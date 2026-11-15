@@ -1,9 +1,8 @@
 ---
-title: API
+title: "TwentyOne Risk API reference"
+sidebarTitle: "API"
 description: "API reference for TwentyOne Risk: every `twentyonerisk.api.*` operation with input and output types."
 ---
-
-Every `twentyonerisk.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -43,20 +42,10 @@ await corsair.twentyonerisk.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `value` | `object[]` | Yes | — |
+| `value` | `Record<string, any>[]` | Yes | — |
 | `@odata.count` | `number` | No | — |
 | `@odata.nextLink` | `string` | No | — |
 | `@odata.context` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 

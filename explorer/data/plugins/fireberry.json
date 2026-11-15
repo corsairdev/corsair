@@ -1,0 +1,899 @@
+{
+  "id": "fireberry",
+  "displayName": "Fireberry",
+  "description": "Operate Fireberry CRM records, metadata, custom fields and objects, attachments, queries, and batch actions through typed Corsair endpoints.",
+  "npmPackageName": "@corsair-dev/fireberry",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fireberry.api.batch.create",
+      "shortPath": "batch.create",
+      "description": "Create multiple Fireberry records in one request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectCode",
+            "optional": false,
+            "type": "account | activitylog | article | accountproduct | businessunit | campaign | competitor | contact | contract | invoicecredit | invoicedelivery | invoicedraft | invoiceno | invoicereno | activity | note | opportunity | crmorder | crmorderitem | calllog | product | project | invoicereceipt | task | cases | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.batch.delete",
+      "shortPath": "batch.delete",
+      "description": "Delete up to 20 Fireberry records in one request",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectCode",
+            "optional": false,
+            "type": "account | activitylog | article | accountproduct | businessunit | campaign | competitor | contact | contract | activity | note | opportunity | crmorderitem | calllog | product | project | task | cases | string"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined | \"\""
+      }
+    },
+    {
+      "path": "fireberry.api.batch.update",
+      "shortPath": "batch.update",
+      "description": "Update multiple Fireberry records in one request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectCode",
+            "optional": false,
+            "type": "account | activitylog | article | accountproduct | businessunit | campaign | competitor | contact | contract | invoicecredit | invoicedelivery | invoicedraft | invoiceno | invoicereno | activity | opportunity | crmorder | crmorderitem | calllog | product | project | invoicereceipt | task | cases | crmuser | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record: Record<string, JsonValue> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Create a tenant-defined Fireberry field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ objectType: number, fieldType: text, data: { fieldName: string, label: string, autoComplete?: boolean, defaultValue?: string, follow?: boolean, maxLength?: number, additionalProperty?: required | readonly } } | { objectType: number, fieldType: emailaddress, data: { fieldName: string, label: string, autoComplete?: boolean, defaultValue?: string, follow?: boolean, maxLength?: number, additionalProperty?: required | readonly } } | { objectType: number, fieldType: url, data: { fieldName: string, label: string, autoComplete?: boolean, defaultValue?: string, follow?: boolean, maxLength?: number, additionalProperty?: required | readonly } } | { objectType: number, fieldType: phonenumber, data: { fieldName: string, label: string, autoComplete?: boolean, defaultValue?: string, follow?: boolean, maxLength?: number, additionalProperty?: required | readonly } } | { objectType: number, fieldType: number, data: { fieldName: string, label: string, precision: number, defaultValue?: string | number, follow?: boolean, additionalProperty?: required | readonly } } | { objectType: number, fieldType: textarea, data: { fieldName: string, label: string, defaultValue?: string, follow?: boolean, additionalProperty?: required | readonly } } | { objectType: number, fieldType: html, data: { fieldName: string, label: string, follow?: boolean, additionalProperty?: required | readonly } } | { objectType: number, fieldType: date, data: { fieldName: string, label: string, defaultValue?: string, follow?: boolean, additionalProperty?: required | readonly } } | { objectType: number, fieldType: datetime, data: { fieldName: string, label: string, defaultValue?: string, follow?: boolean, additionalProperty?: required | readonly } } | { objectType: number, fieldType: lookup, data: { fieldName: string, label: string, relatedObjectType: number, filterBy?: string, defaultValue?: string, follow?: boolean, additionalProperty?: required | readonly } } | { objectType: number, fieldType: summary, data: { fieldName: string, label: string, summarizedObjectType: number, summarizedObjectField: string, summarizedField?: string, summaryType: max | min | count | sum, summarizedUserId: string, precision?: number, follow?: boolean, filter?: JsonValue[] } } | { objectType: number, fieldType: formula, data: { fieldname?: string, fieldName?: string, label: string, formula: string, fieldType: string, precision?: number } } | { objectType: number, fieldType: picklist, data: { fieldName: string, label: string, defaultValue?: number, follow?: boolean, additionalProperty?: required | readonly, options: { order?: number, color?: string, label: string, value: number }[], controllerField?: { fieldName: string, values?: { optionValue: number, controllerValues: number[] }[] } } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.customFields.delete",
+      "shortPath": "customFields.delete",
+      "description": "Delete a tenant-defined Fireberry field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fieldType",
+            "optional": false,
+            "type": "text | emailaddress | url | phonenumber | number | textarea | html | date | datetime | lookup | summary | formula | picklist"
+          },
+          {
+            "key": "fieldName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.customFields.update",
+      "shortPath": "customFields.update",
+      "description": "Update a tenant-defined Fireberry field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ objectType: number, fieldType: text, fieldName: string, data: { label?: string, autoComplete?: boolean, defaultValue?: string, follow?: boolean, maxLength?: number, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: emailaddress, fieldName: string, data: { label?: string, autoComplete?: boolean, defaultValue?: string, follow?: boolean, maxLength?: number, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: url, fieldName: string, data: { label?: string, autoComplete?: boolean, defaultValue?: string, follow?: boolean, maxLength?: number, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: phonenumber, fieldName: string, data: { label?: string, autoComplete?: boolean, defaultValue?: string, follow?: boolean, maxLength?: number, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: number, fieldName: string, data: { label?: string, precision?: number, defaultValue?: string | number, follow?: boolean, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: textarea, fieldName: string, data: { label?: string, defaultValue?: string, follow?: boolean, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: html, fieldName: string, data: { label?: string, follow?: boolean, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: date, fieldName: string, data: { label?: string, defaultValue?: string, follow?: boolean, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: lookup, fieldName: string, data: { label?: string, filterBy?: string, defaultValue?: string, follow?: boolean, additionalProperty?: none | required | readonly } } | { objectType: number, fieldType: summary, fieldName: string, data: { label?: string, summarizedObjectType?: number, summarizedObjectField?: string, summarizedField?: string, summaryType?: max | min | count | sum, summarizedUserId?: string, filter?: JsonValue[], precision?: number, follow?: boolean } } | { objectType: number, fieldType: formula, fieldName: string, data: { label?: string, formula?: string, fieldType?: string, precision?: number } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.customObjects.create",
+      "shortPath": "customObjects.create",
+      "description": "Create a custom Fireberry object",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.customObjects.delete",
+      "shortPath": "customObjects.delete",
+      "description": "Delete a custom Fireberry object and its record definition",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.customObjects.update",
+      "shortPath": "customObjects.update",
+      "description": "Update a custom Fireberry object",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collectionname",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.files.create",
+      "shortPath": "files.create",
+      "description": "Upload a file attachment to a Fireberry record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean | {}"
+      }
+    },
+    {
+      "path": "fireberry.api.metadata.field",
+      "shortPath": "metadata.field",
+      "description": "Retrieve details for a Fireberry field",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fieldName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ label: string, fieldName: string, systemFieldTypeId: string, fieldObjectType: string, systemName: string, values?: { name: string, value: string }[] }"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.metadata.fields",
+      "shortPath": "metadata.fields",
+      "description": "List fields for a Fireberry object",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.metadata.object",
+      "shortPath": "metadata.object",
+      "description": "Retrieve Fireberry object metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.metadata.objects",
+      "shortPath": "metadata.objects",
+      "description": "List Fireberry object metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, systemName: string, objectType: string }[]"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.metadata.picklist",
+      "shortPath": "metadata.picklist",
+      "description": "List values for a Fireberry picklist field",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fieldName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ label: string, fieldName: string, systemFieldTypeId: string, fieldObjectType: string, systemName: string, values?: { name: string, value: string }[] }"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create a Fireberry record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "account | activitylog | asset | article | businessunit | campaign | contact | competitor | contract | creditInvoice | deliveryInvoice | draftInvoice | invoice | invoiceReceipt | meeting | note | opportunity | order | orderItem | phoneCall | product | project | receipt | task | ticket | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Record: Record<string, JsonValue> }"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Permanently delete a Fireberry record",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "account | activitylog | asset | article | businessunit | campaign | contact | competitor | contract | meeting | note | opportunity | orderItem | phoneCall | product | project | task | ticket | string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.records.get",
+      "shortPath": "records.get",
+      "description": "Retrieve a Fireberry record by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "account | activitylog | asset | article | businessunit | campaign | contact | competitor | contract | creditInvoice | deliveryInvoice | draftInvoice | invoice | invoiceReceipt | meeting | note | opportunity | order | orderItem | phoneCall | product | project | receipt | task | transaction | transactionItem | ticket | user | string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Record: Record<string, JsonValue> }"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.records.items",
+      "shortPath": "records.items",
+      "description": "Retrieve line items associated with a Fireberry order, invoice, or receipt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemType",
+            "optional": false,
+            "type": "creditInvoice | invoice | order | receipt | invoiceReceiptItems | invoiceReceiptReceipts"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "fireberry.api.records.legacyQuery",
+      "shortPath": "records.legacyQuery",
+      "description": "Search and paginate Fireberry records using the legacy query API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objecttype",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_type",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.records.list",
+      "shortPath": "records.list",
+      "description": "List records for a documented Fireberry object",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "account | activitylog | asset | article | businessunit | campaign | contact | competitor | contract | creditInvoice | deliveryInvoice | draftInvoice | invoice | invoiceReceipt | meeting | note | opportunity | order | orderItem | phoneCall | product | project | receipt | task | transaction | transactionItem | ticket | user | string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ PrimaryKey: string, PrimaryField: string, Total_Records: number, Page_Size: number, Page_Number: number, Records: Record<string, JsonValue>[] }"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.records.query",
+      "shortPath": "records.query",
+      "description": "Filter, sort, group, and paginate Fireberry records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ name: string, alias?: string, aggrFunc?: SUM | COUNT | MIN | MAX }[]"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ type: AND | OR, conditions: { fieldName: string, operator: eq | ne | lt | gt | le | ge | start-with | not-start-with | is-null | is-not-null | eq-in | not-in | between | userid, value?: string | number | boolean | (string | number)[] }[] }[]"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "{ name: string, order?: asc | desc }[]"
+          },
+          {
+            "key": "groupBy",
+            "optional": true,
+            "type": "{ name: string, datePeriod?: HOUR | DAY | WEEK | MONTH | QUARTER | YEAR | HOUR_PART | DAY_PART | WEEK_PART | MONTH_PART | QUARTER_PART | DAY_OF_WEEK }[]"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "isLastPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.records.related",
+      "shortPath": "records.related",
+      "description": "List records related to a Fireberry record",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "relatedObjectType",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ PrimaryKey: string, PrimaryField: string, Total_Records: number, Page_Size: number, Page_Number: number, Records: Record<string, JsonValue>[] }"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireberry.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update a Fireberry record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "account | activitylog | asset | article | businessunit | campaign | contact | competitor | contract | creditInvoice | deliveryInvoice | draftInvoice | invoice | invoiceReceipt | meeting | opportunity | order | orderItem | phoneCall | product | project | receipt | task | ticket | user | string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "record",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

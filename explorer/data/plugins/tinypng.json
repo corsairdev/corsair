@@ -70,7 +70,7 @@
           {
             "key": "convert",
             "optional": true,
-            "type": "{ type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | image/avif | image/webp | image/jpeg | image/png | image/jxl | */*[] }",
+            "type": "{ type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | (image/avif | image/webp | image/jpeg | image/png | image/jxl | */*)[] }",
             "description": "Several types return the smallest result"
           },
           {
@@ -81,7 +81,7 @@
           {
             "key": "preserve",
             "optional": true,
-            "type": "copyright | creation | location[]"
+            "type": "(copyright | creation | location)[]"
           }
         ]
       },
@@ -255,7 +255,7 @@
           {
             "key": "convert",
             "optional": true,
-            "type": "{ type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | image/avif | image/webp | image/jpeg | image/png | image/jxl | */*[] }",
+            "type": "{ type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | (image/avif | image/webp | image/jpeg | image/png | image/jxl | */*)[] }",
             "description": "Several types return the smallest result"
           },
           {
@@ -266,7 +266,7 @@
           {
             "key": "preserve",
             "optional": true,
-            "type": "copyright | creation | location[]"
+            "type": "(copyright | creation | location)[]"
           },
           {
             "key": "store",
@@ -321,6 +321,11 @@
         },
         {
           "field": "image_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "service",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

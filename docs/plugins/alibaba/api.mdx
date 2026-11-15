@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Alibaba: every `alibaba.api.*` operation with input and output types."
+title: "Alibaba Cloud Model Studio API reference"
+sidebarTitle: "API"
+description: "API reference for Alibaba Cloud Model Studio: every `alibaba.api.*` operation with input and output types."
 ---
-
-Every `alibaba.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -47,7 +46,12 @@ await corsair.alibaba.api.image.generate({});
   enable_thinking?: boolean,
   thinking_mode?: boolean,
   enable_sequential?: boolean,
-  bbox_list?: tuple[][],
+  bbox_list?: [
+    number,
+    number,
+    number,
+    number
+  ][][],
   color_palette?: {
     hex: string,
     ratio: string
@@ -64,7 +68,7 @@ await corsair.alibaba.api.image.generate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `object \| null` | No | — |
 | `request_id` | `string` | Yes | — |
 
 <AccordionGroup>
@@ -99,7 +103,7 @@ await corsair.alibaba.api.image.generate({});
   width?: number | null,
   height?: number | null,
   image_count?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -135,7 +139,7 @@ await corsair.alibaba.api.tasks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `object \| null` | No | — |
 | `request_id` | `string` | Yes | — |
 
 <AccordionGroup>
@@ -166,7 +170,7 @@ await corsair.alibaba.api.tasks.get({});
   SR?: number | null,
   ratio?: string | null,
   video_count?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

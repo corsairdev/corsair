@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTodoistRequest } from '../client';
 import type { TodoistEndpoints } from '../index';
 import type { TodoistEndpointOutputs } from './types';
+import { TodoistEndpointInputSchemas } from './types';
 
 export const close: TodoistEndpoints['tasksClose'] = async (ctx, input) => {
 	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksClose']>(
@@ -120,12 +121,20 @@ export const getMany: TodoistEndpoints['tasksGetMany'] = async (ctx, input) => {
 };
 
 export const move: TodoistEndpoints['tasksMove'] = async (ctx, input) => {
+	const destination = TodoistEndpointInputSchemas.tasksMove.parse(input);
+	const body =
+		'project_id' in destination
+			? { project_id: destination.project_id }
+			: 'section_id' in destination
+				? { section_id: destination.section_id }
+				: { parent_id: destination.parent_id };
+
 	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksMove']>(
-		`tasks/${input.id}`,
+		`tasks/${destination.id}/move`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: input,
+			body,
 		},
 	);
 
@@ -138,7 +147,7 @@ export const move: TodoistEndpoints['tasksMove'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'todoist.tasks.move',
-		{ ...input },
+		{ ...destination },
 		'completed',
 	);
 	return result;

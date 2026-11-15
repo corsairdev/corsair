@@ -1,0 +1,102 @@
+displayName: MemberSpot
+description: Membership and course platform access with MemberSpot - read users, offers, courses, exams and course progress, and grant or revoke offers, course access and custom properties.
+domain: memberspot.de
+recommendedAuth: api_key
+overviewNote: |
+  Create the key in your school under Settings, API keys (https://app.memberspot.de/settings/apikeys). It is per school, so one key covers every member.
+
+  Things to know before you call:
+
+  - **The API is documented as OpenAPI 3.0.** The readable reference is https://api.memberspot.de/api and the machine-readable spec is https://api.memberspot.de/api-json, so the plugin's schemas were built from the spec rather than from prose.
+  - **Auth is an `X-API-KEY` header.** A missing key answers 400, not 401; only an invalid key answers 401. The plugin treats both as auth failures and never retries them.
+  - **`auth.check` returns `schoolId`, not `id`.** The spec documents that route with no response body, so its shape was taken from the live API. It is the cheapest way to confirm a key works.
+  - **`name` means last name.** MemberSpot splits a member into `firstname` and `name`, and this plugin keeps those names exactly. `created` and the other dates are ISO date-times.
+  - **Paging uses two different names.** A page request takes `lastLoadedId` and the response returns `nextPage`; the course-progress list calls the inbound cursor `lastLoadedCourseId`. Pass `nextPage` straight back as `lastLoadedId`.
+  - **Many operations come in email and uid pairs.** Most writes that target a member exist twice, once keyed by email and once by uid; prefer the uid form when you already have the uid. `users.setOfferExpires`, `users.setCourseStartDate`, `users.loginToken` and `users.offers` take a uid only, so look the uid up with `users.findByEmail` first.
+  - **Deletes are capped at 10 members per call.** The schema enforces the cap locally, because the API rejects an 11th rather than batching it.
+  - **Members are deleted, not deactivated.** `users.delete` and `users.deleteByUid` remove the account and its progress. To keep the record, revoke offers instead. `users.setOfferState` with `active: false` revokes one offer, and the member keeps any other offer. To remove all access, list the grants with `users.offers` and revoke each one.
+  - **Grant-state writes need `active`.** MemberSpot deletes the grant when `active` is missing, so the offer-state and order-state writes require it. Pass `true` to grant, `false` to revoke, or `null` to delete the grant. `users.setOrderStateByOrderId` changes every member holding that order id.
+  - **`users.loginToken` mints a credential.** It returns a signed token and URL that sign in as the member, valid for an hour. It is marked as a write, so a read-only caller cannot create one, but treat the result as a secret and never log it.
+  - **A member that does not exist is not `null`.** `users.findByEmail` answers 400 `USER_NOT_FOUND`, and `users.findByUid` answers 200 with an empty body that fails the output schema. Catch the error rather than testing for a null result.
+  - **Custom properties are keyed by id.** `users.setCustomProperties` takes a map of property id (the `id` from `customProperties.list`) to value and sends it as the `[{ id, value }]` array the API expects.
+  - **Chapter access needs the course.** `chapters.enableAccess` takes the `courseId` as well as the `chapterId`.
+  - **Rate limits.** Several write routes document a 429 with no `Retry-After`. The plugin retries twice, after the header when present and after one minute otherwise. Every other 4xx is a rejected request and is not retried.
+  - **No webhooks.** MemberSpot sends none, so the plugin declares no webhook surface.
+examples:
+  read:
+    path: users.list
+    title: List a page of members
+    args:
+      pageLength: 25
+  write:
+    path: users.setOfferState
+    title: Revoke an offer without deleting the member
+    args:
+      email: jordan@acme.example
+      offerId: offer-1
+      active: false
+apiExamples:
+  auth.check:
+    call: "{}"
+  offers.list:
+    call: "{}"
+  courses.list:
+    call: "{}"
+  exams.list:
+    call: "{}"
+  exams.results:
+    call: "{ id: 'exam-1', pageLength: 25 }"
+  customProperties.list:
+    call: "{}"
+  users.list:
+    call: "{ pageLength: 25, courseId: 'course-1' }"
+  users.findByEmail:
+    call: "{ email: 'jordan@acme.example' }"
+  users.findByUid:
+    call: "{ uid: 'uid-1' }"
+  users.offers:
+    call: "{ uid: 'uid-1' }"
+  users.loginToken:
+    call: "{ uid: 'uid-1' }"
+  users.grantOffer:
+    call: "{ email: 'jordan@acme.example', firstname: 'Jordan', name: 'Miller', grantOffer: 'offer-1' }"
+  users.grantOfferByUid:
+    call: "{ uid: 'uid-1', offerId: 'offer-1' }"
+  users.setOfferState:
+    call: "{ email: 'jordan@acme.example', offerId: 'offer-1', active: false }"
+  users.setOfferStateByUid:
+    call: "{ uid: 'uid-1', offerId: 'offer-1', active: true }"
+  users.setOrderState:
+    call: "{ email: 'jordan@acme.example', orderId: 'order-9', active: true }"
+  users.setOrderStateByUid:
+    call: "{ uid: 'uid-1', orderId: 'order-9', active: true }"
+  users.setOrderStateByOrderId:
+    call: "{ orderId: 'order-9', active: false }"
+  users.setOfferExpires:
+    call: "{ uid: 'uid-1', offerId: 'offer-1', expiresAt: '2027-01-01T00:00:00.000Z' }"
+  users.setCourseStartDate:
+    call: "{ uid: 'uid-1', courseId: 'course-1', startDate: '2026-12-01T00:00:00.000Z' }"
+  users.courseProgress:
+    call: "{ email: 'jordan@acme.example', pageLength: 25 }"
+  users.courseProgressByUid:
+    call: "{ uid: 'uid-1', pageLength: 25 }"
+  users.courseProgressDetail:
+    call: "{ courseId: 'course-1', email: 'jordan@acme.example' }"
+  users.courseProgressDetailByUid:
+    call: "{ courseId: 'course-1', uid: 'uid-1' }"
+  users.setCustomProperties:
+    call: "{ email: 'jordan@acme.example', properties: { 'prop-1': 'Sales' } }"
+  users.setCustomPropertiesByUid:
+    call: "{ uid: 'uid-1', properties: { 'prop-1': 'Sales' } }"
+  users.setCustomProperty:
+    call: "{ email: 'jordan@acme.example', key: 'prop-1', value: 'Sales' }"
+  users.setCustomPropertyByUid:
+    call: "{ uid: 'uid-1', key: 'prop-1', value: 'Sales' }"
+  users.delete:
+    call: "{ emails: ['jordan@acme.example'] }"
+  users.deleteByUid:
+    call: "{ uids: ['uid-1'] }"
+  chapters.enableAccess:
+    call: "{ email: 'jordan@acme.example', courseId: 'course-1', chapterId: 'chapter-1' }"
+  chapters.enableAccessByUid:
+    call: "{ uid: 'uid-1', courseId: 'course-1', chapterId: 'chapter-1' }"

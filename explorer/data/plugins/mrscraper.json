@@ -407,12 +407,12 @@
           {
             "key": "extractions",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "runtime",
@@ -432,17 +432,17 @@
           {
             "key": "recording_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "residential_proxy_usage",
@@ -457,17 +457,17 @@
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "screenshot",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -568,12 +568,12 @@
           {
             "key": "extractions",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "runtime",
@@ -593,17 +593,17 @@
           {
             "key": "recording_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "residential_proxy_usage",
@@ -618,17 +618,17 @@
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "screenshot",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -739,12 +739,12 @@
           {
             "key": "extractions",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "runtime",
@@ -764,17 +764,17 @@
           {
             "key": "recording_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "residential_proxy_usage",
@@ -789,17 +789,17 @@
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "screenshot",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -925,12 +925,12 @@
           {
             "key": "extractions",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "runtime",
@@ -950,17 +950,17 @@
           {
             "key": "recording_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "residential_proxy_usage",
@@ -975,17 +975,17 @@
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "screenshot",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1101,12 +1101,12 @@
           {
             "key": "extractions",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "runtime",
@@ -1126,17 +1126,17 @@
           {
             "key": "recording_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html_path",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "residential_proxy_usage",
@@ -1151,17 +1151,17 @@
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "screenshot",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

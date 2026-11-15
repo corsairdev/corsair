@@ -61,88 +61,88 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "nbrOfStars",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "jobCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "techStack",
             "optional": true,
-            "type": "string[]",
+            "type": "string[] | null",
             "description": "A preview capped by Remoet; techStackCount is the full size."
           },
           {
             "key": "matchedTechStack",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "techStackCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "experienceLevels",
             "optional": true,
-            "type": "{ junior?: number | null, mid?: number | null, senior?: number | null }"
+            "type": "{ junior?: number | null, mid?: number | null, senior?: number | null } | null"
           },
           {
             "key": "shortDescription",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isStarred",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "jobPreview",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "about",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "careersUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "verified",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "urls",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null> | null"
           },
           {
             "key": "perks",
             "optional": true,
-            "type": "{ id?: string | null, title: string, tags?: string[] | null, description?: string | null, category?: string | null }[]"
+            "type": "{ id?: string | null, title: string, tags?: string[] | null, description?: string | null, category?: string | null }[] | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -181,7 +181,7 @@
           {
             "key": "experienceLevel",
             "optional": true,
-            "type": "junior | mid | senior[]"
+            "type": "(junior | mid | senior)[]"
           },
           {
             "key": "sortBy",
@@ -218,37 +218,37 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "pageSize",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "totalPages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "hasNextPage",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "starred",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -327,37 +327,37 @@
           {
             "key": "institutionUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "studyLevel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fieldOfStudy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startDate",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "endDate",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "isCurrent",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -405,7 +405,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, institution: string, institutionUrl?: string | null, studyLevel?: string | null, fieldOfStudy?: string | null, startDate?: string | null, endDate?: string | null, isCurrent?: boolean | null, description?: string | null }[]"
+        "type": "{ id: string, institution: string, institutionUrl?: string | null, studyLevel?: string | null, fieldOfStudy?: string | null, startDate: string | null, endDate: string | null, isCurrent?: boolean | null, description?: string | null }[]"
       }
     },
     {
@@ -487,37 +487,37 @@
           {
             "key": "institutionUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "studyLevel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fieldOfStudy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startDate",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "endDate",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "isCurrent",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -559,8 +559,8 @@
           },
           {
             "key": "nextCursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "entries",
@@ -591,8 +591,8 @@
         "fields": [
           {
             "key": "match",
-            "optional": true,
-            "type": "{ company: string, companySlug: string, firstSeenAt: string, daysSinceFirstSeen: number, firstSeenAtIsCensored: boolean, isActive: boolean, deactivatedAt?: string | null, reposts: { removedAt: string, repostedAt: string, gapDays: number }[], otherOpenRoles: number, isStarred: boolean, techStack: string[], remotePolicy?: string | null, remoteRestrictions?: string | null, salary?: { from?: number | null, to?: number | null, currency?: string | null, period?: string | null } | null, experienceLevel?: string | null, summary?: string | null }"
+            "optional": false,
+            "type": "{ company: string, companySlug: string, firstSeenAt: string, daysSinceFirstSeen: number, firstSeenAtIsCensored: boolean, isActive: boolean, deactivatedAt: string | null, reposts: { removedAt: string, repostedAt: string, gapDays: number }[], otherOpenRoles: number, isStarred: boolean, techStack: string[], remotePolicy: string | null, remoteRestrictions: string | null, salary: { from?: number | null, to?: number | null, currency?: string | null, period?: string | null } | null, experienceLevel: string | null, summary: string | null } | null"
           }
         ]
       }
@@ -632,12 +632,12 @@
           {
             "key": "remotePolicy",
             "optional": true,
-            "type": "onsite | hybrid | remote | remote-restricted[]"
+            "type": "(onsite | hybrid | remote | remote-restricted)[]"
           },
           {
             "key": "experienceLevel",
             "optional": true,
-            "type": "junior | mid | senior[]"
+            "type": "(junior | mid | senior)[]"
           },
           {
             "key": "salaryMin",
@@ -711,7 +711,7 @@
           {
             "key": "hint",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Present on an empty result: which filter emptied it and what to try."
           }
         ]
@@ -749,7 +749,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
@@ -813,18 +813,18 @@
           {
             "key": "ghId",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "Numeric GitHub user id; absent for users who never linked GitHub."
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile",
             "optional": false,
-            "type": "{ updatedAt: string, isPublic?: boolean | null, slug?: string | null, name?: { value?: string | null, isPublic: boolean } | null, avatarUrl?: { value?: string | null, isPublic: boolean } | null, phone?: { value?: string | null, isPublic: boolean } | null, url?: { value?: string | null, isPublic: boolean } | null, summary?: { value?: string | null, isPublic: boolean } | null, location?: { value?: string | null, isPublic: boolean } | null, githubUrl?: { value?: string | null, isPublic: boolean } | null, facebookUrl?: { value?: string | null, isPublic: boolean } | null, twitterUrl?: { value?: string | null, isPublic: boolean } | null, linkedinUrl?: { value?: string | null, isPublic: boolean } | null, youtubeUrl?: { value?: string | null, isPublic: boolean } | null }"
+            "type": "{ updatedAt: string, isPublic?: boolean | null, slug?: string | null, name?: { value: string | null, isPublic: boolean } | null, avatarUrl?: { value: string | null, isPublic: boolean } | null, phone?: { value: string | null, isPublic: boolean } | null, url?: { value: string | null, isPublic: boolean } | null, summary?: { value: string | null, isPublic: boolean } | null, location?: { value: string | null, isPublic: boolean } | null, githubUrl?: { value: string | null, isPublic: boolean } | null, facebookUrl?: { value: string | null, isPublic: boolean } | null, twitterUrl?: { value: string | null, isPublic: boolean } | null, linkedinUrl?: { value: string | null, isPublic: boolean } | null, youtubeUrl?: { value: string | null, isPublic: boolean } | null }"
           },
           {
             "key": "jobs",
@@ -834,7 +834,7 @@
           {
             "key": "projects",
             "optional": false,
-            "type": "{ id: string, title: string, shortDescription?: string | null, technologies?: string[] | null, isCurrent?: boolean | null, isRemote?: boolean | null, isOpenSource?: boolean | null, description?: string | null, role?: string | null, startDate?: string | null, endDate?: string | null, repoUrl?: string | null, demoUrl?: string | null, jobId?: string | null }[]"
+            "type": "{ id: string, title: string, shortDescription?: string | null, technologies?: string[] | null, isCurrent?: boolean | null, isRemote?: boolean | null, isOpenSource?: boolean | null, description?: string | null, role?: string | null, startDate: string | null, endDate: string | null, repoUrl?: string | null, demoUrl?: string | null, jobId?: string | null }[]"
           },
           {
             "key": "linkTrees",
@@ -844,7 +844,7 @@
           {
             "key": "education",
             "optional": false,
-            "type": "{ id: string, institution: string, institutionUrl?: string | null, studyLevel?: string | null, fieldOfStudy?: string | null, startDate?: string | null, endDate?: string | null, isCurrent?: boolean | null, description?: string | null }[]"
+            "type": "{ id: string, institution: string, institutionUrl?: string | null, studyLevel?: string | null, fieldOfStudy?: string | null, startDate: string | null, endDate: string | null, isCurrent?: boolean | null, description?: string | null }[]"
           }
         ]
       }
@@ -863,33 +863,33 @@
         "fields": [
           {
             "key": "url",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "githubUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "facebookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "twitterUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "linkedinUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "youtubeUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -1085,62 +1085,62 @@
           {
             "key": "shortDescription",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "technologies",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "isCurrent",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isRemote",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isOpenSource",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startDate",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "endDate",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "repoUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "demoUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jobId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Set when this project is linked to a work experience entry."
           }
         ]
@@ -1189,7 +1189,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, title: string, shortDescription?: string | null, technologies?: string[] | null, isCurrent?: boolean | null, isRemote?: boolean | null, isOpenSource?: boolean | null, description?: string | null, role?: string | null, startDate?: string | null, endDate?: string | null, repoUrl?: string | null, demoUrl?: string | null, jobId?: string | null }[]"
+        "type": "{ id: string, title: string, shortDescription?: string | null, technologies?: string[] | null, isCurrent?: boolean | null, isRemote?: boolean | null, isOpenSource?: boolean | null, description?: string | null, role?: string | null, startDate: string | null, endDate: string | null, repoUrl?: string | null, demoUrl?: string | null, jobId?: string | null }[]"
       }
     },
     {
@@ -1295,62 +1295,62 @@
           {
             "key": "shortDescription",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "technologies",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "isCurrent",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isRemote",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isOpenSource",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "startDate",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "endDate",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "repoUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "demoUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jobId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Set when this project is linked to a work experience entry."
           }
         ]
@@ -1406,7 +1406,7 @@
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "savedAt",
@@ -1415,8 +1415,8 @@
           },
           {
             "key": "job",
-            "optional": true,
-            "type": "{ title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null }"
+            "optional": false,
+            "type": "{ title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null } | null"
           },
           {
             "key": "locked",
@@ -1492,7 +1492,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, jobId: string, jobType: string, note?: string | null, savedAt: string, job?: { title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null } | null, locked?: boolean, lockedReason?: string }[]"
+            "type": "{ id: string, jobId: string, jobType: string, note?: string | null, savedAt: string, job: { title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null } | null, locked?: boolean, lockedReason?: string }[]"
           },
           {
             "key": "totalCount",
@@ -1566,7 +1566,7 @@
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "savedAt",
@@ -1575,8 +1575,8 @@
           },
           {
             "key": "job",
-            "optional": true,
-            "type": "{ title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null }"
+            "optional": false,
+            "type": "{ title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null } | null"
           },
           {
             "key": "locked",
@@ -1625,12 +1625,12 @@
           {
             "key": "remotePolicy",
             "optional": true,
-            "type": "onsite | hybrid | remote | remote-restricted[]"
+            "type": "(onsite | hybrid | remote | remote-restricted)[]"
           },
           {
             "key": "experienceLevel",
             "optional": true,
-            "type": "junior | mid | senior[]"
+            "type": "(junior | mid | senior)[]"
           },
           {
             "key": "salaryMin",
@@ -1698,7 +1698,7 @@
           {
             "key": "starsOverCap",
             "optional": true,
-            "type": "{ surplusStars: number, maxActiveStars: number, starsPendingDeletionAt?: string | null, note: string }",
+            "type": "{ surplusStars: number, maxActiveStars: number, starsPendingDeletionAt?: string | null, note: string } | null",
             "description": "Present when the user holds more stars than the cap allows."
           }
         ]
@@ -1843,7 +1843,7 @@
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
@@ -1858,48 +1858,48 @@
           {
             "key": "endDate",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Null or absent for a current role."
           },
           {
             "key": "isCurrent",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isPublic",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "technologies",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isRemote",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "companyUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "listingId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match."
           }
         ]
@@ -2041,7 +2041,7 @@
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
@@ -2056,48 +2056,48 @@
           {
             "key": "endDate",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Null or absent for a current role."
           },
           {
             "key": "isCurrent",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isPublic",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "technologies",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isRemote",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "companyUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "listingId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match."
           }
         ]

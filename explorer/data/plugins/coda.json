@@ -409,7 +409,7 @@
           {
             "key": "packFormulaTypes",
             "optional": true,
-            "type": "action | formula | sync | metadata[]",
+            "type": "(action | formula | sync | metadata)[]",
             "description": "A list of Pack formula types corresponding to the `packFormulaNames`. If specified, this must have the same length as `packFormulaNames`."
           },
           {
@@ -658,7 +658,7 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON payload passed to the automation."
           }
         ]
@@ -2220,7 +2220,7 @@
           {
             "key": "headers",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -2685,17 +2685,17 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ invitation: { invitationId: string, packId: number, inviteeEmail: string, inviterUserId: number, access: none | view | test | edit | admin, createdAt: string, expiresAt: string }, pack: { id: number, logoUrl?: string, coverUrl?: string, exampleImages?: { filename: string, imageUrl: string, assetId: string, altText?: string, mimeType?: string }[], agentImages?: { filename: string, imageUrl: string, assetId: string, altText?: string, mimeType?: string }[], workspaceId: string, categories: { categoryId: string, categoryName: string, categorySlug?: string }[], certified?: boolean, certifiedAgent?: boolean, sourceCodeVisibility?: private | shared, packEntrypoints?: go | docs[], verifiedVersion?: string, name: string, description: string, shortDescription: string, agentShortDescription?: string, agentDescription?: string, supportEmail?: string, termsOfServiceUrl?: string, privacyPolicyUrl?: string }, makers: { name: string, pictureLink?: string, slug?: string, jobTitle?: string, employer?: string, description?: string, loginId: string }[], networkDomains: string[] }[]"
+            "type": "{ invitation: { invitationId: string, packId: number, inviteeEmail: string, inviterUserId: number, access: none | view | test | edit | admin, createdAt: string, expiresAt: string }, pack: { id: number, logoUrl?: string, coverUrl?: string, exampleImages?: { filename: string, imageUrl: string, assetId: string, altText?: string, mimeType?: string }[], agentImages?: { filename: string, imageUrl: string, assetId: string, altText?: string, mimeType?: string }[], workspaceId: string, categories: { categoryId: string, categoryName: string, categorySlug?: string }[], certified?: boolean, certifiedAgent?: boolean, sourceCodeVisibility?: private | shared, packEntrypoints?: (go | docs)[], verifiedVersion?: string, name: string, description: string, shortDescription: string, agentShortDescription?: string, agentDescription?: string, supportEmail?: string, termsOfServiceUrl?: string, privacyPolicyUrl?: string }, makers: { name: string, pictureLink?: string, slug?: string, jobTitle?: string, employer?: string, description?: string, loginId: string }[], networkDomains: string[] }[]"
           },
           {
             "key": "nextPageToken",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "nextPageLink",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2929,7 +2929,7 @@
           {
             "key": "userAccess",
             "optional": false,
-            "type": "{ canEdit: boolean, canTest: boolean, canView: boolean, canInstall: boolean, canPurchase: boolean, requiresTrial: boolean, canConnectAccount: boolean, usesSystemConnection?: boolean, organization?: { canRequestAccess: boolean, hasRequestedAccess: boolean, requiresConfiguration: boolean, allowedConfigurations?: { configurationId: string, name: string, policy?: {}, hasSharedConnection?: boolean }[], allowedPackIds?: number[], incompatibleDocPermissions?: { principal: { type: email, email: string } | { type: group, groupId: string, groupName: string } | { type: domain, domain: string } | { type: workspace, workspaceId: string } | { type: anyone } | { type: internalAccess, internalAccessType: string }, id: string, access: readonly | write | comment | none }[], incompatibleDocOwner?: { name: string, loginId: string, type: user, pictureLink?: string }, incompatibleDocFolder?: { id: string, type: folder, browserLink: string, name?: string }, isDocOwner?: boolean } | { canRequestAccess: boolean, hasRequestedAccess: boolean, requiresConfiguration: boolean, allowedConfigurations?: { configurationId: string, name: string, policy?: {}, hasSharedConnection?: boolean }[], allowedPackIds?: number[] }, ingestionLimitSettings?: { tableSettings?: {}, maxBytesPerSyncTableDefault?: number | null, allowedTablesCount: number } }"
+            "type": "{ canEdit: boolean, canTest: boolean, canView: boolean, canInstall: boolean, canPurchase: boolean, requiresTrial: boolean, canConnectAccount: boolean, usesSystemConnection?: boolean, organization?: { canRequestAccess: boolean, hasRequestedAccess: boolean, requiresConfiguration: boolean, allowedConfigurations?: { configurationId: string, name: string, policy?: Record<string, JsonValue>, hasSharedConnection?: boolean }[], allowedPackIds?: number[], incompatibleDocPermissions?: { principal: { type: email, email: string } | { type: group, groupId: string, groupName: string } | { type: domain, domain: string } | { type: workspace, workspaceId: string } | { type: anyone } | { type: internalAccess, internalAccessType: string }, id: string, access: readonly | write | comment | none }[], incompatibleDocOwner?: { name: string, loginId: string, type: user, pictureLink?: string }, incompatibleDocFolder?: { id: string, type: folder, browserLink: string, name?: string }, isDocOwner?: boolean } | { canRequestAccess: boolean, hasRequestedAccess: boolean, requiresConfiguration: boolean, allowedConfigurations?: { configurationId: string, name: string, policy?: Record<string, JsonValue>, hasSharedConnection?: boolean }[], allowedPackIds?: number[] }, ingestionLimitSettings?: { tableSettings?: Record<string, { maxBytesPerSyncTableOverride?: number | null, excludeIngestionByDefault?: boolean, parameterLimits?: Record<string, { default: string, allowed: string[] }> }>, maxBytesPerSyncTableDefault: number | null, allowedTablesCount: number } }"
           },
           {
             "key": "codaHelpCenterUrl",
@@ -2939,7 +2939,7 @@
           {
             "key": "configuration",
             "optional": true,
-            "type": "{ configurationId: string, name: string, policy?: {}, hasSharedConnection?: boolean }"
+            "type": "{ configurationId: string, name: string, policy?: Record<string, JsonValue>, hasSharedConnection?: boolean }"
           }
         ]
       }
@@ -2955,7 +2955,7 @@
           {
             "key": "packAccessTypes",
             "optional": true,
-            "type": "none | view | test | edit | admin[]",
+            "type": "(none | view | test | edit | admin)[]",
             "description": "Pack access types."
           },
           {
@@ -2997,7 +2997,7 @@
           {
             "key": "packCategories",
             "optional": true,
-            "type": "connector | agent | customAgent[]",
+            "type": "(connector | agent | customAgent)[]",
             "description": "Filter Packs by one or more category types."
           },
           {
@@ -3139,7 +3139,7 @@
           {
             "key": "logTypes",
             "optional": true,
-            "type": "custom | fetcher | invocation | internal | auth | ingestionLifecycle | ingestionDebug | agentRuntime | mcp[]",
+            "type": "(custom | fetcher | invocation | internal | auth | ingestionLifecycle | ingestionDebug | agentRuntime | mcp)[]",
             "description": "Only return logs of the given types."
           },
           {
@@ -3416,7 +3416,7 @@
           {
             "key": "logTypes",
             "optional": true,
-            "type": "custom | fetcher | invocation | internal | auth | ingestionLifecycle | ingestionDebug | agentRuntime | mcp[]",
+            "type": "(custom | fetcher | invocation | internal | auth | ingestionLifecycle | ingestionDebug | agentRuntime | mcp)[]",
             "description": "Only return logs of the given types."
           },
           {
@@ -3572,7 +3572,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ completionTimestamp: number, creationTimestamp: number, dynamicLabel?: string, dynamicUrl?: string, executionType: FULL | INCREMENTAL, fullExecutionId: string, ingestionExecutionId: string, ingestionId: string, ingestionName: string, ingestionStatusCounts?: {}, lastFinishedFullWorkflowExecutionId?: string, lastFinishedIncrementalWorkflowExecutionId?: string, latestFullWorkflowExecutionId?: string, latestIncrementalWorkflowExecutionId?: string, latestIngestionSequenceId?: string, liveIngestionSequenceId?: string, parentSyncTableIngestionId?: string, startTimestamp: number, totalRowCount?: number }[]"
+            "type": "{ completionTimestamp: number, creationTimestamp: number, dynamicLabel?: string, dynamicUrl?: string, executionType: FULL | INCREMENTAL, fullExecutionId: string, ingestionExecutionId: string, ingestionId: string, ingestionName: string, ingestionStatusCounts?: Record<string, number>, lastFinishedFullWorkflowExecutionId?: string, lastFinishedIncrementalWorkflowExecutionId?: string, latestFullWorkflowExecutionId?: string, latestIncrementalWorkflowExecutionId?: string, latestIngestionSequenceId?: string, liveIngestionSequenceId?: string, parentSyncTableIngestionId?: string, startTimestamp: number, totalRowCount?: number }[]"
           },
           {
             "key": "nextPageToken",
@@ -3968,7 +3968,7 @@
           {
             "key": "sourcePackId",
             "optional": true,
-            "type": "number",
+            "type": "number | null",
             "description": "The ID of the new Pack's source, if this new Pack was forked."
           }
         ]
@@ -4078,7 +4078,7 @@
           {
             "key": "packEntrypoints",
             "optional": true,
-            "type": "go | docs[]"
+            "type": "(go | docs)[]"
           },
           {
             "key": "verifiedVersion",
@@ -4166,7 +4166,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, JsonValue>"
       }
     },
     {
@@ -4186,7 +4186,7 @@
           {
             "key": "accessTypes",
             "optional": true,
-            "type": "none | view | test | edit | admin[]",
+            "type": "(none | view | test | edit | admin)[]",
             "description": "Filter to only return the Packs for which the current user has these access types."
           },
           {
@@ -4240,7 +4240,7 @@
           {
             "key": "excludePackCategories",
             "optional": true,
-            "type": "connector | agent | customAgent[]",
+            "type": "(connector | agent | customAgent)[]",
             "description": "Exclude Packs of one or more category types. Categories not listed stay visible."
           }
         ]
@@ -4251,7 +4251,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: number, logoUrl?: string, coverUrl?: string, exampleImages?: { filename: string, imageUrl: string, assetId: string, altText?: string, mimeType?: string }[], agentImages?: { filename: string, imageUrl: string, assetId: string, altText?: string, mimeType?: string }[], workspaceId: string, categories: { categoryId: string, categoryName: string, categorySlug?: string }[], certified?: boolean, certifiedAgent?: boolean, sourceCodeVisibility?: private | shared, packEntrypoints?: go | docs[], verifiedVersion?: string, name: string, description: string, shortDescription: string, agentShortDescription?: string, agentDescription?: string, supportEmail?: string, termsOfServiceUrl?: string, privacyPolicyUrl?: string }[]"
+            "type": "{ id: number, logoUrl?: string, coverUrl?: string, exampleImages?: { filename: string, imageUrl: string, assetId: string, altText?: string, mimeType?: string }[], agentImages?: { filename: string, imageUrl: string, assetId: string, altText?: string, mimeType?: string }[], workspaceId: string, categories: { categoryId: string, categoryName: string, categorySlug?: string }[], certified?: boolean, certifiedAgent?: boolean, sourceCodeVisibility?: private | shared, packEntrypoints?: (go | docs)[], verifiedVersion?: string, name: string, description: string, shortDescription: string, agentShortDescription?: string, agentDescription?: string, supportEmail?: string, termsOfServiceUrl?: string, privacyPolicyUrl?: string }[]"
           },
           {
             "key": "nextPageToken",
@@ -4283,49 +4283,49 @@
           {
             "key": "overallRateLimit",
             "optional": true,
-            "type": "{ intervalSeconds: number, operationsPerInterval: number }",
+            "type": "{ intervalSeconds: number, operationsPerInterval: number } | null",
             "description": "Rate limit in Pack settings."
           },
           {
             "key": "perConnectionRateLimit",
             "optional": true,
-            "type": "{ intervalSeconds: number, operationsPerInterval: number }",
+            "type": "{ intervalSeconds: number, operationsPerInterval: number } | null",
             "description": "Rate limit in Pack settings."
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "{ assetId: string, filename: string, mimeType?: string }",
+            "type": "{ assetId: string, filename: string, mimeType?: string } | null",
             "description": "Information about an image file for an update Pack request."
           },
           {
             "key": "cover",
             "optional": true,
-            "type": "{ assetId: string, filename: string, mimeType?: string }",
+            "type": "{ assetId: string, filename: string, mimeType?: string } | null",
             "description": "Information about an image file for an update Pack request."
           },
           {
             "key": "exampleImages",
             "optional": true,
-            "type": "{ assetId: string, filename: string, mimeType?: string }[]",
+            "type": "{ assetId: string, filename: string, mimeType?: string }[] | null",
             "description": "The example images for the Pack."
           },
           {
             "key": "agentImages",
             "optional": true,
-            "type": "{ assetId: string, filename: string, mimeType?: string }[]",
+            "type": "{ assetId: string, filename: string, mimeType?: string }[] | null",
             "description": "The agent images for the Pack."
           },
           {
             "key": "sourceCodeVisibility",
             "optional": true,
-            "type": "private | shared",
+            "type": "private | shared | null",
             "description": "Visibility of a Pack's source code."
           },
           {
             "key": "packEntrypoints",
             "optional": true,
-            "type": "go | docs[]",
+            "type": "(go | docs)[] | null",
             "description": "Pack entrypoints where this Pack is available"
           },
           {
@@ -4434,7 +4434,7 @@
           {
             "key": "packEntrypoints",
             "optional": true,
-            "type": "go | docs[]"
+            "type": "(go | docs)[]"
           },
           {
             "key": "verifiedVersion",
@@ -4723,7 +4723,7 @@
           {
             "key": "headers",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -4870,7 +4870,7 @@
           {
             "key": "headers",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -5915,7 +5915,7 @@
           {
             "key": "values",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean | (string | number | boolean | (string | number | boolean)[])[] | string | number | boolean | { @context: string, @type: MonetaryAmount, additionalType?: string, currency: string, amount: string | number } | { @context: string, @type: ImageObject, additionalType?: string, name?: string, url?: string, height?: number, width?: number, status?: live | deleted | failed } | { @context: string, @type: Person, additionalType?: string, name: string, email?: string } | { @context: string, @type: WebPage, additionalType?: string, name?: string, url: string } | { @context: string, @type: StructuredValue, additionalType: row, name: string, url: string, tableId: string, rowId: string, tableUrl: string } | (string | number | boolean | { @context: string, @type: MonetaryAmount, additionalType?: string, currency: string, amount: string | number } | { @context: string, @type: ImageObject, additionalType?: string, name?: string, url?: string, height?: number, width?: number, status?: live | deleted | failed } | { @context: string, @type: Person, additionalType?: string, name: string, email?: string } | { @context: string, @type: WebPage, additionalType?: string, name?: string, url: string } | { @context: string, @type: StructuredValue, additionalType: row, name: string, url: string, tableId: string, rowId: string, tableUrl: string } | (string | number | boolean | { @context: string, @type: MonetaryAmount, additionalType?: string, currency: string, amount: string | number } | { @context: string, @type: ImageObject, additionalType?: string, name?: string, url?: string, height?: number, width?: number, status?: live | deleted | failed } | { @context: string, @type: Person, additionalType?: string, name: string, email?: string } | { @context: string, @type: WebPage, additionalType?: string, name?: string, url: string } | { @context: string, @type: StructuredValue, additionalType: row, name: string, url: string, tableId: string, rowId: string, tableUrl: string })[])[]>"
           },
           {
             "key": "parent",
@@ -6001,7 +6001,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, type: row, href: string, name: string, index: number, browserLink: string, createdAt: string, updatedAt: string, values: {} }[]"
+            "type": "{ id: string, type: row, href: string, name: string, index: number, browserLink: string, createdAt: string, updatedAt: string, values: Record<string, string | number | boolean | (string | number | boolean | (string | number | boolean)[])[] | string | number | boolean | { @context: string, @type: MonetaryAmount, additionalType?: string, currency: string, amount: string | number } | { @context: string, @type: ImageObject, additionalType?: string, name?: string, url?: string, height?: number, width?: number, status?: live | deleted | failed } | { @context: string, @type: Person, additionalType?: string, name: string, email?: string } | { @context: string, @type: WebPage, additionalType?: string, name?: string, url: string } | { @context: string, @type: StructuredValue, additionalType: row, name: string, url: string, tableId: string, rowId: string, tableUrl: string } | (string | number | boolean | { @context: string, @type: MonetaryAmount, additionalType?: string, currency: string, amount: string | number } | { @context: string, @type: ImageObject, additionalType?: string, name?: string, url?: string, height?: number, width?: number, status?: live | deleted | failed } | { @context: string, @type: Person, additionalType?: string, name: string, email?: string } | { @context: string, @type: WebPage, additionalType?: string, name?: string, url: string } | { @context: string, @type: StructuredValue, additionalType: row, name: string, url: string, tableId: string, rowId: string, tableUrl: string } | (string | number | boolean | { @context: string, @type: MonetaryAmount, additionalType?: string, currency: string, amount: string | number } | { @context: string, @type: ImageObject, additionalType?: string, name?: string, url?: string, height?: number, width?: number, status?: live | deleted | failed } | { @context: string, @type: Person, additionalType?: string, name: string, email?: string } | { @context: string, @type: WebPage, additionalType?: string, name?: string, url: string } | { @context: string, @type: StructuredValue, additionalType: row, name: string, url: string, tableId: string, rowId: string, tableUrl: string })[])[]> }[]"
           },
           {
             "key": "href",
@@ -6336,7 +6336,7 @@
           {
             "key": "tableTypes",
             "optional": true,
-            "type": "table | view | database[]",
+            "type": "(table | view | database)[]",
             "description": "Comma-separated list of table types to include in results. If omitted, includes tables, views, and databases."
           }
         ]
@@ -6449,7 +6449,7 @@
           {
             "key": "includedRoles",
             "optional": true,
-            "type": "Admin | DocMaker | Editor[]",
+            "type": "(Admin | DocMaker | Editor)[]",
             "description": "Show only the members that match the included roles. Multiple roles can be specified with a comma-delimited list."
           },
           {
@@ -6493,11 +6493,11 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{ eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: {}, entity: { type: string } }[]"
+            "type": "{ eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: Record<string, JsonValue>, entity: { type: string } }[]"
           }
         ]
       },
-      "responseType": "{ events: { eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: {}, entity: { type: doc, doc: { id: string, type: doc, docType: string, name: string, href: string, browserLink: string, folderId: string, workspaceId: string, owner?: string, ownerName?: string, createdAt?: string, updatedAt?: string, isDeleted?: boolean } } }[] }",
+      "responseType": "{ events: { eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: Record<string, JsonValue>, entity: { type: doc, doc: { id: string, type: doc, docType: string, name: string, href: string, browserLink: string, folderId: string, workspaceId: string, owner?: string, ownerName?: string, createdAt?: string, updatedAt?: string, isDeleted?: boolean } } }[] }",
       "usageExample": "coda({\n    webhookHooks: {\n        docs: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -6510,11 +6510,11 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{ eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: {}, entity: { type: string } }[]"
+            "type": "{ eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: Record<string, JsonValue>, entity: { type: string } }[]"
           }
         ]
       },
-      "responseType": "{ events: { eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: {}, entity: { type: doc, doc: { id: string, type: doc, docType: string, name: string, href: string, browserLink: string, folderId: string, workspaceId: string, owner?: string, ownerName?: string, createdAt?: string, updatedAt?: string, isDeleted?: boolean } } }[] }",
+      "responseType": "{ events: { eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: Record<string, JsonValue>, entity: { type: doc, doc: { id: string, type: doc, docType: string, name: string, href: string, browserLink: string, folderId: string, workspaceId: string, owner?: string, ownerName?: string, createdAt?: string, updatedAt?: string, isDeleted?: boolean } } }[] }",
       "usageExample": "coda({\n    webhookHooks: {\n        docs: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -6527,11 +6527,11 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{ eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: {}, entity: { type: string } }[]"
+            "type": "{ eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: Record<string, JsonValue>, entity: { type: string } }[]"
           }
         ]
       },
-      "responseType": "{ events: { eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: {}, entity: { type: page, page: { id: string, type: page, name: string, href: string, browserLink: string, subtitle?: string } } }[] }",
+      "responseType": "{ events: { eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: Record<string, JsonValue>, entity: { type: page, page: { id: string, type: page, name: string, href: string, browserLink: string, subtitle?: string } } }[] }",
       "usageExample": "coda({\n    webhookHooks: {\n        pages: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -6544,11 +6544,11 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{ eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: {}, entity: { type: string } }[]"
+            "type": "{ eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: Record<string, JsonValue>, entity: { type: string } }[]"
           }
         ]
       },
-      "responseType": "{ events: { eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: {}, entity: { type: page, page: { id: string, type: page, name: string, href: string, browserLink: string, subtitle?: string } } }[] }",
+      "responseType": "{ events: { eventId: string, timestamp: number, action: string, result: string, organizationId: string, user: { type: user, id: number, email: string }, userContext: { source: string }, eventDetails?: Record<string, JsonValue>, entity: { type: page, page: { id: string, type: page, name: string, href: string, browserLink: string, subtitle?: string } } }[] }",
       "usageExample": "coda({\n    webhookHooks: {\n        pages: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

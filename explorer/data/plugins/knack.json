@@ -1,0 +1,303 @@
+{
+  "id": "knack",
+  "displayName": "Knack",
+  "description": "Read and write records in a Knack app - list tables and their fields, then query, create, update and delete records through the REST API.",
+  "npmPackageName": "@corsair-dev/knack",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "knack.api.applications.get",
+      "shortPath": "applications.get",
+      "description": "Read the app metadata: its objects, each object's fields, and per-object record counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "application",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, slug?: string | null, description?: string | null, counts?: Record<string, number> | null, objects?: { key: string, name: string, type?: string | null, user?: boolean | null, fields?: { key: string, name: string, type: string, required?: boolean | null, unique?: boolean | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "knack.api.objects.get",
+      "shortPath": "objects.get",
+      "description": "Read one table's definition and field keys",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_key",
+            "optional": false,
+            "type": "string",
+            "description": "The table key, e.g. `object_3`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "{ key: string, name: string, type?: string | null, user?: boolean | null, fields?: { key: string, name: string, type: string, required?: boolean | null, unique?: boolean | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "knack.api.objects.list",
+      "shortPath": "objects.list",
+      "description": "List the tables in this app with their object keys",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ key: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "knack.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create a record in a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_key",
+            "optional": false,
+            "type": "string",
+            "description": "The table key, e.g. `object_3`."
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | string[] | Record<string, any>>",
+            "description": "Field values keyed by Knack field name, e.g. `{ field_23: \"Acme\" }`. A connection field takes an array of record ids; name, email, address, link and date fields take an object such as `{ first: \"Ada\", last: \"Lovelace\" }` or `{ url: \"https://example.com\" }`. Read-only mirrors such as `field_23_raw` are not accepted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "knack.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Delete a record permanently",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_key",
+            "optional": false,
+            "type": "string",
+            "description": "The table key, e.g. `object_3`."
+          },
+          {
+            "key": "record_id",
+            "optional": false,
+            "type": "string",
+            "description": "The record id, from `records.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete",
+            "optional": false,
+            "type": "true",
+            "description": "True when Knack removed the record."
+          }
+        ]
+      }
+    },
+    {
+      "path": "knack.api.records.get",
+      "shortPath": "records.get",
+      "description": "Read one record by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_key",
+            "optional": false,
+            "type": "string",
+            "description": "The table key, e.g. `object_3`."
+          },
+          {
+            "key": "record_id",
+            "optional": false,
+            "type": "string",
+            "description": "The record id, from `records.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "knack.api.records.list",
+      "shortPath": "records.list",
+      "description": "List records in a table, with paging, sorting and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_key",
+            "optional": false,
+            "type": "string",
+            "description": "The table key, e.g. `object_3`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to the first page."
+          },
+          {
+            "key": "rows_per_page",
+            "optional": true,
+            "type": "number",
+            "description": "How many records to return per page: 25 by default, 1000 at most."
+          },
+          {
+            "key": "sort_field",
+            "optional": true,
+            "type": "string",
+            "description": "The field to sort by, e.g. `field_23`."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Used only with `sort_field`."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ field: string, operator: is | is not | contains | does not contain | starts with | ends with | is blank | is not blank | is any | higher than | lower than | is before | is after | is today | is today or before | is today or after | is before today | is after today | is before current time | is after current time, value?: string }[]",
+            "description": "Conditions a record must meet. All of them must match."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_records",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "knack.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update fields on an existing record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_key",
+            "optional": false,
+            "type": "string",
+            "description": "The table key, e.g. `object_3`."
+          },
+          {
+            "key": "record_id",
+            "optional": false,
+            "type": "string",
+            "description": "The record id, from `records.list`."
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | string[] | Record<string, any>>",
+            "description": "Field values keyed by Knack field name, e.g. `{ field_23: \"Acme\" }`. A connection field takes an array of record ids; name, email, address, link and date fields take an object such as `{ first: \"Ada\", last: \"Lovelace\" }` or `{ url: \"https://example.com\" }`. Read-only mirrors such as `field_23_raw` are not accepted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

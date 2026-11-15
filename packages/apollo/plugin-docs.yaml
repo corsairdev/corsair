@@ -1,0 +1,18 @@
+displayName: Apollo.io
+description: Sales intelligence API for searching and enriching people and organizations, reading organization job postings, and searching company news.
+domain: apollo.io
+examples:
+  read:
+    path: organizations.search
+    title: Search organizations
+    args:
+      q_organization_name: Stripe
+  write:
+    path: people.enrich
+    title: Enrich a person
+    args:
+      email: you@example.com
+dbExample:
+  entity: people
+  note: Search synced people without hitting Apollo.
+  limit: 50

@@ -1,0 +1,323 @@
+displayName: NetSuite
+description: "Create, read, update, and delete NetSuite records, run SuiteQL, and manage OAuth 2.0 tokens."
+domain: netsuite.com
+recommendedAuth: oauth_2
+factory:
+  note: "NetSuite needs your account ID to build account-specific REST and OAuth URLs."
+  options:
+    accountId: "TSTDRV123"
+examples:
+  read:
+    path: records.listRecords
+    title: List customer records
+    args:
+      recordType: customer
+      limit: 10
+  write:
+    path: customers.createCustomer
+    title: Create a customer
+    args:
+      body:
+        entityId: "ACME"
+        companyName: "Acme Inc."
+        isPerson: false
+        subsidiary:
+          id: "1"
+apiExamples:
+  asyncJobs.asyncGetJobStatus:
+    jobId: "123"
+  asyncJobs.asyncGetJobTask:
+    jobId: "123"
+    taskId: "456"
+  asyncJobs.asyncGetJobTaskResult:
+    jobId: "123"
+    taskId: "456"
+  customers.createCustomer:
+    body:
+      entityId: "ACME"
+      companyName: "Acme Inc."
+      isPerson: false
+      subsidiary:
+        id: "1"
+  customerPayments.createCustomerPayment:
+    body:
+      customer:
+        id: "123"
+      payment: 100
+  employees.createEmployee:
+    body:
+      firstName: "Jane"
+      lastName: "Doe"
+      # OneWorld accounts require a subsidiary; use an internal ID from your account.
+      subsidiary:
+        id: "1"
+  invoices.createInvoice:
+    body:
+      entity:
+        id: "123"
+      item:
+        items:
+          - item:
+              id: "1"
+            quantity: 1
+            amount: 100
+  items.createItem:
+    record_type: inventoryItem
+    body:
+      itemId: "WIDGET-01"
+      displayName: "Acme Widget"
+  journalEntries.createJournalEntry:
+    body:
+      memo: "Opening balance"
+      line:
+        items:
+          - account:
+              id: "10"
+            debit: 300
+          - account:
+              id: "14"
+            credit: 300
+  oauth.createJwtClientAssertion:
+    aud: "https://tstdrv123.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token"
+    certificate_id: cert-1
+    client_id: "client-id"
+    scope: "rest_webservices"
+    private_key_pem: "<PEM string with escaped newlines>"
+  purchaseOrders.createPurchaseOrder:
+    entity:
+      id: "123"
+    item:
+      items:
+        - item:
+            id: "1"
+          quantity: 10
+  records.createRecord:
+    record_type: customer
+    body:
+      entityId: "CUST-01"
+      companyName: "Customer One"
+      isPerson: false
+      subsidiary:
+        id: "1"
+  salesOrders.createSalesOrder:
+    entity:
+      id: "123"
+    item:
+      items:
+        - item:
+            id: "1"
+          quantity: 5
+  vendors.createVendor:
+    body:
+      entityId: "SUPPLIER-1"
+      companyName: "Global Supplier"
+      isPerson: false
+      subsidiary:
+        id: "1"
+  vendorBills.createVendorBill:
+    body:
+      entity:
+        id: "123"
+      expense:
+        items:
+          - account:
+              id: "1"
+            amount: 100
+  customers.deleteCustomer:
+    id: "123"
+  customerPayments.deleteCustomerPayment:
+    id: "123"
+  employees.deleteEmployee:
+    id: "123"
+  invoices.deleteInvoice:
+    id: "123"
+  items.deleteItem:
+    item_record_type: inventoryItem
+    id: "123"
+  itemFulfillments.deleteItemFulfillment:
+    id: "123"
+  itemReceipts.deleteItemReceipt:
+    id: "123"
+  journalEntries.deleteJournalEntry:
+    id: "123"
+  purchaseOrders.deletePurchaseOrder:
+    id: "123"
+  salesOrders.deleteSalesOrder:
+    id: "123"
+  vendorPayments.deleteVendorPayment:
+    id: "123"
+  query.executeDataset:
+    dataset_id: "custdataset_sales"
+  customers.getCustomer:
+    id: "123"
+  customerPayments.getCustomerPayment:
+    id: "123"
+  system.getDatacenterUrls:
+    account: "TSTDRV123"
+  employees.getEmployee:
+    id: "123"
+  system.getGovernanceLimits: {}
+  invoices.getInvoice:
+    id: "123"
+  items.getItem:
+    itemRecordType: inventoryItem
+    id: "123"
+  itemFulfillments.getItemFulfillment:
+    id: "123"
+  itemReceipts.getItemReceipt:
+    id: "123"
+  journalEntries.getJournalEntry:
+    id: "123"
+  purchaseOrders.getPurchaseOrder:
+    id: "123"
+  metadata.getRecordMetadata:
+    record_type: customer
+  records.getReferenceSelectField:
+    record_type: customer
+    select_field: subsidiary
+    id: "123"
+  salesOrders.getSalesOrder:
+    id: "123"
+  system.getServerTime: {}
+  records.getSublistCollection:
+    record_type: customer
+    id: "123"
+    sublist_name: addressBook
+  records.getSublistLine:
+    record_type: customer
+    id: "123"
+    sublist_name: addressBook
+    line_id: "1"
+  records.getSubrecord:
+    record_type: salesOrder
+    id: "123"
+    subrecord_name: billingaddress
+  vendors.getVendor:
+    id: "123"
+  vendorBills.getVendorBill:
+    id: "123"
+  vendorPayments.getVendorPayment:
+    id: "123"
+  customerPayments.listCustomerPayments:
+    limit: 20
+  query.listDatasets:
+    limit: 20
+  employees.listEmployees:
+    limit: 20
+  invoices.listInvoices:
+    limit: 20
+  itemFulfillments.listItemFulfillments:
+    limit: 20
+  itemReceipts.listItemReceipts:
+    limit: 20
+  journalEntries.listJournalEntries:
+    limit: 20
+  metadata.listMetadataCatalog: {}
+  purchaseOrders.listPurchaseOrders:
+    limit: 20
+  records.listRecords:
+    recordType: customer
+    limit: 20
+  salesOrders.listSalesOrders:
+    limit: 20
+  vendorPayments.listVendorPayments:
+    limit: 20
+  oauth.oauth2AuthorizeAccountDomain:
+    client_id: "client-id"
+    redirect_uri: "https://example.com/callback"
+    scope: "rest_webservices"
+    state: "replace-with-at-least-22-random-characters"
+    code_challenge: "replace-with-s256-code-challenge"
+    code_challenge_method: S256
+  oauth.oauth2AuthorizeSystemDomain:
+    client_id: "client-id"
+    redirect_uri: "https://example.com/callback"
+    scope: "rest_webservices"
+    state: "replace-with-at-least-22-random-characters"
+    code_challenge: "replace-with-s256-code-challenge"
+    code_challenge_method: S256
+  oauth.oauth2GetJwksKeys: {}
+  oauth.oauth2Logout:
+    id_token_hint: "id-token-xxx"
+  oauth.oauth2RevokeRefreshToken:
+    token: "refresh-token-xxx"
+    client_id: "client-id"
+  oauth.oauth2TokenAuthorizationCode:
+    code: "auth-code"
+    client_id: "client-id"
+    redirect_uri: "https://example.com/callback"
+    code_verifier: "verifier"
+  oauth.oauth2TokenClientCredentials:
+    client_assertion: "jwt-assertion-string"
+    client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+  oauth.oauth2TokenRefresh:
+    refresh_token: "refresh-token-xxx"
+    client_id: "client-id"
+    client_secret: "client-secret"
+  query.runSuiteqlQuery:
+    q: "SELECT id, companyName FROM customer WHERE id = 123"
+  records.transformRecord:
+    source_record_type: salesOrder
+    record_id: "123"
+    target_record_type: invoice
+  customers.updateCustomer:
+    id: "123"
+    data:
+      comments: "VIP customer"
+  customerPayments.updateCustomerPayment:
+    id: "123"
+    data:
+      memo: "Payment updated"
+  employees.updateEmployee:
+    id: "123"
+    data:
+      title: "Lead Engineer"
+  invoices.updateInvoice:
+    id: "123"
+    data:
+      memo: "Invoice updated"
+  items.updateItem:
+    item_type: inventoryItem
+    id: "123"
+    data:
+      displayName: "Updated Widget"
+  itemFulfillments.updateItemFulfillment:
+    id: "123"
+    data:
+      memo: "Fulfillment processed"
+  itemReceipts.updateItemReceipt:
+    id: "123"
+    data:
+      memo: "Receipt processed"
+  journalEntries.updateJournalEntry:
+    id: "123"
+    data:
+      memo: "Q3 adjustment"
+  purchaseOrders.updatePurchaseOrder:
+    id: "123"
+    data:
+      memo: "Approved by Purchasing"
+  salesOrders.updateSalesOrder:
+    id: "123"
+    data:
+      memo: "Priority shipping"
+  vendors.updateVendor:
+    id: "123"
+    data:
+      comments: "Primary supplier"
+  vendorBills.updateVendorBill:
+    id: "123"
+    data:
+      memo: "Approved for payment"
+  vendorPayments.updateVendorPayment:
+    id: "123"
+    data:
+      memo: "Payment processed"
+  records.upsertRecordByExternalId:
+    record_type: customer
+    external_id: "EXT-CUST-100"
+    body:
+      companyName: "Acme Global"
+      isPerson: false
+      subsidiary:
+        id: "1"

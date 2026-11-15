@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Turso local sync: searchable entities, `.search()` filters, and operators."
+title: "Turso database"
+sidebarTitle: "Database"
+description: "Turso local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Turso plugin syncs data locally. Use `corsair.turso.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -28,6 +29,7 @@ const rows = await corsair.turso.db.changeEvents.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `databaseUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `table` | `string` | equals, contains, startsWith, endsWith, in |
+| `action` | `string` | equals, contains, startsWith, endsWith, in |
 | `receivedAt` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

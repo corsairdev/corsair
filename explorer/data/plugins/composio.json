@@ -1,7 +1,7 @@
 {
   "id": "composio",
   "displayName": "Composio",
-  "description": "Composio plugin for Corsair",
+  "description": "Tool integration platform for AI agents. List toolkits and tools, execute them, manage connected accounts, and create sessions.",
   "npmPackageName": "@corsair-dev/composio",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -127,7 +127,7 @@
           {
             "key": "statuses",
             "optional": true,
-            "type": "INITIALIZING | INITIATED | ACTIVE | FAILED | EXPIRED | INACTIVE | REVOKED[]"
+            "type": "(INITIALIZING | INITIATED | ACTIVE | FAILED | EXPIRED | INACTIVE | REVOKED)[]"
           },
           {
             "key": "user_ids",
@@ -167,7 +167,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_pages",
@@ -220,13 +220,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -274,13 +274,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -328,13 +328,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -360,7 +360,7 @@
           {
             "key": "arguments",
             "optional": false,
-            "type": "{ connected_account_id: string, toolkit_slug: string, trigger_name: string, config_params?: {}, user_id?: string }"
+            "type": "{ connected_account_id: string, toolkit_slug: string, trigger_name: string, config_params?: Record<string, JsonValue>, user_id?: string }"
           },
           {
             "key": "user_id",
@@ -382,13 +382,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -414,7 +414,7 @@
           {
             "key": "arguments",
             "optional": false,
-            "type": "{ tool_slug: string, arguments: {}, connected_account_id?: string, allow_destructive?: boolean }"
+            "type": "{ tool_slug: string, arguments: Record<string, JsonValue>, connected_account_id?: string, allow_destructive?: boolean }"
           },
           {
             "key": "user_id",
@@ -436,13 +436,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -490,13 +490,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -544,13 +544,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -598,13 +598,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -636,13 +636,13 @@
           {
             "key": "arguments",
             "optional": false,
-            "type": "{ tool_slugs: string[], include?: input_schema | output_schema[], session_id?: string }"
+            "type": "{ tool_slugs: string[], include?: (input_schema | output_schema)[], session_id?: string }"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+        "type": "{ result_type: completed | failed, data: Record<string, JsonValue>, error: string | null, log_id: string } | { result_type: input_required, input_requests: Record<string, Record<string, JsonValue>>, request_state?: string }"
       }
     },
     {
@@ -656,7 +656,7 @@
           {
             "key": "arguments",
             "optional": false,
-            "type": "{ toolkit: string, parameters?: {} }"
+            "type": "{ toolkit: string, parameters?: Record<string, string> }"
           },
           {
             "key": "user_id",
@@ -678,13 +678,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -732,13 +732,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -786,13 +786,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -830,7 +830,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+        "type": "{ result_type: completed | failed, data: Record<string, JsonValue>, error: string | null, log_id: string } | { result_type: input_required, input_requests: Record<string, Record<string, JsonValue>>, request_state?: string }"
       }
     },
     {
@@ -850,13 +850,13 @@
           {
             "key": "arguments",
             "optional": false,
-            "type": "{ tools: { tool_slug: string, arguments: {} }[], sync_response_to_workbench: boolean, memory?: {}, thought?: string, current_step?: string, current_step_metric?: string, session_id?: string }"
+            "type": "{ tools: { tool_slug: string, arguments: Record<string, JsonValue> }[], sync_response_to_workbench: boolean, memory?: Record<string, string[]>, thought?: string, current_step?: string, current_step_metric?: string, session_id?: string }"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+        "type": "{ result_type: completed | failed, data: Record<string, JsonValue>, error: string | null, log_id: string } | { result_type: input_required, input_requests: Record<string, Record<string, JsonValue>>, request_state?: string }"
       }
     },
     {
@@ -882,7 +882,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+        "type": "{ result_type: completed | failed, data: Record<string, JsonValue>, error: string | null, log_id: string } | { result_type: input_required, input_requests: Record<string, Record<string, JsonValue>>, request_state?: string }"
       }
     },
     {
@@ -908,7 +908,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+        "type": "{ result_type: completed | failed, data: Record<string, JsonValue>, error: string | null, log_id: string } | { result_type: input_required, input_requests: Record<string, Record<string, JsonValue>>, request_state?: string }"
       }
     },
     {
@@ -934,7 +934,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+        "type": "{ result_type: completed | failed, data: Record<string, JsonValue>, error: string | null, log_id: string } | { result_type: input_required, input_requests: Record<string, Record<string, JsonValue>>, request_state?: string }"
       }
     },
     {
@@ -970,13 +970,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -1014,7 +1014,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ result_type: completed | failed, data: {}, error?: string | null, log_id: string } | { result_type: input_required, input_requests: {}, request_state?: string }"
+        "type": "{ result_type: completed | failed, data: Record<string, JsonValue>, error: string | null, log_id: string } | { result_type: input_required, input_requests: Record<string, Record<string, JsonValue>>, request_state?: string }"
       }
     },
     {
@@ -1130,7 +1130,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_pages",
@@ -1166,7 +1166,7 @@
           {
             "key": "arguments",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "Arguments the tool takes"
           },
           {
@@ -1193,13 +1193,13 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "error",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -1260,13 +1260,13 @@
           {
             "key": "input_parameters",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
             "key": "output_parameters",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "JSON object mapping string keys to JSON values"
           },
           {
@@ -1364,12 +1364,12 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ slug: string, name: string, description: string, toolkit: { slug: string, name: string, logo?: string }, input_parameters: {}, output_parameters: {}, no_auth: boolean, version: string, available_versions: string[], scopes?: string[], tags: string[], human_description?: string, is_deprecated: boolean }[]"
+            "type": "{ slug: string, name: string, description: string, toolkit: { slug: string, name: string, logo?: string }, input_parameters: Record<string, JsonValue>, output_parameters: Record<string, JsonValue>, no_auth: boolean, version: string, available_versions: string[], scopes?: string[], tags: string[], human_description?: string, is_deprecated: boolean }[]"
           },
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_pages",

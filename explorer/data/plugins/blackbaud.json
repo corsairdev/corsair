@@ -1,7 +1,7 @@
 {
   "id": "blackbaud",
   "displayName": "Blackbaud",
-  "description": "Blackbaud plugin for Corsair",
+  "description": "Nonprofit software API for Raiser's Edge NXT gifts, gift batches, and membership details, SKY Payments transactions, and OneRoster discovery.",
   "npmPackageName": "@corsair-dev/blackbaud",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -234,37 +234,37 @@
           {
             "key": "dues",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "category_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "program_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sub_category_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_renewed_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_dropped_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "next_renewal_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "joined_date",
@@ -274,27 +274,27 @@
           {
             "key": "total_years",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "times_renewed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "consec_years",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "constituent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -806,6 +806,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "id",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -904,6 +909,11 @@
         },
         {
           "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

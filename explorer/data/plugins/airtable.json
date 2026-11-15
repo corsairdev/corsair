@@ -65,7 +65,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "visibleFieldIds | fieldIdsInSynced[]"
+            "type": "(visibleFieldIds | fieldIdsInSynced)[]"
           }
         ]
       },
@@ -75,7 +75,7 @@
           {
             "key": "tables",
             "optional": false,
-            "type": "{ id: string, name: string, primaryFieldId: string, description?: string, fields: { id: string, type: string, name: string, description?: string, options?: {} }[], views: { id: string, type: string, name: string, personalForCreator?: boolean }[] }[]"
+            "type": "{ id: string, name: string, primaryFieldId: string, description?: string, fields: { id: string, type: string, name: string, description?: string, options?: Record<string, any> }[], views: { id: string, type: string, name: string, personalForCreator?: boolean }[] }[]"
           }
         ]
       }
@@ -101,7 +101,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "typecast",
@@ -116,7 +116,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{ id: string, createdTime: string, fields: {} }[]"
+            "type": "{ id: string, createdTime: string, fields: Record<string, any> }[]"
           }
         ]
       }
@@ -142,7 +142,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "fieldsToMergeOn",
@@ -162,7 +162,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{ id: string, createdTime: string, fields: {} }[]"
+            "type": "{ id: string, createdTime: string, fields: Record<string, any> }[]"
           }
         ]
       }
@@ -254,7 +254,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -340,7 +340,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{ id: string, createdTime: string, fields: {} }[]"
+            "type": "{ id: string, createdTime: string, fields: Record<string, any> }[]"
           },
           {
             "key": "offset",
@@ -376,7 +376,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "typecast",
@@ -391,7 +391,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{ id: string, createdTime: string, fields: {} }[]"
+            "type": "{ id: string, createdTime: string, fields: Record<string, any> }[]"
           }
         ]
       }

@@ -130,18 +130,18 @@
           },
           {
             "key": "rateCentsPerMin",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "durationSec",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "costCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "hasRecording",
@@ -211,18 +211,18 @@
           },
           {
             "key": "rateCentsPerMin",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "durationSec",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "costCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "hasRecording",
@@ -253,7 +253,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, numberId: string, direction: inbound | outbound, to: string, from: string, status: string, rateCentsPerMin?: number | null, durationSec?: number | null, costCents?: number | null, hasRecording: boolean, hasTranscript: boolean, createdAt: string }[]"
+        "type": "{ id: string, numberId: string, direction: inbound | outbound, to: string, from: string, status: string, rateCentsPerMin: number | null, durationSec: number | null, costCents: number | null, hasRecording: boolean, hasTranscript: boolean, createdAt: string }[]"
       }
     },
     {
@@ -277,12 +277,12 @@
           {
             "key": "connectionId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idempotencyKey",
@@ -326,18 +326,18 @@
           },
           {
             "key": "rateCentsPerMin",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "durationSec",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "costCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "hasRecording",
@@ -463,18 +463,18 @@
           },
           {
             "key": "rateCentsPerMin",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "durationSec",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "costCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "hasRecording",
@@ -510,17 +510,17 @@
           {
             "key": "mode",
             "optional": true,
-            "type": "hosted | manual"
+            "type": "hosted | manual | null"
           },
           {
             "key": "backend",
             "optional": true,
-            "type": "network | openai_realtime"
+            "type": "network | openai_realtime | null"
           },
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "llm",
@@ -540,7 +540,7 @@
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mcpServers",
@@ -555,17 +555,17 @@
           {
             "key": "complianceEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "smsAutoReply",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "disclosure",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "openaiRealtime",
@@ -575,7 +575,7 @@
           {
             "key": "manualWebhookUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idempotencyKey",
@@ -609,28 +609,28 @@
           },
           {
             "key": "llm",
-            "optional": true,
-            "type": "{ kind: managed, model: string }"
+            "optional": false,
+            "type": "{ kind: managed, model: string } | null"
           },
           {
             "key": "backgroundAudio",
             "optional": true,
-            "type": "{ type: off } | { type: office, volume: number }"
+            "type": "{ type: off } | { type: office, volume: number } | null"
           },
           {
             "key": "language",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "mcpServers",
-            "optional": true,
-            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[]"
+            "optional": false,
+            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[] | null"
           },
           {
             "key": "callControl",
-            "optional": true,
-            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null }"
+            "optional": false,
+            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null } | null"
           },
           {
             "key": "complianceEnabled",
@@ -654,18 +654,18 @@
           },
           {
             "key": "openaiRealtime",
-            "optional": true,
-            "type": "{ model: string, voice?: string | null }"
+            "optional": false,
+            "type": "{ model: string, voice?: string | null } | null"
           },
           {
             "key": "manualSecret",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "manualWebhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -679,8 +679,8 @@
           },
           {
             "key": "tts",
-            "optional": true,
-            "type": "{ voiceId: string }"
+            "optional": false,
+            "type": "{ voiceId: string } | null"
           }
         ]
       }
@@ -752,28 +752,28 @@
           },
           {
             "key": "llm",
-            "optional": true,
-            "type": "{ kind: managed, model: string }"
+            "optional": false,
+            "type": "{ kind: managed, model: string } | null"
           },
           {
             "key": "backgroundAudio",
             "optional": true,
-            "type": "{ type: off } | { type: office, volume: number }"
+            "type": "{ type: off } | { type: office, volume: number } | null"
           },
           {
             "key": "language",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "mcpServers",
-            "optional": true,
-            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[]"
+            "optional": false,
+            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[] | null"
           },
           {
             "key": "callControl",
-            "optional": true,
-            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null }"
+            "optional": false,
+            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null } | null"
           },
           {
             "key": "complianceEnabled",
@@ -797,18 +797,18 @@
           },
           {
             "key": "openaiRealtime",
-            "optional": true,
-            "type": "{ model: string, voice?: string | null }"
+            "optional": false,
+            "type": "{ model: string, voice?: string | null } | null"
           },
           {
             "key": "manualSecret",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "manualWebhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -822,8 +822,8 @@
           },
           {
             "key": "tts",
-            "optional": true,
-            "type": "{ voiceId: string }"
+            "optional": false,
+            "type": "{ voiceId: string } | null"
           }
         ]
       }
@@ -839,7 +839,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name: string, mode: hosted | manual, instructions: string, llm?: { kind: managed, model: string } | null, backgroundAudio?: { type: off } | { type: office, volume: number } | null, language?: string | null, mcpServers?: { url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[] | null, callControl?: { endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null } | null, complianceEnabled: boolean, smsAutoReply: boolean, disclosure: string, recordingEnabled: boolean, openaiRealtime?: { model: string, voice?: string | null } | null, manualSecret?: string | null, manualWebhookUrl?: string | null, createdAt: string, backend: network | openai_realtime, tts?: { voiceId: string } | null }[]"
+        "type": "{ id: string, name: string, mode: hosted | manual, instructions: string, llm: { kind: managed, model: string } | null, backgroundAudio?: { type: off } | { type: office, volume: number } | null, language: string | null, mcpServers: { url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[] | null, callControl: { endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null } | null, complianceEnabled: boolean, smsAutoReply: boolean, disclosure: string, recordingEnabled: boolean, openaiRealtime: { model: string, voice?: string | null } | null, manualSecret: string | null, manualWebhookUrl: string | null, createdAt: string, backend: network | openai_realtime, tts: { voiceId: string } | null }[]"
       }
     },
     {
@@ -858,22 +858,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mode",
             "optional": true,
-            "type": "hosted | manual"
+            "type": "hosted | manual | null"
           },
           {
             "key": "backend",
             "optional": true,
-            "type": "network | openai_realtime"
+            "type": "network | openai_realtime | null"
           },
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "llm",
@@ -893,7 +893,7 @@
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mcpServers",
@@ -908,17 +908,17 @@
           {
             "key": "complianceEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "smsAutoReply",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "disclosure",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "openaiRealtime",
@@ -928,7 +928,7 @@
           {
             "key": "manualWebhookUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idempotencyKey",
@@ -962,28 +962,28 @@
           },
           {
             "key": "llm",
-            "optional": true,
-            "type": "{ kind: managed, model: string }"
+            "optional": false,
+            "type": "{ kind: managed, model: string } | null"
           },
           {
             "key": "backgroundAudio",
             "optional": true,
-            "type": "{ type: off } | { type: office, volume: number }"
+            "type": "{ type: off } | { type: office, volume: number } | null"
           },
           {
             "key": "language",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "mcpServers",
-            "optional": true,
-            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[]"
+            "optional": false,
+            "type": "{ url: string, auth?: { type: bearer | none, token?: string | null } | null, allowedTools?: string[] | null }[] | null"
           },
           {
             "key": "callControl",
-            "optional": true,
-            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null }"
+            "optional": false,
+            "type": "{ endCall?: boolean | null, sendDtmf?: boolean | null, transfer?: { targets: string[], from?: string | null } | null } | null"
           },
           {
             "key": "complianceEnabled",
@@ -1007,18 +1007,18 @@
           },
           {
             "key": "openaiRealtime",
-            "optional": true,
-            "type": "{ model: string, voice?: string | null }"
+            "optional": false,
+            "type": "{ model: string, voice?: string | null } | null"
           },
           {
             "key": "manualSecret",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "manualWebhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -1032,8 +1032,8 @@
           },
           {
             "key": "tts",
-            "optional": true,
-            "type": "{ voiceId: string }"
+            "optional": false,
+            "type": "{ voiceId: string } | null"
           }
         ]
       }
@@ -1069,7 +1069,7 @@
           {
             "key": "type",
             "optional": true,
-            "type": "implied_inbound | explicit_outbound"
+            "type": "implied_inbound | explicit_outbound | null"
           }
         ]
       }
@@ -1085,7 +1085,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, numberId: string, peerNumber: string, consentType: implied_inbound | explicit_outbound, source: string, grantedAt: string, revokedAt?: string | null }[]"
+        "type": "{ id: string, numberId: string, peerNumber: string, consentType: implied_inbound | explicit_outbound, source: string, grantedAt: string, revokedAt: string | null }[]"
       }
     },
     {
@@ -1158,8 +1158,8 @@
           },
           {
             "key": "revokedAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -1265,13 +1265,13 @@
           },
           {
             "key": "failureReason",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "deletionPending",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdAt",
@@ -1358,13 +1358,13 @@
           },
           {
             "key": "failureReason",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "deletionPending",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdAt",
@@ -1390,7 +1390,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name: string, language: string, gender: male | female | neutral, status: pending | active | failed | expired, failureReason?: string | null, deletionPending?: boolean | null, createdAt: string, updatedAt: string }[]"
+        "type": "{ id: string, name: string, language: string, gender: male | female | neutral, status: pending | active | failed | expired, failureReason: string | null, deletionPending?: boolean | null, createdAt: string, updatedAt: string }[]"
       }
     },
     {
@@ -1424,7 +1424,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name: string, token: string, prefix: string, scopes: read | write | admin[], lastUsedAt?: string | null, createdAt: string, numberScope?: string[] | null, spendLimitCents?: number | null, spendLimitResetPeriod?: monthly | null, spentThisPeriodCents?: number | null, canProvisionKeys?: boolean | null, permissions?: string[] | null, mintedByTokenId?: string | null }[]"
+        "type": "{ id: string, name: string, token: string, prefix: string, scopes: (read | write | admin)[], lastUsedAt: string | null, createdAt: string, numberScope?: string[] | null, spendLimitCents?: number | null, spendLimitResetPeriod?: monthly | null, spentThisPeriodCents?: number | null, canProvisionKeys?: boolean | null, permissions?: string[] | null, mintedByTokenId?: string | null }[]"
       }
     },
     {
@@ -1443,7 +1443,7 @@
           {
             "key": "scopes",
             "optional": false,
-            "type": "read | write | admin[]"
+            "type": "(read | write | admin)[]"
           },
           {
             "key": "numberScope",
@@ -1488,12 +1488,12 @@
           {
             "key": "scopes",
             "optional": false,
-            "type": "read | write | admin[]"
+            "type": "(read | write | admin)[]"
           },
           {
             "key": "lastUsedAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -1695,53 +1695,53 @@
           },
           {
             "key": "connectionId",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "webhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "smsSenderId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "callerIdName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "numberType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "monthlyPriceCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "currency",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "nextChargeAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "releasedAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -1781,53 +1781,53 @@
           },
           {
             "key": "connectionId",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "webhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "smsSenderId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "callerIdName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "numberType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "monthlyPriceCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "currency",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "nextChargeAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "releasedAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -1848,7 +1848,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, phoneNumber: string, connectionId?: string | null, webhookUrl?: string | null, smsSenderId?: string | null, callerIdName?: string | null, country?: string | null, numberType?: string | null, monthlyPriceCents?: number | null, currency?: string | null, nextChargeAt?: string | null, releasedAt?: string | null, createdAt: string }[]"
+        "type": "{ id: string, phoneNumber: string, connectionId: string | null, webhookUrl: string | null, smsSenderId?: string | null, callerIdName?: string | null, country: string | null, numberType: string | null, monthlyPriceCents: number | null, currency: string | null, nextChargeAt: string | null, releasedAt: string | null, createdAt: string }[]"
       }
     },
     {
@@ -1862,32 +1862,32 @@
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "numberType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "areaCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expectedMonthlyPriceCents",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "expectedUpfrontPriceCents",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "approveHigherPrice",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "idempotencyKey",
@@ -1911,53 +1911,53 @@
           },
           {
             "key": "connectionId",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "webhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "smsSenderId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "callerIdName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "numberType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "monthlyPriceCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "currency",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "nextChargeAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "releasedAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -2039,53 +2039,53 @@
           },
           {
             "key": "connectionId",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "webhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "smsSenderId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "callerIdName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "numberType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "monthlyPriceCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "currency",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "nextChargeAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "releasedAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -2135,53 +2135,53 @@
           },
           {
             "key": "connectionId",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "webhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "smsSenderId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "callerIdName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "numberType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "monthlyPriceCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "currency",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "nextChargeAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "releasedAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -2231,53 +2231,53 @@
           },
           {
             "key": "connectionId",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "webhookUrl",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "smsSenderId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "callerIdName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "numberType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "monthlyPriceCents",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "currency",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "nextChargeAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "releasedAt",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "createdAt",

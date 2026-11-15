@@ -1,0 +1,766 @@
+---
+title: "Remarkety API reference"
+sidebarTitle: "API"
+description: "API reference for the Remarkety plugin in Corsair: every `remarkety.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create a campaign from a type and its actions, each an email or an api webhook with the rules that decide when it runs
+
+**Risk:** `write`
+
+```ts
+await corsair.remarkety.api.campaigns.create({ storeId: 'AbC123xy', type: 'TRIGGER_CART_RECOVERY', mode: 'stop', actions: [{ type: 'email', subject: 'Your cart misses you', baseTemplate: '<html></html>', rules: [{ type: 'CART_FOLLOWUP_TIME', operator: 'is', value: '60' }] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `type` | `string` | Yes | A campaign type from campaigns.types. |
+| `actions` | `object[]` | Yes | The action this campaign runs. This API version takes exactly one. |
+| `mode` | `run \| test \| stop` | No | run starts it, test sends a sample to testEmail, stop halts it. Defaults to Remarkety's own choice. |
+| `testEmail` | `string` | No | Where a test send goes, when mode is test. |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  type: email | api,
+  webhook?: string,
+  subject?: string,
+  baseTemplate?: string,
+  rules: {
+    type: string,
+    operator: string,
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `actions` | `Record<string, JsonValue>[] \| null` | No | — |
+| `mode` | `string \| null` | No | run, test or stop. |
+| `testEmail` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete a campaign
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.remarkety.api.campaigns.delete({ storeId: 'AbC123xy', campaignId: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Read one campaign by id
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.campaigns.get({ storeId: 'AbC123xy', campaignId: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `actions` | `Record<string, JsonValue>[] \| null` | No | — |
+| `mode` | `string \| null` | No | run, test or stop. |
+| `testEmail` | `string \| null` | No | — |
+
+
+
+---
+
+### types
+
+`campaigns.types`
+
+Read the campaign types the store supports and their options
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.campaigns.types({ storeId: 'AbC123xy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `type` | `string` | No | Only the options for this campaign type. |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update a campaign, including its mode, which can start or stop real sending
+
+**Risk:** `write`
+
+```ts
+await corsair.remarkety.api.campaigns.update({ storeId: 'AbC123xy', id: 7, mode: 'run' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `id` | `number` | Yes | The campaign to update. |
+| `type` | `string` | No | — |
+| `actions` | `object[]` | No | The action this campaign runs. This API version takes exactly one. |
+| `mode` | `run \| test \| stop` | No | — |
+| `testEmail` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  type: email | api,
+  webhook?: string,
+  subject?: string,
+  baseTemplate?: string,
+  rules: {
+    type: string,
+    operator: string,
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `actions` | `Record<string, JsonValue>[] \| null` | No | — |
+| `mode` | `string \| null` | No | run, test or stop. |
+| `testEmail` | `string \| null` | No | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create or update a contact in a store; Remarkety emails a double opt-in request unless doubleOptin is false
+
+**Risk:** `write`
+
+```ts
+await corsair.remarkety.api.contacts.create({ storeId: 'AbC123xy', email: 'jane@example.com', firstName: 'Jane', tags: ['vip'], allowedMarketing: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `email` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `properties` | `Record<string, JsonValue>` | No | Custom contact properties as one object, such as &#123; country: "US", city: "Austin", rewardsPoints: 100 &#125;. Remarkety refuses an array. |
+| `doubleOptin` | `boolean` | No | Remarkety defaults this to true, which emails the contact a confirmation request before they can be marketed to. Pass false to add the contact without that email. |
+| `allowedMarketing` | `boolean` | No | True marks the contact as marketing-allowed. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### unsubscribe
+
+`contacts.unsubscribe`
+
+Unsubscribe one email address from a store
+
+**Risk:** `write`
+
+```ts
+await corsair.remarkety.api.contacts.unsubscribe({ storeId: 'AbC123xy', email: 'jane@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Email Templates
+
+### get
+
+`emailTemplates.get`
+
+Read one campaign rule's email template
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.emailTemplates.get({ storeId: 'AbC123xy', campaignId: 7, ruleId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `campaignId` | `number` | Yes | — |
+| `ruleId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string \| null` | No | editor-v1 or html. |
+| `html` | `string \| null` | No | — |
+| `masterTemplate` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### update
+
+`emailTemplates.update`
+
+Replace one campaign rule's email template
+
+**Risk:** `write`
+
+```ts
+await corsair.remarkety.api.emailTemplates.update({ storeId: 'AbC123xy', campaignId: 7, ruleId: 1, type: 'html', html: '<html><body>{{shopper.firstName}}</body></html>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `campaignId` | `number` | Yes | — |
+| `ruleId` | `number` | Yes | — |
+| `type` | `string` | Yes | editor-v1 or html. |
+| `html` | `string` | Yes | The template HTML, including its head tags. |
+| `masterTemplate` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string \| null` | No | editor-v1 or html. |
+| `html` | `string \| null` | No | — |
+| `masterTemplate` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Master Templates
+
+### list
+
+`masterTemplates.list`
+
+List the master email templates available to a store
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.masterTemplates.list({ storeId: 'AbC123xy', q: 'promo' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `q` | `string` | No | A term to search the templates for. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  metadata?: {
+    id?: number | null,
+    name?: string | null,
+    author?: string | null,
+    date_uploaded?: string | null,
+    public?: boolean | null,
+    tags?: string[] | null,
+    thumbnail?: string | null,
+    editor?: string | null,
+    campaignTypes?: number[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Products
+
+### list
+
+`products.list`
+
+Search a store's synced products by name or SKU, with paging and an update-time filter
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.products.list({ storeId: 'AbC123xy', q: 'T-Shirt', limit: 50, page: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `q` | `string` | No | A product name or SKU to search for. |
+| `limit` | `number` | No | Defaults to 100, maximum 1000. |
+| `page` | `number` | No | Zero-indexed page number. |
+| `minUpdate` | `string` | No | Only products updated at or after this datetime. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  price?: {
+    amount?: number | null,
+    currency?: string | null
+  } | null,
+  title?: string | null,
+  sku?: string | null,
+  thumbnailUrl?: string | null,
+  productPageUrl?: string | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Rules
+
+### get
+
+`rules.get`
+
+Read one rule type's operators and possible values
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.rules.get({ storeId: 'AbC123xy', ruleType: 'CART_FOLLOWUP_TIME' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `ruleType` | `string` | Yes | A rule type from rules.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inputType` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `operators` | `string[] \| null` | No | — |
+| `details` | `string \| null` | No | — |
+| `possibleValues` | `JsonValue \| null` | No | A string, a map of value to label, or a list, depending on the rule. |
+| `defaultValue` | `JsonValue \| null` | No | — |
+
+
+
+---
+
+### list
+
+`rules.list`
+
+Read every rule a campaign action can use, with its operators and possible values
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.rules.list({ storeId: 'AbC123xy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, {
+  inputType?: string | null,
+  displayName?: string | null,
+  operators?: string[] | null,
+  details?: string | null,
+  possibleValues?: JsonValue | null,
+  defaultValue?: JsonValue | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Segments
+
+### count
+
+`segments.count`
+
+Count the shoppers matching a segment
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.segments.count({ storeId: 'AbC123xy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List the emails and names matching a segment, with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.segments.list({ storeId: 'AbC123xy', page: 0, limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+| `page` | `number` | No | Zero-indexed page number. |
+| `limit` | `number` | No | Results per page. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  email?: string | null,
+  firstName?: string | null,
+  lastName?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Stores
+
+### create
+
+`stores.create`
+
+Create a store with the API key Remarkety will sync it with
+
+**Risk:** `write`
+
+```ts
+await corsair.remarkety.api.stores.create({ name: 'My Store', apiKey: 'store-sync-key', platform: 'MAGENTO', domain: 'https://shop.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The store name. |
+| `apiKey` | `string` | Yes | The API key Remarkety uses to sync with the store. This is the store's key, not the token this plugin authenticates with. |
+| `platform` | `string` | No | PRESTASHOP, VIRTUEMART or MAGENTO. |
+| `domain` | `string` | No | The store URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `apiKey` | `string \| null` | No | The store's own sync key. |
+| `platform` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`stores.delete`
+
+Delete a store
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.remarkety.api.stores.delete({ storeId: 'AbC123xy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`stores.get`
+
+Read one store by id
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.stores.get({ storeId: 'AbC123xy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `apiKey` | `string \| null` | No | The store's own sync key. |
+| `platform` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+
+
+
+---
+
+### status
+
+`stores.status`
+
+Read the store sync status, including the last error and the last successful sync
+
+**Risk:** `read`
+
+```ts
+await corsair.remarkety.api.stores.status({ storeId: 'AbC123xy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storeId` | `string \| number` | Yes | The store ID from Settings &gt; API Keys (a short string such as AbC123xy), or the numeric store id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `syncStatus` | `string \| null` | No | The current sync status, such as OK or ERROR. |
+| `syncLastError` | `string \| null` | No | The last sync or runner message. It is set on a healthy store too; read syncStatus to tell a failure. |
+| `lastSyncSuccess` | `string \| null` | No | — |
+| `lastSyncAttempt` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`stores.update`
+
+Update a store; the id goes in the body because the route is PUT /stores
+
+**Risk:** `write`
+
+```ts
+await corsair.remarkety.api.stores.update({ id: 1, name: 'Renamed Store', apiKey: 'store-sync-key' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The numeric store id that stores.get returns. |
+| `name` | `string` | Yes | The store name. |
+| `apiKey` | `string` | Yes | The API key Remarkety uses to sync with the store. This is the store's key, not the token this plugin authenticates with. |
+| `platform` | `string` | No | PRESTASHOP, VIRTUEMART or MAGENTO. |
+| `domain` | `string` | No | The store URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `apiKey` | `string \| null` | No | The store's own sync key. |
+| `platform` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+
+
+
+---
+

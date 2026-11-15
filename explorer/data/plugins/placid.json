@@ -1,0 +1,1554 @@
+{
+  "id": "placid",
+  "displayName": "Placid",
+  "description": "Creative automation with Placid - render templates to images, PDFs and videos, plus the template, collection, media and font operations behind them.",
+  "npmPackageName": "@corsair-dev/placid",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "placid.api.collections.create",
+      "shortPath": "collections.create",
+      "description": "Create a collection, such as one per customer of your SaaS, holding up to 500 templates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any>"
+          },
+          {
+            "key": "template_uuids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any> | any[] | null"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The UUIDs of the templates in this collection."
+          },
+          {
+            "key": "template_uuids",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Deprecated alias. The API returns `templates`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.collections.delete",
+      "shortPath": "collections.delete",
+      "description": "Permanently delete a collection. The templates inside it are not deleted",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.collections.get",
+      "shortPath": "collections.get",
+      "description": "Read one collection and the template UUIDs it holds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any> | any[] | null"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The UUIDs of the templates in this collection."
+          },
+          {
+            "key": "template_uuids",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Deprecated alias. The API returns `templates`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List template collections, either all at once or cursor-paged with `per_page`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Omitted returns every collection, unpaged."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pass `links.next` from the previous page (the whole URL or just its `cursor` value). Omitted returns every collection, unpaged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, custom_data?: string | Record<string, any> | any[] | null, templates?: string[] | null, template_uuids?: string[] | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ path?: string | null, per_page?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.collections.update",
+      "shortPath": "collections.update",
+      "description": "Change a collection: replace its whole template list with `template_uuids`, or add and remove individual templates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any> | null"
+          },
+          {
+            "key": "template_uuids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replaces the whole list of templates in the collection."
+          },
+          {
+            "key": "add_template_uuids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Adds these templates, keeping the existing ones."
+          },
+          {
+            "key": "remove_template_uuids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Removes these templates."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any> | any[] | null"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The UUIDs of the templates in this collection."
+          },
+          {
+            "key": "template_uuids",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Deprecated alias. The API returns `templates`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.fonts.create",
+      "shortPath": "fonts.create",
+      "description": "Upload a ttf, otf, woff or woff2 font from a public URL. `terms_accepted` must be true. The returned `uuid` is the value to set as the `font` property on a text layer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly reachable ttf, otf, woff or woff2 file over HTTP(S). Private addresses are rejected, and the download is capped at 25 MB."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Display title. Defaults to the filename."
+          },
+          {
+            "key": "terms_accepted",
+            "optional": false,
+            "type": "true",
+            "description": "You must confirm you own the font or hold a licence to use it. Placid rejects the upload without it."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The font code. Use it as the `font` value on a text layer."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_legacy",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.fonts.delete",
+      "shortPath": "fonts.delete",
+      "description": "Delete a custom font. Fails with 409 when a template still uses it unless `force` is set, which leaves those templates on the default font",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean",
+            "description": "Delete even when templates still reference the font. Those templates fall back to the default font on their next render."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.fonts.get",
+      "shortPath": "fonts.get",
+      "description": "Read one custom font by its `uuid`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_legacy",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The font code. Use it as the `font` value on a text layer."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_legacy",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.fonts.list",
+      "shortPath": "fonts.list",
+      "description": "List the custom fonts in the project, optionally including legacy account-wide fonts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_legacy",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return account-wide fonts uploaded before per-project fonts."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pass `links.next` from the previous page (the whole URL or just its `cursor` value) to read the next 20 fonts."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, title?: string | null, filename?: string | null, is_legacy?: boolean | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ path?: string | null, per_page?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.fonts.update",
+      "shortPath": "fonts.update",
+      "description": "Rename a custom font. The file itself cannot be replaced: upload a new font instead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The font code. Use it as the `font` value on a text layer."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_legacy",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.images.create",
+      "shortPath": "images.create",
+      "description": "Render a template to an image. The reply is usually `queued`: poll `images.get` with its `id` or set `webhook_success` to get the finished URL. One image costs one credit.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The template to render, from the Templates tab of the project."
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "Record<string, { hide?: boolean, opacity?: number, rotation?: number, position_x_absolute?: string, position_y_absolute?: string, position_x_relative?: string, position_y_relative?: string, width?: string, height?: string, link_target?: string, text?: string | string[], text_color?: string, font?: string, alt_text_color?: string, alt_font?: string, direction?: auto | ltr | rtl, image?: string | string[], image_viewport?: string, video?: string, url?: string, background_color?: string, border_color?: string, border_radius?: string, border_width?: string, svg?: string, value?: string | number, color?: string, srt?: string }>"
+          },
+          {
+            "key": "modifications",
+            "optional": true,
+            "type": "{ width?: string | number, height?: string | number, filename?: string, image_format?: auto | jpg | png | webp, dpi?: number | string, color_mode?: rgb | cmyk, image_quality?: high | medium | low }",
+            "description": "Output sizing and format. Placid overrides the template default."
+          },
+          {
+            "key": "transfer",
+            "optional": true,
+            "type": "{ to: s3, key: string, secret: string, region?: string, bucket: string, visibility?: public | private, path: string, endpoint?: string, token?: string }",
+            "description": "Copies the finished file to your own S3 bucket. Placid does not store the credentials."
+          },
+          {
+            "key": "webhook_success",
+            "optional": true,
+            "type": "string",
+            "description": "Placid POSTs the finished image object to this URL."
+          },
+          {
+            "key": "create_now",
+            "optional": true,
+            "type": "boolean",
+            "description": "render immediately instead of queueing. Placid allows 10 simultaneous calls this way; past that the call can fail."
+          },
+          {
+            "key": "passthrough",
+            "optional": true,
+            "type": "string | any[]",
+            "description": "Saved with the file and returned in the webhook and polling replies. At most 1024 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | finished | error | string",
+            "description": "`queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`."
+          },
+          {
+            "key": "polling_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "GET this until `status` settles."
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null",
+            "description": "One sentence about the failure. Wording can change, so branch on `error_code`."
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_details",
+            "optional": true,
+            "type": "{ layer?: string | null, message?: string | null }[] | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Deprecated. Use `error_code`, `error_message` and `error_details`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.images.delete",
+      "shortPath": "images.delete",
+      "description": "Permanently delete an image. Placid only keeps generated files for a limited time, so store them yourself if you need them",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.images.get",
+      "shortPath": "images.get",
+      "description": "Read an image by id, including `image_url` once `status` is `finished` and the render error fields when it is `error`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The image id from the create reply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | finished | error | string",
+            "description": "`queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`."
+          },
+          {
+            "key": "polling_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "GET this until `status` settles."
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null",
+            "description": "One sentence about the failure. Wording can change, so branch on `error_code`."
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_details",
+            "optional": true,
+            "type": "{ layer?: string | null, message?: string | null }[] | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Deprecated. Use `error_code`, `error_message` and `error_details`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.media.upload",
+      "shortPath": "media.upload",
+      "description": "Upload a file from a public URL to Placid storage and get a URL back for a picture layer. Placid keeps it for a limited time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly reachable HTTP(S) URL. The plugin downloads it and forwards the bytes as multipart. Private addresses are rejected, and the download is capped at 25 MB."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the name from the URL."
+          },
+          {
+            "key": "file_key",
+            "optional": true,
+            "type": "string",
+            "description": "The key the reply is filed under. Defaults to `file`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ file_key?: string | null, file_id?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.pdfs.create",
+      "shortPath": "pdfs.create",
+      "description": "Render one template per page into a single PDF, merged in the order given. Each page costs two credits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "{ template_uuid: string, layers?: Record<string, { hide?: boolean, opacity?: number, rotation?: number, position_x_absolute?: string, position_y_absolute?: string, position_x_relative?: string, position_y_relative?: string, width?: string, height?: string, link_target?: string, text?: string | string[], text_color?: string, font?: string, alt_text_color?: string, alt_font?: string, direction?: auto | ltr | rtl, image?: string | string[], image_viewport?: string, video?: string, url?: string, background_color?: string, border_color?: string, border_radius?: string, border_width?: string, svg?: string, value?: string | number, color?: string, srt?: string }> }[]",
+            "description": "One template per page, merged in the order given."
+          },
+          {
+            "key": "modifications",
+            "optional": true,
+            "type": "{ width?: string | number, height?: string | number, filename?: string, image_format?: auto | jpg | png | webp, dpi?: number | string, color_mode?: rgb | cmyk, image_quality?: high | medium | low }",
+            "description": "Output sizing and format. Placid overrides the template default."
+          },
+          {
+            "key": "transfer",
+            "optional": true,
+            "type": "{ to: s3, key: string, secret: string, region?: string, bucket: string, visibility?: public | private, path: string, endpoint?: string, token?: string }",
+            "description": "Copies the finished file to your own S3 bucket. Placid does not store the credentials."
+          },
+          {
+            "key": "webhook_success",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "passthrough",
+            "optional": true,
+            "type": "string | any[]",
+            "description": "Saved with the file and returned in the webhook and polling replies. At most 1024 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | finished | error | string",
+            "description": "`queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`."
+          },
+          {
+            "key": "polling_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "GET this until `status` settles."
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null",
+            "description": "One sentence about the failure. Wording can change, so branch on `error_code`."
+          },
+          {
+            "key": "pdf_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_details",
+            "optional": true,
+            "type": "{ layer?: string | null, message?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.pdfs.delete",
+      "shortPath": "pdfs.delete",
+      "description": "Permanently delete a PDF",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.pdfs.get",
+      "shortPath": "pdfs.get",
+      "description": "Read a PDF by id, including `pdf_url` once `status` is `finished`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | finished | error | string",
+            "description": "`queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`."
+          },
+          {
+            "key": "polling_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "GET this until `status` settles."
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null",
+            "description": "One sentence about the failure. Wording can change, so branch on `error_code`."
+          },
+          {
+            "key": "pdf_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_details",
+            "optional": true,
+            "type": "{ layer?: string | null, message?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.pdfs.merge",
+      "shortPath": "pdfs.merge",
+      "description": "Merge 2 to 10 existing PDFs from public URLs into one file, without rendering a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]",
+            "description": "Publicly reachable PDF URLs to merge, in order."
+          },
+          {
+            "key": "transfer",
+            "optional": true,
+            "type": "{ to: s3, key: string, secret: string, region?: string, bucket: string, visibility?: public | private, path: string, endpoint?: string, token?: string }",
+            "description": "Copies the finished file to your own S3 bucket. Placid does not store the credentials."
+          },
+          {
+            "key": "webhook_success",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "passthrough",
+            "optional": true,
+            "type": "string | any[]",
+            "description": "Saved with the file and returned in the webhook and polling replies. At most 1024 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | finished | error | string",
+            "description": "`queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`."
+          },
+          {
+            "key": "polling_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "GET this until `status` settles."
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null",
+            "description": "One sentence about the failure. Wording can change, so branch on `error_code`."
+          },
+          {
+            "key": "pdf_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_details",
+            "optional": true,
+            "type": "{ layer?: string | null, message?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create an empty template, or duplicate an existing one with `from_template`, optionally adding it to collections",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any>",
+            "description": "A reference value, such as a serialized JSON object."
+          },
+          {
+            "key": "from_template",
+            "optional": true,
+            "type": "string",
+            "description": "Duplicate this template UUID. Overrides `title`, `width` and `height` with the source values."
+          },
+          {
+            "key": "add_to_collections",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null",
+            "description": "Null while Placid regenerates the preview."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ name?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any> | any[] | null",
+            "description": "The reference value set on the template, if any."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Permanently delete a template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "template_uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template, including every dynamic layer that can be filled in",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null",
+            "description": "Null while Placid regenerates the preview."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ name?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any> | any[] | null",
+            "description": "The reference value set on the template, if any."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List templates with their layer names and types, optionally filtered by collection, title or tag and sorted; paged 20 at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only templates in this collection."
+          },
+          {
+            "key": "title_filter",
+            "optional": true,
+            "type": "string",
+            "description": "Only templates whose title matches."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only templates with this tag. Nested tags match too: `social` also returns `social/instagram`."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string",
+            "description": "`<field>-<direction>`, where field is `created_at`, `updated_at` or `title` and direction is `asc` or `desc`."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pass `links.next` from the previous page (the whole URL or just its `cursor` value) to read the next 20 templates. Null on the last page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, title?: string | null, thumbnail?: string | null, tags?: string[] | null, layers?: { name?: string | null, type?: string | null }[] | null, custom_data?: string | Record<string, any> | any[] | null, width?: number | null, height?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ path?: string | null, per_page?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Change a template's title, tags or custom_data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null",
+            "description": "Null while Placid regenerates the preview."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ name?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "custom_data",
+            "optional": true,
+            "type": "string | Record<string, any> | any[] | null",
+            "description": "The reference value set on the template, if any."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.videos.create",
+      "shortPath": "videos.create",
+      "description": "Render one template per clip into a video of up to 3 minutes, optionally with audio. Each 10 seconds of video costs 10 credits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clips",
+            "optional": false,
+            "type": "{ template_uuid: string, layers?: Record<string, { hide?: boolean, opacity?: number, rotation?: number, position_x_absolute?: string, position_y_absolute?: string, position_x_relative?: string, position_y_relative?: string, width?: string, height?: string, link_target?: string, text?: string | string[], text_color?: string, font?: string, alt_text_color?: string, alt_font?: string, direction?: auto | ltr | rtl, image?: string | string[], image_viewport?: string, video?: string, url?: string, background_color?: string, border_color?: string, border_radius?: string, border_width?: string, svg?: string, value?: string | number, color?: string, srt?: string }>, audio?: string, audio_duration?: auto | full, audio_trim_start?: string, audio_trim_end?: string }[]",
+            "description": "One template per clip, played in order. The whole video is capped at 3 minutes."
+          },
+          {
+            "key": "modifications",
+            "optional": true,
+            "type": "{ format?: mp4, width?: string | number, height?: string | number, canvas_background?: string, fps?: number, filename?: string }",
+            "description": "Video output settings."
+          },
+          {
+            "key": "transfer",
+            "optional": true,
+            "type": "{ to: s3, key: string, secret: string, region?: string, bucket: string, visibility?: public | private, path: string, endpoint?: string, token?: string }",
+            "description": "Copies the finished file to your own S3 bucket. Placid does not store the credentials."
+          },
+          {
+            "key": "webhook_success",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "passthrough",
+            "optional": true,
+            "type": "string | any[]",
+            "description": "Saved with the file and returned in the webhook and polling replies. At most 1024 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | finished | error | string",
+            "description": "`queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`."
+          },
+          {
+            "key": "polling_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "GET this until `status` settles."
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null",
+            "description": "One sentence about the failure. Wording can change, so branch on `error_code`."
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_details",
+            "optional": true,
+            "type": "{ layer?: string | null, message?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.videos.delete",
+      "shortPath": "videos.delete",
+      "description": "Permanently delete a video",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "placid.api.videos.get",
+      "shortPath": "videos.get",
+      "description": "Read a video by id, including `video_url` once `status` is `finished`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | finished | error | string",
+            "description": "`queued` in the queue, `finished` ready, `error` failed. Poll the matching `get` with `id` until it is not `queued`."
+          },
+          {
+            "key": "polling_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "GET this until `status` settles."
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "A render error code such as `INVALID_INPUT` or `MEDIA_DOWNLOAD_FAILED`. Null unless `status` is `error`."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null",
+            "description": "One sentence about the failure. Wording can change, so branch on `error_code`."
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_details",
+            "optional": true,
+            "type": "{ layer?: string | null, message?: string | null }[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

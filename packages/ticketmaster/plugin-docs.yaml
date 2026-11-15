@@ -1,0 +1,52 @@
+displayName: Ticketmaster
+description: Live event discovery with Ticketmaster - search events, attractions, venues and the classification tree, read any of them by ID, fetch event images, and suggest collections for a partial search term.
+domain: ticketmaster.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the Ticketmaster Developer Portal: sign in at https://developer-account.ticketmaster.com/user/login, open your application, and copy its Consumer Key. That is the API key. Every new account gets a working Discovery key immediately; no approval step. Things to know:
+
+  - **Read-only.** The Discovery API has no writes. Every operation in this plugin is a `read`; nothing here can change an event, a venue or a ticket.
+  - **The key travels in the query string.** Ticketmaster takes it as `?apikey=...`, not as an `Authorization` header. A missing or wrong key answers 401 `oauth.v2.InvalidApiKey`.
+  - **Paging is 0-based.** `page: 0` is the first page, and `size` defaults to 20. Each search returns `next_page`, which is `null` past the deep-paging limit.
+  - **Deep paging stops at 1,000 items.** Ticketmaster rejects a request whose `size * page` reaches 1,000 with `DIS1035`. The input schemas reject such a page before it is sent; narrow the search instead of paging further.
+  - **An empty page has no `_embedded` key.** Ticketmaster answers 200 and simply omits `_embedded` when a page has no results, including the last page of a set whose `totalPages` counts one too many. The searches read that as an empty list.
+  - **`totalElements` can exceed what is reachable.** Past 1,000 items the count keeps climbing while paging does not, so `next_page` is the honest signal.
+  - **The `unit` and `source` parameters are strings.** `includeTBA`, `includeTBD`, `includeTest` and `includeFamily` take `'yes' | 'no' | 'only'`, not booleans, and the plugin keeps that spelling.
+  - **Rate limits.** 5 requests a second and 5,000 a day for a default key. The plugin retries a 429 up to three times, honouring `Retry-After`.
+  - **`suggest.get` returns collections, not a string.** Its docs say "schema (string)", but the live endpoint answers the same `_embedded` envelope as the searches, so `suggest.get` returns `attractions`, `events`, `venues` and `products` lists. Any of them may be empty.
+  - **Webhooks.** Ticketmaster does not send any; this plugin registers none.
+examples:
+  read:
+    path: events.search
+    title: Find music events in the US
+    args:
+      classificationName:
+        - music
+      countryCode: US
+      size: 10
+  write:
+    path: venues.get
+    title: Read a venue by ID
+    args:
+      id: KovZpZA7AAEA
+apiExamples:
+  events.search:
+    call: "{ classificationName: ['music'], countryCode: 'US', city: ['Seattle'], startDateTime: '2026-01-01T00:00:00Z', sort: 'date,asc', size: 10 }"
+  events.get:
+    call: "{ id: 'G5diZfkn0B-bh' }"
+  events.getImages:
+    call: "{ id: 'k7vGFKzleBdwS' }"
+  attractions.search:
+    call: "{ keyword: 'coachella', size: 5 }"
+  attractions.get:
+    call: "{ id: 'K8vZ9171q60' }"
+  venues.search:
+    call: "{ keyword: 'Madison Square Garden', countryCode: 'US', size: 5 }"
+  venues.get:
+    call: "{ id: 'KovZpZA7AAEA' }"
+  classifications.search:
+    call: "{ size: 10 }"
+  classifications.get:
+    call: "{ id: 'KZFzniwnSyZfZ7v7nE' }"
+  suggest.get:
+    call: "{ keyword: 'coachella', size: 3 }"

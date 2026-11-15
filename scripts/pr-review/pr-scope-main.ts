@@ -37,27 +37,36 @@ function pullRequestNumber(event: unknown): string {
 	return String(event.pull_request.number);
 }
 
+// A rename counts as both paths, so moving a file out of a package into a
+// docs-only folder still classifies by where it came from.
 function changedFilesForPullRequest(repo: string, pr: string): string[] {
 	return gh([
 		'api',
 		`repos/${repo}/pulls/${pr}/files`,
 		'--paginate',
 		'--jq',
-		'.[].filename',
+		// One JSON string per line, so a path keeps its exact bytes: no trim,
+		// and a newline inside a filename cannot split it.
+		'.[] | .filename, (.previous_filename // empty) | @json',
 	])
-		.trim()
 		.split('\n')
-		.filter(Boolean);
+		.filter(Boolean)
+		.map((line) => JSON.parse(line) as string);
 }
 
 function gitDiffNameOnly(before: string, after: string): string[] {
+	// -z: NUL-separated and unquoted, so a path with non-ASCII characters
+	// comes back as itself instead of a quoted, octal-escaped string.
 	const diff = (): string[] =>
-		execFileSync('git', ['diff', '--name-only', before, after], {
-			encoding: 'utf8',
-			maxBuffer: 64 * 1024 * 1024,
-		})
-			.trim()
-			.split('\n')
+		execFileSync(
+			'git',
+			['diff', '--name-only', '--no-renames', '-z', before, after],
+			{
+				encoding: 'utf8',
+				maxBuffer: 64 * 1024 * 1024,
+			},
+		)
+			.split('\0')
 			.filter(Boolean);
 	try {
 		return diff();
@@ -128,6 +137,8 @@ writeOutput('skip_heavy', String(filters.skipHeavy));
 writeOutput('include_www', String(filters.includeWww));
 writeOutput('www_install_filter', filters.wwwInstallFilter);
 writeOutput('www_test_filter', filters.wwwTestFilter);
+// The plugin's folder under packages/, for steps that take a path.
+writeOutput('plugin', scope.lane === 'plugin' ? scope.plugin : '');
 console.log(
 	scope.lane === 'plugin'
 		? `CI lane: plugin (${scope.plugin}, filter ${filters.turboFilter})`

@@ -113,13 +113,24 @@ const TasksGetManyInputSchema = z.object({
 	ids: z.array(z.string()).optional(),
 });
 
-const TasksMoveInputSchema = z.object({
-	id: z.string(),
-	project_id: z.string().optional(),
-	section_id: z.string().optional(),
-	parent_id: z.string().optional(),
-	order: z.number().optional(),
-});
+// item_move takes exactly one destination. order stays optional so existing callers still compile, and the handler leaves it off the body.
+const TasksMoveInputSchema = z.union([
+	z.strictObject({
+		id: z.string(),
+		project_id: z.string(),
+		order: z.number().optional(),
+	}),
+	z.strictObject({
+		id: z.string(),
+		section_id: z.string(),
+		order: z.number().optional(),
+	}),
+	z.strictObject({
+		id: z.string(),
+		parent_id: z.string(),
+		order: z.number().optional(),
+	}),
+]);
 
 const TasksQuickAddInputSchema = z.object({
 	text: z.string(),

@@ -28,9 +28,9 @@
         "fields": [
           {
             "key": "model",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Gemini model to count tokens against, e.g. gemini-2.5-flash, gemini-2.5-pro"
+            "description": "Gemini model to count tokens against, e.g. gemini-2.5-flash, gemini-2.5-pro. Defaults to \"gemini-2.5-flash\"."
           },
           {
             "key": "contents",
@@ -66,9 +66,9 @@
         "fields": [
           {
             "key": "model",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Gemini embedding model, e.g. gemini-embedding-001"
+            "description": "Gemini embedding model, e.g. gemini-embedding-001. Defaults to \"gemini-embedding-001\"."
           },
           {
             "key": "content",
@@ -111,9 +111,9 @@
         "fields": [
           {
             "key": "model",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro"
+            "description": "Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro. Defaults to \"gemini-2.5-flash\"."
           },
           {
             "key": "contents",
@@ -130,7 +130,7 @@
           {
             "key": "generationConfig",
             "optional": true,
-            "type": "{ temperature?: number, topP?: number, topK?: number, candidateCount?: number, maxOutputTokens?: number, stopSequences?: string[], responseModalities?: TEXT | IMAGE | AUDIO[] }"
+            "type": "{ temperature?: number, topP?: number, topK?: number, candidateCount?: number, maxOutputTokens?: number, stopSequences?: string[], responseModalities?: (TEXT | IMAGE | AUDIO)[] }"
           },
           {
             "key": "safetySettings",
@@ -176,9 +176,9 @@
         "fields": [
           {
             "key": "model",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Nano Banana image model, e.g. gemini-2.5-flash-image, gemini-3-pro-image-preview, gemini-2.0-flash-exp-image-generation"
+            "description": "Nano Banana image model, e.g. gemini-2.5-flash-image, gemini-3-pro-image-preview, gemini-2.0-flash-exp-image-generation. Defaults to \"gemini-2.5-flash-image\"."
           },
           {
             "key": "prompt",
@@ -195,7 +195,7 @@
           {
             "key": "generationConfig",
             "optional": true,
-            "type": "{ temperature?: number, topP?: number, topK?: number, candidateCount?: number, maxOutputTokens?: number, stopSequences?: string[], responseModalities?: TEXT | IMAGE | AUDIO[] }"
+            "type": "{ temperature?: number, topP?: number, topK?: number, candidateCount?: number, maxOutputTokens?: number, stopSequences?: string[], responseModalities?: (TEXT | IMAGE | AUDIO)[] }"
           }
         ]
       },
@@ -266,9 +266,9 @@
         "fields": [
           {
             "key": "model",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Veo video model, e.g. veo-2.0-generate-001"
+            "description": "Veo video model, e.g. veo-2.0-generate-001. Defaults to \"veo-2.0-generate-001\"."
           },
           {
             "key": "prompt",
@@ -368,15 +368,15 @@
           },
           {
             "key": "pollIntervalMs",
-            "optional": false,
+            "optional": true,
             "type": "number",
-            "description": "Delay between status checks"
+            "description": "Delay between status checks. Defaults to 10000."
           },
           {
             "key": "timeoutMs",
-            "optional": false,
+            "optional": true,
             "type": "number",
-            "description": "Give up and return done=false after this long"
+            "description": "Give up and return done=false after this long. Defaults to 300000."
           }
         ]
       },

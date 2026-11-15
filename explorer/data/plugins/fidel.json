@@ -1,0 +1,4009 @@
+{
+  "id": "fidel",
+  "displayName": "Fidel",
+  "description": "Card-linking API for linking consumer payment cards to programs and offers, exposing cards, transactions, programs, brands, locations, offers, and webhooks operations.",
+  "npmPackageName": "@corsair-dev/fidel",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 55,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fidel.api.brands.createBrand",
+      "shortPath": "brands.createBrand",
+      "description": "Create a brand on Fidel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "websiteURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logoURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.brands.deleteBrand",
+      "shortPath": "brands.deleteBrand",
+      "description": "Delete a brand from the Fidel account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "fidel.api.brands.listBrands",
+      "shortPath": "brands.listBrands",
+      "description": "List the brands on the Fidel account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.brands.retrieveBrand",
+      "shortPath": "brands.retrieveBrand",
+      "description": "Retrieve a brand by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.brands.updateBrand",
+      "shortPath": "brands.updateBrand",
+      "description": "Update the details of a brand",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "websiteURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logoURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.cards.deleteCard",
+      "shortPath": "cards.deleteCard",
+      "description": "Remove a linked card from a program",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "fidel.api.cards.listCards",
+      "shortPath": "cards.listCards",
+      "description": "List the linked cards of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.cards.listCardsFromMetadataId",
+      "shortPath": "cards.listCardsFromMetadataId",
+      "description": "List the linked cards matching a metadata identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadataId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.cards.retrieveCard",
+      "shortPath": "cards.retrieveCard",
+      "description": "Retrieve a linked card by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.cards.updateCardMetadata",
+      "shortPath": "cards.updateCardMetadata",
+      "description": "Replace the metadata of a linked card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.locations.createLocation",
+      "shortPath": "locations.createLocation",
+      "description": "Create a location under a program and brand",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "CAN | DNK | FIN | GBR | IRL | JPN | NOR | SWE | USA"
+          },
+          {
+            "key": "postcode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stateCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searchBy",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.locations.deleteLocation",
+      "shortPath": "locations.deleteLocation",
+      "description": "Delete a location from a program",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "fidel.api.locations.listLocations",
+      "shortPath": "locations.listLocations",
+      "description": "List the locations of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.locations.listLocationsByBrand",
+      "shortPath": "locations.listLocationsByBrand",
+      "description": "List the locations of a brand within a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.locations.listLocationsByOffer",
+      "shortPath": "locations.listLocationsByOffer",
+      "description": "List the locations linked to an offer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.locations.retrieveLocation",
+      "shortPath": "locations.retrieveLocation",
+      "description": "Retrieve a location by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.locations.updateLocation",
+      "shortPath": "locations.updateLocation",
+      "description": "Update the details of a location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "postcode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stateCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "searchBy",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.marketplace.createOfferFromMarketplaceOffer",
+      "shortPath": "marketplace.createOfferFromMarketplaceOffer",
+      "description": "Create an offer from a marketplace offer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "marketplaceOfferId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "programIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.marketplace.listMarketplaceOffers",
+      "shortPath": "marketplace.listMarketplaceOffers",
+      "description": "List the offers available in the Fidel marketplace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approval",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supplierId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "returnPeriod",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.mid-insights.listMidInsights",
+      "shortPath": "mid-insights.listMidInsights",
+      "description": "List the MID insights of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "midId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcAcquiringMid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcLocationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visaAcquiringMid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visaBin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vmid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vsid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastSeenTransactionDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastSeenTransactionDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.mid-requests.createMidRequest",
+      "shortPath": "mid-requests.createMidRequest",
+      "description": "Create a MID request to onboard, offboard or reassign a merchant ID; offboarding stops transaction tracking for that MID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "onboard | offboard | reassign"
+          },
+          {
+            "key": "scheme",
+            "optional": true,
+            "type": "amex | mastercard | visa"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "midId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "missing-transaction-lookup | brand-provided-mid | processor-provided-mid | third-party-provided-mid | manual-mid-lookup"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "wrong-mid | undesired-mid | invalid-mid | duplicated-location | wrong-location"
+          },
+          {
+            "key": "seNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcAcquiringMid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcLocationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vmid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vsid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visaBin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visaAcquiringMid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.mid-requests.listMidRequests",
+      "shortPath": "mid-requests.listMidRequests",
+      "description": "List the MID requests of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "midId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcAcquiringMid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vmid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.mid-requests.retrieveMidRequest",
+      "shortPath": "mid-requests.retrieveMidRequest",
+      "description": "Retrieve a MID request by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "midRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.mids.listMids",
+      "shortPath": "mids.listMids",
+      "description": "List the merchant IDs of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mcAcquiringMid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visaAcquiringMid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vmid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.mids.retrieveMid",
+      "shortPath": "mids.retrieveMid",
+      "description": "Retrieve a merchant ID of a program by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "midId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.missing-transaction-requests.createMissingTransactionRequest",
+      "shortPath": "missing-transaction-requests.createMissingTransactionRequest",
+      "description": "Create a missing transaction request for a linked card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "transactionDate",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.missing-transaction-requests.listMissingTransactionRequests",
+      "shortPath": "missing-transaction-requests.listMissingTransactionRequests",
+      "description": "List the missing transaction requests of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cardId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transactionDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.missing-transaction-requests.retrieveMissingTransactionRequest",
+      "shortPath": "missing-transaction-requests.retrieveMissingTransactionRequest",
+      "description": "Retrieve a missing transaction request by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "missingTransactionRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.activateOfferOnCard",
+      "shortPath": "offers.activateOfferOnCard",
+      "description": "Activate an offer on a linked card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.createOffer",
+      "shortPath": "offers.createOffer",
+      "description": "Create an offer on Fidel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "daysOfWeek",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minTransactionAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "returnPeriod",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "schemes",
+            "optional": true,
+            "type": "(visa | mastercard | amex)[]"
+          },
+          {
+            "key": "activation",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "feeSplit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "(in-store | online)[]"
+          },
+          {
+            "key": "shortDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requiresApproval",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customerRecency",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.deleteOffer",
+      "shortPath": "offers.deleteOffer",
+      "description": "Delete an offer from Fidel",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "fidel.api.offers.linkAllBrandLocationsToOffer",
+      "shortPath": "offers.linkAllBrandLocationsToOffer",
+      "description": "Link every location of a brand in a program to an offer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.linkLocationToOffer",
+      "shortPath": "offers.linkLocationToOffer",
+      "description": "Link a location to an offer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.listCardsWithActiveOffer",
+      "shortPath": "offers.listCardsWithActiveOffer",
+      "description": "List the linked cards with an active offer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.listOffers",
+      "shortPath": "offers.listOffers",
+      "description": "List the offers of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approval",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentProviderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "programId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerRecency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "returnPeriod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.retrieveActiveOfferOnCard",
+      "shortPath": "offers.retrieveActiveOfferOnCard",
+      "description": "Check whether an offer is active on a linked card",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.retrieveOffer",
+      "shortPath": "offers.retrieveOffer",
+      "description": "Retrieve an offer by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.sendOfferToBrand",
+      "shortPath": "offers.sendOfferToBrand",
+      "description": "Send an offer to its brand for approval; this notifies the brand and works only in the live environment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.offers.unlinkCardFromOffer",
+      "shortPath": "offers.unlinkCardFromOffer",
+      "description": "Deactivate an offer on a linked card and reset its usage",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "fidel.api.offers.unlinkLocationToOffer",
+      "shortPath": "offers.unlinkLocationToOffer",
+      "description": "Unlink a location from an offer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "fidel.api.offers.updateOffer",
+      "shortPath": "offers.updateOffer",
+      "description": "Update the details of an offer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "activation",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "daysOfWeek",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "minTransactionAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "returnPeriod",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "schemes",
+            "optional": true,
+            "type": "(visa | mastercard | amex)[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.programs.createProgram",
+      "shortPath": "programs.createProgram",
+      "description": "Create a program on Fidel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconBackground",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.programs.listPrograms",
+      "shortPath": "programs.listPrograms",
+      "description": "List the programs on the Fidel account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.programs.retrieveProgram",
+      "shortPath": "programs.retrieveProgram",
+      "description": "Retrieve a program by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.programs.updateProgram",
+      "shortPath": "programs.updateProgram",
+      "description": "Update the details of a program",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconBackground",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.transactions.createTransactionTest",
+      "shortPath": "transactions.createTransactionTest",
+      "description": "Create a test transaction in the test environment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.transactions.listTransactions",
+      "shortPath": "transactions.listTransactions",
+      "description": "List the transactions of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.transactions.listTransactionsByCard",
+      "shortPath": "transactions.listTransactionsByCard",
+      "description": "List the transactions of a linked card",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.transactions.retrieveTransaction",
+      "shortPath": "transactions.retrieveTransaction",
+      "description": "Retrieve a transaction by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.webhooks.createBrandWebhook",
+      "shortPath": "webhooks.createBrandWebhook",
+      "description": "Create a webhook for brand events on Fidel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "brand.consent"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.webhooks.createProgramWebhook",
+      "shortPath": "webhooks.createProgramWebhook",
+      "description": "Create a webhook for program events on Fidel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "card.linked | card.failed | program.status | transaction.auth | transaction.auth.qualified | transaction.clearing | transaction.clearing.qualified | transaction.refund | transaction.refund.qualified | credits.balance.low | marketplace.offer.live | marketplace.offer.updated"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.webhooks.deleteWebhook",
+      "shortPath": "webhooks.deleteWebhook",
+      "description": "Delete a webhook from a program",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "fidel.api.webhooks.listWebhooks",
+      "shortPath": "webhooks.listWebhooks",
+      "description": "List the webhooks of a program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.webhooks.retrieveWebhook",
+      "shortPath": "webhooks.retrieveWebhook",
+      "description": "Retrieve a webhook by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fidel.api.webhooks.updateWebhook",
+      "shortPath": "webhooks.updateWebhook",
+      "description": "Update the details of a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "programId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "any",
+            "description": "Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged."
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Active-offer check only: whether the offer is active."
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "execution",
+            "optional": true,
+            "type": "number | Record<string, any>"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

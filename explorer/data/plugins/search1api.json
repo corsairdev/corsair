@@ -74,7 +74,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "credential_type",
@@ -84,7 +84,7 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -120,7 +120,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ title: string, link: string, content: string, metadata?: {} }"
+            "type": "{ title: string, link: string, content: string, metadata?: Record<string, any> }"
           }
         ]
       }
@@ -136,7 +136,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ crawlParameters: { url: string }, results: { title: string, link: string, content: string, metadata?: {} } }[]"
+        "type": "{ crawlParameters: { url: string }, results: { title: string, link: string, content: string, metadata?: Record<string, any> } }[]"
       }
     },
     {
@@ -160,7 +160,7 @@
           {
             "key": "response_format",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -389,7 +389,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "r2Key",
@@ -399,7 +399,7 @@
           {
             "key": "zipUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -430,7 +430,7 @@
           {
             "key": "intent",
             "optional": false,
-            "type": "{ search_query: string, sources: string[], time_range?: day | week | month | year |  | null }"
+            "type": "{ search_query: string, sources: string[], time_range: day | week | month | year | \"\" | null }"
           },
           {
             "key": "results",
@@ -512,7 +512,7 @@
           {
             "key": "search_service",
             "optional": true,
-            "type": "google | bing | duckduckgo | yahoo | hackernews | reuters | "
+            "type": "google | bing | duckduckgo | yahoo | hackernews | reuters | \"\""
           },
           {
             "key": "max_results",
@@ -547,7 +547,7 @@
           {
             "key": "time_range",
             "optional": true,
-            "type": "day | week | month | year | "
+            "type": "day | week | month | year | \"\""
           }
         ]
       },
@@ -557,7 +557,7 @@
           {
             "key": "searchParameters",
             "optional": false,
-            "type": "{ query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | , max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }"
+            "type": "{ query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | \"\", max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year | \"\" }"
           },
           {
             "key": "results",
@@ -579,7 +579,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{ query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | , max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }[]"
+        "type": "{ query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | \"\", max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year | \"\" }[]"
       },
       "output": {
         "kind": "object",
@@ -587,7 +587,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ success: boolean, data?: { searchParameters: { query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | , max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }, results: { title: string, link: string, snippet: string, content?: string, published_date?: string, metadata?: { kind?: repo | issue | pr | discussion, stars?: number, language?: string, num_comments?: number, story_url?: string, points?: number } }[], images?: string[] }, error?: { message?: string, statusCode?: number }, cost: number }[]"
+            "type": "{ success: boolean, data?: { searchParameters: { query: string, search_service?: google | bing | duckduckgo | yahoo | hackernews | reuters | \"\", max_results?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year | \"\" }, results: { title: string, link: string, snippet: string, content?: string, published_date?: string, metadata?: { kind?: repo | issue | pr | discussion, stars?: number, language?: string, num_comments?: number, story_url?: string, points?: number } }[], images?: string[] }, error?: { message?: string, statusCode?: number }, cost: number }[]"
           },
           {
             "key": "summary",
@@ -613,7 +613,7 @@
           {
             "key": "search_service",
             "optional": true,
-            "type": "360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | "
+            "type": "360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | \"\""
           },
           {
             "key": "max_results",
@@ -653,7 +653,7 @@
           {
             "key": "time_range",
             "optional": true,
-            "type": "day | week | month | year | "
+            "type": "day | week | month | year | \"\""
           }
         ]
       },
@@ -663,7 +663,7 @@
           {
             "key": "searchParameters",
             "optional": false,
-            "type": "{ query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | , max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }"
+            "type": "{ query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | \"\", max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year | \"\" }"
           },
           {
             "key": "results",
@@ -685,7 +685,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{ query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | , max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }[]"
+        "type": "{ query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | \"\", max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year | \"\" }[]"
       },
       "output": {
         "kind": "object",
@@ -693,7 +693,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ success: boolean, data?: { searchParameters: { query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | , max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year |  }, results: { title: string, link: string, snippet: string, content?: string, published_date?: string, metadata?: { kind?: repo | issue | pr | discussion, stars?: number, language?: string, num_comments?: number, story_url?: string, points?: number } }[], images?: string[] }, error?: { message?: string, statusCode?: number }, cost: number }[]"
+            "type": "{ success: boolean, data?: { searchParameters: { query: string, search_service?: 360 | google | bing | bingcn | duckduckgo | yahoo | yandex | youtube | x | reddit | github | arxiv | wechat | bilibili | imdb | wikipedia | grokipedia | baidu | quark | \"\", max_results?: number, page?: number, crawl_results?: number, image?: boolean, include_sites?: string[], exclude_sites?: string[], language?: string, time_range?: day | week | month | year | \"\" }, results: { title: string, link: string, snippet: string, content?: string, published_date?: string, metadata?: { kind?: repo | issue | pr | discussion, stars?: number, language?: string, num_comments?: number, story_url?: string, points?: number } }[], images?: string[] }, error?: { message?: string, statusCode?: number }, cost: number }[]"
           },
           {
             "key": "summary",

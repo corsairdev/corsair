@@ -38,7 +38,7 @@
           {
             "key": "usdRemaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "bySource",
@@ -48,12 +48,12 @@
           {
             "key": "nextExpiry",
             "optional": true,
-            "type": "{ at?: string, credits?: number }"
+            "type": "{ at?: string, credits?: number } | null"
           },
           {
             "key": "plan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "totalPurchased",
@@ -237,7 +237,7 @@
           {
             "key": "changeKind",
             "optional": true,
-            "type": "added | amended | removed[]"
+            "type": "(added | amended | removed)[]"
           },
           {
             "key": "order",
@@ -339,12 +339,12 @@
           {
             "key": "scope",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "webhookAuth",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -354,7 +354,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ watch?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: {} | null, createdAt?: string | null } | null }"
+            "type": "{ watch?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: Record<string, any> | null, createdAt?: string | null } | null }"
           }
         ]
       }
@@ -405,7 +405,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ watches?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: {} | null, createdAt?: string | null }[], total?: number, hasMore?: boolean }"
+            "type": "{ watches?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: Record<string, any> | null, createdAt?: string | null }[], total?: number, hasMore?: boolean }"
           },
           {
             "key": "meta",
@@ -472,7 +472,7 @@
           {
             "key": "scope",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "emailAddress",
@@ -482,7 +482,7 @@
           {
             "key": "webhookAuth",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       },
@@ -492,7 +492,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ watch?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: {} | null, createdAt?: string | null } | null }"
+            "type": "{ watch?: { id: string | number, corpusType?: string, state?: string | null, channel?: string, isActive?: boolean, scope?: Record<string, any> | null, createdAt?: string | null } | null }"
           }
         ]
       }
@@ -604,27 +604,27 @@
           {
             "key": "citation",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jurisdiction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "session",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "approvedDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sourceUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "available",
@@ -634,22 +634,22 @@
           {
             "key": "reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "textStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "withheldReason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creditsConsumed",
@@ -705,7 +705,7 @@
           {
             "key": "cursor",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "hasMore",
@@ -756,57 +756,57 @@
           {
             "key": "lawId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jurisdiction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "citation",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "citableAs",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "citationShort",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "session",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "series",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "instrumentType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shortTitle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "approvedDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "effectiveDates",
@@ -821,12 +821,12 @@
           {
             "key": "sourceUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "textStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creditsConsumed",
@@ -947,7 +947,7 @@
           {
             "key": "nextCursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hasMore",
@@ -1089,12 +1089,12 @@
           {
             "key": "corpusType",
             "optional": true,
-            "type": "USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL | USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL[]"
+            "type": "USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL | (USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL)[]"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy | federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy[]"
+            "type": "federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy | (federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy)[]"
           },
           {
             "key": "code",
@@ -1124,7 +1124,7 @@
           {
             "key": "actStatus",
             "optional": true,
-            "type": "abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn | abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn[]"
+            "type": "abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn | (abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn)[]"
           },
           {
             "key": "excludeRepealed",
@@ -1149,7 +1149,7 @@
           {
             "key": "scope",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "processingTimeMs",
@@ -1179,7 +1179,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ corpusTypes: { token: string, description?: string, scope?: string }[], jurisdictions: { code: string, name?: string, kind?: string, sectionCount?: number, hasData?: boolean, statusBreakdown?: {} }[] }"
+            "type": "{ corpusTypes: { token: string, description?: string, scope?: string }[], jurisdictions: { code: string, name?: string, kind?: string, sectionCount?: number, hasData?: boolean, statusBreakdown?: Record<string, any> }[] }"
           }
         ]
       }
@@ -1260,7 +1260,7 @@
           {
             "key": "parentLabel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "divisions",
@@ -1280,7 +1280,7 @@
           {
             "key": "nextCursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "processingTimeMs",
@@ -1322,7 +1322,7 @@
           {
             "key": "jurisdiction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "supported",
@@ -1332,7 +1332,7 @@
           {
             "key": "reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enactments",
@@ -1403,7 +1403,7 @@
           {
             "key": "counts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "truncated",
@@ -1530,7 +1530,7 @@
           {
             "key": "section",
             "optional": true,
-            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null } | null"
           },
           {
             "key": "subsection",
@@ -1540,12 +1540,12 @@
           {
             "key": "matchLevel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "missReason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "candidates",
@@ -1581,12 +1581,12 @@
           {
             "key": "corpusType",
             "optional": true,
-            "type": "USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL | USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL[]"
+            "type": "USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL | (USC | CFR | STATE | CONSTITUTION | FEDERAL_LOCAL_RULES | FEDERAL_RULES | STATE_CONSTITUTION | STATE_RULES | EXECUTIVE_ACTION | REGULATION | FEDERAL_REGISTER | FEDERAL_REGISTER_NOTICE | AGENCY_GUIDANCE | SENTENCING_GUIDELINES | US_TAX_TREATY | STATE_AGENCY_GUIDANCE | STATE_AG_OPINION | SESSION_LAW | STATE_REGISTER | STATUTE_COMPILATION | AGENCY_ADJUDICATION | CFR_ANNUAL | USC_ANNUAL)[]"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy | federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy[]"
+            "type": "federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy | (federal | al | ak | az | ar | as | ca | co | ct | de | dc | fl | ga | gu | hi | id | il | in | ia | ks | ky | la | me | md | ma | mi | mn | ms | mo | mp | mt | ne | nv | nh | nj | nm | ny | nc | nd | oh | ok | or | pa | pr | ri | sc | sd | tn | tx | ut | vt | va | vi | wa | wv | wi | wy)[]"
           },
           {
             "key": "code",
@@ -1616,7 +1616,7 @@
           {
             "key": "actStatus",
             "optional": true,
-            "type": "abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn | abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn[]"
+            "type": "abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn | (abolished | deleted | expired | in_force | inactive | non_precedential | not_funded | not_yet_effective | omitted | proposed | recodified | recompiled | rejected | relocated | removed | renumbered | repealed | rescinded | reserved | revoked | superseded | terminated | transferred | unconstitutional | vacant | vacated | vetoed | withdrawn)[]"
           },
           {
             "key": "changedSince",
@@ -1731,12 +1731,12 @@
           {
             "key": "matchQuality",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "citationMissReason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rankingDegraded",
@@ -1840,27 +1840,27 @@
           {
             "key": "plain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "operative",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subsections",
@@ -1880,17 +1880,17 @@
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sourceUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "available",
@@ -1947,7 +1947,7 @@
           {
             "key": "changeKind",
             "optional": true,
-            "type": "added | amended | removed[]"
+            "type": "(added | amended | removed)[]"
           },
           {
             "key": "order",
@@ -1987,7 +1987,7 @@
           {
             "key": "cursor",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "observedFrom",
@@ -2148,7 +2148,7 @@
           {
             "key": "definitionsSection",
             "optional": true,
-            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null }"
+            "type": "{ actId: string, citation?: string, citationShort?: string | null, title?: string | null, corpusType?: string, state?: string | null, year?: number | null, excerpt?: string | null, body?: string | null, titleNumber?: string | number | null, titleName?: string | null, chapter?: string | null, chapterName?: string | null, sectionNumber?: string | null, sectionTitle?: string | null, displayPath?: string | null, actStatus?: string | null, goodLawStatus?: string | null, effectiveDate?: string | null, wordCount?: number | null, htmlUrl?: string | null, textUrl?: string | null } | null"
           },
           {
             "key": "terms",
@@ -2215,7 +2215,7 @@
           {
             "key": "container",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "processingTimeMs",

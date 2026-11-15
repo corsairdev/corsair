@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "TinyPNG local sync: searchable entities, `.search()` filters, and operators."
+title: "TinyPNG database"
+sidebarTitle: "Database"
+description: "TinyPNG local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The TinyPNG plugin syncs data locally. Use `corsair.tinypng.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -52,6 +53,7 @@ const rows = await corsair.tinypng.db.storedOutputs.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `image_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `service` | `string` | equals, contains, startsWith, endsWith, in |
 | `width` | `number` | equals, gt, gte, lt, lte, in |
 | `height` | `number` | equals, gt, gte, lt, lte, in |
 | `content_type` | `string` | equals, contains, startsWith, endsWith, in |

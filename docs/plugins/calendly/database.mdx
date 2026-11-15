@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Calendly local sync: searchable entities, `.search()` filters, and operators."
+title: "Calendly database"
+sidebarTitle: "Database"
+description: "Calendly local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Calendly plugin syncs data locally. Use `corsair.calendly.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -123,6 +124,7 @@ const rows = await corsair.calendly.db.invitees.search({
 | `uri` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `event` | `string` | equals, contains, startsWith, endsWith, in |
 | `timezone` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `date` | equals, before, after, between |
@@ -271,6 +273,7 @@ const rows = await corsair.calendly.db.scheduledEvents.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `uri` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `start_time` | `string` | equals, contains, startsWith, endsWith, in |
 | `end_time` | `string` | equals, contains, startsWith, endsWith, in |
 | `event_type` | `string` | equals, contains, startsWith, endsWith, in |
@@ -333,6 +336,7 @@ const rows = await corsair.calendly.db.webhookSubscriptions.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `uri` | `string` | equals, contains, startsWith, endsWith, in |
 | `callback_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `scope` | `string` | equals, contains, startsWith, endsWith, in |
 | `organization` | `string` | equals, contains, startsWith, endsWith, in |
 | `user` | `string` | equals, contains, startsWith, endsWith, in |

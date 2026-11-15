@@ -40,7 +40,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ clientIdentifier: string, userCount?: number | null, metadata?: {}, created?: string | number | null, updated?: string | number | null }[]"
+        "type": "{ clientIdentifier: string, userCount?: number | null, metadata?: Record<string, any>, created?: string | number | null, updated?: string | number | null }[]"
       }
     },
     {
@@ -85,7 +85,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, title?: string | null, description?: string | null, image?: string | null, imageAltText?: string | null, imageSource?: number | null, thumbnail?: string | null, thumbnailRevision?: string | null, thumbnailOutdated?: boolean | null, start?: {} | null, timeEstimateMinutes?: number | null, finish?: {} | null, theme?: {} | null, clientId?: number | null, active?: boolean | null, identified?: boolean | null, private?: boolean | null, paid?: boolean | null, domain?: boolean | null, price?: number | null, key?: string | null, source?: string | null, identifier?: string | null, clientIdentifier?: string | null, language?: string | null, revision?: string | number | null, collabSeq?: number | null, published?: string | number | boolean | null, narrationsGenerated?: string | number | null, narrationLanguage?: string | null, created?: string | number | null, updated?: string | number | null, type?: string | null, legacy?: boolean | null, documentFlow?: string | null, deleted?: string | number | boolean | null, folderId?: number | null, parentId?: number | null, themeId?: number | null, draftId?: number | null, startScreenId?: number | null, finishScreenId?: number | null, sequence?: number | null }[]"
+        "type": "{ id: number, title?: string | null, description?: string | null, image?: string | null, imageAltText?: string | null, imageSource?: number | null, thumbnail?: string | null, thumbnailRevision?: string | null, thumbnailOutdated?: boolean | null, start?: Record<string, any> | null, timeEstimateMinutes?: number | null, finish?: Record<string, any> | null, theme?: Record<string, any> | null, clientId?: number | null, active?: boolean | null, identified?: boolean | null, private?: boolean | null, paid?: boolean | null, domain?: boolean | null, price?: number | null, key?: string | null, source?: string | null, identifier?: string | null, clientIdentifier?: string | null, language?: string | null, revision?: string | number | null, collabSeq?: number | null, published?: string | number | boolean | null, narrationsGenerated?: string | number | null, narrationLanguage?: string | null, created?: string | number | null, updated?: string | number | null, type?: string | null, legacy?: boolean | null, documentFlow?: string | null, deleted?: string | number | boolean | null, folderId?: number | null, parentId?: number | null, themeId?: number | null, draftId?: number | null, startScreenId?: number | null, finishScreenId?: number | null, sequence?: number | null }[]"
       }
     },
     {
@@ -165,7 +165,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ identifier?: string | null, clientIdentifier?: string | null, metadata?: {}, name?: string | null, avatar?: string | null, testMode?: boolean | null, created?: string | number | null, updated?: string | number | null }[]"
+        "type": "{ identifier?: string | null, clientIdentifier?: string | null, metadata?: Record<string, any>, name?: string | null, avatar?: string | null, testMode?: boolean | null, created?: string | number | null, updated?: string | number | null }[]"
       }
     }
   ],

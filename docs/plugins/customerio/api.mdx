@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Customer.io: every `customerio.api.*` operation with input and output types."
+title: "Customer.io API reference"
+sidebarTitle: "API"
+description: "API reference for the Customer.io plugin in Corsair: every `customerio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `customerio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -40,7 +39,7 @@ await corsair.customerio.api.broadcasts.getTrigger({});
 | `broadcast_id` | `number` | No | — |
 | `campaign_id` | `number` | No | — |
 | `state` | `string` | No | — |
-| `data` | `lazy` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
 | `created` | `number \| string` | No | — |
 | `created_at` | `number \| string` | No | — |
 | `processed_at` | `number \| string` | No | — |
@@ -85,7 +84,7 @@ await corsair.customerio.api.broadcasts.listTriggers({});
   broadcast_id?: number,
   campaign_id?: number,
   state?: string,
-  data?: lazy,
+  data?: Record<string, JsonValue>,
   created?: number | string,
   created_at?: number | string,
   processed_at?: number | string
@@ -115,8 +114,8 @@ await corsair.customerio.api.broadcasts.trigger({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `broadcast_id` | `number` | Yes | — |
-| `data` | `lazy` | No | — |
-| `recipients` | `lazy` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
+| `recipients` | `object` | No | — |
 | `ids` | `string[]` | No | — |
 | `emails` | `string[]` | No | — |
 | `per_user_data` | `object[]` | No | — |
@@ -126,13 +125,34 @@ await corsair.customerio.api.broadcasts.trigger({});
 | `id_ignore_missing` | `boolean` | No | — |
 
 <AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  ids?: string[],
+  emails?: string[],
+  segment?: {
+    id: number
+  },
+  attribute?: {
+    field: string,
+    operator: eq | exists,
+    value?: string | number | boolean
+  },
+  and?: (recursive)[],
+  or?: (recursive)[],
+  not?: (recursive)
+}
+```
+</Accordion>
+
 <Accordion title="per_user_data full type">
 
 ```ts
 {
   id?: string,
   email?: string,
-  data?: lazy
+  data?: Record<string, JsonValue>
 }[]
 ```
 </Accordion>
@@ -172,7 +192,7 @@ await corsair.customerio.api.cdp.batch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `batch` | `object[]` | Yes | — |
-| `context` | `lazy` | No | — |
+| `context` | `Record<string, JsonValue>` | No | — |
 
 <AccordionGroup>
 <Accordion title="batch full type">
@@ -183,46 +203,46 @@ await corsair.customerio.api.cdp.batch({});
     type: identify,
     userId?: string,
     anonymousId?: string,
-    traits?: lazy,
-    context?: lazy,
+    traits?: Record<string, JsonValue>,
+    context?: Record<string, JsonValue>,
     timestamp?: string
   } | {
     type: track,
     userId?: string,
     anonymousId?: string,
     event: string,
-    properties?: lazy,
-    context?: lazy,
+    properties?: Record<string, JsonValue>,
+    context?: Record<string, JsonValue>,
     timestamp?: string
   } | {
     type: page,
     userId?: string,
     anonymousId?: string,
     name?: string,
-    properties?: lazy,
-    context?: lazy,
+    properties?: Record<string, JsonValue>,
+    context?: Record<string, JsonValue>,
     timestamp?: string
   } | {
     type: screen,
     userId?: string,
     anonymousId?: string,
     name: string,
-    properties?: lazy,
-    context?: lazy,
+    properties?: Record<string, JsonValue>,
+    context?: Record<string, JsonValue>,
     timestamp?: string
   } | {
     type: group,
     userId?: string,
     anonymousId?: string,
     groupId: string,
-    traits?: lazy,
-    context?: lazy,
+    traits?: Record<string, JsonValue>,
+    context?: Record<string, JsonValue>,
     timestamp?: string
   } | {
     type: alias,
     userId: string,
     previousId: string,
-    context?: lazy,
+    context?: Record<string, JsonValue>,
     timestamp?: string
   }
 )[]
@@ -256,8 +276,8 @@ await corsair.customerio.api.cdp.page({});
 | `userId` | `string` | No | — |
 | `anonymousId` | `string` | No | — |
 | `name` | `string` | No | — |
-| `properties` | `lazy` | No | — |
-| `context` | `lazy` | No | — |
+| `properties` | `Record<string, JsonValue>` | No | — |
+| `context` | `Record<string, JsonValue>` | No | — |
 | `timestamp` | `string` | No | — |
 
 
@@ -286,8 +306,8 @@ await corsair.customerio.api.cdp.screen({});
 | `userId` | `string` | No | — |
 | `anonymousId` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `properties` | `lazy` | No | — |
-| `context` | `lazy` | No | — |
+| `properties` | `Record<string, JsonValue>` | No | — |
+| `context` | `Record<string, JsonValue>` | No | — |
 | `timestamp` | `string` | No | — |
 
 
@@ -318,7 +338,7 @@ await corsair.customerio.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `collections` | `object[]` | No | — |
+| `collections` | `object[] \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="collections full type">
@@ -327,11 +347,11 @@ await corsair.customerio.api.collections.list({});
 {
   id?: string,
   name?: string,
-  schema?: lazy,
+  schema?: Record<string, JsonValue>,
   rows?: number,
   bytes?: number,
   created?: number | string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -360,7 +380,7 @@ await corsair.customerio.api.groups.addPerson({});
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
 | `groupId` | `string` | Yes | — |
-| `traits` | `lazy` | No | — |
+| `traits` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -575,7 +595,7 @@ await corsair.customerio.api.profiles.identify({});
 | `email` | `string` | No | — |
 | `id` | `string \| number` | No | — |
 | `created_at` | `number` | No | — |
-| `attributes` | `lazy` | No | — |
+| `attributes` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -658,7 +678,7 @@ await corsair.customerio.api.profiles.trackEvent({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `data` | `lazy` | No | — |
+| `data` | `Record<string, JsonValue>` | No | — |
 | `timestamp` | `number` | No | — |
 | `type` | `string` | No | — |
 | `anonymous_id` | `string` | No | — |
@@ -717,7 +737,7 @@ await corsair.customerio.api.reportingWebhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reporting_webhooks` | `object[]` | No | — |
+| `reporting_webhooks` | `object[] \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="reporting_webhooks full type">
@@ -729,7 +749,7 @@ await corsair.customerio.api.reportingWebhooks.list({});
   endpoint?: string,
   events?: string[],
   disabled?: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -853,7 +873,7 @@ await corsair.customerio.api.segments.membership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customers` | `lazy[]` | No | — |
+| `customers` | `Record<string, JsonValue>[]` | No | — |
 | `ids` | `string[]` | No | — |
 | `next` | `string` | No | — |
 

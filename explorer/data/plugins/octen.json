@@ -49,7 +49,7 @@
           {
             "key": "web_search_options",
             "optional": true,
-            "type": "{ count?: number, include_domains?: string[], exclude_domains?: string[], include_text?: string[], exclude_text?: string[], time_basis?: auto | published | crawled, time_range?: day | week | month | year | d | w | m | y, start_time?: string, end_time?: string, language?: ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[], highlight?: { enable?: boolean, max_tokens?: number }, full_content?: { enable?: boolean, max_tokens?: number }, format?: markdown | text, safesearch?: off | strict, include_images?: boolean }"
+            "type": "{ count?: number, include_domains?: string[], exclude_domains?: string[], include_text?: string[], exclude_text?: string[], time_basis?: auto | published | crawled, time_range?: day | week | month | year | d | w | m | y, start_time?: string, end_time?: string, language?: (ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh)[], highlight?: { enable?: boolean, max_tokens?: number }, full_content?: { enable?: boolean, max_tokens?: number }, format?: markdown | text, safesearch?: off | strict, include_images?: boolean }"
           }
         ]
       },
@@ -99,7 +99,7 @@
           {
             "key": "warning",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -125,7 +125,7 @@
           {
             "key": "search_options",
             "optional": true,
-            "type": "{ count?: number, include_domains?: string[], exclude_domains?: string[], include_text?: string[], exclude_text?: string[], time_basis?: auto | published | crawled, time_range?: day | week | month | year | d | w | m | y, start_time?: string, end_time?: string, language?: ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[], highlight?: { enable?: boolean, max_tokens?: number }, full_content?: { enable?: boolean, max_tokens?: number }, format?: markdown | text, safesearch?: off | strict, include_images?: boolean }"
+            "type": "{ count?: number, include_domains?: string[], exclude_domains?: string[], include_text?: string[], exclude_text?: string[], time_basis?: auto | published | crawled, time_range?: day | week | month | year | d | w | m | y, start_time?: string, end_time?: string, language?: (ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh)[], highlight?: { enable?: boolean, max_tokens?: number }, full_content?: { enable?: boolean, max_tokens?: number }, format?: markdown | text, safesearch?: off | strict, include_images?: boolean }"
           }
         ]
       },
@@ -201,7 +201,7 @@
           {
             "key": "language",
             "optional": true,
-            "type": "ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[]"
+            "type": "(ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh)[]"
           },
           {
             "key": "highlight",
@@ -267,7 +267,7 @@
           {
             "key": "input_type",
             "optional": true,
-            "type": "query | document"
+            "type": "query | document | null"
           }
         ]
       },
@@ -597,7 +597,7 @@
           {
             "key": "language",
             "optional": true,
-            "type": "ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[]"
+            "type": "(ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh)[]"
           },
           {
             "key": "highlight",
@@ -693,7 +693,7 @@
           {
             "key": "language",
             "optional": true,
-            "type": "ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[]"
+            "type": "(ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh)[]"
           },
           {
             "key": "highlight",
@@ -799,7 +799,7 @@
           {
             "key": "extra_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },

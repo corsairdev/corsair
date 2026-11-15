@@ -34,22 +34,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": true,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "toolResources",
@@ -59,17 +59,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "topP",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       },
@@ -93,13 +93,13 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "description",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "model",
@@ -108,28 +108,28 @@
           },
           {
             "key": "instructions",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "top_p",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -211,7 +211,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: assistant, created_at: number, name?: string | null, description?: string | null, model: string, instructions?: string | null, tools: ({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[], metadata?: {} | null, temperature?: number | null, top_p?: number | null }[]"
+            "type": "{ id: string, object: assistant, created_at: number, name: string | null, description: string | null, model: string, instructions: string | null, tools: ({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[], metadata?: Record<string, string> | null, temperature?: number | null, top_p?: number | null }[]"
           },
           {
             "key": "first_id",
@@ -252,22 +252,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": true,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "toolResources",
@@ -277,17 +277,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "topP",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       },
@@ -311,13 +311,13 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "description",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "model",
@@ -326,28 +326,28 @@
           },
           {
             "key": "instructions",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "top_p",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -387,13 +387,13 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "description",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "model",
@@ -402,28 +402,28 @@
           },
           {
             "key": "instructions",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "top_p",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -530,7 +530,7 @@
           {
             "key": "timestampGranularities",
             "optional": true,
-            "type": "word | segment[]"
+            "type": "(word | segment)[]"
           }
         ]
       },
@@ -712,7 +712,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -743,7 +743,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -848,7 +848,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -884,7 +884,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: batch, endpoint: string, input_file_id: string, completion_window: string, status: validating | failed | in_progress | finalizing | completed | expired | cancelling | cancelled, output_file_id?: string, error_file_id?: string, created_at: number, in_progress_at?: number, expires_at?: number, finalizing_at?: number, completed_at?: number, failed_at?: number, expired_at?: number, cancelling_at?: number, cancelled_at?: number, request_counts?: { total: number, completed: number, failed: number }, errors?: { data?: { code: string, message: string, param?: string | null, line?: number | null }[] }, metadata?: {} | null }[]"
+            "type": "{ id: string, object: batch, endpoint: string, input_file_id: string, completion_window: string, status: validating | failed | in_progress | finalizing | completed | expired | cancelling | cancelled, output_file_id?: string, error_file_id?: string, created_at: number, in_progress_at?: number, expires_at?: number, finalizing_at?: number, completed_at?: number, failed_at?: number, expired_at?: number, cancelling_at?: number, cancelled_at?: number, request_counts?: { total: number, completed: number, failed: number }, errors?: { data?: { code: string, message: string, param?: string | null, line?: number | null }[] }, metadata?: Record<string, string> | null }[]"
           },
           {
             "key": "first_id",
@@ -1020,7 +1020,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -1051,27 +1051,27 @@
           {
             "key": "logitBias",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, number> | null"
           },
           {
             "key": "logprobs",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "topLogprobs",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "maxCompletionTokens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "n",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "presencePenalty",
@@ -1081,12 +1081,12 @@
           {
             "key": "responseFormat",
             "optional": true,
-            "type": "{ type: text } | { type: json_object } | { type: json_schema, json_schema: { name: string, description?: string, schema?: {}, strict?: boolean | null } }"
+            "type": "{ type: text } | { type: json_object } | { type: json_schema, json_schema: { name: string, description?: string, schema?: Record<string, any>, strict?: boolean | null } }"
           },
           {
             "key": "seed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "serviceTier",
@@ -1096,32 +1096,32 @@
           {
             "key": "stop",
             "optional": true,
-            "type": "string | string[]"
+            "type": "string | string[] | null"
           },
           {
             "key": "store",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "topP",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tools",
             "optional": true,
-            "type": "{ type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } }[]"
+            "type": "{ type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } }[]"
           },
           {
             "key": "toolChoice",
@@ -1171,7 +1171,7 @@
           {
             "key": "choices",
             "optional": false,
-            "type": "{ index: number, message: { role: assistant, content?: string | null, refusal?: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[] }, logprobs?: {} | null, finish_reason: stop | length | tool_calls | content_filter | function_call }[]"
+            "type": "{ index: number, message: { role: assistant, content: string | null, refusal?: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[] }, logprobs?: Record<string, any> | null, finish_reason: stop | length | tool_calls | content_filter | function_call }[]"
           },
           {
             "key": "system_fingerprint",
@@ -1243,7 +1243,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "after",
@@ -1273,7 +1273,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "first_id",
@@ -1334,7 +1334,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "first_id",
@@ -1410,8 +1410,8 @@
           },
           {
             "key": "metadata",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -1477,7 +1477,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1528,7 +1528,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "first_id",
@@ -1594,7 +1594,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: chatkit.thread, created_at: number, status?: {} }[]"
+            "type": "{ id: string, object: chatkit.thread, created_at: number, status?: Record<string, any> }[]"
           },
           {
             "key": "first_id",
@@ -1635,27 +1635,27 @@
           {
             "key": "maxTokens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "topP",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "n",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "stop",
             "optional": true,
-            "type": "string | string[]"
+            "type": "string | string[] | null"
           },
           {
             "key": "presencePenalty",
@@ -1670,7 +1670,7 @@
           {
             "key": "logprobs",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "echo",
@@ -1685,7 +1685,7 @@
           {
             "key": "logitBias",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, number> | null"
           },
           {
             "key": "user",
@@ -1695,7 +1695,7 @@
           {
             "key": "suffix",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -1725,7 +1725,7 @@
           {
             "key": "choices",
             "optional": false,
-            "type": "{ text: string, index: number, logprobs?: {} | null, finish_reason: string }[]"
+            "type": "{ text: string, index: number, logprobs: Record<string, any> | null, finish_reason: string }[]"
           },
           {
             "key": "usage",
@@ -2066,7 +2066,7 @@
           {
             "key": "expires_after",
             "optional": true,
-            "type": "{ anchor: string, minutes: number }"
+            "type": "{ anchor: string, minutes: number } | null"
           }
         ]
       }
@@ -2209,7 +2209,7 @@
           {
             "key": "expires_after",
             "optional": true,
-            "type": "{ anchor: string, minutes: number }"
+            "type": "{ anchor: string, minutes: number } | null"
           }
         ]
       }
@@ -2225,12 +2225,12 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2255,7 +2255,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -2276,7 +2276,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "include",
@@ -2296,7 +2296,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "first_id",
@@ -2393,7 +2393,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -2480,7 +2480,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "first_id",
@@ -2516,7 +2516,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2541,7 +2541,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -2714,7 +2714,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -2734,17 +2734,17 @@
           {
             "key": "data_source",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "result_counts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, number>"
           }
         ]
       }
@@ -2770,12 +2770,12 @@
           {
             "key": "dataSource",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2800,7 +2800,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -2820,17 +2820,17 @@
           {
             "key": "data_source",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "result_counts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, number>"
           }
         ]
       }
@@ -2917,7 +2917,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -2937,17 +2937,17 @@
           {
             "key": "data_source",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "result_counts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, number>"
           }
         ]
       }
@@ -3039,7 +3039,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: eval.run, eval_id: string, name?: string | null, created_at: number, status: string, model?: string, data_source?: {}, metadata?: {} | null, result_counts?: {} }[]"
+            "type": "{ id: string, object: eval.run, eval_id: string, name?: string | null, created_at: number, status: string, model?: string, data_source?: Record<string, any>, metadata?: Record<string, string> | null, result_counts?: Record<string, number> }[]"
           },
           {
             "key": "has_more",
@@ -3121,17 +3121,17 @@
           {
             "key": "dataSourceConfig",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "testingCriteria",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3151,7 +3151,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -3161,17 +3161,17 @@
           {
             "key": "data_source_config",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "testing_criteria",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -3243,7 +3243,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -3253,17 +3253,17 @@
           {
             "key": "data_source_config",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "testing_criteria",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -3309,7 +3309,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: eval, name?: string | null, created_at: number, data_source_config: {}, testing_criteria: {}[], metadata?: {} | null }[]"
+            "type": "{ id: string, object: eval, name?: string | null, created_at: number, data_source_config: Record<string, any>, testing_criteria: Record<string, any>[], metadata?: Record<string, string> | null }[]"
           },
           {
             "key": "has_more",
@@ -3340,7 +3340,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3360,7 +3360,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -3370,17 +3370,17 @@
           {
             "key": "data_source_config",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "testing_criteria",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -3676,7 +3676,7 @@
           {
             "key": "fine_tuned_model",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -3691,12 +3691,12 @@
           {
             "key": "validation_file",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hyperparameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "result_files",
@@ -3706,17 +3706,17 @@
           {
             "key": "trained_tokens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -3747,7 +3747,7 @@
           {
             "key": "hyperparameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "suffix",
@@ -3757,7 +3757,7 @@
           {
             "key": "integrations",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "seed",
@@ -3767,12 +3767,12 @@
           {
             "key": "method",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3802,7 +3802,7 @@
           {
             "key": "fine_tuned_model",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -3817,12 +3817,12 @@
           {
             "key": "validation_file",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hyperparameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "result_files",
@@ -3832,17 +3832,17 @@
           {
             "key": "trained_tokens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -3883,7 +3883,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: fine_tuning.job.checkpoint, created_at: number, fine_tuned_model_checkpoint: string, step_number: number, metrics?: {} }[]"
+            "type": "{ id: string, object: fine_tuning.job.checkpoint, created_at: number, fine_tuned_model_checkpoint: string, step_number: number, metrics?: Record<string, number> }[]"
           },
           {
             "key": "first_id",
@@ -3939,7 +3939,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: fine_tuning.job.event, created_at: number, level: string, message: string, data?: {} }[]"
+            "type": "{ id: string, object: fine_tuning.job.event, created_at: number, level: string, message: string, data?: Record<string, any> }[]"
           },
           {
             "key": "has_more",
@@ -3970,7 +3970,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3985,7 +3985,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: fine_tuning.job, created_at: number, model: string, fine_tuned_model?: string | null, status: validating_files | queued | running | succeeded | failed | cancelled, training_file: string, validation_file?: string | null, hyperparameters?: {}, result_files?: string[], trained_tokens?: number | null, error?: { code: string, message: string } | null, metadata?: {} | null }[]"
+            "type": "{ id: string, object: fine_tuning.job, created_at: number, model: string, fine_tuned_model?: string | null, status: validating_files | queued | running | succeeded | failed | cancelled, training_file: string, validation_file?: string | null, hyperparameters?: Record<string, any>, result_files?: string[], trained_tokens?: number | null, error?: { code: string, message: string } | null, metadata?: Record<string, string> | null }[]"
           },
           {
             "key": "has_more",
@@ -4036,7 +4036,7 @@
           {
             "key": "fine_tuned_model",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -4051,12 +4051,12 @@
           {
             "key": "validation_file",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hyperparameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "result_files",
@@ -4066,17 +4066,17 @@
           {
             "key": "trained_tokens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -4092,12 +4092,12 @@
           {
             "key": "grader",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "item",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "modelSample",
@@ -4128,7 +4128,7 @@
           {
             "key": "grader",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4138,7 +4138,7 @@
           {
             "key": "grader",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -4362,17 +4362,17 @@
           {
             "key": "content",
             "optional": false,
-            "type": "string | ({ type: text, text: { value: string, annotations: {}[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[]"
+            "type": "string | ({ type: text, text: { value: string, annotations: Record<string, any>[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[]"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{ file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[]"
+            "type": "{ file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -4412,27 +4412,27 @@
           {
             "key": "content",
             "optional": false,
-            "type": "({ type: text, text: { value: string, annotations: {}[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[]"
+            "type": "({ type: text, text: { value: string, annotations: Record<string, any>[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[]"
           },
           {
             "key": "assistant_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "run_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{ file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[]"
+            "type": "{ file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -4529,7 +4529,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: thread.message, created_at: number, thread_id: string, status?: in_progress | incomplete | completed, role: user | assistant, content: ({ type: text, text: { value: string, annotations: {}[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[], assistant_id?: string | null, run_id?: string | null, attachments?: { file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[] | null, metadata?: {} | null }[]"
+            "type": "{ id: string, object: thread.message, created_at: number, thread_id: string, status?: in_progress | incomplete | completed, role: user | assistant, content: ({ type: text, text: { value: string, annotations: Record<string, any>[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[], assistant_id?: string | null, run_id?: string | null, attachments?: { file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[] | null, metadata?: Record<string, string> | null }[]"
           },
           {
             "key": "first_id",
@@ -4570,7 +4570,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -4610,27 +4610,27 @@
           {
             "key": "content",
             "optional": false,
-            "type": "({ type: text, text: { value: string, annotations: {}[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[]"
+            "type": "({ type: text, text: { value: string, annotations: Record<string, any>[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[]"
           },
           {
             "key": "assistant_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "run_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{ file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[]"
+            "type": "{ file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -4691,27 +4691,27 @@
           {
             "key": "content",
             "optional": false,
-            "type": "({ type: text, text: { value: string, annotations: {}[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[]"
+            "type": "({ type: text, text: { value: string, annotations: Record<string, any>[] } } | { type: image_file, image_file: { file_id: string, detail?: auto | low | high } } | { type: image_url, image_url: { url: string, detail?: auto | low | high } })[]"
           },
           {
             "key": "assistant_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "run_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{ file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[]"
+            "type": "{ file_id?: string, tools?: ({ type: code_interpreter } | { type: file_search })[] }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -4793,7 +4793,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "string | string[] | {}[]"
+            "type": "string | string[] | Record<string, any>[]"
           },
           {
             "key": "model",
@@ -4818,7 +4818,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ flagged: boolean, categories: {}, category_scores: {}, category_applied_input_types?: {} }[]"
+            "type": "{ flagged: boolean, categories: Record<string, boolean>, category_scores: Record<string, number>, category_applied_input_types?: Record<string, string[]> }[]"
           }
         ]
       }
@@ -4839,7 +4839,7 @@
           {
             "key": "session",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4870,7 +4870,7 @@
           {
             "key": "session",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "expiresAfter",
@@ -4952,7 +4952,7 @@
           {
             "key": "inputAudioTranscription",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5013,12 +5013,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "previous_response_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage",
@@ -5044,7 +5044,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -5069,7 +5069,7 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "usage",
@@ -5095,7 +5095,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "string | {}[]"
+            "type": "string | Record<string, any>[]"
           },
           {
             "key": "instructions",
@@ -5105,27 +5105,27 @@
           {
             "key": "tools",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "toolChoice",
             "optional": true,
-            "type": "none | auto | required | {}"
+            "type": "none | auto | required | Record<string, any>"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "topP",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "maxOutputTokens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previousResponseId",
@@ -5140,7 +5140,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "truncation",
@@ -5195,12 +5195,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "previous_response_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage",
@@ -5292,7 +5292,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "first_id",
@@ -5358,12 +5358,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "previous_response_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage",
@@ -5429,12 +5429,12 @@
           {
             "key": "required_action",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "model",
@@ -5444,22 +5444,22 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
           }
         ]
       }
@@ -5490,42 +5490,42 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "additionalInstructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": true,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "topP",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "maxPromptTokens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "maxCompletionTokens",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "truncationStrategy",
@@ -5580,12 +5580,12 @@
           {
             "key": "required_action",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "model",
@@ -5595,22 +5595,22 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
           }
         ]
       }
@@ -5661,7 +5661,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: thread.run, created_at: number, thread_id: string, assistant_id: string, status: queued | in_progress | requires_action | cancelling | cancelled | failed | completed | incomplete | expired, required_action?: {} | null, last_error?: { code: string, message: string } | null, model: string, instructions?: string | null, tools: ({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[], metadata?: {} | null, usage?: { prompt_tokens: number, completion_tokens: number, total_tokens: number } | null }[]"
+            "type": "{ id: string, object: thread.run, created_at: number, thread_id: string, assistant_id: string, status: queued | in_progress | requires_action | cancelling | cancelled | failed | completed | incomplete | expired, required_action?: Record<string, any> | null, last_error?: { code: string, message: string } | null, model: string, instructions?: string | null, tools: ({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[], metadata?: Record<string, string> | null, usage?: { prompt_tokens: number, completion_tokens: number, total_tokens: number } | null }[]"
           },
           {
             "key": "first_id",
@@ -5702,7 +5702,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -5742,12 +5742,12 @@
           {
             "key": "required_action",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "model",
@@ -5757,22 +5757,22 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
           }
         ]
       }
@@ -5833,12 +5833,12 @@
           {
             "key": "required_action",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "model",
@@ -5848,22 +5848,22 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
           }
         ]
       }
@@ -5929,12 +5929,12 @@
           {
             "key": "required_action",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "model",
@@ -5944,22 +5944,22 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
           }
         ]
       }
@@ -6015,7 +6015,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: thread.run.step, created_at: number, run_id: string, assistant_id: string, thread_id: string, type: message_creation | tool_calls, status: in_progress | cancelled | failed | completed | expired, step_details: {}, last_error?: { code: string, message: string } | null, usage?: { prompt_tokens: number, completion_tokens: number, total_tokens: number } | null }[]"
+            "type": "{ id: string, object: thread.run.step, created_at: number, run_id: string, assistant_id: string, thread_id: string, type: message_creation | tool_calls, status: in_progress | cancelled | failed | completed | expired, step_details: Record<string, any>, last_error?: { code: string, message: string } | null, usage?: { prompt_tokens: number, completion_tokens: number, total_tokens: number } | null }[]"
           },
           {
             "key": "first_id",
@@ -6106,17 +6106,17 @@
           {
             "key": "step_details",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
           }
         ]
       }
@@ -6280,7 +6280,7 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{ role: user | assistant, content: string, metadata?: {} | null }[]"
+            "type": "{ role: user | assistant, content: string, metadata?: Record<string, string> | null }[]"
           },
           {
             "key": "toolResources",
@@ -6290,7 +6290,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -6315,7 +6315,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -6336,7 +6336,7 @@
           {
             "key": "thread",
             "optional": true,
-            "type": "{ messages?: { role: user | assistant, content: string, metadata?: {} | null }[], toolResources?: { code_interpreter?: { file_ids: string[] }, file_search?: { vector_store_ids: string[] } }, metadata?: {} | null }"
+            "type": "{ messages?: { role: user | assistant, content: string, metadata?: Record<string, string> | null }[], toolResources?: { code_interpreter?: { file_ids: string[] }, file_search?: { vector_store_ids: string[] } }, metadata?: Record<string, string> | null }"
           },
           {
             "key": "model",
@@ -6346,12 +6346,12 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": true,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[] | null"
           },
           {
             "key": "toolResources",
@@ -6361,17 +6361,17 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "temperature",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "topP",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "truncationStrategy",
@@ -6426,12 +6426,12 @@
           {
             "key": "required_action",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "model",
@@ -6441,22 +6441,22 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tools",
             "optional": false,
-            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: {}, strict?: boolean | null } })[]"
+            "type": "({ type: code_interpreter } | { type: file_search, file_search?: { max_num_results?: number, ranking_options?: { ranker?: string, score_threshold?: number } } } | { type: function, function: { name: string, description?: string, parameters?: Record<string, any>, strict?: boolean | null } })[]"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number } | null"
           }
         ]
       }
@@ -6518,7 +6518,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -6543,7 +6543,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -6584,7 +6584,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -6605,12 +6605,12 @@
           {
             "key": "input",
             "optional": false,
-            "type": "string | {}[]"
+            "type": "string | Record<string, any>[]"
           },
           {
             "key": "tools",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -6737,7 +6737,7 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{ id: string, object: file, bytes: number, created_at: number, filename: string, purpose: string }"
+            "type": "{ id: string, object: file, bytes: number, created_at: number, filename: string, purpose: string } | null"
           }
         ]
       }
@@ -6813,7 +6813,7 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{ id: string, object: file, bytes: number, created_at: number, filename: string, purpose: string }"
+            "type": "{ id: string, object: file, bytes: number, created_at: number, filename: string, purpose: string } | null"
           }
         ]
       }
@@ -6894,7 +6894,7 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{ id: string, object: file, bytes: number, created_at: number, filename: string, purpose: string }"
+            "type": "{ id: string, object: file, bytes: number, created_at: number, filename: string, purpose: string } | null"
           }
         ]
       }
@@ -6925,7 +6925,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       },
@@ -7021,7 +7021,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: vector_store.file, usage_bytes: number, created_at: number, vector_store_id: string, status: in_progress | completed | cancelled | failed, last_error?: { code: string, message: string } | null, attributes?: {} | null }[]"
+            "type": "{ id: string, object: vector_store.file, usage_bytes: number, created_at: number, vector_store_id: string, status: in_progress | completed | cancelled | failed, last_error?: { code: string, message: string } | null, attributes?: Record<string, any> | null }[]"
           },
           {
             "key": "first_id",
@@ -7123,7 +7123,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       },
@@ -7163,12 +7163,12 @@
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -7265,7 +7265,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: vector_store.file, usage_bytes: number, created_at: number, vector_store_id: string, status: in_progress | completed | cancelled | failed, last_error?: { code: string, message: string } | null, attributes?: {} | null }[]"
+            "type": "{ id: string, object: vector_store.file, usage_bytes: number, created_at: number, vector_store_id: string, status: in_progress | completed | cancelled | failed, last_error?: { code: string, message: string } | null, attributes?: Record<string, any> | null }[]"
           },
           {
             "key": "first_id",
@@ -7341,12 +7341,12 @@
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -7392,7 +7392,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -7417,8 +7417,8 @@
           },
           {
             "key": "attributes",
-            "optional": true,
-            "type": "{}"
+            "optional": false,
+            "type": "Record<string, any> | null"
           }
         ]
       },
@@ -7458,12 +7458,12 @@
           {
             "key": "last_error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -7499,7 +7499,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -7524,7 +7524,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage_bytes",
@@ -7549,17 +7549,17 @@
           {
             "key": "expires_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last_active_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -7641,7 +7641,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, object: vector_store, created_at: number, name?: string | null, usage_bytes: number, file_counts: { in_progress: number, completed: number, failed: number, cancelled: number, total: number }, status: expired | in_progress | completed, expires_after?: { anchor: last_active_at, days: number }, expires_at?: number | null, last_active_at?: number | null, metadata?: {} | null }[]"
+            "type": "{ id: string, object: vector_store, created_at: number, name?: string | null, usage_bytes: number, file_counts: { in_progress: number, completed: number, failed: number, cancelled: number, total: number }, status: expired | in_progress | completed, expires_after?: { anchor: last_active_at, days: number }, expires_at?: number | null, last_active_at?: number | null, metadata?: Record<string, string> | null }[]"
           },
           {
             "key": "first_id",
@@ -7677,7 +7677,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expiresAfter",
@@ -7687,7 +7687,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       },
@@ -7712,7 +7712,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage_bytes",
@@ -7737,17 +7737,17 @@
           {
             "key": "expires_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last_active_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -7788,7 +7788,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage_bytes",
@@ -7813,17 +7813,17 @@
           {
             "key": "expires_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last_active_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -7849,7 +7849,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "maxNumResults",
@@ -7884,7 +7884,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ file_id: string, filename: string, score: number, attributes?: {} | null, content: { type: text, text: string }[] }[]"
+            "type": "{ file_id: string, filename: string, score: number, attributes?: Record<string, any> | null, content: { type: text, text: string }[] }[]"
           },
           {
             "key": "has_more",
@@ -7894,7 +7894,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -7985,12 +7985,12 @@
           {
             "key": "remixed_from_video_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           }
         ]
       }
@@ -8061,12 +8061,12 @@
           {
             "key": "remixed_from_video_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           }
         ]
       }
@@ -8255,12 +8255,12 @@
           {
             "key": "remixed_from_video_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           }
         ]
       }

@@ -1,0 +1,1524 @@
+{
+  "id": "memberspot",
+  "displayName": "MemberSpot",
+  "description": "Membership and course platform access with MemberSpot - read users, offers, courses, exams and course progress, and grant or revoke offers, course access and custom properties.",
+  "npmPackageName": "@corsair-dev/memberspot",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 32,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "memberspot.api.auth.check",
+      "shortPath": "auth.check",
+      "description": "Returns the school the API key belongs to, which is the cheapest way to confirm a key works",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schoolId",
+            "optional": false,
+            "type": "string",
+            "description": "The school the key belongs to."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The school name."
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.chapters.enableAccess",
+      "shortPath": "chapters.enableAccess",
+      "description": "Grants a user access to one chapter by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "courseId",
+            "optional": false,
+            "type": "string",
+            "description": "The course the chapter belongs to."
+          },
+          {
+            "key": "chapterId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.chapters.enableAccessByUid",
+      "shortPath": "chapters.enableAccessByUid",
+      "description": "Grants a user access to one chapter by uid",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "courseId",
+            "optional": false,
+            "type": "string",
+            "description": "The course the chapter belongs to."
+          },
+          {
+            "key": "chapterId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.courses.list",
+      "shortPath": "courses.list",
+      "description": "Lists all courses of the school with their ids and types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, description?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.customProperties.list",
+      "shortPath": "customProperties.list",
+      "description": "Lists the custom user properties defined for the school",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, schoolId?: string | null, type?: string | null, name?: string | null, options?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "memberspot.api.exams.list",
+      "shortPath": "exams.list",
+      "description": "Lists all exams of the school, including the examId used for results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ examId: string, name?: string | null, description?: string | null, requiredPercentage?: number | null, questionCount?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.exams.results",
+      "shortPath": "exams.results",
+      "description": "Lists the exam results of every user who took an exam, with each run and whether it passed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lastLoadedId",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor to continue from. Pass the `nextPage` value from the previous response."
+          },
+          {
+            "key": "pageLength",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 100. MemberSpot defaults to 10."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `examId` from `exams.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, uid?: string | null, email?: string | null, firstname?: string | null, lastname?: string | null, created?: string | null, active?: boolean | null, hasPassed?: boolean | null, lastRun?: { id?: string | null, courseId?: string | null, chapterId?: string | null, postId?: string | null, started?: string | null, ended?: string | null, possibleScore?: number | null, pointsScored?: number | null, percentRequired?: number | null, hasPassed?: boolean | null } | null, lastSuccessfullRun?: { id?: string | null, courseId?: string | null, chapterId?: string | null, postId?: string | null, started?: string | null, ended?: string | null, possibleScore?: number | null, pointsScored?: number | null, percentRequired?: number | null, hasPassed?: boolean | null } | null, runs?: { id?: string | null, courseId?: string | null, chapterId?: string | null, postId?: string | null, started?: string | null, ended?: string | null, possibleScore?: number | null, pointsScored?: number | null, percentRequired?: number | null, hasPassed?: boolean | null }[] | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.offers.list",
+      "shortPath": "offers.list",
+      "description": "Lists the offers available in the school",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, priority?: number | null, allCourses?: boolean | null, hasCourseIds?: string[] | null, hasSpaceIds?: string[] | null, pageIds?: string[] | null, portalIds?: string[] | null, internal?: boolean | null, schoolId?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "memberspot.api.users.courseProgress",
+      "shortPath": "users.courseProgress",
+      "description": "Lists every course progress record for a user by email, paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lastLoadedId",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor to continue from. Pass the `nextPage` value from the previous response."
+          },
+          {
+            "key": "pageLength",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 100. MemberSpot defaults to 10."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, email?: string | null, firstname?: string | null, name?: string | null, active?: boolean | null, courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.courseProgressByUid",
+      "shortPath": "users.courseProgressByUid",
+      "description": "Lists every course progress record for a user by uid, paginated",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lastLoadedId",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor to continue from. Pass the `nextPage` value from the previous response."
+          },
+          {
+            "key": "pageLength",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 100. MemberSpot defaults to 10."
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, email?: string | null, firstname?: string | null, name?: string | null, active?: boolean | null, courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.courseProgressDetail",
+      "shortPath": "users.courseProgressDetail",
+      "description": "Returns one user’s progress in one course, by email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "courseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Last name."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "courseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "activePosts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "completedPosts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "grantedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.courseProgressDetailByUid",
+      "shortPath": "users.courseProgressDetailByUid",
+      "description": "Returns one user’s progress in one course, by uid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "courseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Last name."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "courseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "activePosts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "completedPosts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "grantedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Permanently deletes up to 10 users by email; deleted accounts and their progress cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.deleteByUid",
+      "shortPath": "users.deleteByUid",
+      "description": "Permanently deletes up to 10 users by uid; deleted accounts and their progress cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.findByEmail",
+      "shortPath": "users.findByEmail",
+      "description": "Returns one user by email; a member that does not exist answers 400 USER_NOT_FOUND rather than an empty result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "{ courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "customUserProperties",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.findByUid",
+      "shortPath": "users.findByUid",
+      "description": "Returns one user by uid; a uid that does not exist answers an empty body, which fails the output schema rather than returning null",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "{ courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "customUserProperties",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.grantOffer",
+      "shortPath": "users.grantOffer",
+      "description": "Creates or updates a user by email and optionally grants an offer in the same call; reports whether the user is new",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Last name."
+          },
+          {
+            "key": "grantOffer",
+            "optional": true,
+            "type": "string",
+            "description": "Offer to grant in the same call, by id."
+          },
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isNew",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "grantedOffers",
+            "optional": true,
+            "type": "{ offerId: string, name: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.grantOfferByUid",
+      "shortPath": "users.grantOfferByUid",
+      "description": "Grants an offer to an existing user by uid",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string",
+            "description": "Offer to grant, by id. Sent as `grantOffer`."
+          },
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isNew",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "grantedOffers",
+            "optional": true,
+            "type": "{ offerId: string, name: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.list",
+      "shortPath": "users.list",
+      "description": "Returns a page of users, optionally filtered by offer or course, with a cursor for the next page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lastLoadedId",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor to continue from. Pass the `nextPage` value from the previous response."
+          },
+          {
+            "key": "pageLength",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 100. MemberSpot defaults to 10."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean",
+            "description": "True returns only active members, false only inactive ones. Leave it out for all members."
+          },
+          {
+            "key": "offerId",
+            "optional": true,
+            "type": "string",
+            "description": "Only users holding this offer."
+          },
+          {
+            "key": "courseId",
+            "optional": true,
+            "type": "string",
+            "description": "Only users with this course. Also populates each user’s `progress` with that course alone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid: string, email: string, created: string, firstname: string, name: string, active?: boolean | null, progress?: { courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[] | null, customUserProperties?: Record<string, string> | null }[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present while more users remain; pass it as `lastLoadedId`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.loginToken",
+      "shortPath": "users.loginToken",
+      "description": "Mints a token and login URL that signs a user in automatically, which is a credential; the token expires after one hour",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "loginUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.offers",
+      "shortPath": "users.offers",
+      "description": "Returns the offers granted to a user with their active state and expiry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offers",
+            "optional": false,
+            "type": "{ offerId: string, active?: boolean | null, grantedAt?: string | null, expiresAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setCourseStartDate",
+      "shortPath": "users.setCourseStartDate",
+      "description": "Sets when a user’s access to a course starts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "courseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "ISO date-time the course access should start."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setCustomProperties",
+      "shortPath": "users.setCustomProperties",
+      "description": "Sets several custom user properties at once by email; properties omitted from the map are left unchanged",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, string>",
+            "description": "Custom property id to value. A property omitted here is left unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "{ courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "customUserProperties",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setCustomPropertiesByUid",
+      "shortPath": "users.setCustomPropertiesByUid",
+      "description": "Sets several custom user properties at once by uid",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "{ courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "customUserProperties",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setCustomProperty",
+      "shortPath": "users.setCustomProperty",
+      "description": "Sets one custom user property by email; a null value blanks it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "The custom property id."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null",
+            "description": "Null or omitted blanks the property."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "{ courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "customUserProperties",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setCustomPropertyByUid",
+      "shortPath": "users.setCustomPropertyByUid",
+      "description": "Sets one custom user property by uid",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "{ courseId?: string | null, activePosts?: number | null, completedPosts?: number | null, grantedAt?: string | null, startDate?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "customUserProperties",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setOfferExpires",
+      "shortPath": "users.setOfferExpires",
+      "description": "Sets or clears the expiry date of an offer for a user by uid",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO date-time, or null to clear the expiry."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setOfferState",
+      "shortPath": "users.setOfferState",
+      "description": "Activates or deactivates an offer for a user by email, which is how access is revoked",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean | null",
+            "description": "True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setOfferStateByUid",
+      "shortPath": "users.setOfferStateByUid",
+      "description": "Activates or deactivates an offer for a user by uid",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean | null",
+            "description": "True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setOrderState",
+      "shortPath": "users.setOrderState",
+      "description": "Sets the state of an offer tied to an order for a user by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean | null",
+            "description": "True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setOrderStateByOrderId",
+      "shortPath": "users.setOrderStateByOrderId",
+      "description": "Sets the state of every offer carrying a given orderId, across all users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string",
+            "description": "Every member holding a grant with this order id is affected."
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean | null",
+            "description": "True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberspot.api.users.setOrderStateByUid",
+      "shortPath": "users.setOrderStateByUid",
+      "description": "Sets the state of an offer tied to an order for a user by uid",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean | null",
+            "description": "True grants, false revokes. Null deletes the grant from the member. Required: MemberSpot deletes the grant when the field is missing, so the plugin asks for the choice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

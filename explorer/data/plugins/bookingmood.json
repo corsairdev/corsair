@@ -59,7 +59,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -89,17 +89,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -129,17 +129,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -189,7 +189,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -219,17 +219,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -319,17 +319,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -379,7 +379,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -409,17 +409,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -449,17 +449,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -509,7 +509,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -539,17 +539,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -599,7 +599,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -629,17 +629,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -689,7 +689,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -719,17 +719,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -759,17 +759,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -819,7 +819,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -849,17 +849,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -909,7 +909,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -939,17 +939,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -999,7 +999,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1029,17 +1029,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1069,17 +1069,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1129,7 +1129,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1159,17 +1159,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1199,17 +1199,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1259,7 +1259,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1289,17 +1289,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1329,17 +1329,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1389,7 +1389,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1419,17 +1419,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1459,17 +1459,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1499,17 +1499,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1559,7 +1559,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1589,17 +1589,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1629,17 +1629,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1689,7 +1689,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1719,17 +1719,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1759,17 +1759,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1819,7 +1819,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1849,17 +1849,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1889,17 +1889,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1949,7 +1949,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1979,17 +1979,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2019,17 +2019,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2079,7 +2079,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2109,17 +2109,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2149,17 +2149,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2209,7 +2209,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2239,17 +2239,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2279,17 +2279,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2339,7 +2339,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2369,17 +2369,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2429,7 +2429,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2459,17 +2459,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2499,17 +2499,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2559,7 +2559,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2589,17 +2589,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2629,17 +2629,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2725,7 +2725,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2775,7 +2775,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2825,7 +2825,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2855,17 +2855,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2915,7 +2915,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -2945,17 +2945,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2985,17 +2985,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3045,7 +3045,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3075,17 +3075,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3115,17 +3115,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3175,7 +3175,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3205,17 +3205,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3245,17 +3245,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3305,7 +3305,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3335,17 +3335,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3395,7 +3395,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3425,17 +3425,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3485,7 +3485,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3515,17 +3515,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3585,17 +3585,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3645,7 +3645,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3675,17 +3675,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3715,17 +3715,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3775,7 +3775,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3805,17 +3805,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3845,17 +3845,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3905,7 +3905,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -3935,17 +3935,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3975,17 +3975,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4035,7 +4035,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4065,17 +4065,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4105,17 +4105,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4165,7 +4165,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4195,17 +4195,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4235,17 +4235,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4295,7 +4295,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4325,17 +4325,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4385,7 +4385,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4415,17 +4415,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4450,7 +4450,7 @@
           {
             "key": "occupancy",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, number>"
           },
           {
             "key": "option_ids",
@@ -4520,7 +4520,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4550,17 +4550,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4610,7 +4610,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4640,17 +4640,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4700,7 +4700,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4730,17 +4730,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4770,17 +4770,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4810,17 +4810,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4870,7 +4870,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4900,17 +4900,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4960,7 +4960,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -4990,17 +4990,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5050,7 +5050,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5080,17 +5080,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5140,7 +5140,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5170,17 +5170,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5230,7 +5230,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5260,17 +5260,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5320,7 +5320,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5350,17 +5350,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5410,7 +5410,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5440,17 +5440,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5500,7 +5500,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5530,17 +5530,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5590,7 +5590,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5620,17 +5620,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5660,17 +5660,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5700,17 +5700,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5760,7 +5760,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -5790,17 +5790,17 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6066,6 +6066,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "created_at",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -6195,6 +6200,16 @@
         },
         {
           "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "interaction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rent_period",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

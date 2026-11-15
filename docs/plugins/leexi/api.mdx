@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Leexi: every `leexi.api.*` operation with input and output types."
+title: "Leexi API reference"
+sidebarTitle: "API"
+description: "API reference for the Leexi plugin in Corsair: every `leexi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `leexi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -60,8 +59,7 @@ await corsair.leexi.api.calls.get({});
   transcript_url?: string | null,
   simple_transcript?: string | null,
   summary?: string | null,
-  custom_fields?: {
-  } | null,
+  custom_fields?: Record<string, string | number | boolean | null> | null,
   customer_email_addresses?: string[],
   customer_phone_numbers?: string[],
   audio_archived_at?: string | null,
@@ -191,14 +189,10 @@ await corsair.leexi.api.calls.get({});
     created_at?: string | null,
     updated_at?: string | null
   }[],
-  deal?: {
-  } | null,
-  meeting_event?: {
-  } | null,
-  feedbacks?: {
-  }[],
-  scorecards?: {
-  }[]
+  deal?: Record<string, any> | null,
+  meeting_event?: Record<string, any> | null,
+  feedbacks?: Record<string, any>[],
+  scorecards?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -271,8 +265,7 @@ await corsair.leexi.api.calls.list({});
   transcript_url?: string | null,
   simple_transcript?: string | null,
   summary?: string | null,
-  custom_fields?: {
-  } | null,
+  custom_fields?: Record<string, string | number | boolean | null> | null,
   customer_email_addresses?: string[],
   customer_phone_numbers?: string[],
   audio_archived_at?: string | null,
@@ -408,8 +401,7 @@ await corsair.leexi.api.calls.requestPresignedUrl({});
 {
   url: string,
   recording_s3_key: string,
-  headers: {
-  }
+  headers: Record<string, string>
 }
 ```
 </Accordion>

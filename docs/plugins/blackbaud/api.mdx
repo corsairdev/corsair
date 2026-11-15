@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Blackbaud: every `blackbaud.api.*` operation with input and output types."
+title: "Blackbaud API reference"
+sidebarTitle: "API"
+description: "API reference for the Blackbaud plugin in Corsair: every `blackbaud.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `blackbaud.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -435,19 +434,19 @@ await corsair.blackbaud.api.membership.getMembershipDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `dues` | `number` | No | — |
-| `category_name` | `string` | No | — |
-| `program_name` | `string` | No | — |
-| `sub_category_name` | `string` | No | — |
-| `last_renewed_date` | `string` | No | — |
-| `last_dropped_date` | `string` | No | — |
-| `next_renewal_date` | `string` | No | — |
+| `dues` | `number \| null` | No | — |
+| `category_name` | `string \| null` | No | — |
+| `program_name` | `string \| null` | No | — |
+| `sub_category_name` | `string \| null` | No | — |
+| `last_renewed_date` | `string \| null` | No | — |
+| `last_dropped_date` | `string \| null` | No | — |
+| `next_renewal_date` | `string \| null` | No | — |
 | `joined_date` | `string` | No | — |
-| `total_years` | `number` | No | — |
-| `times_renewed` | `number` | No | — |
-| `consec_years` | `number` | No | — |
-| `constituent_id` | `string` | No | — |
-| `notes` | `string` | No | — |
+| `total_years` | `number \| null` | No | — |
+| `times_renewed` | `number \| null` | No | — |
+| `consec_years` | `number \| null` | No | — |
+| `constituent_id` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
 | `type` | `Joined \| Renewal \| Rejoined \| Upgrade \| Downgrade \| Dropped` | No | — |
 
 

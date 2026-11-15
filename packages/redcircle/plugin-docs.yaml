@@ -1,0 +1,42 @@
+displayName: RedCircle API
+description: Target product data with RedCircle API - read Target products, search results, customer reviews and category listings, and read the account's credit usage, through Traject Data's RedCircle API.
+domain: redcircleapi.com
+recommendedAuth: api_key
+overviewNote: |
+  Sign up at `app.redcircleapi.com` for a key, then pass it as the `api_key` query parameter. RedCircle is a **credit-metered** API: every retrieved page costs one credit, and the account response reports what is left. Things to know before you call:
+
+  - **Sorting and delivery values.** `sort_by` takes `best_seller`, `price_high_to_low`, `price_low_to_high`, `best_match`, `highest_rating`, `newly_listed` or `featured`; `delivery_type` takes `in_store_pickup`, `same_day_delivery`, `buy_at_store` or `ship_to_home`.
+  - **One route does the product work.** `GET /request` is discriminated by `type`: `product`, `search` or `reviews` in this plugin. Each has its own typed operation and pins the `type` value, so an invalid one cannot be sent.
+  - **Each page costs a credit.** `max_page` retrieves several pages and concatenates them in one response, which is convenient but multiplies the cost; it is capped here, and a request that yields fewer pages than asked is charged only for what it returned.
+  - **A `402` is a spent balance.** It means the credits are exhausted or there is a payment problem, and no retry fixes it. The plugin matches it before the rate-limit handler and stops immediately.
+  - **A `503` is a parsing incident.** RedCircle raises it deliberately so it never serves unstable data, the body says the request was **not charged**, and it carries `retry_after` **in seconds**. The plugin retries delays up to 30 seconds. Longer delays are returned immediately on the error for the caller to schedule.
+  - **Paging is `page`, and the response says where you are.** `pagination.current.page` and `pagination.next.page` are returned as `current_page` and `next_page`, with `total_pages` and `total_results`. `next_page` is null on the last page.
+  - **Some routes do not page.** `/categories` has no pagination at all; it returns `categories` (with `parent_id` or `search_term`) or a single `category`.
+  - **The account route echoes the key.** RedCircle returns `account_info.api_key`; the plugin strips it before the output parse, so it cannot reach a caller or a log.
+  - **The demo key is limited.** `api_key=demo` works on `/request` and `/account` but answers 401 on other routes, which reads as an auth failure — check the message, not just the status.
+examples:
+  read:
+    path: search.products
+    title: Search Target for highlighter pens
+    args:
+      search_term: highlighter pens
+  write:
+    path: account.get
+    title: Read the account's remaining credits
+    args: {}
+apiExamples:
+  search.products:
+    call: "{ search_term: 'highlighter pens', sort_by: 'best_seller' }"
+  products.get:
+    call: "{ tcin: '94907686' }"
+  reviews.list:
+    call: "{ tcin: '94907686', sort_by: 'most_recent' }"
+  categories.list:
+    call: "{ parent_id: '5xt1a' }"
+  account.get: {}
+apiNotes:
+  'search.products': 'Each page costs a credit; `max_page` concatenates several and is capped.'
+  'products.get': 'Provide at least one non-empty selector: `tcin`, `dpci`, `gtin` or `url`. `gtin` overrides `tcin` and `dpci`, and `url` overrides all three.'
+  'reviews.list': 'Provide at least one non-empty selector: `tcin`, `dpci`, `gtin` or `url`. The sort values are `most_recent`, `most_helpful`, `high_to_low_rating` and `low_to_high_rating`.'
+  'categories.list': '`parent_id` and `search_term` are mutually exclusive; with neither, the root categories return.'
+  'account.get': 'RedCircle echoes the api_key in this response; the plugin strips it before parsing.'

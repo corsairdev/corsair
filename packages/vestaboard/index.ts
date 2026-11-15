@@ -13,7 +13,11 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { packVestaboardCredentials, tryGetStoredKey } from './client';
+import {
+	packVestaboardCredentials,
+	splitKeyAndSecret,
+	tryGetStoredKey,
+} from './client';
 import { Subscriptions } from './endpoints';
 import type {
 	VestaboardEndpointInputs,
@@ -152,11 +156,16 @@ export function vestaboard<const T extends VestaboardPluginOptions>(
 				throw new AuthMissingError('vestaboard', 'api_key');
 			}
 
-			const apiKey =
+			const storedKey =
 				options.key ?? (await tryGetStoredKey(() => ctx.keys.get_api_key()));
-			const apiSecret =
+			const storedSecret =
 				options.apiSecret ??
 				(await tryGetStoredKey(() => ctx.keys.get_api_secret()));
+			// No secret: the key field may hold both, as `key:secret`.
+			const pair =
+				storedKey && !storedSecret ? splitKeyAndSecret(storedKey) : null;
+			const apiKey = pair?.apiKey ?? storedKey;
+			const apiSecret = pair?.apiSecret ?? storedSecret;
 			if (!apiKey || !apiSecret) {
 				throw new AuthMissingError('vestaboard', 'api_key');
 			}

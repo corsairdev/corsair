@@ -1,7 +1,7 @@
 {
   "id": "callingly",
   "displayName": "Callingly",
-  "description": "Callingly plugin for Corsair",
+  "description": "Speed-to-lead platform. Manage leads, calls, agents and their schedules, teams, clients, and webhooks.",
   "npmPackageName": "@corsair-dev/callingly",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -89,7 +89,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
@@ -99,27 +99,27 @@
           {
             "key": "ext",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "on_call_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "custom_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "fub_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "hubspot_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "donotdisturb",
@@ -129,7 +129,7 @@
           {
             "key": "donotdisturb_until",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
@@ -327,7 +327,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
@@ -337,27 +337,27 @@
           {
             "key": "ext",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "on_call_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "custom_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "fub_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "hubspot_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "donotdisturb",
@@ -367,7 +367,7 @@
           {
             "key": "donotdisturb_until",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
@@ -504,7 +504,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_formatted",
@@ -514,7 +514,7 @@
           {
             "key": "lead_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lead_status_formatted",
@@ -559,22 +559,22 @@
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recording_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "waveform_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number_formatted",
@@ -584,27 +584,27 @@
           {
             "key": "human_result",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[]"
+            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[] | null"
           },
           {
             "key": "member",
             "optional": true,
-            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[]"
+            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[] | null"
           },
           {
             "key": "lead",
             "optional": true,
-            "type": "{ id: string | number, name?: string | null, label?: string | null, fname?: string | null, lname?: string | null, email?: string | null, phone_number?: string | null, phone_number_formatted?: string | null, source?: string | null, crm?: string | null, source_id?: string | number | null, deleted_at?: string | null } | never[]"
+            "type": "{ id: string | number, name?: string | null, label?: string | null, fname?: string | null, lname?: string | null, email?: string | null, phone_number?: string | null, phone_number_formatted?: string | null, source?: string | null, crm?: string | null, source_id?: string | number | null, deleted_at?: string | null } | never[] | null"
           },
           {
             "key": "profile",
             "optional": true,
-            "type": "{ id?: string | number, name?: string } | never[]"
+            "type": "{ id?: string | number, name?: string } | never[] | null"
           },
           {
             "key": "is_voicemail",
@@ -624,17 +624,17 @@
           {
             "key": "scheduled_call_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "old_lead_owner_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "transcript",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_error",
@@ -695,7 +695,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_formatted",
@@ -705,7 +705,7 @@
           {
             "key": "lead_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lead_status_formatted",
@@ -750,22 +750,22 @@
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recording_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "waveform_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number_formatted",
@@ -775,27 +775,27 @@
           {
             "key": "human_result",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[]"
+            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[] | null"
           },
           {
             "key": "member",
             "optional": true,
-            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[]"
+            "type": "{ id: string | number, name?: string, fname?: string, lname?: string, email?: string, phone_number?: string } | never[] | null"
           },
           {
             "key": "lead",
             "optional": true,
-            "type": "{ id: string | number, name?: string | null, label?: string | null, fname?: string | null, lname?: string | null, email?: string | null, phone_number?: string | null, phone_number_formatted?: string | null, source?: string | null, crm?: string | null, source_id?: string | number | null, deleted_at?: string | null } | never[]"
+            "type": "{ id: string | number, name?: string | null, label?: string | null, fname?: string | null, lname?: string | null, email?: string | null, phone_number?: string | null, phone_number_formatted?: string | null, source?: string | null, crm?: string | null, source_id?: string | number | null, deleted_at?: string | null } | never[] | null"
           },
           {
             "key": "profile",
             "optional": true,
-            "type": "{ id?: string | number, name?: string } | never[]"
+            "type": "{ id?: string | number, name?: string } | never[] | null"
           },
           {
             "key": "is_voicemail",
@@ -815,17 +815,17 @@
           {
             "key": "scheduled_call_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "old_lead_owner_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "transcript",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_error",
@@ -1132,37 +1132,37 @@
           {
             "key": "lead_owner_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "fname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "created_at",
@@ -1172,27 +1172,27 @@
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team",
             "optional": true,
-            "type": "{ id?: string | number, name?: string }"
+            "type": "{ id?: string | number, name?: string } | null"
           },
           {
             "key": "tags",
@@ -1202,7 +1202,7 @@
           {
             "key": "stage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "calls",
@@ -1212,12 +1212,12 @@
           {
             "key": "scheduled_call_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lead_owner",
             "optional": true,
-            "type": "{ name?: string | null, phone_number?: string | null, custom_id?: string | number | null }"
+            "type": "{ name?: string | null, phone_number?: string | null, custom_id?: string | number | null } | null"
           },
           {
             "key": "is_stopped",
@@ -1318,12 +1318,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "stage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_stopped",
@@ -1358,37 +1358,37 @@
           {
             "key": "lead_owner_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "fname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "created_at",
@@ -1398,27 +1398,27 @@
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team",
             "optional": true,
-            "type": "{ id?: string | number, name?: string }"
+            "type": "{ id?: string | number, name?: string } | null"
           },
           {
             "key": "tags",
@@ -1428,7 +1428,7 @@
           {
             "key": "stage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "calls",
@@ -1438,12 +1438,12 @@
           {
             "key": "scheduled_call_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lead_owner",
             "optional": true,
-            "type": "{ name?: string | null, phone_number?: string | null, custom_id?: string | number | null }"
+            "type": "{ name?: string | null, phone_number?: string | null, custom_id?: string | number | null } | null"
           },
           {
             "key": "is_stopped",
@@ -1894,7 +1894,7 @@
           {
             "key": "cap",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "account_id",
@@ -1924,12 +1924,12 @@
           {
             "key": "custom_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "fub_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "priority",
@@ -1939,7 +1939,7 @@
           {
             "key": "cap",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2001,43 +2001,43 @@
           {
             "key": "call_direction",
             "optional": true,
-            "type": "outbound | inbound",
+            "type": "outbound | inbound | null",
             "description": "call_completed only"
           },
           {
             "key": "call_status",
             "optional": true,
-            "type": "completed | missed | offline",
+            "type": "completed | missed | offline | null",
             "description": "call_completed only"
           },
           {
             "key": "call_lead_status",
             "optional": true,
-            "type": "contacted | missed | removed | voicemail",
+            "type": "contacted | missed | removed | voicemail | null",
             "description": "call_completed only"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string | number",
+            "type": "string | number | null",
             "description": "Outbound call_completed only"
           },
           {
             "key": "number_id",
             "optional": true,
-            "type": "string | number",
+            "type": "string | number | null",
             "description": "Inbound call_completed only"
           },
           {
             "key": "field",
             "optional": true,
-            "type": "lead_owner | result | stage | status | tags",
+            "type": "lead_owner | result | stage | status | tags | null",
             "description": "lead_created / lead_updated only: trigger when this field changes"
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "lead_created / lead_updated only: required value of `field`"
           },
           {
@@ -2078,42 +2078,42 @@
           {
             "key": "direction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_direction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_lead_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "number_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "field",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
@@ -2128,7 +2128,7 @@
           {
             "key": "last_failed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_auto_disabled",
@@ -2225,42 +2225,42 @@
           {
             "key": "direction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_direction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_lead_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "number_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "field",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
@@ -2275,7 +2275,7 @@
           {
             "key": "last_failed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_auto_disabled",
@@ -2336,43 +2336,43 @@
           {
             "key": "call_direction",
             "optional": true,
-            "type": "outbound | inbound",
+            "type": "outbound | inbound | null",
             "description": "call_completed only"
           },
           {
             "key": "call_status",
             "optional": true,
-            "type": "completed | missed | offline",
+            "type": "completed | missed | offline | null",
             "description": "call_completed only"
           },
           {
             "key": "call_lead_status",
             "optional": true,
-            "type": "contacted | missed | removed | voicemail",
+            "type": "contacted | missed | removed | voicemail | null",
             "description": "call_completed only"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string | number",
+            "type": "string | number | null",
             "description": "Outbound call_completed only"
           },
           {
             "key": "number_id",
             "optional": true,
-            "type": "string | number",
+            "type": "string | number | null",
             "description": "Inbound call_completed only"
           },
           {
             "key": "field",
             "optional": true,
-            "type": "lead_owner | result | stage | status | tags",
+            "type": "lead_owner | result | stage | status | tags | null",
             "description": "lead_created / lead_updated only: trigger when this field changes"
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "lead_created / lead_updated only: required value of `field`"
           },
           {
@@ -2413,42 +2413,42 @@
           {
             "key": "direction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_direction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "call_lead_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "number_id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "field",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
@@ -2463,7 +2463,7 @@
           {
             "key": "last_failed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_auto_disabled",

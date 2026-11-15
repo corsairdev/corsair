@@ -1,6 +1,7 @@
 ---
-title: Overview
-description: "Uploadcare plugin for Corsair"
+title: "Uploadcare plugin"
+sidebarTitle: "Overview"
+description: "File upload and delivery platform for uploading files, managing files and groups, CDN operations, add-ons, webhooks, and project settings."
 ---
 
 Use **Uploadcare** through Corsair: one client, typed API calls, local DB sync.
@@ -17,16 +18,20 @@ Use **Uploadcare** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/uploadcare
+npm install corsair @corsair-dev/uploadcare better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/uploadcare
+yarn add corsair @corsair-dev/uploadcare better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/uploadcare
+pnpm install corsair @corsair-dev/uploadcare better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/uploadcare
+bun add corsair @corsair-dev/uploadcare better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -44,6 +49,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +57,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -59,7 +65,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Uploadcare API key before the first call: `pnpm corsair setup --plugin=uploadcare --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 uploadcare()
@@ -89,19 +95,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`addons.clamavStatus`**
+**List files**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.uploadcare.api.addons.clamavStatus({});
+await tenant.uploadcare.api.files.list({});
 ```
 
 
-**`addons.executeClamav`**
+**Upload a file from a URL**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.uploadcare.api.addons.executeClamav({});
+await tenant.uploadcare.api.upload.fromUrl({ source_url: 'https://example.com/photo.jpg' });
 ```
 
 
@@ -109,9 +115,17 @@ See the full list on the [API](/plugins/uploadcare/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.uploadcare.db.<entity>.search()` and `.list()`: `UploadcareFile`, `UploadcareGroup`.
+This table exists, but Uploadcare calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/uploadcare/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.uploadcare.db.UploadcareFile.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `UploadcareFile`, `UploadcareGroup`. See [Database](/plugins/uploadcare/database) for filters and operators.
 
 ## What's next
 

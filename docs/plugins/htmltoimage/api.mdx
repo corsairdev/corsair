@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for HTML to Image: every `htmltoimage.api.*` operation with input and output types."
+title: "HTML to Image API reference"
+sidebarTitle: "API"
+description: "API reference for the HTML to Image plugin in Corsair: every `htmltoimage.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `htmltoimage.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -31,12 +30,12 @@ await corsair.htmltoimage.api.account.checkUsage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `email` | `string` | Yes | — |
-| `plan` | `string` | No | — |
-| `plan_name` | `string` | No | — |
+| `plan` | `string \| null` | No | — |
+| `plan_name` | `string \| null` | No | — |
 | `active` | `boolean` | Yes | — |
 | `free_plan` | `boolean` | Yes | — |
 | `credits_remaining` | `number` | Yes | — |
-| `credits_reset_at` | `string` | No | — |
+| `credits_reset_at` | `string \| null` | No | — |
 
 
 
@@ -84,7 +83,7 @@ await corsair.htmltoimage.api.html.convertToImage({});
 | `id` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `credits_remaining` | `number` | No | — |
-| `expires_at` | `string` | No | — |
+| `expires_at` | `string \| null` | No | — |
 | `status` | `processing` | No | — |
 | `message` | `string` | No | — |
 

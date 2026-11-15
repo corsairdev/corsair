@@ -1,0 +1,23 @@
+displayName: DocuPost
+description: Mail API for sending letters and postcards and checking the account balance.
+domain: docupost.com
+examples:
+  read:
+    path: account.balance
+    title: Check the account balance
+  write:
+    path: send.postcard
+    title: Send a postcard
+    args:
+      to_name: Ada Lovelace
+      to_address: 123 Main St
+      to_city: Austin
+      to_state: TX
+      to_zip: '78701'
+      from_name: Corsair
+      from_address: 456 Market St
+      from_city: San Francisco
+      from_state: CA
+      from_zip: '94105'
+      front_image_url: https://example.com/front.png
+      back_image_url: https://example.com/back.png

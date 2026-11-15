@@ -66,52 +66,52 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "platformId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution",
             "optional": true,
-            "type": "{ mode: string }"
+            "type": "{ mode: string } | null"
           },
           {
             "key": "pricing",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "failover",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inputSchema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "outputSchema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "latency",
             "optional": true,
-            "type": "{ p50Ms?: number | null, p95Ms?: number | null, p99Ms?: number | null, sample?: number | null }"
+            "type": "{ p50Ms?: number | null, p95Ms?: number | null, p99Ms?: number | null, sample?: number | null } | null"
           }
         ]
       }
@@ -138,7 +138,7 @@
           {
             "key": "apis",
             "optional": false,
-            "type": "{ slug: string, name?: string | null, description?: string | null, category?: string | null, platformId?: string | null, execution?: { mode: string } | null, pricing?: {} | null, failover?: boolean | null }[]"
+            "type": "{ slug: string, name?: string | null, description?: string | null, category?: string | null, platformId?: string | null, execution?: { mode: string } | null, pricing?: Record<string, any> | null, failover?: boolean | null }[]"
           }
         ]
       }
@@ -159,9 +159,9 @@
           },
           {
             "key": "input",
-            "optional": false,
-            "type": "{}",
-            "description": "The endpoint's input, matching its inputSchema from apis.get"
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The endpoint's input, matching its inputSchema from apis.get. Defaults to {}."
           }
         ]
       },
@@ -176,27 +176,27 @@
           {
             "key": "minCostUsd",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "baseUsd",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "perItemUsd",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "exact",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pricing",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -217,9 +217,9 @@
           },
           {
             "key": "input",
-            "optional": false,
-            "type": "{}",
-            "description": "The endpoint's input, matching its inputSchema from apis.get"
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The endpoint's input, matching its inputSchema from apis.get. Defaults to {}."
           },
           {
             "key": "fields",
@@ -261,7 +261,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ output: any, provider?: string | null, costUsd: number, items?: number | null, replayed?: boolean | null, source?: { id: string, name?: string | null, kind?: string | null } | null, resultId?: string | null, hint?: string | null, jqError?: string | null } | { requestId: string, sku: string, status: queued | running | succeeded | failed | expired, createdAt: string, completedAt?: string | null, expiresAt?: string | null, retryAfterSeconds?: number | null, serviceOutcome?: string | null, settlementState?: string | null, resultExpired?: boolean | null, result?: {} | null, error?: {} | null }"
+        "type": "{ output: any, provider?: string | null, costUsd: number, items?: number | null, replayed?: boolean | null, source?: { id: string, name?: string | null, kind?: string | null } | null, resultId?: string | null, hint?: string | null, jqError?: string | null } | { requestId: string, sku: string, status: queued | running | succeeded | failed | expired, createdAt: string, completedAt?: string | null, expiresAt?: string | null, retryAfterSeconds?: number | null, serviceOutcome?: string | null, settlementState?: string | null, resultExpired?: boolean | null, result?: Record<string, any> | null, error?: Record<string, any> | null }"
       }
     },
     {
@@ -303,12 +303,12 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ slug: string, name?: string | null, description?: string | null, category?: string | null, platformId?: string | null, execution?: { mode: string } | null, pricing?: {} | null, failover?: boolean | null }[]"
+            "type": "{ slug: string, name?: string | null, description?: string | null, category?: string | null, platformId?: string | null, execution?: { mode: string } | null, pricing?: Record<string, any> | null, failover?: boolean | null }[]"
           },
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -386,12 +386,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{ found: boolean, data?: { query?: string | null, results?: { position?: number | null, title?: string | null, link?: string | null, snippet?: string | null }[] | null, nextCursor?: string | null } | null }"
+            "type": "{ found: boolean, data: { query?: string | null, results?: { position?: number | null, title?: string | null, link?: string | null, snippet?: string | null }[] | null, nextCursor?: string | null } | null }"
           },
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -402,33 +402,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -467,12 +467,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{ found: boolean, data?: { userId?: string | null, handle?: string | null, displayName?: string | null, bio?: string | null, followers?: number | null, following?: number | null, posts?: number | null, verified?: boolean | null, private?: boolean | null, isBusiness?: boolean | null, avatarUrl?: string | null } | null }"
+            "type": "{ found: boolean, data: { userId?: string | null, handle?: string | null, displayName?: string | null, bio?: string | null, followers?: number | null, following?: number | null, posts?: number | null, verified?: boolean | null, private?: boolean | null, isBusiness?: boolean | null, avatarUrl?: string | null } | null }"
           },
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -483,33 +483,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -548,12 +548,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{ found: boolean, data?: { id?: string | null, name?: string | null, universalName?: string | null, linkedinUrl?: string | null, website?: string | null, tagline?: string | null, description?: string | null, industry?: string | null, companyType?: string | null, employeeCount?: number | null, followerCount?: number | null, specialities?: any[] | null, locations?: any[] | null } | null }"
+            "type": "{ found: boolean, data: { id?: string | null, name?: string | null, universalName?: string | null, linkedinUrl?: string | null, website?: string | null, tagline?: string | null, description?: string | null, industry?: string | null, companyType?: string | null, employeeCount?: number | null, followerCount?: number | null, specialities?: any[] | null, locations?: any[] | null } | null }"
           },
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -564,33 +564,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -629,12 +629,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{ found: boolean, data?: { id?: string | null, publicIdentifier?: string | null, url?: string | null, firstName?: string | null, lastName?: string | null, headline?: string | null, about?: string | null, location?: string | null, city?: string | null, country?: string | null, followerCount?: number | null, connectionsCount?: number | null, openToWork?: boolean | null, currentPosition?: any[] | null, experience?: any[] | null, education?: any[] | null, skills?: any[] | null } | null }"
+            "type": "{ found: boolean, data: { id?: string | null, publicIdentifier?: string | null, url?: string | null, firstName?: string | null, lastName?: string | null, headline?: string | null, about?: string | null, location?: string | null, city?: string | null, country?: string | null, followerCount?: number | null, connectionsCount?: number | null, openToWork?: boolean | null, currentPosition?: any[] | null, experience?: any[] | null, education?: any[] | null, skills?: any[] | null } | null }"
           },
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -645,33 +645,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -743,12 +743,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{ found: boolean, data?: { items?: { placeId?: string | null, name?: string | null, category?: string | null, address?: string | null, city?: string | null, phone?: string | null, website?: string | null, url?: string | null, rating?: number | null, reviewCount?: number | null, latitude?: number | null, longitude?: number | null, permanentlyClosed?: boolean | null }[] | null, nextCursor?: string | null } | null }"
+            "type": "{ found: boolean, data: { items?: { placeId?: string | null, name?: string | null, category?: string | null, address?: string | null, city?: string | null, phone?: string | null, website?: string | null, url?: string | null, rating?: number | null, reviewCount?: number | null, latitude?: number | null, longitude?: number | null, permanentlyClosed?: boolean | null }[] | null, nextCursor?: string | null } | null }"
           },
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -759,33 +759,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -840,12 +840,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{ found: boolean, data?: { posts?: { id?: string | null, title?: string | null, subreddit?: string | null, author?: string | null, score?: number | null, numComments?: number | null, permalink?: string | null, url?: string | null, selftext?: string | null, createdUtc?: number | null }[] | null, nextCursor?: string | null } | null }"
+            "type": "{ found: boolean, data: { posts?: { id?: string | null, title?: string | null, subreddit?: string | null, author?: string | null, score?: number | null, numComments?: number | null, permalink?: string | null, url?: string | null, selftext?: string | null, createdUtc?: number | null }[] | null, nextCursor?: string | null } | null }"
           },
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -856,33 +856,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -929,42 +929,42 @@
           {
             "key": "completedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expiresAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "retryAfterSeconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "serviceOutcome",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "settlementState",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resultExpired",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -1020,7 +1020,7 @@
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -1031,33 +1031,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1112,12 +1112,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{ found: boolean, data?: { items?: { id?: string | null, url?: string | null, text?: string | null, createdUtc?: number | null, authorUsername?: string | null, authorName?: string | null, likeCount?: number | null, retweetCount?: number | null, replyCount?: number | null, viewCount?: number | null }[] | null, nextCursor?: string | null } | null }"
+            "type": "{ found: boolean, data: { items?: { id?: string | null, url?: string | null, text?: string | null, createdUtc?: number | null, authorUsername?: string | null, authorName?: string | null, likeCount?: number | null, retweetCount?: number | null, replyCount?: number | null, viewCount?: number | null }[] | null, nextCursor?: string | null } | null }"
           },
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -1128,33 +1128,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1176,7 +1176,7 @@
           {
             "key": "formats",
             "optional": true,
-            "type": "markdown | html | rawHtml[]",
+            "type": "(markdown | html | rawHtml)[]",
             "description": "Defaults to markdown and html"
           },
           {
@@ -1233,12 +1233,12 @@
           {
             "key": "output",
             "optional": false,
-            "type": "{ found: boolean, data?: { url?: string | null, statusCode?: number | null, title?: string | null, description?: string | null, language?: string | null, markdown?: string | null, html?: string | null, rawHtml?: string | null } | null }"
+            "type": "{ found: boolean, data: { url?: string | null, statusCode?: number | null, title?: string | null, description?: string | null, language?: string | null, markdown?: string | null, html?: string | null, rawHtml?: string | null } | null }"
           },
           {
             "key": "provider",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "costUsd",
@@ -1249,33 +1249,33 @@
           {
             "key": "items",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "replayed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ id: string, name?: string | null, kind?: string | null }"
+            "type": "{ id: string, name?: string | null, kind?: string | null } | null"
           },
           {
             "key": "resultId",
             "optional": true,
-            "type": "string",
+            "type": "string | null",
             "description": "Re-read and re-shape this result for free with results.get for about 15 minutes"
           },
           {
             "key": "hint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jqError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

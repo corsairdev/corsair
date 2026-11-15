@@ -48,26 +48,26 @@
         "fields": [
           {
             "key": "model",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Model name or alias from models.list. jev-latest moves with each release; pin a version such as jev-1.14.0 to keep answers stable."
+            "description": "Model name or alias from models.list. jev-latest moves with each release; pin a version such as jev-1.14.0 to keep answers stable. Defaults to \"jev-latest\"."
           },
           {
             "key": "state",
             "optional": false,
-            "type": "string | {} | any[]",
+            "type": "string | Record<string, any> | any[]",
             "description": "The content every question is about: text, or JSON with descriptive keys. Leave out fields no question needs."
           },
           {
             "key": "questions",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, { type: noul, instructions?: string | Record<string, any> | any[] | null, criteria?: { true?: string | Record<string, any> | any[] | null, false?: string | Record<string, any> | any[] | null } | null } | { type: choice, instructions?: string | Record<string, any> | any[] | null, criteria: Record<string, string | Record<string, any> | any[] | null> } | { type: score, instructions?: string | Record<string, any> | any[] | null, criteria: (string | Record<string, any> | any[])[] } | { type: box, instructions?: string | Record<string, any> | any[] | null }>",
             "description": "Questions keyed by a name you choose; answers come back under the same names. Questions run in parallel and cannot see each other."
           },
           {
             "key": "assets",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, { type: image, format: png | jpg | jpeg, data_base64: string }>",
             "description": "Images keyed by a placeholder string. Each placeholder in state, instructions or criteria is replaced by its image. Images are experimental at TypeSafe."
           },
           {
@@ -90,7 +90,7 @@
           {
             "key": "answers",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { type: noul, noul: number } | { type: choice, choice: string, confidence: number, probabilities: Record<string, number> } | { type: score, score: number, confidence: number, legend?: Record<string, any>, probabilities?: Record<string, number> } | { type: box, box: { top: number, bottom: number, left: number, right: number }, confidence: number | null }>"
           },
           {
             "key": "usage",

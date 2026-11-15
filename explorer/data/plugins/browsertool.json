@@ -1,7 +1,7 @@
 {
   "id": "browsertool",
-  "displayName": "BrowserTool",
-  "description": "BrowserTool plugin for Corsair",
+  "displayName": "Browser Tool",
+  "description": "Cloud browser automation tool that runs AI-driven browser tasks, polls and stops them, and returns session live URLs and task output files.",
   "npmPackageName": "@corsair-dev/browsertool",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -49,7 +49,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -59,7 +59,7 @@
           {
             "key": "session_info",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "log_id",
@@ -95,7 +95,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -105,7 +105,7 @@
           {
             "key": "session_info",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "log_id",
@@ -131,7 +131,7 @@
           {
             "key": "secrets",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "startUrl",
@@ -156,7 +156,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -166,7 +166,7 @@
           {
             "key": "session_info",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "log_id",
@@ -202,7 +202,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -212,7 +212,7 @@
           {
             "key": "session_info",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "log_id",
@@ -253,7 +253,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "successful",
@@ -263,7 +263,7 @@
           {
             "key": "session_info",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "log_id",

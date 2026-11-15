@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Exa local sync: searchable entities, `.search()` filters, and operators."
+title: "Exa database"
+sidebarTitle: "Database"
+description: "Exa local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Exa plugin syncs data locally. Use `corsair.exa.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -54,6 +55,7 @@ const rows = await corsair.exa.db.imports.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `websetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |
 
@@ -80,6 +82,7 @@ const rows = await corsair.exa.db.monitors.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `websetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `cadenceType` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |
 
@@ -138,6 +141,7 @@ const rows = await corsair.exa.db.webhookConfigs.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |
 
@@ -163,6 +167,7 @@ const rows = await corsair.exa.db.websets.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |

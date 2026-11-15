@@ -27,19 +27,26 @@ describe('resolveManagedPricingApiKey', () => {
 	const cache = createManagedPricingCredentialCache();
 	const originalFetch = global.fetch;
 
+	// A typed spy on the real fetch, answered with a real Response, so the
+	// calls can be read back without casting the mock.
+	const mockHubCredentials = () =>
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(
+				async () =>
+					new Response(
+						JSON.stringify({ api_key: 'fc-test-key', expires_in: 3600 }),
+						{ status: 200, headers: { 'content-type': 'application/json' } },
+					),
+			);
+
 	afterEach(() => {
 		global.fetch = originalFetch;
 		jest.restoreAllMocks();
 	});
 
 	it('forwards operation from input when ctx has no meteredOperationId', async () => {
-		global.fetch = jest.fn(async () => ({
-			ok: true,
-			status: 200,
-			headers: { get: () => 'application/json' },
-			text: async () =>
-				JSON.stringify({ api_key: 'fc-test-key', expires_in: 3600 }),
-		})) as typeof fetch;
+		const fetchMock = mockHubCredentials();
 
 		const apiKey = await resolveManagedPricingApiKey(
 			{ hub, tenantId: 'tenant_a' },
@@ -47,16 +54,68 @@ describe('resolveManagedPricingApiKey', () => {
 		);
 
 		expect(apiKey).toBe('fc-test-key');
-		expect(global.fetch).toHaveBeenCalledWith(
-			'https://hub.test/managed-pricing/credentials',
-			expect.objectContaining({
-				body: JSON.stringify({
-					plugin: 'firecrawl',
-					tenantId: 'tenant_a',
-					operation: TEST_OPERATION,
-				}),
-			}),
+		const [url, init] = fetchMock.mock.calls[0] ?? [];
+		expect(url).toBe('https://hub.test/managed-pricing/credentials');
+		expect(JSON.parse(String(init?.body))).toEqual({
+			plugin: 'firecrawl',
+			tenantId: 'tenant_a',
+			operation: TEST_OPERATION,
+			idempotencyKey: expect.any(String),
+		});
+	});
+
+	it('asks Hub for a fresh, separately charged key on every call', async () => {
+		const fetchMock = mockHubCredentials();
+
+		const localCache = createManagedPricingCredentialCache();
+		for (let i = 0; i < 3; i++) {
+			await resolveManagedPricingApiKey(
+				{ hub, tenantId: 'tenant_a' },
+				{ plugin: 'firecrawl', cache: localCache, operation: TEST_OPERATION },
+			);
+		}
+
+		const calls = fetchMock.mock.calls;
+		expect(calls).toHaveLength(3);
+		const keys = calls.map(
+			([, init]) => JSON.parse(String(init?.body)).idempotencyKey,
 		);
+		expect(new Set(keys).size).toBe(3);
+		for (const [, init] of calls) {
+			const headers = new Headers(init?.headers);
+			expect(headers.get('x-corsair-idempotency-key')).toBe(
+				JSON.parse(String(init?.body)).idempotencyKey,
+			);
+		}
+	});
+
+	it('gives up on a key request Hub does not answer', async () => {
+		const fetchMock = mockHubCredentials();
+
+		await resolveManagedPricingApiKey(
+			{ hub, tenantId: 'tenant_a' },
+			{ plugin: 'firecrawl', cache, operation: TEST_OPERATION },
+		);
+
+		const [, init] = fetchMock.mock.calls[0] ?? [];
+		expect(init?.signal).toBeInstanceOf(AbortSignal);
+		expect(init?.signal?.aborted).toBe(false);
+	});
+
+	it('does not merge concurrent calls into one charge', async () => {
+		const fetchMock = mockHubCredentials();
+
+		const localCache = createManagedPricingCredentialCache();
+		await Promise.all(
+			[1, 2].map(() =>
+				resolveManagedPricingApiKey(
+					{ hub, tenantId: 'tenant_a' },
+					{ plugin: 'firecrawl', cache: localCache, operation: TEST_OPERATION },
+				),
+			),
+		);
+
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 });
 

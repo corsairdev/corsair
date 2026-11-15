@@ -49,12 +49,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id?: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -95,7 +95,7 @@
           {
             "key": "widgets",
             "optional": false,
-            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+            "type": "{ id?: number, definition: Record<string, any>, layout?: { x: number, y: number, width: number, height: number } }[]"
           },
           {
             "key": "layoutType",
@@ -135,7 +135,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "layout_type",
@@ -170,22 +170,22 @@
           {
             "key": "widgets",
             "optional": true,
-            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+            "type": "{ id?: number, definition: Record<string, any>, layout?: { x: number, y: number, width: number, height: number } }[]"
           },
           {
             "key": "template_variables",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "notify_list",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -248,7 +248,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "layout_type",
@@ -283,22 +283,22 @@
           {
             "key": "widgets",
             "optional": true,
-            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+            "type": "{ id?: number, definition: Record<string, any>, layout?: { x: number, y: number, width: number, height: number } }[]"
           },
           {
             "key": "template_variables",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "notify_list",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -360,7 +360,7 @@
           {
             "key": "widgets",
             "optional": false,
-            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+            "type": "{ id?: number, definition: Record<string, any>, layout?: { x: number, y: number, width: number, height: number } }[]"
           },
           {
             "key": "layoutType",
@@ -405,7 +405,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "layout_type",
@@ -440,22 +440,22 @@
           {
             "key": "widgets",
             "optional": true,
-            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+            "type": "{ id?: number, definition: Record<string, any>, layout?: { x: number, y: number, width: number, height: number } }[]"
           },
           {
             "key": "template_variables",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "notify_list",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -506,7 +506,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, attributes?: { scope?: string, status?: string, message?: string | null, created?: string, modified?: string, monitor_identifier?: {}, schedule?: {} } }"
+            "type": "{ id?: string, type?: string, attributes?: { scope?: string, status?: string, message?: string | null, created?: string, modified?: string, monitor_identifier?: Record<string, any>, schedule?: Record<string, any> } }"
           }
         ]
       }
@@ -538,7 +538,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ data?: { id?: string, type?: string, attributes?: { scope?: string, status?: string, message?: string | null, created?: string, modified?: string, monitor_identifier?: {}, schedule?: {} } }[] } & { page?: { total_count?: number, total_filtered_count?: number, after?: string } }"
+        "type": "{ data?: { id?: string, type?: string, attributes?: { scope?: string, status?: string, message?: string | null, created?: string, modified?: string, monitor_identifier?: Record<string, any>, schedule?: Record<string, any> } }[] } & { page?: { total_count?: number, total_filtered_count?: number, after?: string } }"
       }
     },
     {
@@ -699,7 +699,7 @@
           {
             "key": "host_list",
             "optional": true,
-            "type": "{ name?: string, host_name?: string, id?: number, aliases?: string[], apps?: string[], is_muted?: boolean, last_reported_time?: number, up?: boolean, sources?: string[], tags_by_source?: {} }[]"
+            "type": "{ name?: string, host_name?: string, id?: number, aliases?: string[], apps?: string[], is_muted?: boolean, last_reported_time?: number, up?: boolean, sources?: string[], tags_by_source?: Record<string, string[]> }[]"
           },
           {
             "key": "total_matching",
@@ -765,12 +765,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id?: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -821,12 +821,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -846,7 +846,7 @@
           {
             "key": "indexes",
             "optional": true,
-            "type": "{ name?: string, filter?: {}, is_rate_limited?: boolean, daily_limit?: number | null, num_retention_days?: number }[]"
+            "type": "{ name?: string, filter?: Record<string, any>, is_rate_limited?: boolean, daily_limit?: number | null, num_retention_days?: number }[]"
           }
         ]
       }
@@ -902,7 +902,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, attributes?: {} }[]"
+            "type": "{ id?: string, type?: string, attributes?: Record<string, any> }[]"
           },
           {
             "key": "meta",
@@ -1004,7 +1004,7 @@
           {
             "key": "series",
             "optional": true,
-            "type": "{ metric?: string, display_name?: string, pointlist?: number | null[][], scope?: string, unit?: {} | null[] | null }[]"
+            "type": "{ metric?: string, display_name?: string, pointlist?: (number | null)[][], scope?: string, unit?: (Record<string, any> | null)[] | null }[]"
           }
         ]
       }
@@ -1020,7 +1020,7 @@
           {
             "key": "series",
             "optional": false,
-            "type": "{ metric: string, points: tuple[], type?: gauge | count | rate, host?: string, tags?: string[] }[]"
+            "type": "{ metric: string, points: [number, number][], type?: gauge | count | rate, host?: string, tags?: string[] }[]"
           }
         ]
       },
@@ -1076,7 +1076,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1116,7 +1116,7 @@
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "overall_state",
@@ -1141,7 +1141,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1229,7 +1229,7 @@
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "overall_state",
@@ -1254,7 +1254,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1301,7 +1301,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: number, name?: string, type?: string, query?: string, message?: string, tags?: string[], priority?: number | null, overall_state?: string, created?: string, modified?: string, creator?: { name?: string | null, email?: string, handle?: string }, options?: {} }[]"
+        "type": "{ id?: number, name?: string, type?: string, query?: string, message?: string, tags?: string[], priority?: number | null, overall_state?: string, created?: string, modified?: string, creator?: { name?: string | null, email?: string, handle?: string }, options?: Record<string, any> }[]"
       }
     },
     {
@@ -1365,7 +1365,7 @@
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "overall_state",
@@ -1390,7 +1390,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1431,7 +1431,7 @@
           {
             "key": "monitors",
             "optional": true,
-            "type": "{ id?: number, name?: string, type?: string, query?: string, message?: string, tags?: string[], priority?: number | null, overall_state?: string, created?: string, modified?: string, creator?: { name?: string | null, email?: string, handle?: string }, options?: {} }[]"
+            "type": "{ id?: number, name?: string, type?: string, query?: string, message?: string, tags?: string[], priority?: number | null, overall_state?: string, created?: string, modified?: string, creator?: { name?: string | null, email?: string, handle?: string }, options?: Record<string, any> }[]"
           },
           {
             "key": "metadata",
@@ -1502,7 +1502,7 @@
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "overall_state",
@@ -1527,7 +1527,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1568,12 +1568,12 @@
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1613,7 +1613,7 @@
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "overall_state",
@@ -1638,7 +1638,7 @@
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1674,12 +1674,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id?: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1715,7 +1715,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ type?: string, id?: string, attributes?: {} }[]"
+            "type": "{ type?: string, id?: string, attributes?: Record<string, any> }[]"
           }
         ]
       }
@@ -1776,7 +1776,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1878,12 +1878,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ type?: string, attributes?: {} } | {}[]"
+            "type": "{ type?: string, attributes?: Record<string, any> } | Record<string, any>[]"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1930,7 +1930,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ data?: { id?: string, type?: string, attributes?: {} }[], meta?: { page?: { total_count?: number, total_filtered_count?: number, after?: string } } } & { links?: {} }"
+        "type": "{ data?: { id?: string, type?: string, attributes?: Record<string, any> }[], meta?: { page?: { total_count?: number, total_filtered_count?: number, after?: string } } } & { links?: Record<string, any> }"
       }
     },
     {
@@ -1949,7 +1949,7 @@
           {
             "key": "config",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "locations",
@@ -1959,7 +1959,7 @@
           {
             "key": "options",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "message",
@@ -2019,12 +2019,12 @@
           {
             "key": "config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "message",
@@ -2090,12 +2090,12 @@
           {
             "key": "config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "message",
@@ -2151,7 +2151,7 @@
           {
             "key": "tests",
             "optional": true,
-            "type": "{ public_id?: string, name?: string, type?: string, subtype?: string, status?: string, tags?: string[], locations?: string[], config?: {}, options?: {}, message?: string }[]"
+            "type": "{ public_id?: string, name?: string, type?: string, subtype?: string, status?: string, tags?: string[], locations?: string[], config?: Record<string, any>, options?: Record<string, any>, message?: string }[]"
           }
         ]
       }
@@ -2213,7 +2213,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string[]>"
           }
         ]
       }
@@ -2300,7 +2300,7 @@
           {
             "key": "usage",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2336,12 +2336,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id?: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id?: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2397,12 +2397,12 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "custom_headers",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "encode_as",
@@ -2443,12 +2443,12 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "custom_headers",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "encode_as",

@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Google Docs: every `googledocs.api.*` operation with input and output types."
+title: "Google Docs API reference"
+sidebarTitle: "API"
+description: "API reference for the Google Docs plugin in Corsair: every `googledocs.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `googledocs.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -449,26 +448,8 @@ await corsair.googledocs.api.documents.updateDocumentBatch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | Yes | — |
-| `requests` | `object[]` | Yes | — |
-| `writeControl` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="requests full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="writeControl full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `requests` | `Record<string, any>[]` | Yes | — |
+| `writeControl` | `Record<string, any>` | No | — |
 
 
 
@@ -477,18 +458,10 @@ await corsair.googledocs.api.documents.updateDocumentBatch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -530,18 +503,10 @@ await corsair.googledocs.api.documents.updateDocumentMarkdown({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -585,18 +550,10 @@ await corsair.googledocs.api.documents.updateDocumentSectionMarkdown({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -629,18 +586,8 @@ await corsair.googledocs.api.documents.updateDocumentStyle({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | Yes | — |
-| `documentStyle` | `object` | Yes | — |
+| `documentStyle` | `Record<string, any>` | Yes | — |
 | `fields` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="documentStyle full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -649,18 +596,10 @@ await corsair.googledocs.api.documents.updateDocumentStyle({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -693,26 +632,8 @@ await corsair.googledocs.api.documents.updateExistingDocument({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | Yes | — |
-| `requests` | `object[]` | Yes | — |
-| `writeControl` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="requests full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="writeControl full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `requests` | `Record<string, any>[]` | Yes | — |
+| `writeControl` | `Record<string, any>` | No | — |
 
 
 
@@ -721,18 +642,10 @@ await corsair.googledocs.api.documents.updateExistingDocument({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -829,18 +742,10 @@ await corsair.googledocs.api.structure.createFooter({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -906,18 +811,10 @@ await corsair.googledocs.api.structure.createFootnote({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -973,18 +870,10 @@ await corsair.googledocs.api.structure.createHeader({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1028,18 +917,10 @@ await corsair.googledocs.api.structure.createNamedRange({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1083,18 +964,10 @@ await corsair.googledocs.api.structure.createParagraphBullets({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1137,18 +1010,10 @@ await corsair.googledocs.api.structure.deleteFooter({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1191,18 +1056,10 @@ await corsair.googledocs.api.structure.deleteHeader({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1245,18 +1102,10 @@ await corsair.googledocs.api.structure.deleteNamedRange({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1299,18 +1148,10 @@ await corsair.googledocs.api.structure.deleteParagraphBullets({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1371,18 +1212,10 @@ await corsair.googledocs.api.tables.deleteTableColumn({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1441,18 +1274,10 @@ await corsair.googledocs.api.tables.deleteTableRow({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1497,18 +1322,10 @@ await corsair.googledocs.api.tables.insertTable({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1568,18 +1385,10 @@ await corsair.googledocs.api.tables.insertTableColumn({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1642,18 +1451,10 @@ await corsair.googledocs.api.tables.unmergeTableCells({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1725,18 +1526,10 @@ await corsair.googledocs.api.tables.updateTableRowStyle({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1781,18 +1574,10 @@ await corsair.googledocs.api.text.deleteContentRange({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1855,18 +1640,10 @@ await corsair.googledocs.api.text.insertInlineImage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1909,18 +1686,10 @@ await corsair.googledocs.api.text.insertPageBreak({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -1964,18 +1733,10 @@ await corsair.googledocs.api.text.insertText({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -2019,18 +1780,10 @@ await corsair.googledocs.api.text.replaceAllText({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts
@@ -2074,18 +1827,10 @@ await corsair.googledocs.api.text.replaceImage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | No | — |
-| `replies` | `object[]` | No | — |
+| `replies` | `Record<string, any>[]` | No | — |
 | `writeControl` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="replies full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="writeControl full type">
 
 ```ts

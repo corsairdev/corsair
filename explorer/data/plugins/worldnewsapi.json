@@ -61,7 +61,7 @@
           {
             "key": "image",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "images",
@@ -71,7 +71,7 @@
           {
             "key": "video",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "videos",
@@ -86,12 +86,12 @@
           {
             "key": "author",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "authors",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[]"
           },
           {
             "key": "language",
@@ -404,7 +404,7 @@
           {
             "key": "news",
             "optional": false,
-            "type": "{ id: number, title: string, text?: string, summary?: string | null, url: string, image?: string | null, video?: string | null, publish_date?: string, author?: string | null, authors?: string | null[], category?: string, language?: string, source_country?: string, sentiment?: number }[]"
+            "type": "{ id: number, title: string, text?: string, summary?: string | null, url: string, image?: string | null, video?: string | null, publish_date?: string, author?: string | null, authors?: (string | null)[], category?: string, language?: string, source_country?: string, sentiment?: number }[]"
           }
         ]
       }
@@ -487,7 +487,7 @@
           {
             "key": "top_news",
             "optional": false,
-            "type": "{ news: { id: number, title: string, text?: string, summary?: string | null, url: string, image?: string | null, video?: string | null, publish_date?: string, author?: string | null, authors?: string | null[], category?: string, language?: string, source_country?: string, sentiment?: number }[] }[]"
+            "type": "{ news: { id: number, title: string, text?: string, summary?: string | null, url: string, image?: string | null, video?: string | null, publish_date?: string, author?: string | null, authors?: (string | null)[], category?: string, language?: string, source_country?: string, sentiment?: number }[] }[]"
           },
           {
             "key": "language",

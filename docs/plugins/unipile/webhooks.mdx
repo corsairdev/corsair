@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Unipile incoming webhooks: event paths, payloads, and response data."
+title: "Unipile webhooks"
+sidebarTitle: "Webhooks"
+description: "Unipile incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Unipile plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/unipile/overview) for setup context and the exact URL shape).
@@ -71,9 +72,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -95,11 +110,11 @@ A new account was connected and is ready; payload.state is the createAuthLink st
 | `type` | `account.add` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -120,10 +135,8 @@ A new account was connected and is ready; payload.state is the createAuthLink st
     account_scope_id?: string | null,
     metadata?: {
       connection_method?: string | null,
-      products_connection_status?: {
-      } | null,
-      custom_data?: {
-      } | null
+      products_connection_status?: Record<string, string> | null,
+      custom_data?: Record<string, string> | null
     } | null
   },
   state?: string | null
@@ -162,10 +175,8 @@ A new account was connected and is ready; payload.state is the createAuthLink st
       account_scope_id?: string | null,
       metadata?: {
         connection_method?: string | null,
-        products_connection_status?: {
-        } | null,
-        custom_data?: {
-        } | null
+        products_connection_status?: Record<string, string> | null,
+        custom_data?: Record<string, string> | null
       } | null
     },
     state?: string | null
@@ -209,11 +220,11 @@ The first sync finished and all history is available
 | `type` | `account.initial_sync.completed` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -285,11 +296,11 @@ The first sync stopped with an error
 | `type` | `account.initial_sync.failed` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -361,11 +372,11 @@ The first sync of a newly connected account started
 | `type` | `account.initial_sync.running` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -437,11 +448,11 @@ API access to an account was locked
 | `type` | `account.locked` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -513,11 +524,11 @@ An existing account was signed in again or reconfigured
 | `type` | `account.reconnect` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -538,10 +549,8 @@ An existing account was signed in again or reconfigured
     account_scope_id?: string | null,
     metadata?: {
       connection_method?: string | null,
-      products_connection_status?: {
-      } | null,
-      custom_data?: {
-      } | null
+      products_connection_status?: Record<string, string> | null,
+      custom_data?: Record<string, string> | null
     } | null
   },
   state?: string | null
@@ -580,10 +589,8 @@ An existing account was signed in again or reconfigured
       account_scope_id?: string | null,
       metadata?: {
         connection_method?: string | null,
-        products_connection_status?: {
-        } | null,
-        custom_data?: {
-        } | null
+        products_connection_status?: Record<string, string> | null,
+        custom_data?: Record<string, string> | null
       } | null
     },
     state?: string | null
@@ -627,11 +634,11 @@ An account was removed from Unipile
 | `type` | `account.remove` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -707,11 +714,11 @@ A multi-product account has one product running and another interrupted
 | `type` | `account.status.degraded` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -787,11 +794,11 @@ An account needs signing in again; send a reconnect link from accounts.createAut
 | `type` | `account.status.disconnected` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -865,11 +872,11 @@ An account is interrupted by a Unipile, proxy or provider problem
 | `type` | `account.status.errored` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -945,11 +952,11 @@ A multi-product account has one product running and another needing sign-in
 | `type` | `account.status.partial` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1023,11 +1030,11 @@ An account (or one of its products) is working again
 | `type` | `account.status.running` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1101,11 +1108,11 @@ API access to an account was restored
 | `type` | `account.unlocked` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1179,11 +1186,11 @@ A calendar event was deleted
 | `type` | `calendar.event.delete` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1257,11 +1264,11 @@ A calendar event was created or the account was invited (Google and Outlook can 
 | `type` | `calendar.event.new` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1343,11 +1350,11 @@ A calendar event was changed
 | `type` | `calendar.event.update` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1431,11 +1438,11 @@ A calendar was created
 | `type` | `calendar.create` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1511,11 +1518,11 @@ A calendar was deleted
 | `type` | `calendar.delete` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1587,11 +1594,11 @@ A calendar was changed
 | `type` | `calendar.update` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1669,11 +1676,11 @@ A chat was deleted
 | `type` | `chat.delete` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1745,11 +1752,11 @@ A chat changed: folders, unread count, archive state, participants or name
 | `type` | `chat.update` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1819,8 +1826,7 @@ A chat changed: folders, unread count, archive state, participants or name
       is_verified?: boolean | null
     } | null
   }[] | null,
-  last_message?: {
-  } | null
+  last_message?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1905,8 +1911,7 @@ A chat changed: folders, unread count, archive state, participants or name
         is_verified?: boolean | null
       } | null
     }[] | null,
-    last_message?: {
-    } | null
+    last_message?: Record<string, any> | null
   }
 }
 ```
@@ -1949,11 +1954,11 @@ An email draft was deleted
 | `type` | `email.draft.delete` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2025,11 +2030,11 @@ An email draft was created
 | `type` | `email.draft.new` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2109,11 +2114,11 @@ An email folder or label was created
 | `type` | `email.folder.create` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2191,11 +2196,11 @@ An email folder or label was deleted
 | `type` | `email.folder.delete` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2267,11 +2272,11 @@ An email folder or label was changed
 | `type` | `email.folder.update` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2351,11 +2356,11 @@ A bounce notice arrived for an email the account sent (sent instead of email.new
 | `type` | `email.new.bounce` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2451,11 +2456,11 @@ An email left a folder: deleted, trashed or moved elsewhere
 | `type` | `email.delete` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2533,11 +2538,11 @@ An email was added to a folder: received, sent, or moved in (check folder_id). G
 | `type` | `email.new` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2627,11 +2632,11 @@ Someone started following the account owner (LinkedIn can report it up to 6 hour
 | `type` | `follower.new` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2745,11 +2750,11 @@ A message was deleted
 | `type` | `message.delete` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2823,11 +2828,11 @@ A message was received or sent in a chat (check payload.is_sender)
 | `type` | `message.new` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2872,8 +2877,7 @@ A message was received or sent in a chat (check payload.is_sender)
       is_verified?: boolean | null
     } | null
   } | null,
-  quoted?: {
-  } | null
+  quoted?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -2933,8 +2937,7 @@ A message was received or sent in a chat (check payload.is_sender)
         is_verified?: boolean | null
       } | null
     } | null,
-    quoted?: {
-    } | null
+    quoted?: Record<string, any> | null
   }
 }
 ```
@@ -2975,11 +2978,11 @@ A reaction was removed from a message
 | `type` | `message.reaction.delete` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2989,8 +2992,7 @@ A reaction was removed from a message
 {
   chat_id: string,
   message_id: string,
-  reaction?: {
-  } | null
+  reaction?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -3015,8 +3017,7 @@ A reaction was removed from a message
   payload: {
     chat_id: string,
     message_id: string,
-    reaction?: {
-    } | null
+    reaction?: Record<string, any> | null
   }
 }
 ```
@@ -3057,11 +3058,11 @@ Someone reacted to a message
 | `type` | `message.reaction.new` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3071,8 +3072,7 @@ Someone reacted to a message
 {
   chat_id: string,
   message_id: string,
-  reaction?: {
-  } | null
+  reaction?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -3097,8 +3097,7 @@ Someone reacted to a message
   payload: {
     chat_id: string,
     message_id: string,
-    reaction?: {
-    } | null
+    reaction?: Record<string, any> | null
   }
 }
 ```
@@ -3139,11 +3138,11 @@ A sent message was delivered to someone (can fire once per member in group chats
 | `type` | `message.receipt.delivery` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3221,11 +3220,11 @@ Someone read a message the account sent
 | `type` | `message.receipt.read` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3303,11 +3302,11 @@ A message was edited
 | `type` | `message.update` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3352,8 +3351,7 @@ A message was edited
       is_verified?: boolean | null
     } | null
   } | null,
-  quoted?: {
-  } | null
+  quoted?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -3413,8 +3411,7 @@ A message was edited
         is_verified?: boolean | null
       } | null
     } | null,
-    quoted?: {
-    } | null
+    quoted?: Record<string, any> | null
   }
 }
 ```
@@ -3457,11 +3454,11 @@ A new 1st-degree relation, usually an accepted invitation (LinkedIn can report i
 | `type` | `relation.new` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3585,11 +3582,11 @@ Someone clicked a tracked link in an email
 | `type` | `tracking.click` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3669,11 +3666,11 @@ Someone opened an email sent with open tracking
 | `type` | `tracking.open` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `account_id` | `string` | Yes | Account the event happened on (acc_…) |
-| `account_provider` | `string` | No | — |
-| `account_name` | `string` | No | — |
-| `account_scope_id` | `string` | No | — |
-| `application_id` | `string` | No | — |
-| `application_production` | `boolean` | No | — |
+| `account_provider` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `account_scope_id` | `string \| null` | No | — |
+| `application_id` | `string \| null` | No | — |
+| `application_production` | `boolean \| null` | No | — |
 | `payload` | `object` | Yes | — |
 
 <AccordionGroup>

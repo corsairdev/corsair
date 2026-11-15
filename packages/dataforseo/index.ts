@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { packCredentials } from './client';
+import { isWholeCredential, packCredentials } from './client';
 import {
 	Account,
 	Ai,
@@ -400,7 +400,9 @@ const dataforseoEndpointMeta = {
 >;
 
 // HTTP Basic auth: the API key field holds the DataForSEO login and
-// `api_secret` holds the API password.
+// `api_secret` holds the API password. A key field holding the whole
+// `login:password` (or the dashboard's base64 of it) works with no
+// `api_secret`, for forms that have only one field.
 export const dataforseoAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id', 'api_secret'] as const,
@@ -453,10 +455,13 @@ export function dataforseo<const T extends DataForSeoPluginOptions>(
 			}
 			const login = options.key ?? (await ctx.keys.get_api_key());
 			const password = options.secret ?? (await ctx.keys.get_api_secret());
-			if (!login || !password) {
-				throw new AuthMissingError('dataforseo', 'api_key');
+			if (login && password) {
+				return packCredentials(login, password);
 			}
-			return packCredentials(login, password);
+			if (login && isWholeCredential(login)) {
+				return login;
+			}
+			throw new AuthMissingError('dataforseo', 'api_key');
 		},
 	} satisfies InternalDataForSeoPlugin;
 }

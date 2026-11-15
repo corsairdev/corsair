@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Celigo: every `celigo.api.*` operation with input and output types."
+title: "Celigo API reference"
+sidebarTitle: "API"
+description: "API reference for the Celigo plugin in Corsair: every `celigo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `celigo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -217,40 +216,12 @@ await corsair.celigo.api.connections.evaluateVirtualImportMap({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Celigo resource _id |
-| `import` | `object` | Yes | Import definition to run without saving it |
-| `data` | `object[]` | Yes | Records to send through the import |
-
-<AccordionGroup>
-<Accordion title="import full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `import` | `Record<string, any>` | Yes | Import definition to run without saving it |
+| `data` | `Record<string, any>[]` | Yes | Records to send through the import |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `any[] \| Record<string, any>`
 
 
 ---
@@ -272,17 +243,7 @@ await corsair.celigo.api.connections.executeVirtualExport({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Celigo resource _id |
-| `export` | `object` | Yes | Export definition to run without saving it |
-
-<AccordionGroup>
-<Accordion title="export full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `export` | `Record<string, any>` | Yes | Export definition to run without saving it |
 
 
 
@@ -290,18 +251,8 @@ await corsair.celigo.api.connections.executeVirtualExport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `dataURIs` | `string \| null[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
+| `dataURIs` | `(string \| null)[]` | No | — |
 
 
 
@@ -324,26 +275,8 @@ await corsair.celigo.api.connections.executeVirtualExportPaged({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Celigo resource _id |
-| `export` | `object` | Yes | Export definition to run without saving it |
-| `pagedExportState` | `object` | No | pagedExportState from the previous page; omit for the first page |
-
-<AccordionGroup>
-<Accordion title="export full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="pagedExportState full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `export` | `Record<string, any>` | Yes | Export definition to run without saving it |
+| `pagedExportState` | `Record<string, any>` | No | pagedExportState from the previous page; omit for the first page |
 
 
 
@@ -351,27 +284,9 @@ await corsair.celigo.api.connections.executeVirtualExportPaged({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `dataURIs` | `string \| null[]` | No | — |
-| `pagedExportState` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="pagedExportState full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
+| `dataURIs` | `(string \| null)[]` | No | — |
+| `pagedExportState` | `Record<string, any>` | No | — |
 
 
 
@@ -394,26 +309,8 @@ await corsair.celigo.api.connections.executeVirtualImport({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Celigo resource _id |
-| `import` | `object` | Yes | Import definition to run without saving it |
-| `data` | `object[]` | Yes | Records to send through the import |
-
-<AccordionGroup>
-<Accordion title="import full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `import` | `Record<string, any>` | Yes | Import definition to run without saving it |
+| `data` | `Record<string, any>[]` | Yes | Records to send through the import |
 
 
 
@@ -426,12 +323,10 @@ await corsair.celigo.api.connections.executeVirtualImport({});
 {
   statusCode?: number,
   id?: string,
-  _json?: {
-  },
+  _json?: Record<string, any>,
   ignored?: boolean,
   stage?: string,
-  errors?: {
-  }[]
+  errors?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -576,17 +471,7 @@ await corsair.celigo.api.connections.getDependencies({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -708,8 +593,7 @@ await corsair.celigo.api.connections.ping({});
 {
   code: number
 } | {
-  errors: {
-  }[]
+  errors: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -750,8 +634,7 @@ await corsair.celigo.api.connections.testVirtual({});
 {
   code: number
 } | {
-  errors: {
-  }[]
+  errors: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1122,17 +1005,7 @@ await corsair.celigo.api.errors.updateTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `errorsToReturn` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="errorsToReturn full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `errorsToReturn` | `Record<string, any>` | No | — |
 
 
 
@@ -1158,21 +1031,11 @@ await corsair.celigo.api.exports.clone({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Celigo resource _id |
 | `name` | `string` | No | — |
-| `connectionMap` | `object` | No | Maps source connection _id to target connection _id |
-
-<AccordionGroup>
-<Accordion title="connectionMap full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `connectionMap` | `Record<string, string>` | No | Maps source connection _id to target connection _id |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1595,22 +1458,12 @@ await corsair.celigo.api.flows.clone({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Celigo resource _id |
 | `name` | `string` | No | — |
-| `connectionMap` | `object` | No | Maps source connection _id to target connection _id |
+| `connectionMap` | `Record<string, string>` | No | Maps source connection _id to target connection _id |
 | `_integrationId` | `string` | Yes | — |
 
-<AccordionGroup>
-<Accordion title="connectionMap full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1803,17 +1656,7 @@ await corsair.celigo.api.flows.getDependencies({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1912,7 +1755,7 @@ await corsair.celigo.api.flows.getLastExportDateTime({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `lastExportDateTime` | `string` | No | — |
+| `lastExportDateTime` | `string \| null` | Yes | — |
 
 
 
@@ -2357,21 +2200,11 @@ await corsair.celigo.api.imports.clone({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Celigo resource _id |
 | `name` | `string` | No | — |
-| `connectionMap` | `object` | No | Maps source connection _id to target connection _id |
-
-<AccordionGroup>
-<Accordion title="connectionMap full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `connectionMap` | `Record<string, string>` | No | Maps source connection _id to target connection _id |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2563,17 +2396,7 @@ await corsair.celigo.api.imports.getDependencies({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2595,17 +2418,7 @@ await corsair.celigo.api.imports.invoke({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Celigo resource _id |
-| `data` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2618,12 +2431,10 @@ await corsair.celigo.api.imports.invoke({});
 {
   statusCode?: number,
   id?: string,
-  _json?: {
-  },
+  _json?: Record<string, any>,
   ignored?: boolean,
   stage?: string,
-  errors?: {
-  }[]
+  errors?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -2773,21 +2584,11 @@ await corsair.celigo.api.integrations.clone({});
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `envId` | `string` | No | — |
-| `connectionMap` | `object` | Yes | Maps source connection _id to target connection _id |
-
-<AccordionGroup>
-<Accordion title="connectionMap full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `connectionMap` | `Record<string, string>` | Yes | Maps source connection _id to target connection _id |
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3013,17 +2814,7 @@ await corsair.celigo.api.integrations.getDependencies({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3629,19 +3420,11 @@ await corsair.celigo.api.processors.generateStructuredFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `rules` | `object` | Yes | — |
-| `options` | `object` | No | — |
+| `options` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="rules full type">
 
 ```ts
@@ -3649,16 +3432,7 @@ await corsair.celigo.api.processors.generateStructuredFile({});
   name: string,
   version: 1 | 2,
   format: delimited | delimited/x12 | delimited/edifact | fixed,
-  rules: {
-  }[]
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
+  rules: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3695,18 +3469,10 @@ await corsair.celigo.api.processors.parseCsv({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `string` | Yes | — |
-| `rules` | `object` | No | columnDelimiter, rowDelimiter, hasHeaderRow, rowsToSkip, keyColumns, ... |
+| `rules` | `Record<string, any>` | No | columnDelimiter, rowDelimiter, hasHeaderRow, rowsToSkip, keyColumns, ... |
 | `options` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="options full type">
 
 ```ts
@@ -3748,26 +3514,8 @@ await corsair.celigo.api.processors.parseStructuredFile({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `string` | Yes | — |
-| `rules` | `object` | Yes | fileDefinition or _fileDefinitionId, resourcePath |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>` | Yes | fileDefinition or _fileDefinitionId, resourcePath |
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -3800,17 +3548,7 @@ await corsair.celigo.api.processors.parseXml({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `string` | Yes | — |
-| `rules` | `object` | No | resourcePath, groupByFields, sortByFields, doc |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>` | No | resourcePath, groupByFields, sortByFields, doc |
 
 
 
@@ -3960,18 +3698,8 @@ await corsair.celigo.api.scripts.getLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `logs` | `object[]` | Yes | — |
+| `logs` | `Record<string, any>[]` | Yes | — |
 | `nextPageURL` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="logs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4156,17 +3884,7 @@ await corsair.celigo.api.state.get({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4193,17 +3911,7 @@ await corsair.celigo.api.state.getForResource({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| any[]`
 
 
 ---
@@ -4281,17 +3989,7 @@ await corsair.celigo.api.state.set({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `key` | `string` | Yes | State key |
-| `value` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+| `value` | `Record<string, any> \| any[]` | Yes | — |
 
 
 
@@ -4324,17 +4022,7 @@ await corsair.celigo.api.state.setForResource({});
 | `resourceType` | `exports \| imports \| integrations` | Yes | — |
 | `resourceId` | `string` | Yes | _id of the export, import or integration |
 | `key` | `string` | Yes | State key |
-| `value` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-} | any[]
-```
-</Accordion>
-</AccordionGroup>
+| `value` | `Record<string, any> \| any[]` | Yes | — |
 
 
 

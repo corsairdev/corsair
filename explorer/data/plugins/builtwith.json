@@ -38,8 +38,9 @@
           },
           {
             "key": "format",
-            "optional": false,
-            "type": "txt | zip"
+            "optional": true,
+            "type": "txt | zip",
+            "description": "Defaults to \"txt\"."
           }
         ]
       },
@@ -181,7 +182,7 @@
           {
             "key": "Results",
             "optional": true,
-            "type": "{ Lookup?: string, Result?: { IsDB?: string, Spend?: number, SalesRevenue?: number, Paths?: { Domain?: string, Url?: string, SubDomain?: string, FirstIndexed?: string | number, LastIndexed?: string | number, Technologies?: { Name: string, Id?: number, Parent?: string, Description?: string, Link?: string, confidence?: number, IsPremium?: string, Tag?: string, Categories?: string[], FirstDetected?: string | number, LastDetected?: string | number }[] }[] }, Meta?: { ARank?: number | null, QRank?: number | null, Majestic?: number | null, Umbrella?: number | null, CompanyName?: string | null, City?: string | null, Postcode?: string | null, State?: string | null, Country?: string | null, Vertical?: string | null, PrimaryBusiness?: string | null, Telephones?: string[] | null, Emails?: string[] | null, Social?: string[] | null, company_reg?: { type: string, number: string }[] | null }, Attributes?: {}, FirstIndexed?: string | number, LastIndexed?: string | number }[]"
+            "type": "{ Lookup?: string, Result?: { IsDB?: string, Spend?: number, SalesRevenue?: number, Paths?: { Domain?: string, Url?: string, SubDomain?: string, FirstIndexed?: string | number, LastIndexed?: string | number, Technologies?: { Name: string, Id?: number, Parent?: string, Description?: string, Link?: string, confidence?: number, IsPremium?: string, Tag?: string, Categories?: string[], FirstDetected?: string | number, LastDetected?: string | number }[] }[] }, Meta?: { ARank?: number | null, QRank?: number | null, Majestic?: number | null, Umbrella?: number | null, CompanyName?: string | null, City?: string | null, Postcode?: string | null, State?: string | null, Country?: string | null, Vertical?: string | null, PrimaryBusiness?: string | null, Telephones?: string[] | null, Emails?: string[] | null, Social?: string[] | null, company_reg?: { type: string, number: string }[] | null }, Attributes?: Record<string, number | null>, FirstIndexed?: string | number, LastIndexed?: string | number }[]"
           },
           {
             "key": "Errors",
@@ -242,12 +243,12 @@
           {
             "key": "edgar",
             "optional": true,
-            "type": "{ companyName?: string, cik?: string | number, sic?: string | number, exchanges?: string[], tickers?: string[], financials?: { periodStartDate?: string, periodEndDate?: string, revenue?: number, operatingIncome?: number, netIncome?: number, assets?: number, liabilities?: number, cash?: number, equity?: number }[] }"
+            "type": "{ companyName?: string, cik?: string | number, sic?: string | number, exchanges?: string[], tickers?: string[], financials?: { periodStartDate?: string, periodEndDate?: string, revenue?: number, operatingIncome?: number, netIncome?: number, assets?: number, liabilities?: number, cash?: number, equity?: number }[] } | null"
           },
           {
             "key": "companyhouse",
             "optional": true,
-            "type": "{ companyName?: string, regNo?: string | number, accountingType?: string, sic?: string | number, financials?: { balanceSheetDate?: string, debtors?: number, fixedAssets?: number, currentAssets?: number, creditors?: number }[] }"
+            "type": "{ companyName?: string, regNo?: string | number, accountingType?: string, sic?: string | number, financials?: { balanceSheetDate?: string, debtors?: number, fixedAssets?: number, currentAssets?: number, creditors?: number }[] } | null"
           },
           {
             "key": "Errors",
@@ -283,17 +284,17 @@
           {
             "key": "first",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "last",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "groups",
             "optional": true,
-            "type": "{ name: string, live?: number | null, dead?: number | null, latest?: number | null, oldest?: number | null, categories?: { name: string, live?: number | null, dead?: number | null, latest?: number | null, oldest?: number | null }[] | null }[]"
+            "type": "{ name: string, live?: number | null, dead?: number | null, latest?: number | null, oldest?: number | null, categories?: { name: string, live?: number | null, dead?: number | null, latest?: number | null, oldest?: number | null }[] | null }[] | null"
           }
         ]
       }
@@ -995,6 +996,11 @@
         },
         {
           "field": "lookup",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

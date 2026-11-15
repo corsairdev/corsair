@@ -1,0 +1,40 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "01a01962-0a8c-0000-7870-fe060231244a",
+      "short_id": "tcqaFJLe",
+      "title": "Example notebook",
+      "deleted": false,
+      "created_at": "2026-08-19T09:37:30.764663Z",
+      "created_by": {
+        "id": 636283,
+        "uuid": "019f5aed-1469-0000-9e4e-e282cc6ee87f",
+        "distinct_id": "distinct-id-1",
+        "first_name": "Test",
+        "last_name": "Test",
+        "email": "user@example.com",
+        "is_email_verified": true,
+        "hedgehog_config": null,
+        "role_at_organization": "engineering"
+      },
+      "last_modified_at": "2026-08-19T09:37:30.764337Z",
+      "last_modified_by": {
+        "id": 636283,
+        "uuid": "019f5aed-1469-0000-9e4e-e282cc6ee87f",
+        "distinct_id": "distinct-id-1",
+        "first_name": "Test",
+        "last_name": "Test",
+        "email": "user@example.com",
+        "is_email_verified": true,
+        "hedgehog_config": null,
+        "role_at_organization": "engineering"
+      },
+      "user_access_level": "editor",
+      "content": null,
+      "text_content": null
+    }
+  ]
+}

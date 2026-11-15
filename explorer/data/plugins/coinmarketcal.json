@@ -74,7 +74,7 @@
           {
             "key": "rank",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tracked",
@@ -84,22 +84,22 @@
           {
             "key": "iconUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "upcomingCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "majorCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "peakImpact",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -186,7 +186,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
@@ -196,7 +196,7 @@
           {
             "key": "dateEnd",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dateType",
@@ -226,27 +226,27 @@
           {
             "key": "impact",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "impactSummary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sourceUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "snapshotUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastVerifiedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",

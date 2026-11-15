@@ -1,12 +1,11 @@
 ---
-title: Database
-description: "Daffy local sync: searchable entities, `.search()` filters, and operators."
+title: "Daffy database"
+sidebarTitle: "Database"
+description: "The Daffy plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally."
 ---
 
-The Daffy plugin syncs data locally. Use `corsair.daffy.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+No local `.search()` operations are available for Daffy. To read its data, call the [API operations](/plugins/daffy/api), which return what Daffy has at that moment.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
-
-

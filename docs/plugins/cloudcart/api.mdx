@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Cloudcart: every `cloudcart.api.*` operation with input and output types."
+title: "CloudCart API reference"
+sidebarTitle: "API"
+description: "API reference for the CloudCart plugin in Corsair: every `cloudcart.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `cloudcart.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -38,17 +37,7 @@ await corsair.cloudcart.api.blogs.createBlogCategory({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -89,17 +78,7 @@ await corsair.cloudcart.api.blogs.createBlogPost({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -140,17 +119,7 @@ await corsair.cloudcart.api.blogs.createBlogTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -191,17 +160,7 @@ await corsair.cloudcart.api.blogs.deleteBlogCategory({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -249,17 +208,7 @@ await corsair.cloudcart.api.blogs.deleteBlogPost({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -307,17 +256,7 @@ await corsair.cloudcart.api.blogs.deleteBlogTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -365,17 +304,7 @@ await corsair.cloudcart.api.blogs.getBlogAuthor({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -416,17 +345,7 @@ await corsair.cloudcart.api.blogs.getBlogCategory({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -467,17 +386,7 @@ await corsair.cloudcart.api.blogs.getBlogPost({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -518,17 +427,7 @@ await corsair.cloudcart.api.blogs.getBlogTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -569,17 +468,7 @@ await corsair.cloudcart.api.blogs.listBlogCategories({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -620,17 +509,7 @@ await corsair.cloudcart.api.blogs.listBlogPosts({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -671,17 +550,7 @@ await corsair.cloudcart.api.blogs.listBlogTags({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -722,17 +591,7 @@ await corsair.cloudcart.api.blogs.updateBlogCategory({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -773,17 +632,7 @@ await corsair.cloudcart.api.blogs.updateBlogPost({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -824,17 +673,7 @@ await corsair.cloudcart.api.blogs.updateBlogTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -877,18 +716,8 @@ await corsair.cloudcart.api.carts.addToCart({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `quantity` | `number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -929,17 +758,7 @@ await corsair.cloudcart.api.carts.clearCart({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -987,18 +806,8 @@ await corsair.cloudcart.api.carts.getCart({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `cart_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1039,17 +848,7 @@ await corsair.cloudcart.api.carts.removeFromCart({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1097,18 +896,8 @@ await corsair.cloudcart.api.carts.updateCartItem({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `quantity` | `number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1151,17 +940,7 @@ await corsair.cloudcart.api.categories.addCategoryProperties({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1209,17 +988,7 @@ await corsair.cloudcart.api.categories.createCategory({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1260,17 +1029,7 @@ await corsair.cloudcart.api.categories.deleteCategory({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1318,17 +1077,7 @@ await corsair.cloudcart.api.categories.getCategory({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1369,17 +1118,7 @@ await corsair.cloudcart.api.categories.getCategoryProperties({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1420,17 +1159,7 @@ await corsair.cloudcart.api.categories.listCategories({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1471,17 +1200,7 @@ await corsair.cloudcart.api.categories.updateCategory({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1524,17 +1243,7 @@ await corsair.cloudcart.api.customers.createCustomer({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1575,17 +1284,7 @@ await corsair.cloudcart.api.customers.createCustomerBillingAddress({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1626,17 +1325,7 @@ await corsair.cloudcart.api.customers.createCustomerGroup({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1677,17 +1366,7 @@ await corsair.cloudcart.api.customers.createCustomerShippingAddress({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1728,17 +1407,7 @@ await corsair.cloudcart.api.customers.createCustomerTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1779,17 +1448,7 @@ await corsair.cloudcart.api.customers.deleteCustomer({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1837,17 +1496,7 @@ await corsair.cloudcart.api.customers.deleteCustomerBillingAddress({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1895,17 +1544,7 @@ await corsair.cloudcart.api.customers.deleteCustomerGroup({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -1953,17 +1592,7 @@ await corsair.cloudcart.api.customers.deleteCustomerShippingAddress({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2011,17 +1640,7 @@ await corsair.cloudcart.api.customers.deleteCustomerTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2069,17 +1688,7 @@ await corsair.cloudcart.api.customers.getCustomer({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2120,17 +1729,7 @@ await corsair.cloudcart.api.customers.getCustomerBillingAddress({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2171,17 +1770,7 @@ await corsair.cloudcart.api.customers.getCustomerGroup({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2222,17 +1811,7 @@ await corsair.cloudcart.api.customers.getCustomerGroupsCustomers({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2273,17 +1852,7 @@ await corsair.cloudcart.api.customers.getCustomerShippingAddress({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2324,17 +1893,7 @@ await corsair.cloudcart.api.customers.getCustomerTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2375,17 +1934,7 @@ await corsair.cloudcart.api.customers.listCustomerBillingAddresses({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2426,17 +1975,7 @@ await corsair.cloudcart.api.customers.listCustomerGroups({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2477,17 +2016,7 @@ await corsair.cloudcart.api.customers.listCustomers({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2528,17 +2057,7 @@ await corsair.cloudcart.api.customers.listCustomerShippingAddresses({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2579,17 +2098,7 @@ await corsair.cloudcart.api.customers.listCustomerTags({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2630,17 +2139,7 @@ await corsair.cloudcart.api.customers.updateCustomer({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2681,17 +2180,7 @@ await corsair.cloudcart.api.customers.updateCustomerBillingAddress({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2732,17 +2221,7 @@ await corsair.cloudcart.api.customers.updateCustomerGroup({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2783,17 +2262,7 @@ await corsair.cloudcart.api.customers.updateCustomerShippingAddress({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2834,17 +2303,7 @@ await corsair.cloudcart.api.customers.updateCustomerTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2887,17 +2346,7 @@ await corsair.cloudcart.api.discounts.createDiscount({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2938,17 +2387,7 @@ await corsair.cloudcart.api.discounts.createDiscountCode({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -2989,17 +2428,7 @@ await corsair.cloudcart.api.discounts.createProductToDiscount({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3040,17 +2469,7 @@ await corsair.cloudcart.api.discounts.deleteDiscount({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3098,17 +2517,7 @@ await corsair.cloudcart.api.discounts.deleteDiscountCode({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3156,17 +2565,7 @@ await corsair.cloudcart.api.discounts.deleteProductToDiscount({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3214,17 +2613,7 @@ await corsair.cloudcart.api.discounts.generateDiscountCodes({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3265,17 +2654,7 @@ await corsair.cloudcart.api.discounts.listDiscountCodes({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3316,17 +2695,7 @@ await corsair.cloudcart.api.discounts.updateDiscountCode({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3369,17 +2738,7 @@ await corsair.cloudcart.api.misc.createRedirect({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3420,17 +2779,7 @@ await corsair.cloudcart.api.misc.createVendor({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3471,17 +2820,7 @@ await corsair.cloudcart.api.misc.deleteRedirect({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3529,17 +2868,7 @@ await corsair.cloudcart.api.misc.deleteVendor({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3587,17 +2916,7 @@ await corsair.cloudcart.api.misc.getPaymentMethods({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3638,17 +2957,7 @@ await corsair.cloudcart.api.misc.getShippingMethods({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3689,17 +2998,7 @@ await corsair.cloudcart.api.misc.getVendor({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3740,17 +3039,7 @@ await corsair.cloudcart.api.misc.listPaymentProviders({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3791,17 +3080,7 @@ await corsair.cloudcart.api.misc.listRedirects({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3842,17 +3121,7 @@ await corsair.cloudcart.api.misc.listShippingProviders({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3893,17 +3162,7 @@ await corsair.cloudcart.api.misc.listVendors({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3944,17 +3203,7 @@ await corsair.cloudcart.api.misc.updateVendor({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -3997,17 +3246,7 @@ await corsair.cloudcart.api.orders.createOrder({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4048,17 +3287,7 @@ await corsair.cloudcart.api.orders.deleteOrder({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4106,17 +3335,7 @@ await corsair.cloudcart.api.orders.getOrder({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4157,17 +3376,7 @@ await corsair.cloudcart.api.orders.listOrderBillingAddresses({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4208,17 +3417,7 @@ await corsair.cloudcart.api.orders.listOrderPayments({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4259,17 +3458,7 @@ await corsair.cloudcart.api.orders.listOrderProducts({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4310,17 +3499,7 @@ await corsair.cloudcart.api.orders.listOrderProductsOptions({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4361,17 +3540,7 @@ await corsair.cloudcart.api.orders.listOrders({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4412,17 +3581,7 @@ await corsair.cloudcart.api.orders.listOrderShipping({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4463,17 +3622,7 @@ await corsair.cloudcart.api.orders.listOrderShippingAddresses({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4514,17 +3663,7 @@ await corsair.cloudcart.api.orders.listOrderStatus({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4565,17 +3704,7 @@ await corsair.cloudcart.api.orders.updateOrder({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4618,17 +3747,7 @@ await corsair.cloudcart.api.products.createImage({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4669,17 +3788,7 @@ await corsair.cloudcart.api.products.createLinkedProducts({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4727,17 +3836,7 @@ await corsair.cloudcart.api.products.createProduct({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4778,17 +3877,7 @@ await corsair.cloudcart.api.products.deleteImage({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4836,17 +3925,7 @@ await corsair.cloudcart.api.products.deleteLinkedProducts({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4894,17 +3973,7 @@ await corsair.cloudcart.api.products.deleteProduct({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -4952,17 +4021,7 @@ await corsair.cloudcart.api.products.getImage({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5003,17 +4062,7 @@ await corsair.cloudcart.api.products.getProduct({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5054,17 +4103,7 @@ await corsair.cloudcart.api.products.getProductsLinkedProduct({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5105,17 +4144,7 @@ await corsair.cloudcart.api.products.getProductsLinkedProducts({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5156,17 +4185,7 @@ await corsair.cloudcart.api.products.getProductWithRelations({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5207,17 +4226,7 @@ await corsair.cloudcart.api.products.listImages({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5258,17 +4267,7 @@ await corsair.cloudcart.api.products.listProducts({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5309,17 +4308,7 @@ await corsair.cloudcart.api.products.updateLinkedProduct({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5367,17 +4356,7 @@ await corsair.cloudcart.api.products.updateProduct({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5420,17 +4399,7 @@ await corsair.cloudcart.api.properties.createProductsPropertyOptions({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5478,17 +4447,7 @@ await corsair.cloudcart.api.properties.createProperty({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5529,17 +4488,7 @@ await corsair.cloudcart.api.properties.createPropertyOption({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5580,17 +4529,7 @@ await corsair.cloudcart.api.properties.deleteProperty({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5638,17 +4577,7 @@ await corsair.cloudcart.api.properties.deletePropertyOption({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5696,17 +4625,7 @@ await corsair.cloudcart.api.properties.getProperty({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5747,17 +4666,7 @@ await corsair.cloudcart.api.properties.getPropertyOption({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5798,17 +4707,7 @@ await corsair.cloudcart.api.properties.getPropertyOptionsRelationship({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5849,17 +4748,7 @@ await corsair.cloudcart.api.properties.listProperties({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5900,17 +4789,7 @@ await corsair.cloudcart.api.properties.listPropertyOptions({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -5951,17 +4830,7 @@ await corsair.cloudcart.api.properties.updateProperty({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6002,17 +4871,7 @@ await corsair.cloudcart.api.properties.updatePropertyOption({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6055,17 +4914,7 @@ await corsair.cloudcart.api.subscribers.createSubscriber({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6106,17 +4955,7 @@ await corsair.cloudcart.api.subscribers.createSubscriberChannel({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6157,17 +4996,7 @@ await corsair.cloudcart.api.subscribers.createSubscriberTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6208,17 +5037,7 @@ await corsair.cloudcart.api.subscribers.deleteSubscriber({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6266,17 +5085,7 @@ await corsair.cloudcart.api.subscribers.deleteSubscribersChannel({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6324,17 +5133,7 @@ await corsair.cloudcart.api.subscribers.deleteSubscriberTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6382,17 +5181,7 @@ await corsair.cloudcart.api.subscribers.getSubscriber({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6433,17 +5222,7 @@ await corsair.cloudcart.api.subscribers.getSubscribersChannel({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6484,17 +5263,7 @@ await corsair.cloudcart.api.subscribers.getSubscriberTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6535,17 +5304,7 @@ await corsair.cloudcart.api.subscribers.listSubscribers({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6586,17 +5345,7 @@ await corsair.cloudcart.api.subscribers.listSubscribersChannels({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6637,17 +5386,7 @@ await corsair.cloudcart.api.subscribers.listSubscribersTags({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6688,17 +5427,7 @@ await corsair.cloudcart.api.subscribers.updateSubscriber({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6739,17 +5468,7 @@ await corsair.cloudcart.api.subscribers.updateSubscribersChannel({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6790,17 +5509,7 @@ await corsair.cloudcart.api.subscribers.updateSubscriberTag({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6843,17 +5552,7 @@ await corsair.cloudcart.api.variants.createVariant({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6894,17 +5593,7 @@ await corsair.cloudcart.api.variants.createVariantOption({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6945,17 +5634,7 @@ await corsair.cloudcart.api.variants.createVariantOptions({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -6996,17 +5675,7 @@ await corsair.cloudcart.api.variants.createVariantParameter({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7047,17 +5716,7 @@ await corsair.cloudcart.api.variants.createVariantParameterForVariant({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7098,17 +5757,7 @@ await corsair.cloudcart.api.variants.deleteVariant({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7156,17 +5805,7 @@ await corsair.cloudcart.api.variants.deleteVariantOption({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7214,17 +5853,7 @@ await corsair.cloudcart.api.variants.deleteVariantParameter({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7272,17 +5901,7 @@ await corsair.cloudcart.api.variants.getVariant({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7323,17 +5942,7 @@ await corsair.cloudcart.api.variants.getVariantOption({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7374,17 +5983,7 @@ await corsair.cloudcart.api.variants.getVariantParameter({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7425,17 +6024,7 @@ await corsair.cloudcart.api.variants.listVariantOptions({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7476,17 +6065,7 @@ await corsair.cloudcart.api.variants.listVariantParameters({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7527,17 +6106,7 @@ await corsair.cloudcart.api.variants.listVariants({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7578,17 +6147,7 @@ await corsair.cloudcart.api.variants.updateVariant({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7629,17 +6188,7 @@ await corsair.cloudcart.api.variants.updateVariantOption({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7680,17 +6229,7 @@ await corsair.cloudcart.api.variants.updateVariantParameter({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7733,17 +6272,7 @@ await corsair.cloudcart.api.webhooks.createWebhook({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7784,17 +6313,7 @@ await corsair.cloudcart.api.webhooks.deleteWebhook({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7842,17 +6361,7 @@ await corsair.cloudcart.api.webhooks.getWebhook({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7893,17 +6402,7 @@ await corsair.cloudcart.api.webhooks.listWebhooks({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
@@ -7944,17 +6443,7 @@ await corsair.cloudcart.api.webhooks.updateWebhook({});
 | `page[size]` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `include` | `string` | No | — |
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 

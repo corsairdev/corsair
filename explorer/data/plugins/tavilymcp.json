@@ -49,7 +49,7 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chunks_per_source",
@@ -84,7 +84,7 @@
           {
             "key": "categories",
             "optional": true,
-            "type": "Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media | People[]"
+            "type": "(Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media | People)[]"
           },
           {
             "key": "extract_depth",
@@ -271,7 +271,7 @@
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "select_paths",
@@ -301,7 +301,7 @@
           {
             "key": "categories",
             "optional": true,
-            "type": "Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media | People[]"
+            "type": "(Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media | People)[]"
           },
           {
             "key": "timeout",
@@ -367,7 +367,7 @@
           {
             "key": "output_schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "citation_format",
@@ -422,22 +422,22 @@
           {
             "key": "input",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "model",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any> | null"
           },
           {
             "key": "sources",
@@ -447,7 +447,7 @@
           {
             "key": "response_time",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "usage",
@@ -493,17 +493,17 @@
           {
             "key": "time_range",
             "optional": true,
-            "type": "day | week | month | year | d | w | m | y"
+            "type": "day | week | month | year | d | w | m | y | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "include_answer",
@@ -543,7 +543,7 @@
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_parameters",
@@ -578,12 +578,12 @@
           {
             "key": "answer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "follow_up_questions",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "images",
@@ -613,7 +613,7 @@
           {
             "key": "auto_parameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }

@@ -33,6 +33,12 @@ pnpm build:explorer-catalog
 Commit the resulting `explorer/data/catalog.json` and `explorer/data/plugins/`
 alongside your deploy.
 
+You rarely need to run this by hand. When a merge to main changes a plugin, the
+catalog bot (`.github/workflows/catalog-bot.yml`) rebuilds the catalog, gets an
+icon for each new plugin and keeps one PR open on `bot/catalog`. A person checks
+the icons and merges it. That merge starts Hub's `catalog-sync.yml`, which opens
+the same kind of PR in Hub. Contributors don't need to touch `explorer/`.
+
 ## Setup
 
 One-time, from inside this folder:

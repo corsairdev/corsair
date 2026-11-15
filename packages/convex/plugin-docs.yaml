@@ -1,5 +1,5 @@
 displayName: Convex
-description: Convex plugin for Corsair
+description: "Reactive backend platform. Manage projects, deployments and deploy keys, delete custom domains, read token details and the available deployment classes and regions, and run query batches, read query timestamps and list log streams on a deployment."
 overviewNote: |
   Convex is a reactive backend platform for TypeScript apps. This plugin wraps the
   Convex Management API (https://api.convex.dev/v1) for teams, projects,

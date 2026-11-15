@@ -164,7 +164,7 @@
           {
             "key": "extractors",
             "optional": false,
-            "type": "entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling[]"
+            "type": "(entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling)[]"
           }
         ]
       },
@@ -305,7 +305,7 @@
           {
             "key": "extractors",
             "optional": true,
-            "type": "entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling[]"
+            "type": "(entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling)[]"
           }
         ]
       },
@@ -446,7 +446,7 @@
           {
             "key": "extractors",
             "optional": true,
-            "type": "entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling[]"
+            "type": "(entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling)[]"
           },
           {
             "key": "minRelevanceScore",
@@ -762,7 +762,7 @@
           {
             "key": "entries",
             "optional": false,
-            "type": "{ id?: string, text: string, data?: {} }[]"
+            "type": "{ id?: string, text: string, data?: Record<string, string[]> }[]"
           }
         ]
       },
@@ -1032,7 +1032,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{ id: string, text?: string, data?: {} }"
+            "type": "{ id: string, text?: string, data?: Record<string, string[]> }"
           }
         ]
       }
@@ -1133,7 +1133,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{ id: string, text?: string, data?: {} }[] | { entries: { id: string, text?: string, data?: {} }[] }"
+            "type": "{ id: string, text?: string, data?: Record<string, string[]> }[] | { entries: { id: string, text?: string, data?: Record<string, string[]> }[] }"
           },
           {
             "key": "limit",

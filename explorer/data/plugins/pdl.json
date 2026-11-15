@@ -33,8 +33,9 @@
           },
           {
             "key": "text",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           },
           {
             "key": "size",
@@ -64,7 +65,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ count: number, name: string, meta?: {} }[]"
+            "type": "{ count: number, name: string, meta?: Record<string, any> }[]"
           },
           {
             "key": "status",
@@ -212,7 +213,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ found: true, status: number, likelihood: number, company: {} } | { found: false }"
+        "type": "{ found: true, status: number, likelihood: number, company: Record<string, any> } | { found: false }"
       }
     },
     {
@@ -226,7 +227,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "sql",
@@ -266,7 +267,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "total",
@@ -333,7 +334,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ found: true, status: number, data: { ip: { address: string, metadata?: {}, location?: {} }, company?: {}, person?: {} }, dataset_version?: string | number } | { found: false }"
+        "type": "{ found: true, status: number, data: { ip: { address: string, metadata?: Record<string, any>, location?: Record<string, any> }, company?: Record<string, any>, person?: Record<string, any> }, dataset_version?: string | number } | { found: false }"
       }
     },
     {
@@ -392,7 +393,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "size",
@@ -422,7 +423,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "total",
@@ -484,7 +485,7 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ params: {}, metadata?: {} }[]"
+            "type": "{ params: Record<string, any>, metadata?: Record<string, any> }[]"
           },
           {
             "key": "required",
@@ -500,7 +501,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status: number, likelihood?: number, data?: {} | null, metadata?: {}, error?: { type?: string, message?: string } }[]"
+        "type": "{ status: number, likelihood?: number, data?: Record<string, any> | null, metadata?: Record<string, any>, error?: { type?: string, message?: string } }[]"
       }
     },
     {
@@ -640,7 +641,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ found: true, status: number, likelihood: number, data?: {} | null, matched?: string[] } | { found: false }"
+        "type": "{ found: true, status: number, likelihood: number, data: Record<string, any> | null, matched?: string[] } | { found: false }"
       }
     },
     {
@@ -765,7 +766,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ found: true, status: number, matches: { match_score: number, data: {}[], matched_on?: string[] }[] } | { found: false }"
+        "type": "{ found: true, status: number, matches: { match_score: number, data: Record<string, any>[], matched_on?: string[] }[] } | { found: false }"
       }
     },
     {
@@ -779,7 +780,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "sql",
@@ -824,7 +825,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "total",

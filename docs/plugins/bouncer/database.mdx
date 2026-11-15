@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Bouncer local sync: searchable entities, `.search()` filters, and operators."
+title: "Bouncer database"
+sidebarTitle: "Database"
+description: "Bouncer local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Bouncer plugin syncs data locally. Use `corsair.bouncer.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -62,6 +63,9 @@ const rows = await corsair.bouncer.db.domainVerifications.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `acceptAll` | `string` | equals, contains, startsWith, endsWith, in |
+| `disposable` | `string` | equals, contains, startsWith, endsWith, in |
+| `free` | `string` | equals, contains, startsWith, endsWith, in |
 | `dnsType` | `string` | equals, contains, startsWith, endsWith, in |
 | `dnsRecord` | `string` | equals, contains, startsWith, endsWith, in |
 | `provider` | `string` | equals, contains, startsWith, endsWith, in |
@@ -90,7 +94,15 @@ const rows = await corsair.bouncer.db.emailVerifications.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `reason` | `string` | equals, contains, startsWith, endsWith, in |
 | `domainName` | `string` | equals, contains, startsWith, endsWith, in |
+| `domainAcceptAll` | `string` | equals, contains, startsWith, endsWith, in |
+| `domainDisposable` | `string` | equals, contains, startsWith, endsWith, in |
+| `domainFree` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountRole` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountDisabled` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountFullMailbox` | `string` | equals, contains, startsWith, endsWith, in |
 | `dnsType` | `string` | equals, contains, startsWith, endsWith, in |
 | `dnsRecord` | `string` | equals, contains, startsWith, endsWith, in |
 | `provider` | `string` | equals, contains, startsWith, endsWith, in |

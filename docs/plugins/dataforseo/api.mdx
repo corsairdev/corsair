@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for DataForSeo: every `dataforseo.api.*` operation with input and output types."
+title: "DataForSEO API reference"
+sidebarTitle: "API"
+description: "API reference for the DataForSEO plugin in Corsair: every `dataforseo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `dataforseo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -30,14 +29,14 @@ await corsair.dataforseo.api.account.userData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -51,8 +50,7 @@ await corsair.dataforseo.api.account.userData({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     login: string,
     timezone?: string | null,
@@ -63,7 +61,7 @@ await corsair.dataforseo.api.account.userData({});
     backlinks_subscription_expiry_date?: string | null,
     llm_mentions_subscription_expiry_date?: string | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -121,14 +119,14 @@ await corsair.dataforseo.api.ai.chatgptResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -142,8 +140,7 @@ await corsair.dataforseo.api.ai.chatgptResponse({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     model_name?: string | null,
     input_tokens?: number | null,
@@ -167,10 +164,9 @@ await corsair.dataforseo.api.ai.chatgptResponse({});
         }[] | null
       }[] | null
     }[] | null,
-    fan_out_queries?: string[] | {
-    } | null
+    fan_out_queries?: string[] | Record<string, string[]> | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -224,14 +220,14 @@ await corsair.dataforseo.api.ai.geminiResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -245,8 +241,7 @@ await corsair.dataforseo.api.ai.geminiResponse({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     model_name?: string | null,
     input_tokens?: number | null,
@@ -270,10 +265,9 @@ await corsair.dataforseo.api.ai.geminiResponse({});
         }[] | null
       }[] | null
     }[] | null,
-    fan_out_queries?: string[] | {
-    } | null
+    fan_out_queries?: string[] | Record<string, string[]> | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -304,7 +298,7 @@ await corsair.dataforseo.api.ai.mentionsSearch({});
 | `language_name` | `string` | No | — |
 | `language_code` | `string` | No | — |
 | `platform` | `chat_gpt \| google` | No | — |
-| `filters` | `lazy` | No | — |
+| `filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `order_by` | `string[]` | No | — |
 | `limit` | `number` | No | — |
 | `tag` | `string` | No | — |
@@ -334,14 +328,14 @@ await corsair.dataforseo.api.ai.mentionsSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -355,8 +349,7 @@ await corsair.dataforseo.api.ai.mentionsSearch({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     total_count?: number | null,
     offset?: number | null,
@@ -406,7 +399,7 @@ await corsair.dataforseo.api.ai.mentionsSearch({});
       is_web_search_based?: boolean | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -437,13 +430,13 @@ await corsair.dataforseo.api.ai.mentionsTopDomains({});
 | `language_name` | `string` | No | — |
 | `language_code` | `string` | No | — |
 | `platform` | `chat_gpt \| google` | No | — |
-| `filters` | `lazy` | No | — |
+| `filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `order_by` | `string[]` | No | — |
 | `limit` | `number` | No | — |
 | `tag` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `links_scope` | `sources \| search_results` | No | — |
-| `initial_dataset_filters` | `lazy` | No | — |
+| `initial_dataset_filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `internal_list_limit` | `number` | No | — |
 | `include_domains` | `string[]` | No | — |
 | `exclude_domains` | `string[]` | No | — |
@@ -471,14 +464,14 @@ await corsair.dataforseo.api.ai.mentionsTopDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -492,8 +485,7 @@ await corsair.dataforseo.api.ai.mentionsTopDomains({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     total_count?: number | null,
     offset?: number | null,
@@ -582,7 +574,7 @@ await corsair.dataforseo.api.ai.mentionsTopDomains({});
       } | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -635,14 +627,14 @@ await corsair.dataforseo.api.ai.perplexityResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -656,8 +648,7 @@ await corsair.dataforseo.api.ai.perplexityResponse({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     model_name?: string | null,
     input_tokens?: number | null,
@@ -681,10 +672,9 @@ await corsair.dataforseo.api.ai.perplexityResponse({});
         }[] | null
       }[] | null
     }[] | null,
-    fan_out_queries?: string[] | {
-    } | null
+    fan_out_queries?: string[] | Record<string, string[]> | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -726,14 +716,14 @@ await corsair.dataforseo.api.amazon.asin({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -747,8 +737,7 @@ await corsair.dataforseo.api.amazon.asin({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     asin?: string | null,
     type?: string | null,
@@ -799,8 +788,7 @@ await corsair.dataforseo.api.amazon.asin({});
         {
           type: product_information_details_item,
           section_name?: string | null,
-          body?: {
-          } | null
+          body?: Record<string, string | null> | null
         } | {
           type: product_information_text_item,
           section_name?: string | null,
@@ -908,7 +896,7 @@ await corsair.dataforseo.api.amazon.asin({});
       }[] | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -956,14 +944,14 @@ await corsair.dataforseo.api.amazon.products({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -977,8 +965,7 @@ await corsair.dataforseo.api.amazon.products({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     keyword?: string | null,
     type?: string | null,
@@ -993,8 +980,7 @@ await corsair.dataforseo.api.amazon.products({});
     } | null,
     item_types?: string[] | null,
     se_results_count?: number | null,
-    categories?: {
-    } | null,
+    categories?: Record<string, number | null> | null,
     items_count?: number | null,
     items?: (
       {
@@ -1209,7 +1195,7 @@ await corsair.dataforseo.api.amazon.products({});
       }
     )[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1244,14 +1230,14 @@ await corsair.dataforseo.api.appStore.infoResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1265,8 +1251,7 @@ await corsair.dataforseo.api.appStore.infoResult({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     app_id?: string | null,
     se_domain?: string | null,
@@ -1329,7 +1314,7 @@ await corsair.dataforseo.api.appStore.infoResult({});
       }[] | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1371,14 +1356,14 @@ await corsair.dataforseo.api.appStore.infoTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1392,11 +1377,10 @@ await corsair.dataforseo.api.appStore.infoTask({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1429,14 +1413,14 @@ await corsair.dataforseo.api.appStore.reviewsResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1450,8 +1434,7 @@ await corsair.dataforseo.api.appStore.reviewsResult({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     app_id?: string | null,
     type?: string | null,
@@ -1492,7 +1475,7 @@ await corsair.dataforseo.api.appStore.reviewsResult({});
       } | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1536,14 +1519,14 @@ await corsair.dataforseo.api.appStore.reviewsTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1557,11 +1540,10 @@ await corsair.dataforseo.api.appStore.reviewsTask({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1594,14 +1576,14 @@ await corsair.dataforseo.api.appStore.searchResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1615,8 +1597,7 @@ await corsair.dataforseo.api.appStore.searchResult({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     keyword?: string | null,
     se_domain?: string | null,
@@ -1653,7 +1634,7 @@ await corsair.dataforseo.api.appStore.searchResult({});
       is_free?: boolean | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1696,14 +1677,14 @@ await corsair.dataforseo.api.appStore.searchTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1717,11 +1698,10 @@ await corsair.dataforseo.api.appStore.searchTask({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1756,11 +1736,11 @@ await corsair.dataforseo.api.backlinks.anchors({});
 | `backlinks_status_type` | `all \| live \| lost` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `filters` | `lazy` | No | — |
+| `filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `order_by` | `string[]` | No | — |
 | `include_indirect_links` | `boolean` | No | — |
 | `internal_list_limit` | `number` | No | — |
-| `backlinks_filters` | `lazy` | No | — |
+| `backlinks_filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 
 
 
@@ -1768,14 +1748,14 @@ await corsair.dataforseo.api.backlinks.anchors({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1789,8 +1769,7 @@ await corsair.dataforseo.api.backlinks.anchors({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     target?: string | null,
     total_count?: number | null,
@@ -1813,21 +1792,15 @@ await corsair.dataforseo.api.backlinks.anchors({});
       referring_subnets?: number | null,
       referring_pages?: number | null,
       referring_pages_nofollow?: number | null,
-      referring_links_tld?: {
-      } | null,
-      referring_links_types?: {
-      } | null,
-      referring_links_attributes?: {
-      } | null,
-      referring_links_platform_types?: {
-      } | null,
-      referring_links_semantic_locations?: {
-      } | null,
-      referring_links_countries?: {
-      } | null
+      referring_links_tld?: Record<string, number | null> | null,
+      referring_links_types?: Record<string, number | null> | null,
+      referring_links_attributes?: Record<string, number | null> | null,
+      referring_links_platform_types?: Record<string, number | null> | null,
+      referring_links_semantic_locations?: Record<string, number | null> | null,
+      referring_links_countries?: Record<string, number | null> | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1862,14 +1835,14 @@ await corsair.dataforseo.api.backlinks.bulkRanks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1883,8 +1856,7 @@ await corsair.dataforseo.api.backlinks.bulkRanks({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     items_count?: number | null,
     items?: {
@@ -1892,7 +1864,7 @@ await corsair.dataforseo.api.backlinks.bulkRanks({});
       rank?: number | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1922,7 +1894,7 @@ await corsair.dataforseo.api.backlinks.competitors({});
 | `tag` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `filters` | `lazy` | No | — |
+| `filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `order_by` | `string[]` | No | — |
 | `main_domain` | `boolean` | No | — |
 | `exclude_large_domains` | `boolean` | No | — |
@@ -1934,14 +1906,14 @@ await corsair.dataforseo.api.backlinks.competitors({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -1955,8 +1927,7 @@ await corsair.dataforseo.api.backlinks.competitors({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     total_count?: number | null,
     items_count?: number | null,
@@ -1967,7 +1938,7 @@ await corsair.dataforseo.api.backlinks.competitors({});
       intersections?: number | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2000,7 +1971,7 @@ await corsair.dataforseo.api.backlinks.list({});
 | `backlinks_status_type` | `all \| live \| lost` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `filters` | `lazy` | No | — |
+| `filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `order_by` | `string[]` | No | — |
 | `search_after_token` | `string` | No | — |
 | `mode` | `as_is \| one_per_domain \| one_per_anchor` | No | — |
@@ -2011,14 +1982,14 @@ await corsair.dataforseo.api.backlinks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -2032,8 +2003,7 @@ await corsair.dataforseo.api.backlinks.list({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     target?: string | null,
     mode?: string | null,
@@ -2098,7 +2068,7 @@ await corsair.dataforseo.api.backlinks.list({});
       } | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2131,11 +2101,11 @@ await corsair.dataforseo.api.backlinks.referringDomains({});
 | `backlinks_status_type` | `all \| live \| lost` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `filters` | `lazy` | No | — |
+| `filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `order_by` | `string[]` | No | — |
 | `include_indirect_links` | `boolean` | No | — |
 | `internal_list_limit` | `number` | No | — |
-| `backlinks_filters` | `lazy` | No | — |
+| `backlinks_filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 
 
 
@@ -2143,14 +2113,14 @@ await corsair.dataforseo.api.backlinks.referringDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -2164,8 +2134,7 @@ await corsair.dataforseo.api.backlinks.referringDomains({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     target?: string | null,
     total_count?: number | null,
@@ -2188,21 +2157,15 @@ await corsair.dataforseo.api.backlinks.referringDomains({});
       referring_subnets?: number | null,
       referring_pages?: number | null,
       referring_pages_nofollow?: number | null,
-      referring_links_tld?: {
-      } | null,
-      referring_links_types?: {
-      } | null,
-      referring_links_attributes?: {
-      } | null,
-      referring_links_platform_types?: {
-      } | null,
-      referring_links_semantic_locations?: {
-      } | null,
-      referring_links_countries?: {
-      } | null
+      referring_links_tld?: Record<string, number | null> | null,
+      referring_links_types?: Record<string, number | null> | null,
+      referring_links_attributes?: Record<string, number | null> | null,
+      referring_links_platform_types?: Record<string, number | null> | null,
+      referring_links_semantic_locations?: Record<string, number | null> | null,
+      referring_links_countries?: Record<string, number | null> | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2235,7 +2198,7 @@ await corsair.dataforseo.api.backlinks.summary({});
 | `backlinks_status_type` | `all \| live \| lost` | No | — |
 | `include_indirect_links` | `boolean` | No | — |
 | `internal_list_limit` | `number` | No | — |
-| `backlinks_filters` | `lazy` | No | — |
+| `backlinks_filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 
 
 
@@ -2243,14 +2206,14 @@ await corsair.dataforseo.api.backlinks.summary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -2264,8 +2227,7 @@ await corsair.dataforseo.api.backlinks.summary({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     target?: string | null,
     crawled_pages?: number | null,
@@ -2295,20 +2257,14 @@ await corsair.dataforseo.api.backlinks.summary({});
     referring_subnets?: number | null,
     referring_pages?: number | null,
     referring_pages_nofollow?: number | null,
-    referring_links_tld?: {
-    } | null,
-    referring_links_types?: {
-    } | null,
-    referring_links_attributes?: {
-    } | null,
-    referring_links_platform_types?: {
-    } | null,
-    referring_links_semantic_locations?: {
-    } | null,
-    referring_links_countries?: {
-    } | null
+    referring_links_tld?: Record<string, number | null> | null,
+    referring_links_types?: Record<string, number | null> | null,
+    referring_links_attributes?: Record<string, number | null> | null,
+    referring_links_platform_types?: Record<string, number | null> | null,
+    referring_links_semantic_locations?: Record<string, number | null> | null,
+    referring_links_countries?: Record<string, number | null> | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2344,7 +2300,7 @@ await corsair.dataforseo.api.keywords.ideas({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `offset_token` | `string` | No | — |
-| `filters` | `lazy` | No | — |
+| `filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `order_by` | `string[]` | No | — |
 | `include_serp_info` | `boolean` | No | — |
 | `include_clickstream_data` | `boolean` | No | — |
@@ -2357,14 +2313,14 @@ await corsair.dataforseo.api.keywords.ideas({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -2378,8 +2334,7 @@ await corsair.dataforseo.api.keywords.ideas({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     seed_keywords?: string[] | null,
     se_type?: string | null,
@@ -2438,10 +2393,8 @@ await corsair.dataforseo.api.keywords.ideas({});
       clickstream_keyword_info?: {
         search_volume?: number | null,
         last_updated_time?: string | null,
-        gender_distribution?: {
-        } | null,
-        age_distribution?: {
-        } | null,
+        gender_distribution?: Record<string, number | null> | null,
+        age_distribution?: Record<string, number | null> | null,
         monthly_searches?: {
           year: number,
           month: number,
@@ -2484,7 +2437,7 @@ await corsair.dataforseo.api.keywords.ideas({});
       } | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2512,14 +2465,14 @@ await corsair.dataforseo.api.keywords.locations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -2533,8 +2486,7 @@ await corsair.dataforseo.api.keywords.locations({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     location_code: number,
     location_name: string,
@@ -2549,7 +2501,7 @@ await corsair.dataforseo.api.keywords.locations({});
       serps?: number | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2593,14 +2545,14 @@ await corsair.dataforseo.api.keywords.searchVolume({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -2614,8 +2566,7 @@ await corsair.dataforseo.api.keywords.searchVolume({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     keyword: string,
     spell?: string | null,
@@ -2634,7 +2585,7 @@ await corsair.dataforseo.api.keywords.searchVolume({});
       search_volume?: number | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2669,7 +2620,7 @@ await corsair.dataforseo.api.keywords.suggestions({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `offset_token` | `string` | No | — |
-| `filters` | `lazy` | No | — |
+| `filters` | `[string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| [string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| ([string, = \| <> \| < \| <= \| > \| >= \| in \| not_in \| like \| not_like \| ilike \| not_ilike \| regex \| not_regex \| match \| not_match, string \| number \| boolean \| null \| (string \| number)[]] \| and \| or \| (recursive))[])[]` | No | — |
 | `order_by` | `string[]` | No | — |
 | `include_serp_info` | `boolean` | No | — |
 | `include_clickstream_data` | `boolean` | No | — |
@@ -2682,14 +2633,14 @@ await corsair.dataforseo.api.keywords.suggestions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -2703,8 +2654,7 @@ await corsair.dataforseo.api.keywords.suggestions({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     seed_keyword?: string | null,
     seed_keyword_data?: {
@@ -2756,10 +2706,8 @@ await corsair.dataforseo.api.keywords.suggestions({});
       clickstream_keyword_info?: {
         search_volume?: number | null,
         last_updated_time?: string | null,
-        gender_distribution?: {
-        } | null,
-        age_distribution?: {
-        } | null,
+        gender_distribution?: Record<string, number | null> | null,
+        age_distribution?: Record<string, number | null> | null,
         monthly_searches?: {
           year: number,
           month: number,
@@ -2857,10 +2805,8 @@ await corsair.dataforseo.api.keywords.suggestions({});
       clickstream_keyword_info?: {
         search_volume?: number | null,
         last_updated_time?: string | null,
-        gender_distribution?: {
-        } | null,
-        age_distribution?: {
-        } | null,
+        gender_distribution?: Record<string, number | null> | null,
+        age_distribution?: Record<string, number | null> | null,
         monthly_searches?: {
           year: number,
           month: number,
@@ -2903,7 +2849,7 @@ await corsair.dataforseo.api.keywords.suggestions({});
       } | null
     }[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2950,14 +2896,14 @@ await corsair.dataforseo.api.serp.googleNews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -2971,8 +2917,7 @@ await corsair.dataforseo.api.serp.googleNews({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     keyword?: string | null,
     type?: string | null,
@@ -3024,7 +2969,7 @@ await corsair.dataforseo.api.serp.googleNews({});
       }
     )[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3069,8 +3014,8 @@ await corsair.dataforseo.api.serp.googleOrganic({});
 | `remove_from_url` | `string[]` | No | — |
 | `target` | `string` | No | — |
 | `target_search_mode` | `all \| any` | No | — |
-| `find_targets_in` | `organic \| paid \| local_pack \| featured_snippet \| events \| google_flights \| images \| jobs \| knowledge_graph \| local_service \| map \| scholarly_articles \| third_party_reviews \| twitter[]` | No | — |
-| `ignore_targets_in` | `organic \| paid \| local_pack \| featured_snippet \| events \| google_flights \| images \| jobs \| knowledge_graph \| local_service \| map \| scholarly_articles \| third_party_reviews \| twitter[]` | No | — |
+| `find_targets_in` | `(organic \| paid \| local_pack \| featured_snippet \| events \| google_flights \| images \| jobs \| knowledge_graph \| local_service \| map \| scholarly_articles \| third_party_reviews \| twitter)[]` | No | — |
+| `ignore_targets_in` | `(organic \| paid \| local_pack \| featured_snippet \| events \| google_flights \| images \| jobs \| knowledge_graph \| local_service \| map \| scholarly_articles \| third_party_reviews \| twitter)[]` | No | — |
 | `stop_crawl_on_match` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3091,14 +3036,14 @@ await corsair.dataforseo.api.serp.googleOrganic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -3112,8 +3057,7 @@ await corsair.dataforseo.api.serp.googleOrganic({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     keyword?: string | null,
     type?: string | null,
@@ -3424,7 +3368,7 @@ await corsair.dataforseo.api.serp.googleOrganic({});
       }
     )[] | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3452,14 +3396,14 @@ await corsair.dataforseo.api.serp.languages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -3473,13 +3417,12 @@ await corsair.dataforseo.api.serp.languages({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     language_name: string,
     language_code: string
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3512,14 +3455,14 @@ await corsair.dataforseo.api.serp.locations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `string` | No | — |
+| `version` | `string \| null` | No | — |
 | `status_code` | `number` | Yes | — |
-| `status_message` | `string` | No | — |
-| `time` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `tasks_count` | `number` | No | — |
-| `tasks_error` | `number` | No | — |
-| `tasks` | `object[]` | No | — |
+| `status_message` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `tasks_count` | `number \| null` | No | — |
+| `tasks_error` | `number \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -3533,8 +3476,7 @@ await corsair.dataforseo.api.serp.locations({});
   cost?: number | null,
   result_count?: number | null,
   path?: string[] | null,
-  data?: {
-  } | null,
+  data?: Record<string, any> | null,
   result?: {
     location_code: number,
     location_name: string,
@@ -3542,7 +3484,7 @@ await corsair.dataforseo.api.serp.locations({});
     country_iso_code?: string | null,
     location_type?: string | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>

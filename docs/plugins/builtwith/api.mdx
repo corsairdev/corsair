@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for BuiltWith: every `builtwith.api.*` operation with input and output types."
+title: "BuiltWith API reference"
+sidebarTitle: "API"
+description: "API reference for the BuiltWith plugin in Corsair: every `builtwith.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `builtwith.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -31,7 +30,7 @@ await corsair.builtwith.api.createDomainListFile({
 |------|------|----------|-------------|
 | `domains` | `string[]` | Yes | — |
 | `fileName` | `string` | No | — |
-| `format` | `txt \| zip` | Yes | — |
+| `format` | `txt \| zip` | No | Defaults to "txt". |
 
 
 
@@ -208,8 +207,7 @@ await corsair.builtwith.api.domain.lookup({ lookup: 'builtwith.com', liveonly: t
       number: string
     }[] | null
   },
-  Attributes?: {
-  },
+  Attributes?: Record<string, number | null>,
   FirstIndexed?: string | number,
   LastIndexed?: string | number
 }[]
@@ -263,8 +261,8 @@ await corsair.builtwith.api.financial.lookup({ lookup: 'shopify.com' });
 | `followers` | `number` | No | — |
 | `products` | `number` | No | — |
 | `spend` | `number` | No | — |
-| `edgar` | `object` | No | — |
-| `companyhouse` | `object` | No | — |
+| `edgar` | `object \| null` | No | — |
+| `companyhouse` | `object \| null` | No | — |
 | `Errors` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -288,7 +286,7 @@ await corsair.builtwith.api.financial.lookup({ lookup: 'shopify.com' });
     cash?: number,
     equity?: number
   }[]
-}
+} | null
 ```
 </Accordion>
 
@@ -307,7 +305,7 @@ await corsair.builtwith.api.financial.lookup({ lookup: 'shopify.com' });
     currentAssets?: number,
     creditors?: number
   }[]
-}
+} | null
 ```
 </Accordion>
 
@@ -353,9 +351,9 @@ await corsair.builtwith.api.free.lookup({ lookup: 'builtwith.com' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domain` | `string` | Yes | — |
-| `first` | `number` | No | — |
-| `last` | `number` | No | — |
-| `groups` | `object[]` | No | — |
+| `first` | `number \| null` | No | — |
+| `last` | `number \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="groups full type">
@@ -374,7 +372,7 @@ await corsair.builtwith.api.free.lookup({ lookup: 'builtwith.com' });
     latest?: number | null,
     oldest?: number | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>

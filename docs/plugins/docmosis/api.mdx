@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Docmosis: every `docmosis.api.*` operation with input and output types."
+title: "Docmosis API reference"
+sidebarTitle: "API"
+description: "API reference for the Docmosis plugin in Corsair: every `docmosis.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `docmosis.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -586,18 +585,10 @@ await corsair.docmosis.api.templates.getSampleData({});
 | `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
-| `templateSampleData` | `object` | No | — |
+| `templateSampleData` | `Record<string, JsonValue> \| string` | No | — |
 | `templateDetails` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="templateSampleData full type">
-
-```ts
-{
-} | string
-```
-</Accordion>
-
 <Accordion title="templateDetails full type">
 
 ```ts
@@ -643,7 +634,7 @@ await corsair.docmosis.api.templates.getStructure({});
 | `longMsg` | `string` | No | — |
 | `templateHasErrors` | `boolean` | No | — |
 | `templateErrorMessage` | `string` | No | — |
-| `templateStructure` | `object` | No | — |
+| `templateStructure` | `object[] \| string` | No | — |
 
 <AccordionGroup>
 <Accordion title="templateStructure full type">
@@ -656,7 +647,15 @@ await corsair.docmosis.api.templates.getStructure({});
   fieldIdx?: number,
   repeatIdx?: number,
   conditionIdx?: number,
-  contains?: lazy
+  contains?: {
+    type?: string,
+    text?: string,
+    dataRefs?: string[],
+    fieldIdx?: number,
+    repeatIdx?: number,
+    conditionIdx?: number,
+    contains?: (recursive)
+  }[]
 }[] | string
 ```
 </Accordion>
@@ -744,21 +743,11 @@ await corsair.docmosis.api.templates.render({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateName` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `string \| Record<string, JsonValue>` | Yes | — |
 | `outputName` | `string` | Yes | — |
 | `outputFormat` | `string` | No | — |
 | `devMode` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
 | `tags` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

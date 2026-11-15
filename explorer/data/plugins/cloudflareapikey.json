@@ -1,7 +1,7 @@
 {
   "id": "cloudflareapikey",
-  "displayName": "Cloudflare API token",
-  "description": "Cloudflare API token plugin for Corsair",
+  "displayName": "Cloudflare API Token",
+  "description": "Cloudflare API access with an API token. Manage zones, DNS records, DNSSEC, rulesets, lockdowns, and cache settings.",
   "npmPackageName": "@corsair-dev/cloudflareapikey",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -54,7 +54,7 @@
           {
             "key": "modified_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -839,7 +839,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ account_id?: string, zone_id?: string } & { name: string, kind: string, phase: string, description?: string, rules?: {}[] }"
+        "type": "{ account_id?: string, zone_id?: string } & { name: string, kind: string, phase: string, description?: string, rules?: Record<string, any>[] }"
       },
       "output": {
         "kind": "object",
@@ -882,7 +882,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -894,7 +894,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, action: string, expression: string, description?: string, enabled?: boolean, action_parameters?: {}, position?: { index?: number, before?: string, after?: string } }"
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, action: string, expression: string, description?: string, enabled?: boolean, action_parameters?: Record<string, any>, position?: { index?: number, before?: string, after?: string } }"
       },
       "output": {
         "kind": "object",
@@ -937,7 +937,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1006,7 +1006,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1061,7 +1061,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1116,7 +1116,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1128,7 +1128,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, name?: string, description?: string, rules: {}[] }"
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, name?: string, description?: string, rules: Record<string, any>[] }"
       },
       "output": {
         "kind": "object",
@@ -1171,7 +1171,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1183,7 +1183,7 @@
       "riskLevel": "write",
       "input": {
         "kind": "inline",
-        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, rule_id: string, action?: string, expression?: string, description?: string, enabled?: boolean, action_parameters?: {}, position?: { index?: number, before?: string, after?: string } }"
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, rule_id: string, action?: string, expression?: string, description?: string, enabled?: boolean, action_parameters?: Record<string, any>, position?: { index?: number, before?: string, after?: string } }"
       },
       "output": {
         "kind": "object",
@@ -1226,7 +1226,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }

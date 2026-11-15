@@ -1,7 +1,7 @@
 {
   "id": "studiobyai21labs",
-  "displayName": "ElevenLabs Studio",
-  "description": "AI audio studio for voice generation, dubbing, and long-form spoken content production.",
+  "displayName": "AI21 Studio",
+  "description": "AI21 Labs' model platform: Jamba chat completions, Maestro runs, and a file library to ground answers in your documents.",
   "npmPackageName": "@corsair-dev/studiobyai21labs",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -39,12 +39,12 @@
           {
             "key": "tools",
             "optional": true,
-            "type": "{ type: function, function: { name: string, description?: string, parameters?: {} } }[]"
+            "type": "{ type: function, function: { name: string, description?: string, parameters?: Record<string, any> } }[]"
           },
           {
             "key": "documents",
             "optional": true,
-            "type": "{ content: string, metadata?: {} }[]"
+            "type": "{ content: string, metadata?: Record<string, any> }[]"
           },
           {
             "key": "response_format",
@@ -342,7 +342,7 @@
           {
             "key": "tools",
             "optional": true,
-            "type": "({ type: mcp, server_label: string, server_url: string, headers?: {}, allowed_tools?: string[] } | { type: http, function: { name: string, description?: string, parameters?: {} }, endpoint: { url: string, headers?: {} } } | { type: file_search, labels?: string[], file_ids?: string[] } | { type: web_search, urls?: string[] })[]"
+            "type": "({ type: mcp, server_label: string, server_url: string, headers?: Record<string, string>, allowed_tools?: string[] } | { type: http, function: { name: string, description?: string, parameters?: Record<string, any> }, endpoint: { url: string, headers?: Record<string, string> } } | { type: file_search, labels?: string[], file_ids?: string[] } | { type: web_search, urls?: string[] })[]"
           },
           {
             "key": "models",
@@ -357,7 +357,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "data_sources | requirements_result[]"
+            "type": "(data_sources | requirements_result)[]"
           },
           {
             "key": "response_language",
@@ -397,7 +397,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "{ message?: string }"
+            "type": "{ message?: string } | null"
           }
         ]
       }
@@ -448,7 +448,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "{ message?: string }"
+            "type": "{ message?: string } | null"
           }
         ]
       }

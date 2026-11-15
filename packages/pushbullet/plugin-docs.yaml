@@ -1,0 +1,16 @@
+displayName: Pushbullet
+description: Notification service for sending pushes between devices, with endpoints for pushes, devices, chats, and the account.
+domain: pushbullet.com
+examples:
+  read:
+    path: pushes.list
+    title: List pushes
+  write:
+    path: chats.create
+    title: Start a chat
+    args:
+      email: you@example.com
+dbExample:
+  entity: pushes
+  note: Search synced pushes without hitting Pushbullet.
+  limit: 50

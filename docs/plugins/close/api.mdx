@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Close: every `close.api.*` operation with input and output types."
+title: "Close API reference"
+sidebarTitle: "API"
+description: "API reference for the Close plugin in Corsair: every `close.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `close.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -48,7 +47,7 @@ await corsair.close.api.activities.createCall({});
 | `direction` | `string` | No | — |
 | `duration` | `number` | No | — |
 | `status` | `string` | No | — |
-| `user_id` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
 | `date_created` | `string` | No | — |
 
@@ -84,7 +83,7 @@ await corsair.close.api.activities.createNote({});
 | `id` | `string` | Yes | — |
 | `lead_id` | `string` | No | — |
 | `note` | `string` | No | — |
-| `user_id` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
@@ -129,7 +128,7 @@ await corsair.close.api.activities.createSms({});
 | `text` | `string` | No | — |
 | `direction` | `string` | No | — |
 | `status` | `string` | No | — |
-| `user_id` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
 | `date_created` | `string` | No | — |
 
@@ -377,11 +376,11 @@ await corsair.close.api.contacts.create({});
 | `id` | `string` | Yes | — |
 | `lead_id` | `string` | No | — |
 | `name` | `string` | No | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
 | `emails` | `object[]` | No | — |
 | `phones` | `object[]` | No | — |
 | `organization_id` | `string` | No | — |
-| `created_by` | `string` | No | — |
+| `created_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -469,11 +468,11 @@ await corsair.close.api.contacts.get({});
 | `id` | `string` | Yes | — |
 | `lead_id` | `string` | No | — |
 | `name` | `string` | No | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
 | `emails` | `object[]` | No | — |
 | `phones` | `object[]` | No | — |
 | `organization_id` | `string` | No | — |
-| `created_by` | `string` | No | — |
+| `created_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -615,11 +614,11 @@ await corsair.close.api.contacts.update({});
 | `id` | `string` | Yes | — |
 | `lead_id` | `string` | No | — |
 | `name` | `string` | No | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
 | `emails` | `object[]` | No | — |
 | `phones` | `object[]` | No | — |
 | `organization_id` | `string` | No | — |
-| `created_by` | `string` | No | — |
+| `created_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -753,26 +752,8 @@ await corsair.close.api.leads.create({});
 | `status_id` | `string` | No | — |
 | `description` | `string` | No | — |
 | `url` | `string` | No | — |
-| `custom` | `object` | No | — |
-| `contacts` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="contacts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `custom` | `Record<string, any>` | No | — |
+| `contacts` | `Record<string, any>[]` | No | — |
 
 
 
@@ -782,35 +763,17 @@ await corsair.close.api.leads.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `status_id` | `string` | No | — |
-| `status_label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `url` | `string` | No | — |
+| `status_id` | `string \| null` | No | — |
+| `status_label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
-| `contacts` | `object[]` | No | — |
-| `custom` | `object` | No | — |
-| `created_by` | `string` | No | — |
-| `updated_by` | `string` | No | — |
+| `contacts` | `Record<string, any>[]` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+| `created_by` | `string \| null` | No | — |
+| `updated_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="contacts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="custom full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -873,35 +836,17 @@ await corsair.close.api.leads.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `status_id` | `string` | No | — |
-| `status_label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `url` | `string` | No | — |
+| `status_id` | `string \| null` | No | — |
+| `status_label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
-| `contacts` | `object[]` | No | — |
-| `custom` | `object` | No | — |
-| `created_by` | `string` | No | — |
-| `updated_by` | `string` | No | — |
+| `contacts` | `Record<string, any>[]` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+| `created_by` | `string \| null` | No | — |
+| `updated_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="contacts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="custom full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -950,10 +895,8 @@ await corsair.close.api.leads.list({});
   description?: string | null,
   url?: string | null,
   organization_id?: string,
-  contacts?: {
-  }[],
-  custom?: {
-  },
+  contacts?: Record<string, any>[],
+  custom?: Record<string, any>,
   created_by?: string | null,
   updated_by?: string | null,
   date_created?: string,
@@ -988,17 +931,7 @@ await corsair.close.api.leads.update({});
 | `status_id` | `string` | No | — |
 | `description` | `string` | No | — |
 | `url` | `string` | No | — |
-| `custom` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `custom` | `Record<string, any>` | No | — |
 
 
 
@@ -1008,35 +941,17 @@ await corsair.close.api.leads.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `status_id` | `string` | No | — |
-| `status_label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `url` | `string` | No | — |
+| `status_id` | `string \| null` | No | — |
+| `status_label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
-| `contacts` | `object[]` | No | — |
-| `custom` | `object` | No | — |
-| `created_by` | `string` | No | — |
-| `updated_by` | `string` | No | — |
+| `contacts` | `Record<string, any>[]` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+| `created_by` | `string \| null` | No | — |
+| `updated_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="contacts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="custom full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1083,10 +998,10 @@ await corsair.close.api.opportunities.create({});
 | `value` | `number` | No | — |
 | `value_period` | `string` | No | — |
 | `confidence` | `number` | No | — |
-| `user_id` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
-| `date_won` | `string` | No | — |
-| `date_lost` | `string` | No | — |
+| `date_won` | `string \| null` | No | — |
+| `date_lost` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -1158,10 +1073,10 @@ await corsair.close.api.opportunities.get({});
 | `value` | `number` | No | — |
 | `value_period` | `string` | No | — |
 | `confidence` | `number` | No | — |
-| `user_id` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
-| `date_won` | `string` | No | — |
-| `date_lost` | `string` | No | — |
+| `date_won` | `string \| null` | No | — |
+| `date_lost` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -1267,10 +1182,10 @@ await corsair.close.api.opportunities.update({});
 | `value` | `number` | No | — |
 | `value_period` | `string` | No | — |
 | `confidence` | `number` | No | — |
-| `user_id` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
-| `date_won` | `string` | No | — |
-| `date_lost` | `string` | No | — |
+| `date_won` | `string \| null` | No | — |
+| `date_lost` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -1311,12 +1226,12 @@ await corsair.close.api.tasks.create({});
 | `id` | `string` | Yes | — |
 | `lead_id` | `string` | No | — |
 | `text` | `string` | No | — |
-| `due_date` | `string` | No | — |
+| `due_date` | `string \| null` | No | — |
 | `is_complete` | `boolean` | No | — |
-| `assigned_to` | `string` | No | — |
+| `assigned_to` | `string \| null` | No | — |
 | `type` | `string` | No | — |
 | `organization_id` | `string` | No | — |
-| `created_by` | `string` | No | — |
+| `created_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -1382,12 +1297,12 @@ await corsair.close.api.tasks.get({});
 | `id` | `string` | Yes | — |
 | `lead_id` | `string` | No | — |
 | `text` | `string` | No | — |
-| `due_date` | `string` | No | — |
+| `due_date` | `string \| null` | No | — |
 | `is_complete` | `boolean` | No | — |
-| `assigned_to` | `string` | No | — |
+| `assigned_to` | `string \| null` | No | — |
 | `type` | `string` | No | — |
 | `organization_id` | `string` | No | — |
-| `created_by` | `string` | No | — |
+| `created_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -1482,12 +1397,12 @@ await corsair.close.api.tasks.update({});
 | `id` | `string` | Yes | — |
 | `lead_id` | `string` | No | — |
 | `text` | `string` | No | — |
-| `due_date` | `string` | No | — |
+| `due_date` | `string \| null` | No | — |
 | `is_complete` | `boolean` | No | — |
-| `assigned_to` | `string` | No | — |
+| `assigned_to` | `string \| null` | No | — |
 | `type` | `string` | No | — |
 | `organization_id` | `string` | No | — |
-| `created_by` | `string` | No | — |
+| `created_by` | `string \| null` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
 
@@ -1520,7 +1435,7 @@ await corsair.close.api.users.getMe({});
 | `first_name` | `string` | No | — |
 | `last_name` | `string` | No | — |
 | `email` | `string` | No | — |
-| `image` | `string` | No | — |
+| `image` | `string \| null` | No | — |
 | `organization_id` | `string` | No | — |
 
 

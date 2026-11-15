@@ -1,7 +1,7 @@
 {
   "id": "dataforseo",
-  "displayName": "DataForSeo",
-  "description": "DataForSeo plugin for Corsair",
+  "displayName": "DataForSEO",
+  "description": "SEO data API for SERP results, keyword research, backlinks, Amazon and app store data, and AI search results.",
   "npmPackageName": "@corsair-dev/dataforseo",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -38,7 +38,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -48,32 +48,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { login: string, timezone?: string | null, money?: { total?: number | null, balance?: number | null } | null, backlinks_subscription_expiry_date?: string | null, llm_mentions_subscription_expiry_date?: string | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { login: string, timezone?: string | null, money?: { total?: number | null, balance?: number | null } | null, backlinks_subscription_expiry_date?: string | null, llm_mentions_subscription_expiry_date?: string | null }[] | null }[] | null"
           }
         ]
       }
@@ -155,7 +155,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -165,32 +165,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | {} | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | Record<string, string[]> | null }[] | null }[] | null"
           }
         ]
       }
@@ -262,7 +262,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -272,32 +272,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | {} | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | Record<string, string[]> | null }[] | null }[] | null"
           }
         ]
       }
@@ -343,7 +343,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "order_by",
@@ -378,7 +378,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -388,32 +388,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { total_count?: number | null, offset?: number | null, search_after_token?: string | null, items_count?: number | null, items?: { platform?: string | null, model_name?: string | null, location_code?: number | null, language_code?: string | null, question?: string | null, answer?: string | null, sources?: { rank?: number | null, title?: string | null, domain?: string | null, url?: string | null, publication_date?: string | null, snippet?: string | null, source_name?: string | null, thumbnail?: string | null, markdown?: string | null }[] | null, search_results?: { rank?: number | null, title?: string | null, domain?: string | null, url?: string | null, publication_date?: string | null, description?: string | null, breadcrumb?: string | null }[] | null, ai_search_volume?: number | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, first_response_at?: string | null, last_response_at?: string | null, brand_entities?: { rank?: number | null, title?: string | null, category?: string | null }[] | null, fan_out_queries?: string[] | null, is_web_search_based?: boolean | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { total_count?: number | null, offset?: number | null, search_after_token?: string | null, items_count?: number | null, items?: { platform?: string | null, model_name?: string | null, location_code?: number | null, language_code?: string | null, question?: string | null, answer?: string | null, sources?: { rank?: number | null, title?: string | null, domain?: string | null, url?: string | null, publication_date?: string | null, snippet?: string | null, source_name?: string | null, thumbnail?: string | null, markdown?: string | null }[] | null, search_results?: { rank?: number | null, title?: string | null, domain?: string | null, url?: string | null, publication_date?: string | null, description?: string | null, breadcrumb?: string | null }[] | null, ai_search_volume?: number | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, first_response_at?: string | null, last_response_at?: string | null, brand_entities?: { rank?: number | null, title?: string | null, category?: string | null }[] | null, fan_out_queries?: string[] | null, is_web_search_based?: boolean | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -459,7 +459,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "order_by",
@@ -489,7 +489,7 @@
           {
             "key": "initial_dataset_filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "internal_list_limit",
@@ -514,7 +514,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -524,32 +524,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { total_count?: number | null, offset?: number | null, items_count?: number | null, aggregated_metrics?: { location?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, language?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, platform?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, sources_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, search_results_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_title?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_category?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, total?: { mentions?: number | null, ai_search_volume?: number | null } | null } | null, items?: { domain?: string | null, location?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, language?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, platform?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, sources_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, search_results_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_title?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_category?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, total?: { mentions?: number | null, ai_search_volume?: number | null } | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { total_count?: number | null, offset?: number | null, items_count?: number | null, aggregated_metrics?: { location?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, language?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, platform?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, sources_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, search_results_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_title?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_category?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, total?: { mentions?: number | null, ai_search_volume?: number | null } | null } | null, items?: { domain?: string | null, location?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, language?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, platform?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, sources_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, search_results_domain?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_title?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, brand_entities_category?: { key?: string | null, mentions?: number | null, ai_search_volume?: number | null }[] | null, total?: { mentions?: number | null, ai_search_volume?: number | null } | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -616,7 +616,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -626,32 +626,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | {} | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { model_name?: string | null, input_tokens?: number | null, output_tokens?: number | null, reasoning_tokens?: number | null, web_search?: boolean | null, money_spent?: number | null, datetime?: string | null, items?: { type: message | reasoning, sections?: { type?: string | null, text?: string | null, annotations?: { title?: string | null, url?: string | null, direct_url?: string | null, start_index?: number | null, end_index?: number | null, text?: string | null }[] | null }[] | null }[] | null, fan_out_queries?: string[] | Record<string, string[]> | null }[] | null }[] | null"
           }
         ]
       }
@@ -712,7 +712,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -722,32 +722,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { asin?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, item_types?: string[] | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, title?: string | null, details?: string | null, image_url?: string | null, author?: string | null, data_asin?: string | null, parent_asin?: string | null, product_asins?: string[] | null, price_from?: number | null, price_to?: number | null, percentage_discount?: string | null, currency?: string | null, is_amazon_choice?: boolean | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_newer_model_available?: boolean | null, is_prime_video?: boolean | null, newer_model?: { title?: string | null, newer_model_asin?: string | null } | null, categories?: { category?: string | null, url?: string | null }[] | null, product_information?: ({ type: product_information_details_item, section_name?: string | null, body?: {} | null } | { type: product_information_text_item, section_name?: string | null, text?: string | null } | { type: product_information_extended_item, section_name?: string | null, contents?: { type?: string | null, title?: string | null, rows?: { type?: string | null, text?: string | null, alt?: string | null, url?: string | null }[] | null }[] | null })[] | null, product_images_list?: string[] | null, product_videos_list?: string[] | null, description?: string | null, is_available?: boolean | null, top_local_reviews?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, verified?: boolean | null, subtitle?: string | null, helpful_votes?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, videos?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null, user_profile?: { name?: string | null, avatar?: string | null, url?: string | null, reviews_count?: number | null, locations?: string | null } | null, title?: string | null, url?: string | null, review_text?: string | null, publication_date?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null }[] | null, top_global_reviews?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, verified?: boolean | null, subtitle?: string | null, helpful_votes?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, videos?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null, user_profile?: { name?: string | null, avatar?: string | null, url?: string | null, reviews_count?: number | null, locations?: string | null } | null, title?: string | null, url?: string | null, review_text?: string | null, publication_date?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null }[] | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { asin?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, item_types?: string[] | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, title?: string | null, details?: string | null, image_url?: string | null, author?: string | null, data_asin?: string | null, parent_asin?: string | null, product_asins?: string[] | null, price_from?: number | null, price_to?: number | null, percentage_discount?: string | null, currency?: string | null, is_amazon_choice?: boolean | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_newer_model_available?: boolean | null, is_prime_video?: boolean | null, newer_model?: { title?: string | null, newer_model_asin?: string | null } | null, categories?: { category?: string | null, url?: string | null }[] | null, product_information?: ({ type: product_information_details_item, section_name?: string | null, body?: Record<string, string | null> | null } | { type: product_information_text_item, section_name?: string | null, text?: string | null } | { type: product_information_extended_item, section_name?: string | null, contents?: { type?: string | null, title?: string | null, rows?: { type?: string | null, text?: string | null, alt?: string | null, url?: string | null }[] | null }[] | null })[] | null, product_images_list?: string[] | null, product_videos_list?: string[] | null, description?: string | null, is_available?: boolean | null, top_local_reviews?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, verified?: boolean | null, subtitle?: string | null, helpful_votes?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, videos?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null, user_profile?: { name?: string | null, avatar?: string | null, url?: string | null, reviews_count?: number | null, locations?: string | null } | null, title?: string | null, url?: string | null, review_text?: string | null, publication_date?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null }[] | null, top_global_reviews?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, verified?: boolean | null, subtitle?: string | null, helpful_votes?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, videos?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null, user_profile?: { name?: string | null, avatar?: string | null, url?: string | null, reviews_count?: number | null, locations?: string | null } | null, title?: string | null, url?: string | null, review_text?: string | null, publication_date?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null }[] | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -848,7 +848,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -858,32 +858,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, categories?: {} | null, items_count?: number | null, items?: ({ type: amazon_serp, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: amazon_paid, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: editorial_recommendations, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | { type: top_rated_from_our_brands, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | { type: related_searches, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, url?: string | null, image_alt?: string | null, image_url?: string | null }[] | null })[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, categories?: Record<string, number | null> | null, items_count?: number | null, items?: ({ type: amazon_serp, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: amazon_paid, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: editorial_recommendations, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | { type: top_rated_from_our_brands, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, bought_past_month?: number | null, price_from?: number | null, price_to?: number | null, currency?: string | null, special_offers?: string[] | null, data_asin?: string | null, rating?: { type?: string | null, position?: string | null, rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, is_amazon_choice?: boolean | null, is_best_seller?: boolean | null, delivery_info?: { delivery_message?: string | null, delivery_date_from?: string | null, delivery_date_to?: string | null, fastest_delivery_date_from?: string | null, fastest_delivery_date_to?: string | null, delivery_price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null } | null, labels?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | { type: related_searches, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, url?: string | null, image_alt?: string | null, image_url?: string | null }[] | null })[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -909,7 +909,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -919,32 +919,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { app_id?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, app_id?: string | null, title?: string | null, url?: string | null, icon?: string | null, reviews_count?: number | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, is_free?: boolean | null, subtitle?: string | null, description?: string | null, main_category?: string | null, categories?: string[] | null, languages?: string[] | null, advisories?: string[] | null, developer?: string | null, developer_id?: string | null, developer_url?: string | null, version?: string | null, minimum_os_version?: string | null, size?: string | null, released_date?: string | null, last_update_date?: string | null, update_notes?: string | null, images?: string[] | null, similar_apps?: { app_id?: string | null, title?: string | null, url?: string | null }[] | null, more_apps_by_developer?: { app_id?: string | null, title?: string | null, url?: string | null }[] | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { app_id?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, app_id?: string | null, title?: string | null, url?: string | null, icon?: string | null, reviews_count?: number | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, is_free?: boolean | null, subtitle?: string | null, description?: string | null, main_category?: string | null, categories?: string[] | null, languages?: string[] | null, advisories?: string[] | null, developer?: string | null, developer_id?: string | null, developer_url?: string | null, version?: string | null, minimum_os_version?: string | null, size?: string | null, released_date?: string | null, last_update_date?: string | null, update_notes?: string | null, images?: string[] | null, similar_apps?: { app_id?: string | null, title?: string | null, url?: string | null }[] | null, more_apps_by_developer?: { app_id?: string | null, title?: string | null, url?: string | null }[] | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -1015,7 +1015,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1025,32 +1025,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: {}[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: {}[] | null }[] | null"
           }
         ]
       }
@@ -1076,7 +1076,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1086,32 +1086,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { app_id?: string | null, type?: string | null, title?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, reviews_count?: number | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, id?: string | null, version?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, timestamp?: string | null, title?: string | null, review_text?: string | null, user_profile?: { profile_name?: string | null, profile_image_url?: string | null } | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { app_id?: string | null, type?: string | null, title?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, reviews_count?: number | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, id?: string | null, version?: string | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, timestamp?: string | null, title?: string | null, review_text?: string | null, user_profile?: { profile_name?: string | null, profile_image_url?: string | null } | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -1192,7 +1192,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1202,32 +1202,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: {}[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: {}[] | null }[] | null"
           }
         ]
       }
@@ -1253,7 +1253,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1263,32 +1263,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, app_id?: string | null, title?: string | null, url?: string | null, icon?: string | null, reviews_count?: number | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, is_free?: boolean | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { keyword?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, se_results_count?: number | null, items_count?: number | null, items?: { type?: string | null, rank_group?: number | null, rank_absolute?: number | null, position?: string | null, app_id?: string | null, title?: string | null, url?: string | null, icon?: string | null, reviews_count?: number | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, is_free?: boolean | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -1364,7 +1364,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1374,32 +1374,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: {}[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: {}[] | null }[] | null"
           }
         ]
       }
@@ -1456,7 +1456,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "order_by",
@@ -1476,7 +1476,7 @@
           {
             "key": "backlinks_filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           }
         ]
       },
@@ -1486,7 +1486,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1496,32 +1496,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { target?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, anchor?: string | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: {} | null, referring_links_types?: {} | null, referring_links_attributes?: {} | null, referring_links_platform_types?: {} | null, referring_links_semantic_locations?: {} | null, referring_links_countries?: {} | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { target?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, anchor?: string | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: Record<string, number | null> | null, referring_links_types?: Record<string, number | null> | null, referring_links_attributes?: Record<string, number | null> | null, referring_links_platform_types?: Record<string, number | null> | null, referring_links_semantic_locations?: Record<string, number | null> | null, referring_links_countries?: Record<string, number | null> | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -1557,7 +1557,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1567,32 +1567,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { items_count?: number | null, items?: { target?: string | null, rank?: number | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { items_count?: number | null, items?: { target?: string | null, rank?: number | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -1634,7 +1634,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "order_by",
@@ -1664,7 +1664,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1674,32 +1674,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { total_count?: number | null, items_count?: number | null, items?: { type?: string | null, target?: string | null, rank?: number | null, intersections?: number | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { total_count?: number | null, items_count?: number | null, items?: { type?: string | null, target?: string | null, rank?: number | null, intersections?: number | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -1756,7 +1756,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "order_by",
@@ -1781,7 +1781,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1791,32 +1791,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { target?: string | null, mode?: string | null, search_after_token?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, domain_from?: string | null, url_from?: string | null, url_from_https?: boolean | null, domain_to?: string | null, url_to?: string | null, url_to_https?: boolean | null, tld_from?: string | null, is_new?: boolean | null, is_lost?: boolean | null, backlink_spam_score?: number | null, rank?: number | null, page_from_rank?: number | null, domain_from_rank?: number | null, domain_from_platform_type?: string[] | null, domain_from_is_ip?: boolean | null, domain_from_ip?: string | null, domain_from_country?: string | null, page_from_external_links?: number | null, page_from_internal_links?: number | null, page_from_size?: number | null, page_from_encoding?: string | null, page_from_language?: string | null, page_from_title?: string | null, page_from_status_code?: number | null, first_seen?: string | null, prev_seen?: string | null, last_seen?: string | null, item_type?: string | null, attributes?: string[] | null, dofollow?: boolean | null, original?: boolean | null, alt?: string | null, image_url?: string | null, anchor?: string | null, text_pre?: string | null, text_post?: string | null, semantic_location?: string | null, links_count?: number | null, group_count?: number | null, is_broken?: boolean | null, url_to_status_code?: number | null, url_to_spam_score?: number | null, url_to_redirect_target?: string | null, is_indirect_link?: boolean | null, indirect_link_path?: { type?: string | null, status_code?: number | null, url?: string | null }[] | null, ranked_keywords_info?: { page_from_keywords_count_top_3?: number | null, page_from_keywords_count_top_10?: number | null, page_from_keywords_count_top_100?: number | null } | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { target?: string | null, mode?: string | null, search_after_token?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, domain_from?: string | null, url_from?: string | null, url_from_https?: boolean | null, domain_to?: string | null, url_to?: string | null, url_to_https?: boolean | null, tld_from?: string | null, is_new?: boolean | null, is_lost?: boolean | null, backlink_spam_score?: number | null, rank?: number | null, page_from_rank?: number | null, domain_from_rank?: number | null, domain_from_platform_type?: string[] | null, domain_from_is_ip?: boolean | null, domain_from_ip?: string | null, domain_from_country?: string | null, page_from_external_links?: number | null, page_from_internal_links?: number | null, page_from_size?: number | null, page_from_encoding?: string | null, page_from_language?: string | null, page_from_title?: string | null, page_from_status_code?: number | null, first_seen?: string | null, prev_seen?: string | null, last_seen?: string | null, item_type?: string | null, attributes?: string[] | null, dofollow?: boolean | null, original?: boolean | null, alt?: string | null, image_url?: string | null, anchor?: string | null, text_pre?: string | null, text_post?: string | null, semantic_location?: string | null, links_count?: number | null, group_count?: number | null, is_broken?: boolean | null, url_to_status_code?: number | null, url_to_spam_score?: number | null, url_to_redirect_target?: string | null, is_indirect_link?: boolean | null, indirect_link_path?: { type?: string | null, status_code?: number | null, url?: string | null }[] | null, ranked_keywords_info?: { page_from_keywords_count_top_3?: number | null, page_from_keywords_count_top_10?: number | null, page_from_keywords_count_top_100?: number | null } | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -1873,7 +1873,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "order_by",
@@ -1893,7 +1893,7 @@
           {
             "key": "backlinks_filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           }
         ]
       },
@@ -1903,7 +1903,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -1913,32 +1913,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { target?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, domain?: string | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: {} | null, referring_links_types?: {} | null, referring_links_attributes?: {} | null, referring_links_platform_types?: {} | null, referring_links_semantic_locations?: {} | null, referring_links_countries?: {} | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { target?: string | null, total_count?: number | null, items_count?: number | null, items?: { type?: string | null, domain?: string | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: Record<string, number | null> | null, referring_links_types?: Record<string, number | null> | null, referring_links_attributes?: Record<string, number | null> | null, referring_links_platform_types?: Record<string, number | null> | null, referring_links_semantic_locations?: Record<string, number | null> | null, referring_links_countries?: Record<string, number | null> | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -1995,7 +1995,7 @@
           {
             "key": "backlinks_filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           }
         ]
       },
@@ -2005,7 +2005,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2015,32 +2015,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { target?: string | null, crawled_pages?: number | null, internal_links_count?: number | null, external_links_count?: number | null, info?: { server?: string | null, cms?: string | null, platform_type?: string[] | null, ip_address?: string | null, country?: string | null, is_ip?: boolean | null, target_spam_score?: number | null } | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: {} | null, referring_links_types?: {} | null, referring_links_attributes?: {} | null, referring_links_platform_types?: {} | null, referring_links_semantic_locations?: {} | null, referring_links_countries?: {} | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { target?: string | null, crawled_pages?: number | null, internal_links_count?: number | null, external_links_count?: number | null, info?: { server?: string | null, cms?: string | null, platform_type?: string[] | null, ip_address?: string | null, country?: string | null, is_ip?: boolean | null, target_spam_score?: number | null } | null, rank?: number | null, backlinks?: number | null, first_seen?: string | null, lost_date?: string | null, backlinks_spam_score?: number | null, broken_backlinks?: number | null, broken_pages?: number | null, referring_domains?: number | null, referring_domains_nofollow?: number | null, referring_main_domains?: number | null, referring_main_domains_nofollow?: number | null, referring_ips?: number | null, referring_subnets?: number | null, referring_pages?: number | null, referring_pages_nofollow?: number | null, referring_links_tld?: Record<string, number | null> | null, referring_links_types?: Record<string, number | null> | null, referring_links_attributes?: Record<string, number | null> | null, referring_links_platform_types?: Record<string, number | null> | null, referring_links_semantic_locations?: Record<string, number | null> | null, referring_links_countries?: Record<string, number | null> | null }[] | null }[] | null"
           }
         ]
       }
@@ -2101,7 +2101,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "order_by",
@@ -2136,7 +2136,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2146,32 +2146,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { seed_keywords?: string[] | null, se_type?: string | null, location_code?: number | null, language_code?: string | null, total_count?: number | null, items_count?: number | null, offset?: number | null, offset_token?: string | null, items?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: {} | null, age_distribution?: {} | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { seed_keywords?: string[] | null, se_type?: string | null, location_code?: number | null, language_code?: string | null, total_count?: number | null, items_count?: number | null, offset?: number | null, offset_token?: string | null, items?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: Record<string, number | null> | null, age_distribution?: Record<string, number | null> | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -2191,7 +2191,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2201,32 +2201,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { location_code: number, location_name: string, location_code_parent?: number | null, country_iso_code?: string | null, location_type?: string | null, available_languages?: { available_sources?: string[] | null, language_name?: string | null, language_code?: string | null, keywords?: number | null, serps?: number | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { location_code: number, location_name: string, location_code_parent?: number | null, country_iso_code?: string | null, location_type?: string | null, available_languages?: { available_sources?: string[] | null, language_name?: string | null, language_code?: string | null, keywords?: number | null, serps?: number | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -2307,7 +2307,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2317,32 +2317,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword: string, spell?: string | null, location_code?: number | null, language_code?: string | null, search_partners?: boolean | null, competition?: string | null, competition_index?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, cpc?: number | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { keyword: string, spell?: string | null, location_code?: number | null, language_code?: string | null, search_partners?: boolean | null, competition?: string | null, competition_index?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, cpc?: number | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -2408,7 +2408,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "lazy"
+            "type": "[string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | [string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | ([string, = | <> | < | <= | > | >= | in | not_in | like | not_like | ilike | not_ilike | regex | not_regex | match | not_match, string | number | boolean | null | (string | number)[]] | and | or | (recursive))[])[]"
           },
           {
             "key": "order_by",
@@ -2443,7 +2443,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2453,32 +2453,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { seed_keyword?: string | null, seed_keyword_data?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: {} | null, age_distribution?: {} | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null } | null, se_type?: string | null, location_code?: number | null, language_code?: string | null, total_count?: number | null, items_count?: number | null, offset?: number | null, offset_token?: string | null, items?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: {} | null, age_distribution?: {} | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null }[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { seed_keyword?: string | null, seed_keyword_data?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: Record<string, number | null> | null, age_distribution?: Record<string, number | null> | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null } | null, se_type?: string | null, location_code?: number | null, language_code?: string | null, total_count?: number | null, items_count?: number | null, offset?: number | null, offset_token?: string | null, items?: { se_type?: string | null, keyword: string, location_code?: number | null, language_code?: string | null, keyword_info?: { se_type?: string | null, last_updated_time?: string | null, competition?: number | null, competition_level?: string | null, cpc?: number | null, search_volume?: number | null, low_top_of_page_bid?: number | null, high_top_of_page_bid?: number | null, categories?: number[] | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null, search_volume_trend?: { monthly?: number | null, quarterly?: number | null, yearly?: number | null } | null } | null, keyword_info_normalized_with_bing?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_info_normalized_with_clickstream?: { last_updated_time?: string | null, search_volume?: number | null, is_normalized?: boolean | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, clickstream_keyword_info?: { search_volume?: number | null, last_updated_time?: string | null, gender_distribution?: Record<string, number | null> | null, age_distribution?: Record<string, number | null> | null, monthly_searches?: { year: number, month: number, search_volume?: number | null }[] | null } | null, keyword_properties?: { se_type?: string | null, core_keyword?: string | null, synonym_clustering_algorithm?: string | null, keyword_difficulty?: number | null, detected_language?: string | null, is_another_language?: boolean | null, words_count?: number | null } | null, serp_info?: { se_type?: string | null, check_url?: string | null, serp_item_types?: string[] | null, se_results_count?: number | null, last_updated_time?: string | null, previous_updated_time?: string | null } | null, avg_backlinks_info?: { se_type?: string | null, backlinks?: number | null, dofollow?: number | null, referring_pages?: number | null, referring_domains?: number | null, referring_main_domains?: number | null, rank?: number | null, main_domain_rank?: number | null, last_updated_time?: string | null } | null, search_intent_info?: { se_type?: string | null, main_intent?: string | null, foreign_intent?: string[] | null, last_updated_time?: string | null } | null }[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -2564,7 +2564,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2574,32 +2574,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, items_count?: number | null, includes_non_news_search_results?: boolean | null, items?: ({ type: news_search, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, snippet?: string | null, time_published?: string | null, timestamp?: string | null } | { type: top_stories, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, source?: string | null, domain?: string | null, title?: string | null, date?: string | null, timestamp?: string | null, url?: string | null, image_url?: string | null }[] | null })[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, items_count?: number | null, includes_non_news_search_results?: boolean | null, items?: ({ type: news_search, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, url?: string | null, image_url?: string | null, snippet?: string | null, time_published?: string | null, timestamp?: string | null } | { type: top_stories, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, source?: string | null, domain?: string | null, title?: string | null, date?: string | null, timestamp?: string | null, url?: string | null, image_url?: string | null }[] | null })[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -2715,12 +2715,12 @@
           {
             "key": "find_targets_in",
             "optional": true,
-            "type": "organic | paid | local_pack | featured_snippet | events | google_flights | images | jobs | knowledge_graph | local_service | map | scholarly_articles | third_party_reviews | twitter[]"
+            "type": "(organic | paid | local_pack | featured_snippet | events | google_flights | images | jobs | knowledge_graph | local_service | map | scholarly_articles | third_party_reviews | twitter)[]"
           },
           {
             "key": "ignore_targets_in",
             "optional": true,
-            "type": "organic | paid | local_pack | featured_snippet | events | google_flights | images | jobs | knowledge_graph | local_service | map | scholarly_articles | third_party_reviews | twitter[]"
+            "type": "(organic | paid | local_pack | featured_snippet | events | google_flights | images | jobs | knowledge_graph | local_service | map | scholarly_articles | third_party_reviews | twitter)[]"
           },
           {
             "key": "stop_crawl_on_match",
@@ -2735,7 +2735,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2745,32 +2745,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, items_count?: number | null, pages_count?: number | null, refinement_chips?: { type?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | null, items?: ({ type: organic, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, cache_url?: string | null, related_search_url?: string | null, is_featured_snippet?: boolean | null, is_malicious?: boolean | null, is_web_story?: boolean | null, pre_snippet?: string | null, extended_snippet?: string | null, amp_version?: boolean | null, links?: { type?: string | null, title?: string | null, snippet?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null, faq?: { type?: string | null, items?: { type?: string | null, title?: string | null, description?: string | null, links?: { type?: string | null, title?: string | null, snippet?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | null } | { type: paid, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, description_rows?: string[] | null, links?: { type?: string | null, title?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: featured_snippet, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, featured_title?: string | null, table?: { table_element?: string | null, table_header?: string[] | null, table_content?: string[][] | null } | null } | { type: people_also_ask, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, seed_question?: string | null, xpath?: string | null, expanded_element?: { type?: string | null, featured_title?: string | null, url?: string | null, domain?: string | null, title?: string | null, description?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, timestamp?: string | null, asynchronous_ai_overview?: boolean | null, references?: { type?: string | null, source?: string | null, domain?: string | null, url?: string | null, title?: string | null, text?: string | null }[] | null }[] | null }[] | null } | { type: related_searches, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: string[] | null } | { type: top_stories, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, title?: string | null, items?: { type?: string | null, source?: string | null, domain?: string | null, title?: string | null, date?: string | null, timestamp?: string | null, url?: string | null, image_url?: string | null }[] | null } | { type: local_pack, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, title?: string | null, description?: string | null, domain?: string | null, phone?: string | null, booking_url?: string | null, url?: string | null, is_paid?: boolean | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, cid?: string | null } | { type: ai_overview, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, asynchronous_ai_overview?: boolean | null, markdown?: string | null, references?: { type?: string | null, source?: string | null, domain?: string | null, url?: string | null, title?: string | null, text?: string | null }[] | null } | { type: video, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null } | { type: string, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null })[] | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { keyword?: string | null, type?: string | null, se_domain?: string | null, location_code?: number | null, language_code?: string | null, check_url?: string | null, datetime?: string | null, spell?: { keyword?: string | null, type?: string | null } | null, item_types?: string[] | null, se_results_count?: number | null, items_count?: number | null, pages_count?: number | null, refinement_chips?: { type?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, url?: string | null, domain?: string | null }[] | null } | null, items?: ({ type: organic, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, cache_url?: string | null, related_search_url?: string | null, is_featured_snippet?: boolean | null, is_malicious?: boolean | null, is_web_story?: boolean | null, pre_snippet?: string | null, extended_snippet?: string | null, amp_version?: boolean | null, links?: { type?: string | null, title?: string | null, snippet?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null, faq?: { type?: string | null, items?: { type?: string | null, title?: string | null, description?: string | null, links?: { type?: string | null, title?: string | null, snippet?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null }[] | null } | null } | { type: paid, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, description_rows?: string[] | null, links?: { type?: string | null, title?: string | null, description?: string | null, url?: string | null, domain?: string | null }[] | null } | { type: featured_snippet, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, domain?: string | null, title?: string | null, description?: string | null, url?: string | null, breadcrumb?: string | null, website_name?: string | null, is_image?: boolean | null, is_video?: boolean | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, highlighted?: string[] | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, price?: { current?: number | null, regular?: number | null, max_value?: number | null, currency?: string | null, is_price_range?: boolean | null, displayed_price?: string | null } | null, timestamp?: string | null, featured_title?: string | null, table?: { table_element?: string | null, table_header?: string[] | null, table_content?: string[][] | null } | null } | { type: people_also_ask, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, title?: string | null, seed_question?: string | null, xpath?: string | null, expanded_element?: { type?: string | null, featured_title?: string | null, url?: string | null, domain?: string | null, title?: string | null, description?: string | null, images?: { type?: string | null, alt?: string | null, url?: string | null, image_url?: string | null }[] | null, timestamp?: string | null, asynchronous_ai_overview?: boolean | null, references?: { type?: string | null, source?: string | null, domain?: string | null, url?: string | null, title?: string | null, text?: string | null }[] | null }[] | null }[] | null } | { type: related_searches, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: string[] | null } | { type: top_stories, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, title?: string | null, items?: { type?: string | null, source?: string | null, domain?: string | null, title?: string | null, date?: string | null, timestamp?: string | null, url?: string | null, image_url?: string | null }[] | null } | { type: local_pack, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, title?: string | null, description?: string | null, domain?: string | null, phone?: string | null, booking_url?: string | null, url?: string | null, is_paid?: boolean | null, rating?: { rating_type?: string | null, value?: number | null, votes_count?: number | null, rating_max?: number | null } | null, cid?: string | null } | { type: ai_overview, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, asynchronous_ai_overview?: boolean | null, markdown?: string | null, references?: { type?: string | null, source?: string | null, domain?: string | null, url?: string | null, title?: string | null, text?: string | null }[] | null } | { type: video, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null, items?: { type?: string | null, source?: string | null, preview?: string | null, title?: string | null, timestamp?: string | null, url?: string | null }[] | null } | { type: string, rank_group?: number | null, rank_absolute?: number | null, page?: number | null, position?: string | null, xpath?: string | null })[] | null }[] | null }[] | null"
           }
         ]
       }
@@ -2790,7 +2790,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2800,32 +2800,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { language_name: string, language_code: string }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { language_name: string, language_code: string }[] | null }[] | null"
           }
         ]
       }
@@ -2851,7 +2851,7 @@
           {
             "key": "version",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_code",
@@ -2861,32 +2861,32 @@
           {
             "key": "status_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks_error",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tasks",
             "optional": true,
-            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: {} | null, result?: { location_code: number, location_name: string, location_code_parent?: number | null, country_iso_code?: string | null, location_type?: string | null }[] | null }[]"
+            "type": "{ id: string, status_code: number, status_message?: string | null, time?: string | null, cost?: number | null, result_count?: number | null, path?: string[] | null, data?: Record<string, any> | null, result?: { location_code: number, location_name: string, location_code_parent?: number | null, country_iso_code?: string | null, location_type?: string | null }[] | null }[] | null"
           }
         ]
       }

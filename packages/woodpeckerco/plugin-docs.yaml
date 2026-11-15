@@ -1,0 +1,48 @@
+displayName: Woodpecker Co
+description: Cold email and LinkedIn outreach with Woodpecker - list, run, pause and stop campaigns, remove unused campaign steps, add prospects to campaigns and read them back, and look up webhook event types.
+domain: woodpecker.co
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Woodpecker under Add-ons, API & Integrations, API keys. Your subscription needs the API add-on. Things to know before you send:
+
+  - **Real outreach.** `campaigns.run` starts contacting the campaign's prospects. It also resumes a paused or stopped campaign.
+  - **Pause and stop.** `campaigns.pause` and `campaigns.stop` both halt contact until `campaigns.run` is called again; they differ in the status they leave the campaign in.
+  - **Adding prospects can partly succeed.** `prospects.addToCampaign` returns a result per prospect, and an entry with `status: 'ERROR'` was not added. `DUPLICATE` is not an error. If none could be added, Woodpecker answers 400: the call throws a `WoodpeckerCoAPIError` whose `body.prospects` holds the reasons.
+  - **`force`.** Prospects whose global status is not `ACTIVE` are rejected unless you pass `force: true`, and with it they may be contacted again even after replying elsewhere or opting out.
+  - **Deleting a step.** `campaigns.deleteStep` needs the campaign in `DRAFT` or `EDITED` status and the step's ID. Both come from Woodpecker's campaign API (`POST v2/campaigns/{id}/make_editable` and `GET v2/campaigns/{id}`), which this plugin does not wrap yet. A deleted step cannot be restored.
+  - **Rate limits.** Woodpecker runs one request at a time per account and queues six more for up to 15 seconds each. Anything past that is dropped, with a 429 on v2 and a 409 `E_TOO_MANY_REQUESTS` on v1. The plugin retries both up to three times with backoff. Every other 409 is a real conflict and is not retried.
+  - **Paging.** `prospects.listInCampaigns` returns `next_page`, which stays set while pages come back full, so a full last page leads to one empty page. Woodpecker's `X-Total-Count` header is not exposed.
+  - **Webhooks.** The plugin does not receive webhooks. `webhooks.listEvents` lists the event types from Woodpecker's docs without calling the API.
+examples:
+  read:
+    path: campaigns.list
+    title: List running campaigns
+    args:
+      status:
+        - RUNNING
+  write:
+    path: prospects.addToCampaign
+    title: Add a prospect to a campaign
+    args:
+      campaign:
+        campaign_id: 1234567
+      prospects:
+        - email: jordan@acme-logistics.com
+          first_name: Jordan
+          company: Acme Logistics
+apiExamples:
+  campaigns.list:
+    call: "{ status: ['RUNNING', 'PAUSED'] }"
+  campaigns.run:
+    call: "{ campaign_id: 1234567 }"
+  campaigns.pause:
+    call: "{ campaign_id: 1234567 }"
+  campaigns.stop:
+    call: "{ campaign_id: 1234567 }"
+  campaigns.deleteStep:
+    call: "{ campaign_id: 1234567, step_id: '36c4fb2c-6f4f-45bf-aeae-4903501193hd' }"
+  prospects.addToCampaign:
+    call: "{ campaign: { campaign_id: 1234567 }, prospects: [{ email: 'jordan@acme-logistics.com', first_name: 'Jordan', snippet1: 'Saw your talk in Austin' }] }"
+  prospects.listInCampaigns:
+    call: "{ campaigns_id: [1234567], status: 'REPLIED', sort: '-updated', per_page: 50 }"
+  webhooks.listEvents: {}

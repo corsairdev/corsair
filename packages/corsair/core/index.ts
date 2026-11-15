@@ -326,6 +326,7 @@ export {
 	getOAuthAccessToken,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
+	OAuthRefreshError,
 	ReconnectRequiredError,
 	reEncryptConfig,
 } from './auth';
@@ -438,6 +439,7 @@ export type {
 	CorsairPluginSubscribe,
 	CorsairPluginSubscribeResult,
 	EndpointHooks,
+	EndpointJob,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 	KeyBuilderContext,

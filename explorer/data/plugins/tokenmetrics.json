@@ -1,7 +1,7 @@
 {
   "id": "tokenmetrics",
   "displayName": "Token Metrics",
-  "description": "Token Metrics plugin for Corsair",
+  "description": "Crypto analytics API for token prices, market cap rankings, technical indicators, and AI-generated trading signals.",
   "npmPackageName": "@corsair-dev/tokenmetrics",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

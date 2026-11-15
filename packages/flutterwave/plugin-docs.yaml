@@ -1,0 +1,17 @@
+displayName: Flutterwave
+description: Payments API for accepting charges and payment links, and managing transfers, beneficiaries, subaccounts, virtual accounts, subscriptions, settlements, refunds, bills, banks, and wallet balances.
+domain: flutterwave.com
+examples:
+  read:
+    path: transactions.list
+    title: List transactions
+  write:
+    path: paymentLinks.create
+    title: Create a payment link
+    args:
+      tx_ref: order-1001
+      amount: 1000
+      currency: NGN
+      redirect_url: https://example.com/thanks
+      customer:
+        email: you@example.com

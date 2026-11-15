@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Discord incoming webhooks: event paths, payloads, and response data."
+title: "Discord webhooks"
+sidebarTitle: "Webhooks"
+description: "Discord incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Discord plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/discord/overview) for setup context and the exact URL shape).
@@ -25,9 +26,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -68,8 +83,8 @@ A user invoked a slash command or context-menu action
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -79,7 +94,7 @@ A user invoked a slash command or context-menu action
     public_flags?: number,
     flags?: number
   },
-  nick?: string | null,
+  nick: string | null,
   roles: string[],
   joined_at: string,
   permissions: string,
@@ -96,8 +111,8 @@ A user invoked a slash command or context-menu action
   id: string,
   username: string,
   discriminator: string,
-  global_name?: string | null,
-  avatar?: string | null,
+  global_name: string | null,
+  avatar: string | null,
   bot?: boolean,
   system?: boolean,
   email?: string | null,
@@ -122,7 +137,13 @@ A user invoked a slash command or context-menu action
     type: number,
     value?: string | number | boolean,
     focused?: boolean,
-    options?: lazy
+    options?: {
+      name: string,
+      type: number,
+      value?: string | number | boolean,
+      focused?: boolean,
+      options?: (recursive)
+    }[]
   }[],
   guild_id?: string,
   target_id?: string
@@ -149,8 +170,8 @@ A user invoked a slash command or context-menu action
       id: string,
       username: string,
       discriminator: string,
-      global_name?: string | null,
-      avatar?: string | null,
+      global_name: string | null,
+      avatar: string | null,
       bot?: boolean,
       system?: boolean,
       email?: string | null,
@@ -160,7 +181,7 @@ A user invoked a slash command or context-menu action
       public_flags?: number,
       flags?: number
     },
-    nick?: string | null,
+    nick: string | null,
     roles: string[],
     joined_at: string,
     permissions: string,
@@ -171,8 +192,8 @@ A user invoked a slash command or context-menu action
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -195,7 +216,13 @@ A user invoked a slash command or context-menu action
       type: number,
       value?: string | number | boolean,
       focused?: boolean,
-      options?: lazy
+      options?: {
+        name: string,
+        type: number,
+        value?: string | number | boolean,
+        focused?: boolean,
+        options?: (recursive)
+      }[]
     }[],
     guild_id?: string,
     target_id?: string
@@ -259,8 +286,8 @@ A user clicked a button or selected a menu option
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -270,7 +297,7 @@ A user clicked a button or selected a menu option
     public_flags?: number,
     flags?: number
   },
-  nick?: string | null,
+  nick: string | null,
   roles: string[],
   joined_at: string,
   permissions: string,
@@ -287,8 +314,8 @@ A user clicked a button or selected a menu option
   id: string,
   username: string,
   discriminator: string,
-  global_name?: string | null,
-  avatar?: string | null,
+  global_name: string | null,
+  avatar: string | null,
   bot?: boolean,
   system?: boolean,
   email?: string | null,
@@ -323,8 +350,8 @@ A user clicked a button or selected a menu option
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -335,15 +362,15 @@ A user clicked a button or selected a menu option
     flags?: number
   },
   timestamp: string,
-  edited_timestamp?: string | null,
+  edited_timestamp: string | null,
   tts: boolean,
   mention_everyone: boolean,
   mentions: {
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -406,8 +433,8 @@ A user clicked a button or selected a menu option
       id: string,
       username: string,
       discriminator: string,
-      global_name?: string | null,
-      avatar?: string | null,
+      global_name: string | null,
+      avatar: string | null,
       bot?: boolean,
       system?: boolean,
       email?: string | null,
@@ -417,7 +444,7 @@ A user clicked a button or selected a menu option
       public_flags?: number,
       flags?: number
     },
-    nick?: string | null,
+    nick: string | null,
     roles: string[],
     joined_at: string,
     permissions: string,
@@ -428,8 +455,8 @@ A user clicked a button or selected a menu option
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -456,8 +483,8 @@ A user clicked a button or selected a menu option
       id: string,
       username: string,
       discriminator: string,
-      global_name?: string | null,
-      avatar?: string | null,
+      global_name: string | null,
+      avatar: string | null,
       bot?: boolean,
       system?: boolean,
       email?: string | null,
@@ -468,15 +495,15 @@ A user clicked a button or selected a menu option
       flags?: number
     },
     timestamp: string,
-    edited_timestamp?: string | null,
+    edited_timestamp: string | null,
     tts: boolean,
     mention_everyone: boolean,
     mentions: {
       id: string,
       username: string,
       discriminator: string,
-      global_name?: string | null,
-      avatar?: string | null,
+      global_name: string | null,
+      avatar: string | null,
       bot?: boolean,
       system?: boolean,
       email?: string | null,
@@ -575,8 +602,8 @@ A user submitted a modal dialog
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -586,7 +613,7 @@ A user submitted a modal dialog
     public_flags?: number,
     flags?: number
   },
-  nick?: string | null,
+  nick: string | null,
   roles: string[],
   joined_at: string,
   permissions: string,
@@ -603,8 +630,8 @@ A user submitted a modal dialog
   id: string,
   username: string,
   discriminator: string,
-  global_name?: string | null,
-  avatar?: string | null,
+  global_name: string | null,
+  avatar: string | null,
   bot?: boolean,
   system?: boolean,
   email?: string | null,
@@ -653,8 +680,8 @@ A user submitted a modal dialog
       id: string,
       username: string,
       discriminator: string,
-      global_name?: string | null,
-      avatar?: string | null,
+      global_name: string | null,
+      avatar: string | null,
       bot?: boolean,
       system?: boolean,
       email?: string | null,
@@ -664,7 +691,7 @@ A user submitted a modal dialog
       public_flags?: number,
       flags?: number
     },
-    nick?: string | null,
+    nick: string | null,
     roles: string[],
     joined_at: string,
     permissions: string,
@@ -675,8 +702,8 @@ A user submitted a modal dialog
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -758,8 +785,8 @@ Discord sends a PING to verify the endpoint is live
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,
@@ -769,7 +796,7 @@ Discord sends a PING to verify the endpoint is live
     public_flags?: number,
     flags?: number
   },
-  nick?: string | null,
+  nick: string | null,
   roles: string[],
   joined_at: string,
   permissions: string,
@@ -786,8 +813,8 @@ Discord sends a PING to verify the endpoint is live
   id: string,
   username: string,
   discriminator: string,
-  global_name?: string | null,
-  avatar?: string | null,
+  global_name: string | null,
+  avatar: string | null,
   bot?: boolean,
   system?: boolean,
   email?: string | null,
@@ -819,8 +846,8 @@ Discord sends a PING to verify the endpoint is live
       id: string,
       username: string,
       discriminator: string,
-      global_name?: string | null,
-      avatar?: string | null,
+      global_name: string | null,
+      avatar: string | null,
       bot?: boolean,
       system?: boolean,
       email?: string | null,
@@ -830,7 +857,7 @@ Discord sends a PING to verify the endpoint is live
       public_flags?: number,
       flags?: number
     },
-    nick?: string | null,
+    nick: string | null,
     roles: string[],
     joined_at: string,
     permissions: string,
@@ -841,8 +868,8 @@ Discord sends a PING to verify the endpoint is live
     id: string,
     username: string,
     discriminator: string,
-    global_name?: string | null,
-    avatar?: string | null,
+    global_name: string | null,
+    avatar: string | null,
     bot?: boolean,
     system?: boolean,
     email?: string | null,

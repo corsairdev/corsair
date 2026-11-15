@@ -1,7 +1,7 @@
 {
   "id": "claidai",
   "displayName": "Claid.ai",
-  "description": "Claid.ai plugin for Corsair",
+  "description": "Image editing and generation API. Remove or generate backgrounds, resize, polish, blur license plates, edit images with AI, and manage storage connections.",
   "npmPackageName": "@corsair-dev/claidai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -52,7 +52,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ input?: {}, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+            "type": "{ input?: Record<string, JsonValue>, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
           }
         ]
       }
@@ -138,7 +138,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "lazy",
+            "type": "JsonValue",
             "description": "Deletion result"
           }
         ]
@@ -229,7 +229,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: number, status: string, result_url?: string, created_at?: string, request?: {}, errors?: { error: string, created_at?: string | number }[], result?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }, results?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }[] }"
+            "type": "{ id: number, status: string, result_url?: string, created_at?: string, request?: Record<string, JsonValue>, errors?: { error: string, created_at?: string | number }[], result?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }, results?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }[] }"
           }
         ]
       }
@@ -251,7 +251,7 @@
           {
             "key": "operations",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, JsonValue>",
             "description": "Image editing operations, for example { resizing: { width: 1000 } }"
           },
           {
@@ -268,7 +268,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: number, status: string, result_url?: string, created_at?: string, request?: {}, errors?: { error: string, created_at?: string | number }[], result?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }, results?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }[] }"
+            "type": "{ id: number, status: string, result_url?: string, created_at?: string, request?: Record<string, JsonValue>, errors?: { error: string, created_at?: string | number }[], result?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }, results?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }[] }"
           }
         ]
       }
@@ -307,7 +307,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ input?: {}, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+            "type": "{ input?: Record<string, JsonValue>, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
           }
         ]
       }
@@ -542,7 +542,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "web_folder | s3 | gcs[]"
+            "type": "(web_folder | s3 | gcs)[]"
           }
         ]
       }

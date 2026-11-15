@@ -38,7 +38,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -135,12 +135,12 @@
           {
             "key": "filteredResults",
             "optional": true,
-            "type": "number | {}"
+            "type": "number | Record<string, any>"
           },
           {
             "key": "prints",
             "optional": false,
-            "type": "{ id?: string, name: string, prompt: string, status: number, params: { name: sujetMode | templatePrompt | angle | photographe | time | weather | format | camera | interdiction | version | chaos | stylize | fromImageUrl, value: string }[], processMode?: relax | fast | null, images?: { id?: string, url?: string }[], nbImages?: number | null, tags?: string[], metaData?: {} | null, createdAt?: string | null }[]"
+            "type": "{ id?: string, name: string, prompt: string, status: number, params: { name: sujetMode | templatePrompt | angle | photographe | time | weather | format | camera | interdiction | version | chaos | stylize | fromImageUrl, value: string }[], processMode?: relax | fast | null, images?: { id?: string, url?: string }[], nbImages?: number | null, tags?: string[], metaData?: Record<string, any> | null, createdAt?: string | null }[]"
           }
         ]
       }
@@ -186,7 +186,7 @@
           {
             "key": "filteredResults",
             "optional": true,
-            "type": "number | {}"
+            "type": "number | Record<string, any>"
           },
           {
             "key": "images",
@@ -212,7 +212,7 @@
           {
             "key": "events",
             "optional": true,
-            "type": "test | print.created | print.active | print.failed | print.progress | print.completed[]"
+            "type": "(test | print.created | print.active | print.failed | print.progress | print.completed)[]"
           }
         ]
       },
@@ -253,12 +253,12 @@
           {
             "key": "apiKeyId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

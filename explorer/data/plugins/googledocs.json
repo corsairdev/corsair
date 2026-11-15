@@ -731,12 +731,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -751,7 +751,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -792,7 +792,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -843,7 +843,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -869,7 +869,7 @@
           {
             "key": "documentStyle",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "fields",
@@ -889,7 +889,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -915,12 +915,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -935,7 +935,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1043,7 +1043,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1089,7 +1089,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1135,7 +1135,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1186,7 +1186,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1237,7 +1237,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1283,7 +1283,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1329,7 +1329,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1375,7 +1375,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1421,7 +1421,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1462,7 +1462,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1503,7 +1503,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1559,7 +1559,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1605,7 +1605,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1646,7 +1646,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1702,7 +1702,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1748,7 +1748,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1804,7 +1804,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1850,7 +1850,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1901,7 +1901,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -1952,7 +1952,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -2003,7 +2003,7 @@
           {
             "key": "replies",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "writeControl",
@@ -2025,7 +2025,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ data?: string, attributes?: {}, messageId?: string, publishTime?: string }"
+            "type": "{ data?: string, attributes?: Record<string, string>, messageId?: string, publishTime?: string }"
           },
           {
             "key": "subscription",

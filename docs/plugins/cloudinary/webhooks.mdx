@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Cloudinary incoming webhooks: event paths, payloads, and response data."
+title: "Cloudinary webhooks"
+sidebarTitle: "Webhooks"
+description: "Cloudinary incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Cloudinary plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/cloudinary/overview) for setup context and the exact URL shape).
@@ -40,9 +41,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -118,20 +133,10 @@ Notification when eager transformations complete
 | `notification_type` | `eager` | Yes | — |
 | `request_id` | `string` | No | — |
 | `signature_key` | `string` | No | — |
-| `eager` | `object[]` | No | — |
+| `eager` | `Record<string, any>[]` | No | — |
 | `batch_id` | `string` | No | — |
 | `asset_id` | `string` | No | — |
 | `public_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="eager full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -143,8 +148,7 @@ Notification when eager transformations complete
   notification_type: eager,
   request_id?: string,
   signature_key?: string,
-  eager?: {
-  }[],
+  eager?: Record<string, any>[],
   batch_id?: string,
   asset_id?: string,
   public_id?: string
@@ -597,17 +601,7 @@ Notification when resource context metadata changes
 | `signature_key` | `string` | No | — |
 | `public_id` | `string` | No | — |
 | `asset_id` | `string` | No | — |
-| `context` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="context full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `context` | `Record<string, any>` | No | — |
 
 
 
@@ -621,8 +615,7 @@ Notification when resource context metadata changes
   signature_key?: string,
   public_id?: string,
   asset_id?: string,
-  context?: {
-  }
+  context?: Record<string, any>
 }
 ```
 </Accordion>
@@ -663,17 +656,7 @@ Notification when structured metadata changes
 | `signature_key` | `string` | No | — |
 | `public_id` | `string` | No | — |
 | `asset_id` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -687,8 +670,7 @@ Notification when structured metadata changes
   signature_key?: string,
   public_id?: string,
   asset_id?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }
 ```
 </Accordion>

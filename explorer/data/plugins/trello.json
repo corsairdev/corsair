@@ -129,7 +129,7 @@
           {
             "key": "descData",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "closed",
@@ -139,12 +139,12 @@
           {
             "key": "idOrganization",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idEnterprise",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pinned",
@@ -169,7 +169,7 @@
           {
             "key": "labelNames",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "starred",
@@ -205,7 +205,7 @@
           {
             "key": "_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -251,7 +251,7 @@
           {
             "key": "descData",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "closed",
@@ -261,12 +261,12 @@
           {
             "key": "idOrganization",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idEnterprise",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pinned",
@@ -291,7 +291,7 @@
           {
             "key": "labelNames",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "starred",
@@ -333,7 +333,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name?: string, desc?: string, descData?: any | null, closed?: boolean, idOrganization?: string | null, idEnterprise?: string | null, pinned?: boolean, url?: string, shortUrl?: string, prefs?: { permissionLevel?: string, hideVotes?: boolean, voting?: string, comments?: string, invitations?: string, selfJoin?: boolean, cardCovers?: boolean, isTemplate?: boolean, cardAging?: string, calendarFeedEnabled?: boolean, background?: string | null, backgroundImage?: string | null, backgroundTile?: boolean, backgroundBrightness?: string, canBePublic?: boolean, canBeOrg?: boolean, canBePrivate?: boolean, canInvite?: string | boolean }, labelNames?: {}, starred?: boolean, memberships?: any[] }[]"
+        "type": "{ id: string, name?: string, desc?: string, descData?: any | null, closed?: boolean, idOrganization?: string | null, idEnterprise?: string | null, pinned?: boolean, url?: string, shortUrl?: string, prefs?: { permissionLevel?: string, hideVotes?: boolean, voting?: string, comments?: string, invitations?: string, selfJoin?: boolean, cardCovers?: boolean, isTemplate?: boolean, cardAging?: string, calendarFeedEnabled?: boolean, background?: string | null, backgroundImage?: string | null, backgroundTile?: boolean, backgroundBrightness?: string, canBePublic?: boolean, canBeOrg?: boolean, canBePrivate?: boolean, canInvite?: string | boolean }, labelNames?: Record<string, string>, starred?: boolean, memberships?: any[] }[]"
       }
     },
     {
@@ -417,7 +417,7 @@
           {
             "key": "descData",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "closed",
@@ -427,12 +427,12 @@
           {
             "key": "idOrganization",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idEnterprise",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pinned",
@@ -457,7 +457,7 @@
           {
             "key": "labelNames",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "starred",
@@ -503,12 +503,12 @@
           {
             "key": "due",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dueComplete",
@@ -553,7 +553,7 @@
           {
             "key": "checkItemStates",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "closed",
@@ -573,12 +573,12 @@
           {
             "key": "descData",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "due",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dueComplete",
@@ -588,12 +588,12 @@
           {
             "key": "dueReminder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idBoard",
@@ -633,7 +633,7 @@
           {
             "key": "idAttachmentCover",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "labels",
@@ -668,7 +668,7 @@
           {
             "key": "start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subscribed",
@@ -683,7 +683,7 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -709,7 +709,7 @@
           {
             "key": "_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -750,7 +750,7 @@
           {
             "key": "checkItemStates",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "closed",
@@ -770,12 +770,12 @@
           {
             "key": "descData",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "due",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dueComplete",
@@ -785,12 +785,12 @@
           {
             "key": "dueReminder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idBoard",
@@ -830,7 +830,7 @@
           {
             "key": "idAttachmentCover",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "labels",
@@ -865,7 +865,7 @@
           {
             "key": "start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subscribed",
@@ -880,7 +880,7 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -976,7 +976,7 @@
           {
             "key": "checkItemStates",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "closed",
@@ -996,12 +996,12 @@
           {
             "key": "descData",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "due",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dueComplete",
@@ -1011,12 +1011,12 @@
           {
             "key": "dueReminder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idBoard",
@@ -1056,7 +1056,7 @@
           {
             "key": "idAttachmentCover",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "labels",
@@ -1091,7 +1091,7 @@
           {
             "key": "start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subscribed",
@@ -1106,7 +1106,7 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -1147,7 +1147,7 @@
           {
             "key": "idAttachmentCover",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idList",
@@ -1172,12 +1172,12 @@
           {
             "key": "due",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dueComplete",
@@ -1207,7 +1207,7 @@
           {
             "key": "checkItemStates",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "closed",
@@ -1227,12 +1227,12 @@
           {
             "key": "descData",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "due",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dueComplete",
@@ -1242,12 +1242,12 @@
           {
             "key": "dueReminder",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idBoard",
@@ -1287,7 +1287,7 @@
           {
             "key": "idAttachmentCover",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "labels",
@@ -1322,7 +1322,7 @@
           {
             "key": "start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subscribed",
@@ -1337,7 +1337,7 @@
           {
             "key": "cover",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -1429,7 +1429,7 @@
           {
             "key": "_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1515,8 +1515,8 @@
           },
           {
             "key": "color",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "idBoard",
@@ -1546,7 +1546,7 @@
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1572,7 +1572,7 @@
           {
             "key": "_value",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1628,7 +1628,7 @@
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -1653,7 +1653,7 @@
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1709,7 +1709,7 @@
           {
             "key": "softLimit",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -1780,7 +1780,7 @@
           {
             "key": "softLimit",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -1841,7 +1841,7 @@
           {
             "key": "softLimit",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -1947,7 +1947,7 @@
           {
             "key": "softLimit",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -1988,12 +1988,12 @@
           {
             "key": "avatarHash",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatarUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bio",
@@ -2008,7 +2008,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fullName",
@@ -2018,12 +2018,12 @@
           {
             "key": "idEnterprise",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idMemberReferrer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "idOrganizations",
@@ -2110,11 +2110,11 @@
           {
             "key": "model",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ action: { id: string, idMemberCreator: string, type: createCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number } } }, model: {} }",
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: createCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number } } }, model: Record<string, any> }",
       "usageExample": "trello({\n    webhookHooks: {\n        cards: {\n            cardCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2127,16 +2127,16 @@
           {
             "key": "action",
             "optional": false,
-            "type": "{ id: string, idMemberCreator: string, type: updateCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, listBefore?: { id: string, name?: string }, listAfter?: { id: string, name?: string }, old?: {} } }"
+            "type": "{ id: string, idMemberCreator: string, type: updateCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, listBefore?: { id: string, name?: string }, listAfter?: { id: string, name?: string }, old?: Record<string, any> } }"
           },
           {
             "key": "model",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ action: { id: string, idMemberCreator: string, type: updateCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, listBefore?: { id: string, name?: string }, listAfter?: { id: string, name?: string }, old?: {} } }, model: {} }",
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: updateCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, listBefore?: { id: string, name?: string }, listAfter?: { id: string, name?: string }, old?: Record<string, any> } }, model: Record<string, any> }",
       "usageExample": "trello({\n    webhookHooks: {\n        cards: {\n            cardUpdated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2154,11 +2154,11 @@
           {
             "key": "model",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ action: { id: string, idMemberCreator: string, type: commentCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, list?: { id: string, name?: string }, text?: string, textData?: any | null } }, model: {} }",
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: commentCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, list?: { id: string, name?: string }, text?: string, textData?: any | null } }, model: Record<string, any> }",
       "usageExample": "trello({\n    webhookHooks: {\n        comments: {\n            commentCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2176,11 +2176,11 @@
           {
             "key": "model",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ action: { id: string, idMemberCreator: string, type: createList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string } } }, model: {} }",
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: createList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string } } }, model: Record<string, any> }",
       "usageExample": "trello({\n    webhookHooks: {\n        lists: {\n            listCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2193,16 +2193,16 @@
           {
             "key": "action",
             "optional": false,
-            "type": "{ id: string, idMemberCreator: string, type: updateList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, old?: {} } }"
+            "type": "{ id: string, idMemberCreator: string, type: updateList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, old?: Record<string, any> } }"
           },
           {
             "key": "model",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ action: { id: string, idMemberCreator: string, type: updateList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, old?: {} } }, model: {} }",
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: updateList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, old?: Record<string, any> } }, model: Record<string, any> }",
       "usageExample": "trello({\n    webhookHooks: {\n        lists: {\n            listUpdated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2220,11 +2220,11 @@
           {
             "key": "model",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ action: { id: string, idMemberCreator: string, type: addMemberToCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, idMember?: string, member?: { id: string, username?: string, fullName?: string, avatarUrl?: string | null, initials?: string } } }, model: {} }",
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: addMemberToCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, idMember?: string, member?: { id: string, username?: string, fullName?: string, avatarUrl?: string | null, initials?: string } } }, model: Record<string, any> }",
       "usageExample": "trello({\n    webhookHooks: {\n        members: {\n            memberAddedToCard: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Orbit: every `orbit.api.*` operation with input and output types."
+title: "Orbit API reference"
+sidebarTitle: "API"
+description: "API reference for the Orbit plugin in Corsair: every `orbit.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `orbit.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -544,7 +543,7 @@ await corsair.orbit.api.search.quotePopulation({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `population` | `object` | Yes | — |
-| `size` | `number` | No | — |
+| `size` | `number \| null` | No | — |
 | `profile_depth` | `partial \| full` | No | — |
 
 <AccordionGroup>
@@ -692,7 +691,7 @@ await corsair.orbit.api.search.startPopulation({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `population` | `object` | Yes | — |
-| `size` | `number` | No | — |
+| `size` | `number \| null` | No | — |
 | `profile_depth` | `partial \| full` | No | — |
 | `request_id` | `string` | No | — |
 
@@ -764,7 +763,7 @@ await corsair.orbit.api.watchers.create({});
 |------|------|----------|-------------|
 | `orbit_id` | `string` | Yes | — |
 | `interval_seconds` | `number` | Yes | — |
-| `phases` | `existing_sources \| existing_socials \| new_sources[]` | No | — |
+| `phases` | `(existing_sources \| existing_socials \| new_sources)[] \| null` | No | — |
 
 
 
@@ -941,7 +940,7 @@ await corsair.orbit.api.watchers.update({});
 | `watcher_id` | `string` | Yes | — |
 | `enabled` | `boolean` | No | — |
 | `interval_seconds` | `number` | No | — |
-| `phases` | `existing_sources \| existing_socials \| new_sources[]` | No | — |
+| `phases` | `(existing_sources \| existing_socials \| new_sources)[] \| null` | No | — |
 
 
 
@@ -976,7 +975,7 @@ await corsair.orbit.api.webhooks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `event_types` | `profile.updated \| company.thesis.changed \| company.alert \| portfolio.changed \| search.profile.updated \| search.completed[]` | No | — |
+| `event_types` | `(profile.updated \| company.thesis.changed \| company.alert \| portfolio.changed \| search.profile.updated \| search.completed)[]` | No | — |
 | `description` | `string` | No | — |
 
 

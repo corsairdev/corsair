@@ -46,21 +46,21 @@
           },
           {
             "key": "maxEvents",
-            "optional": false,
+            "optional": true,
             "type": "number",
-            "description": "Stop after this many events have been received"
+            "description": "Stop after this many events have been received. Defaults to 10."
           },
           {
             "key": "timeoutMs",
-            "optional": false,
+            "optional": true,
             "type": "number",
-            "description": "Stop listening after this many milliseconds"
+            "description": "Stop listening after this many milliseconds. Defaults to 15000."
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ mode: stream, table: string, action: insert | update | delete, events: { table: string, action: insert | update | delete, receivedAt: string, data?: {} }[], stoppedBy: max_events | timeout | stream_closed } | { mode: health_check, table: string, action: insert | update | delete, listenAvailable: false, reason: string, databaseReachable: boolean }"
+        "type": "{ mode: stream, table: string, action: insert | update | delete, events: { table: string, action: insert | update | delete, receivedAt: string, data?: Record<string, any> }[], stoppedBy: max_events | timeout | stream_closed } | { mode: health_check, table: string, action: insert | update | delete, listenAvailable: false, reason: string, databaseReachable: boolean }"
       }
     },
     {
@@ -130,6 +130,11 @@
         },
         {
           "field": "table",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "action",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

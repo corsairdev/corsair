@@ -171,7 +171,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ mms_campaign_id?: number, name?: string, user_id?: number, subaccount_id?: number, list_id?: number, from?: string, subject?: string, file_name?: string, body?: string, schedule?: number, status?: string, date_added?: number, _total_count?: number, _list_name?: string, _media_file_url?: string } | never[] | {} | boolean | null"
+        "type": "{ mms_campaign_id?: number, name?: string, user_id?: number, subaccount_id?: number, list_id?: number, from?: string, subject?: string, file_name?: string, body?: string, schedule?: number, status?: string, date_added?: number, _total_count?: number, _list_name?: string, _media_file_url?: string } | never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -514,7 +514,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ sms_campaign_id?: number, name?: string, user_id?: number, subaccount_id?: number, list_id?: number, from?: string, body?: string, schedule?: number, status?: string, date_added?: number, custom_string?: string, url_to_shorten?: string, _total_count?: number, _list_name?: string } | never[] | {} | boolean | null"
+        "type": "{ sms_campaign_id?: number, name?: string, user_id?: number, subaccount_id?: number, list_id?: number, from?: string, body?: string, schedule?: number, status?: string, date_added?: number, custom_string?: string, url_to_shorten?: string, _total_count?: number, _list_name?: string } | never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -771,7 +771,7 @@
           {
             "key": "senders",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, string>[]"
           },
           {
             "key": "source",
@@ -986,7 +986,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -1346,7 +1346,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -2364,7 +2364,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -2476,7 +2476,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -2918,7 +2918,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -3167,7 +3167,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -3406,7 +3406,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -3690,7 +3690,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -4121,7 +4121,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -4350,7 +4350,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -5093,7 +5093,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -6073,7 +6073,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -6093,7 +6093,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -6312,7 +6312,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -6632,7 +6632,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -6951,7 +6951,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -7190,7 +7190,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -7368,7 +7368,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -7607,7 +7607,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -8105,7 +8105,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {
@@ -8267,7 +8267,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "never[] | {} | boolean | null"
+        "type": "never[] | Record<string, string> | boolean | null"
       }
     },
     {

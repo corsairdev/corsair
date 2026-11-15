@@ -520,7 +520,7 @@
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "profile_depth",
@@ -652,7 +652,7 @@
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "profile_depth",
@@ -723,7 +723,7 @@
           {
             "key": "phases",
             "optional": true,
-            "type": "existing_sources | existing_socials | new_sources[]"
+            "type": "(existing_sources | existing_socials | new_sources)[] | null"
           }
         ]
       },
@@ -892,7 +892,7 @@
           {
             "key": "phases",
             "optional": true,
-            "type": "existing_sources | existing_socials | new_sources[]"
+            "type": "(existing_sources | existing_socials | new_sources)[] | null"
           }
         ]
       },
@@ -933,7 +933,7 @@
           {
             "key": "event_types",
             "optional": true,
-            "type": "profile.updated | company.thesis.changed | company.alert | portfolio.changed | search.profile.updated | search.completed[]"
+            "type": "(profile.updated | company.thesis.changed | company.alert | portfolio.changed | search.profile.updated | search.completed)[]"
           },
           {
             "key": "description",
@@ -1111,6 +1111,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "requestId",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1142,6 +1147,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "updatedAt",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1159,6 +1169,11 @@
         },
         {
           "field": "searchId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

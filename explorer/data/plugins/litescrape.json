@@ -1065,7 +1065,7 @@
           {
             "key": "ai_overview",
             "optional": true,
-            "type": "{ text_blocks?: {}[], references?: {}[] }"
+            "type": "{ text_blocks?: {}[], references?: {}[] } | null"
           },
           {
             "key": "pagination",
@@ -1437,7 +1437,7 @@
           {
             "key": "ai_overview",
             "optional": true,
-            "type": "{ text_blocks?: {}[], references?: {}[] }"
+            "type": "{ text_blocks?: {}[], references?: {}[] } | null"
           },
           {
             "key": "related_questions",

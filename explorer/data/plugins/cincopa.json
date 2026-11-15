@@ -1,7 +1,7 @@
 {
   "id": "cincopa",
   "displayName": "Cincopa",
-  "description": "Cincopa plugin for Corsair",
+  "description": "Media hosting platform. List galleries, upload assets from a URL and track the upload, and get the upload iframe.",
   "npmPackageName": "@corsair-dev/cincopa",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -237,7 +237,7 @@
           {
             "key": "tag_cloud",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, number>"
           },
           {
             "key": "items_data",

@@ -38,7 +38,7 @@
           {
             "key": "symbols",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -155,7 +155,7 @@
           {
             "key": "rates",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, number>"
           }
         ]
       }
@@ -206,7 +206,7 @@
           {
             "key": "rates",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, number>"
           }
         ]
       }

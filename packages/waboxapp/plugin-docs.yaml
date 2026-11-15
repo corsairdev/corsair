@@ -1,0 +1,19 @@
+displayName: waboxapp
+description: WhatsApp messaging API for sending text, image, link, and media messages and checking the linked account status.
+domain: waboxapp.com
+examples:
+  read:
+    path: accounts.getStatus
+    title: Check account status
+  write:
+    path: messages.sendChat
+    title: Send a WhatsApp message
+    args:
+      to: "14155552671"
+      text: Hello from Corsair
+dbExample:
+  entity: messages
+  note: >-
+    This table exists, but waboxapp calls don't fill it yet. This returns only
+    rows you have written yourself.
+  limit: 50

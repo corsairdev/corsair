@@ -44,7 +44,7 @@
           {
             "key": "contractors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -69,7 +69,7 @@
           {
             "key": "integrations",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -156,7 +156,7 @@
           {
             "key": "accounts",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -192,12 +192,12 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "package_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -213,7 +213,7 @@
           {
             "key": "package_ids",
             "optional": false,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -228,7 +228,7 @@
           {
             "key": "packages_history",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -253,7 +253,7 @@
           {
             "key": "couriers",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -284,7 +284,7 @@
           {
             "key": "packages",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -315,7 +315,7 @@
           {
             "key": "package_details",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -336,12 +336,12 @@
           {
             "key": "package_ids",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "package_numbers",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "account_id",
@@ -397,7 +397,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -418,12 +418,12 @@
           {
             "key": "package_ids",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "package_numbers",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "account_id",
@@ -433,7 +433,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -580,7 +580,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "fv_payment",
@@ -707,7 +707,7 @@
           {
             "key": "invoices",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -743,7 +743,7 @@
           {
             "key": "orders",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "receipt_id",
@@ -783,7 +783,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -829,7 +829,7 @@
           {
             "key": "receipts",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -854,7 +854,7 @@
           {
             "key": "series",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -992,7 +992,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -1017,7 +1017,7 @@
           {
             "key": "storages",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -1042,7 +1042,7 @@
           {
             "key": "storages",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -1073,7 +1073,7 @@
           {
             "key": "languages",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "default_language",
@@ -1083,7 +1083,7 @@
           {
             "key": "price_groups",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "default_price_group",
@@ -1093,7 +1093,7 @@
           {
             "key": "warehouses",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "default_warehouse",
@@ -1433,7 +1433,7 @@
           {
             "key": "ean_additional",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "asin",
@@ -1443,7 +1443,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "tax_rate",
@@ -1493,52 +1493,52 @@
           {
             "key": "prices",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "stock",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "locations",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "text_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "images",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "videos",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "media_options",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "bundle_products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "suppliers",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -1558,7 +1558,7 @@
           {
             "key": "warnings",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -1924,7 +1924,7 @@
           {
             "key": "inventories",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -1955,7 +1955,7 @@
           {
             "key": "text_field_keys",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -1986,7 +1986,7 @@
           {
             "key": "categories",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2011,7 +2011,7 @@
           {
             "key": "extra_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2042,7 +2042,7 @@
           {
             "key": "integrations",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2073,7 +2073,7 @@
           {
             "key": "manufacturers",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2109,7 +2109,7 @@
           {
             "key": "payers",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2134,7 +2134,7 @@
           {
             "key": "price_groups",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2159,7 +2159,7 @@
           {
             "key": "printouts",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2215,7 +2215,7 @@
           {
             "key": "logs",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2236,7 +2236,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "include_erp_units",
@@ -2286,7 +2286,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2382,7 +2382,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2418,7 +2418,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2504,7 +2504,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2540,7 +2540,7 @@
           {
             "key": "suppliers",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2565,7 +2565,7 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2590,7 +2590,7 @@
           {
             "key": "warehouses",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2642,7 +2642,7 @@
           {
             "key": "products",
             "optional": false,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -2662,7 +2662,7 @@
           {
             "key": "warnings",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2769,7 +2769,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2840,7 +2840,7 @@
           {
             "key": "documents",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -2871,7 +2871,7 @@
           {
             "key": "document_series",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3072,12 +3072,12 @@
           {
             "key": "custom_extra_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -3113,7 +3113,7 @@
           {
             "key": "items_to_split",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "delivery_cost_to_split",
@@ -3213,7 +3213,7 @@
           {
             "key": "order_ids",
             "optional": false,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -3228,7 +3228,7 @@
           {
             "key": "deleted_order_ids",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3249,7 +3249,7 @@
           {
             "key": "logs_types",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "order_id",
@@ -3269,7 +3269,7 @@
           {
             "key": "logs",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3294,7 +3294,7 @@
           {
             "key": "extra_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3330,7 +3330,7 @@
           {
             "key": "payments",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3366,7 +3366,7 @@
           {
             "key": "history",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3391,7 +3391,7 @@
           {
             "key": "printouts",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3492,7 +3492,7 @@
           {
             "key": "orders",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3523,7 +3523,7 @@
           {
             "key": "orders",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3548,7 +3548,7 @@
           {
             "key": "sources",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3573,7 +3573,7 @@
           {
             "key": "statuses",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3619,7 +3619,7 @@
           {
             "key": "fulfillment_shipments",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "fulfillment_center_id",
@@ -3664,7 +3664,7 @@
           {
             "key": "order_items",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3689,7 +3689,7 @@
           {
             "key": "carts",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -3901,7 +3901,7 @@
           {
             "key": "custom_extra_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "pick_state",
@@ -4100,7 +4100,7 @@
           {
             "key": "order_ids_to_merge",
             "optional": false,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "merge_mode",
@@ -4172,7 +4172,7 @@
           {
             "key": "order_ids",
             "optional": false,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "status_id",
@@ -4243,12 +4243,12 @@
           {
             "key": "additional_costs",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "packages",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -4289,7 +4289,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -4304,7 +4304,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -4340,7 +4340,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -4406,7 +4406,7 @@
           {
             "key": "purchase_orders",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -4437,7 +4437,7 @@
           {
             "key": "series",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -4463,7 +4463,7 @@
           {
             "key": "completed_items",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -4594,12 +4594,12 @@
           {
             "key": "custom_extra_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "products",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "refund_account_number",
@@ -4807,7 +4807,7 @@
           {
             "key": "extra_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -4828,7 +4828,7 @@
           {
             "key": "logs_types",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "return_id",
@@ -4848,7 +4848,7 @@
           {
             "key": "logs",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -4884,7 +4884,7 @@
           {
             "key": "payments",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -4909,7 +4909,7 @@
           {
             "key": "order_return_product_statuses",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -4934,7 +4934,7 @@
           {
             "key": "return_reasons",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -5005,7 +5005,7 @@
           {
             "key": "returns",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -5030,7 +5030,7 @@
           {
             "key": "statuses",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       }
@@ -5121,7 +5121,7 @@
           {
             "key": "custom_extra_fields",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           }
         ]
       },
@@ -5340,7 +5340,7 @@
           {
             "key": "return_ids",
             "optional": false,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "status_id",

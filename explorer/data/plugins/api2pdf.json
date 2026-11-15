@@ -70,22 +70,22 @@
           {
             "key": "FileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MbOut",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Success",
@@ -95,12 +95,12 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ResponseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -139,22 +139,22 @@
           {
             "key": "FileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MbOut",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Success",
@@ -164,12 +164,12 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ResponseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -208,22 +208,22 @@
           {
             "key": "FileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MbOut",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Success",
@@ -233,12 +233,12 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ResponseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -289,22 +289,22 @@
           {
             "key": "FileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MbOut",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Success",
@@ -314,12 +314,12 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ResponseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -358,22 +358,22 @@
           {
             "key": "FileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MbOut",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Success",
@@ -383,12 +383,12 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ResponseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -427,22 +427,22 @@
           {
             "key": "FileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MbOut",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Success",
@@ -452,12 +452,12 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ResponseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -526,22 +526,22 @@
           {
             "key": "FileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MbOut",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Success",
@@ -551,12 +551,12 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ResponseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -608,7 +608,7 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -657,22 +657,22 @@
           {
             "key": "FileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "MbOut",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "Success",
@@ -682,12 +682,12 @@
           {
             "key": "Error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ResponseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

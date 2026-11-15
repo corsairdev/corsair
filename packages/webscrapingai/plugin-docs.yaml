@@ -1,0 +1,13 @@
+displayName: WebScraping.AI
+description: Web scraping API that returns rendered HTML, text, or selected elements from pages, answers questions about a page, and extracts structured fields.
+domain: webscraping.ai
+examples:
+  read:
+    path: account.getInfo
+    title: Get account info
+  write:
+    path: ai.askQuestion
+    title: Ask a question about a page
+    args:
+      url: https://example.com
+      question: What is this page about?

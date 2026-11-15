@@ -1,7 +1,7 @@
 {
   "id": "alibaba",
-  "displayName": "Alibaba",
-  "description": "Alibaba plugin for Corsair",
+  "displayName": "Alibaba Cloud Model Studio",
+  "description": "Generative AI API for creating images with Qwen-Image and Wan, starting Wan video generation and editing tasks, and checking task status.",
   "npmPackageName": "@corsair-dev/alibaba",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -44,7 +44,7 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{ size?: string, n?: number, seed?: number, watermark?: boolean, negative_prompt?: string, prompt_extend?: boolean, prompt_extend_mode?: direct | agent, enable_thinking?: boolean, thinking_mode?: boolean, enable_sequential?: boolean, bbox_list?: tuple[][], color_palette?: { hex: string, ratio: string }[] }"
+            "type": "{ size?: string, n?: number, seed?: number, watermark?: boolean, negative_prompt?: string, prompt_extend?: boolean, prompt_extend_mode?: direct | agent, enable_thinking?: boolean, thinking_mode?: boolean, enable_sequential?: boolean, bbox_list?: [number, number, number, number][][], color_palette?: { hex: string, ratio: string }[] }"
           }
         ]
       },
@@ -59,7 +59,7 @@
           {
             "key": "usage",
             "optional": true,
-            "type": "{ output_width?: number | null, output_height?: number | null, input_image_count?: number | null, output_image_count?: number | null, input_image_type?: string | null, output_image_type?: string | null, width?: number | null, height?: number | null, image_count?: number | null }"
+            "type": "{ output_width?: number | null, output_height?: number | null, input_image_count?: number | null, output_image_count?: number | null, input_image_type?: string | null, output_image_type?: string | null, width?: number | null, height?: number | null, image_count?: number | null } | null"
           },
           {
             "key": "request_id",
@@ -95,7 +95,7 @@
           {
             "key": "usage",
             "optional": true,
-            "type": "{ duration?: number | null, input_video_duration?: number | null, output_video_duration?: number | null, SR?: number | null, ratio?: string | null, video_count?: number | null }"
+            "type": "{ duration?: number | null, input_video_duration?: number | null, output_video_duration?: number | null, SR?: number | null, ratio?: string | null, video_count?: number | null } | null"
           },
           {
             "key": "request_id",

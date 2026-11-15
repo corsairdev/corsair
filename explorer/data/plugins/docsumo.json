@@ -1,7 +1,7 @@
 {
   "id": "docsumo",
   "displayName": "Docsumo",
-  "description": "Docsumo plugin for Corsair",
+  "description": "Document AI platform for extracting data from uploaded documents, with endpoints for documents, document types, folders, tables, analytics, and agents.",
   "npmPackageName": "@corsair-dev/docsumo",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -114,7 +114,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ cases?: {}[], pagination?: { limit?: number, offset?: number, total?: number } }"
+            "type": "{ cases?: Record<string, any>[], pagination?: { limit?: number, offset?: number, total?: number } }"
           }
         ]
       }
@@ -165,7 +165,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ agents?: {}[], disabled_agents?: any[] }"
+            "type": "{ agents?: Record<string, any>[], disabled_agents?: any[] }"
           }
         ]
       }
@@ -211,7 +211,7 @@
           {
             "key": "account_summaries",
             "optional": true,
-            "type": "{}[][]"
+            "type": "Record<string, any>[][]"
           },
           {
             "key": "status",
@@ -317,7 +317,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ documents?: {}[], limit?: number, offset?: number, total?: number }"
+            "type": "{ documents?: Record<string, any>[], limit?: number, offset?: number, total?: number }"
           }
         ]
       }
@@ -362,7 +362,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -463,7 +463,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -514,7 +514,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -611,7 +611,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: {}[], limit?: number, offset?: number, total?: number }"
+            "type": "{ data?: Record<string, any>[], limit?: number, offset?: number, total?: number }"
           }
         ]
       }

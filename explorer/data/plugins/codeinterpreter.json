@@ -1,7 +1,7 @@
 {
   "id": "codeinterpreter",
-  "displayName": "CodeInterpreter",
-  "description": "CodeInterpreter plugin for Corsair",
+  "displayName": "Code Interpreter",
+  "description": "LibreChat Code Interpreter API. Execute code in a sandbox and upload, list, download, and delete session files.",
   "npmPackageName": "@corsair-dev/codeinterpreter",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -364,6 +364,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

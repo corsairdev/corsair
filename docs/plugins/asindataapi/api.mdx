@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for AsinData API: every `asindataapi.api.*` operation with input and output types."
+title: "AsinData API API reference"
+sidebarTitle: "API"
+description: "API reference for the AsinData API plugin in Corsair: every `asindataapi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `asindataapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -42,11 +41,11 @@ await corsair.asindataapi.api.categories.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `request_info` | `object` | Yes | — |
-| `request_parameters` | `object` | No | — |
+| `request_parameters` | `Record<string, any>` | No | — |
 | `request_metadata` | `object` | No | — |
 | `category_results` | `object[]` | No | — |
-| `pagination` | `object` | No | — |
-| `refinements` | `object` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
+| `refinements` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_info full type">
@@ -59,14 +58,6 @@ await corsair.asindataapi.api.categories.get({});
   credits_reset_at?: string,
   message?: string,
   type?: string
-}
-```
-</Accordion>
-
-<Accordion title="request_parameters full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -112,22 +103,6 @@ await corsair.asindataapi.api.categories.get({});
     name?: string
   }[]
 }[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="refinements full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -986,8 +961,7 @@ await corsair.asindataapi.api.identifiers.resolve({});
     message?: string,
     type?: string
   },
-  request_parameters?: {
-  },
+  request_parameters?: Record<string, any>,
   request_metadata?: {
     id?: string,
     created_at?: string,
@@ -1007,8 +981,7 @@ await corsair.asindataapi.api.identifiers.resolve({});
     main_image?: {
       link?: string
     },
-    images?: {
-    }[],
+    images?: Record<string, any>[],
     feature_bullets?: string[],
     attributes?: {
       name: string,
@@ -1026,8 +999,7 @@ await corsair.asindataapi.api.identifiers.resolve({});
       raw?: string,
       name?: string
     },
-    buybox_winner?: {
-    }
+    buybox_winner?: Record<string, any>
   }
 } | {
   request_info: {
@@ -1038,8 +1010,7 @@ await corsair.asindataapi.api.identifiers.resolve({});
     message?: string,
     type?: string
   },
-  request_parameters?: {
-  },
+  request_parameters?: Record<string, any>,
   request_metadata?: {
     id?: string,
     created_at?: string,
@@ -1059,8 +1030,7 @@ await corsair.asindataapi.api.identifiers.resolve({});
     main_image?: {
       link?: string
     },
-    images?: {
-    }[],
+    images?: Record<string, any>[],
     feature_bullets?: string[],
     attributes?: {
       name: string,
@@ -1078,8 +1048,7 @@ await corsair.asindataapi.api.identifiers.resolve({});
       raw?: string,
       name?: string
     },
-    buybox_winner?: {
-    }
+    buybox_winner?: Record<string, any>
   }
 }
 ```
@@ -1124,12 +1093,12 @@ await corsair.asindataapi.api.offers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `request_info` | `object` | Yes | — |
-| `request_parameters` | `object` | No | — |
+| `request_parameters` | `Record<string, any>` | No | — |
 | `request_metadata` | `object` | No | — |
-| `product` | `object` | No | — |
+| `product` | `Record<string, any>` | No | — |
 | `offers` | `object[]` | No | — |
-| `pagination` | `object` | No | — |
-| `available_filters` | `object` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
+| `available_filters` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_info full type">
@@ -1146,14 +1115,6 @@ await corsair.asindataapi.api.offers.get({});
 ```
 </Accordion>
 
-<Accordion title="request_parameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="request_metadata full type">
 
 ```ts
@@ -1163,14 +1124,6 @@ await corsair.asindataapi.api.offers.get({});
   processed_at?: string,
   total_time_taken?: number,
   amazon_url?: string
-}
-```
-</Accordion>
-
-<Accordion title="product full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1191,29 +1144,10 @@ await corsair.asindataapi.api.offers.get({});
     raw?: string,
     name?: string
   },
-  condition?: {
-  },
-  seller?: {
-  },
-  delivery?: {
-  }
+  condition?: Record<string, any>,
+  seller?: Record<string, any>,
+  delivery?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="available_filters full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1264,8 +1198,7 @@ await corsair.asindataapi.api.products.get({});
     message?: string,
     type?: string
   },
-  request_parameters?: {
-  },
+  request_parameters?: Record<string, any>,
   request_metadata?: {
     id?: string,
     created_at?: string,
@@ -1285,8 +1218,7 @@ await corsair.asindataapi.api.products.get({});
     main_image?: {
       link?: string
     },
-    images?: {
-    }[],
+    images?: Record<string, any>[],
     feature_bullets?: string[],
     attributes?: {
       name: string,
@@ -1304,8 +1236,7 @@ await corsair.asindataapi.api.products.get({});
       raw?: string,
       name?: string
     },
-    buybox_winner?: {
-    }
+    buybox_winner?: Record<string, any>
   }
 } | {
   request_info: {
@@ -1316,8 +1247,7 @@ await corsair.asindataapi.api.products.get({});
     message?: string,
     type?: string
   },
-  request_parameters?: {
-  },
+  request_parameters?: Record<string, any>,
   request_metadata?: {
     id?: string,
     created_at?: string,
@@ -1337,8 +1267,7 @@ await corsair.asindataapi.api.products.get({});
     main_image?: {
       link?: string
     },
-    images?: {
-    }[],
+    images?: Record<string, any>[],
     feature_bullets?: string[],
     attributes?: {
       name: string,
@@ -1356,8 +1285,7 @@ await corsair.asindataapi.api.products.get({});
       raw?: string,
       name?: string
     },
-    buybox_winner?: {
-    }
+    buybox_winner?: Record<string, any>
   }
 }
 ```
@@ -1816,10 +1744,8 @@ await corsair.asindataapi.api.resultSets.get({});
       all_pages?: string | null
     } | null
   } | null,
-  webhook_status?: {
-  } | null,
-  destination_status?: {
-  } | null
+  webhook_status?: Record<string, any> | null,
+  destination_status?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1938,10 +1864,8 @@ await corsair.asindataapi.api.resultSets.list({});
       all_pages?: string | null
     } | null
   } | null,
-  webhook_status?: {
-  } | null,
-  destination_status?: {
-  } | null
+  webhook_status?: Record<string, any> | null,
+  destination_status?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1987,11 +1911,11 @@ await corsair.asindataapi.api.search.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `request_info` | `object` | Yes | — |
-| `request_parameters` | `object` | No | — |
+| `request_parameters` | `Record<string, any>` | No | — |
 | `request_metadata` | `object` | No | — |
 | `search_results` | `object[]` | No | — |
-| `pagination` | `object` | No | — |
-| `refinements` | `object` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
+| `refinements` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_info full type">
@@ -2004,14 +1928,6 @@ await corsair.asindataapi.api.search.get({});
   credits_reset_at?: string,
   message?: string,
   type?: string
-}
-```
-</Accordion>
-
-<Accordion title="request_parameters full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2057,22 +1973,6 @@ await corsair.asindataapi.api.search.get({});
     name?: string
   }[]
 }[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="refinements full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

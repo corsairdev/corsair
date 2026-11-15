@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Fixer: every `fixer.api.*` operation with input and output types."
+title: "Fixer API reference"
+sidebarTitle: "API"
+description: "API reference for the Fixer plugin in Corsair: every `fixer.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `fixer.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -31,17 +30,7 @@ await corsair.fixer.api.currencies.getAll({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `symbols` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="symbols full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `symbols` | `Record<string, string>` | Yes | — |
 
 
 
@@ -142,17 +131,7 @@ await corsair.fixer.api.rates.historical({
 | `historical` | `boolean` | No | — |
 | `date` | `string` | No | — |
 | `base` | `string` | No | — |
-| `rates` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="rates full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `rates` | `Record<string, number>` | Yes | — |
 
 
 
@@ -190,17 +169,7 @@ await corsair.fixer.api.rates.latest({
 | `timestamp` | `number` | No | — |
 | `base` | `string` | No | — |
 | `date` | `string` | No | — |
-| `rates` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="rates full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `rates` | `Record<string, number>` | Yes | — |
 
 
 

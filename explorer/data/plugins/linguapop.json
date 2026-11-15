@@ -1,0 +1,145 @@
+{
+  "id": "linguapop",
+  "displayName": "Linguapop",
+  "description": "Language placement tests with Linguapop - list the languages it can test and create candidate invitations that return a direct test link, optionally emailed to the candidate.",
+  "npmPackageName": "@corsair-dev/linguapop",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "linguapop.api.invitations.create",
+      "shortPath": "invitations.create",
+      "description": "Create a placement test invitation for a candidate and return the test link; with sendEmail true, Linguapop emails the invitation to the candidate. Needs a paid Linguapop subscription, the invitation cannot be cancelled through the API, and completed tests are billed",
+      "riskLevel": "write",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The candidate's email address. Linguapop also uses it to identify the candidate."
+          },
+          {
+            "key": "languageCode",
+            "optional": false,
+            "type": "string",
+            "description": "Linguapop code of the language to test, from `languages.list`."
+          },
+          {
+            "key": "sendEmail",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether Linguapop emails the invitation to the candidate. When false, share the returned `url` yourself."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The candidate's name. It appears in Linguapop's example request but not in its field list, and the API does not require it."
+          },
+          {
+            "key": "externalIdentifier",
+            "optional": true,
+            "type": "string",
+            "description": "An ID from your own system to identify the candidate, at most 500 characters. It comes back on the response and the result callback."
+          },
+          {
+            "key": "generateKioskCode",
+            "optional": true,
+            "type": "boolean",
+            "description": "Generate and return a kiosk code. A kiosk must already be set up in Linguapop under Customization."
+          },
+          {
+            "key": "testReading",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include a reading section. When omitted, the default from Customization applies."
+          },
+          {
+            "key": "testListening",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include a listening section. When omitted, the default from Customization applies."
+          },
+          {
+            "key": "callbackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL Linguapop POSTs the placement test result to once the candidate finishes, at most 1000 characters. The call is unsigned, and this plugin does not receive it."
+          },
+          {
+            "key": "returnUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL the candidate is redirected to from a button on the results screen, at most 1000 characters. Without it the button is hidden."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invitationId",
+            "optional": false,
+            "type": "number",
+            "description": "Unique ID of the invitation; keep it to track the test."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Direct link to the placement test, the same one the invitation email carries. It holds the invitation token, so treat it as a secret."
+          },
+          {
+            "key": "externalIdentifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "The externalIdentifier from the request, when one was sent."
+          },
+          {
+            "key": "emailSent",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the invitation email went out; always false when sendEmail was false."
+          },
+          {
+            "key": "kioskCode",
+            "optional": true,
+            "type": "string | null",
+            "description": "Kiosk code for the candidate; null unless one was requested."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linguapop.api.languages.list",
+      "shortPath": "languages.list",
+      "description": "List the languages Linguapop can test, each with the code to pass as languageCode when creating an invitation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, code: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

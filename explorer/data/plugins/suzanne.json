@@ -49,7 +49,7 @@
           {
             "key": "outputs",
             "optional": true,
-            "type": "glb | obj | stl | fbx[]"
+            "type": "(glb | obj | stl | fbx)[]"
           },
           {
             "key": "idempotencyKey",
@@ -110,7 +110,7 @@
           {
             "key": "outputs",
             "optional": true,
-            "type": "glb | obj | stl | fbx[]"
+            "type": "(glb | obj | stl | fbx)[]"
           },
           {
             "key": "idempotencyKey",
@@ -227,7 +227,7 @@
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "outputs",
@@ -237,7 +237,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           }
         ]
       }
@@ -317,6 +317,11 @@
         },
         {
           "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

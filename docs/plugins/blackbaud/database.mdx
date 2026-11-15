@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Blackbaud local sync: searchable entities, `.search()` filters, and operators."
+title: "Blackbaud database"
+sidebarTitle: "Database"
+description: "Blackbaud local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Blackbaud plugin syncs data locally. Use `corsair.blackbaud.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -119,6 +120,7 @@ const rows = await corsair.blackbaud.db.memberships.search({
 | `consec_years` | `number` | equals, gt, gte, lt, lte, in |
 | `constituent_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -179,6 +181,7 @@ const rows = await corsair.blackbaud.db.paymentTransactions.search({
 | `application_fee` | `number` | equals, gt, gte, lt, lte, in |
 | `total_fees` | `number` | equals, gt, gte, lt, lte, in |
 | `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `transaction_date` | `string` | equals, contains, startsWith, endsWith, in |
 | `pending_date` | `string` | equals, contains, startsWith, endsWith, in |
 | `transaction_type` | `string` | equals, contains, startsWith, endsWith, in |

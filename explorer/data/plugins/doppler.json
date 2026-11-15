@@ -44,12 +44,12 @@
           {
             "key": "logs",
             "optional": false,
-            "type": "{ id?: string | null, text?: string | null, html?: string | null, created_at?: string | null, config?: string | null, environment?: string | null, project?: string | null, enclave_project?: string | null, enclave_environment?: string | null, enclave_config?: string | null, user?: {} | null, diff?: {} | null }[]"
+            "type": "{ id?: string | null, text?: string | null, html?: string | null, created_at?: string | null, config?: string | null, environment?: string | null, project?: string | null, enclave_project?: string | null, enclave_environment?: string | null, enclave_config?: string | null, user?: Record<string, any> | null, diff?: Record<string, any> | null }[]"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -75,62 +75,62 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "config",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enclave_project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enclave_environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enclave_config",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "diff",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -150,42 +150,42 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_seen_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "token_preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workplace",
             "optional": true,
-            "type": "{ slug?: string | null, name?: string | null }"
+            "type": "{ slug?: string | null, name?: string | null } | null"
           },
           {
             "key": "principal",
             "optional": true,
-            "type": "{ type?: string | null, slug?: string | null }"
+            "type": "{ type?: string | null, slug?: string | null } | null"
           }
         ]
       }
@@ -222,7 +222,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -256,32 +256,32 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "diff",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -322,12 +322,12 @@
           {
             "key": "logs",
             "optional": false,
-            "type": "{ id?: string | null, text?: string | null, html?: string | null, created_at?: string | null, user?: {} | null, diff?: {} | null }[]"
+            "type": "{ id?: string | null, text?: string | null, html?: string | null, created_at?: string | null, user?: Record<string, any> | null, diff?: Record<string, any> | null }[]"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -363,32 +363,32 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "diff",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -429,62 +429,62 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "root",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheritable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheriting",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inherits",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "inheritedBy",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -525,62 +525,62 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "root",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheritable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheriting",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inherits",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "inheritedBy",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -647,62 +647,62 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "root",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheritable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheriting",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inherits",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "inheritedBy",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -748,7 +748,7 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -784,62 +784,62 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "root",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheritable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheriting",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inherits",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "inheritedBy",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -875,62 +875,62 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "root",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheritable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheriting",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inherits",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "inheritedBy",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -971,62 +971,62 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "root",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheritable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inheriting",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "inherits",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "inheritedBy",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1113,32 +1113,32 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "personal_configs",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -1205,32 +1205,32 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "personal_configs",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -1301,32 +1301,32 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "initial_fetch_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "personal_configs",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -1378,7 +1378,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -1407,12 +1407,12 @@
           {
             "key": "invites",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1484,22 +1484,22 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "environments",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           }
         ]
       }
@@ -1535,12 +1535,12 @@
           {
             "key": "members",
             "optional": false,
-            "type": "{ type?: string | null, slug?: string | null, role?: {} | null, environments?: any[] | null }[]"
+            "type": "{ type?: string | null, slug?: string | null, role?: Record<string, any> | null, environments?: any[] | null }[]"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1566,27 +1566,27 @@
           {
             "key": "identifier",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_custom_role",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -1650,22 +1650,22 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1722,22 +1722,22 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1773,7 +1773,7 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1814,22 +1814,22 @@
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1917,7 +1917,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1951,37 +1951,37 @@
           {
             "key": "raw",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "computed",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rawVisibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "computedVisibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rawValueType",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "computedValueType",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "name",
@@ -2023,7 +2023,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { raw?: string | null, computed?: string | null, note?: string | null, rawVisibility?: string | null, computedVisibility?: string | null, rawValueType?: Record<string, any> | null, computedValueType?: Record<string, any> | null }>"
       }
     },
     {
@@ -2082,13 +2082,13 @@
           {
             "key": "secrets",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { raw?: string | null, computed?: string | null, note?: string | null, rawVisibility?: string | null, computedVisibility?: string | null, rawValueType?: Record<string, any> | null, computedValueType?: Record<string, any> | null }>"
       }
     },
     {
@@ -2122,12 +2122,12 @@
           {
             "key": "secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2168,12 +2168,12 @@
           {
             "key": "secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "note",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2219,57 +2219,57 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "access",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "config",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_seen_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "token_preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2381,17 +2381,17 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "authenticated_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2427,17 +2427,17 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "authenticated_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "password",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2498,37 +2498,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "hasSecret",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "authentication",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "enabledConfigs",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "canManage",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -2595,37 +2595,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "hasSecret",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "authentication",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "enabledConfigs",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "canManage",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -2661,37 +2661,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "hasSecret",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "authentication",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "enabledConfigs",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "canManage",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -2727,37 +2727,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "hasSecret",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "authentication",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "enabledConfigs",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "canManage",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -2848,37 +2848,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "hasSecret",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "authentication",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "enabledConfigs",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "canManage",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -2903,17 +2903,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billing_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "security_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2954,17 +2954,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billing_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "security_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2990,12 +2990,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "permissions",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -3049,17 +3049,17 @@
           {
             "key": "access",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id?: string | null, email?: string | null, name?: string | null, username?: string | null }"
+            "type": "{ id?: string | null, email?: string | null, name?: string | null, username?: string | null } | null"
           }
         ]
       }
@@ -3095,7 +3095,7 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }

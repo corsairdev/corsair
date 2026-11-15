@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for ClickHouse: every `clickhouse.api.*` operation with input and output types."
+title: "ClickHouse API reference"
+sidebarTitle: "API"
+description: "API reference for the ClickHouse plugin in Corsair: every `clickhouse.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `clickhouse.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -256,9 +255,9 @@ await corsair.clickhouse.api.schema.getTable({});
 | `database` | `string` | Yes | — |
 | `table` | `string` | Yes | — |
 | `engine` | `string` | No | — |
-| `totalRows` | `number \| string` | No | — |
+| `totalRows` | `number \| string \| null` | No | — |
 | `columns` | `object[]` | Yes | — |
-| `sampleRows` | `object[]` | No | Sample rows; only present when includeSample is true |
+| `sampleRows` | `Record<string, any>[]` | No | Sample rows; only present when includeSample is true |
 
 <AccordionGroup>
 <Accordion title="columns full type">
@@ -270,14 +269,6 @@ await corsair.clickhouse.api.schema.getTable({});
   position?: number | string | null,
   comment?: string,
   defaultExpression?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="sampleRows full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
