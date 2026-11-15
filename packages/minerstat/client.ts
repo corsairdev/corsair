@@ -21,9 +21,11 @@ export async function makeMinerstatRequest(
 	};
 	// Keep the HTTP result unchecked until the endpoint's Zod parser validates it.
 	return request<unknown>(config, options, {
+		// Core retries a 429 (per-minute limit) three times, honouring Retry-After.
+		// The monthly quota answers 402, which is never retried.
 		rateLimitConfig: {
 			enabled: true,
-			maxRetries: 0,
+			maxRetries: 3,
 			initialRetryDelay: 1000,
 			backoffMultiplier: 2,
 			headerNames: { retryAfter: 'retry-after' },
