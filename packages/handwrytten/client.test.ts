@@ -165,7 +165,51 @@ describe('makeHandwryttenRequest', () => {
 		expect(body.apiKey).toBe('[REDACTED]');
 		expect(body.credit_card_id).toBe('[REDACTED]');
 		expect(body.card_id).toBe(10);
-		expect(body.message).toBe('Hello');
+		expect(body.message).toBe('[REDACTED]');
+	});
+
+	it('strips recipient names, addresses and card messages from a failed order', async () => {
+		const rawBody = {
+			card_id: 10,
+			message: 'Dear Jane, thank you',
+			recipient_first_name: 'Jane',
+			recipient_address1: '12 Private Lane',
+			addresses: [{ to_first_name: 'Joe', to_zip: '10001', signature_id: 4 }],
+			client_metadata: '{"crm_id":"c-123"}',
+		};
+		mockRequest.mockRejectedValue(
+			apiError(400, 'address error', undefined, rawBody),
+		);
+
+		// `unknown` because rejection value has no static type; assertion below narrows it.
+		const caught: unknown = await makeHandwryttenRequest(
+			'/orders/placeBasket',
+			'test-key',
+			{ method: 'POST', body: rawBody },
+		).catch((e: unknown) => e);
+
+		const text = JSON.stringify((caught as ApiError).request);
+		for (const value of [
+			'Jane',
+			'Joe',
+			'Private Lane',
+			'10001',
+			'thank you',
+			'c-123',
+		]) {
+			expect(text).not.toContain(value);
+		}
+		// `unknown` because request.body is arbitrary object.
+		const body = (caught as ApiError).request?.body as {
+			card_id: number;
+			addresses: Array<Record<string, unknown>>;
+		};
+		expect(body.card_id).toBe(10);
+		expect(body.addresses[0]?.signature_id).toBe(4);
+	});
+
+	it('defaults to the documented v2 host', () => {
+		expect(HANDWRYTTEN_API_BASE).toBe('https://api.handwrytten.com/v2');
 	});
 
 	it('wraps generic non-ApiError in HandwryttenAPIError', async () => {

@@ -25,8 +25,12 @@ export const getUser: HandwryttenEndpoints['auth.getUser'] = async (
 			baseUrl: ctx.options?.baseUrl,
 		},
 	);
-	const parsed =
-		HandwryttenEndpointOutputSchemas['auth.getUser'].parse(response);
+	// `uid` is the account's session token (it authenticates like a password
+	// login); it never leaves the plugin.
+	const { uid: _uid, ...safe } = (response ?? {}) as AuthGetUserResponse & {
+		uid?: unknown;
+	};
+	const parsed = HandwryttenEndpointOutputSchemas['auth.getUser'].parse(safe);
 	await logEventFromContext(
 		ctx,
 		'handwrytten.auth.getUser',

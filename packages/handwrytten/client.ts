@@ -12,7 +12,7 @@ export class HandwryttenAPIError extends Error {
 	}
 }
 
-export const HANDWRYTTEN_API_BASE = 'https://api.handwrytten.com/v1';
+export const HANDWRYTTEN_API_BASE = 'https://api.handwrytten.com/v2';
 
 export const PUBLIC_ROUTES = new Set([
 	'/fonts/list',
@@ -49,47 +49,17 @@ export const PUBLIC_ROUTES = new Set([
 	'qrCode/frames',
 ]);
 
-const SENSITIVE_FIELD_NAMES = new Set([
-	'authorization',
-	'apikey',
-	'token',
-	'secret',
-	'password',
-	'login',
-	'uid',
-	'accesskeyid',
-	'secretaccesskey',
-	'sessiontoken',
-	'privatekey',
-	'clientemail',
-	'projectid',
-	'creditcardid',
-	'couponcode',
-]);
-
+// Request bodies carry recipient names, mailing addresses, card messages and
+// credentials. Every string value is replaced before an error leaves the client;
+// numbers and booleans (ids, flags) stay so failures remain debuggable.
 // `unknown` because request payloads can be arbitrary JSON primitives, arrays, or objects.
 function redactValue(value: unknown): unknown {
-	if (
-		typeof value === 'string' ||
-		typeof value === 'number' ||
-		typeof value === 'boolean' ||
-		value === null ||
-		value === undefined
-	) {
-		return value;
-	}
-	if (Array.isArray(value)) {
-		return value.map(redactValue);
-	}
-	if (typeof value === 'object') {
+	if (typeof value === 'string') return '[REDACTED]';
+	if (Array.isArray(value)) return value.map(redactValue);
+	if (value !== null && typeof value === 'object') {
 		const result: Record<string, unknown> = {};
 		for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-			const normalized = k.toLowerCase().replace(/[-_]/g, '');
-			if (SENSITIVE_FIELD_NAMES.has(normalized)) {
-				result[k] = '[REDACTED]';
-			} else {
-				result[k] = redactValue(v);
-			}
+			result[k] = redactValue(v);
 		}
 		return result;
 	}
@@ -105,6 +75,8 @@ export async function makeHandwryttenRequest<T>(
 		// input schemas before send), so the shared transport stays generic
 		// over a JSON record instead of a closed per-endpoint union.
 		body?: Record<string, unknown>;
+		// Multipart parts (strings or Blobs); used by the image upload.
+		formData?: Record<string, string | Blob | undefined>;
 		query?: Record<string, string | number | boolean | undefined>;
 		baseUrl?: string;
 		isPublic?: boolean;
@@ -113,6 +85,7 @@ export async function makeHandwryttenRequest<T>(
 	const {
 		method = 'GET',
 		body,
+		formData,
 		query,
 		baseUrl = HANDWRYTTEN_API_BASE,
 		isPublic,
@@ -139,7 +112,7 @@ export async function makeHandwryttenRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			'Content-Type': 'application/json',
+			...(formData ? {} : { 'Content-Type': 'application/json' }),
 			...authHeaders,
 		},
 	};
@@ -148,10 +121,11 @@ export async function makeHandwryttenRequest<T>(
 		method,
 		url: endpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			!formData && (method === 'POST' || method === 'PUT' || method === 'PATCH')
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		formData,
+		mediaType: formData ? undefined : 'application/json; charset=utf-8',
 		query,
 	};
 
@@ -160,11 +134,11 @@ export async function makeHandwryttenRequest<T>(
 	} catch (error) {
 		// Redact sensitive credentials in-place without replacing ApiError, preserving status, retryAfter, etc.
 		if (error instanceof ApiError) {
-			if (error.request && error.request.body) {
+			if (error.request) {
 				// `unknown` because request.body contains untrusted request JSON.
-				(error.request as { body: unknown }).body = redactValue(
-					error.request.body,
-				);
+				const req = error.request as { body?: unknown; formData?: unknown };
+				if (req.body !== undefined) req.body = redactValue(req.body);
+				if (req.formData !== undefined) req.formData = '[REDACTED]';
 			}
 			throw error;
 		}
