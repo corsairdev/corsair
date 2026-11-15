@@ -14,7 +14,7 @@ pnpm add @corsair-dev/gleap
 
 Generate an API key in your Gleap dashboard under **Settings → Developer → API keys**.
 
-Pass your API key to the plugin:
+API keys belong to one project. Every project-scoped call needs that project's ID (**Settings → Project → General**). On a stored connection, save it as the account field `project_id`; a missing project ID raises `AuthMissingError` so Corsair can offer a connect link. In code you can pass it as `projectId`:
 
 ```typescript
 import { createCorsair } from 'corsair';
@@ -24,7 +24,7 @@ const app = createCorsair({
   plugins: [
     gleap({
       key: process.env.GLEAP_API_KEY,
-      projectId: process.env.GLEAP_PROJECT_ID, // optional
+      projectId: process.env.GLEAP_PROJECT_ID,
     }),
   ],
 });
@@ -32,7 +32,7 @@ const app = createCorsair({
 
 ### Regions
 
-The plugin defaults to the European data region base URL (`https://api.gleap.io/v3`). For projects hosted in the US data region, specify the US host via `baseUrl`:
+The plugin defaults to the European data region base URL (`https://api.gleap.io/v3`). For a project hosted in the US data region, set the account field `region` to `us`, or pass the US host via `baseUrl` in code:
 
 ```typescript
 gleap({
@@ -54,10 +54,10 @@ gleap({
 | `tickets.counts` | `GET /tickets/ticketscount` | `read` | Get ticket counts grouped by board and status |
 | `messages.list` | `GET /messages` | `read` | List messages in a ticket |
 | `messages.create` | `POST /messages` | `destructive` | Create a message or internal note |
-| `messages.update` | `PUT /messages/{messageId}` | `write` | Update an existing message |
+| `messages.update` | `PUT /messages/{messageId}` | `write` | Replace a message's text |
 | `messages.delete` | `DELETE /messages/{messageId}` | `destructive` | Delete a message |
 | `messages.getThread` | `GET /messages/{messageId}/thread` | `read` | Get thread messages for a parent message |
-| `messages.createThread` | `POST /messages/{messageId}/thread` | `destructive` | Create a thread reply |
+| `messages.createThread` | `POST /messages/{messageId}/thread` | `destructive` | Internal thread reply (teammates only) |
 | `sessions.list` | `GET /sessions` | `read` | List contact sessions |
 | `sessions.get` | `GET /sessions/{sessionId}` | `read` | Get session details by ID |
 | `sessions.getByUserId` | `GET /sessions/by-user-id/{userId}` | `read` | Get session by end-user ID |
@@ -68,16 +68,16 @@ gleap({
 | `sessions.activities` | `GET /sessions/{sessionId}/activities` | `read` | Get session timeline activities |
 | `users.getMe` | `GET /users/me` | `read` | Get current authenticated user profile |
 | `users.list` | `GET /projects/users` | `read` | List project team members |
-| `users.update` | `PUT /users/{userId}` | `write` | Update team member profile |
+| `users.update` | `PUT /users/{userId}` | `write` | Update the API key owner's own profile |
 | `feedback.rateConversation` | `POST /s2s/conversations/{conversationId}/rating` | `write` | Submit CSAT rating (0–10) |
-| `feedback.rateMessage` | `POST /s2s/messages/{messageId}/rating` | `write` | Rate message (thumbs up/down) |
+| `feedback.rateMessage` | `POST /s2s/messages/{messageId}/rating` | `write` | Rate a message `positive` or `negative` |
 | `feedback.surveysList` | `GET /engagement/surveys` | `read` | List engagement surveys |
 | `feedback.surveysGet` | `GET /engagement/surveys/{surveyId}` | `read` | Get survey definition by ID |
 | `feedback.surveysResponses` | `GET /engagement/surveys/{surveyId}/responses` | `read` | Get responses for a survey |
 | `feedback.surveysStats` | `GET /engagement/surveys/{surveyId}/stats` | `read` | Get aggregate survey statistics |
 | `teams.list` | `GET /teams` | `read` | List teams in project |
 | `teams.create` | `POST /teams` | `write` | Create a new team |
-| `teams.update` | `PUT /teams/{teamId}` | `write` | Update team configuration |
+| `teams.update` | `PUT /teams/{teamId}` | `destructive` | Replace a team's settings and member list |
 | `teams.delete` | `DELETE /teams/{teamId}` | `destructive` | Delete a team |
 | `boards.list` | `GET /ticket-types` | `read` | List project ticket boards |
 | `boards.create` | `POST /ticket-types` | `write` | Create a ticket board |

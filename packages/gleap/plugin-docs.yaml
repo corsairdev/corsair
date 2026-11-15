@@ -5,8 +5,10 @@ recommendedAuth: api_key
 overviewNote: |
   Authentication uses an API key generated in your Gleap dashboard under **Settings → Developer → API keys**.
   The API key is passed in the `Authorization: Bearer <key>` header.
-  The default base URL is `https://api.gleap.io/v3` (EU region), and US-hosted projects can use `https://api.us.gleap.ai/v3` via the `baseUrl` option.
-  Optionally specify your project ID from **Settings → Project → General** via `projectId`.
+  API keys belong to one project, and every project-scoped call sends that project's ID in the `project` header: store the **Project ID** from **Settings → Project → General** on the connection (`project_id`).
+  Keys only work in the project's data region. Leave `region` empty (or `eu`) for EU projects (`https://api.gleap.io/v3`); set it to `us` for US projects (`https://api.us.gleap.ai/v3`). Settings → Developer → API keys shows the region.
+  In code, the `projectId` and `baseUrl` plugin options override the stored values.
+  The API needs a Gleap Team plan or higher (Starter has no API access).
 apiExamples:
   tickets.get:
     ticketId: "ticket_123"
@@ -19,17 +21,17 @@ apiExamples:
     searchTerm: "checkout error"
   messages.create:
     ticket: "ticket_123"
-    content: "Hello from support"
+    markdownComment: "Hello from support"
   messages.update:
     messageId: "msg_123"
-    content: "Updated message"
+    comment: "Updated message"
   messages.delete:
     messageId: "msg_123"
   messages.getThread:
     messageId: "msg_123"
   messages.createThread:
     messageId: "msg_123"
-    content: "Follow-up reply"
+    comment: "Follow-up reply"
   sessions.get:
     sessionId: "sess_123"
   sessions.getByUserId:
@@ -43,13 +45,14 @@ apiExamples:
     sessionId: "sess_123"
   users.update:
     userId: "user_123"
-    name: "Alex Smith"
+    firstName: "Alex"
+    lastName: "Smith"
   feedback.rateConversation:
     conversationId: "conv_123"
     rating: 10
   feedback.rateMessage:
     messageId: "msg_123"
-    rating: "up"
+    rating: "positive"
   feedback.surveysGet:
     surveyId: "survey_123"
   feedback.surveysResponses:
@@ -58,9 +61,13 @@ apiExamples:
     surveyId: "survey_123"
   teams.create:
     name: "Support Tier 1"
+    assignmentMethod: "balanced"
+    members: ["user_123"]
   teams.update:
     teamId: "team_123"
     name: "Support Tier 2"
+    assignmentMethod: "manual"
+    members: ["user_123"]
   teams.delete:
     teamId: "team_123"
   boards.create:
