@@ -162,6 +162,7 @@ export type ResolveAccountFromWebhookLinkInput = {
 	pluginId: string;
 	linkType: string;
 	externalId: string;
+	tenantId?: string;
 };
 
 /**
@@ -173,9 +174,9 @@ export type ResolveAccountFromWebhookLinkInput = {
 export async function resolveAccountFromWebhookLink(
 	options: ResolveAccountFromWebhookLinkInput,
 ): Promise<CorsairAccount | null> {
-	const { database, kek, pluginId, linkType, externalId } = options;
+	const { database, kek, pluginId, linkType, externalId, tenantId } = options;
 
-	const accounts = await database.db
+	let query = database.db
 		.selectFrom('corsair_accounts as accounts')
 		.innerJoin(
 			'corsair_integrations as integrations',
@@ -183,8 +184,9 @@ export async function resolveAccountFromWebhookLink(
 			'accounts.integration_id',
 		)
 		.selectAll('accounts')
-		.where('integrations.name', '=', pluginId)
-		.execute();
+		.where('integrations.name', '=', pluginId);
+	if (tenantId) query = query.where('accounts.tenant_id', '=', tenantId);
+	const accounts = await query.execute();
 
 	for (const account of accounts) {
 		if (!account.dek) continue;

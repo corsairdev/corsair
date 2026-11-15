@@ -247,6 +247,7 @@ async function resolveWebhookTenantId(
 			pluginId: payload.plugin,
 			linkType: payload.linkType,
 			externalId: payload.externalId,
+			tenantId: explicitTenantId,
 		});
 	} catch (error) {
 		// An explicit tenant never needed this lookup; its delivery must not fail on it.
