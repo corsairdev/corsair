@@ -162,7 +162,7 @@ await corsair.pointagram.api.competitions.players({ id: 3545 });
 
 `players.create`
 
-Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice
+Create a player with a name and an email or external id; an online player is also invited. A player whose external id already exists is reported as a failure, not created twice
 
 **Risk:** `destructive`
 
@@ -248,6 +248,7 @@ await corsair.pointagram.api.players.get({ id: 989 });
 |------|------|----------|-------------|
 | `id` | `string \| number \| null` | No | — |
 | `name` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
 | `player_name` | `string \| null` | No | — |
 | `emailaddress` | `string \| null` | No | — |
 | `player_email` | `string \| null` | No | — |
@@ -298,6 +299,7 @@ await corsair.pointagram.api.players.list({ limit: 25, offset: '527947' });
 {
   id?: string | number | null,
   name?: string | null,
+  Name?: string | null,
   player_name?: string | null,
   emailaddress?: string | null,
   player_email?: string | null,
@@ -330,9 +332,9 @@ await corsair.pointagram.api.players.list({ limit: 25, offset: '527947' });
 
 `players.update`
 
-Update a player's name, email, external id or online status
+Update a player's name, email, external id or online status; making a player online invites them
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pointagram.api.players.update({ id: 989, player_name: 'Axl Rose', player_email: 'axl@pointagram.com' });
@@ -703,7 +705,7 @@ await corsair.pointagram.api.rewardStore.updatePurchase({ id: 27, profileid: '12
 
 Score points for a player in a score series, optionally with a comment, tags and a transaction reference that makes a repeat call replace the earlier one
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pointagram.api.scoreSeries.addPoints({ player_email: 'harry@pointagram.com', scoreseries_id: 180, points: 120, tags: [{ name: 'North' }], source_score_id: 'order-991' });
@@ -790,7 +792,7 @@ await corsair.pointagram.api.scoreSeries.get({ id: 180 });
 
 `scoreSeries.history`
 
-Read the points history of a score series, filtered by tag, point type, team, player and time window, with `next_offset` paging
+Read the points history of a score series, filtered by tag, point type, team, player and time window, with `next_offset` paging. A series with no points yet answers "Score serie not found"
 
 **Risk:** `read`
 
@@ -856,7 +858,17 @@ await corsair.pointagram.api.scoreSeries.history({ id: 180, time_from: '2026-01-
   emailaddress?: string | null,
   score?: string | number | null,
   comment?: string | null,
-  timestamp?: string | null
+  timestamp?: string | null,
+  Name?: string | null,
+  Score?: string | number | null,
+  Comment?: string | null,
+  player_external_id?: string | number | null,
+  external_id?: string | number | null,
+  point_type?: string | number | null,
+  point_type_name?: string | null,
+  is_revoked?: string | number | null,
+  revoked_id?: string | number | null,
+  created?: string | null
 }[]
 ```
 </Accordion>
