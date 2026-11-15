@@ -357,18 +357,61 @@ describe('ServiceM8 public request seam', () => {
 			'ServiceM8 returned invalid JSON',
 		);
 	});
-	it('propagates rate limits without retrying writes', async () => {
+	it('retries a per-minute rate limit, writes included', async () => {
+		const request = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				new Response('Number of allowed API requests per minute exceeded', {
+					status: 429,
+					headers: { 'retry-after': '1' },
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify(result), {
+					status: 200,
+					headers: { 'x-record-uuid': uuid },
+				}),
+			);
+		await expect(api.jobs.create({ status: 'Quote' })).resolves.toEqual({
+			result,
+			recordUuid: uuid,
+		});
+		expect(request).toHaveBeenCalledTimes(2);
+	});
+	it('does not retry the daily request limit', async () => {
 		const request = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response('too many', {
+			new Response('Number of allowed API requests per day exceeded', {
 				status: 429,
 				headers: { 'retry-after': '3' },
 			}),
 		);
-		await expect(api.jobs.create({ status: 'Quote' })).rejects.toMatchObject({
+		await expect(api.jobs.list({})).rejects.toMatchObject({
 			status: 429,
 			retryAfter: 3000,
+			dailyLimit: true,
+			message:
+				'ServiceM8 HTTP 429: Number of allowed API requests per day exceeded',
 		});
 		expect(request).toHaveBeenCalledTimes(1);
+	});
+	it("passes ServiceM8's error message to the caller", async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					errorCode: 400,
+					message:
+						'asset requires addon activation on this account prior to use',
+					documentation: 'https://developer.servicem8.com/llms.txt',
+				}),
+				{ status: 400 },
+			),
+		);
+		await expect(api.assets.list({})).rejects.toMatchObject({
+			status: 400,
+			providerCode: 400,
+			message:
+				'ServiceM8 HTTP 400: asset requires addon activation on this account prior to use',
+		});
 	});
 	it('rejects provider-level errors and malformed outputs', async () => {
 		jest
