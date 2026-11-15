@@ -12,21 +12,98 @@ examples:
     args:
       contact:
         organisation_name: Example Ltd
+apiExamples:
+  company.get: {}
+  company.businessCategories: {}
+  company.taxTimeline: {}
+  contacts.list: {}
+  contacts.get:
+    id: '1'
+  contacts.create:
+    contact:
+      organisation_name: Example Ltd
+  contacts.update:
+    id: '1'
+    contact:
+      organisation_name: Example Ltd
+  contacts.delete:
+    id: '1'
+  projects.list: {}
+  projects.get:
+    id: '1'
+  projects.create:
+    project:
+      contact: https://api.freeagent.com/v2/contacts/1
+      name: Example Project
+      status: Active
+      currency: GBP
+      budget_units: Hours
+  projects.update:
+    id: '1'
+    project:
+      name: Example Project
+  projects.delete:
+    id: '1'
+  invoices.list: {}
+  invoices.get:
+    id: '1'
+  invoices.pdf:
+    id: '1'
+  invoices.create:
+    invoice:
+      contact: https://api.freeagent.com/v2/contacts/1
+      dated_on: '2025-01-15'
+      payment_terms_in_days: 30
+  invoices.duplicate:
+    id: '1'
+  invoices.update:
+    id: '1'
+    invoice:
+      comments: Example update
+  invoices.delete:
+    id: '1'
+  invoices.sendEmail:
+    id: '1'
+    email:
+      use_template: true
+  invoices.markSent:
+    id: '1'
+  invoices.markScheduled:
+    id: '1'
+  invoices.markDraft:
+    id: '1'
+  invoices.markCancelled:
+    id: '1'
+  invoices.directDebit:
+    id: '1'
+  invoices.timeline: {}
+  invoices.getDefaultAdditionalText: {}
+  invoices.updateDefaultAdditionalText:
+    default_additional_text: Pay within 7 days
+  invoices.deleteDefaultAdditionalText: {}
+  invoices.convertToCreditNote:
+    id: '1'
 apiNotes:
   invoices.create: >-
     FreeAgent creates new invoices in Draft status. Use an explicit status-transition
     operation to mark an invoice sent; this plugin currently exposes markSent.
   invoices.sendEmail: >-
     Sending an invoice email is a separate action from marking the invoice sent.
-    This implementation accepts the documented template flag or message fields;
-    attachment payloads (maximum 5 MB each) are not exposed.
+    The operation accepts the documented template flag, message fields, and
+    base64 attachments up to 5 MiB each.
+  invoices.directDebit: >-
+    This requests a real GoCardless payment and is available only for sent invoices
+    with an enabled pre-authorised mandate and no previous payment.
+  invoices.pdf: >-
+    FreeAgent returns PDF bytes as base64 in pdf.content; decode that value to
+    obtain the PDF file.
   contacts.list: >-
     FreeAgent paginates collections with a default of 25 records and a maximum
-    per_page of 100. Link and X-Total-Count response headers are not returned by
-    the JSON endpoint result.
+    per_page of 100. The result includes pagination.link and pagination.total_count,
+    preserving the Link header and X-Total-Count header value respectively.
 overviewNote: >-
-  Connect with a FreeAgent OAuth 2.0 access token. This plugin exposes selected
-  company-account operations only. The API docs also describe many other company
-  resources that are not currently implemented; see the package README for the
-  coverage boundary and exclusions. The separate Accountancy Practice API
-  requires practice-enabled OAuth and X-Subdomain client scoping and is excluded.
+  Connect with a FreeAgent OAuth 2.0 access token. This plugin exposes company
+  profile, contacts, projects, and selected invoice operations only. Many other
+  official company API routes remain unimplemented; see the linked route inventory
+  in the package README. The Accountancy Practice API requires practice-enabled
+  OAuth and X-Subdomain client scoping and is excluded.

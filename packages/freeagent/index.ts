@@ -50,6 +50,8 @@ type Endpoint<K extends keyof FreeAgentEndpointOutputs> = CorsairEndpoint<
 
 export type FreeAgentEndpoints = {
 	companyGet: Endpoint<'companyGet'>;
+	companyBusinessCategories: Endpoint<'companyBusinessCategories'>;
+	companyTaxTimeline: Endpoint<'companyTaxTimeline'>;
 	contactsList: Endpoint<'contactsList'>;
 	contactsGet: Endpoint<'contactsGet'>;
 	contactsCreate: Endpoint<'contactsCreate'>;
@@ -67,10 +69,25 @@ export type FreeAgentEndpoints = {
 	invoicesDelete: Endpoint<'invoicesDelete'>;
 	invoicesMarkSent: Endpoint<'invoicesMarkSent'>;
 	invoicesSendEmail: Endpoint<'invoicesSendEmail'>;
+	invoicesDuplicate: Endpoint<'invoicesDuplicate'>;
+	invoicesMarkScheduled: Endpoint<'invoicesMarkScheduled'>;
+	invoicesMarkDraft: Endpoint<'invoicesMarkDraft'>;
+	invoicesMarkCancelled: Endpoint<'invoicesMarkCancelled'>;
+	invoicesDirectDebit: Endpoint<'invoicesDirectDebit'>;
+	invoicesTimeline: Endpoint<'invoicesTimeline'>;
+	invoicesDefaultAdditionalTextGet: Endpoint<'invoicesDefaultAdditionalTextGet'>;
+	invoicesDefaultAdditionalTextUpdate: Endpoint<'invoicesDefaultAdditionalTextUpdate'>;
+	invoicesDefaultAdditionalTextDelete: Endpoint<'invoicesDefaultAdditionalTextDelete'>;
+	invoicesPdf: Endpoint<'invoicesPdf'>;
+	invoicesConvertToCreditNote: Endpoint<'invoicesConvertToCreditNote'>;
 };
 
 const freeAgentEndpointsNested = {
-	company: { get: Company.get },
+	company: {
+		get: Company.get,
+		businessCategories: Company.businessCategories,
+		taxTimeline: Company.taxTimeline,
+	},
 	contacts: {
 		list: Contacts.list,
 		get: Contacts.get,
@@ -93,6 +110,17 @@ const freeAgentEndpointsNested = {
 		delete: Invoices.remove,
 		markSent: Invoices.markSent,
 		sendEmail: Invoices.sendEmail,
+		duplicate: Invoices.duplicate,
+		markScheduled: Invoices.markScheduled,
+		markDraft: Invoices.markDraft,
+		markCancelled: Invoices.markCancelled,
+		directDebit: Invoices.directDebit,
+		timeline: Invoices.timeline,
+		getDefaultAdditionalText: Invoices.getDefaultAdditionalText,
+		updateDefaultAdditionalText: Invoices.updateDefaultAdditionalText,
+		deleteDefaultAdditionalText: Invoices.deleteDefaultAdditionalText,
+		pdf: Invoices.pdf,
+		convertToCreditNote: Invoices.convertToCreditNote,
 	},
 } as const;
 
@@ -100,6 +128,14 @@ export const freeAgentEndpointSchemas = {
 	'company.get': {
 		input: FreeAgentEndpointInputSchemas.companyGet,
 		output: FreeAgentEndpointOutputSchemas.companyGet,
+	},
+	'company.businessCategories': {
+		input: FreeAgentEndpointInputSchemas.companyBusinessCategories,
+		output: FreeAgentEndpointOutputSchemas.companyBusinessCategories,
+	},
+	'company.taxTimeline': {
+		input: FreeAgentEndpointInputSchemas.companyTaxTimeline,
+		output: FreeAgentEndpointOutputSchemas.companyTaxTimeline,
 	},
 	'contacts.list': {
 		input: FreeAgentEndpointInputSchemas.contactsList,
@@ -169,6 +205,50 @@ export const freeAgentEndpointSchemas = {
 		input: FreeAgentEndpointInputSchemas.invoicesSendEmail,
 		output: FreeAgentEndpointOutputSchemas.invoicesSendEmail,
 	},
+	'invoices.duplicate': {
+		input: FreeAgentEndpointInputSchemas.invoicesDuplicate,
+		output: FreeAgentEndpointOutputSchemas.invoicesDuplicate,
+	},
+	'invoices.markScheduled': {
+		input: FreeAgentEndpointInputSchemas.invoicesMarkScheduled,
+		output: FreeAgentEndpointOutputSchemas.invoicesMarkScheduled,
+	},
+	'invoices.markDraft': {
+		input: FreeAgentEndpointInputSchemas.invoicesMarkDraft,
+		output: FreeAgentEndpointOutputSchemas.invoicesMarkDraft,
+	},
+	'invoices.markCancelled': {
+		input: FreeAgentEndpointInputSchemas.invoicesMarkCancelled,
+		output: FreeAgentEndpointOutputSchemas.invoicesMarkCancelled,
+	},
+	'invoices.directDebit': {
+		input: FreeAgentEndpointInputSchemas.invoicesDirectDebit,
+		output: FreeAgentEndpointOutputSchemas.invoicesDirectDebit,
+	},
+	'invoices.timeline': {
+		input: FreeAgentEndpointInputSchemas.invoicesTimeline,
+		output: FreeAgentEndpointOutputSchemas.invoicesTimeline,
+	},
+	'invoices.getDefaultAdditionalText': {
+		input: FreeAgentEndpointInputSchemas.invoicesDefaultAdditionalTextGet,
+		output: FreeAgentEndpointOutputSchemas.invoicesDefaultAdditionalTextGet,
+	},
+	'invoices.updateDefaultAdditionalText': {
+		input: FreeAgentEndpointInputSchemas.invoicesDefaultAdditionalTextUpdate,
+		output: FreeAgentEndpointOutputSchemas.invoicesDefaultAdditionalTextUpdate,
+	},
+	'invoices.deleteDefaultAdditionalText': {
+		input: FreeAgentEndpointInputSchemas.invoicesDefaultAdditionalTextDelete,
+		output: FreeAgentEndpointOutputSchemas.invoicesDefaultAdditionalTextDelete,
+	},
+	'invoices.pdf': {
+		input: FreeAgentEndpointInputSchemas.invoicesPdf,
+		output: FreeAgentEndpointOutputSchemas.invoicesPdf,
+	},
+	'invoices.convertToCreditNote': {
+		input: FreeAgentEndpointInputSchemas.invoicesConvertToCreditNote,
+		output: FreeAgentEndpointOutputSchemas.invoicesConvertToCreditNote,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof freeAgentEndpointsNested
 >;
@@ -179,6 +259,14 @@ const freeAgentEndpointMeta = {
 	'company.get': {
 		riskLevel: 'read',
 		description: 'Get the authenticated company profile',
+	},
+	'company.businessCategories': {
+		riskLevel: 'read',
+		description: 'List the documented business categories for company profiles',
+	},
+	'company.taxTimeline': {
+		riskLevel: 'read',
+		description: 'List upcoming tax events and due dates for the company',
 	},
 	'contacts.list': {
 		riskLevel: 'read',
@@ -247,6 +335,50 @@ const freeAgentEndpointMeta = {
 	'invoices.sendEmail': {
 		riskLevel: 'destructive',
 		description: 'Send an invoice email to its recipient',
+	},
+	'invoices.duplicate': {
+		riskLevel: 'write',
+		description: 'Duplicate an invoice as a new draft using the next reference',
+	},
+	'invoices.markScheduled': {
+		riskLevel: 'destructive',
+		description: 'Schedule an invoice to be emailed',
+	},
+	'invoices.markDraft': {
+		riskLevel: 'destructive',
+		description: 'Return an invoice to Draft status',
+	},
+	'invoices.markCancelled': {
+		riskLevel: 'destructive',
+		description: 'Cancel and write off an eligible sent invoice',
+	},
+	'invoices.directDebit': {
+		riskLevel: 'destructive',
+		description: 'Take payment using an eligible GoCardless mandate',
+	},
+	'invoices.timeline': {
+		riskLevel: 'read',
+		description: 'List invoice timeline entries',
+	},
+	'invoices.getDefaultAdditionalText': {
+		riskLevel: 'read',
+		description: 'Get the default additional text for company invoices',
+	},
+	'invoices.updateDefaultAdditionalText': {
+		riskLevel: 'write',
+		description: 'Update the default additional text for company invoices',
+	},
+	'invoices.deleteDefaultAdditionalText': {
+		riskLevel: 'write',
+		description: 'Remove the default additional text from company invoices',
+	},
+	'invoices.pdf': {
+		riskLevel: 'read',
+		description: 'Get the invoice PDF as base64 encoded JSON content',
+	},
+	'invoices.convertToCreditNote': {
+		riskLevel: 'destructive',
+		description: 'Convert a draft negative invoice into a credit note',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof freeAgentEndpointsNested

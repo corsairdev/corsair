@@ -17,6 +17,8 @@ describe('FreeAgent endpoint registry', () => {
 		const routeInputs = new Map<string, object>(
 			Object.entries({
 				'company.get': {},
+				'company.businessCategories': {},
+				'company.taxTimeline': {},
 				'contacts.list': {},
 				'contacts.get': { id: '1' },
 				'contacts.create': { contact: { organisation_name: 'Example Ltd' } },
@@ -51,6 +53,19 @@ describe('FreeAgent endpoint registry', () => {
 				'invoices.delete': { id: '1' },
 				'invoices.markSent': { id: '1' },
 				'invoices.sendEmail': { id: '1', email: { use_template: true } },
+				'invoices.duplicate': { id: '1' },
+				'invoices.markScheduled': { id: '1' },
+				'invoices.markDraft': { id: '1' },
+				'invoices.markCancelled': { id: '1' },
+				'invoices.directDebit': { id: '1' },
+				'invoices.timeline': {},
+				'invoices.getDefaultAdditionalText': {},
+				'invoices.updateDefaultAdditionalText': {
+					default_additional_text: 'Pay within 7 days',
+				},
+				'invoices.deleteDefaultAdditionalText': {},
+				'invoices.pdf': { id: '1' },
+				'invoices.convertToCreditNote': { id: '1' },
 			}),
 		);
 		for (const [name, schema] of Object.entries(freeAgentEndpointSchemas)) {
@@ -66,5 +81,23 @@ describe('FreeAgent endpoint registry', () => {
 			'destructive',
 		);
 		expect(plugin.endpointMeta?.['invoices.create']?.riskLevel).toBe('write');
+		expect(plugin.endpointMeta?.['invoices.directDebit']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpointMeta?.['invoices.markCancelled']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(
+			plugin.endpointMeta?.['invoices.convertToCreditNote']?.riskLevel,
+		).toBe('destructive');
+	});
+
+	it('keeps new company and invoice operations registered', () => {
+		expect(plugin.endpoints?.company).toHaveProperty('businessCategories');
+		expect(plugin.endpoints?.company).toHaveProperty('taxTimeline');
+		expect(plugin.endpoints?.invoices).toHaveProperty('duplicate');
+		expect(plugin.endpoints?.invoices).toHaveProperty('directDebit');
+		expect(plugin.endpoints?.invoices).toHaveProperty('pdf');
+		expect(plugin.endpoints?.invoices).toHaveProperty('convertToCreditNote');
 	});
 });

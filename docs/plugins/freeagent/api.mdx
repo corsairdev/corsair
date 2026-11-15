@@ -10,6 +10,31 @@ description: "API reference for the FreeAgent plugin in Corsair: every `freeagen
 
 ## Company
 
+### businessCategories
+
+`company.businessCategories`
+
+List the documented business categories for company profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.company.businessCategories({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `business_categories` | `string[]` | Yes | — |
+
+
+
+---
+
 ### get
 
 `company.get`
@@ -35,6 +60,46 @@ await corsair.freeagent.api.company.get({});
 
 ---
 
+### taxTimeline
+
+`company.taxTimeline`
+
+List upcoming tax events and due dates for the company
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.company.taxTimeline({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeline_items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="timeline_items full type">
+
+```ts
+{
+  description: string,
+  nature: string,
+  dated_on: string,
+  amount_due?: string | number,
+  is_personal: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Contacts
 
 ### create
@@ -46,7 +111,9 @@ Create a contact using documented contact fields
 **Risk:** `write`
 
 ```ts
-await corsair.freeagent.api.contacts.create({});
+await corsair.freeagent.api.contacts.create({
+	contact: { organisation_name: 'Example Ltd' },
+});
 ```
 
 **Input**
@@ -151,7 +218,7 @@ Delete a contact
 **Risk:** `destructive`
 
 ```ts
-await corsair.freeagent.api.contacts.delete({});
+await corsair.freeagent.api.contacts.delete({ id: '1' });
 ```
 
 **Input**
@@ -166,7 +233,6 @@ await corsair.freeagent.api.contacts.delete({});
 
 
 ---
-
 ### get
 
 `contacts.get`
@@ -176,7 +242,7 @@ Get a contact by its FreeAgent ID
 **Risk:** `read`
 
 ```ts
-await corsair.freeagent.api.contacts.get({});
+await corsair.freeagent.api.contacts.get({ id: '1' });
 ```
 
 **Input**
@@ -255,7 +321,7 @@ await corsair.freeagent.api.contacts.list({});
 |------|------|----------|-------------|
 | `query` | `object` | No | — |
 
-FreeAgent paginates collections with a default of 25 records and a maximum per_page of 100. Link and X-Total-Count response headers are not returned by the JSON endpoint result.
+FreeAgent paginates collections with a default of 25 records and a maximum per_page of 100. The result includes pagination.link and pagination.total_count, preserving the Link header and X-Total-Count header value respectively.
 
 <AccordionGroup>
 <Accordion title="query full type">
@@ -281,6 +347,7 @@ FreeAgent paginates collections with a default of 25 records and a maximum per_p
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contacts` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -320,6 +387,16 @@ FreeAgent paginates collections with a default of 25 records and a maximum per_p
 }[]
 ```
 </Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  link: string | null,
+  total_count: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -335,7 +412,10 @@ Update documented fields on a contact
 **Risk:** `write`
 
 ```ts
-await corsair.freeagent.api.contacts.update({});
+await corsair.freeagent.api.contacts.update({
+	id: '1',
+	contact: { organisation_name: 'Example Ltd' },
+});
 ```
 
 **Input**
@@ -389,6 +469,99 @@ await corsair.freeagent.api.contacts.update({});
 
 ## Invoices
 
+### convertToCreditNote
+
+`invoices.convertToCreditNote`
+
+Convert a draft negative invoice into a credit note
+
+**Risk:** `destructive`
+
+```ts
+await corsair.freeagent.api.invoices.convertToCreditNote({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credit_note` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credit_note full type">
+
+```ts
+{
+  url?: string,
+  contact?: string,
+  project?: string,
+  property?: string,
+  reference?: string,
+  dated_on?: string,
+  due_on?: string,
+  payment_terms_in_days?: number,
+  currency?: string,
+  cis_rate?: string | null,
+  cis_deduction_rate?: string | number,
+  comments?: string,
+  discount_percent?: string | number,
+  client_contact_name?: string,
+  payment_terms?: string,
+  po_reference?: string,
+  bank_account?: string,
+  omit_header?: boolean,
+  show_project_name?: boolean,
+  ec_status?: string,
+  place_of_supply?: string,
+  net_value?: string | number,
+  exchange_rate?: string | number,
+  involves_sales_tax?: boolean,
+  sales_tax_value?: string | number,
+  second_sales_tax_value?: string | number,
+  total_value?: string | number,
+  refunded_value?: string | number,
+  due_value?: string | number,
+  is_interim_uk_vat?: boolean,
+  refunded_on?: string,
+  written_off_date?: string,
+  status?: Draft | Open | Overdue | Refunded | Written-off,
+  long_status?: string,
+  contact_name?: string,
+  credit_note_items?: {
+    url?: string,
+    position?: string | number,
+    description?: string,
+    item_type?: string,
+    price?: string | number,
+    quantity?: string | number,
+    sales_tax_rate?: string | number,
+    second_sales_tax_rate?: string | number,
+    suffers_cis_deduction?: boolean,
+    sales_tax_status?: string,
+    second_sales_tax_status?: string,
+    stock_item?: string,
+    category?: string,
+    project?: string
+  }[],
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### create
 
 `invoices.create`
@@ -398,7 +571,9 @@ Create an invoice in Draft status
 **Risk:** `write`
 
 ```ts
-await corsair.freeagent.api.invoices.create({});
+await corsair.freeagent.api.invoices.create({
+	invoice: { contact: 'https://api.freeagent.com/v2/contacts/1', dated_on: '2025-01-15', payment_terms_in_days: 30 },
+});
 ```
 
 **Input**
@@ -414,16 +589,16 @@ FreeAgent creates new invoices in Draft status. Use an explicit status-transitio
 
 ```ts
 {
-  contact?: string,
+  contact: string,
   project?: string,
   property?: string,
   include_timeslips?: string | null,
   include_expenses?: string | null,
   include_estimates?: string | null,
   reference?: string,
-  dated_on?: string,
+  dated_on: string,
   due_on?: string,
-  payment_terms_in_days?: number,
+  payment_terms_in_days: number,
   currency?: string,
   cis_rate?: string | null,
   cis_deduction_rate?: number,
@@ -542,7 +717,7 @@ Delete an invoice
 **Risk:** `destructive`
 
 ```ts
-await corsair.freeagent.api.invoices.delete({});
+await corsair.freeagent.api.invoices.delete({ id: '1' });
 ```
 
 **Input**
@@ -558,16 +733,63 @@ await corsair.freeagent.api.invoices.delete({});
 
 ---
 
-### get
+### deleteDefaultAdditionalText
 
-`invoices.get`
+`invoices.deleteDefaultAdditionalText`
 
-Get an invoice by its FreeAgent ID
+Remove the default additional text from company invoices
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
-await corsair.freeagent.api.invoices.get({});
+await corsair.freeagent.api.invoices.deleteDefaultAdditionalText({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### directDebit
+
+`invoices.directDebit`
+
+Take payment using an eligible GoCardless mandate
+
+**Risk:** `destructive`
+
+```ts
+await corsair.freeagent.api.invoices.directDebit({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+This requests a real GoCardless payment and is available only for sent invoices with an enabled pre-authorised mandate and no previous payment.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### duplicate
+
+`invoices.duplicate`
+
+Duplicate an invoice as a new draft using the next reference
+
+**Risk:** `write`
+
+```ts
+await corsair.freeagent.api.invoices.duplicate({ id: '1' });
 ```
 
 **Input**
@@ -649,6 +871,122 @@ await corsair.freeagent.api.invoices.get({});
 
 ---
 
+### get
+
+`invoices.get`
+
+Get an invoice by its FreeAgent ID
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.invoices.get({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  contact?: string,
+  project?: string,
+  property?: string,
+  include_timeslips?: string | null,
+  include_expenses?: string | null,
+  include_estimates?: string | null,
+  reference?: string,
+  dated_on?: string,
+  due_on?: string,
+  payment_terms_in_days?: number,
+  currency?: string,
+  cis_rate?: string | null,
+  cis_deduction_rate?: number,
+  comments?: string,
+  send_new_invoice_emails?: boolean,
+  send_reminder_emails?: boolean,
+  send_thank_you_emails?: boolean,
+  discount_percent?: number,
+  client_contact_name?: string,
+  payment_terms?: string,
+  po_reference?: string,
+  bank_account?: string,
+  omit_header?: boolean,
+  show_project_name?: boolean,
+  always_show_bic_and_iban?: boolean,
+  ec_status?: UK/Non-EC | EC Goods | EC Services | Reverse Charge | EC VAT MOSS,
+  place_of_supply?: string,
+  invoice_items?: {
+    position?: number,
+    item_type?: Hours | Days | Weeks | Months | Years | Products | Services | Training | Expenses | Comment | Bills | Discount | Credit | VAT | Stock,
+    quantity?: number,
+    description: string,
+    price?: number,
+    sales_tax_rate?: number,
+    second_sales_tax_rate?: number,
+    sales_tax_status?: TAXABLE | EXEMPT,
+    second_sales_tax_status?: string,
+    stock_item?: string,
+    category?: string,
+    project?: string
+  }[],
+  url?: string,
+  status?: string,
+  long_status?: string,
+  net_value?: string,
+  total_value?: string,
+  paid_value?: string,
+  due_value?: string,
+  paid_on?: string,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDefaultAdditionalText
+
+`invoices.getDefaultAdditionalText`
+
+Get the default additional text for company invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.invoices.getDefaultAdditionalText({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `default_additional_text` | `string` | Yes | — |
+
+
+
+---
+
 ### list
 
 `invoices.list`
@@ -694,6 +1032,7 @@ await corsair.freeagent.api.invoices.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `invoices` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="invoices full type">
@@ -754,8 +1093,93 @@ await corsair.freeagent.api.invoices.list({});
 }[]
 ```
 </Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  link: string | null,
+  total_count: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
 
+
+
+---
+
+### markCancelled
+
+`invoices.markCancelled`
+
+Cancel and write off an eligible sent invoice
+
+**Risk:** `destructive`
+
+```ts
+await corsair.freeagent.api.invoices.markCancelled({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### markDraft
+
+`invoices.markDraft`
+
+Return an invoice to Draft status
+
+**Risk:** `destructive`
+
+```ts
+await corsair.freeagent.api.invoices.markDraft({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### markScheduled
+
+`invoices.markScheduled`
+
+Schedule an invoice to be emailed
+
+**Risk:** `destructive`
+
+```ts
+await corsair.freeagent.api.invoices.markScheduled({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
 
 
 ---
@@ -769,7 +1193,7 @@ Mark an invoice as sent or reopen a cancelled invoice
 **Risk:** `destructive`
 
 ```ts
-await corsair.freeagent.api.invoices.markSent({});
+await corsair.freeagent.api.invoices.markSent({ id: '1' });
 ```
 
 **Input**
@@ -781,6 +1205,49 @@ await corsair.freeagent.api.invoices.markSent({});
 
 
 **Output:** _empty object_
+
+
+---
+
+### pdf
+
+`invoices.pdf`
+
+Get the invoice PDF as base64 encoded JSON content
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.invoices.pdf({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+FreeAgent returns PDF bytes as base64 in pdf.content; decode that value to obtain the PDF file.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pdf` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pdf full type">
+
+```ts
+{
+  content: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -794,7 +1261,10 @@ Send an invoice email to its recipient
 **Risk:** `destructive`
 
 ```ts
-await corsair.freeagent.api.invoices.sendEmail({});
+await corsair.freeagent.api.invoices.sendEmail({
+	id: '1',
+	email: { use_template: true },
+});
 ```
 
 **Input**
@@ -804,7 +1274,7 @@ await corsair.freeagent.api.invoices.sendEmail({});
 | `id` | `string` | Yes | — |
 | `email` | `object` | Yes | — |
 
-Sending an invoice email is a separate action from marking the invoice sent. This implementation accepts the documented template flag or message fields; attachment payloads (maximum 5 MB each) are not exposed.
+Sending an invoice email is a separate action from marking the invoice sent. The operation accepts the documented template flag, message fields, and base64 attachments up to 5 MiB each.
 
 <AccordionGroup>
 <Accordion title="email full type">
@@ -817,7 +1287,12 @@ Sending an invoice email is a separate action from marking the invoice sent. Thi
   body?: string,
   email_to_sender?: boolean,
   attach_expense_receipts?: boolean,
-  use_template?: boolean
+  use_template?: boolean,
+  attachments?: {
+    content_type: string,
+    data: string,
+    file_name: string
+  }[]
 }
 ```
 </Accordion>
@@ -826,6 +1301,46 @@ Sending an invoice email is a separate action from marking the invoice sent. Thi
 
 
 **Output:** _empty object_
+
+
+---
+
+### timeline
+
+`invoices.timeline`
+
+List invoice timeline entries
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.invoices.timeline({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_timeline_items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice_timeline_items full type">
+
+```ts
+{
+  reference: string,
+  summary: string,
+  description: string,
+  dated_on: string,
+  amount: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -839,7 +1354,10 @@ Update an invoice without changing its status
 **Risk:** `write`
 
 ```ts
-await corsair.freeagent.api.invoices.update({});
+await corsair.freeagent.api.invoices.update({
+	id: '1',
+	invoice: { comments: 'Example update' },
+});
 ```
 
 **Input**
@@ -907,6 +1425,36 @@ await corsair.freeagent.api.invoices.update({});
 
 ---
 
+### updateDefaultAdditionalText
+
+`invoices.updateDefaultAdditionalText`
+
+Update the default additional text for company invoices
+
+**Risk:** `write`
+
+```ts
+await corsair.freeagent.api.invoices.updateDefaultAdditionalText({ default_additional_text: 'Pay within 7 days' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `default_additional_text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `default_additional_text` | `string` | Yes | — |
+
+
+
+---
+
 ## Projects
 
 ### create
@@ -918,7 +1466,15 @@ Create a project with documented project fields
 **Risk:** `write`
 
 ```ts
-await corsair.freeagent.api.projects.create({});
+await corsair.freeagent.api.projects.create({
+	project: {
+		contact: 'https://api.freeagent.com/v2/contacts/1',
+		name: 'Example Project',
+		status: 'Active',
+		currency: 'GBP',
+		budget_units: 'Hours',
+	},
+});
 ```
 
 **Input**
@@ -932,14 +1488,14 @@ await corsair.freeagent.api.projects.create({});
 
 ```ts
 {
-  contact?: string,
-  name?: string,
-  status?: Active | Completed | Cancelled | Hidden,
+  contact: string,
+  name: string,
+  status: Active | Completed | Cancelled | Hidden,
   contract_po_reference?: string,
   uses_project_invoice_sequence?: boolean,
-  currency?: string,
+  currency: string,
   budget?: number,
-  budget_units?: Hours | Days | Monetary,
+  budget_units: Hours | Days | Monetary,
   hours_per_day?: number,
   normal_billing_rate?: number,
   billing_period?: hour | day,
@@ -1003,7 +1559,7 @@ Delete a project
 **Risk:** `destructive`
 
 ```ts
-await corsair.freeagent.api.projects.delete({});
+await corsair.freeagent.api.projects.delete({ id: '1' });
 ```
 
 **Input**
@@ -1028,7 +1584,7 @@ Get a project by its FreeAgent ID
 **Risk:** `read`
 
 ```ts
-await corsair.freeagent.api.projects.get({});
+await corsair.freeagent.api.projects.get({ id: '1' });
 ```
 
 **Input**
@@ -1123,6 +1679,7 @@ await corsair.freeagent.api.projects.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projects` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -1152,6 +1709,16 @@ await corsair.freeagent.api.projects.list({});
 }[]
 ```
 </Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  link: string | null,
+  total_count: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -1167,7 +1734,10 @@ Update documented fields on a project
 **Risk:** `write`
 
 ```ts
-await corsair.freeagent.api.projects.update({});
+await corsair.freeagent.api.projects.update({
+	id: '1',
+	project: { name: 'Example Project' },
+});
 ```
 
 **Input**

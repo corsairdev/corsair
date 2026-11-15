@@ -1,8 +1,10 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
 import {
 	FREEAGENT_API_BASE,
 	FREEAGENT_SANDBOX_API_BASE,
+	makeFreeAgentPaginatedRequest,
 	makeFreeAgentRequest,
 } from './client';
 
@@ -76,5 +78,73 @@ describe('FreeAgent client', () => {
 		await expect(
 			makeFreeAgentRequest('/v2/contacts', 'access-token'),
 		).rejects.toBe(rateLimit);
+	});
+
+	it('returns the documented Link and X-Total-Count pagination headers', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ contacts: [] }), {
+				status: 200,
+				headers: {
+					'Content-Type': 'application/json',
+					Link: '<https://api.freeagent.com/v2/contacts?page=3>; rel="next"',
+					'X-Total-Count': '26',
+				},
+			}),
+		);
+		try {
+			const result = await makeFreeAgentPaginatedRequest(
+				'/v2/contacts',
+				'access-token',
+				{ page: 2, per_page: 50 },
+				z
+					.object({ contacts: z.array(z.object({}).passthrough()) })
+					.passthrough(),
+			);
+			expect(result.data).toEqual({ contacts: [] });
+			expect(result.pagination).toEqual({
+				link: '<https://api.freeagent.com/v2/contacts?page=3>; rel="next"',
+				total_count: '26',
+			});
+			const [url, init] = fetchMock.mock.calls[0] ?? [];
+			expect(String(url)).toBe(
+				'https://api.freeagent.com/v2/contacts?page=2&per_page=50',
+			);
+			expect(init?.method).toBe('GET');
+			expect(new Headers(init?.headers).get('Authorization')).toBe(
+				'Bearer access-token',
+			);
+		} finally {
+			fetchMock.mockRestore();
+		}
+	});
+
+	it('retries a paginated GET after 429 using Retry-After', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				new Response(null, {
+					status: 429,
+					headers: { 'Retry-After': '0' },
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ contacts: [] }), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+			);
+		try {
+			await makeFreeAgentPaginatedRequest(
+				'/v2/contacts',
+				'access-token',
+				{},
+				z
+					.object({ contacts: z.array(z.object({}).passthrough()) })
+					.passthrough(),
+			);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			fetchMock.mockRestore();
+		}
 	});
 });

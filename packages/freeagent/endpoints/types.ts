@@ -192,8 +192,121 @@ const InvoiceSchema = InvoiceFieldsSchema.extend({
 	updated_at: z.string().optional(),
 }).passthrough();
 
+const InvoiceEmailAttachmentSchema = z
+	.object({
+		content_type: z.string().min(1),
+		data: z
+			.string()
+			.min(1)
+			.max(6_990_508)
+			.regex(/^[A-Za-z0-9+/]*={0,2}$/),
+		file_name: z.string().min(1),
+	})
+	.strict()
+	.superRefine((attachment, context) => {
+		const padding = attachment.data.endsWith('==')
+			? 2
+			: attachment.data.endsWith('=')
+				? 1
+				: 0;
+		const decodedByteLength = (attachment.data.length * 3) / 4 - padding;
+		if (attachment.data.length % 4 !== 0) {
+			context.addIssue({
+				code: 'custom',
+				message: 'Attachment data must be valid base64',
+			});
+		} else if (decodedByteLength > 5 * 1024 * 1024) {
+			context.addIssue({
+				code: 'custom',
+				message: 'Each email attachment must be 5 MB or smaller',
+			});
+		}
+	});
+
+const CreditNoteItemSchema = z
+	.object({
+		url: z.string().url().optional(),
+		position: z.union([z.string(), z.number()]).optional(),
+		description: z.string().optional(),
+		item_type: z.string().optional(),
+		price: z.union([z.string(), z.number()]).optional(),
+		quantity: z.union([z.string(), z.number()]).optional(),
+		sales_tax_rate: z.union([z.string(), z.number()]).optional(),
+		second_sales_tax_rate: z.union([z.string(), z.number()]).optional(),
+		suffers_cis_deduction: z.boolean().optional(),
+		sales_tax_status: z.string().optional(),
+		second_sales_tax_status: z.string().optional(),
+		stock_item: z.string().url().optional(),
+		category: z.string().url().optional(),
+		project: z.string().url().optional(),
+	})
+	.passthrough();
+
+// Passthrough matches FreeAgent's documented extensible credit-note response objects.
+const CreditNoteSchema = z
+	.object({
+		url: z.string().url().optional(),
+		contact: z.string().url().optional(),
+		project: z.string().url().optional(),
+		property: z.string().url().optional(),
+		reference: z.string().optional(),
+		dated_on: z.string().date().optional(),
+		due_on: z.string().date().optional(),
+		payment_terms_in_days: z.number().int().optional(),
+		currency: z.string().optional(),
+		cis_rate: z.string().nullable().optional(),
+		cis_deduction_rate: z.union([z.string(), z.number()]).optional(),
+		comments: z.string().optional(),
+		discount_percent: z.union([z.string(), z.number()]).optional(),
+		client_contact_name: z.string().optional(),
+		payment_terms: z.string().optional(),
+		po_reference: z.string().optional(),
+		bank_account: z.string().url().optional(),
+		omit_header: z.boolean().optional(),
+		show_project_name: z.boolean().optional(),
+		ec_status: z.string().optional(),
+		place_of_supply: z.string().optional(),
+		net_value: z.union([z.string(), z.number()]).optional(),
+		exchange_rate: z.union([z.string(), z.number()]).optional(),
+		involves_sales_tax: z.boolean().optional(),
+		sales_tax_value: z.union([z.string(), z.number()]).optional(),
+		second_sales_tax_value: z.union([z.string(), z.number()]).optional(),
+		total_value: z.union([z.string(), z.number()]).optional(),
+		refunded_value: z.union([z.string(), z.number()]).optional(),
+		due_value: z.union([z.string(), z.number()]).optional(),
+		is_interim_uk_vat: z.boolean().optional(),
+		refunded_on: z.string().date().optional(),
+		written_off_date: z.string().date().optional(),
+		status: z
+			.enum(['Draft', 'Open', 'Overdue', 'Refunded', 'Written-off'])
+			.optional(),
+		long_status: z.string().optional(),
+		contact_name: z.string().optional(),
+		credit_note_items: z.array(CreditNoteItemSchema).optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+	})
+	.passthrough();
+
+const PaginationHeadersSchema = z.object({
+	link: z.string().nullable(),
+	total_count: z.string().regex(/^\d+$/).nullable(),
+});
+
+const ContactsListResponseSchema = z
+	.object({ contacts: z.array(ContactSchema) })
+	.passthrough();
+const ProjectsListResponseSchema = z
+	.object({ projects: z.array(ProjectSchema) })
+	.passthrough();
+const InvoicesListResponseSchema = z
+	.object({ invoices: z.array(InvoiceSchema) })
+	.passthrough();
+
 export const FreeAgentEndpointInputSchemas = {
 	companyGet: z.object({}).strict(),
+	companyBusinessCategories: z.object({}).strict(),
+	companyTaxTimeline: z.object({}).strict(),
 	contactsList: z.object({ query: PaginationSchema.optional() }).strict(),
 	contactsGet: z.object({ id: z.string().min(1) }).strict(),
 	contactsCreate: z.object({ contact: ContactCreateSchema }).strict(),
@@ -243,33 +356,100 @@ export const FreeAgentEndpointInputSchemas = {
 					email_to_sender: z.boolean().optional(),
 					attach_expense_receipts: z.boolean().optional(),
 					use_template: z.boolean().optional(),
+					attachments: z.array(InvoiceEmailAttachmentSchema).optional(),
 				})
 				.strict(),
 		})
 		.strict(),
+	invoicesDuplicate: z.object({ id: z.string().min(1) }).strict(),
+	invoicesMarkScheduled: z.object({ id: z.string().min(1) }).strict(),
+	invoicesMarkDraft: z.object({ id: z.string().min(1) }).strict(),
+	invoicesMarkCancelled: z.object({ id: z.string().min(1) }).strict(),
+	invoicesDirectDebit: z.object({ id: z.string().min(1) }).strict(),
+	invoicesTimeline: z.object({}).strict(),
+	invoicesDefaultAdditionalTextGet: z.object({}).strict(),
+	invoicesDefaultAdditionalTextUpdate: z
+		.object({ default_additional_text: z.string() })
+		.strict(),
+	invoicesDefaultAdditionalTextDelete: z.object({}).strict(),
+	invoicesPdf: z.object({ id: z.string().min(1) }).strict(),
+	invoicesConvertToCreditNote: z.object({ id: z.string().min(1) }).strict(),
 } as const;
+
+const TaxTimelineItemSchema = z
+	.object({
+		description: z.string(),
+		nature: z.string(),
+		dated_on: z.string().date(),
+		amount_due: z.union([z.string(), z.number()]).optional(),
+		is_personal: z.boolean(),
+	})
+	.passthrough();
+
+const InvoiceTimelineItemSchema = z
+	.object({
+		reference: z.string(),
+		summary: z.string(),
+		description: z.string(),
+		dated_on: z.string().date(),
+		amount: z.string(),
+	})
+	.passthrough();
 
 export const FreeAgentEndpointOutputSchemas = {
 	companyGet: z
 		.object({ company: z.record(z.string(), z.json()) })
 		.passthrough(),
-	contactsList: z.object({ contacts: z.array(ContactSchema) }).passthrough(),
+	companyBusinessCategories: z
+		.object({ business_categories: z.array(z.string()) })
+		.passthrough(),
+	companyTaxTimeline: z
+		.object({ timeline_items: z.array(TaxTimelineItemSchema) })
+		.passthrough(),
+	contactsList: ContactsListResponseSchema.extend({
+		pagination: PaginationHeadersSchema,
+	}).passthrough(),
 	contactsGet: z.object({ contact: ContactSchema }).passthrough(),
 	contactsCreate: z.object({ contact: ContactSchema }).passthrough(),
 	contactsUpdate: z.object({}).passthrough(),
 	contactsDelete: z.object({}).passthrough(),
-	projectsList: z.object({ projects: z.array(ProjectSchema) }).passthrough(),
+	projectsList: ProjectsListResponseSchema.extend({
+		pagination: PaginationHeadersSchema,
+	}).passthrough(),
 	projectsGet: z.object({ project: ProjectSchema }).passthrough(),
 	projectsCreate: z.object({ project: ProjectSchema }).passthrough(),
 	projectsUpdate: z.object({}).passthrough(),
 	projectsDelete: z.object({}).passthrough(),
-	invoicesList: z.object({ invoices: z.array(InvoiceSchema) }).passthrough(),
+	invoicesList: InvoicesListResponseSchema.extend({
+		pagination: PaginationHeadersSchema,
+	}).passthrough(),
 	invoicesGet: z.object({ invoice: InvoiceSchema }).passthrough(),
 	invoicesCreate: z.object({ invoice: InvoiceSchema }).passthrough(),
 	invoicesUpdate: z.object({}).passthrough(),
 	invoicesDelete: z.object({}).passthrough(),
 	invoicesMarkSent: z.object({}).passthrough(),
 	invoicesSendEmail: z.object({}).passthrough(),
+	invoicesDuplicate: z.object({ invoice: InvoiceSchema }).passthrough(),
+	invoicesMarkScheduled: z.object({}).passthrough(),
+	invoicesMarkDraft: z.object({}).passthrough(),
+	invoicesMarkCancelled: z.object({}).passthrough(),
+	invoicesDirectDebit: z.object({}).passthrough(),
+	invoicesTimeline: z
+		.object({ invoice_timeline_items: z.array(InvoiceTimelineItemSchema) })
+		.passthrough(),
+	invoicesDefaultAdditionalTextGet: z
+		.object({ default_additional_text: z.string() })
+		.passthrough(),
+	invoicesDefaultAdditionalTextUpdate: z
+		.object({ default_additional_text: z.string() })
+		.passthrough(),
+	invoicesDefaultAdditionalTextDelete: z.object({}).passthrough(),
+	invoicesPdf: z
+		.object({ pdf: z.object({ content: z.string().min(1) }) })
+		.passthrough(),
+	invoicesConvertToCreditNote: z
+		.object({ credit_note: CreditNoteSchema })
+		.passthrough(),
 } as const;
 
 export type FreeAgentEndpointInputs = {

@@ -11,3 +11,27 @@ export const get: FreeAgentEndpoints['companyGet'] = async (ctx, input) => {
 	const response = await makeFreeAgentRequest('/v2/company', ctx.key);
 	return FreeAgentEndpointOutputSchemas.companyGet.parse(response);
 };
+
+export const businessCategories: FreeAgentEndpoints['companyBusinessCategories'] =
+	async (ctx, input) => {
+		FreeAgentEndpointInputSchemas.companyBusinessCategories.parse(input);
+		const response = await makeFreeAgentRequest(
+			'/v2/company/business_categories',
+			ctx.key,
+		);
+		return FreeAgentEndpointOutputSchemas.companyBusinessCategories.parse(
+			response,
+		);
+	};
+
+export const taxTimeline: FreeAgentEndpoints['companyTaxTimeline'] = async (
+	ctx,
+	input,
+) => {
+	FreeAgentEndpointInputSchemas.companyTaxTimeline.parse(input);
+	const response = await makeFreeAgentRequest(
+		'/v2/company/tax_timeline',
+		ctx.key,
+	);
+	return FreeAgentEndpointOutputSchemas.companyTaxTimeline.parse(response);
+};

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FreeAgentEndpoints } from '..';
-import { makeFreeAgentRequest } from '../client';
+import { makeFreeAgentPaginatedRequest, makeFreeAgentRequest } from '../client';
 import {
 	FreeAgentEndpointInputSchemas,
 	FreeAgentEndpointOutputSchemas,
@@ -8,10 +8,16 @@ import {
 
 export const list: FreeAgentEndpoints['projectsList'] = async (ctx, input) => {
 	const parsed = FreeAgentEndpointInputSchemas.projectsList.parse(input);
-	const response = await makeFreeAgentRequest('/v2/projects', ctx.key, {
-		query: parsed.query,
+	const response = await makeFreeAgentPaginatedRequest(
+		'/v2/projects',
+		ctx.key,
+		parsed.query ?? {},
+		FreeAgentEndpointOutputSchemas.projectsList.omit({ pagination: true }),
+	);
+	const output = FreeAgentEndpointOutputSchemas.projectsList.parse({
+		...response.data,
+		pagination: response.pagination,
 	});
-	const output = FreeAgentEndpointOutputSchemas.projectsList.parse(response);
 	await logEventFromContext(
 		ctx,
 		'freeagent.projects.list',
