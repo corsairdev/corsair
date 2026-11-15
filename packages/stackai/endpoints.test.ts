@@ -250,6 +250,50 @@ describe('StackAI public endpoints', () => {
 		expect((error as Error).message).toBe(
 			'StackAI request failed with HTTP 422: body.input: Field required',
 		);
+		expect((error as StackAIAPIError).body).toEqual({
+			detail: [
+				{ loc: ['body', 'input'], msg: 'Field required', type: 'missing' },
+			],
+		});
+		expect(JSON.stringify((error as StackAIAPIError).body)).not.toContain(
+			'customer data',
+		);
+	});
+	it('rejects a plain-HTTP baseURL unless it is a loopback host', async () => {
+		const remote = {
+			key: 'test-key',
+			options: { baseURL: 'http://remote.example' },
+		} as never;
+		await expect(plugin.endpoints!.runs.list(remote, {})).rejects.toThrow(
+			'HTTPS origin',
+		);
+		const lookalike = {
+			key: 'test-key',
+			options: { baseURL: 'http://localhost.example' },
+		} as never;
+		await expect(plugin.endpoints!.runs.list(lookalike, {})).rejects.toThrow(
+			'HTTPS origin',
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+		reply({ data: [], total: 0, limit: 20, offset: 0 });
+		const local = {
+			key: 'test-key',
+			options: { baseURL: 'http://127.0.0.1:8080' },
+		} as never;
+		await plugin.endpoints!.runs.list(local, {}).catch(() => undefined);
+		expect(request().url.origin).toBe('http://127.0.0.1:8080');
+	});
+	it('sends every request with an abort deadline and names a timeout', async () => {
+		fetchMock.mockRejectedValueOnce(
+			new DOMException(
+				'The operation was aborted due to timeout',
+				'TimeoutError',
+			),
+		);
+		await expect(
+			plugin.endpoints!.runs.get(ctx, { run_id: id }),
+		).rejects.toThrow('StackAI request timed out after 60 s');
+		expect(request().init.signal).toBeInstanceOf(AbortSignal);
 	});
 	it('does not wait out a long Retry-After on reads', async () => {
 		const longWait = new StackAIAPIError(429, undefined, 86_400_000, 'GET');
