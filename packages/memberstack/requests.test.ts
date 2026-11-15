@@ -135,6 +135,14 @@ describe('Memberstack public request seam', () => {
 			response: { data: null },
 		},
 		{
+			name: 'get member by an email with an apostrophe',
+			run: () =>
+				api.members.get(context, { id_or_email: "o'brien@example.com" }),
+			method: 'GET',
+			path: '/members/o%27brien%40example.com',
+			response: { data: null },
+		},
+		{
 			name: 'create member',
 			run: () =>
 				api.members.create(context, {

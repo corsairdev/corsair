@@ -10,6 +10,19 @@ export const pathSegment = z
 		(value) => value !== '.' && value !== '..' && !/[\\/"']/.test(value),
 		'Must be a safe path segment',
 	);
+// Member lookups also take an email, and emails may contain an apostrophe
+// (o'brien@example.com); the route encodes it as %27.
+const memberIdOrEmail = z
+	.string()
+	.min(1)
+	.refine(
+		(value) =>
+			value !== '.' &&
+			value !== '..' &&
+			!/[\\/"]/.test(value) &&
+			(!value.includes("'") || value.includes('@')),
+		'Must be a member ID or an email address',
+	);
 const member = z
 	.object({
 		id: z.string(),
@@ -151,7 +164,7 @@ export const inputs = {
 		includeJSON: z.literal('true').optional(),
 	}),
 	membersGet: z.object({
-		id_or_email: pathSegment,
+		id_or_email: memberIdOrEmail,
 		include: z.string().optional(),
 	}),
 	membersCreate: z.object({

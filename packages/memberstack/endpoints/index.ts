@@ -26,7 +26,9 @@ async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	);
 	return response;
 }
-const segment = (value: string) => encodeURIComponent(value);
+// encodeURIComponent leaves apostrophes as they are; send them as %27.
+const segment = (value: string) =>
+	encodeURIComponent(value).replace(/'/g, '%27');
 const json = (
 	method: 'POST' | 'PATCH' | 'PUT' | 'DELETE',
 	url: string,
