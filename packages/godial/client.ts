@@ -46,22 +46,9 @@ function collectStrings(value: unknown, out: Set<string>): void {
 	}
 }
 
-// Values of three characters or more are replaced wherever they appear. A
-// shorter value (a two-letter name) is replaced only as a whole word, so a
-// name like "Al" doesn't turn every "al" inside other words into [REDACTED].
 function scrubString(text: string, secrets: Set<string>): string {
 	let result = text;
-	for (const secret of secrets) {
-		if (secret.length >= 3) {
-			result = result.split(secret).join(REDACTED);
-			continue;
-		}
-		const escaped = secret.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-		result = result.replace(
-			new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, 'gu'),
-			REDACTED,
-		);
-	}
+	for (const secret of secrets) result = result.split(secret).join(REDACTED);
 	return result;
 }
 
@@ -73,7 +60,7 @@ function scrubValue(value: unknown, secrets: Set<string>): unknown {
 	if (value !== null && typeof value === 'object') {
 		return Object.fromEntries(
 			Object.entries(value).map(([key, item]) => [
-				key,
+				scrubString(key, secrets),
 				scrubValue(item, secrets),
 			]),
 		);
@@ -105,6 +92,10 @@ function sanitizeError(
 	}
 	collectStrings(options.apiKey, secrets);
 	const invalidToken = isInvalidTokenError(error);
+	// A value under three characters (a two-letter name) can't be replaced
+	// safely inside other text, so the provider's message and body are dropped
+	// and only the status is reported.
+	const hasShortValue = [...secrets].some((secret) => secret.length < 3);
 	const { body: _requestBody, ...requestWithoutBody } = error.request;
 	return new ApiError(
 		{
@@ -116,11 +107,13 @@ function sanitizeError(
 			ok: false,
 			status: invalidToken ? 401 : error.status,
 			statusText: invalidToken ? 'Unauthorized' : error.statusText,
-			body: scrubValue(error.body, secrets),
+			body: hasShortValue ? undefined : scrubValue(error.body, secrets),
 		},
 		invalidToken
 			? 'GoDial rejected the access token (missing, invalid or revoked)'
-			: scrubString(error.message, secrets),
+			: hasShortValue
+				? `GoDial request failed with HTTP ${error.status}`
+				: scrubString(error.message, secrets),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,

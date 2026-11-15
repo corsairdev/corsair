@@ -113,12 +113,12 @@ describe('GoDial client', () => {
 		}
 	});
 
-	it('redacts a two-letter name as a whole word only', async () => {
+	it('drops the provider text when a contact value is under three characters', async () => {
 		jest
 			.spyOn(globalThis, 'fetch')
 			.mockResolvedValue(
 				new Response(
-					'{"error":{"statusCode":422,"message":"Contact Al is invalid"}}',
+					'{"error":{"statusCode":422,"message":"Contact AlSmith (Al) is invalid"}}',
 					{ status: 422, headers: { 'content-type': 'application/json' } },
 				),
 			);
@@ -132,11 +132,34 @@ describe('GoDial client', () => {
 
 		expect(error).toBeInstanceOf(ApiError);
 		if (!(error instanceof ApiError)) return;
-		const serialized = `${error.message} ${JSON.stringify(error.body)}`;
-		expect(serialized).not.toMatch(/\bAl\b/);
-		expect(JSON.stringify(error.body)).toContain(
-			'Contact [REDACTED] is invalid',
+		expect(error.status).toBe(422);
+		expect(error.body).toBeUndefined();
+		expect(error.message).toBe('GoDial request failed with HTTP 422');
+	});
+
+	it('redacts contact values used as keys in the error body', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response('{"errors":{"ada@example.test":"invalid"}}', {
+				status: 422,
+				headers: { 'content-type': 'application/json' },
+			}),
 		);
+
+		// unknown because the shared transport's rejection value has no static type until narrowed.
+		const error = await makeGoDialRequest('/meta/api/externals/contact/add', {
+			method: 'POST',
+			apiKey: 'secret-token',
+			body: {
+				listId: 'list-1',
+				phone: '+15555550123',
+				email: 'ada@example.test',
+			},
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(JSON.stringify(error.body)).not.toContain('ada@example.test');
+		expect(error.body).toEqual({ errors: { '[REDACTED]': 'invalid' } });
 	});
 
 	it('redacts the query token from transport errors', async () => {
