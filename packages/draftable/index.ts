@@ -3,7 +3,6 @@ import type {
 	BindEndpoints,
 	CorsairErrorHandler,
 	CorsairPlugin,
-	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -11,6 +10,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import type { DraftableContext } from './context';
 import { Comparisons } from './endpoints';
 import {
 	ListComparisonsInputSchema,
@@ -19,6 +19,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { DraftableSchema } from './schema';
 
+export type { DraftableContext };
+
 export type DraftablePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
@@ -26,11 +28,6 @@ export type DraftablePluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof draftableEndpointsNested>;
 };
-
-export type DraftableContext = CorsairPluginContext<
-	typeof DraftableSchema,
-	DraftablePluginOptions
->;
 
 export type DraftableKeyBuilderContext =
 	KeyBuilderContext<DraftablePluginOptions>;

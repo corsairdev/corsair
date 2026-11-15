@@ -4,13 +4,14 @@ sidebarTitle: "Overview"
 description: "List document comparisons on a Draftable account. The key is sent as a Token header."
 ---
 
-Use **Draftable** through Corsair: one client, typed API calls.
+Use **Draftable** through Corsair: one client, typed API calls, local DB sync.
 
 An empty token comes back as HTTP 401. The header is Authorization Token, not Bearer.
 
 **What you get:**
 
 - 1 typed API operations
+- 1 synced entity (`comparisons`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -111,11 +112,20 @@ _No write-style endpoint inferred; pick any operation from the [API](/plugins/dr
 
 See the full list on the [API](/plugins/draftable/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.draftable.db.<entity>.search()` and `.list()`: `comparisons`.
+
+See [Database](/plugins/draftable/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/draftable/api">
     Every `draftable.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/draftable/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

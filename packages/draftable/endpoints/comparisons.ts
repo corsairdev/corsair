@@ -1,7 +1,8 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import type { DraftableContext } from '..';
 import { makeDraftableRequest } from '../client';
+import type { DraftableContext } from '../context';
+import { DraftableComparisonEntity } from '../schema/database';
 import type { ListComparisonsInput, ListComparisonsResponse } from './types';
 import {
 	ListComparisonsInputSchema,
@@ -23,6 +24,7 @@ export const listComparisons: CorsairEndpoint<
 		offset: parsed.offset,
 	});
 	const result = ListComparisonsResponseSchema.parse(body);
+	await storeComparisons(ctx, result.results);
 	await logEventFromContext(
 		ctx,
 		'draftable.comparisons.list',
@@ -31,5 +33,21 @@ export const listComparisons: CorsairEndpoint<
 	);
 	return result;
 };
+
+async function storeComparisons(
+	ctx: DraftableContext,
+	results: unknown[],
+): Promise<void> {
+	if (!ctx.db?.comparisons) return;
+	for (const item of results) {
+		const row = DraftableComparisonEntity.safeParse(item);
+		if (!row.success) continue;
+		try {
+			await ctx.db.comparisons.upsertByEntityId(row.data.identifier, row.data);
+		} catch {
+			console.warn('Failed to save Draftable comparison');
+		}
+	}
+}
 
 export const Comparisons = { list: listComparisons };

@@ -27,8 +27,11 @@ const SAMPLE = {
 	results: [{ identifier: 'cmp-1' }],
 };
 
-function context(key: string): DraftableContext {
-	return { key } as DraftableContext;
+function context(key: string, upsert?: jest.Mock): DraftableContext {
+	return {
+		key,
+		db: upsert ? { comparisons: { upsertByEntityId: upsert } } : undefined,
+	} as unknown as DraftableContext;
 }
 
 describe('comparisons.list', () => {
@@ -84,5 +87,46 @@ describe('comparisons.list', () => {
 		);
 		mockRequest.mockRejectedValue(error);
 		await expect(listComparisons(context('test-key'), {})).rejects.toBe(error);
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects a bad page size before calling the API', async () => {
+		await expect(
+			listComparisons(context('test-key'), { limit: 0 }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that has no count', async () => {
+		mockRequest.mockResolvedValue({ results: [] });
+		await expect(listComparisons(context('test-key'), {})).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('stores each comparison that has an identifier', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({
+			count: 2,
+			results: [{ identifier: 'cmp-1', ready: true }, { title: 'no id' }],
+		});
+		const result = await listComparisons(context('test-key', upsert), {});
+		expect(result.count).toBe(2);
+		expect(upsert).toHaveBeenCalledTimes(1);
+		expect(upsert).toHaveBeenCalledWith('cmp-1', {
+			identifier: 'cmp-1',
+			ready: true,
+		});
+	});
+
+	it('returns the list when the database write fails', async () => {
+		const upsert = jest.fn().mockRejectedValue(new Error('disk full'));
+		mockRequest.mockResolvedValue(SAMPLE);
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		await expect(
+			listComparisons(context('test-key', upsert), {}),
+		).resolves.toEqual(SAMPLE);
+		warn.mockRestore();
 	});
 });
