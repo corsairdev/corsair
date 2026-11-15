@@ -202,6 +202,42 @@ describe('GetProspect HTTP client', () => {
 		expect(JSON.stringify(notFound.body)).not.toContain('Jane Doe');
 	});
 
+	it('drops unquoted values after a colon or "received" in validation text', async () => {
+		fetchSpy.mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					success: false,
+					data: null,
+					errors: [
+						{
+							name: 'VALIDATION_ERROR',
+							message: 'Invalid name: Jane Doe',
+						},
+						{
+							name: 'VALIDATION_ERROR',
+							message: 'company must be a domain, received Acme Robotics',
+						},
+					],
+				}),
+				{ status: 400, headers: { 'content-type': 'application/json' } },
+			),
+		);
+		// unknown because the rejection may be any transport/provider value; the predicate narrows it.
+		const caught = await makeGetProspectRequest(
+			'/v2/people/enrich',
+			'unit-key',
+			{ method: 'POST', body: {} },
+		).catch((error: unknown) => error);
+		if (!(caught instanceof ApiError))
+			throw new Error('Expected sanitized ApiError');
+		expect(caught.message).toContain('Invalid name');
+		expect(JSON.stringify(caught.body)).toContain('company must be a domain');
+		for (const leaked of ['Jane Doe', 'Acme Robotics']) {
+			expect(caught.message).not.toContain(leaked);
+			expect(JSON.stringify(caught.body)).not.toContain(leaked);
+		}
+	});
+
 	it('does not expose transport URLs or error details for non-API failures', async () => {
 		fetchSpy.mockRejectedValue(
 			new Error('https://api.getprospect.com/?email=person@samplemail.test'),

@@ -60,12 +60,15 @@ const QUOTED_PATTERN = /"[^"]*"|“[^”]*”/g;
 const LONG_TOKEN_PATTERN = /[A-Za-z0-9_-]{32,}/g;
 // Phone numbers, coordinates and other long numbers: 6+ characters of digits and separators.
 const NUMBER_RUN_PATTERN = /\+?\d[\d\s().-]{4,}\d/g;
+// "Invalid name: Jane Doe", "got +1 415 ...", "received Acme": the rest of the clause echoes input.
+const ECHOED_VALUE_PATTERN = /(:|\b(?:got|received)\b)[^,;?!\n]*/gi;
 
 /**
  * Validation messages explain what to fix ("enrich_mail is not a field of this
  * request - did you mean enrich_email?"), so they are kept, minus anything that
- * may echo the request: the key, email addresses, URLs, quoted input values and
- * long numbers (phones, coordinates). Other error kinds may describe a person or
+ * may echo the request: the key, email addresses, URLs, quoted input values,
+ * the rest of a clause after a colon, "got" or "received", and long numbers
+ * (phones, coordinates). Other error kinds may describe a person or
  * company in free text, so only their name and code are exposed.
  */
 function redactProviderMessage(message: string, apiKey: string): string {
@@ -76,6 +79,7 @@ function redactProviderMessage(message: string, apiKey: string): string {
 		.replace(EMAIL_PATTERN, '[email]')
 		.replace(URL_PATTERN, '[url]')
 		.replace(QUOTED_PATTERN, '"[value]"')
+		.replace(ECHOED_VALUE_PATTERN, '$1 [value]')
 		.replace(LONG_TOKEN_PATTERN, '[redacted]')
 		.replace(NUMBER_RUN_PATTERN, '[number]')
 		.slice(0, 300);
