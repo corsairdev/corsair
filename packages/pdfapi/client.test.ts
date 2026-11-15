@@ -92,6 +92,36 @@ describe('PdfApi client', () => {
 		);
 	});
 
+	it('drops the template data from the request kept on a failed render', async () => {
+		const renderRequest: ApiRequestOptions = {
+			method: 'POST',
+			url: '/templates/7/pdf',
+			body: { data: { email: 'jane@example.com', name: 'Jane' } },
+		};
+		const badRequest: ApiResult = {
+			url: 'https://pdf-api.io/api/templates/7/pdf',
+			ok: false,
+			status: 400,
+			statusText: 'Bad Request',
+			body: { message: 'Invalid data' },
+		};
+		const original = new ApiError(renderRequest, badRequest, 'Bad Request', {
+			retryAfter: 5000,
+		});
+		requestMock.mockRejectedValue(original);
+		const error = await makePdfApiRequest(
+			{ key: 'secret' },
+			'/templates/7/pdf',
+			{ method: 'POST', body: renderRequest.body as Record<string, unknown> },
+		).catch((caught: unknown) => caught); // unknown: the rejection value is opaque; narrowed by the assertions below
+		expect(error).toBe(original);
+		expect((error as ApiError).status).toBe(400);
+		expect((error as ApiError).retryAfter).toBe(5000);
+		expect((error as ApiError).request.body).toBeUndefined();
+		expect((error as ApiError).request.url).toBe('/templates/7/pdf');
+		expect(JSON.stringify(error)).not.toContain('jane@example.com');
+	});
+
 	it('does not retry a 429 again in the plugin error handler', async () => {
 		const rateLimit = new ApiError(
 			apiRequest,

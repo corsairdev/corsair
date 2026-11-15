@@ -76,6 +76,17 @@ export async function makePdfApiRequest<T>(
 				| { message?: string; error?: string }
 				| undefined;
 			error.message = provider?.message || provider?.error || error.message;
+			// Render and merge bodies carry the caller's template data (names,
+			// emails, addresses). Core redacts only the URL and query on the stored
+			// request, so drop the body here; the instance, status and Retry-After
+			// stay as they are.
+			if (error.request.body !== undefined) {
+				// The field is readonly in the type only; it is a plain data property.
+				(error as { request: ApiRequestOptions }).request = {
+					...error.request,
+					body: undefined,
+				};
+			}
 			throw error;
 		}
 		if (error instanceof Error) {
