@@ -2,6 +2,8 @@ import { ApiError } from 'corsair/http';
 import { Messages, Receipts, Sounds, Teams } from './endpoints';
 import { errorHandlers } from './error-handlers';
 
+// Endpoints read only `key` from the context; the full plugin context is not
+// needed to exercise the transport.
 const ctx = { key: 'secret-token' } as never;
 const originalFetch = global.fetch;
 
@@ -143,6 +145,26 @@ test('drops a cancel tag (customer data) from a failed request URL', async () =>
 	expect(caught).toBeInstanceOf(ApiError);
 	if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
 	expect(caught.status).toBe(400);
+	expect(caught.url).toContain('receipts/cancel_by_tag/[REDACTED].json');
+	expect(caught.request.url).toBe('receipts/cancel_by_tag/[REDACTED].json');
+	expect(JSON.stringify(caught)).not.toContain('alice');
+});
+
+test('drops a cancel tag that itself contains .json', async () => {
+	global.fetch = jest.fn().mockResolvedValue(
+		new Response(JSON.stringify({ status: 0, errors: ['x'], request: 'r' }), {
+			status: 400,
+			headers: { 'Content-Type': 'application/json' },
+		}),
+	);
+	// JavaScript may throw any value; narrow it to ApiError before inspecting it.
+	let caught: unknown;
+	try {
+		await Receipts.cancelByTag(ctx, { tag: 'batch.json-alice@example.com' });
+	} catch (error) {
+		caught = error;
+	}
+	if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
 	expect(caught.url).toContain('receipts/cancel_by_tag/[REDACTED].json');
 	expect(caught.request.url).toBe('receipts/cancel_by_tag/[REDACTED].json');
 	expect(JSON.stringify(caught)).not.toContain('alice');

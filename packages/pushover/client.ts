@@ -31,8 +31,16 @@ export function resolvePushoverUser(key: string, user?: string): string {
 	return target;
 }
 
+/**
+ * Replaces the cancel tag in a failed request's URL. The match runs to the
+ * last `.json` before any query, so a tag that itself contains `.json` is
+ * removed whole.
+ */
 function redactTag(url: string): string {
-	return url.replace(/(cancel_by_tag\/)[^/?#]+?(\.json)/, '$1[REDACTED]$2');
+	return url.replace(
+		/(cancel_by_tag\/)[^?#]+(\.json)(?=[?#]|$)/,
+		'$1[REDACTED]$2',
+	);
 }
 
 export async function makePushoverRequest<T>(
