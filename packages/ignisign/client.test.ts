@@ -185,6 +185,46 @@ describe('makeIgnisignRequest', () => {
 		expect(serialized).not.toContain('+33612345678');
 	});
 
+	it('masks the signer values the caller sent when the message repeats them', async () => {
+		const echoError = new ApiError(
+			{ method: 'POST', url: '/v4/signers' },
+			{
+				url: `${IGNISIGN_API_BASE}/v4/signers`,
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable Entity',
+				body: {
+					errorCode: 'SIGNER_INPUT_INVALID',
+					message: 'Signer Jane Doe +33612345678 is invalid (EN)',
+				},
+			},
+			'Signer Jane Doe +33612345678 is invalid (EN)',
+		);
+		mockRequest.mockRejectedValue(echoError);
+
+		// `unknown` because rejection value has no static type; assertions narrow it.
+		const error: unknown = await makeIgnisignRequest('/v4/signers', 'key', {
+			method: 'POST',
+			body: {
+				firstName: 'Jane',
+				lastName: 'Doe',
+				phoneNumber: '+33612345678',
+				language: 'EN',
+				metadata: { nickname: 'Janie' },
+			},
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const typedError = error as ApiError;
+		const expected =
+			'Signer [REDACTED] [REDACTED] [REDACTED] is invalid ([REDACTED])';
+		expect(typedError.message).toBe(expected);
+		expect(typedError.body).toEqual({
+			errorCode: 'SIGNER_INPUT_INVALID',
+			message: expected,
+		});
+	});
+
 	it('leaves the echoed context out of the fallback message too', async () => {
 		const rawBody = {
 			errorCode: 'SIGNER_INPUT_INVALID',

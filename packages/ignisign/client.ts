@@ -143,16 +143,72 @@ const ERROR_BODY_FIELDS = [
 	'detail',
 ] as const;
 
-/** The error body with only the allowlisted scalar fields, emails redacted. */
+/**
+ * The string values the caller sent (body, query and multipart fields, nested
+ * ones included). IgniSign's error message can repeat a signer's name or phone
+ * number from the request, so these are masked in the thrown error. Short
+ * numbers are skipped: masking `1` would mangle every number in the message.
+ */
+export function requestValues(
+	// `unknown` because request bodies are endpoint-specific JSON walked here.
+	...sources: unknown[]
+): string[] {
+	const values = new Set<string>();
+	// `unknown` because nested request members are walked before narrowing.
+	const walk = (value: unknown) => {
+		if (typeof value === 'string') {
+			if (value.length === 0 || (value.length < 3 && /^\d+$/.test(value))) {
+				return;
+			}
+			values.add(value);
+		} else if (Array.isArray(value)) {
+			for (const item of value) walk(item);
+		} else if (isRecord(value)) {
+			for (const item of Object.values(value)) walk(item);
+		}
+	};
+	for (const source of sources) walk(source);
+	return [...values].sort((a, b) => b.length - a.length);
+}
+
+/**
+ * Replaces one sent value in `text`. A value under three characters is matched
+ * only where no letter or digit touches it, so `EN` is masked without turning
+ * `ENTITY` into `[REDACTED]TITY`.
+ */
+function maskValue(text: string, value: string): string {
+	if (value.length >= 3) return text.split(value).join('[REDACTED]');
+	const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	return text.replace(
+		new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, 'gu'),
+		'[REDACTED]',
+	);
+}
+
+/** Emails and the caller's own values masked out of one error string. */
+function maskErrorText(text: string, sent: readonly string[]): string {
+	return sent.reduce(
+		maskValue,
+		text.replace(EMAIL_PATTERN, '[REDACTED_EMAIL]'),
+	);
+}
+
+/**
+ * The error body with only the allowlisted scalar fields, emails and the
+ * caller's own values (`sent`) masked.
+ */
 // `unknown` because error bodies returned from the provider are untrusted JSON.
-export function safeErrorBody(rawBody: unknown): unknown {
-	if (typeof rawBody === 'string') return sanitizeData(rawBody);
+export function safeErrorBody(
+	rawBody: unknown,
+	sent: readonly string[] = [],
+): unknown {
+	if (typeof rawBody === 'string') return maskErrorText(rawBody, sent);
 	if (!isRecord(rawBody)) return undefined;
 	const result: Record<string, string | number | boolean> = {};
 	for (const field of ERROR_BODY_FIELDS) {
 		const value = rawBody[field];
 		if (typeof value === 'string') {
-			result[field] = value.replace(EMAIL_PATTERN, '[REDACTED_EMAIL]');
+			result[field] = maskErrorText(value, sent);
 		} else if (typeof value === 'number' || typeof value === 'boolean') {
 			result[field] = value;
 		}
@@ -281,7 +337,10 @@ export async function makeIgnisignRequest<T>(
 		if (error instanceof ApiError) {
 			// `unknown` because error.body has no static type from corsair/http.
 			const rawBody: unknown = error.body;
-			const sanitizedBody = safeErrorBody(rawBody);
+			const sanitizedBody = safeErrorBody(
+				rawBody,
+				requestValues(body, query, formData),
+			);
 			const errorMessage = buildErrorMessage(
 				sanitizedBody,
 				error.status,
