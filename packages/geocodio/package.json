@@ -1,0 +1,53 @@
+{
+  "name": "@corsair-dev/geocodio",
+  "version": "0.1.0",
+  "description": "Geocodio plugin for Corsair: geocode addresses one at a time or in batches of up to 10,000, reverse geocode coordinates, append Census and district data, and measure driving or straight-line distances.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "corsair": "workspace:*",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "geocodio",
+    "plugin",
+    "geocoding",
+    "addresses",
+    "census"
+  ],
+  "author": "Corsair (https://corsair.dev)",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/geocodio"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/geocodio"
+}

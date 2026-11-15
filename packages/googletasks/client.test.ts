@@ -1,0 +1,200 @@
+import { AuthMissingError } from 'corsair/core';
+import { ApiError, request } from 'corsair/http';
+import { makeGoogleTasksRequest } from './client';
+
+jest.mock('corsair/http', () => {
+	const actual =
+		jest.requireActual<typeof import('corsair/http')>('corsair/http');
+	return { ...actual, request: jest.fn() };
+});
+
+const mockedRequest = jest.mocked(request);
+
+function apiError(status: number, retryAfter?: number): ApiError {
+	return new ApiError(
+		{ method: 'GET', url: '/tasks/v1/users/@me/lists' },
+		{
+			url: 'https://tasks.googleapis.com/tasks/v1/users/@me/lists',
+			ok: false,
+			status,
+			statusText: 'Google API error',
+			body: { error: { code: status, status: 'RESOURCE_EXHAUSTED' } },
+		},
+		'Google API error',
+		retryAfter === undefined ? undefined : { retryAfter },
+	);
+}
+
+describe('Google Tasks OAuth client', () => {
+	beforeEach(() => {
+		mockedRequest.mockReset().mockResolvedValue({ items: [] });
+	});
+
+	it('sends an OAuth bearer token only in the authorization header', async () => {
+		await makeGoogleTasksRequest('/tasks/v1/users/@me/lists', {
+			key: 'private-access-token',
+		});
+		const config = mockedRequest.mock.calls[0]?.[0];
+		expect(config?.BASE).toBe('https://tasks.googleapis.com');
+		expect(config?.VERSION).toBe('v1');
+		expect(config?.HEADERS).toEqual({
+			Authorization: 'Bearer private-access-token',
+			'Content-Type': 'application/json',
+		});
+		expect(config?.TOKEN).toBeUndefined();
+		expect(mockedRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: {
+				enabled: true,
+				maxRetries: 0,
+				initialRetryDelay: 0,
+				backoffMultiplier: 1,
+				headerNames: { retryAfter: 'retry-after' },
+			},
+		});
+	});
+
+	it('fails on a missing token before making a request', async () => {
+		await expect(
+			makeGoogleTasksRequest('/tasks/v1/users/@me/lists', {}),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it.each([400, 401, 403, 404, 429, 500])(
+		'preserves Google ApiError status and retry metadata for HTTP %i',
+		async (status) => {
+			const failure = apiError(status, status === 429 ? 4000 : undefined);
+			mockedRequest.mockRejectedValue(failure);
+			await expect(
+				makeGoogleTasksRequest('/tasks/v1/users/@me/lists', {
+					key: 'private-access-token',
+				}),
+			).rejects.toBe(failure);
+		},
+	);
+
+	it('drops the submitted task from a failed write but keeps status and retry data', async () => {
+		const failure = new ApiError(
+			{
+				method: 'POST',
+				url: '/tasks/v1/lists/l/tasks',
+				body: { title: 'Call Dr. Lee', notes: 'private note' },
+			},
+			{
+				url: 'https://tasks.googleapis.com/tasks/v1/lists/l/tasks',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: { code: 429, status: 'RESOURCE_EXHAUSTED' } },
+			},
+			'Google API error',
+			{ retryAfter: 4000, rateLimitRemaining: 0 },
+		);
+		mockedRequest.mockRejectedValue(failure);
+		// `unknown` in the catch: a rejection can carry any value; the assertions below narrow it to ApiError.
+		const thrown = await makeGoogleTasksRequest(
+			'/tasks/v1/lists/l/tasks',
+			{ key: 'private-access-token' },
+			{
+				method: 'POST',
+				body: { title: 'Call Dr. Lee', notes: 'private note' },
+			},
+		).catch((error: unknown) => error);
+		expect(thrown).toBeInstanceOf(ApiError);
+		const error = thrown as ApiError;
+		expect(error.request.body).toBeUndefined();
+		expect(error.request.method).toBe('POST');
+		expect(JSON.stringify(error)).not.toContain('private note');
+		expect(error.status).toBe(429);
+		expect(error.statusText).toBe('Too Many Requests');
+		expect(error.message).toBe('Google API error');
+		expect(error.body).toEqual({
+			error: { code: 429, status: 'RESOURCE_EXHAUSTED' },
+		});
+		expect(error.retryAfter).toBe(4000);
+		expect(error.rateLimitRemaining).toBe(0);
+	});
+
+	it('extracts Retry-After with the real corsair/http transport', async () => {
+		const actualHttp =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http');
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({ error: { code: 429, message: 'slow down' } }),
+				{
+					status: 429,
+					headers: { 'Retry-After': '4', 'Content-Type': 'application/json' },
+				},
+			),
+		);
+		await expect(
+			actualHttp.request(
+				{
+					BASE: 'https://tasks.googleapis.com',
+					VERSION: 'v1',
+					WITH_CREDENTIALS: false,
+					CREDENTIALS: 'omit',
+					HEADERS: { Authorization: 'Bearer token-for-test' },
+				},
+				{ method: 'GET', url: '/tasks/v1/users/@me/lists' },
+				{
+					rateLimitConfig: {
+						enabled: true,
+						maxRetries: 0,
+						initialRetryDelay: 0,
+						backoffMultiplier: 1,
+						headerNames: { retryAfter: 'retry-after' },
+					},
+				},
+			),
+		).rejects.toMatchObject({ status: 429, retryAfter: 4000 });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		fetchMock.mockRestore();
+	});
+});
+
+function unauthorized(): ApiError {
+	return new ApiError(
+		{ method: 'POST', url: '/tasks/v1/lists/list-1/tasks' },
+		{
+			url: 'https://tasks.googleapis.com/tasks/v1/lists/list-1/tasks',
+			ok: false,
+			status: 401,
+			statusText: 'Unauthorized',
+			body: { error: { code: 401, status: 'UNAUTHENTICATED' } },
+		},
+		'Unauthorized',
+	);
+}
+
+describe('Google Tasks 401 refresh', () => {
+	beforeEach(() => mockedRequest.mockReset());
+
+	it('refreshes the token once and retries only the failed request', async () => {
+		mockedRequest
+			.mockRejectedValueOnce(unauthorized())
+			.mockResolvedValueOnce({ id: 'task-1' });
+		const refresh = jest.fn().mockResolvedValue('fresh-token');
+		await expect(
+			makeGoogleTasksRequest(
+				'/tasks/v1/lists/list-1/tasks',
+				{ key: 'stale-token', _refreshAuth: refresh },
+				{ method: 'POST', body: { title: 'x' } },
+			),
+		).resolves.toEqual({ id: 'task-1' });
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+		expect(mockedRequest.mock.calls[1]?.[0].HEADERS).toMatchObject({
+			Authorization: 'Bearer fresh-token',
+		});
+	});
+
+	it('does not refresh on other errors or without a refresher', async () => {
+		const failure = unauthorized();
+		mockedRequest.mockRejectedValue(failure);
+		await expect(
+			makeGoogleTasksRequest('/tasks/v1/users/@me/lists', { key: 't' }),
+		).rejects.toBe(failure);
+		expect(mockedRequest).toHaveBeenCalledTimes(1);
+	});
+});
