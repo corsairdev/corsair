@@ -3363,6 +3363,14 @@
                 ]
               },
               {
+                "group": "NewsAPI",
+                "pages": [
+                  "plugins/newsapi/overview",
+                  "plugins/newsapi/api",
+                  "plugins/newsapi/database"
+                ]
+              },
+              {
                 "group": "NextDNS",
                 "pages": [
                   "plugins/nextdns/overview",

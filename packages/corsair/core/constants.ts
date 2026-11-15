@@ -403,6 +403,7 @@ export const BaseProviders = [
 	'neon',
 	'netsuite',
 	'neverbounce',
+	'newsapi',
 	'nextdns',
 	'northflank',
 	'notion',
@@ -1016,6 +1017,7 @@ export const ProviderDisplayNames = {
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	neverbounce: 'NeverBounce',
+	newsapi: 'NewsAPI',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
@@ -1636,6 +1638,7 @@ export type AllProviders =
 	| 'neon'
 	| 'netsuite'
 	| 'neverbounce'
+	| 'newsapi'
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'

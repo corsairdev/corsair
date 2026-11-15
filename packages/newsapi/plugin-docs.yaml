@@ -1,0 +1,30 @@
+displayName: NewsAPI
+description: Search NewsAPI articles, headlines, sources, and the legacy v1 source feed.
+domain: newsapi.org
+recommendedAuth: api_key
+overviewNote: |
+  The key is the apiKey query parameter. Empty-key requests to /v2/everything, /v2/top-headlines, /v2/top-headlines/sources, and /v1/articles each returned HTTP 401 with code apiKeyInvalid. Article text content is not stored. The search query is not written to the event.
+examples:
+  read:
+    path: articles.headlines
+    title: Top headlines
+    args:
+      country: us
+apiNotes:
+  articles.everything: |
+    GET /v2/everything. Requires q, sources, or domains. A row is stored when url is present.
+  articles.headlines: |
+    GET /v2/top-headlines. sources cannot be combined with country or category.
+  articles.legacy: |
+    GET /v1/articles. source is required. The top-level source string is stored as sourceName.
+  sources.list: |
+    GET /v2/top-headlines/sources. A row is stored when id is present.
+apiExamples:
+  articles.everything:
+    call: "{ q: 'corsair' }"
+  articles.headlines:
+    call: "{ country: 'us' }"
+  articles.legacy:
+    call: "{ source: 'bbc-news' }"
+  sources.list:
+    call: "{}"
