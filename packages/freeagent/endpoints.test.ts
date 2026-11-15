@@ -1,4 +1,4 @@
-import type { BoundEndpointTree } from 'corsair/core';
+import type { AccountKeyManagerFor, BoundEndpointTree } from 'corsair/core';
 import * as corsairCore from 'corsair/core';
 import {
 	Company,
@@ -9,6 +9,7 @@ import {
 	RecurringInvoices,
 	TrackingGroups,
 } from './endpoints';
+import type { FreeAgentContext } from './index';
 import { freeAgentEndpointSchemas, freeagent } from './index';
 
 // `unknown` because route tests compare parsed results without relying on handler-specific output types.
@@ -555,13 +556,36 @@ const endpoints = {
 	test: async (_args: unknown) => undefined,
 } satisfies BoundEndpointTree;
 
+const emptyKey = async () => null;
+const keys = {
+	get_dek: async () => '',
+	issue_new_dek: async () => '',
+	get_access_token: async () => 'access-token',
+	set_access_token: async (_value: string | null) => {},
+	get_refresh_token: emptyKey,
+	set_refresh_token: async (_value: string | null) => {},
+	get_expires_at: emptyKey,
+	set_expires_at: async (_value: string | null) => {},
+	get_scope: emptyKey,
+	set_scope: async (_value: string | null) => {},
+	get_webhook_signature: emptyKey,
+	set_webhook_signature: async (_value: string | null) => {},
+	get_integration_credentials: async () => ({
+		client_id: null,
+		client_secret: null,
+		redirect_url: null,
+	}),
+} satisfies AccountKeyManagerFor<'oauth_2'>;
+
 const ctx = {
 	key: 'access-token',
 	database: undefined,
 	db: {},
+	options: {},
+	keys,
 	$getAccountId: async () => 'account-test',
 	endpoints,
-};
+} satisfies FreeAgentContext;
 
 describe('FreeAgent endpoint registry and wire contracts', () => {
 	const plugin = freeagent();
