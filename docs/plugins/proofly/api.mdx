@@ -1,0 +1,158 @@
+---
+title: "Proofly API reference"
+sidebarTitle: "API"
+description: "API reference for the Proofly plugin in Corsair: every `proofly.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activity
+
+### list
+
+`activity.list`
+
+Read Proofly activity logs. The logs are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.proofly.api.activity.list({});
+```
+
+**Input:** _empty object_
+
+Official activity fields are type, ip, and date. The call returns them and stores nothing.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+| `status` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: string,
+  ip?: string,
+  date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### list
+
+`campaigns.list`
+
+List Proofly campaigns for the connected account.
+
+**Risk:** `read`
+
+```ts
+await corsair.proofly.api.campaigns.list({});
+```
+
+**Input:** _empty object_
+
+Official campaign fields are id, name, domain.domain, domain.subdomains, enabled, and created. id is stored as a decimal string.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+| `status` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number | string,
+  name: string,
+  domain?: {
+    domain: string,
+    subdomains: boolean
+  },
+  enabled?: boolean,
+  created?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### get
+
+`user.get`
+
+Read the signed-in Proofly user. The pixel key is removed from the result.
+
+**Risk:** `read`
+
+```ts
+await corsair.proofly.api.user.get({});
+```
+
+**Input:** _empty object_
+
+Official user fields are name, email, meta, impressions, and pixel. The call returns and stores email, name, meta, and impressions. pixel is removed.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+| `status` | `number` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  email: string,
+  meta?: {
+    logins?: number,
+    registered?: string
+  },
+  impressions?: {
+    period?: number,
+    total?: number
+  },
+  pixel?: {
+    key?: string,
+    debug?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

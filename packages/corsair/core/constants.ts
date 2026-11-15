@@ -444,6 +444,7 @@ export const BaseProviders = [
 	'posthog',
 	'postman',
 	'prisma',
+	'proofly',
 	'pushbullet',
 	'qdrant',
 	'quaderno',
@@ -1057,6 +1058,7 @@ export const ProviderDisplayNames = {
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
+	proofly: 'Proofly',
 	pushbullet: 'Pushbullet',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
@@ -1677,6 +1679,7 @@ export type AllProviders =
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
+	| 'proofly'
 	| 'pushbullet'
 	| 'qdrant'
 	| 'quaderno'

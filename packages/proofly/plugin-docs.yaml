@@ -1,0 +1,25 @@
+displayName: Proofly
+description: List Proofly campaigns, the signed-in user, and activity logs. Campaigns and the user are stored. The pixel key and activity IP addresses are not.
+domain: proofly.io
+recommendedAuth: api_key
+overviewNote: |
+  Auth is the X-Api-Key header on https://proofly.io/api. An empty key was measured as HTTP 400 with ok false. Campaign rows and the user profile are stored. The pixel key is removed before the user object is returned or stored. Activity logs have no id, so they are not stored, and their IP addresses are not written to the event log.
+examples:
+  read:
+    path: campaigns.list
+    title: List campaigns
+    args: {}
+apiNotes:
+  campaigns.list: |
+    Official campaign fields are id, name, domain.domain, domain.subdomains, enabled, and created. id is stored as a decimal string.
+  user.get: |
+    Official user fields are name, email, meta, impressions, and pixel. The call returns and stores email, name, meta, and impressions. pixel is removed.
+  activity.list: |
+    Official activity fields are type, ip, and date. The call returns them and stores nothing.
+apiExamples:
+  campaigns.list:
+    call: "{}"
+  user.get:
+    call: "{}"
+  activity.list:
+    call: "{}"

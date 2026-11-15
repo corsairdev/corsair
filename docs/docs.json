@@ -3697,6 +3697,14 @@
                 ]
               },
               {
+                "group": "Proofly",
+                "pages": [
+                  "plugins/proofly/overview",
+                  "plugins/proofly/api",
+                  "plugins/proofly/database"
+                ]
+              },
+              {
                 "group": "Pushbullet",
                 "pages": [
                   "plugins/pushbullet/overview",
