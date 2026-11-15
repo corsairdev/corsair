@@ -13,15 +13,19 @@ export const create: GigasheetEndpoints['exports.create'] = async (
 ) => {
 	const parsedInput =
 		GigasheetEndpointInputSchemas['exports.create'].parse(input);
-	const { handle, ...exportBody } = parsedInput;
+	const { handle, ...exportOptions } = parsedInput;
+	// gridState is required by POST /dataset/{handle}/export.
+	const exportBody = {
+		...exportOptions,
+		gridState: exportOptions.gridState ?? {},
+	};
 
 	const response = await makeGigasheetRequest<ExportsCreateResponse>(
 		`/dataset/${encodeURIComponent(handle)}/export`,
 		ctx.key,
 		{
 			method: 'POST',
-			// `unknown` because export options and gridState contain arbitrary AgGrid filter definitions.
-			body: exportBody as Record<string, unknown>,
+			body: exportBody,
 		},
 	);
 

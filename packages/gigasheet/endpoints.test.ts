@@ -608,6 +608,20 @@ describe('Gigasheet Endpoints', () => {
 		});
 	});
 
+	describe('exports.create without gridState', () => {
+		it('sends an empty gridState (Gigasheet requires the field)', async () => {
+			mockRequest.mockResolvedValue({ handle: 'export_job_456' });
+
+			await Exports.create(mockCtx, { handle: 'sheet_export_456' });
+
+			expect(mockRequest).toHaveBeenCalledWith(
+				'/dataset/sheet_export_456/export',
+				'test-api-key',
+				{ method: 'POST', body: { gridState: {} } },
+			);
+		});
+	});
+
 	describe('exports.download', () => {
 		it('calls GET /dataset/{handle}/download-export and parses presigned URL', async () => {
 			mockRequest.mockResolvedValue({

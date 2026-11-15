@@ -225,6 +225,13 @@ describe('Gigasheet Schema & Types', () => {
 					CustomField: 'passthrough',
 				}).success,
 			).toBe(true);
+			expect(
+				GigasheetEndpointOutputSchemas['datasets.get'].safeParse({
+					FileUuid: 'h_abc',
+					Status: 'archived',
+					FileSize: 2048,
+				}).success,
+			).toBe(true);
 		});
 
 		it('validates datasets.delete schemas', () => {
@@ -292,10 +299,10 @@ describe('Gigasheet Schema & Types', () => {
 			expect(
 				GigasheetEndpointOutputSchemas['datasets.getOperationStatus'].safeParse(
 					{
-						Status: 'InvalidStatus',
+						Status: 'Queued',
 					},
 				).success,
-			).toBe(false);
+			).toBe(true);
 		});
 	});
 
@@ -434,9 +441,10 @@ describe('Gigasheet Schema & Types', () => {
 			).toBe(true);
 			expect(
 				GigasheetEndpointOutputSchemas['exports.download'].safeParse({
-					presignedUrl: 'not-a-url',
+					presignedUrl: '',
+					error: 'export not ready',
 				}).success,
-			).toBe(false);
+			).toBe(true);
 		});
 	});
 });

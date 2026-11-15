@@ -112,10 +112,14 @@ export const DatasetsGetOutputSchema = z
 	.object({
 		FileUuid: z.string().optional(),
 		FileName: z.string().optional(),
-		FileSize: z.string().optional(),
+		FileSize: z.union([z.string(), z.number()]).optional(),
 		FileRows: z.number().optional(),
+		// Known values plus any string, so a new status from Gigasheet does not throw.
 		Status: z
-			.enum(['uploading', 'loading', 'processing', 'processed', 'error'])
+			.union([
+				z.enum(['uploading', 'loading', 'processing', 'processed', 'error']),
+				z.string(),
+			])
 			.optional(),
 		DetailedStatus: z.string().optional(),
 		Headers: z.array(z.string()).optional(),
@@ -211,9 +215,8 @@ export type DatasetsGetOperationStatusInput = z.infer<
 >;
 
 export const DatasetsGetOperationStatusOutputSchema = z.object({
-	Status: z
-		.union([z.enum(['Working', 'Done', 'Error']), z.literal('')])
-		.optional(),
+	// Known values plus any string (including ''), so a new status does not throw.
+	Status: z.union([z.enum(['Working', 'Done', 'Error']), z.string()]).optional(),
 	Message: z.string().optional(),
 	Owner: z.string().optional(),
 	UpdatedAt: z.string().optional(),
@@ -333,6 +336,7 @@ export const ExportsCreateInputSchema = z
 		// `unknown` because clientState accepts arbitrary AgGrid client state objects.
 		clientState: z.record(z.string(), z.unknown()).optional(),
 		// `unknown` because gridState accepts complex AgGrid filter models and sort specifications.
+		// Gigasheet requires it; omitted means `{}` (export every row, no filter or sort).
 		gridState: z.record(z.string(), z.unknown()).optional(),
 	})
 	.strict();
@@ -350,8 +354,9 @@ export const ExportsDownloadInputSchema = z
 	.strict();
 export type ExportsDownloadInput = z.infer<typeof ExportsDownloadInputSchema>;
 
+// presignedUrl is a plain string: Gigasheet can return it empty with `error` set.
 export const ExportsDownloadOutputSchema = z.object({
-	presignedUrl: z.string().url(),
+	presignedUrl: z.string(),
 	error: z.string().optional(),
 });
 export type ExportsDownloadResponse = z.infer<
