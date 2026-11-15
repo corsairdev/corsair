@@ -55,6 +55,11 @@ const ResultSchema = z.object({
 	}),
 	/** A link to the same point on openstreetmap.org. */
 	osmurl: z.string().optional(),
+	/**
+	 * Undocumented, but sent on every forward result live: the OpenStreetMap
+	 * importance score used to rank the matches.
+	 */
+	importance: z.union([z.number(), z.string()]).optional(),
 	/** Only on a reverse lookup: the distance from the query point, unit glued on. */
 	distance: z.string().optional(),
 	/** The latitude as a number, read from `geometry.location.lat`. */

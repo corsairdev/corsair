@@ -124,7 +124,7 @@ describe('Geokeo client', () => {
 		respond(zeroResults);
 		const result = (await invoke(forwardGeocode, {
 			q: 'xyzzyplugh',
-		})) as typeof zeroResults;
+		})) as { status: string; results: unknown[] };
 
 		expect(result.status).toBe('ZERO_RESULTS');
 		expect(result.results).toEqual([]);
@@ -274,6 +274,21 @@ describe('geokeo.geocode.forward', () => {
 	});
 });
 
+describe('geokeo forward importance', () => {
+	it('keeps the importance score Geokeo sends on forward results', async () => {
+		const first = empireState.results[0];
+		respond({
+			...empireState,
+			results: [{ ...first, importance: 0.6105 }],
+		});
+		const result = (await invoke(forwardGeocode, { q: 'empire' })) as {
+			results: Array<{ importance?: number | string }>;
+		};
+
+		expect(result.results[0]?.importance).toBe(0.6105);
+	});
+});
+
 describe('geokeo.geocode.reverse', () => {
 	it('sends lat and lng to the reverse route', async () => {
 		respond(reverseResult);
@@ -313,7 +328,7 @@ describe('geokeo.geocode.reverse', () => {
 		const result = (await invoke(reverseGeocode, {
 			lat: 0,
 			lng: 0,
-		})) as typeof zeroResults;
+		})) as { status: string; results: unknown[] };
 
 		expect(result.results).toEqual([]);
 	});

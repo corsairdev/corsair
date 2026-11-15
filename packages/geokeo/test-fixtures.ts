@@ -77,9 +77,11 @@ export const reverseResult = {
 };
 
 /** A valid query that matched nothing. Not charged, and not an error. */
+/**
+ * A query that matched nothing, exactly as Geokeo answered it live (11-15):
+ * only the status, with no `results` or `credits` key.
+ */
 export const zeroResults = {
-	results: [],
-	credits: 'https://geokeo.com/credits.php',
 	status: 'ZERO_RESULTS',
 };
 

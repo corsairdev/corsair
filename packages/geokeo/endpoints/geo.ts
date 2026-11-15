@@ -1,7 +1,7 @@
 import { asRecord, logEventFromContext } from 'corsair/core';
 import type { GeokeoContext, GeokeoEndpoints } from '..';
 import type { GeokeoCredentials } from '../client';
-import { definedQuery, makeGeokeoRequest } from '../client';
+import { definedQuery, GEOKEO_STATUS, makeGeokeoRequest } from '../client';
 import {
 	GeokeoEndpointInputSchemas,
 	GeokeoEndpointOutputSchemas,
@@ -27,7 +27,14 @@ function resolveCredentials(ctx: GeokeoContext): GeokeoCredentials {
 function withParsedNumbers(raw: unknown): unknown {
 	const record = asRecord(raw);
 	const rows = record?.results;
-	if (!Array.isArray(rows)) return raw;
+	// Live, ZERO_RESULTS arrives as `{"status":"ZERO_RESULTS"}` with no
+	// `results` key at all. It is a documented answer (not charged), so it is
+	// returned as an empty list, as the plugin documents.
+	if (!Array.isArray(rows)) {
+		return record?.status === GEOKEO_STATUS.ZERO_RESULTS
+			? { ...record, results: [] }
+			: raw;
+	}
 	return {
 		...record,
 		results: rows.map((row) => {
