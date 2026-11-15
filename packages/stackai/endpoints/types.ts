@@ -20,6 +20,9 @@ const status = z.enum([
 	'failed',
 	'cancelled',
 ]);
+// Response enums accept values StackAI adds later; inputs stay strict.
+const openEnum = <const T extends readonly [string, ...string[]]>(values: T) =>
+	z.union([z.enum(values), z.string()]);
 const runType = z.enum([
 	'workflow_builder',
 	'form',
@@ -42,15 +45,15 @@ const runSummary = z
 		run_id: z.string().guid(),
 		project_id: z.string().nullable(),
 		project_version: z.number().int().nullable().optional(),
-		status,
+		status: z.union([status, z.string()]),
 		error: z.string().nullable(),
 		created_at: z.string(),
 		started_at: z.string().nullable(),
 		completed_at: z.string().nullable(),
-		run_type: runType.nullable(),
+		run_type: z.union([runType, z.string()]).nullable(),
 		created_by: z
 			.object({
-				type: z.enum([
+				type: openEnum([
 					'user',
 					'personal_api_key',
 					'org_api_key',
@@ -86,7 +89,12 @@ const run = runSummary.extend({
 				knowledge_base_id: z.string().nullable(),
 				resource_id: z.string().nullable(),
 				source_url: z.string().nullable(),
-				source_type: z.enum(['knowledge_base', 'website', 'document', 'other']),
+				source_type: openEnum([
+					'knowledge_base',
+					'website',
+					'document',
+					'other',
+				]),
 				position: z
 					.object({
 						page_index: z.number().int().nullable(),
@@ -101,7 +109,7 @@ const run = runSummary.extend({
 		.object({
 			question: z.string(),
 			context: z.string().nullable(),
-			response_type: z.enum(['text', 'approval', 'choice', 'unknown']),
+			response_type: openEnum(['text', 'approval', 'choice', 'unknown']),
 			choices: z.array(z.string()).nullable(),
 			resume_token: z.string(),
 			resume_token_expires_at: z.string().nullable(),
@@ -128,7 +136,7 @@ export const schemas = {
 			.object({
 				...envelope,
 				data: z.object({
-					input_kind: z.enum(['start_node', 'legacy_input_nodes']),
+					input_kind: openEnum(['start_node', 'legacy_input_nodes']),
 					inputs: z.array(z.object({ id: z.string(), name: z.string() })),
 					outputs: z.array(z.object({ id: z.string(), name: z.string() })),
 				}),

@@ -138,6 +138,22 @@ describe('StackAI public endpoints', () => {
 		expect(r.url.searchParams.get('page_size')).toBe('7');
 		expect(r.url.searchParams.get('status')).toBe('running');
 	});
+	it('accepts response enum values StackAI adds later', async () => {
+		reply({
+			data: {
+				...run,
+				status: 'archived',
+				run_type: 'mcp',
+				created_by: { type: 'service_account', id: null },
+			},
+		});
+		const result = await plugin.endpoints!.runs.get(ctx, { run_id: id });
+		expect(result.data.status).toBe('archived');
+		expect(result.data.run_type).toBe('mcp');
+		await expect(
+			plugin.endpoints!.runs.list(ctx, { status: 'archived' as never }),
+		).rejects.toThrow();
+	});
 	it('reads a run with nullable output', async () => {
 		reply({ data: run });
 		expect(
