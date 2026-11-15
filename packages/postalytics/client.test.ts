@@ -1,5 +1,6 @@
 import { ZodError } from 'zod';
 import { makePostalyticsRequest, PostalyticsRateLimitError } from './client';
+import { errorHandlers } from './error-handlers';
 import type { PostalyticsContext, PostalyticsKeyBuilderContext } from './index';
 import { postalytics, postalyticsEndpointSchemas } from './index';
 
@@ -148,6 +149,21 @@ describe('Postalytics request seam', () => {
 		).rejects.toMatchObject({ retryAfterMs: 3000, status: 429 });
 		expect(mockFetch).toHaveBeenCalledTimes(1);
 		expect(new PostalyticsRateLimitError('limited', 3000).status).toBe(429);
+	});
+	it('retries a short 429 three times and returns a long one to the caller', async () => {
+		const handler = errorHandlers.RATE_LIMIT_ERROR;
+		const short = new PostalyticsRateLimitError('limited', 3000);
+		expect(handler.match(short)).toBe(true);
+		await expect(handler.handler(short)).resolves.toMatchObject({
+			maxRetries: 3,
+			headersRetryAfterMs: 3000,
+		});
+		await expect(
+			handler.handler(new PostalyticsRateLimitError('limited')),
+		).resolves.toMatchObject({ maxRetries: 3 });
+		await expect(
+			handler.handler(new PostalyticsRateLimitError('limited', 3_600_000)),
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 	it('does not send credentials to an absolute or scheme-relative URL', async () => {
 		for (const path of [
