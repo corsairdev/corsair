@@ -1,5 +1,6 @@
 import type { ExpressionBuilder, Insertable, Updateable } from 'kysely';
 import type { ZodTypeAny, z } from 'zod';
+import { findAccountRow } from '../core/account-lookup';
 import { generateUUID } from '../core/utils';
 import type {
 	CorsairAccount,
@@ -502,10 +503,11 @@ function createAccountsClient(
 				.where('name', '=', integrationName)
 				.executeTakeFirst();
 			if (!integration) return null;
-			return base.findOne({
-				tenant_id: tenantId,
-				integration_id: integration.id,
+			const row = await findAccountRow(database.db, {
+				tenantId,
+				integrationId: integration.id,
 			});
+			return row ? base.findOne({ id: row.id }) : null;
 		},
 		listByTenant: (tenantId, options) =>
 			base.findMany({
@@ -1328,12 +1330,10 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			);
 		}
 
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', context.tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
+		const account = await findAccountRow(database.db, {
+			tenantId: context.tenantId,
+			integrationId: integration.id,
+		});
 
 		if (!account) {
 			throw new Error(
@@ -1427,12 +1427,10 @@ export function createPluginOrm<
 			);
 		}
 
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
+		const account = await findAccountRow(database.db, {
+			tenantId,
+			integrationId: integration.id,
+		});
 
 		if (!account) {
 			throw new Error(

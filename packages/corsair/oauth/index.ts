@@ -10,6 +10,7 @@ import {
 	exchangeCodeForTokens,
 	generateDEK,
 } from '../core';
+import { findAccountRow } from '../core/account-lookup';
 import {
 	encodeOAuthState,
 	signState,
@@ -100,12 +101,10 @@ async function ensureAccount(
 			);
 		}
 
-		const existing = await trx
-			.selectFrom('corsair_accounts')
-			.select('id')
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integrationRow.id)
-			.executeTakeFirst();
+		const existing = await findAccountRow(trx, {
+			tenantId,
+			integrationId: integrationRow.id,
+		});
 		if (existing) return;
 
 		const dek = generateDEK();

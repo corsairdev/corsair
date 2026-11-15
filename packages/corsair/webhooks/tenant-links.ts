@@ -1,3 +1,4 @@
+import { findAccountRow } from '../core/account-lookup';
 import {
 	decryptConfig,
 	decryptDEK,
@@ -46,12 +47,10 @@ async function resolveAccountForTenant(options: {
 		);
 	}
 
-	const account = await options.database.db
-		.selectFrom('corsair_accounts')
-		.selectAll()
-		.where('tenant_id', '=', options.tenantId)
-		.where('integration_id', '=', integration.id)
-		.executeTakeFirst();
+	const account = await findAccountRow(options.database.db, {
+		tenantId: options.tenantId,
+		integrationId: integration.id,
+	});
 
 	if (!account) {
 		throw new Error(

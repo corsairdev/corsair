@@ -1,5 +1,6 @@
 import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
+import { findAccountRow } from '../account-lookup';
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -360,12 +361,10 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			while (true) {
 				const integration = await getIntegration();
 
-				const account = await database.db
-					.selectFrom('corsair_accounts')
-					.selectAll()
-					.where('tenant_id', '=', tenantId)
-					.where('integration_id', '=', integration.id)
-					.executeTakeFirst();
+				const account = await findAccountRow(database.db, {
+					tenantId,
+					integrationId: integration.id,
+				});
 
 				if (!account) {
 					if (!provisionAttempted && ensureProvisioned) {
@@ -651,12 +650,10 @@ export async function initializeAccountDEK(
 		throw new Error(`Integration "${integrationName}" not found.`);
 	}
 
-	const account = await database.db
-		.selectFrom('corsair_accounts')
-		.selectAll()
-		.where('tenant_id', '=', tenantId)
-		.where('integration_id', '=', integration.id)
-		.executeTakeFirst();
+	const account = await findAccountRow(database.db, {
+		tenantId,
+		integrationId: integration.id,
+	});
 
 	if (!account) {
 		throw new Error(

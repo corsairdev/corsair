@@ -1,5 +1,6 @@
 import type { CorsairInternalConfig } from '../../core';
 import { encryptDEK, generateDEK } from '../../core';
+import { findAccountRow } from '../../core/account-lookup';
 import { generateUUID } from '../../core/utils';
 
 export async function ensureIntegrationAccountRow(
@@ -24,12 +25,10 @@ export async function ensureIntegrationAccountRow(
 			);
 		}
 
-		const existing = await trx
-			.selectFrom('corsair_accounts')
-			.select('id')
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integrationRow.id)
-			.executeTakeFirst();
+		const existing = await findAccountRow(trx, {
+			tenantId,
+			integrationId: integrationRow.id,
+		});
 		if (existing) return;
 
 		const dek = generateDEK();
