@@ -272,6 +272,10 @@ describe('real-transport rate-limit Retry-After integration', () => {
 
 describe('gleap keyBuilder', () => {
 	function keyCtx(apiKey: string | null, projectId: string | null) {
+		// The keyBuilder only reads authType and these three key getters. The full
+		// KeyBuilderContext also carries core's database-backed key managers and
+		// setters, which a unit test can't build, so the stub goes through
+		// `unknown` to the keyBuilder's parameter type.
 		return {
 			authType: 'api_key',
 			keys: {
