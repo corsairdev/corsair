@@ -324,6 +324,7 @@ export const BaseProviders = [
 	'huggingface',
 	'humanitix',
 	'hunterio',
+	'hyperbrowser',
 	'imagekit',
 	'imagior',
 	'imejisio',
@@ -908,6 +909,7 @@ export const ProviderDisplayNames = {
 	huggingface: 'Hugging Face',
 	humanitix: 'Humanitix',
 	hunterio: 'Hunter.io',
+	hyperbrowser: 'Hyperbrowser',
 	imagekit: 'ImageKit',
 	imagior: 'Imagior',
 	imejisio: 'Imejis.io',
@@ -1499,6 +1501,7 @@ export type AllProviders =
 	| 'huggingface'
 	| 'humanitix'
 	| 'hunterio'
+	| 'hyperbrowser'
 	| 'imagekit'
 	| 'imagior'
 	| 'imejisio'
