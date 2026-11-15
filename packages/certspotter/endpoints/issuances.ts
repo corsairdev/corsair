@@ -45,7 +45,10 @@ export const listIssuances: CertSpotterEndpoints['issuancesList'] = async (
 		},
 	);
 
-export const firehose: CertSpotterEndpoints['firehose'] = async (ctx, input) =>
+export const firehose: CertSpotterEndpoints['firehoseList'] = async (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

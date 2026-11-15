@@ -45,9 +45,9 @@ describe('certspotter plugin definition', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const entry of Object.values(meta)) {
-			expect(entry.description?.length).toBeGreaterThan(10);
+			expect(entry?.description?.length ?? 0).toBeGreaterThan(10);
 			// Both routes are GETs over a read-only index.
-			expect(entry.riskLevel).toBe('read');
+			expect(entry?.riskLevel).toBe('read');
 		}
 	});
 
