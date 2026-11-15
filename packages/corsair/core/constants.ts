@@ -308,6 +308,7 @@ export const BaseProviders = [
 	'googleslides',
 	'googletasks',
 	'gorgias',
+	'gosquared',
 	'grafana',
 	'griptape',
 	'grist',
@@ -910,6 +911,7 @@ export const ProviderDisplayNames = {
 	googleslides: 'Google Slides',
 	googletasks: 'Google Tasks',
 	gorgias: 'Gorgias',
+	gosquared: 'GoSquared',
 	grafana: 'Grafana',
 	griptape: 'Griptape',
 	grist: 'Grist',
@@ -1519,6 +1521,7 @@ export type AllProviders =
 	| 'googleslides'
 	| 'googletasks'
 	| 'gorgias'
+	| 'gosquared'
 	| 'grafana'
 	| 'griptape'
 	| 'grist'
