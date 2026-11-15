@@ -1,0 +1,510 @@
+{
+  "id": "livesession",
+  "displayName": "LiveSession",
+  "description": "Session replay and product analytics API for listing recorded sessions, managing alerts and webhooks, and listing tracked websites.",
+  "npmPackageName": "@corsair-dev/livesession",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "livesession.api.alerts.create",
+      "shortPath": "alerts.create",
+      "description": "Create an alert delivered to Slack or a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ kind: 5 | 6 | 20 | 21 | 24 | 25 | 26 | 29 | 30, value: string }[]"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "slack | webhooks"
+          },
+          {
+            "key": "slack_channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alert_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ kind: number, value?: string | null }[] | null"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slack_channel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "creation_date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "livesession.api.alerts.delete",
+      "shortPath": "alerts.delete",
+      "description": "Permanently delete an alert by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alert_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "livesession.api.alerts.list",
+      "shortPath": "alerts.list",
+      "description": "List all alerts configured for the token scope",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ alert_id: string, name?: string | null, events?: { kind: number, value?: string | null }[] | null, provider?: string | null, slack_channel_id?: string | null, webhook_id?: string | null, enabled?: boolean | null, creation_date?: string | null }[]"
+      }
+    },
+    {
+      "path": "livesession.api.alerts.update",
+      "shortPath": "alerts.update",
+      "description": "Update an existing alert by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ kind: 5 | 6 | 20 | 21 | 24 | 25 | 26 | 29 | 30, value: string }[]"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "slack | webhooks"
+          },
+          {
+            "key": "slack_channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alert_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ kind: number, value?: string | null }[] | null"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slack_channel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "creation_date",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "livesession.api.sessions.list",
+      "shortPath": "sessions.list",
+      "description": "List recorded sessions with page, size, visitor, email, timezone, and date filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitor_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tz",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "TODAY | YESTERDAY | BEGINNING_OF_WEEK | BEGINNING_OF_MONTH | BEGINNING_OF_PREV_MONTH | TODAY-7DAYS | TODAY-30DAYS | string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "TODAY | YESTERDAY | BEGINNING_OF_WEEK | BEGINNING_OF_MONTH | BEGINNING_OF_PREV_MONTH | TODAY-7DAYS | TODAY-30DAYS | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ num: number, size: number }"
+          },
+          {
+            "key": "sessions",
+            "optional": false,
+            "type": "{ id: string, website_id?: string | null, session_url?: string | null, creation_timestamp?: number | null, duration?: number | null, end_timestamp?: number | null, active_time?: number | null, end_url?: string | null, expiration_timestamp?: number | null, last_event_timestamp?: number | null, product?: string | null, device?: string | null, tags?: string[] | null, last_seen_page_view_id?: string | null, seen?: boolean | null, referrer?: string | null, start_url?: string | null, visitor_first_session?: boolean | null, engagment_score?: number | null, visitor?: { id?: string | null, ip?: string | null, geolocation?: { country_code?: string | null, city?: string | null, region?: string | null } | null, name?: string | null, email?: string | null, email_hash?: string | null, params?: { name?: string | null, value?: string | null }[] | null, last_session_timestamp?: number | null, first_session_timestamp?: number | null } | null, resolution?: { height?: number | null, width?: number | null, resolution?: string | null } | null, os?: { name?: string | null, version?: string | null } | null, browser?: { description?: string | null, name?: string | null, version?: string | null } | null, utm?: { source?: string | null, medium?: string | null, campaign?: string | null, term?: string | null, content?: string | null } | null, page_views_statistics?: { count?: number | null } | null, events_statistics?: { clicks?: number | null, error_clicks?: number | null, rage_clicks?: number | null, error_logs?: number | null, net_errors?: number | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "livesession.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create an outbound webhook for a website",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "website_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_date",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "livesession.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Permanently delete an outbound webhook by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "livesession.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List all outbound webhooks for the token scope",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ webhook_id: string, url?: string | null, website?: string | null, website_id?: string | null, version?: string | null, enabled?: boolean | null, created_date?: number | null, created_by?: string | null }[]"
+      }
+    },
+    {
+      "path": "livesession.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update an outbound webhook by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "website_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "v1.0"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_date",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "livesession.api.websites.list",
+      "shortPath": "websites.list",
+      "description": "List all websites available to the token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ website_id: string, host?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

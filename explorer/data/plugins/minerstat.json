@@ -1,0 +1,528 @@
+{
+  "id": "minerstat",
+  "displayName": "Minerstat",
+  "description": "Access mining data, hardware, pools, and profitability from Minerstat.",
+  "npmPackageName": "@corsair-dev/minerstat",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "minerstat.api.algorithms.get",
+      "shortPath": "algorithms.get",
+      "description": "Get one algorithm with its coins and benchmarked hardware",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "algorithm",
+            "optional": false,
+            "type": "{ slug: string, name: string, unit: string, coins: { slug: string, symbol: string, name?: string, algorithm?: string, networkHashrate?: number | null, difficulty?: number | null, blockReward?: number | null, blockTimeSeconds?: number | null, priceUsd?: number | null, marketCapUsd?: number | null, volume24hUsd?: number | null, confidence?: number | null, dataUpdatedAt?: string | null }[], hardware: { slug: string, name: string, type: ASIC | GPU | CPU | FPGA | string, hashrateHs: number, powerWatts: number | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.algorithms.list",
+      "shortPath": "algorithms.list",
+      "description": "List mining algorithms with coin counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ slug: string, name: string, unit: string, coins: number }[]"
+          },
+          {
+            "key": "notice",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.coins.get",
+      "shortPath": "coins.get",
+      "description": "Get one coin by slug, with identity and supply fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataUpdatedAt",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "confidence",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "coin",
+            "optional": false,
+            "type": "{ slug: string, symbol: string, name?: string, algorithm?: string, networkHashrate?: number | null, difficulty?: number | null, blockReward?: number | null, blockTimeSeconds?: number | null, priceUsd?: number | null, marketCapUsd?: number | null, volume24hUsd?: number | null, confidence?: number | null, dataUpdatedAt?: string | null, website: string | null, explorerUrl: string | null, consensusType: string | null, coinType: coin | pool | string, circulatingSupply: number | null, maxSupply: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.coins.history",
+      "shortPath": "coins.history",
+      "description": "List network snapshots for one coin, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ t: string, difficulty: number | null, networkHashrate: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.coins.list",
+      "shortPath": "coins.list",
+      "description": "List mineable coins with network, price and confidence data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ slug: string, symbol: string, name?: string, algorithm?: string, networkHashrate?: number | null, difficulty?: number | null, blockReward?: number | null, blockTimeSeconds?: number | null, priceUsd?: number | null, marketCapUsd?: number | null, volume24hUsd?: number | null, confidence?: number | null, dataUpdatedAt?: string | null }[]"
+          },
+          {
+            "key": "notice",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.hardware.get",
+      "shortPath": "hardware.get",
+      "description": "Get one hardware device by slug, with its spec sheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hardware",
+            "optional": false,
+            "type": "{ slug: string, name: string, manufacturer: string, type: ASIC | GPU | CPU | FPGA | string, defaultPowerWatts: number | null, releaseDate: string | null, specs: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.hardware.list",
+      "shortPath": "hardware.list",
+      "description": "List mining hardware (ASIC, GPU, CPU, FPGA)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "ASIC | GPU | CPU | FPGA"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ slug: string, manufacturer: string, model: string, type: ASIC | GPU | CPU | FPGA | string, powerWatts: number | null, releaseDate: string | null }[]"
+          },
+          {
+            "key": "notice",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.pools.get",
+      "shortPath": "pools.get",
+      "description": "Get one pool with per-coin fees and payout schemes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pool",
+            "optional": false,
+            "type": "{ slug: string, name: string, website: string | null, type?: string, founded: string | null, coins: { coin: string, symbol: string, algorithm: string, fee: number | null, payoutScheme: string | null, minPayout: number | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.pools.list",
+      "shortPath": "pools.list",
+      "description": "List mining pools with fees and liveness",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ slug: string, name: string, website: string | null, type?: string, defaultFee: number | null, coins: number, lastOkAt: string | null }[]"
+          },
+          {
+            "key": "notice",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minerstat.api.profitability.rank",
+      "shortPath": "profitability.rank",
+      "description": "Rank coins by mining profit for hardware or a hashrate (Enterprise plan)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hardware",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hashrate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "power",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "electricity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "poolFee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "verifiedOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "window",
+            "optional": true,
+            "type": "current | 6h | 24h | 3d"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hardware",
+            "optional": false,
+            "type": "{ slug: string, name: string } | null"
+          },
+          {
+            "key": "electricityPrice",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ coin: { slug: string, symbol: string, name?: string, algorithm: string }, coinsPerDay: number, revenuePerDay: number, electricityPerDay: number, profitPerDay: number, profitMargin: number | null, breakEvenElectricityPrice: number | null, confidenceScore: number }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

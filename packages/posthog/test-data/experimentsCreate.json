@@ -1,0 +1,114 @@
+{
+  "id": 596591,
+  "name": "corsair-plugin-test-1794490650",
+  "description": "corsair plugin test draft, never launched",
+  "start_date": null,
+  "end_date": null,
+  "feature_flag_key": "corsair-plugin-test-1794490650-exp",
+  "feature_flag": {
+    "id": 1069366,
+    "team_id": 309833,
+    "name": "Feature Flag for Experiment corsair-plugin-test-1794490650",
+    "key": "corsair-plugin-test-1794490650-exp",
+    "filters": {
+      "groups": [
+        {
+          "properties": [],
+          "rollout_percentage": 100,
+          "aggregation_group_type_index": null
+        }
+      ],
+      "holdout": null,
+      "multivariate": {
+        "variants": [
+          {
+            "key": "control",
+            "name": "Control Group",
+            "rollout_percentage": 50
+          },
+          {
+            "key": "test",
+            "name": "Test Variant",
+            "rollout_percentage": 50
+          }
+        ]
+      },
+      "aggregation_group_type_index": null
+    },
+    "deleted": false,
+    "active": false,
+    "ensure_experience_continuity": false,
+    "version": 1,
+    "evaluation_runtime": "all",
+    "bucketing_identifier": "distinct_id",
+    "evaluation_contexts": []
+  },
+  "feature_flag_rule_id": null,
+  "holdout": null,
+  "holdout_id": null,
+  "exposure_cohort": null,
+  "parameters": {
+    "feature_flag_variants": [
+      {
+        "key": "control",
+        "name": "Control Group",
+        "rollout_percentage": 50,
+        "split_percent": 50
+      },
+      {
+        "key": "test",
+        "name": "Test Variant",
+        "rollout_percentage": 50,
+        "split_percent": 50
+      }
+    ],
+    "rollout_percentage": 100,
+    "ensure_experience_continuity": false
+  },
+  "running_time_calculation": {},
+  "excluded_variants": null,
+  "secondary_metrics": [],
+  "saved_metrics": [],
+  "saved_metrics_ids": null,
+  "filters": {},
+  "archived": false,
+  "deleted": false,
+  "created_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "created_at": "2026-11-12T13:38:13.732551Z",
+  "updated_at": "2026-11-12T13:38:13.733005Z",
+  "type": "product",
+  "exposure_criteria": {
+    "filterTestAccounts": true
+  },
+  "metrics": [],
+  "metrics_secondary": [],
+  "stats_config": {
+    "method": "bayesian"
+  },
+  "scheduling_config": null,
+  "conclusion": null,
+  "conclusion_comment": null,
+  "flag_cleanup_task_id": null,
+  "repository": null,
+  "primary_metrics_ordered_uuids": null,
+  "secondary_metrics_ordered_uuids": null,
+  "only_count_matured_users": false,
+  "version": 0,
+  "status": "draft",
+  "is_legacy": false,
+  "can_freeze_exposure": false,
+  "resolved_exposure_event": "$experiment_exposure",
+  "health": null,
+  "user_access_level": "manager",
+  "tags": []
+}

@@ -1,0 +1,1028 @@
+{
+  "id": "imgix",
+  "displayName": "Imgix",
+  "description": "Manage Imgix sources, asset metadata, direct uploads, upload sessions, edge cache purging, daily analytics reports, and AI video/alt-text generations with API-key authentication.",
+  "npmPackageName": "@corsair-dev/imgix",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 20,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "imgix.api.assets.addFromOrigin",
+      "shortPath": "assets.addFromOrigin",
+      "description": "Queue an existing origin asset to be indexed into the Imgix Asset Manager (imgix answers 202 with no body, returned as {})",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "origin_path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: Record<string, any> }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.assets.get",
+      "shortPath": "assets.get",
+      "description": "Retrieve details, technical metadata, and custom fields for an asset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "origin_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated asset fields to return, sent as fields[assets]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: assets | string, attributes: { origin_path?: string | null, source_id?: string | null, name?: string | null, description?: string | null, content_type?: string | null, media_kind?: string | null, file_size?: number | null, media_width?: number | null, media_height?: number | null, dpi_width?: number | null, dpi_height?: number | null, color_model?: string | null, color_profile?: string | null, has_frames?: boolean | null, categories?: string[] | null, custom_fields?: Record<string, any> | null, date_created?: number | null, date_modified?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.assets.list",
+      "shortPath": "assets.list",
+      "description": "List indexed assets for a specific Imgix source",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Asset field filters, sent as filter[<field>]=<value> and ANDed, e.g. { origin_path: \"photos/\", media_kind: \"IMAGE\" }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated asset fields to return, sent as fields[assets]"
+          },
+          {
+            "key": "page_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: assets | string, attributes: { origin_path?: string | null, source_id?: string | null, name?: string | null, description?: string | null, content_type?: string | null, media_kind?: string | null, file_size?: number | null, media_width?: number | null, media_height?: number | null, dpi_width?: number | null, dpi_height?: number | null, color_model?: string | null, color_profile?: string | null, has_frames?: boolean | null, categories?: string[] | null, custom_fields?: Record<string, any> | null, date_created?: number | null, date_modified?: number | null } }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, cursor?: { current?: string | null, next?: string | null, hasMore?: boolean | null, totalRecords?: string | number | null }, pagination?: { currentPage?: number | null, hasNextPage?: boolean | null, nextPage?: number | null, pageSize?: number | null, totalPages?: number | null, totalRecords?: number | null }, page?: { current?: number, size?: number, total?: number } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.assets.update",
+      "shortPath": "assets.update",
+      "description": "Update custom fields or metadata for an asset in the Asset Manager",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "origin_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: assets | string, attributes: { origin_path?: string | null, source_id?: string | null, name?: string | null, description?: string | null, content_type?: string | null, media_kind?: string | null, file_size?: number | null, media_width?: number | null, media_height?: number | null, dpi_width?: number | null, dpi_height?: number | null, color_model?: string | null, color_profile?: string | null, has_frames?: boolean | null, categories?: string[] | null, custom_fields?: Record<string, any> | null, date_created?: number | null, date_modified?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.assets.upload",
+      "shortPath": "assets.upload",
+      "description": "Upload a file directly to the origin via Imgix Asset Manager; with overwrite: true it replaces the existing file at that path",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "origin_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, type: assets | string, attributes: { origin_path?: string | null, source_id?: string | null, name?: string | null, description?: string | null, content_type?: string | null, media_kind?: string | null, file_size?: number | null, media_width?: number | null, media_height?: number | null, dpi_width?: number | null, dpi_height?: number | null, color_model?: string | null, color_profile?: string | null, has_frames?: boolean | null, categories?: string[] | null, custom_fields?: Record<string, any> | null, date_created?: number | null, date_modified?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.generations.createVideo",
+      "shortPath": "generations.createVideo",
+      "description": "Transform a static image into a video using AI motion generation (consumes AI credits)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "auto | klingai | veo3.1 | veo3.1-fast"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "16:9 | 9:16"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes: { status: string, created_at?: number | null, updated_at?: number | null, result?: { url?: string | null } | null, error?: { code?: number | null, message?: string | null } | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.generations.getAltText",
+      "shortPath": "generations.getAltText",
+      "description": "Generate or retrieve AI alt text for an image (new languages consume AI credits; regenerate replaces stored text and overrides)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regenerate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alt_text",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "failed_languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "overridden_languages",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.generations.getVideoJob",
+      "shortPath": "generations.getVideoJob",
+      "description": "Poll the status and retrieve result URL of an asynchronous video generation job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes: { status: string, created_at?: number | null, updated_at?: number | null, result?: { url?: string | null } | null, error?: { code?: number | null, message?: string | null } | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.generations.overrideAltText",
+      "shortPath": "generations.overrideAltText",
+      "description": "Set or remove manual alt-text overrides per language for an image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_text",
+            "optional": false,
+            "type": "Record<string, string | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alt_text",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "removed_languages",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.purges.create",
+      "shortPath": "purges.create",
+      "description": "Purge an asset and its derived variants from the Imgix CDN edge cache",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sub_image",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: purges | string, attributes?: { url?: string, status?: string } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.reports.get",
+      "shortPath": "reports.get",
+      "description": "Retrieve details, metadata, and downloadable segment URLs for a report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "report_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: reports | string, attributes: { completed?: boolean | null, files?: string[] | null, period_start?: number | null, period_end?: number | null, report_key?: string | null, report_type?: string | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.reports.list",
+      "shortPath": "reports.list",
+      "description": "List available daily CDN logs and credit analytics reports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "report_type",
+            "optional": true,
+            "type": "cdn_logs | credit_analytics_daily | string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: reports | string, attributes: { completed?: boolean | null, files?: string[] | null, period_start?: number | null, period_end?: number | null, report_key?: string | null, report_type?: string | null } }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, cursor?: { current?: string | null, next?: string | null, hasMore?: boolean | null, totalRecords?: string | number | null }, pagination?: { currentPage?: number | null, hasNextPage?: boolean | null, nextPage?: number | null, pageSize?: number | null, totalPages?: number | null, totalRecords?: number | null }, page?: { current?: number, size?: number, total?: number } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.sources.create",
+      "shortPath": "sources.create",
+      "description": "Create and deploy a new Imgix storage or web folder source",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deployment_type",
+            "optional": false,
+            "type": "s3 | webfolder | gcs | azure | webproxy | s3_compatible"
+          },
+          {
+            "key": "imgix_subdomains",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "s3_bucket",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_access_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_secret_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webfolder_base_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_bucket",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_access_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_secret_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_account",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_bucket",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_sas_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_service_type",
+            "optional": true,
+            "type": "blob | file"
+          },
+          {
+            "key": "access_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bucket_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint_url",
+            "optional": true,
+            "type": "string",
+            "description": "S3-compatible endpoint host, e.g. sfo3.digitaloceanspaces.com (imgix documents it without a scheme)"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secret_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "storage_provider",
+            "optional": true,
+            "type": "DigitalOcean | Linode | Wasabi | R2"
+          },
+          {
+            "key": "custom_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "default_params",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          },
+          {
+            "key": "secure_url_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cache_ttl_value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cache_ttl_error",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: sources, attributes: { name?: string | null, deployment_status?: string | null, enabled?: boolean | null, deployment?: { type?: string | null, s3_bucket?: string | null, s3_prefix?: string | null, s3_access_key?: string | null, webfolder_base_url?: string | null, gcs_bucket?: string | null, gcs_prefix?: string | null, gcs_access_key?: string | null, azure_account?: string | null, azure_bucket?: string | null, azure_prefix?: string | null, azure_service_type?: string | null, access_key_id?: string | null, bucket_name?: string | null, endpoint_url?: string | null, region?: string | null, storage_provider?: string | null, imgix_subdomains?: string[] | null, custom_domains?: string[] | null, default_params?: Record<string, any> | null, secure_url_enabled?: boolean | null, cache_ttl_behavior?: string | null, cache_ttl_value?: number | null, cache_ttl_error?: number | null } | null, date_deployed?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.sources.get",
+      "shortPath": "sources.get",
+      "description": "Retrieve configuration details and deployment status for a source",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: sources, attributes: { name?: string | null, deployment_status?: string | null, enabled?: boolean | null, deployment?: { type?: string | null, s3_bucket?: string | null, s3_prefix?: string | null, s3_access_key?: string | null, webfolder_base_url?: string | null, gcs_bucket?: string | null, gcs_prefix?: string | null, gcs_access_key?: string | null, azure_account?: string | null, azure_bucket?: string | null, azure_prefix?: string | null, azure_service_type?: string | null, access_key_id?: string | null, bucket_name?: string | null, endpoint_url?: string | null, region?: string | null, storage_provider?: string | null, imgix_subdomains?: string[] | null, custom_domains?: string[] | null, default_params?: Record<string, any> | null, secure_url_enabled?: boolean | null, cache_ttl_behavior?: string | null, cache_ttl_value?: number | null, cache_ttl_error?: number | null } | null, date_deployed?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.sources.list",
+      "shortPath": "sources.list",
+      "description": "List all Imgix sources configured for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_deployment_type",
+            "optional": true,
+            "type": "s3 | webfolder | gcs | azure | webproxy | s3_compatible | imgix_storage"
+          },
+          {
+            "key": "filter_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: sources, attributes: { name?: string | null, deployment_status?: string | null, enabled?: boolean | null, deployment?: { type?: string | null, s3_bucket?: string | null, s3_prefix?: string | null, s3_access_key?: string | null, webfolder_base_url?: string | null, gcs_bucket?: string | null, gcs_prefix?: string | null, gcs_access_key?: string | null, azure_account?: string | null, azure_bucket?: string | null, azure_prefix?: string | null, azure_service_type?: string | null, access_key_id?: string | null, bucket_name?: string | null, endpoint_url?: string | null, region?: string | null, storage_provider?: string | null, imgix_subdomains?: string[] | null, custom_domains?: string[] | null, default_params?: Record<string, any> | null, secure_url_enabled?: boolean | null, cache_ttl_behavior?: string | null, cache_ttl_value?: number | null, cache_ttl_error?: number | null } | null, date_deployed?: number | null } }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, cursor?: { current?: string | null, next?: string | null, hasMore?: boolean | null, totalRecords?: string | number | null }, pagination?: { currentPage?: number | null, hasNextPage?: boolean | null, nextPage?: number | null, pageSize?: number | null, totalPages?: number | null, totalRecords?: number | null }, page?: { current?: number, size?: number, total?: number } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.sources.update",
+      "shortPath": "sources.update",
+      "description": "Update an existing Imgix source configuration or deployment settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_params",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          },
+          {
+            "key": "custom_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cache_ttl_value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cache_ttl_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secure_url_enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: sources, attributes: { name?: string | null, deployment_status?: string | null, enabled?: boolean | null, deployment?: { type?: string | null, s3_bucket?: string | null, s3_prefix?: string | null, s3_access_key?: string | null, webfolder_base_url?: string | null, gcs_bucket?: string | null, gcs_prefix?: string | null, gcs_access_key?: string | null, azure_account?: string | null, azure_bucket?: string | null, azure_prefix?: string | null, azure_service_type?: string | null, access_key_id?: string | null, bucket_name?: string | null, endpoint_url?: string | null, region?: string | null, storage_provider?: string | null, imgix_subdomains?: string[] | null, custom_domains?: string[] | null, default_params?: Record<string, any> | null, secure_url_enabled?: boolean | null, cache_ttl_behavior?: string | null, cache_ttl_value?: number | null, cache_ttl_error?: number | null } | null, date_deployed?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.uploadSessions.cancel",
+      "shortPath": "uploadSessions.cancel",
+      "description": "Cancel an active upload session",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: Record<string, any> }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.uploadSessions.close",
+      "shortPath": "uploadSessions.close",
+      "description": "Close an upload session to trigger immediate asset processing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: Record<string, any> }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.uploadSessions.create",
+      "shortPath": "uploadSessions.create",
+      "description": "Initialize an upload session and receive a presigned URL for large asset upload",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "origin_path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string, attributes: { url: string, session_id?: string, expires_at?: number | string } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imgix.api.uploadSessions.getStatus",
+      "shortPath": "uploadSessions.getStatus",
+      "description": "Retrieve the status of an ongoing or finalized asset upload session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string, attributes: { status: PENDING | CLOSED | COMPLETE | CANCELED | string, origin_path?: string } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

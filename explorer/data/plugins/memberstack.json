@@ -1,0 +1,526 @@
+{
+  "id": "memberstack",
+  "displayName": "Memberstack",
+  "description": "Manage members, free plans, data tables and member token verification using the Memberstack Admin REST API.",
+  "npmPackageName": "@corsair-dev/memberstack",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "memberstack.api.members.addPlan",
+      "shortPath": "members.addPlan",
+      "description": "Add a free plan to a member",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "planId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "memberstack.api.members.create",
+      "shortPath": "members.create",
+      "description": "Create a member with optional free plans and custom data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metaData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "loginRedirect",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plans",
+            "optional": true,
+            "type": "{ planId: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, auth?: { email?: string }, createdAt?: string, lastLogin?: string | null, verified?: boolean, customFields?: Record<string, any> | null, metaData?: Record<string, any> | null, json?: Record<string, any> | null, loginRedirect?: string | null, stripeCustomerId?: string | null, profileImage?: string | null, permissions?: string[], planConnections?: { id?: string, active?: boolean, status?: string, planId?: string, planName?: string, type?: string, payment?: Record<string, any> | null }[], teams?: { id: string, role: string, createdAt: string, inviteToken: string, currentTeamMemberCount: number, maxTeamMembers: number | null, plan: { id: string, name: string, teamAccountInviteSignupLink: string, teamAccountUpgradeLink: string } | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.members.delete",
+      "shortPath": "members.delete",
+      "description": "Permanently delete a member and optionally cancel subscriptions",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleteStripeCustomer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cancelStripeSubscriptions",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.members.get",
+      "shortPath": "members.get",
+      "description": "Get a member by ID or email; returns null when absent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id_or_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, auth?: { email?: string }, createdAt?: string, lastLogin?: string | null, verified?: boolean, customFields?: Record<string, any> | null, metaData?: Record<string, any> | null, json?: Record<string, any> | null, loginRedirect?: string | null, stripeCustomerId?: string | null, profileImage?: string | null, permissions?: string[], planConnections?: { id?: string, active?: boolean, status?: string, planId?: string, planName?: string, type?: string, payment?: Record<string, any> | null }[], teams?: { id: string, role: string, createdAt: string, inviteToken: string, currentTeamMemberCount: number, maxTeamMembers: number | null, plan: { id: string, name: string, teamAccountInviteSignupLink: string, teamAccountUpgradeLink: string } | null }[] } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.members.list",
+      "shortPath": "members.list",
+      "description": "List members with cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeJSON",
+            "optional": true,
+            "type": "true"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, auth?: { email?: string }, createdAt?: string, lastLogin?: string | null, verified?: boolean, customFields?: Record<string, any> | null, metaData?: Record<string, any> | null, json?: Record<string, any> | null, loginRedirect?: string | null, stripeCustomerId?: string | null, profileImage?: string | null, permissions?: string[], planConnections?: { id?: string, active?: boolean, status?: string, planId?: string, planName?: string, type?: string, payment?: Record<string, any> | null }[], teams?: { id: string, role: string, createdAt: string, inviteToken: string, currentTeamMemberCount: number, maxTeamMembers: number | null, plan: { id: string, name: string, teamAccountInviteSignupLink: string, teamAccountUpgradeLink: string } | null }[] }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "endCursor",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.members.removePlan",
+      "shortPath": "members.removePlan",
+      "description": "Remove a free plan and revoke its access",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "planId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "memberstack.api.members.update",
+      "shortPath": "members.update",
+      "description": "Update a member; JSON is replaced, not merged",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "metaData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "loginRedirect",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "profileImage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, auth?: { email?: string }, createdAt?: string, lastLogin?: string | null, verified?: boolean, customFields?: Record<string, any> | null, metaData?: Record<string, any> | null, json?: Record<string, any> | null, loginRedirect?: string | null, stripeCustomerId?: string | null, profileImage?: string | null, permissions?: string[], planConnections?: { id?: string, active?: boolean, status?: string, planId?: string, planName?: string, type?: string, payment?: Record<string, any> | null }[], teams?: { id: string, role: string, createdAt: string, inviteToken: string, currentTeamMemberCount: number, maxTeamMembers: number | null, plan: { id: string, name: string, teamAccountInviteSignupLink: string, teamAccountUpgradeLink: string } | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.members.verifyToken",
+      "shortPath": "members.verifyToken",
+      "description": "Verify a member JWT and return its decoded payload",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, iat: number, exp: number, aud: string, iss: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create a data table record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "memberId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tableKey?: string, data: Record<string, any>, createdAt: string, updatedAt: string, internalOrder: number, createdByMemberId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Permanently delete a data table record",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tableKey?: string, data: Record<string, any>, createdAt: string, updatedAt: string, internalOrder: number, createdByMemberId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.records.query",
+      "shortPath": "records.query",
+      "description": "Query data records with filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ findMany: { where?: Record<string, any>, include?: Record<string, any>, select?: Record<string, any>, orderBy?: Record<string, any> | Record<string, any>[], take?: number, skip?: number, after?: string | number, _count?: boolean }, findUnique?: never } | { findUnique: { where: { id: string }, include?: Record<string, any>, select?: Record<string, any> }, findMany?: never }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ records: { id: string, tableKey?: string, data: Record<string, any>, createdAt: string, updatedAt: string, internalOrder: number, createdByMemberId?: string | null }[], pagination: { hasMore: boolean, limit: number, endCursor: number | string | null } } | { record: { id: string, tableKey?: string, data: Record<string, any>, createdAt: string, updatedAt: string, internalOrder: number, createdByMemberId?: string | null } } | { _count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update fields on a data table record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tableKey?: string, data: Record<string, any>, createdAt: string, updatedAt: string, internalOrder: number, createdByMemberId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.tables.get",
+      "shortPath": "tables.get",
+      "description": "Get a data table by key or ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, key: string, name: string, createRule: string, readRule: string, updateRule: string, deleteRule: string, createdAt: string, updatedAt: string, fields: { id: string, key: string, name: string, type: string, required: boolean, defaultValue: any, tableOrder: number, referencedTableId: string | null, referencedTable?: { id: string, key: string, name: string } | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "memberstack.api.tables.list",
+      "shortPath": "tables.list",
+      "description": "List data tables and their fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tables: { id: string, key: string, name: string, createRule: string, readRule: string, updateRule: string, deleteRule: string, createdAt: string, updatedAt: string, fields: { id: string, key: string, name: string, type: string, required: boolean, defaultValue: any, tableOrder: number, referencedTableId: string | null, referencedTable?: { id: string, key: string, name: string } | null }[] }[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,1672 @@
+---
+title: "Kadoa API reference"
+sidebarTitle: "API"
+description: "API reference for the Kadoa plugin in Corsair: every `kadoa.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Changes
+
+### get
+
+`changes.get`
+
+One detected data change with its differences and current data
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.changes.get({ changeId: '9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `changeId` | `string` | Yes | The change ID from `changes.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `workflowId` | `string \| null` | No | — |
+| `data` | `Record<string, any>[] \| null` | No | — |
+| `dataPending` | `boolean \| null` | No | — |
+| `differences` | `object[] \| null` | No | — |
+| `differencesCounts` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `screenshotUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="differences full type">
+
+```ts
+{
+  type: string,
+  fields?: {
+    key: string,
+    value?: string | null,
+    previousValue?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="differencesCounts full type">
+
+```ts
+{
+  added?: number | null,
+  removed?: number | null,
+  changed?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`changes.list`
+
+Data changes detected across workflows in a date window, with the changed fields and counts; `exclude` drops the large arrays
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.changes.list({ startDate: '2026-11-01', endDate: '2026-11-12', exclude: ['differences'], limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowIds` | `string[]` | No | Only changes in these workflows, sent comma-separated. Omit for every ACTIVE workflow. |
+| `startDate` | `string` | No | Earliest change, as an ISO date or date-time. |
+| `endDate` | `string` | No | Latest change, as an ISO date or date-time. A date alone covers that whole day. |
+| `skip` | `number` | No | Changes to skip. |
+| `limit` | `number` | No | Changes to return, at most 100. Defaults to 25. |
+| `exclude` | `(data \| differences)[]` | No | Drop these large fields from each change. The counts stay available. |
+
+`exclude` drops the large arrays; `differencesCounts` still arrives.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string \| null` | No | — |
+| `changesCount` | `number \| null` | No | — |
+| `changes` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `nextSkip` | `number \| null` | Yes | The `skip` for the next page while this one came back full; null otherwise. |
+
+<AccordionGroup>
+<Accordion title="changes full type">
+
+```ts
+{
+  id: string,
+  workflowId?: string | null,
+  data?: Record<string, any>[] | null,
+  dataPending?: boolean | null,
+  differences?: {
+    type: string,
+    fields?: {
+      key: string,
+      value?: string | null,
+      previousValue?: string | null
+    }[] | null
+  }[] | null,
+  differencesCounts?: {
+    added?: number | null,
+    removed?: number | null,
+    changed?: number | null
+  } | null,
+  url?: string | null,
+  summary?: string | null,
+  screenshotUrl?: string | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalCount?: number | null,
+  page?: number | null,
+  totalPages?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### list
+
+`locations.list`
+
+Countries a workflow can scrape from, with their ISO codes
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.locations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  countryName?: string | null,
+  isoCode?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schemas
+
+### create
+
+`schemas.create`
+
+Create an extraction schema from typed data fields or classification fields, for workflows to reuse
+
+**Risk:** `write`
+
+```ts
+await corsair.kadoa.api.schemas.create({ name: 'Product', entity: 'Product', fields: [{ name: 'title', fieldType: 'SCHEMA', dataType: 'STRING', description: 'The product name', isKey: true }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The schema name. |
+| `entity` | `string` | No | Entity the schema describes, such as `Product`. |
+| `fields` | `object[]` | Yes | The fields to extract. |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  name: string,
+  fieldType: SCHEMA | CLASSIFICATION,
+  description?: string,
+  dataType?: STRING | NUMBER | BOOLEAN | DATE | DATETIME | MONEY | IMAGE | LINK | OBJECT | ARRAY,
+  isKey?: boolean,
+  categories?: {
+    title: string,
+    definition: string
+  }[],
+  mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize,
+  mapperConfig?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `schemaId` | `string` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`schemas.delete`
+
+Delete a schema and every revision of it; it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.kadoa.api.schemas.delete({ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b5c7d9e21' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaId` | `string` | Yes | The schema ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`schemas.get`
+
+One extraction schema with its fields and entity
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.schemas.get({ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b5c7d9e21' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaId` | `string` | Yes | The schema ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  isPublic?: boolean | null,
+  entity?: string | null,
+  schema?: {
+    name?: string | null,
+    description?: string | null,
+    example?: string | string[] | null,
+    dataType?: string | null,
+    isKey?: boolean | null,
+    isRequired?: boolean | null,
+    isUnique?: boolean | null
+  }[] | null,
+  description?: {
+    hintText?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`schemas.list`
+
+Every extraction schema the caller can see
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.schemas.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  isPublic?: boolean | null,
+  entity?: string | null,
+  schema?: {
+    name?: string | null,
+    description?: string | null,
+    example?: string | string[] | null,
+    dataType?: string | null,
+    isKey?: boolean | null,
+    isRequired?: boolean | null,
+    isUnique?: boolean | null
+  }[] | null,
+  description?: {
+    hintText?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`schemas.update`
+
+Rename a schema, change its entity, or publish a new revision from replacement fields; workflows on the old revision keep it
+
+**Risk:** `write`
+
+```ts
+await corsair.kadoa.api.schemas.update({ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b5c7d9e21', name: 'Product Catalog' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schemaId` | `string` | Yes | The schema ID. |
+| `name` | `string` | No | — |
+| `entity` | `string \| null` | No | The entity name. Send null to clear it. |
+| `fields` | `object[]` | No | Replace every field. Kadoa keeps the previous revision, so workflows on it keep the old shape. |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  name: string,
+  fieldType: SCHEMA | CLASSIFICATION,
+  description?: string,
+  dataType?: STRING | NUMBER | BOOLEAN | DATE | DATETIME | MONEY | IMAGE | LINK | OBJECT | ARRAY,
+  isKey?: boolean,
+  categories?: {
+    title: string,
+    definition: string
+  }[],
+  mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize,
+  mapperConfig?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `updatedSchema` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="updatedSchema full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  isPublic?: boolean | null,
+  entity?: string | null,
+  schema?: {
+    name?: string | null,
+    description?: string | null,
+    example?: string | string[] | null,
+    dataType?: string | null,
+    isKey?: boolean | null,
+    isRequired?: boolean | null,
+    isUnique?: boolean | null
+  }[] | null,
+  description?: {
+    hintText?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Triggers
+
+### list
+
+`triggers.list`
+
+Triggers where this workflow is the source, plus the incoming ones that start it
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.triggers.list({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+
+Only the read is wrapped: Kadoa publishes a response body for it alone, so the trigger create, update and delete routes are left out rather than guessed at.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `triggers` | `object[]` | Yes | Triggers where this workflow is the source. |
+| `incoming` | `object[]` | Yes | Triggers where this workflow is the target. |
+
+<AccordionGroup>
+<Accordion title="triggers full type">
+
+```ts
+{
+  id: string,
+  sourceWorkflowId?: string | null,
+  targetWorkflowId?: string | null,
+  targetWorkflowName?: string | null,
+  eventType?: string | null,
+  enabled?: boolean | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="incoming full type">
+
+```ts
+{
+  id: string,
+  sourceWorkflowId?: string | null,
+  targetWorkflowId?: string | null,
+  targetWorkflowName?: string | null,
+  eventType?: string | null,
+  enabled?: boolean | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Variables
+
+### create
+
+`variables.create`
+
+Create a string, number, object or array variable, or a secret held by Kadoa or read from your Google Secret Manager
+
+**Risk:** `write`
+
+```ts
+await corsair.kadoa.api.variables.create({ key: 'region', value: 'eu-west', dataType: 'STRING' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | Unique within the team. |
+| `value` | `string` | No | The value. For OBJECT and ARRAY, a JSON string. May be empty, except for a Kadoa-managed secret. Omit only for a CUSTOMER_MANAGED secret. |
+| `dataType` | `STRING \| OBJECT \| ARRAY \| NUMBER \| SECRET` | No | Defaults to STRING. |
+| `managementMode` | `KADOA_MANAGED \| CUSTOMER_MANAGED` | No | SECRET only. Defaults to KADOA_MANAGED. |
+| `providerConnectionId` | `string` | No | SECRET with CUSTOMER_MANAGED: the Google Secret Manager connection. |
+| `resourceReference` | `string` | No | SECRET with CUSTOMER_MANAGED: the secret resource to read. |
+
+A `SECRET` with a value is Kadoa-managed. `CUSTOMER_MANAGED` needs `providerConnectionId` and `resourceReference` and takes no value.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variable` | `object \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variable full type">
+
+```ts
+{
+  id: string,
+  key: string,
+  value?: string | null,
+  dataType?: string | null,
+  provider?: string | null,
+  managementMode?: string | null,
+  status?: string | null,
+  currentVersion?: string | null,
+  lastResolvedVersion?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  lastRotatedAt?: string | null,
+  lastResolvedAt?: string | null,
+  workflowCount?: number | null,
+  workflows?: {
+    id: string,
+    name: string
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`variables.delete`
+
+Delete a variable; a secret still bound to a connection is refused with a 409
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.kadoa.api.variables.delete({ variableId: '5d6e7f80-1a2b-4c3d-9e4f-5a6b7c8d9e01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variableId` | `string` | Yes | The variable ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variable` | `object \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variable full type">
+
+```ts
+{
+  id: string,
+  key: string,
+  value?: string | null,
+  dataType?: string | null,
+  provider?: string | null,
+  managementMode?: string | null,
+  status?: string | null,
+  currentVersion?: string | null,
+  lastResolvedVersion?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  lastRotatedAt?: string | null,
+  lastResolvedAt?: string | null,
+  workflowCount?: number | null,
+  workflows?: {
+    id: string,
+    name: string
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`variables.get`
+
+One variable by ID; a secret comes back without its value
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.variables.get({ variableId: '5d6e7f80-1a2b-4c3d-9e4f-5a6b7c8d9e01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variableId` | `string` | Yes | The variable ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variable` | `object \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variable full type">
+
+```ts
+{
+  id: string,
+  key: string,
+  value?: string | null,
+  dataType?: string | null,
+  provider?: string | null,
+  managementMode?: string | null,
+  status?: string | null,
+  currentVersion?: string | null,
+  lastResolvedVersion?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  lastRotatedAt?: string | null,
+  lastResolvedAt?: string | null,
+  workflowCount?: number | null,
+  workflows?: {
+    id: string,
+    name: string
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`variables.list`
+
+Team variables with their keys and values, optionally limited to one workflow’s; a secret’s value is never returned
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.variables.list({ includeWorkflows: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | No | Only variables this workflow references. |
+| `includeWorkflows` | `boolean` | No | Also list the workflows that reference each variable. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variables` | `object[]` | Yes | — |
+| `error` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variables full type">
+
+```ts
+{
+  id: string,
+  key: string,
+  value?: string | null,
+  dataType?: string | null,
+  provider?: string | null,
+  managementMode?: string | null,
+  status?: string | null,
+  currentVersion?: string | null,
+  lastResolvedVersion?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  lastRotatedAt?: string | null,
+  lastResolvedAt?: string | null,
+  workflowCount?: number | null,
+  workflows?: {
+    id: string,
+    name: string
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`variables.update`
+
+Change a variable’s key or value; a stored value cannot change type, and a secret’s new value is written only
+
+**Risk:** `write`
+
+```ts
+await corsair.kadoa.api.variables.update({ variableId: '5d6e7f80-1a2b-4c3d-9e4f-5a6b7c8d9e01', value: 'us-east' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variableId` | `string` | Yes | The variable ID. |
+| `key` | `string` | No | — |
+| `value` | `string` | No | New value. For OBJECT and ARRAY, a JSON string. Empty is rejected by Kadoa for a secret. |
+| `dataType` | `STRING \| OBJECT \| ARRAY \| NUMBER \| SECRET` | No | Accepted but cannot change the stored type, which Kadoa keeps. A mismatch is rejected by Kadoa. |
+
+Kadoa keeps the stored type, so `dataType` cannot change it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variable` | `object \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variable full type">
+
+```ts
+{
+  id: string,
+  key: string,
+  value?: string | null,
+  dataType?: string | null,
+  provider?: string | null,
+  managementMode?: string | null,
+  status?: string | null,
+  currentVersion?: string | null,
+  lastResolvedVersion?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  lastRotatedAt?: string | null,
+  lastResolvedAt?: string | null,
+  workflowCount?: number | null,
+  workflows?: {
+    id: string,
+    name: string
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workflows
+
+### connectors
+
+`workflows.connectors`
+
+Destinations that receive this workflow’s results after each run, with the format each takes
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.workflows.connectors({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectors` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="connectors full type">
+
+```ts
+{
+  name?: string | null,
+  provider?: string | null,
+  destination?: string | null,
+  formats?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`workflows.create`
+
+Create a workflow from a prompt, an existing schema, inline entity and fields, or a template; every URL must belong to one website. Spends Kadoa credits once it runs
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kadoa.api.workflows.create({ urls: ['https://acme.example/products'], name: 'Product Catalog', userPrompt: 'Collect every product name, price and stock status from the listing.', interval: 'DAILY' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | Sources. Several URLs must belong to one website: subdomains and country domains of the same name count as one, and a request spanning two sites is rejected. |
+| `name` | `string` | No | Human-readable workflow name. |
+| `description` | `string` | No | What the workflow does, at most 500 characters. |
+| `tags` | `string[]` | No | Tags for grouping. Each is at least two characters. |
+| `limit` | `number \| null` | No | Maximum records per run. Omit or send null for no limit. |
+| `interval` | `ONLY_ONCE \| EVERY_10_MINUTES \| EVERY_20_MINUTES \| HALF_HOURLY \| HOURLY \| TWO_HOURLY \| THREE_HOURLY \| FOUR_HOURLY \| SIX_HOURLY \| TWELVE_HOURLY \| EIGHTEEN_HOURLY \| DAILY \| TWO_DAY \| THREE_DAY \| WEEKLY \| BIWEEKLY \| TRIWEEKLY \| FOUR_WEEKS \| MONTHLY \| CUSTOM` | No | How often the workflow runs. Defaults to Kadoa’s choice for the workflow type. |
+| `schedules` | `string[]` | No | Cron expressions. Overrides `interval`. |
+| `timezone` | `string` | No | IANA timezone for `schedules`, such as `America/New_York`. Defaults to UTC. |
+| `location` | `object` | No | — |
+| `userPrompt` | `string` | No | What to extract and how to navigate the site. Required unless the workflow is built from `schemaId`, `entity` with `fields`, or `templateId`. |
+| `schemaId` | `string` | No | Build from an existing schema instead of inline fields. |
+| `entity` | `string` | No | Entity name for inline extraction, such as `Product`. Needs `fields` unless `userPrompt` is set. |
+| `fields` | `object[]` | No | Inline extraction fields. Need `entity` unless `userPrompt` is set. |
+| `templateId` | `string` | No | Build from a published template. |
+| `templateVersion` | `number` | No | Pin a template version. Omit for the latest published one. |
+| `bypassPreview` | `boolean` | No | Skip preview and validation and deploy at once. Only for a configuration you are sure of. |
+
+Exactly one build source: `userPrompt`, `schemaId`, `entity` with `fields`, or `templateId`. Every URL must belong to one website, or Kadoa answers 422.
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  type: auto | manual,
+  isoCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  name: string,
+  fieldType: SCHEMA | CLASSIFICATION,
+  description?: string,
+  dataType?: STRING | NUMBER | BOOLEAN | DATE | DATETIME | MONEY | IMAGE | LINK | OBJECT | ARRAY,
+  isKey?: boolean,
+  categories?: {
+    title: string,
+    definition: string
+  }[],
+  mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize,
+  mapperConfig?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `success` | `boolean` | Yes | — |
+| `workflowId` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### data
+
+`workflows.data`
+
+Extracted rows of a workflow’s latest published run, with filters, sorting and paging; `limit: 0` streams every row at once
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.workflows.data({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', sortBy: 'price', order: 'asc', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+| `runId` | `string` | No | Read a specific run’s data. |
+| `sortBy` | `string` | No | Field to sort by. |
+| `order` | `asc \| desc` | No | Sort direction. Defaults to asc. |
+| `filters` | `object[]` | No | Row filters, sent JSON-encoded. |
+| `page` | `number` | No | 1-based page. Defaults to 1. |
+| `limit` | `number` | No | Rows per page. Defaults to 25; 0 streams every row and ignores paging. |
+| `rowIds` | `string[]` | No | Only these row IDs, sent comma-separated. |
+
+`limit: 0` streams every row and returns no next page. A run that has not published data answers 409 `DATA_NOT_PUBLISHED`.
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  field: string,
+  operator: string,
+  value?: string | number | boolean | (string | number | boolean)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | — |
+| `runId` | `string \| null` | No | — |
+| `executedAt` | `string \| null` | No | — |
+| `data` | `Record<string, any>[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `nextPage` | `number \| null` | Yes | The next page number while more rows remain; null on the last page and when every row was streamed at once. |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalCount?: number | null,
+  page?: number | null,
+  totalPages?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`workflows.delete`
+
+Delete a workflow along with its run history and stored data; it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.kadoa.api.workflows.delete({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`workflows.get`
+
+One workflow with its sources, schema, schedule, latest run state and pending fields
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.workflows.get({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `displayState` | `string \| null` | No | — |
+| `reviewReason` | `string \| null` | No | — |
+| `inSupport` | `boolean \| null` | No | — |
+| `awaitingUserInput` | `object \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `userName` | `string \| null` | No | — |
+| `userEmail` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updateInterval` | `string \| null` | No | — |
+| `isRealTime` | `boolean \| null` | No | — |
+| `lastDataChangedAt` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `runState` | `string \| null` | No | — |
+| `jobId` | `string \| null` | No | — |
+| `totalRecords` | `number \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `urls` | `string[] \| null` | No | — |
+| `schemaName` | `string \| null` | No | — |
+| `schemaId` | `string \| null` | No | — |
+| `schema` | `object[] \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
+| `templateId` | `string \| null` | No | — |
+| `templateVersion` | `number \| null` | No | — |
+| `templateLatestVersion` | `number \| null` | No | — |
+| `templateIsOutdated` | `boolean \| null` | No | — |
+| `schedules` | `string[] \| null` | No | — |
+| `scheduleTimezone` | `string \| null` | No | — |
+| `nextInvocation` | `string \| null` | No | — |
+| `entity` | `string \| null` | No | — |
+| `isSchemaEditable` | `boolean \| null` | No | — |
+| `dataQualityIssues` | `number \| null` | No | — |
+| `extractionSpec` | `Record<string, any> \| null` | No | — |
+| `transformation` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="awaitingUserInput full type">
+
+```ts
+{
+  since: string,
+  prompt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  example?: string | string[] | null,
+  dataType?: string | null,
+  isKey?: boolean | null,
+  isRequired?: boolean | null,
+  isUnique?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  errorCode?: string | null,
+  message?: string | null,
+  occurredAt?: string | null,
+  screenshot?: string | null,
+  context?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`workflows.history`
+
+Past runs of a workflow with their state, record count and errors, paged or by run ID
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.workflows.history({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+| `page` | `number` | No | 1-based page. Defaults to 1. |
+| `limit` | `number` | No | Runs per page. Defaults to 25. |
+| `runId` | `string` | No | Read one run, whatever the page. |
+| `status` | `success \| failed \| in_progress \| stopped` | No | Only runs with this outcome. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | — |
+| `workflowRuns` | `object[]` | Yes | — |
+| `totalCount` | `number \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `nextPage` | `number \| null` | Yes | The next page number, null on the last page. |
+
+<AccordionGroup>
+<Accordion title="workflowRuns full type">
+
+```ts
+{
+  id: string,
+  state?: string | null,
+  startedAt?: string | null,
+  finishedAt?: string | null,
+  screenshot?: string | null,
+  records?: number | null,
+  startedBy?: string | null,
+  stoppedBy?: {
+    kind?: string | null,
+    name?: string | null,
+    via?: string | null
+  } | null,
+  errors?: {
+    errorCode?: string | null,
+    message?: string | null,
+    occurredAt?: string | null,
+    screenshot?: string | null,
+    context?: Record<string, any> | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalCount?: number | null,
+  page?: number | null,
+  totalPages?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jobStatus
+
+`workflows.jobStatus`
+
+Where a run stands: IN_PROGRESS, FINISHED, FAILED, NOT_SUPPORTED or FAILED_INSUFFICIENT_FUNDS, with any errors
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.workflows.jobStatus({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', jobId: 'a1b2c3d4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+| `jobId` | `string` | Yes | The `jobId` a run returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `startedAt` | `string \| null` | No | — |
+| `finishedAt` | `string \| null` | No | — |
+| `estimatedFinishedAtUtc` | `string \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `workflowId` | `string \| null` | No | — |
+| `variables` | `Record<string, any> \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  errorCode?: string | null,
+  message?: string | null,
+  occurredAt?: string | null,
+  screenshot?: string | null,
+  context?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workflows.list`
+
+List workflows by name, ID, state or tag, with paging by skip; `statusFilters: ["group:attention"]` returns the ones waiting on you
+
+**Risk:** `read`
+
+```ts
+await corsair.kadoa.api.workflows.list({ state: 'ACTIVE', tags: ['pricing'], skip: 0, limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Filter workflows by name or workflow ID. |
+| `skip` | `number` | No | Number of workflows to skip. Defaults to 0. |
+| `limit` | `number` | No | Maximum workflows to return. Defaults to 25. |
+| `state` | `ACTIVE \| DRAFT \| PAUSED \| PREVIEW \| QUEUED \| SETUP \| COMPLIANCE_REVIEW \| COMPLIANCE_REJECTED \| NOT_SUPPORTED \| ERROR \| DELETED` | No | Only workflows in this persisted state. DRAFT is excluded unless asked for. |
+| `runState` | `FAILED \| FINISHED \| RUNNING \| STOPPED` | No | Only workflows whose latest run is in this state. |
+| `displayState` | `(ACTIVE \| DRAFT \| PAUSED \| PREVIEW \| FAILED \| RUNNING \| VALIDATING \| INVESTIGATING \| PENDING_START \| COMPLIANCE_REVIEW \| COMPLIANCE_REJECTED)[]` | No | Only workflows whose computed operational state is one of these. Sent comma-separated. |
+| `tags` | `string[]` | No | Only workflows carrying at least one of these tags. |
+| `statusFilters` | `string[]` | No | Dashboard category filter, such as `group:attention` for workflows waiting on the caller. |
+| `monitoring` | `boolean` | No | Only workflows with change monitoring on or off. |
+| `updateInterval` | `HOURLY \| DAILY \| WEEKLY \| MONTHLY \| REAL_TIME` | No | Only workflows on this schedule. |
+| `scheduleType` | `RUN_ONCE \| RECURRING` | No | RUN_ONCE for no recurring schedule, RECURRING for one. |
+| `templateId` | `string[]` | No | Only workflows created from these templates. |
+| `includeDeleted` | `boolean` | No | Include deleted workflows. Only useful for compliance officers. |
+
+Pages by offset. Pass `nextSkip` back as `skip`; a page that comes back short is the last one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflows` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `nextSkip` | `number \| null` | Yes | The `skip` for the next page while this one came back full; null otherwise. |
+
+<AccordionGroup>
+<Accordion title="workflows full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  state?: string | null,
+  displayState?: string | null,
+  reviewReason?: string | null,
+  inSupport?: boolean | null,
+  awaitingUserInput?: {
+    since: string,
+    prompt?: string | null
+  } | null,
+  userId?: string | null,
+  userName?: string | null,
+  userEmail?: string | null,
+  createdAt?: string | null,
+  updateInterval?: string | null,
+  isRealTime?: boolean | null,
+  lastDataChangedAt?: string | null,
+  tags?: string[] | null,
+  limit?: number | null,
+  runState?: string | null,
+  jobId?: string | null,
+  totalRecords?: number | null,
+  url?: string | null,
+  urls?: string[] | null,
+  schemaName?: string | null,
+  schemaId?: string | null,
+  schema?: {
+    name?: string | null,
+    description?: string | null,
+    example?: string | string[] | null,
+    dataType?: string | null,
+    isKey?: boolean | null,
+    isRequired?: boolean | null,
+    isUnique?: boolean | null
+  }[] | null,
+  errors?: {
+    errorCode?: string | null,
+    message?: string | null,
+    occurredAt?: string | null,
+    screenshot?: string | null,
+    context?: Record<string, any> | null
+  }[] | null,
+  templateId?: string | null,
+  templateVersion?: number | null,
+  templateLatestVersion?: number | null,
+  templateIsOutdated?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalCount?: number | null,
+  page?: number | null,
+  totalPages?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`workflows.pause`
+
+Pause a workflow so its schedule stops starting runs; workflows.resume turns it back on
+
+**Risk:** `write`
+
+```ts
+await corsair.kadoa.api.workflows.pause({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### resume
+
+`workflows.resume`
+
+Unpause a paused workflow, or resume a preview or error workflow; a 202 means a fresh preview run was started and returned a jobId
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kadoa.api.workflows.resume({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+
+A 202 means the preview was stale, so a fresh preview run started and its `jobId` is on the answer.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `jobId` | `string \| null` | No | A new preview run, set when the preview no longer matched the settings. |
+
+
+
+---
+
+### run
+
+`workflows.run`
+
+Start a run and get a jobId back at once; spends Kadoa credits. Follow it with workflows.jobStatus(&#123; workflowId, jobId &#125;), or read the result with workflows.data
+
+**Risk:** `destructive`
+
+```ts
+await corsair.kadoa.api.workflows.run({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+| `variables` | `Record<string, string>` | No | Values for the workflow’s variables, as text. |
+| `limit` | `number` | No | Maximum records this run processes. |
+| `preview` | `boolean` | No | Rerun the preview of a PREVIEW workflow instead of starting a production run. |
+
+Answers at once with `jobId` and spends credits. Read it back with `workflows.jobStatus`, which needs the workflow ID too.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `jobId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### schedule
+
+`workflows.schedule`
+
+Set when a workflow’s next run starts, as a UTC time; the workflow needs a schedule for this to work
+
+**Risk:** `write`
+
+```ts
+await corsair.kadoa.api.workflows.schedule({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', date: '2026-12-01T06:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+| `date` | `string` | Yes | When to run next, in UTC, such as 2026-03-01T09:00:00.000Z. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### stop
+
+`workflows.stop`
+
+Stop the workflow’s active run; queued steps are dropped and the step already running may finish
+
+**Risk:** `write`
+
+```ts
+await corsair.kadoa.api.workflows.stop({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### updateMetadata
+
+`workflows.updateMetadata`
+
+Change a workflow’s name, description, tags, sources, record limit, schedule, location or monitored fields
+
+**Risk:** `write`
+
+```ts
+await corsair.kadoa.api.workflows.updateMetadata({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', name: 'Product Catalog v2', limit: 500 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The workflow ID, as returned by `workflows.list`. |
+| `urls` | `string[]` | No | Replace the workflow’s sources. |
+| `limit` | `number \| null` | No | Maximum records per run. Send null to remove the limit. |
+| `updateInterval` | `ONLY_ONCE \| EVERY_10_MINUTES \| HALF_HOURLY \| HOURLY \| THREE_HOURLY \| SIX_HOURLY \| TWELVE_HOURLY \| EIGHTEEN_HOURLY \| DAILY \| TWO_DAY \| THREE_DAY \| WEEKLY \| BIWEEKLY \| TRIWEEKLY \| FOUR_WEEKS \| MONTHLY \| CUSTOM` | No | — |
+| `schedules` | `string[]` | No | — |
+| `timezone` | `string` | No | IANA timezone for `schedules`. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `location` | `object` | No | — |
+| `monitoring` | `object` | No | Change monitoring: the fields to watch. |
+
+The interval list here is shorter than the one `workflows.create` takes: no `TWO_HOURLY` or `FOUR_HOURLY`.
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  type: auto | manual,
+  isoCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="monitoring full type">
+
+```ts
+{
+  fields: {
+    fieldName: string,
+    operator: changed | added | removed,
+    isKeyField?: boolean
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+

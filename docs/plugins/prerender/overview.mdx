@@ -1,0 +1,138 @@
+---
+title: "Prerender plugin"
+sidebarTitle: "Overview"
+description: "Prerender service API for recaching pages, searching the cache, submitting sitemaps and tuning the render queue."
+---
+
+Use **Prerender** through Corsair: one client, typed API calls.
+
+Prerender.io serves pre-rendered HTML to crawlers so a JavaScript-heavy site stays indexable, and its REST API controls that cache. Find the token under Security and Access, Prerender Token, and paste it in; it travels in the `X-Prerender-Token` header, and in the path on the status route, which takes it no other way.
+
+What to know before you recache:
+
+- **Recache spends renders.** `recache` caches a URL for the first time or refreshes one already cached, and each URL counts as one render against the plan (paid plans bill renders past the included amount). Refreshing only the pages that changed is how a longer global cache expiration stays affordable. One call takes either a single `url` or up to 1000 `urls`.
+- **Mobile is a separate entry.** Add `adaptiveType: 'mobile'` to act on the mobile rendering rather than the desktop one, and the same filter on `search` to read one of the two.
+- **Search pages by 200.** `search` matches a substring with `query` or a whole URL with `exactMatch` (with neither, it lists the whole cache), at 200 results per page, and takes `start` for the next page. It allows 50 requests a minute and answers 429 past that.
+- **A sitemap adds only new URLs.** `sitemap` renders and caches what is not cached yet, one render per new URL, and leaves existing entries alone, so use `recache` to refresh them.
+- **Clearing is a job.** `cacheClear` takes a SQL-like pattern where `%` matches any run, schedules a job, and only one job runs at a time. Check it with `cacheClearStatus`, whose `inProgress` is true while a job runs.
+- **Recache speed affects your origin.** `changeSpeed` sets how many URLs the queue renders per hour, from 3600 up to 36000, or 0 to restore the automatic delay. A faster rate can overload the origin, so confirm the stack can take it first.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/prerender better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/prerender better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/prerender better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/prerender better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { prerender } from '@corsair-dev/prerender';
+
+export const corsair = createCorsair({
+	plugins: [
+		prerender(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Prerender API key before the first call: `pnpm corsair setup --plugin=prerender --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+prerender()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'prerender',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search the cache for a path**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.prerender.api.cache.search({ query: 'example.com/path', start: 0 });
+```
+
+
+**Recache one page**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.prerender.api.cache.recache({ url: 'https://example.com/pricing' });
+```
+
+
+See the full list on the [API](/plugins/prerender/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/prerender/api">
+    Every `prerender.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

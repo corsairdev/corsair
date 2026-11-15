@@ -1,0 +1,2125 @@
+{
+  "id": "waiverfile",
+  "displayName": "WaiverFile",
+  "description": "Electronic waivers and booking with WaiverFile - read signed waivers and their PDFs, search and page through waiver data, manage events and event categories, list waiver forms, and subscribe URLs to the triggers WaiverFile posts to.",
+  "npmPackageName": "@corsair-dev/waiverfile",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "waiverfile.api.eventCategories.create",
+      "shortPath": "eventCategories.create",
+      "description": "Create an event category, active or not",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "number | null",
+            "description": "0 = active, 1 = disabled, 2 = deleted."
+          },
+          {
+            "key": "OrderNum",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.eventCategories.delete",
+      "shortPath": "eventCategories.delete",
+      "description": "Delete an event category; the events in it survive and lose their category",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventCategoryID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "number | null",
+            "description": "0 = active, 1 = disabled, 2 = deleted."
+          },
+          {
+            "key": "OrderNum",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.eventCategories.list",
+      "shortPath": "eventCategories.list",
+      "description": "List event categories, optionally including disabled ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeDisabledCategories",
+            "optional": false,
+            "type": "boolean",
+            "description": "Also return categories that are switched off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "EventCategories",
+            "optional": true,
+            "type": "{ ID?: string | null, SiteID?: string | null, Name?: string | null, Status?: number | null, OrderNum?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.eventCategories.update",
+      "shortPath": "eventCategories.update",
+      "description": "Rename an event category and set whether it is active",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventCategoryID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "number | null",
+            "description": "0 = active, 1 = disabled, 2 = deleted."
+          },
+          {
+            "key": "OrderNum",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.byCategory",
+      "shortPath": "events.byCategory",
+      "description": "List events in one category within a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventCategoryID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Events",
+            "optional": true,
+            "type": "{ WaiverEventID?: string | null, SiteID?: string | null, Name?: string | null, DateStart?: string | null, DateEnd?: string | null, IsAllDay?: boolean | null, IsDeleted?: boolean | null, CategoryID?: string | null, TimeLabel?: string | null, NumWaiverForms?: number | null, NumSignedWaivers?: number | null, SpotsRemaining?: number | null, MaxParts?: number | null, Headcount?: number | null, ManagerEmailList?: string | null, ManagerIDs?: string[] | null, Created?: string | null, LastModified?: string | null, WaiverEventFormIDs?: (string | { WaiverEventID?: string | null, WaiverFormID?: string | null })[] | null, WaiverForms?: Record<string, any>[] | null, Waivers?: Record<string, any>[] | null, Category?: Record<string, any> | null, Settings?: { MaxParticipants?: number | null, Location?: string | null, SigningCutoff?: string | null, Description?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.byDateRange",
+      "shortPath": "events.byDateRange",
+      "description": "List events in any category that fall within a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Events",
+            "optional": true,
+            "type": "{ WaiverEventID?: string | null, SiteID?: string | null, Name?: string | null, DateStart?: string | null, DateEnd?: string | null, IsAllDay?: boolean | null, IsDeleted?: boolean | null, CategoryID?: string | null, TimeLabel?: string | null, NumWaiverForms?: number | null, NumSignedWaivers?: number | null, SpotsRemaining?: number | null, MaxParts?: number | null, Headcount?: number | null, ManagerEmailList?: string | null, ManagerIDs?: string[] | null, Created?: string | null, LastModified?: string | null, WaiverEventFormIDs?: (string | { WaiverEventID?: string | null, WaiverFormID?: string | null })[] | null, WaiverForms?: Record<string, any>[] | null, Waivers?: Record<string, any>[] | null, Category?: Record<string, any> | null, Settings?: { MaxParticipants?: number | null, Location?: string | null, SigningCutoff?: string | null, Description?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.create",
+      "shortPath": "events.create",
+      "description": "Create an event with its dates, category, attached forms and manager invitations; the credentials go in the body on this route",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateStart",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "dateEnd",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "isAllDay",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "eventCategoryID",
+            "optional": true,
+            "type": "string",
+            "description": "A category from `eventCategories.list`."
+          },
+          {
+            "key": "managerEmailList",
+            "optional": true,
+            "type": "string",
+            "description": "Addresses separated by commas, spaces or line breaks."
+          },
+          {
+            "key": "managerEmailMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "waiverFormIDList",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated form IDs. Omit to attach every active form."
+          },
+          {
+            "key": "eventLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signingCutoff",
+            "optional": true,
+            "type": "string",
+            "description": "After this time waivers can no longer be signed."
+          },
+          {
+            "key": "maxParticipants",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workflowIDList",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverEventID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsAllDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsDeleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CategoryID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TimeLabel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NumWaiverForms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "NumSignedWaivers",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "SpotsRemaining",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "MaxParts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Headcount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ManagerEmailList",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ManagerIDs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastModified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverEventFormIDs",
+            "optional": true,
+            "type": "(string | { WaiverEventID?: string | null, WaiverFormID?: string | null })[] | null",
+            "description": "The forms attached to the event."
+          },
+          {
+            "key": "WaiverForms",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Category",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "Settings",
+            "optional": true,
+            "type": "{ MaxParticipants?: number | null, Location?: string | null, SigningCutoff?: string | null, Description?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.delete",
+      "shortPath": "events.delete",
+      "description": "Delete an event (marked deleted; signed waivers stay); the call is a GET, so it is not replayed on a failure",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverEventID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsAllDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsDeleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CategoryID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TimeLabel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NumWaiverForms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "NumSignedWaivers",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "SpotsRemaining",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "MaxParts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Headcount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ManagerEmailList",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ManagerIDs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastModified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverEventFormIDs",
+            "optional": true,
+            "type": "(string | { WaiverEventID?: string | null, WaiverFormID?: string | null })[] | null",
+            "description": "The forms attached to the event."
+          },
+          {
+            "key": "WaiverForms",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Category",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "Settings",
+            "optional": true,
+            "type": "{ MaxParticipants?: number | null, Location?: string | null, SigningCutoff?: string | null, Description?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.inviteManagers",
+      "shortPath": "events.inviteManagers",
+      "description": "Invite people to manage an event, optionally skipping those who already have an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": false,
+            "type": "string",
+            "description": "Addresses separated by commas, spaces or line breaks."
+          },
+          {
+            "key": "managerEmailMessage",
+            "optional": true,
+            "type": "string",
+            "description": "Text added to the invitation. Invite only."
+          },
+          {
+            "key": "skipSendingEmailIfAccountExists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Invite only: skip the email for people who already have an account. Defaults to false, so everyone listed is emailed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverEventID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsAllDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsDeleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CategoryID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TimeLabel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NumWaiverForms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "NumSignedWaivers",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "SpotsRemaining",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "MaxParts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Headcount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ManagerEmailList",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ManagerIDs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastModified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverEventFormIDs",
+            "optional": true,
+            "type": "(string | { WaiverEventID?: string | null, WaiverFormID?: string | null })[] | null",
+            "description": "The forms attached to the event."
+          },
+          {
+            "key": "WaiverForms",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Category",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "Settings",
+            "optional": true,
+            "type": "{ MaxParticipants?: number | null, Location?: string | null, SigningCutoff?: string | null, Description?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.removeManagers",
+      "shortPath": "events.removeManagers",
+      "description": "Remove event manager access for the given addresses",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": false,
+            "type": "string",
+            "description": "Addresses separated by commas, spaces or line breaks."
+          },
+          {
+            "key": "managerEmailMessage",
+            "optional": true,
+            "type": "string",
+            "description": "Text added to the invitation. Invite only."
+          },
+          {
+            "key": "skipSendingEmailIfAccountExists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Invite only: skip the email for people who already have an account. Defaults to false, so everyone listed is emailed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverEventID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsAllDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsDeleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CategoryID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TimeLabel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NumWaiverForms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "NumSignedWaivers",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "SpotsRemaining",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "MaxParts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Headcount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ManagerEmailList",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ManagerIDs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastModified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverEventFormIDs",
+            "optional": true,
+            "type": "(string | { WaiverEventID?: string | null, WaiverFormID?: string | null })[] | null",
+            "description": "The forms attached to the event."
+          },
+          {
+            "key": "WaiverForms",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Category",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "Settings",
+            "optional": true,
+            "type": "{ MaxParticipants?: number | null, Location?: string | null, SigningCutoff?: string | null, Description?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.upcoming",
+      "shortPath": "events.upcoming",
+      "description": "List events within a date range, capped at 3,000 by the API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Events",
+            "optional": true,
+            "type": "{ WaiverEventID?: string | null, SiteID?: string | null, Name?: string | null, DateStart?: string | null, DateEnd?: string | null, IsAllDay?: boolean | null, IsDeleted?: boolean | null, CategoryID?: string | null, TimeLabel?: string | null, NumWaiverForms?: number | null, NumSignedWaivers?: number | null, SpotsRemaining?: number | null, MaxParts?: number | null, Headcount?: number | null, ManagerEmailList?: string | null, ManagerIDs?: string[] | null, Created?: string | null, LastModified?: string | null, WaiverEventFormIDs?: (string | { WaiverEventID?: string | null, WaiverFormID?: string | null })[] | null, WaiverForms?: Record<string, any>[] | null, Waivers?: Record<string, any>[] | null, Category?: Record<string, any> | null, Settings?: { MaxParticipants?: number | null, Location?: string | null, SigningCutoff?: string | null, Description?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.update",
+      "shortPath": "events.update",
+      "description": "Change an event name, dates, category and attached forms; omitting the form list attaches every active form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateStart",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "dateEnd",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "isAllDay",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "eventCategoryID",
+            "optional": false,
+            "type": "string",
+            "description": "To set no category, send the empty GUID 00000000-0000-0000-0000-000000000000."
+          },
+          {
+            "key": "waiverFormIDs",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replaces the attached forms. Omitted or empty attaches every active form: WaiverFile cannot leave them unchanged, so pass the current IDs to keep them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverEventID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsAllDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsDeleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CategoryID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TimeLabel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NumWaiverForms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "NumSignedWaivers",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "SpotsRemaining",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "MaxParts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Headcount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ManagerEmailList",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ManagerIDs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastModified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverEventFormIDs",
+            "optional": true,
+            "type": "(string | { WaiverEventID?: string | null, WaiverFormID?: string | null })[] | null",
+            "description": "The forms attached to the event."
+          },
+          {
+            "key": "WaiverForms",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "Category",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "Settings",
+            "optional": true,
+            "type": "{ MaxParticipants?: number | null, Location?: string | null, SigningCutoff?: string | null, Description?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.events.waivers",
+      "shortPath": "events.waivers",
+      "description": "List the waivers signed for one event",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "waiverEventID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "{ WaiverID?: string | null, SiteID?: string | null, WaiverEventID?: string | null, WaiverFormID?: string | null, DateSigned?: string | null, SignedName?: string | null, SignedNameFirst?: string | null, Email?: string | null, Phone?: string | null, DOB?: string | null, Age?: number | null, HasSignature?: boolean | null, OptIn?: boolean | null, WaiverIsDeleted?: boolean | null, ReferenceID1?: string | null, ReferenceID2?: string | null, ReferenceID3?: string | null, Participants?: { WaiverParticipantID?: string | null, ParticipantName?: string | null, ParticipantNameFirst?: string | null, DOB?: string | null, IsCheckedIn?: boolean | null, IsSignee?: boolean | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.forms.active",
+      "shortPath": "forms.active",
+      "description": "List the waiver forms currently active on the site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverForms",
+            "optional": true,
+            "type": "{ ID?: string | null, SiteID?: string | null, Name?: string | null, Questions?: string | null, NumParticipantsPerForm?: number | null, MinAge?: number | null, MaxAgeParticipant?: number | null, AgreementLabelText?: string | null, FieldInclude_Email?: boolean | null, FieldRequire_Email?: boolean | null, FieldInclude_Phone?: boolean | null, FieldRequire_Phone?: boolean | null, FieldInclude_DOB?: boolean | null, FieldRequire_DOB?: boolean | null, FieldInclude_Address?: boolean | null, FieldRequire_Address?: boolean | null, IncludeSignature?: boolean | null, AllowSigningForSomeoneElse?: boolean | null, Status?: number | null, Language?: string | null, Created?: string | null, LastModified?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.forms.all",
+      "shortPath": "forms.all",
+      "description": "List every waiver form, including disabled and deleted ones, to resolve an older waiver",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverForms",
+            "optional": true,
+            "type": "{ ID?: string | null, SiteID?: string | null, Name?: string | null, Questions?: string | null, NumParticipantsPerForm?: number | null, MinAge?: number | null, MaxAgeParticipant?: number | null, AgreementLabelText?: string | null, FieldInclude_Email?: boolean | null, FieldRequire_Email?: boolean | null, FieldInclude_Phone?: boolean | null, FieldRequire_Phone?: boolean | null, FieldInclude_DOB?: boolean | null, FieldRequire_DOB?: boolean | null, FieldInclude_Address?: boolean | null, FieldRequire_Address?: boolean | null, IncludeSignature?: boolean | null, AllowSigningForSomeoneElse?: boolean | null, Status?: number | null, Language?: string | null, Created?: string | null, LastModified?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.ping.check",
+      "shortPath": "ping.check",
+      "description": "Check that the service is up and that the API key and site ID are valid; the cheapest way to verify credentials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.site.get",
+      "shortPath": "site.get",
+      "description": "Read the site behind the credentials: its name, timezone and contact details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Url",
+            "optional": true,
+            "type": "string | null",
+            "description": "The site path on app.waiverfile.com."
+          },
+          {
+            "key": "DefaultTimezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DateAdded",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReplyToEmail",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.subscribers.list",
+      "shortPath": "subscribers.list",
+      "description": "List SMS subscribers added within a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Subscribers",
+            "optional": true,
+            "type": "{ WPSMSMobileNumID?: string | null, Phone?: string | null, MobileNum?: string | null, Added?: string | null, OptOutDate?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.subscribers.optedOut",
+      "shortPath": "subscribers.optedOut",
+      "description": "List subscribers who opted out within a date range, which is what a suppression list needs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDateUTC",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Subscribers",
+            "optional": true,
+            "type": "{ WPSMSMobileNumID?: string | null, Phone?: string | null, MobileNum?: string | null, Added?: string | null, OptOutDate?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.byReference",
+      "shortPath": "waivers.byReference",
+      "description": "Find waivers by your own reference IDs, exactly matching any of the three fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "refID1",
+            "optional": true,
+            "type": "string",
+            "description": "Exact match on Reference ID 1."
+          },
+          {
+            "key": "refID2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refID3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refIDAny",
+            "optional": true,
+            "type": "string",
+            "description": "Exact match on any of the three reference fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "{ WaiverID?: string | null, SiteID?: string | null, WaiverEventID?: string | null, WaiverFormID?: string | null, WaiverFormInstanceID?: string | null, DateSigned?: string | null, DateAttending?: string | null, SignedName?: string | null, SignedNameFirst?: string | null, Email?: string | null, Phone?: string | null, DOB?: string | null, Age?: string | null, Address?: string | null, Address2?: string | null, City?: string | null, State?: string | null, Zip?: string | null, OptIn?: string | null, HasSignature?: string | null, Expired?: string | null, WaiverIsDeleted?: string | null, ClientIP?: string | null, ClientType?: string | null, ReferenceID1?: string | null, ReferenceID2?: string | null, ReferenceID3?: string | null, FieldsXml?: string | null, ValuesXml?: any, Particpants?: { WaiverParticipantID?: string | null, WaiverID?: string | null, ParticipantName?: string | null, ParticipantNameFirst?: string | null, DOB?: string | null, Age?: string | null, IsCheckedIn?: string | null, IsSignee?: string | null, ValuesXml?: any, CustomFields?: Record<string, any> | null }[] | null, WaiverEvent?: Record<string, any> | null, WaiverForm?: Record<string, any> | null, WaiverText?: Record<string, any> | null, CustomFields?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.data",
+      "shortPath": "waivers.data",
+      "description": "Read report-style rows, one per participant, optionally with custom form columns; pageIndex starts at 1",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "includeCustomColumns",
+            "optional": false,
+            "type": "boolean",
+            "description": "Include custom form fields from every waiver form."
+          },
+          {
+            "key": "consolidateParticipants",
+            "optional": false,
+            "type": "boolean",
+            "description": "Reserved: the API currently ignores it and still returns one row per participant."
+          },
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The page to return, starting at **1** — unlike the waiver lists."
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number",
+            "description": "Rows per page, 10 to 1000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Table",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.dataCount",
+      "shortPath": "waivers.dataCount",
+      "description": "Count the report rows a date range would return",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.get",
+      "shortPath": "waivers.get",
+      "description": "Read a signed waiver in full: the agreement accepted, every participant, the signatures and the form answers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "waiverID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverEventID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverFormID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverFormInstanceID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateSigned",
+            "optional": true,
+            "type": "string | null",
+            "description": "UTC, without an offset."
+          },
+          {
+            "key": "DateAttending",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SignedName",
+            "optional": true,
+            "type": "string | null",
+            "description": "The signer's last name."
+          },
+          {
+            "key": "SignedNameFirst",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DOB",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Age",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Address2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "City",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OptIn",
+            "optional": true,
+            "type": "string | null",
+            "description": "\"true\" or \"false\"."
+          },
+          {
+            "key": "HasSignature",
+            "optional": true,
+            "type": "string | null",
+            "description": "\"true\" or \"false\"."
+          },
+          {
+            "key": "Expired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverIsDeleted",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ClientIP",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ClientType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID3",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FieldsXml",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ValuesXml",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "Particpants",
+            "optional": true,
+            "type": "{ WaiverParticipantID?: string | null, WaiverID?: string | null, ParticipantName?: string | null, ParticipantNameFirst?: string | null, DOB?: string | null, Age?: string | null, IsCheckedIn?: string | null, IsSignee?: string | null, ValuesXml?: any, CustomFields?: Record<string, any> | null }[] | null",
+            "description": "WaiverFile's own spelling, with the missing i."
+          },
+          {
+            "key": "WaiverEvent",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "WaiverForm",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "WaiverText",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "CustomFields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "GetWaiver only: each custom form field label mapped to its value."
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.getLite",
+      "shortPath": "waivers.getLite",
+      "description": "Read a signed waiver without the agreement text, event detail or signatures",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "waiverID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "WaiverID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SiteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverEventID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverFormID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverFormInstanceID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateSigned",
+            "optional": true,
+            "type": "string | null",
+            "description": "UTC, without an offset."
+          },
+          {
+            "key": "DateAttending",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SignedName",
+            "optional": true,
+            "type": "string | null",
+            "description": "The signer's last name."
+          },
+          {
+            "key": "SignedNameFirst",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DOB",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Age",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Address2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "City",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OptIn",
+            "optional": true,
+            "type": "string | null",
+            "description": "\"true\" or \"false\"."
+          },
+          {
+            "key": "HasSignature",
+            "optional": true,
+            "type": "string | null",
+            "description": "\"true\" or \"false\"."
+          },
+          {
+            "key": "Expired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WaiverIsDeleted",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ClientIP",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ClientType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID3",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FieldsXml",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ValuesXml",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "Particpants",
+            "optional": true,
+            "type": "{ WaiverParticipantID?: string | null, WaiverID?: string | null, ParticipantName?: string | null, ParticipantNameFirst?: string | null, DOB?: string | null, Age?: string | null, IsCheckedIn?: string | null, IsSignee?: string | null, ValuesXml?: any, CustomFields?: Record<string, any> | null }[] | null",
+            "description": "WaiverFile's own spelling, with the missing i."
+          },
+          {
+            "key": "WaiverEvent",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "WaiverForm",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "WaiverText",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "CustomFields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "GetWaiver only: each custom form field label mapped to its value."
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.list",
+      "shortPath": "waivers.list",
+      "description": "Page through full waivers signed in a date range; pageIndex starts at 0",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number",
+            "description": "Zero-based for waiver lists and one-based for GetWaiverData — WaiverFile differs between the two."
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number",
+            "description": "Waivers per page, 10 to 500."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "{ WaiverID?: string | null, SiteID?: string | null, WaiverEventID?: string | null, WaiverFormID?: string | null, WaiverFormInstanceID?: string | null, DateSigned?: string | null, DateAttending?: string | null, SignedName?: string | null, SignedNameFirst?: string | null, Email?: string | null, Phone?: string | null, DOB?: string | null, Age?: string | null, Address?: string | null, Address2?: string | null, City?: string | null, State?: string | null, Zip?: string | null, OptIn?: string | null, HasSignature?: string | null, Expired?: string | null, WaiverIsDeleted?: string | null, ClientIP?: string | null, ClientType?: string | null, ReferenceID1?: string | null, ReferenceID2?: string | null, ReferenceID3?: string | null, FieldsXml?: string | null, ValuesXml?: any, Particpants?: { WaiverParticipantID?: string | null, WaiverID?: string | null, ParticipantName?: string | null, ParticipantNameFirst?: string | null, DOB?: string | null, Age?: string | null, IsCheckedIn?: string | null, IsSignee?: string | null, ValuesXml?: any, CustomFields?: Record<string, any> | null }[] | null, WaiverEvent?: Record<string, any> | null, WaiverForm?: Record<string, any> | null, WaiverText?: Record<string, any> | null, CustomFields?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.listLite",
+      "shortPath": "waivers.listLite",
+      "description": "Page through waivers signed in a date range, with the collected data only",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number",
+            "description": "Zero-based for waiver lists and one-based for GetWaiverData — WaiverFile differs between the two."
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number",
+            "description": "Waivers per page, 10 to 500."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "{ WaiverID?: string | null, SiteID?: string | null, WaiverEventID?: string | null, WaiverFormID?: string | null, WaiverFormInstanceID?: string | null, DateSigned?: string | null, DateAttending?: string | null, SignedName?: string | null, SignedNameFirst?: string | null, Email?: string | null, Phone?: string | null, DOB?: string | null, Age?: string | null, Address?: string | null, Address2?: string | null, City?: string | null, State?: string | null, Zip?: string | null, OptIn?: string | null, HasSignature?: string | null, Expired?: string | null, WaiverIsDeleted?: string | null, ClientIP?: string | null, ClientType?: string | null, ReferenceID1?: string | null, ReferenceID2?: string | null, ReferenceID3?: string | null, FieldsXml?: string | null, ValuesXml?: any, Particpants?: { WaiverParticipantID?: string | null, WaiverID?: string | null, ParticipantName?: string | null, ParticipantNameFirst?: string | null, DOB?: string | null, Age?: string | null, IsCheckedIn?: string | null, IsSignee?: string | null, ValuesXml?: any, CustomFields?: Record<string, any> | null }[] | null, WaiverEvent?: Record<string, any> | null, WaiverForm?: Record<string, any> | null, WaiverText?: Record<string, any> | null, CustomFields?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.pageCount",
+      "shortPath": "waivers.pageCount",
+      "description": "Count the waivers in a date range, to plan the paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date or date-time, as `yyyy-MM-dd` or ISO 8601."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.pdf",
+      "shortPath": "waivers.pdf",
+      "description": "Download a signed waiver as a PDF, returned base64-encoded in `content` with its byte length",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "waiverID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "waiverID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bytes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Base64. Decode it to get the PDF bytes."
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.waivers.search",
+      "shortPath": "waivers.search",
+      "description": "Search waivers by name, or by whatever the site configures as quick-search fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "terms",
+            "optional": false,
+            "type": "string",
+            "description": "A name, or whatever the site configures as its quick-search fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Waivers",
+            "optional": true,
+            "type": "{ WaiverID?: string | null, SiteID?: string | null, WaiverEventID?: string | null, WaiverFormID?: string | null, WaiverFormInstanceID?: string | null, DateSigned?: string | null, DateAttending?: string | null, SignedName?: string | null, SignedNameFirst?: string | null, Email?: string | null, Phone?: string | null, DOB?: string | null, Age?: string | null, Address?: string | null, Address2?: string | null, City?: string | null, State?: string | null, Zip?: string | null, OptIn?: string | null, HasSignature?: string | null, Expired?: string | null, WaiverIsDeleted?: string | null, ClientIP?: string | null, ClientType?: string | null, ReferenceID1?: string | null, ReferenceID2?: string | null, ReferenceID3?: string | null, FieldsXml?: string | null, ValuesXml?: any, Particpants?: { WaiverParticipantID?: string | null, WaiverID?: string | null, ParticipantName?: string | null, ParticipantNameFirst?: string | null, DOB?: string | null, Age?: string | null, IsCheckedIn?: string | null, IsSignee?: string | null, ValuesXml?: any, CustomFields?: Record<string, any> | null }[] | null, WaiverEvent?: Record<string, any> | null, WaiverForm?: Record<string, any> | null, WaiverText?: Record<string, any> | null, CustomFields?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.webhooks.subscribe",
+      "shortPath": "webhooks.subscribe",
+      "description": "Subscribe a URL to one WaiverFile trigger, such as newwaiver or newevent, so it is posted to on each occurrence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "newwaiver | newevent | newcheckin | newqrscan | newbookingcheckin | bookingcheckinundone | bookingcheckedin | newmembercheckin | membercheckinundone | editwaiver | editevent | editcheckin",
+            "description": "The trigger whose events will be posted to `targetUrl`."
+          },
+          {
+            "key": "targetUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The URL WaiverFile will POST to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "waiverfile.api.webhooks.unsubscribe",
+      "shortPath": "webhooks.unsubscribe",
+      "description": "Unsubscribe a URL from one trigger, which stops its deliveries without touching any other URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "newwaiver | newevent | newcheckin | newqrscan | newbookingcheckin | bookingcheckinundone | bookingcheckedin | newmembercheckin | membercheckinundone | editwaiver | editevent | editcheckin",
+            "description": "The trigger whose events will be posted to `targetUrl`."
+          },
+          {
+            "key": "targetUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The URL WaiverFile will POST to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

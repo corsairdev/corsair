@@ -1,0 +1,672 @@
+{
+  "id": "referralrock",
+  "displayName": "Referral Rock",
+  "description": "Referral program management with Referral Rock - read programs, advocates, referrals and rewards, and create an advocate, a referral or a reward through the Referral Rock API.",
+  "npmPackageName": "@corsair-dev/referralrock",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "referralrock.api.members.create",
+      "shortPath": "members.create",
+      "description": "Add an advocate to a program with their name, email and an optional referral code",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "program_id",
+            "optional": false,
+            "type": "string",
+            "description": "The program the member joins."
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The member’s email address."
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referral_code",
+            "optional": true,
+            "type": "string",
+            "description": "A code the member shares; Referral Rock generates one when omitted."
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_identifier",
+            "optional": true,
+            "type": "string",
+            "description": "Your own id, for linking the member to another system."
+          },
+          {
+            "key": "date_of_birth",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "A region name or ISO 3166-2 code; requires `country`."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "A country name or ISO 3166-2 code."
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "should_send_email",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send the program’s confirmation email. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ id?: string | null, displayName?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, externalIdentifier?: string | null, dateOfBirth?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, region?: string | null, countrySubdivision?: string | null, country?: string | null, postalCode?: string | null, disabledFlag?: boolean | null, disabledReason?: string | null, customOverrideURL?: string | null, payoutInfo?: { payoutType?: string | null, useDefaultValues?: boolean | null, email?: string | null } | null, customOption1Name?: string | null, customOption1Value?: string | null, customText1Name?: string | null, customText1Value?: string | null, customText2Name?: string | null, customText2Value?: string | null, programId?: string | null, programTitle?: string | null, programName?: string | null, referralCode?: string | null, referralUrl?: string | null, memberUrl?: string | null, emailShares?: number | null, socialShares?: number | null, views?: number | null, referrals?: number | null, lastShare?: string | null, referralsApproved?: number | null, referralsQualified?: number | null, referralsPending?: number | null, referralsApprovedAmount?: number | null, rewardsPendingAmount?: number | null, rewardsIssuedAmount?: number | null, rewardAmountTotal?: number | null, rewards?: number | null, createDt?: string | null, status?: string | null, utmSource?: string | null, utmMedium?: string | null, utmCampaign?: string | null, activatedDate?: string | null, lastActiveDate?: string | null } | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "referralrock.api.members.list",
+      "shortPath": "members.list",
+      "description": "List advocates with program, search, disabled and date filters, plus offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip, 0-based. Pass `next_offset` from the previous page."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Referral Rock returns everything matching when this is omitted."
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created after this date."
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created before this date."
+          },
+          {
+            "key": "program_id",
+            "optional": true,
+            "type": "string",
+            "description": "A program id, name or title."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A value the member must match on email, internal id, external id or referral code."
+          },
+          {
+            "key": "show_disabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include disabled members. Defaults to false."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "Member_Views_Desc | Member_Views_Asc | Page_Views_Desc | Page_Views_Asc | Lead_Count_Desc | Lead_Count_Asc | Reward_Issued_Total_Desc | Reward_Issued_Total_Asc | Member_Full_Name_Desc | Member_Full_Name_Asc | Create_Dt_Desc | Create_Dt_Asc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ id?: string | null, displayName?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, externalIdentifier?: string | null, dateOfBirth?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, region?: string | null, countrySubdivision?: string | null, country?: string | null, postalCode?: string | null, disabledFlag?: boolean | null, disabledReason?: string | null, customOverrideURL?: string | null, payoutInfo?: { payoutType?: string | null, useDefaultValues?: boolean | null, email?: string | null } | null, customOption1Name?: string | null, customOption1Value?: string | null, customText1Name?: string | null, customText1Value?: string | null, customText2Name?: string | null, customText2Value?: string | null, programId?: string | null, programTitle?: string | null, programName?: string | null, referralCode?: string | null, referralUrl?: string | null, memberUrl?: string | null, emailShares?: number | null, socialShares?: number | null, views?: number | null, referrals?: number | null, lastShare?: string | null, referralsApproved?: number | null, referralsQualified?: number | null, referralsPending?: number | null, referralsApprovedAmount?: number | null, rewardsPendingAmount?: number | null, rewardsIssuedAmount?: number | null, rewardAmountTotal?: number | null, rewards?: number | null, createDt?: string | null, status?: string | null, utmSource?: string | null, utmMedium?: string | null, utmCampaign?: string | null, activatedDate?: string | null, lastActiveDate?: string | null }[]"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `offset` to read the next page; null on the last."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Referral Rock’s own note. On a collection it can explain why nothing matched."
+          }
+        ]
+      }
+    },
+    {
+      "path": "referralrock.api.programs.list",
+      "shortPath": "programs.list",
+      "description": "List the referral programs on the account, optionally narrowed to one program id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "program_id",
+            "optional": true,
+            "type": "string",
+            "description": "A program id; when given, only that program is returned."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip, 0-based. Pass `next_offset` from the previous page."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Referral Rock returns everything matching when this is omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programs",
+            "optional": false,
+            "type": "{ id?: string | null, isActive?: boolean | null, name?: string | null, type?: string | null, title?: string | null, memberOffer?: string | null, referralOffer?: string | null, directUrl?: string | null, widgetUrl?: string | null }[]"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `offset` to read the next page; null on the last."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Referral Rock’s own note. On a collection it can explain why nothing matched."
+          }
+        ]
+      }
+    },
+    {
+      "path": "referralrock.api.referrals.create",
+      "shortPath": "referrals.create",
+      "description": "Record a referral against the code of the member who introduced it, with the order amount that reward rules key on",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "referral_code",
+            "optional": false,
+            "type": "string",
+            "description": "The referral code of the member who introduced this referral."
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preferred_contact",
+            "optional": true,
+            "type": "email | callMorning | callAfternoon | callEvening"
+          },
+          {
+            "key": "external_identifier",
+            "optional": true,
+            "type": "string",
+            "description": "Your own id, such as an order number."
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The order amount, which reward rules can key on."
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_option1_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_option2_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_text1_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_text2_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_text3_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_option1_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_option2_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_text1_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_text2_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_text3_value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "referral",
+            "optional": true,
+            "type": "{ id?: string | null, displayName?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, email?: string | null, externalIdentifier?: string | null, phoneNumber?: string | null, amount?: number | null, amountFormatted?: string | null, preferredContact?: string | null, createDate?: string | null, updateDate?: string | null, source?: string | null, programId?: string | null, programName?: string | null, programTitle?: string | null, referringMemberId?: string | null, referringMemberName?: string | null, memberEmail?: string | null, memberReferralCode?: string | null, memberExternalIdentifier?: string | null, approvedDate?: string | null, qualifiedDate?: string | null, status?: string | null, companyName?: string | null, note?: string | null, publicNote?: string | null, conversionNote?: string | null, customOption1Name?: string | null, customOption2Name?: string | null, customText1Name?: string | null, customText2Name?: string | null, customText3Name?: string | null, customOption1Value?: string | null, customOption2Value?: string | null, customText1Value?: string | null, customText2Value?: string | null, customText3Value?: string | null, utmSource?: string | null, utmMedium?: string | null, utmCampaign?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, region?: string | null, postalCode?: string | null, country?: string | null } | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "referralrock.api.referrals.list",
+      "shortPath": "referrals.list",
+      "description": "List referrals with program, member, status and date filters, plus offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip, 0-based. Pass `next_offset` from the previous page."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Referral Rock returns everything matching when this is omitted."
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created after this date."
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created before this date."
+          },
+          {
+            "key": "program_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A value the referral must match on email, internal id, external id or referral code."
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "The referral status: `pending`, `qualified`, `approved` or `denied`."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "Create_Dt_Desc | Create_Dt_Asc | Amount_Desc | Amount_Asc | Qualified_Dt_Desc | Qualified_Dt_Asc | Closed_Dt_Desc | Closed_Dt_Asc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "referrals",
+            "optional": false,
+            "type": "{ id?: string | null, displayName?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, email?: string | null, externalIdentifier?: string | null, phoneNumber?: string | null, amount?: number | null, amountFormatted?: string | null, preferredContact?: string | null, createDate?: string | null, updateDate?: string | null, source?: string | null, programId?: string | null, programName?: string | null, programTitle?: string | null, referringMemberId?: string | null, referringMemberName?: string | null, memberEmail?: string | null, memberReferralCode?: string | null, memberExternalIdentifier?: string | null, approvedDate?: string | null, qualifiedDate?: string | null, status?: string | null, companyName?: string | null, note?: string | null, publicNote?: string | null, conversionNote?: string | null, customOption1Name?: string | null, customOption2Name?: string | null, customText1Name?: string | null, customText2Name?: string | null, customText3Name?: string | null, customOption1Value?: string | null, customOption2Value?: string | null, customText1Value?: string | null, customText2Value?: string | null, customText3Value?: string | null, utmSource?: string | null, utmMedium?: string | null, utmCampaign?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, region?: string | null, postalCode?: string | null, country?: string | null }[]"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `offset` to read the next page; null on the last."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Referral Rock’s own note. On a collection it can explain why nothing matched."
+          }
+        ]
+      }
+    },
+    {
+      "path": "referralrock.api.rewards.create",
+      "shortPath": "rewards.create",
+      "description": "Create a pending reward for a member or for a referred person, with its amount and payout",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string",
+            "description": "A member to reward. Give this or `referral_id`, not both."
+          },
+          {
+            "key": "referral_id",
+            "optional": true,
+            "type": "string",
+            "description": "A referral (the referred person) to reward. Give this or `member_id`, not both."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "The reward amount."
+          },
+          {
+            "key": "payout_id",
+            "optional": false,
+            "type": "string",
+            "description": "The payout the reward is paid through. Referral Rock requires it; payouts exist once a reward rule uses them."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eligibility_date",
+            "optional": true,
+            "type": "string",
+            "description": "When the reward becomes eligible, as ISO 8601."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reward",
+            "optional": true,
+            "type": "{ id?: string | null, payoutId?: string | null, payoutDescription?: string | null, programId?: string | null, programName?: string | null, memberId?: string | null, referralId?: string | null, type?: string | null, recipientId?: string | null, recipientName?: string | null, recipientEmailAddress?: string | null, recipientExternalIdentifier?: string | null, externalIdentifier?: string | null, status?: string | null, amount?: number | null, createDate?: string | null, issueDate?: string | null, eligibilityDate?: string | null, description?: string | null, transactionID?: string | null, updateDate?: string | null, referralDisplayName?: string | null, currencyCode?: string | null, source?: string | null, programRewardRuleId?: string | null, paymentType?: string | null, paymentCode?: string | null, completeNote?: string | null, reason?: string | null, reasonOther?: string | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The `resultInfo.Status` Referral Rock reported for the reward."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The `resultInfo.Message`; when `reward` is null it says why nothing was created."
+          }
+        ]
+      }
+    },
+    {
+      "path": "referralrock.api.rewards.list",
+      "shortPath": "rewards.list",
+      "description": "List rewards with program, member, status and date filters, plus offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip, 0-based. Pass `next_offset` from the previous page."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. Referral Rock returns everything matching when this is omitted."
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created after this date."
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string",
+            "description": "Only records created before this date."
+          },
+          {
+            "key": "program_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "The reward status: `Pending`, `Processing` or `Issued`."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rewards",
+            "optional": false,
+            "type": "{ id?: string | null, payoutId?: string | null, payoutDescription?: string | null, programId?: string | null, programName?: string | null, memberId?: string | null, referralId?: string | null, type?: string | null, recipientId?: string | null, recipientName?: string | null, recipientEmailAddress?: string | null, recipientExternalIdentifier?: string | null, externalIdentifier?: string | null, status?: string | null, amount?: number | null, createDate?: string | null, issueDate?: string | null, eligibilityDate?: string | null, description?: string | null, transactionID?: string | null, updateDate?: string | null, referralDisplayName?: string | null, currencyCode?: string | null, source?: string | null, programRewardRuleId?: string | null, paymentType?: string | null, paymentCode?: string | null, completeNote?: string | null, reason?: string | null, reasonOther?: string | null }[]"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `offset` to read the next page; null on the last."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Referral Rock’s own note. On a collection it can explain why nothing matched."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
