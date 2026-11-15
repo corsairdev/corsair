@@ -41,7 +41,7 @@ it.each([
 		'GET',
 		'/recipients/56',
 		undefined,
-		{ id: 56, dob: null },
+		{ data: { id: 56, dob: null } },
 	],
 	[
 		'update',
@@ -1076,4 +1076,53 @@ it('marks every operation that mails or charges as destructive (R8)', () => {
 		'recipients.createMultiple',
 	] as const)
 		expect(thanksIoEndpointMeta[op].riskLevel).toBe('destructive');
+});
+
+it('parses live responses: recipients.get in a data envelope, null giftcard fields on templates', async () => {
+	// Trimmed from the 11-15 live run (free account, test mode).
+	const recipient = {
+		data: {
+			id: 88931950,
+			mailing_list_id: 342345,
+			name: 'Corsair-plugin-test',
+			address: '123 Corsair Test St',
+			city: 'Denver',
+			province: 'CO',
+			postal_code: '80202',
+			country: 'US',
+			dob: null,
+			email: null,
+			absentee_address: null,
+			'mailing-list': { id: 342345 },
+		},
+	};
+	const template = {
+		id: 680093,
+		type: 'postcard',
+		name: 'corsair-plugin-test',
+		content: 'corsair plugin test',
+		font_size: 'auto',
+		skip_creative_generation: 0,
+		cc_emails: [],
+		giftcard_brand_code: null,
+		giftcard_brand_image: null,
+		giftcard_amount: null,
+		landing_page_url: null,
+		handwriting_realism: false,
+	};
+	mockRequest
+		.mockResolvedValueOnce(recipient)
+		.mockResolvedValueOnce(template)
+		.mockResolvedValueOnce({ data: [template] });
+	await expect(
+		thanksIoEndpointsNested.recipients.get(ctx, { recipientId: 88931950 }),
+	).resolves.toEqual(recipient);
+	await expect(
+		thanksIoEndpointsNested.messageTemplates.create(ctx, {
+			body: { type: 'postcard', name: 'corsair-plugin-test' },
+		}),
+	).resolves.toEqual(template);
+	await expect(
+		thanksIoEndpointsNested.messageTemplates.list(ctx, {}),
+	).resolves.toEqual({ data: [template] });
 });

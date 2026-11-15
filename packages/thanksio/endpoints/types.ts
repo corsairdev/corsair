@@ -266,9 +266,10 @@ const messageTemplateSchema = z
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
 		type: z.string().optional(),
-		giftcard_brand_code: z.string().optional(),
+		// Live responses send null for these on non-giftcard templates.
+		giftcard_brand_code: nullableString,
 		giftcard_brand_image: nullableString,
-		giftcard_amount: z.union([z.string(), z.number()]).optional(),
+		giftcard_amount: z.union([z.string(), z.number()]).nullable().optional(),
 		landing_page_url: nullableString,
 		share_uuid: z.string().optional(),
 	})
@@ -687,7 +688,8 @@ export const ThanksIoEndpointInputSchemas = {
 } as const;
 
 export const ThanksIoEndpointOutputSchemas = {
-	recipientsGet: recipientSchema,
+	// The live API wraps this one in { data } (the OpenAPI example shows it bare).
+	recipientsGet: z.object({ data: recipientSchema }).passthrough(),
 	recipientsUpdate: recipientSchema,
 	recipientsDelete: emptyResponse,
 	recipientsCreate: recipientSchema,
