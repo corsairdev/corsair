@@ -4,6 +4,11 @@ import { KlipfolioEndpointOutputSchemas } from './endpoints/types';
 const apiKey = process.env.KLIPFOLIO_API_KEY;
 
 const describeLive = apiKey ? describe : describe.skip;
+if (!apiKey) {
+	console.warn(
+		'Skipping Klipfolio live API tests: KLIPFOLIO_API_KEY is not set.',
+	);
+}
 
 // One read-only smoke test: it proves authentication, transport, and schema
 // parsing still work against the live API. Destructive and mutation
