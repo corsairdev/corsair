@@ -1,0 +1,147 @@
+displayName: Ignisign
+description: Electronic signature and document workflow integration for Ignisign eIDAS-compliant digital signatures.
+overviewNote: >-
+  Ignisign operations use an API key from the IgniSign console (API page),
+  sent as a Bearer token. Each key belongs to one application and one
+  environment (DEVELOPMENT, STAGING or PRODUCTION), and both are read from the
+  key itself (`skv2_<env>_<app>_<secret>`), so `appId` and `appEnv` inputs are
+  optional overrides. To work in another environment, connect that
+  environment's key. Publishing a signature request (`publish`,
+  `createInOneCall`) emails signers whose signer profile uses BySide mode;
+  with Embedded mode your application shows the signing interface instead.
+  Run the Corsair database migration once before passing the connection to
+  `createCorsair`; creating a SQLite file does not create Corsair's tables.
+  Before creating a tenant connect link, mount a Hub delivery handler as
+  described in [Connect / OAuth](/management/connect). A call for a tenant with
+  no stored key fails with `AuthMissingError`, which carries a connect link when
+  Hub is configured.
+examples:
+  read:
+    path: applications.getContext
+    title: Read application context
+    args: {}
+  write:
+    path: signatureRequests.createInOneCall
+    title: Create signature request in one call
+    args:
+      title: Employment Agreement
+      signatureMethod: SIMPLE_STD
+      signers:
+        - email: signer@example.com
+      documents:
+        - originalName: contract.pdf
+          mimeType: application/pdf
+          base64: JVBERi0xLjQK...
+apiExamples:
+  signatureRequests.createInOneCall:
+    title: Sample Agreement
+    signatureMethod: SIMPLE_STD
+    signers:
+      - email: signer@example.com
+    documents:
+      - originalName: contract.pdf
+        mimeType: application/pdf
+        base64: JVBERi0xLjQK...
+  signatureRequests.init: {}
+  signatureRequests.initSignerSetup: {}
+  signatureRequests.list: {}
+  signatureRequests.getContext:
+    signatureRequestId: sig_req_sample
+  signatureRequests.update:
+    signatureRequestId: sig_req_sample
+    title: Updated Title
+  signatureRequests.publish:
+    signatureRequestId: sig_req_sample
+  signatureRequests.close:
+    signatureRequestId: sig_req_sample
+  signatureRequests.getStatus:
+    signatureRequestIds:
+      - sig_req_sample
+  signers.create:
+    email: signer@example.com
+  signers.getDetails:
+    signerId: signer_sample
+  signers.getSummary:
+    signerId: signer_sample
+  signers.update:
+    signerId: signer_sample
+    firstName: Jane
+  signers.revoke:
+    signerId: signer_sample
+  signers.regenerateAuthSecret:
+    signerId: signer_sample
+  signers.search:
+    filter: sample
+  signers.list: {}
+  documents.initialize:
+    signatureRequestId: sig_req_sample
+    label: Contract Document
+  documents.get:
+    documentId: doc_sample
+  documents.getContext:
+    documentId: doc_sample
+  documents.update:
+    documentId: doc_sample
+    label: Updated Label
+  documents.remove:
+    documentId: doc_sample
+  documents.removeContent:
+    documentId: doc_sample
+  documents.provideJsonContent:
+    documentId: doc_sample
+    jsonContent:
+      field: sampleValue
+  documents.providePrivateContent:
+    documentId: doc_sample
+    documentHash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  documents.downloadOriginalDoc:
+    documentId: doc_sample
+  documents.provideFileContent:
+    documentId: doc_sample
+    fileBase64: JVBERi0xLjQK...
+    fileName: contract.pdf
+    mimeType: application/pdf
+  documents.checkAuthenticity:
+    documentId: doc_sample
+    fileBase64: JVBERi0xLjQK...
+    fileName: signed-contract.pdf
+    mimeType: application/pdf
+  signatures.list:
+    documentId: doc_sample
+  signatures.get:
+    documentId: doc_sample
+    signatureId: sig_sample
+  signatures.getImages:
+    documentId: doc_sample
+  proofs.downloadSignatureByType:
+    call: "{ documentId: 'doc_sample', signatureType: 'PDF_WITH_SIGNATURES' }"
+  proofs.downloadLowLevelSignatureProof:
+    call: "{ documentId: 'doc_sample', signatureType: 'PKCS7', signerId: 'signer_sample' }"
+  signerProfiles.list: {}
+  signerProfiles.get:
+    signerProfileId: prof_sample
+  signerProfiles.getInputsNeeded:
+    signerProfileId: prof_sample
+  applications.getContext: {}
+  seal.signM2M:
+    m2mId: m2m_sample
+    documentHashSignedByM2MPrivateKey: hex_signature
+    document:
+      documentType: PDF
+      documentHash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  logCapsules.create:
+    hashSha256_b64: 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+  bareSignatures.getConfiguration: {}
+  bareSignatures.getProofToken:
+    code_verifier: verifier_sample
+    redirect_uri: https://app.example.com/callback
+    code: code_sample
+  bareSignatures.getProofs:
+    proofToken: token_sample
+apiNotes:
+  documents.downloadOriginalDoc: >-
+    Returns a binary response `{ kind: 'binary', contentType, base64, size }`.
+  proofs.downloadSignatureByType: >-
+    Returns a binary response `{ kind: 'binary', contentType, base64, size }`.
+  proofs.downloadLowLevelSignatureProof: >-
+    Returns a binary response `{ kind: 'binary', contentType, base64, size }`.

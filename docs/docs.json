@@ -2805,6 +2805,14 @@
                 ]
               },
               {
+                "group": "Ignisign",
+                "pages": [
+                  "plugins/ignisign/overview",
+                  "plugins/ignisign/api",
+                  "plugins/ignisign/database"
+                ]
+              },
+              {
                 "group": "ImageKit",
                 "pages": [
                   "plugins/imagekit/overview",
