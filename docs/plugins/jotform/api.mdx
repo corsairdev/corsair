@@ -1,0 +1,2429 @@
+---
+title: "Jotform API reference"
+sidebarTitle: "API"
+description: "API reference for the Jotform plugin in Corsair: every `jotform.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a new folder to organize forms
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.folders.create({ name: 'Feedback Forms' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `parent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  parent?: string | null,
+  color?: string | null,
+  path?: string | null,
+  forms?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a specific folder by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jotform.api.folders.delete({ id: 'fold-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `string \| Record<string, any> \| boolean` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### get
+
+`folders.get`
+
+Get details, subfolders and form IDs for a specific folder
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.folders.get({ id: 'fold-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  parent?: string | null,
+  color?: string | null,
+  path?: string | null,
+  forms?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Update folder properties such as name, color or contained forms
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.folders.update({ id: 'fold-123', name: 'Archived Feedback Forms' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `forms` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  parent?: string | null,
+  color?: string | null,
+  path?: string | null,
+  forms?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### clone
+
+`forms.clone`
+
+Clone an existing form by duplicating its questions and settings
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.clone({ id: '230000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### create
+
+`forms.create`
+
+Create a new form with questions, properties and email settings
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.create({ properties: { title: 'Feedback Form' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `questions` | `Record<string, any>[]` | No | — |
+| `properties` | `Record<string, any>` | No | — |
+| `emails` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### createForms
+
+`forms.createForms`
+
+Create new forms using a complete JSON form content structure
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.createForms({ formContent: { properties: { title: 'Feedback Form' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formContent` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### createQuestion
+
+`forms.createQuestion`
+
+Add a new question field to a specific form
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.createQuestion({ id: '230000000000000', question: { type: 'control_textbox', text: 'Full Name' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `question` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### createQuestions
+
+`forms.createQuestions`
+
+Add multiple questions in batch to a specific form
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.createQuestions({ id: '230000000000000', questions: [{ type: 'control_textbox', text: 'Full Name' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `questions` | `Record<string, any>[] \| Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### createReport
+
+`forms.createReport`
+
+Create a new report (grid, excel, csv, etc.) for a specific form
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.createReport({ id: '230000000000000', title: 'Submissions Grid', list_type: 'grid' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `list_type` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  title?: string | null,
+  type?: string | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSubmission
+
+`forms.createSubmission`
+
+Submit a new entry with field answers to a specific form
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.createSubmission({ id: '230000000000000', submission: { '1': 'Sample Answer' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `submission` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### createSubmissions
+
+`forms.createSubmissions`
+
+Add multiple submission entries in batch to a specific form
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.createSubmissions({ id: '230000000000000', submissions: [{ '1': 'Sample Answer' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `submissions` | `Record<string, any>[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### delete
+
+`forms.delete`
+
+Delete a specific form by ID from the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jotform.api.forms.delete({ id: '230000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### deleteQuestion
+
+`forms.deleteQuestion`
+
+Delete a specific question field from a form
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jotform.api.forms.deleteQuestion({ id: '230000000000000', qid: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `qid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `string \| Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### get
+
+`forms.get`
+
+Get basic information and status for a specific form
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.forms.get({ id: '230000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object \| object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  username?: string | null,
+  title?: string | null,
+  height?: string | number | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  last_submission?: string | null,
+  new?: string | number | null,
+  count?: string | number | null,
+  type?: string | null,
+  url?: string | null
+} | {
+  id: string,
+  username?: string | null,
+  title?: string | null,
+  height?: string | number | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  last_submission?: string | null,
+  new?: string | number | null,
+  count?: string | number | null,
+  type?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFiles
+
+`forms.getFiles`
+
+Get list of all uploaded files across submissions for a specific form
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.forms.getFiles({ id: '230000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null,
+  size?: string | number | null,
+  username?: string | null,
+  form_id?: string | null,
+  submission_id?: string | null,
+  date?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProperties
+
+`forms.getProperties`
+
+Get all form properties such as width, height and redirects
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.forms.getProperties({ id: '230000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### getProperty
+
+`forms.getProperty`
+
+Get a specific form property by its configuration key
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.forms.getProperty({ id: '230000000000000', key: 'title' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `string \| number \| Record<string, any> \| null` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### getQuestion
+
+`forms.getQuestion`
+
+Get configuration and properties for a specific question on a form
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.forms.getQuestion({ id: '230000000000000', qid: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `qid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any> \| Record<string, any>[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### getQuestions
+
+`forms.getQuestions`
+
+Get full list of questions and form fields for a specific form
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.forms.getQuestions({ id: '230000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### getReports
+
+`forms.getReports`
+
+Get all reports created for a specific form
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.forms.getReports({ id: '230000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  title?: string | null,
+  type?: string | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSubmissions
+
+`forms.getSubmissions`
+
+Get submissions list for a specific form with pagination and filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.forms.getSubmissions({ id: '230000000000000', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `filter` | `string` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `resultSet` | `object` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  ip?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  new?: string | number | null,
+  flag?: string | number | null,
+  answers?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="resultSet full type">
+
+```ts
+{
+  offset?: number | string,
+  limit?: number | string,
+  count?: number | string,
+  orderby?: string,
+  filter?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setProperties
+
+`forms.setProperties`
+
+Update or set configuration properties on a specific form
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.setProperties({ id: '230000000000000', properties: { title: 'New Form Title' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### updateQuestion
+
+`forms.updateQuestion`
+
+Update properties or label of a specific question on a form
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.forms.updateQuestion({ id: '230000000000000', qid: '1', question: { text: 'Updated Name' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `qid` | `string` | Yes | — |
+| `question` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any> \| Record<string, any>[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+## Labels
+
+### addResources
+
+`labels.addResources`
+
+Add form resources to a specific label
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.labels.addResources({ id: 'lbl-123', resources: [{ id: '230000000000000', type: 'form' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  id: string,
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  title?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`labels.create`
+
+Create a new label for organizing forms and assets
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.labels.create({ name: 'Internal Forms' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `parent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null,
+  parent?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete a label and all its sublabels
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jotform.api.labels.delete({ id: 'lbl-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `string \| Record<string, any> \| boolean` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### get
+
+`labels.get`
+
+Get details and metadata of a specific label
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.labels.get({ id: 'lbl-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null,
+  parent?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResources
+
+`labels.getResources`
+
+Get list of assets (forms) grouped under a specific label
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.labels.getResources({ id: 'lbl-123', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `orderby` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `resultSet` | `object` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  title?: string,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="resultSet full type">
+
+```ts
+{
+  offset?: number | string,
+  limit?: number | string,
+  count?: number | string,
+  orderby?: string,
+  filter?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeResources
+
+`labels.removeResources`
+
+Remove form resources from a specific label
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.labels.removeResources({ id: 'lbl-123', resources: [{ id: '230000000000000', type: 'form' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  id: string,
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  title?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`labels.update`
+
+Update name, color or parent of an existing label
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.labels.update({ id: 'lbl-123', name: 'General Forms' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null,
+  parent?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### delete
+
+`reports.delete`
+
+Delete a specific report by report ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jotform.api.reports.delete({ id: '90000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `boolean \| Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### get
+
+`reports.get`
+
+Get configuration and URL for a specific report by report ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.reports.get({ id: '90000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object \| object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  title?: string | null,
+  type?: string | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: string | null
+} | {
+  id: string,
+  form_id?: string | null,
+  title?: string | null,
+  type?: string | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Submissions
+
+### delete
+
+`submissions.delete`
+
+Delete a specific submission record from a form
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jotform.api.submissions.delete({ id: '500000000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `string \| Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### get
+
+`submissions.get`
+
+Get complete submission data and answer records for a specific submission
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.submissions.get({ id: '500000000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  ip?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  new?: string | number | null,
+  flag?: string | number | null,
+  answers?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`submissions.update`
+
+Edit answers or read/flag status of an existing submission
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.submissions.update({ id: '500000000000000000', submission: { '1': 'Updated Answer' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `submission` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+## System
+
+### getPlan
+
+`system.getPlan`
+
+Get limits and details for a specific Jotform system plan
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.system.getPlan({ planName: 'FREE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `planName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  name?: string | null,
+  price?: string | number | null,
+  submissions?: string | number | null,
+  uploads?: string | number | null,
+  paymentSubmissions?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### get
+
+`user.get`
+
+Get user account details, including account type, email, website and usage link
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  username: string,
+  name?: string | null,
+  email?: string | null,
+  website?: string | null,
+  time_zone?: string | null,
+  account_type?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  is_verified?: string | number | null,
+  usage?: string | null,
+  industry?: string | null,
+  company?: string | null,
+  avatarUrl?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFolders
+
+`user.getFolders`
+
+Get folders structure and layout for this account
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getFolders({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[] \| Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  parent?: string | null,
+  color?: string | null,
+  path?: string | null,
+  forms?: string[]
+}[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForms
+
+`user.getForms`
+
+Get list of forms for this account with pagination, ordering and filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getForms({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `filter` | `string` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `resultSet` | `object` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  username?: string | null,
+  title?: string | null,
+  height?: string | number | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  last_submission?: string | null,
+  new?: string | number | null,
+  count?: string | number | null,
+  type?: string | null,
+  favorite?: number | string | null,
+  archived?: number | string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="resultSet full type">
+
+```ts
+{
+  offset?: number | string,
+  limit?: number | string,
+  count?: number | string,
+  orderby?: string,
+  filter?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistory
+
+`user.getHistory`
+
+Get user activity log history records
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getHistory({ action: 'formCreation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `string` | No | — |
+| `date` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  type?: string | null,
+  date?: number | string | null,
+  ip?: string | null,
+  form_id?: string | null,
+  username?: string | null,
+  parent?: string | null,
+  title?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInvoices
+
+`user.getInvoices`
+
+Get list of invoices and payment receipts for this account
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getInvoices({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### getLabels
+
+`user.getLabels`
+
+Get all labels created by the user for organizing form assets
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getLabels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addResources` | `string \| boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### getReports
+
+`user.getReports`
+
+Get list of reports generated across all forms in this account
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getReports({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  title?: string | null,
+  type?: string | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSettingByKey
+
+`user.getSettingByKey`
+
+Get a specific user setting by key name
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getSettingByKey({ key: 'time_zone' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `string \| number \| boolean \| Record<string, any> \| null` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### getSettings
+
+`user.getSettings`
+
+Get user account settings including company, timezone and industry
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getSettings({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### getSubmissions
+
+`user.getSubmissions`
+
+Get list of submissions for all forms in this account
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getSubmissions({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `filter` | `string` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `resultSet` | `object` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  ip?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  new?: string | number | null,
+  flag?: string | number | null,
+  answers?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="resultSet full type">
+
+```ts
+{
+  offset?: number | string,
+  limit?: number | string,
+  count?: number | string,
+  orderby?: string,
+  filter?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSubusers
+
+`user.getSubusers`
+
+Get sub-user accounts list and permissions for this account
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getSubusers({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  owner?: string | null,
+  status?: string | null,
+  email?: string | null,
+  username?: string | null,
+  created_at?: string | null,
+  permissions?: Record<string, any>[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUsage
+
+`user.getUsage`
+
+Get monthly user usage statistics such as submissions, payments and views
+
+**Risk:** `read`
+
+```ts
+await corsair.jotform.api.user.getUsage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  submissions?: string | number,
+  ssl_submissions?: string | number,
+  payments?: string | number,
+  uploads?: string | number,
+  mobile_submissions?: string | number,
+  views?: string | number,
+  api?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### login
+
+`user.login`
+
+Log in user with username and password to create an authenticated session
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.user.login({ username: 'testuser.example', password: 'example-password' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `appName` | `string` | No | — |
+| `access` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### logout
+
+`user.logout`
+
+End the current user session and log out
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.user.logout({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `boolean` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### register
+
+`user.register`
+
+Register a new user account with username, password and email
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.user.register({ username: 'testuser.example', password: 'example-password', email: 'user@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+
+### updateSettings
+
+`user.updateSettings`
+
+Update user account settings including name, email, website and timezone
+
+**Risk:** `write`
+
+```ts
+await corsair.jotform.api.user.updateSettings({ company: 'Acme Corp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `website` | `string` | No | — |
+| `time_zone` | `string` | No | — |
+| `company` | `string` | No | — |
+| `securityQuestion` | `string` | No | — |
+| `securityAnswer` | `string` | No | — |
+| `industry` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseCode` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `duration` | `string` | No | — |
+| `info` | `string` | No | — |
+| `limit-left` | `number \| string` | No | — |
+
+
+
+---
+

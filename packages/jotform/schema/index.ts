@@ -1,4 +1,6 @@
+import { jotformEntities } from './database';
+
 export const JotformSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: jotformEntities,
 } as const;

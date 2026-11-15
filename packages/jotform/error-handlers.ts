@@ -1,28 +1,94 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
+	// First match wins: daily quota exhaustion cannot succeed on retry,
+	// so it is handled before generic rate-limit handling.
+	QUOTA_EXHAUSTED_ERROR: {
+		match: (error: Error) => {
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('daily api call limit') ||
+				msg.includes('limit-left: 0') ||
+				msg.includes('quota exceeded') ||
+				msg.includes('quota_exhausted')
+			);
+		},
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
+	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return (
+				msg.includes('too many requests') ||
+				msg.includes('rate limit') ||
+				msg.includes('rate_limited') ||
+				msg.includes('429')
+			);
 		},
-		// Core's request() has already retried this 429 (three times, honouring
-		// Retry-After) before it reaches a handler. Retrying the endpoint again
-		// here would multiply the attempts and the wait.
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (error: Error) => {
+			let retryAfterMs: number | undefined;
+			if (error instanceof ApiError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			}
+			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs };
+		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (
+				error instanceof ApiError &&
+				(error.status === 401 || error.status === 403)
+			) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('forbidden') ||
+				msg.includes('invalid api key') ||
+				msg.includes('not authorized')
+			);
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 404) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('not found');
+		},
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
+	},
+	BAD_REQUEST_ERROR: {
+		match: (error: Error) => {
+			if (
+				error instanceof ApiError &&
+				(error.status === 400 || error.status === 422)
+			) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return msg.includes('bad request') || msg.includes('invalid request');
+		},
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			if (
+				error instanceof ApiError &&
+				error.status >= 500 &&
+				error.status < 600
+			)
+				return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('internal server error') || msg.includes('500');
+		},
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
+		match: (_error: Error) => true,
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
