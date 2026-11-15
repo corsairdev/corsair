@@ -485,6 +485,7 @@ export const BaseProviders = [
 	'sentry',
 	'serpapi',
 	'servicenow',
+	'sevdesk',
 	'sharepoint',
 	'shippo',
 	'shortcut',
@@ -1072,6 +1073,7 @@ export const ProviderDisplayNames = {
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	servicenow: 'ServiceNow',
+	sevdesk: 'Sevdesk',
 	sharepoint: 'SharePoint',
 	shippo: 'Shippo',
 	shortcut: 'Shortcut',
@@ -1666,6 +1668,7 @@ export type AllProviders =
 	| 'sentry'
 	| 'serpapi'
 	| 'servicenow'
+	| 'sevdesk'
 	| 'sharepoint'
 	| 'shippo'
 	| 'shortcut'
