@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
 	FreeAgentEndpointInputSchemas,
 	FreeAgentEndpointOutputSchemas,
@@ -269,5 +271,42 @@ describe('FreeAgent schemas', () => {
 				query: { order_by: 'count' },
 			}).success,
 		).toBe(false);
+	});
+
+	it('documents invoice item request and response shapes separately', () => {
+		const apiDocs = readFileSync(
+			join(__dirname, '../../docs/plugins/freeagent/api.mdx'),
+			'utf8',
+		);
+		for (const operation of [
+			'invoices.create',
+			'invoices.duplicate',
+			'invoices.get',
+			'invoices.list',
+		]) {
+			const snippetStart = apiDocs.indexOf(
+				`await corsair.freeagent.api.${operation}(`,
+			);
+			const inputStart = apiDocs.indexOf('**Input**', snippetStart);
+			const outputStart = apiDocs.indexOf('**Output**', inputStart);
+			const operationEnd = apiDocs.indexOf('\n---', outputStart);
+			const inputDocs = apiDocs.slice(inputStart, outputStart);
+			const outputDocs = apiDocs.slice(outputStart, operationEnd);
+
+			expect(snippetStart).toBeGreaterThanOrEqual(0);
+			expect(inputStart).toBeGreaterThan(snippetStart);
+			expect(outputStart).toBeGreaterThan(inputStart);
+			expect(operationEnd).toBeGreaterThan(outputStart);
+			expect(outputDocs).toContain('url?: string');
+			expect(outputDocs).toContain('description?: string');
+			expect(outputDocs).toContain('price?: string | number');
+			expect(outputDocs).toContain('quantity?: string | number');
+			expect(outputDocs).toContain('sales_tax_rate?: string | number');
+			if (operation === 'invoices.create') {
+				expect(inputDocs).toContain('description: string');
+				expect(inputDocs).toContain('price?: number');
+				expect(inputDocs).not.toContain('price?: string | number');
+			}
+		}
 	});
 });
