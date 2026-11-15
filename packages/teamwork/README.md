@@ -44,6 +44,8 @@ When a V3 response supports field projection, `fields[projects]` selection also 
 
 V3 task create/update inputs accept Teamwork's official examples, including plain numeric assignee arrays, string priorities, descriptions, and custom-field arrays. Known fields are still validated and unknown fields are rejected.
 
+V3 task create operations require `task.name`; update operations accept partial task fields.
+
 Teamwork's published API guide and OpenAPI documents do not specify a numeric rate quota or a documented rate-limit window. Corsair's HTTP transport handles HTTP 429 responses and honors `Retry-After`; plugin handlers do not add a second retry loop. Writes are not retried on server or network failures.
 
 ## API operation inventory
