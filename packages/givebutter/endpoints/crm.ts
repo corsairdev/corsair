@@ -13,7 +13,7 @@ import {
 
 type EndpointName = keyof GivebutterCrmEndpointInputs;
 type Operation<T extends EndpointName> = {
-	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	path: (input: GivebutterCrmEndpointInputs[T]) => string;
 	query?: (
 		input: GivebutterCrmEndpointInputs[T],
@@ -92,7 +92,7 @@ export const Contacts = {
 		void: true,
 	}),
 	restore: define('restoreContact', {
-		method: 'POST',
+		method: 'PATCH',
 		path: ({ contact }) => `/v1/contacts/${pathValue(contact)}/restore`,
 	}),
 } as const;

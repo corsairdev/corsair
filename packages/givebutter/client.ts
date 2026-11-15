@@ -34,7 +34,7 @@ export class GivebutterAPIError extends Error {
 }
 
 type RequestOptions = {
-	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	// Endpoint schemas accept provider-specific JSON objects with varying documented fields.
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;

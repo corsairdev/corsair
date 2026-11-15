@@ -13,7 +13,7 @@ import {
 
 type EndpointName = keyof GivebutterEndpointInputs;
 type Operation<T extends EndpointName> = {
-	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	path: (input: GivebutterEndpointInputs[T]) => string;
 	query?: (
 		input: GivebutterEndpointInputs[T],

@@ -163,7 +163,7 @@ describe('Givebutter CRM and financial operation seams', () => {
 			name: 'contacts.restore',
 			call: () => Contacts.restore(ctx as never, { contact: 1 }),
 			result: resource,
-			method: 'POST',
+			method: 'PATCH',
 			path: '/v1/contacts/1/restore',
 		},
 		{
