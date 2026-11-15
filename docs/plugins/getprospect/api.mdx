@@ -113,7 +113,9 @@ await corsair.getprospect.api.account.meGet({});
 </AccordionGroup>
 
 
+
 ---
+
 ## Billing
 
 ### creditsGet
@@ -2556,7 +2558,7 @@ await corsair.getprospect.api.developer.rateLimitsGet({});
 
 Find Email. Credit cost: served_address (a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free)).
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.getprospect.api.email.find({
@@ -2674,7 +2676,7 @@ Credit-aware operation: served_address; a valid address is served that the works
 
 Find Email (GET). Credit cost: served_address (a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free)).
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.getprospect.api.email.findGet({
@@ -3975,7 +3977,7 @@ Credit-aware operation: billable_row; at start, for `counts.billable`; `unknown`
 
 Verify Email. Credit cost: address (a valid, invalid or accept_all verdict, once per address per workspace).
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.getprospect.api.email.verify({
@@ -4089,7 +4091,7 @@ Credit-aware operation: address; a valid, invalid or accept_all verdict, once pe
 
 Verify Email (GET). Credit cost: address (a valid, invalid or accept_all verdict, once per address per workspace).
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.getprospect.api.email.verifyGet({
@@ -8196,7 +8198,7 @@ await corsair.getprospect.api.notifications.markRead({
 
 People Bulk Enrich. Credit cost: newly revealed email; phone number found (enrich_email (on by default) / enrich_phone, per item).
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.getprospect.api.people.bulkEnrich({
@@ -9226,7 +9228,7 @@ await corsair.getprospect.api.people.editsUpdate({
 
 People Enrich. Credit cost: newly revealed email; phone number found (enrich_email (on by default) / enrich_phone).
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.getprospect.api.people.enrich({
@@ -10548,7 +10550,7 @@ Credit-aware operation: person whose stored valid email is handed over and was n
 
 People Search. Credit cost: newly revealed email; phone number found (only with enrich_email / enrich_phone).
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.getprospect.api.people.search({
@@ -12319,3 +12321,4 @@ await corsair.getprospect.api.trash.restore({
 
 
 ---
+
