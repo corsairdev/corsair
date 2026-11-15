@@ -3350,6 +3350,14 @@
                 ]
               },
               {
+                "group": "PDF-API.io",
+                "pages": [
+                  "plugins/pdfapi/overview",
+                  "plugins/pdfapi/api",
+                  "plugins/pdfapi/database"
+                ]
+              },
+              {
                 "group": "PDF.co",
                 "pages": [
                   "plugins/pdfco/overview",
