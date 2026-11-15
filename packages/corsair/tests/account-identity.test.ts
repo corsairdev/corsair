@@ -161,6 +161,25 @@ describe('listAccounts / resolveAccount', () => {
 		);
 	});
 
+	test('resolveAccount with a label matching two accounts throws account_required', async () => {
+		await seedAccount(t, 'x1', '2026-01-01', {
+			ref: 'r1',
+			label: 'same@x.com',
+		});
+		await seedAccount(t, 'x2', '2026-01-02', {
+			ref: 'r2',
+			label: 'same@x.com',
+		});
+		const err = await resolveAccount(input(t, 'SAME@x.com')).catch((e) => e);
+		expect(err).toBeInstanceOf(AccountSelectionError);
+		expect(err.code).toBe('account_required');
+		expect(err.message).toBe(
+			'Label "SAME@x.com" matches 2 accounts for "gmail" (tenant "t1"): r1, r2. Name one by its id.',
+		);
+		expect((await resolveAccount(input(t, 'x2')))?.id).toBe('x2');
+		expect((await resolveAccount(input(t, 'r1')))?.id).toBe('x1');
+	});
+
 	test('resolveAccount returns undefined when the tenant has no account', async () => {
 		expect(await resolveAccount(input(t))).toBeUndefined();
 	});

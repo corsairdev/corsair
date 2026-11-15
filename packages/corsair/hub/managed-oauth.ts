@@ -18,7 +18,7 @@ export type ManagedOAuthDeliveryErrorCode =
 	| 'no_database'
 	| 'plugin_not_found'
 	| 'no_access_token'
-	| 'account_limit';
+	| AccountSelectionError['code'];
 
 export class ManagedOAuthDeliveryError extends Error {
 	readonly code: ManagedOAuthDeliveryErrorCode;
@@ -64,8 +64,12 @@ export async function processManagedOAuthDelivery(
 		scope,
 		authType = 'managed',
 		providerData,
-		account,
 	} = options;
+	// Delivery payloads are untyped at runtime; a blank id means no account.
+	const account =
+		typeof options.account?.id === 'string' && options.account.id.trim()
+			? options.account
+			: undefined;
 
 	if (!accessToken.trim()) {
 		throw new ManagedOAuthDeliveryError(
@@ -110,10 +114,7 @@ export async function processManagedOAuthDelivery(
 			}));
 		} catch (error) {
 			if (error instanceof AccountSelectionError) {
-				throw new ManagedOAuthDeliveryError(
-					error.code as 'account_limit',
-					error.message,
-				);
+				throw new ManagedOAuthDeliveryError(error.code, error.message);
 			}
 			throw error;
 		}

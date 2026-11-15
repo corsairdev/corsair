@@ -236,13 +236,21 @@ export async function resolveAccount(
 		})),
 	);
 	const wanted = i.ref?.toLowerCase();
-	const match = i.ref
-		? (accounts.find((a) => a.ref === i.ref) ??
-			accounts.find((a) => a.label?.toLowerCase() === wanted))
-		: undefined;
-	if (match) return match;
+	const exact = i.ref ? accounts.find((a) => a.ref === i.ref) : undefined;
+	if (exact) return exact;
+	const byLabel = i.ref
+		? accounts.filter((a) => a.label?.toLowerCase() === wanted)
+		: [];
+	if (byLabel.length === 1) return byLabel[0];
 
 	const name = await integrationName(i.db, i.integrationId);
+	if (byLabel.length > 1) {
+		throw new AccountSelectionError(
+			'account_required',
+			`Label "${i.ref}" matches ${byLabel.length} accounts for "${name}" (tenant "${i.tenantId}"): ${byLabel.map((a) => a.ref ?? a.id).join(', ')}. Name one by its id.`,
+			byLabel.map(({ id, ref, label }) => ({ id, ref, label })),
+		);
+	}
 	const names = accounts.map(displayName).join(', ');
 	const summary = accounts.map(({ id, ref, label }) => ({ id, ref, label }));
 	if (!i.ref) {

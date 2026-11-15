@@ -82,6 +82,15 @@ describe('managed oauth delivery by account identity', () => {
 		expect(await km().get_access_token()).toBe('at-default');
 	});
 
+	it('a delivery with an empty account id is treated as no account', async () => {
+		await deliver('at-blank', { id: '  ' });
+		expect(await rows()).toHaveLength(1);
+		expect(await km().get_access_token()).toBe('at-blank');
+		// A sealed blank identity would block adoption and force a second row.
+		await deliver('at-a', { id: 'a' });
+		expect(await rows()).toHaveLength(1);
+	});
+
 	it('two deliveries with different account ids create two rows with separate tokens', async () => {
 		await deliver('at-a', { id: 'a', label: 'a@x.com' });
 		await deliver('at-b', { id: 'b', label: 'b@x.com' });

@@ -337,11 +337,7 @@ describe('withTenant account scope', () => {
 		it('a single-account read does not decrypt the account identity', async () => {
 			await addAccount('a', 'a@x.com', 'tok-a');
 			await notes(bound('a')).upsertByEntityId('a0', { title: 'a0' });
-			const spy = jest.spyOn(
-				// biome-ignore lint/style/noCommonJs: spy on the compiled module
-				require('../core/auth/encryption'),
-				'decryptDEK',
-			);
+			const spy = jest.spyOn(require('../core/auth/encryption'), 'decryptDEK');
 			try {
 				const rows = await notes(corsair.withTenant('t1')).list();
 				expect(rows).toHaveLength(1);

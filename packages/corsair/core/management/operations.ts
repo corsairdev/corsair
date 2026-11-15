@@ -187,9 +187,11 @@ export async function describeTenant(
 	tenantId: string,
 ): Promise<Tenant> {
 	const accounts = await listAccountSummariesForTenant(internal, tenantId);
-	const connectedPlugins = accounts
-		.filter((a) => a.hasCredentials)
-		.map((a) => a.integrationName);
+	const connectedPlugins = [
+		...new Set(
+			accounts.filter((a) => a.hasCredentials).map((a) => a.integrationName),
+		),
+	];
 	return { id: tenantId, accounts, connectedPlugins };
 }
 
@@ -222,7 +224,9 @@ export async function listTenants(
 				integrationName: r.integrationName,
 				hasCredentials,
 			});
-			if (hasCredentials) t.connectedPlugins.push(r.integrationName);
+			if (hasCredentials && !t.connectedPlugins.includes(r.integrationName)) {
+				t.connectedPlugins.push(r.integrationName);
+			}
 		}
 	}
 
@@ -356,6 +360,8 @@ export async function disconnectConnection(
 				)?.id;
 			} catch (error) {
 				if (!(error instanceof AccountSelectionError)) throw error;
+				// An ambiguous label must not look like "nothing to disconnect".
+				if (error.code === 'account_required') throw badRequest(error.message);
 			}
 			if (!accountId) return;
 		}

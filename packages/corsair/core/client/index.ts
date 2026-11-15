@@ -303,6 +303,7 @@ function createAccountIdResolver(
 		}
 		// A bound ref is pinned by row id, but the row can be disconnected and
 		// reconnected under a new id, so confirm it still exists each call.
+		if (cachedAccountId && !account?.ref) return cachedAccountId;
 		if (cachedAccountId) {
 			const live = await database.db
 				.selectFrom('corsair_accounts')

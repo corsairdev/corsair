@@ -5,7 +5,11 @@ import {
 	generateDEK,
 } from '../core/auth/encryption';
 import { managementHandler } from '../core/management';
-import { disconnectConnection } from '../core/management/operations';
+import {
+	describeTenant,
+	disconnectConnection,
+	listTenants,
+} from '../core/management/operations';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
 
@@ -341,6 +345,52 @@ describe('manage.disconnect — one account', () => {
 			expect(result).toEqual({ ok: true, disconnected: true });
 			expect(await accountCount(db, 'acc1')).toBe(0);
 			expect(await accountCount(db, 'acc2')).toBe(0);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('disconnect with a label matching two accounts rejects and deletes nothing', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			const dek = generateDEK();
+			await db
+				.updateTable('corsair_accounts')
+				.set({
+					config: encryptConfig(
+						{ account_ref: 'p-2', account_label: 'one@x.com' },
+						dek,
+					),
+					dek: await encryptDEK(dek, KEK),
+				})
+				.where('id', '=', 'acc2')
+				.execute();
+			await expect(
+				disconnectConnection(internalFor(db), {
+					plugin: 'slack',
+					tenantId: 't1',
+					account: 'one@x.com',
+				}),
+			).rejects.toThrow(/matches 2 accounts.*Name one by its id/);
+			expect(await accountCount(db, 'acc1')).toBe(1);
+			expect(await accountCount(db, 'acc2')).toBe(1);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('lists a plugin once in connectedPlugins when it has two accounts', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			expect(
+				(await describeTenant(internalFor(db), 't1')).connectedPlugins,
+			).toEqual(['slack']);
+			const t1 = (await listTenants(internalFor(db))).find(
+				(t) => t.id === 't1',
+			);
+			expect(t1?.connectedPlugins).toEqual(['slack']);
 		} finally {
 			await destroy();
 		}
