@@ -1,0 +1,138 @@
+---
+title: "SSLMate Cert Spotter plugin"
+sidebarTitle: "Overview"
+description: "Search Certificate Transparency logs for a domain's certificates, and follow the stream of new issuances."
+---
+
+Use **SSLMate Cert Spotter** through Corsair: one client, typed API calls.
+
+Create an API key at https://sslmate.com/account/api_keys. The free tier allows 100 single-hostname queries an hour and 10 full-domain queries an hour; paid plans raise both.
+
+Things to know:
+
+- **Paging is a cursor.** The last issuance's `id` is the next call's `after`. Repeat until the answer is an empty array, which carries a `Retry-After` header telling you when new certificates may exist.
+- **Fields need `expand`.** `dns_names`, `issuer`, `revocation`, `problem_reporting`, `cert_der` and the `pubkey` fields are left out unless named in `expand`. A nested field takes a dotted path, such as `issuer.caa_domains`.
+- **`revoked` is three-state.** It is `true`, `false`, or `null` when Cert Spotter cannot determine the status. Expired certificates always report `null`.
+- **Wildcards.** A request for `www.example.com` does not return a `*.example.com` certificate unless `match_wildcards` is true, and sub-domain certificates need `include_subdomains`.
+- **The firehose needs its own subscription.** `firehose` returns every issuance across all logs. Falling too far behind answers `lagging_client`, which means restart from the end rather than retry.
+- **Two failures are not retried.** `timeout` means the query exceeded your plan's limit, and `payment_required` means the subscription lapsed. Both need a plan change, not a replay.
+
+**What you get:**
+
+- 2 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/certspotter better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/certspotter better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/certspotter better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/certspotter better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { certspotter } from '@corsair-dev/certspotter';
+
+export const corsair = createCorsair({
+	plugins: [
+		certspotter(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the SSLMate Cert Spotter API key before the first call: `pnpm corsair setup --plugin=certspotter --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+certspotter()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'certspotter',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the certificates for a domain**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.certspotter.api.issuances.list({
+	domain: 'example.com',
+	expand: ['dns_names', 'issuer'],
+});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/certspotter/api) reference._
+
+
+See the full list on the [API](/plugins/certspotter/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/certspotter/api">
+    Every `certspotter.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
