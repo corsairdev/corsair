@@ -1,9 +1,2 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const ProductboardExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type ProductboardExample = z.infer<typeof ProductboardExample>;
+// Productboard records are fetched live; the plugin persists no local entities.
+export const productboardEntities = {} as const;

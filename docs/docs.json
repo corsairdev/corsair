@@ -3697,6 +3697,14 @@
                 ]
               },
               {
+                "group": "Productboard",
+                "pages": [
+                  "plugins/productboard/overview",
+                  "plugins/productboard/api",
+                  "plugins/productboard/database"
+                ]
+              },
+              {
                 "group": "Pushbullet",
                 "pages": [
                   "plugins/pushbullet/overview",

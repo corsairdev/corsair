@@ -1,4 +1,6 @@
+import { productboardEntities } from './database';
+
 export const ProductboardSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: productboardEntities,
 } as const;
