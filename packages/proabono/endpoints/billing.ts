@@ -161,7 +161,21 @@ export const listBalanceLines: ProabonoEndpoints['balanceLinesList'] = (
 			},
 		}),
 		{
-			shape: asList('balanceLines'),
+			shape: (raw, { SizePage }) => {
+				const shaped = asList('balanceLines')(raw);
+				// `SizePage: 0` asks for the totals only, so ProAbono sends no `Items`.
+				// Any other answer without `Items` stays invalid for the output schema.
+				if (
+					SizePage === 0 &&
+					raw !== null &&
+					typeof raw === 'object' &&
+					'TotalItems' in raw &&
+					!('Items' in raw)
+				) {
+					return { ...(shaped as object), balanceLines: [] };
+				}
+				return shaped;
+			},
 			log: (_, result) => ({ count: result.balanceLines.length }),
 		},
 	);

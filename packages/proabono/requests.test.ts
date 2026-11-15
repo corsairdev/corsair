@@ -583,6 +583,34 @@ describe('billing endpoints', () => {
 		expect(result.Computations?.AmountTotal).toBe(47880);
 	});
 
+	it('balanceLines.list reads a SizePage 0 totals-only answer as no rows', async () => {
+		mockedRequest.mockResolvedValue({
+			TotalItems: 12,
+			Computations: { AmountSubtotal: 39900, AmountTotal: 47880 },
+		});
+
+		const result = await Billing.listBalanceLines(ctx, {
+			ReferenceCustomer: 'cust-42',
+			SizePage: 0,
+		});
+
+		expect(sentRequest()?.query).toMatchObject({ SizePage: 0 });
+		expect(result.balanceLines).toEqual([]);
+		expect(result.TotalItems).toBe(12);
+		expect(result.Computations?.AmountTotal).toBe(47880);
+	});
+
+	it('balanceLines.list still rejects an answer without Items when rows were asked for', async () => {
+		mockedRequest.mockResolvedValue({ TotalItems: 12 });
+
+		await expect(
+			Billing.listBalanceLines(ctx, {
+				ReferenceCustomer: 'cust-42',
+				SizePage: 10,
+			}),
+		).rejects.toThrow();
+	});
+
 	it('invoices.list sends the documented filters and reads the envelope', async () => {
 		mockedRequest.mockResolvedValue(
 			page([{ Id: 499734, FullNumber: 'S-3.00000004', Status: 'Due' }]),
