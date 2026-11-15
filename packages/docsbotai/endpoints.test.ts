@@ -396,6 +396,41 @@ describe('DocsBot API boundary', () => {
 		);
 	});
 
+	it('parses a new source with null faqs and indexedUrls (live response)', async () => {
+		// Trimmed from a live sources.create response on a free account.
+		const created = {
+			id: 'source',
+			type: 'url',
+			title: 'corsair-plugin-test',
+			url: 'https://corsair.dev/',
+			file: null,
+			faqs: null,
+			processImages: false,
+			ocr: false,
+			crawlerJS: false,
+			indexedUrls: null,
+			createdAt: '2026-11-15T01:02:41.094Z',
+			warnsList: [],
+			pageCount: 3,
+			ocrAiCredits: 0,
+			imageAiCredits: 0,
+			refreshing: false,
+			chunkCount: 25,
+			status: 'ready',
+		};
+		mockRequest.mockResolvedValue(created);
+		await expect(
+			endpoints.sources.create(ctx, {
+				...ids,
+				type: 'url',
+				url: 'https://corsair.dev',
+			}),
+		).resolves.toMatchObject({ faqs: null, indexedUrls: null });
+		await expect(
+			endpoints.sources.get(ctx, { ...ids, sourceId: 'source' }),
+		).resolves.toMatchObject({ id: 'source' });
+	});
+
 	it('retries a source with a bodyless PUT', async () => {
 		mockRequest.mockResolvedValue({ id: 'source', file: null });
 		await endpoints.sources.retry(ctx, { ...ids, sourceId: 'source' });
