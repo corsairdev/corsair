@@ -136,6 +136,10 @@
   "discord": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/discord.svg"
   },
+  "docsbotai": {
+    "from": "https://media.brand.dev/c5b5f0e0-164c-44d2-aa30-7cb45f4e6942.svg",
+    "note": "found with the context.dev Brand API for docsbot.ai"
+  },
   "documenso": {
     "from": "https://media.brand.dev/9521d660-0c58-4ab5-98c7-111a3ed5617a.svg",
     "note": "found with the context.dev Brand API for documenso.com"
@@ -159,6 +163,10 @@
   },
   "epicgames": {
     "from": "https://svgl.app/library/epicgames-icon-light.svg"
+  },
+  "erpnext": {
+    "from": "https://media.brand.dev/8076c83e-7531-472b-ab69-cb2147e725c0.svg",
+    "note": "found with the context.dev Brand API for frappe.io"
   },
   "excel": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/excel.svg"
@@ -289,6 +297,10 @@
   "hashnode": {
     "from": "https://svgl.app/library/hashnode.svg"
   },
+  "hubplanner": {
+    "from": "https://media.brand.dev/f4a6845b-7f17-42f5-baaf-719a313793d2.svg",
+    "note": "found with the context.dev Brand API for hubplanner.com"
+  },
   "huggingface": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/hugging_face.svg"
   },
@@ -313,11 +325,19 @@
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
   },
+  "livesession": {
+    "from": "https://media.brand.dev/47dbc903-58ce-4343-a2f7-f16034313891.svg",
+    "note": "found with the context.dev Brand API for livesession.io"
+  },
   "loyverse": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/loyverse.svg"
   },
   "mem0": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/mem0.svg"
+  },
+  "minerstat": {
+    "from": "https://media.brand.dev/07684fb4-31a1-40ff-804a-0dc61c60e370.svg",
+    "note": "found with the context.dev Brand API for minerstat.com"
   },
   "mixmax": {
     "from": "https://www.mixmax.com/_astro/mixmax-mark.De_LqLaT_ZC7Ac.svg",
@@ -363,6 +383,10 @@
   },
   "parseur": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/parseur.svg"
+  },
+  "pdfapi": {
+    "from": "https://media.brand.dev/22fb8796-812b-4fe3-a4af-76819a941314.svg",
+    "note": "found with the context.dev Brand API for pdf-api.io"
   },
   "perplexityai": {
     "from": "https://svgl.app/library/perplexity.svg"
@@ -453,6 +477,10 @@
   "sharepoint": {
     "from": "https://svgl.app/library/microsoft-sharepoint.svg"
   },
+  "shortcut": {
+    "from": "https://media.brand.dev/dde75a56-1d84-43fe-a839-6b94fa6cc79e.svg",
+    "note": "found with the context.dev Brand API for shortcut.com"
+  },
   "slack": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/slack.svg"
   },
@@ -482,6 +510,10 @@
   },
   "supabase": {
     "from": "https://svgl.app/library/supabase.svg"
+  },
+  "svix": {
+    "from": "https://media.brand.dev/7d3b979e-0d4c-4af2-9512-b0444a952b6a.svg",
+    "note": "found with the context.dev Brand API for svix.com"
   },
   "tavilymcp": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/tavily_mcp.svg"

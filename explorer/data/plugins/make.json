@@ -1,0 +1,973 @@
+{
+  "id": "make",
+  "displayName": "Make",
+  "description": "Manage and run Make automation scenarios.",
+  "npmPackageName": "@corsair-dev/make",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "zone"]
+    }
+  ],
+  "api": [
+    {
+      "path": "make.api.scenarios.activate",
+      "shortPath": "scenarios.activate",
+      "description": "Activate scenario",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "{ id?: number, isActive?: boolean, islinked?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.addBuildVariables",
+      "shortPath": "scenarios.addBuildVariables",
+      "description": "Add new buildtime variables to scenario metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ input?: { name?: string, value?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.clone",
+      "shortPath": "scenarios.clone",
+      "description": "Clone scenario",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cols[]",
+            "optional": true,
+            "type": "(id | name | teamId | hookId | devices | deviceId | deviceScope | description | folderId | concept | folderPath | isinvalid | islinked | isActive | islocked | isPaused | usedPackages | usedModules | lastEdit | scheduling | iswaiting | dlqCount | allDlqCount | chainingRole | isShared | type | createdByUser | updatedByUser | created | nextExec | operations | centicredits | transfer | executions | errors | customProperties | templateMetadata | deleted | deletedAt | labels)[]"
+          },
+          {
+            "key": "confirmed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notAnalyze",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, teamId: number, account?: Record<string, any>, key?: Record<string, any>, hook?: Record<string, any>, device?: Record<string, any>, udt?: Record<string, any>, datastore?: Record<string, any>, states: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "{ id?: number, name?: string, teamId?: number, hookId?: number | null, devices?: { id?: number, scope?: string }[], deviceId?: number | null, deviceScope?: string | null, description?: string | null, folderId?: number | null, concept?: boolean, folderPath?: string | null, isinvalid?: boolean, islinked?: boolean, isActive?: boolean, islocked?: boolean, isPaused?: boolean, usedPackages?: string[], usedModules?: { packageName?: string, moduleName?: string }[], lastEdit?: string, scheduling?: { type?: string, interval?: number }, iswaiting?: boolean, dlqCount?: number, allDlqCount?: number, createdByUser?: { id?: number, name?: string, email?: string } | null, updatedByUser?: { id?: number, name?: string, email?: string } | null, nextExec?: string | null, created?: string, scenarioVersion?: number, moduleSequenceId?: number, type?: string, chainingRole?: string | null, isShared?: boolean | null, operations?: number, centicredits?: number, transfer?: number, executions?: number, errors?: number, customProperties?: Record<string, any> | null, templateMetadata?: { isOem?: boolean, versionId?: number, metadataId?: number, instantiableId?: number } | null, deleted?: boolean, deletedAt?: string | null, labels?: { id?: number, name?: string, colour?: string, scope?: string, teamId?: number, description?: string | null, createdBy?: number | null, created?: string, updated?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.countTrash",
+      "shortPath": "scenarios.countTrash",
+      "description": "Count scenarios in trash",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenariosTrashedTotal",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.create",
+      "shortPath": "scenarios.create",
+      "description": "Create scenario",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cols[]",
+            "optional": true,
+            "type": "(id | name | teamId | hookId | devices | deviceId | deviceScope | description | folderId | concept | folderPath | isinvalid | islinked | isActive | islocked | isPaused | usedPackages | usedModules | lastEdit | scheduling | iswaiting | dlqCount | allDlqCount | chainingRole | isShared | type | createdByUser | updatedByUser | created | nextExec | operations | centicredits | transfer | executions | errors | customProperties | templateMetadata | deleted | deletedAt | labels)[]"
+          },
+          {
+            "key": "confirmed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ blueprint: string, teamId: number, scheduling: string, folderId?: number, basedon?: number, description?: string, metadata?: { input_spec?: Record<string, any>[], output_spec?: Record<string, any>[], template_metadata?: Record<string, any> } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "{ id?: number, name?: string, teamId?: number, hookId?: number | null, devices?: { id?: number, scope?: string }[], deviceId?: number | null, deviceScope?: string | null, description?: string | null, folderId?: number | null, concept?: boolean, folderPath?: string | null, isinvalid?: boolean, islinked?: boolean, isActive?: boolean, islocked?: boolean, isPaused?: boolean, usedPackages?: string[], usedModules?: { packageName?: string, moduleName?: string }[], lastEdit?: string, scheduling?: { type?: string, interval?: number }, iswaiting?: boolean, dlqCount?: number, allDlqCount?: number, createdByUser?: { id?: number, name?: string, email?: string } | null, updatedByUser?: { id?: number, name?: string, email?: string } | null, nextExec?: string | null, created?: string, scenarioVersion?: number, moduleSequenceId?: number, type?: string, chainingRole?: string | null, isShared?: boolean | null, operations?: number, centicredits?: number, transfer?: number, executions?: number, errors?: number, customProperties?: Record<string, any> | null, templateMetadata?: { isOem?: boolean, versionId?: number, metadataId?: number, instantiableId?: number } | null, deleted?: boolean, deletedAt?: string | null, labels?: { id?: number, name?: string, colour?: string, scope?: string, teamId?: number, description?: string | null, createdBy?: number | null, created?: string, updated?: string | null }[] }"
+          },
+          {
+            "key": "scenarioVersion",
+            "optional": true,
+            "type": "{ version?: number, draft?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.deactivate",
+      "shortPath": "scenarios.deactivate",
+      "description": "Deactivate scenario",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "{ id?: number, isActive?: boolean, islinked?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.delete",
+      "shortPath": "scenarios.delete",
+      "description": "Delete scenario",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.deleteBuildVariable",
+      "shortPath": "scenarios.deleteBuildVariable",
+      "description": "Delete buildtime variable",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.get",
+      "shortPath": "scenarios.get",
+      "description": "Get scenario details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cols[]",
+            "optional": true,
+            "type": "(id | name | teamId | hookId | devices | deviceId | deviceScope | description | folderId | concept | folderPath | isinvalid | islinked | isActive | islocked | isPaused | usedPackages | usedModules | lastEdit | scheduling | iswaiting | dlqCount | allDlqCount | chainingRole | isShared | type | createdByUser | updatedByUser | created | nextExec | operations | centicredits | transfer | executions | errors | customProperties | templateMetadata | deleted | deletedAt | labels)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "{ id?: number, name?: string, teamId?: number, hookId?: number | null, devices?: { id?: number, scope?: string }[], deviceId?: number | null, deviceScope?: string | null, description?: string | null, folderId?: number | null, concept?: boolean, folderPath?: string | null, isinvalid?: boolean, islinked?: boolean, isActive?: boolean, islocked?: boolean, isPaused?: boolean, usedPackages?: string[], usedModules?: { packageName?: string, moduleName?: string }[], lastEdit?: string, scheduling?: { type?: string, interval?: number }, iswaiting?: boolean, dlqCount?: number, allDlqCount?: number, createdByUser?: { id?: number, name?: string, email?: string } | null, updatedByUser?: { id?: number, name?: string, email?: string } | null, nextExec?: string | null, created?: string, scenarioVersion?: number, moduleSequenceId?: number, type?: string, chainingRole?: string | null, isShared?: boolean | null, operations?: number, centicredits?: number, transfer?: number, executions?: number, errors?: number, customProperties?: Record<string, any> | null, templateMetadata?: { isOem?: boolean, versionId?: number, metadataId?: number, instantiableId?: number } | null, deleted?: boolean, deletedAt?: string | null, labels?: { id?: number, name?: string, colour?: string, scope?: string, teamId?: number, description?: string | null, createdBy?: number | null, created?: string, updated?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.getAiAgentModules",
+      "shortPath": "scenarios.getAiAgentModules",
+      "description": "Get AI agent module details for scenarios",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pg[offset]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pg[limit]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ scenarioIds?: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentModules",
+            "optional": true,
+            "type": "{ scenarioId?: number, id?: number, module?: string, userLabel?: string | null, evaluationMode?: string, tools?: { moduleId?: number, module?: string, name?: string, fileIds?: string[] }[] }[]"
+          },
+          {
+            "key": "pg",
+            "optional": true,
+            "type": "{ limit?: number, offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.getInterface",
+      "shortPath": "scenarios.getInterface",
+      "description": "Get scenario interface",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interface",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.getModuleData",
+      "shortPath": "scenarios.getModuleData",
+      "description": "Check module data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "moduleId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.getTriggers",
+      "shortPath": "scenarios.getTriggers",
+      "description": "Get trigger details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "udid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queueCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "queueLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "typeName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.getUsage",
+      "shortPath": "scenarios.getUsage",
+      "description": "Get scenario usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "organizationTimezone",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ date?: string, operations?: number, dataTransfer?: number, centicredits?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.list",
+      "shortPath": "scenarios.list",
+      "description": "List scenarios",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id[]",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeSubfolders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "labelIds[]",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "concept",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "scenario | tool"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isinvalid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "islocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdByUserName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedByUserName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dlqCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cols[]",
+            "optional": true,
+            "type": "(id | name | teamId | hookId | devices | deviceId | deviceScope | description | folderId | concept | folderPath | isinvalid | islinked | isActive | islocked | isPaused | usedPackages | usedModules | lastEdit | scheduling | iswaiting | dlqCount | allDlqCount | chainingRole | isShared | type | createdByUser | updatedByUser | created | nextExec | operations | centicredits | transfer | executions | errors | customProperties | templateMetadata | deleted | deletedAt | labels)[]"
+          },
+          {
+            "key": "pg[offset]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pg[limit]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pg[sortBy]",
+            "optional": true,
+            "type": "proprietal | id | name | teamId | folderId | isActive | islinked | isinvalid | islocked | lastEdit | createdByUserName | updatedByUserName | created | dlqCount | operations | executions | centicredits | transfer | errors"
+          },
+          {
+            "key": "pg[sortDir]",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarios",
+            "optional": true,
+            "type": "{ id?: number, name?: string, teamId?: number, hookId?: number | null, devices?: { id?: number, scope?: string }[], deviceId?: number | null, deviceScope?: string | null, description?: string | null, folderId?: number | null, concept?: boolean, folderPath?: string | null, isinvalid?: boolean, islinked?: boolean, isActive?: boolean, islocked?: boolean, isPaused?: boolean, usedPackages?: string[], usedModules?: { packageName?: string, moduleName?: string }[], lastEdit?: string, scheduling?: { type?: string, interval?: number }, iswaiting?: boolean, dlqCount?: number, allDlqCount?: number, createdByUser?: { id?: number, name?: string, email?: string } | null, updatedByUser?: { id?: number, name?: string, email?: string } | null, nextExec?: string | null, created?: string, scenarioVersion?: number, moduleSequenceId?: number, type?: string, chainingRole?: string | null, isShared?: boolean | null, operations?: number, centicredits?: number, transfer?: number, executions?: number, errors?: number, customProperties?: Record<string, any> | null, templateMetadata?: { isOem?: boolean, versionId?: number, metadataId?: number, instantiableId?: number } | null, deleted?: boolean, deletedAt?: string | null, labels?: { id?: number, name?: string, colour?: string, scope?: string, teamId?: number, description?: string | null, createdBy?: number | null, created?: string, updated?: string | null }[] }[]"
+          },
+          {
+            "key": "pg",
+            "optional": true,
+            "type": "{ last?: string, showLast?: boolean, sortBy?: string, sortDir?: string, limit?: number, offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.listAiAgents",
+      "shortPath": "scenarios.listAiAgents",
+      "description": "List AI agent scenarios",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pg[offset]",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pg[limit]",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarios",
+            "optional": true,
+            "type": "{ id?: number, name?: string, description?: string | null, isActive?: boolean, teamId?: number, created?: string, lastEdit?: string, scheduling?: Record<string, any>, usedPackages?: string[], agentCount?: number, createdByUser?: { id?: number, name?: string | null, email?: string } | null }[]"
+          },
+          {
+            "key": "pg",
+            "optional": true,
+            "type": "{ limit?: number, offset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.listBuildVariables",
+      "shortPath": "scenarios.listBuildVariables",
+      "description": "List buildtime variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.moveToTrash",
+      "shortPath": "scenarios.moveToTrash",
+      "description": "Move scenarios to trash",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ teamId: number, scenarioIds: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trashedScenarioIds",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "rejectedScenarios",
+            "optional": false,
+            "type": "{ scenarioId: number, code: string, detail: string }[]"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "{ total: number, trashed: number, rejected: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.replay",
+      "shortPath": "scenarios.replay",
+      "description": "Replay scenario executions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ executionIds: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "executionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replayed",
+            "optional": false,
+            "type": "{ executionId: string, replayExecutionId: string }[]"
+          },
+          {
+            "key": "failed",
+            "optional": false,
+            "type": "{ executionId: string, code: string, message: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.restore",
+      "shortPath": "scenarios.restore",
+      "description": "Restore scenario from trash",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "{ id?: number, deleted?: boolean, deletedAt?: string | null, containsErrors?: boolean }"
+          },
+          {
+            "key": "strippedModules",
+            "optional": true,
+            "type": "{ moduleId?: number, moduleName?: string, entities?: { entityType?: string, entityId?: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.run",
+      "shortPath": "scenarios.run",
+      "description": "Run a scenario",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ data?: Record<string, any>, responsive?: boolean, callbackUrl?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "executionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.update",
+      "shortPath": "scenarios.update",
+      "description": "Update scenario",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cols[]",
+            "optional": true,
+            "type": "(id | name | teamId | hookId | devices | deviceId | deviceScope | description | folderId | concept | folderPath | isinvalid | islinked | isActive | islocked | isPaused | usedPackages | usedModules | lastEdit | scheduling | iswaiting | dlqCount | allDlqCount | chainingRole | isShared | type | createdByUser | updatedByUser | created | nextExec | operations | centicredits | transfer | executions | errors | customProperties | templateMetadata | deleted | deletedAt | labels)[]"
+          },
+          {
+            "key": "confirmed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ blueprint?: string, scheduling?: string, folderId?: number | null, name?: string, baseVersion?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "{ id?: number, name?: string, teamId?: number, hookId?: number | null, devices?: { id?: number, scope?: string }[], deviceId?: number | null, deviceScope?: string | null, description?: string | null, folderId?: number | null, concept?: boolean, folderPath?: string | null, isinvalid?: boolean, islinked?: boolean, isActive?: boolean, islocked?: boolean, isPaused?: boolean, usedPackages?: string[], usedModules?: { packageName?: string, moduleName?: string }[], lastEdit?: string, scheduling?: { type?: string, interval?: number }, iswaiting?: boolean, dlqCount?: number, allDlqCount?: number, createdByUser?: { id?: number, name?: string, email?: string } | null, updatedByUser?: { id?: number, name?: string, email?: string } | null, nextExec?: string | null, created?: string, scenarioVersion?: number, moduleSequenceId?: number, type?: string, chainingRole?: string | null, isShared?: boolean | null, operations?: number, centicredits?: number, transfer?: number, executions?: number, errors?: number, customProperties?: Record<string, any> | null, templateMetadata?: { isOem?: boolean, versionId?: number, metadataId?: number, instantiableId?: number } | null, deleted?: boolean, deletedAt?: string | null, labels?: { id?: number, name?: string, colour?: string, scope?: string, teamId?: number, description?: string | null, createdBy?: number | null, created?: string, updated?: string | null }[] }"
+          },
+          {
+            "key": "scenarioVersion",
+            "optional": true,
+            "type": "{ scenarioId?: number, version?: number, draft?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.updateBuildVariables",
+      "shortPath": "scenarios.updateBuildVariables",
+      "description": "Replace buildtime variables in scenario metadata (variables left out are overwritten)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ input?: { name?: string, value?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "make.api.scenarios.updateInterface",
+      "shortPath": "scenarios.updateInterface",
+      "description": "Update scenario interface",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scenarioId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ interface?: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interface",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
