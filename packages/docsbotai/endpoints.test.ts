@@ -351,6 +351,26 @@ describe('DocsBot API boundary', () => {
 		expect(plugin.webhooks).toEqual({});
 	});
 
+	it('marks deletes and credit-spending jobs as destructive (R8)', () => {
+		const destructive = Object.entries(plugin.endpointMeta ?? {})
+			.filter(([, meta]) => meta.riskLevel === 'destructive')
+			.map(([name]) => name)
+			.sort();
+		expect(destructive).toEqual([
+			'bots.delete',
+			'conversations.delete',
+			'conversations.ticket',
+			'leads.delete',
+			'questions.delete',
+			'sources.create',
+			'sources.delete',
+			'sources.retry',
+			'webhooks.delete',
+		]);
+		// Semantic search costs 0.1 AI credit but only returns data: a metered read.
+		expect(plugin.endpointMeta?.['search.search'].riskLevel).toBe('read');
+	});
+
 	it('forwards pagination and parses nullable source files', async () => {
 		mockRequest.mockResolvedValue({
 			sources: [{ id: 's', file: null }],

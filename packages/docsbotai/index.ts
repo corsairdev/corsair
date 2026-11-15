@@ -161,8 +161,12 @@ const docsbotaiEndpointMeta = {
 	'bots.reports': read('Get monthly reports'),
 	'sources.list': read('List sources'),
 	'sources.get': read('Get a source'),
-	'sources.create': write('Create a source'),
-	'sources.retry': write('Retry a failed source'),
+	'sources.create': destructive(
+		'Create a source and start indexing it (uses page quota; OCR bills AI credits per page)',
+	),
+	'sources.retry': destructive(
+		'Re-index a failed source (uses page quota; OCR bills AI credits per page)',
+	),
 	'sources.delete': destructive('Delete a source'),
 	'sources.getUploadUrl': read('Get a presigned source upload URL'),
 	'sources.uploadFile': write('Upload bytes to a presigned source URL'),
@@ -172,7 +176,9 @@ const docsbotaiEndpointMeta = {
 	'conversations.list': read('List conversations'),
 	'conversations.delete': destructive('Delete a conversation'),
 	'conversations.captureLead': write('Capture a lead'),
-	'conversations.ticket': write('Generate a support ticket'),
+	'conversations.ticket': destructive(
+		'Generate a support ticket from a conversation with the AI model',
+	),
 	'leads.list': read('List leads'),
 	'leads.delete': destructive('Delete a lead'),
 	'research.list': read('List research jobs'),
