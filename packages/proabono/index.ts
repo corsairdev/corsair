@@ -28,10 +28,13 @@ import { ProabonoSchema } from './schema';
  * ProAbono authenticates with HTTP Basic: the agent key is the username and the
  * API key is the password. The account key manager only creates accessors for
  * account-level fields, so the agent key is declared here beside `api_key`.
+ * `account` is the number in the account's API endpoint (`42` for
+ * `api-42.proabono.com`): each business has its own host, so it is stored with
+ * the keys rather than set once in code.
  */
 export const proabonoAuthConfig = {
 	api_key: {
-		account: ['agent_key'] as const,
+		account: ['agent_key', 'account'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -41,7 +44,8 @@ export type ProabonoPluginOptions = {
 	apiKey?: string;
 	/**
 	 * The account number from your API endpoint, such as `42` for
-	 * `api-42.proabono.com`. Every call needs it, since it forms the host.
+	 * `api-42.proabono.com`. Overrides the stored `account` field. Every call
+	 * needs one or the other, since it forms the host.
 	 */
 	account?: string;
 	hooks?: InternalProabonoPlugin['hooks'];
@@ -279,7 +283,7 @@ const proabonoEndpointMeta = {
 	'customers.update': {
 		riskLevel: 'write',
 		description:
-			"Change a customer's name, email, company, country or language",
+			"Change a customer's name, email, language, affiliation or metadata. ProAbono creates and updates on the same route, so an unknown reference creates a customer",
 	},
 	'customers.anonymize': {
 		riskLevel: 'destructive',
@@ -290,7 +294,7 @@ const proabonoEndpointMeta = {
 	'customers.invalidate': {
 		riskLevel: 'destructive',
 		description:
-			'Invalidate a customer, which stops their subscriptions and revokes their links',
+			'Invalidate a customer: ProAbono replaces their reference so it can be reused and revokes their portal links. Subscriptions, invoices and payment methods stay',
 	},
 	'customers.suspend': {
 		riskLevel: 'write',
@@ -343,7 +347,7 @@ const proabonoEndpointMeta = {
 	'subscriptions.terminate': {
 		riskLevel: 'destructive',
 		description:
-			'Terminate a subscription, ending it for good. A later start cannot revive it',
+			'Terminate a subscription, ending it for good; by default at the end of the current period. A later start cannot revive it',
 	},
 	'subscriptions.upgrade': {
 		riskLevel: 'destructive',
@@ -357,34 +361,41 @@ const proabonoEndpointMeta = {
 	'usages.list': {
 		riskLevel: 'read',
 		description:
-			'List usages by customer, feature, subscription or date window',
+			'List feature usages by customer, feature or subscription, one page at a time',
 	},
 	'usages.get': {
 		riskLevel: 'read',
-		description: 'Read one usage row',
+		description:
+			"Read one customer's usage of one feature: on/off, or the included and current quantities",
 	},
 	'usages.increment': {
-		riskLevel: 'write',
+		// Consumption and over-quota usage is billed, so recording it spends the
+		// customer's money (R8).
+		riskLevel: 'destructive',
 		description:
-			'Add to a feature’s usage for a customer. A negative increment subtracts, which is how a reversed action is recorded',
+			'Add to a feature’s usage for a customer, which ProAbono bills when it exceeds the included quantity. A negative increment subtracts, which is how a reversed action is recorded',
 	},
 	'usages.update': {
-		riskLevel: 'write',
+		// Same as usages.increment: the rows change what the customer is billed.
+		riskLevel: 'destructive',
 		description:
-			'Update several usages in one call, each by increment or quantity',
+			'Update up to 50 usages in one call, each by increment, current quantity or on/off',
 	},
 	'balanceLines.create': {
-		riskLevel: 'write',
+		// A balance line is a charge (or credit) on the customer's next invoice.
+		riskLevel: 'destructive',
 		description:
-			'Add a balance line, such as a one-off charge or credit, to a customer in cents',
+			"Add a balance line, such as a one-off charge or credit in cents, to a customer's next invoice",
 	},
 	'balanceLines.list': {
 		riskLevel: 'read',
-		description: 'List balance lines, optionally only those already billed',
+		description:
+			'List balance lines by customer, segment, feature or subscription, with their totals',
 	},
 	'invoices.list': {
 		riskLevel: 'read',
-		description: 'List invoices by customer, state or date window',
+		description:
+			'List invoices by customer or subscription, one page at a time',
 	},
 	'invoices.get': {
 		riskLevel: 'read',
@@ -441,7 +452,12 @@ export function proabono<const T extends ProabonoPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+				// Every call also needs the agent key (the Basic username) and the
+				// account number (the host). A connection missing either must throw
+				// here, where core turns it into a connect link, rather than fail later.
+				const agentKey = await ctx.keys.get_agent_key();
+				const account = options.account ?? (await ctx.keys.get_account());
+				if (res && agentKey?.trim() && account?.trim()) return res;
 			}
 
 			throw new AuthMissingError('proabono', ctx.authType ?? 'api_key');

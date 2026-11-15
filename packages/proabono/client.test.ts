@@ -110,6 +110,27 @@ describe('apiBase', () => {
 	it('builds the per-account host the docs use', () => {
 		expect(apiBase('42')).toBe('https://api-42.proabono.com');
 	});
+
+	it('accepts the endpoint pasted from the back office', () => {
+		expect(apiBase('https://api-42.proabono.com')).toBe(
+			'https://api-42.proabono.com',
+		);
+		expect(apiBase('api-42.proabono.com/')).toBe('https://api-42.proabono.com');
+	});
+
+	it('refuses an account that would move the request to another host', () => {
+		// The Basic credentials ride on this host, so `42.attacker.example/` must
+		// never become https://api-42.attacker.example/.proabono.com.
+		for (const account of [
+			'42.attacker.example/',
+			'42@attacker.example',
+			'42:8080',
+			'42/../x',
+			'https://evil.example',
+		]) {
+			expect(() => apiBase(account)).toThrow(ProabonoAPIError);
+		}
+	});
 });
 
 describe('makeProabonoRequest', () => {

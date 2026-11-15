@@ -44,7 +44,10 @@ type Untyped = unknown; // unknown: see the note above.
 const keyBuilderOf = (candidate: { keyBuilder?: Untyped }): KeyBuilder =>
 	candidate.keyBuilder as KeyBuilder;
 
-function keyBuilderContext(apiKey: string | null): ProabonoKeyBuilderContext {
+function keyBuilderContext(
+	apiKey: string | null,
+	stored: { agentKey?: string | null; account?: string | null } = {},
+): ProabonoKeyBuilderContext {
 	return {
 		authType: 'api_key',
 		options: {},
@@ -54,8 +57,12 @@ function keyBuilderContext(apiKey: string | null): ProabonoKeyBuilderContext {
 			issue_new_dek: async () => 'dek',
 			get_api_key: async () => apiKey,
 			set_api_key: async () => {},
-			get_agent_key: async () => 'agent-key',
+			get_agent_key: async () =>
+				stored.agentKey === undefined ? 'agent-key' : stored.agentKey,
 			set_agent_key: async () => {},
+			get_account: async () =>
+				stored.account === undefined ? '42' : stored.account,
+			set_account: async () => {},
 			get_webhook_signature: async () => null,
 			set_webhook_signature: async () => {},
 		},
@@ -119,6 +126,14 @@ describe('proabono plugin', () => {
 		expect(meta['subscriptions.start']?.riskLevel).toBe('destructive');
 	});
 
+	it('marks the operations that add to what a customer is billed destructive', () => {
+		// A balance line is a charge on the next invoice, and consumption usage is
+		// billed: R8 counts spending the customer's money as destructive.
+		expect(meta['balanceLines.create']?.riskLevel).toBe('destructive');
+		expect(meta['usages.increment']?.riskLevel).toBe('destructive');
+		expect(meta['usages.update']?.riskLevel).toBe('destructive');
+	});
+
 	it('keeps a suspension at write, since it is reversible', () => {
 		expect(meta['subscriptions.suspend']?.riskLevel).toBe('write');
 		expect(meta['customers.suspend']?.riskLevel).toBe('write');
@@ -156,9 +171,11 @@ describe('proabono plugin', () => {
 		}
 	});
 
-	it('declares agent_key as an account field, since Basic auth needs both halves', () => {
+	it('stores the agent key and the account number with the API key', () => {
+		// Basic auth needs both keys, and the account number forms the host, so all
+		// three belong to the connection.
 		expect(proabonoAuthConfig).toEqual({
-			api_key: { account: ['agent_key'] },
+			api_key: { account: ['agent_key', 'account'] },
 		});
 	});
 });
@@ -177,6 +194,34 @@ describe('proabono keyBuilder', () => {
 		await expect(
 			keyBuilderOf(proabono())(keyBuilderContext('stored-key'), 'endpoint'),
 		).resolves.toBe('stored-key');
+	});
+
+	it('throws AuthMissingError when the stored account number is missing', async () => {
+		// Core shows a connect link only when the key builder throws.
+		await expect(
+			keyBuilderOf(proabono())(
+				keyBuilderContext('stored-key', { account: null }),
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('accepts the account number from the plugin option instead', async () => {
+		await expect(
+			keyBuilderOf(proabono({ account: '42' }))(
+				keyBuilderContext('stored-key', { account: null }),
+				'endpoint',
+			),
+		).resolves.toBe('stored-key');
+	});
+
+	it('throws AuthMissingError when the stored agent key is missing', async () => {
+		await expect(
+			keyBuilderOf(proabono())(
+				keyBuilderContext('stored-key', { agentKey: null }),
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('throws AuthMissingError when there is no key at all', async () => {

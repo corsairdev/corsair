@@ -170,9 +170,35 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
 }
 
+/**
+ * The account part of the host: letters, digits and inner hyphens only, so a
+ * stored value cannot add a dot, slash, `@` or port and move the request (and
+ * the Basic credentials) to another host.
+ */
+const ACCOUNT_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/i;
+
+/**
+ * Reads the account from what a user is likely to paste: the number itself
+ * (`42`) or the whole API endpoint from the ProAbono back office
+ * (`https://api-42.proabono.com`).
+ */
+export function normalizeAccount(value: string): string {
+	const trimmed = value.trim();
+	const endpoint = /^(?:https:\/\/)?api-([^/.]+)\.proabono\.com\/?$/i.exec(
+		trimmed,
+	);
+	return endpoint?.[1] ?? trimmed;
+}
+
 /** The API host for an account number, such as `42` for `api-42.proabono.com`. */
 export function apiBase(account: string): string {
-	return `https://api-${account}${PROABONO_HOST_SUFFIX}`;
+	const normalized = normalizeAccount(account);
+	if (!ACCOUNT_PATTERN.test(normalized)) {
+		throw new ProabonoAPIError(
+			'The ProAbono account must be the number in your API endpoint, such as 42 for api-42.proabono.com',
+		);
+	}
+	return `https://api-${normalized}${PROABONO_HOST_SUFFIX}`;
 }
 
 export type ProabonoCredentials = {
