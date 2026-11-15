@@ -35,6 +35,15 @@ describe('PdfApi client', () => {
 		expect(requestMock.mock.calls[0]?.[2]).toBeUndefined();
 	});
 
+	it('sends Content-Type exactly application/json (a charset suffix gets 415)', async () => {
+		requestMock.mockResolvedValue({ status: 200, data: 'x' });
+		await makePdfApiRequest({ key: 'secret' }, '/templates/merge', {
+			method: 'POST',
+			body: { templates: [] },
+		});
+		expect(requestMock.mock.calls[0]?.[1]?.mediaType).toBe('application/json');
+	});
+
 	it('preserves status and Retry-After metadata on rate limits', async () => {
 		requestMock.mockRejectedValue(
 			new ApiError(apiRequest, rateLimitResult, 'Too Many Requests', {

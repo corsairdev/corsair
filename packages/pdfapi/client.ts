@@ -54,7 +54,9 @@ export async function makePdfApiRequest<T>(
 		// config.HEADERS into the outgoing request, and keeping the key out of
 		// requestOptions means a stored ApiError never retains the credential.
 		body: method === 'POST' ? body : undefined,
-		mediaType: 'application/json; charset=utf-8',
+		// Exactly application/json: the API answers 415 "Content-Type must be
+		// application/json" when a charset parameter is appended.
+		mediaType: 'application/json',
 	};
 
 	try {
