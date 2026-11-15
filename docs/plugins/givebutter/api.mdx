@@ -125,6 +125,7 @@ await corsair.givebutter.api.activities.list({});
 | `contact` | `string \| number` | Yes | — |
 | `type` | `email \| meeting \| note \| phone_call \| sms \| completed_task \| volunteer_activity` | No | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -420,6 +421,7 @@ await corsair.givebutter.api.campaigns.list({});
 |------|------|----------|-------------|
 | `scope` | `string` | No | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -795,6 +797,7 @@ await corsair.givebutter.api.contacts.list({});
 | `firstName` | `string \| null` | No | — |
 | `lastName` | `string \| null` | No | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -1184,6 +1187,7 @@ await corsair.givebutter.api.discountCodes.list({});
 |------|------|----------|-------------|
 | `campaign` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -1383,6 +1387,7 @@ await corsair.givebutter.api.funds.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -1547,6 +1552,7 @@ await corsair.givebutter.api.householdContacts.list({});
 |------|------|----------|-------------|
 | `household` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -1625,7 +1631,13 @@ await corsair.givebutter.api.householdContacts.remove({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+
 
 
 ---
@@ -1744,6 +1756,7 @@ await corsair.givebutter.api.households.list({});
 | `sortBy` | `string` | No | — |
 | `sortByDesc` | `string` | No | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -1871,6 +1884,7 @@ await corsair.givebutter.api.members.list({});
 |------|------|----------|-------------|
 | `campaign` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -1963,6 +1977,7 @@ await corsair.givebutter.api.messages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -2074,6 +2089,7 @@ await corsair.givebutter.api.payouts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -2160,7 +2176,18 @@ await corsair.givebutter.api.plans.get({});
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `contact_id` | `string \| number \| null` | No | — |
+| `amount` | `number \| string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `frequency` | `string \| null` | No | — |
+| `next_bill_date` | `string \| null` | No | — |
+| `canceled_at` | `string \| null` | No | — |
+
 
 
 ---
@@ -2183,6 +2210,7 @@ await corsair.givebutter.api.plans.list({});
 |------|------|----------|-------------|
 | `contacts` | `string \| null` | No | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -2199,6 +2227,13 @@ await corsair.givebutter.api.plans.list({});
 
 ```ts
 {
+  id: string | number,
+  contact_id?: string | number | null,
+  amount?: number | string | null,
+  status?: string | null,
+  frequency?: string | null,
+  next_bill_date?: string | null,
+  canceled_at?: string | null
 }[]
 ```
 </Accordion>
@@ -2291,6 +2326,7 @@ await corsair.givebutter.api.pledges.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -2368,7 +2404,16 @@ await corsair.givebutter.api.sso.account({});
 **Input:** _empty object_
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+
 
 
 ---
@@ -2470,6 +2515,7 @@ await corsair.givebutter.api.teams.list({});
 |------|------|----------|-------------|
 | `campaign` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -2611,6 +2657,7 @@ await corsair.givebutter.api.ticketItems.list({});
 |------|------|----------|-------------|
 | `campaign` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -2712,6 +2759,7 @@ await corsair.givebutter.api.tickets.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -2915,6 +2963,7 @@ await corsair.givebutter.api.transactions.list({});
 | `sortBy` | `amount \| transacted_at \| created_at \| contact_name \| null` | No | — |
 | `sortByDesc` | `amount \| transacted_at \| created_at \| contact_name \| null` | No | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -3092,6 +3141,7 @@ await corsair.givebutter.api.webhooks.activities.list({});
 |------|------|----------|-------------|
 | `webhook` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
@@ -3259,6 +3309,7 @@ await corsair.givebutter.api.webhooks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
 
 
 
