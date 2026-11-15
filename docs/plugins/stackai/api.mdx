@@ -44,7 +44,7 @@ await corsair.stackai.api.projects.ioSchema({ project_id: 'example-project', ver
 
 ```ts
 {
-  input_kind: start_node | legacy_input_nodes,
+  input_kind: start_node | legacy_input_nodes | string,
   inputs: {
     id: string,
     name: string
@@ -58,16 +58,19 @@ await corsair.stackai.api.projects.ioSchema({ project_id: 'example-project', ver
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
+
 ## Runs
 
 ### cancel
 
 `runs.cancel`
 
-Request cancellation of an owned run.
+Request cancellation of an owned run. It cannot be undone.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stackai.api.runs.cancel({ run_id: '00000000-0000-4000-8000-000000000000' });
@@ -140,14 +143,14 @@ await corsair.stackai.api.runs.get({ run_id: '00000000-0000-4000-8000-0000000000
   run_id: string,
   project_id: string | null,
   project_version?: number | null,
-  status: queued | running | paused | succeeded | failed | cancelled,
+  status: queued | running | paused | succeeded | failed | cancelled | string,
   error: string | null,
   created_at: string,
   started_at: string | null,
   completed_at: string | null,
-  run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | null,
+  run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | string | null,
   created_by: {
-    type: user | personal_api_key | org_api_key | system | end_user | unknown,
+    type: user | personal_api_key | org_api_key | system | end_user | unknown | string,
     id: string | null
   } | null,
   usage: {
@@ -168,7 +171,7 @@ await corsair.stackai.api.runs.get({ run_id: '00000000-0000-4000-8000-0000000000
     knowledge_base_id: string | null,
     resource_id: string | null,
     source_url: string | null,
-    source_type: knowledge_base | website | document | other,
+    source_type: knowledge_base | website | document | other | string,
     position: {
       page_index: number | null,
       chunk_index: number | null,
@@ -178,7 +181,7 @@ await corsair.stackai.api.runs.get({ run_id: '00000000-0000-4000-8000-0000000000
   pending_input: {
     question: string,
     context: string | null,
-    response_type: text | approval | choice | unknown,
+    response_type: text | approval | choice | unknown | string,
     choices: string[] | null,
     resume_token: string,
     resume_token_expires_at: string | null
@@ -238,14 +241,14 @@ await corsair.stackai.api.runs.list({ page_size: 25 });
   run_id: string,
   project_id: string | null,
   project_version?: number | null,
-  status: queued | running | paused | succeeded | failed | cancelled,
+  status: queued | running | paused | succeeded | failed | cancelled | string,
   error: string | null,
   created_at: string,
   started_at: string | null,
   completed_at: string | null,
-  run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | null,
+  run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | string | null,
   created_by: {
-    type: user | personal_api_key | org_api_key | system | end_user | unknown,
+    type: user | personal_api_key | org_api_key | system | end_user | unknown | string,
     id: string | null
   } | null,
   usage: {
@@ -273,9 +276,9 @@ await corsair.stackai.api.runs.list({ page_size: 25 });
 
 `runs.resume`
 
-Resume an ask-human paused run.
+Resume an ask-human paused run. The run continues executing and bills model usage.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stackai.api.runs.resume({ run_id: '00000000-0000-4000-8000-000000000000', resume_token: 'token', response: 'yes' });
@@ -319,9 +322,9 @@ await corsair.stackai.api.runs.resume({ run_id: '00000000-0000-4000-8000-0000000
 
 `runs.start`
 
-Start an asynchronous project run.
+Start an asynchronous project run. Each run executes the workflow and bills model usage.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.stackai.api.runs.start({ project_id: 'example-project', input: { 'in-0': 'Hello' } });
@@ -355,14 +358,14 @@ await corsair.stackai.api.runs.start({ project_id: 'example-project', input: { '
     run_id: string,
     project_id: string | null,
     project_version?: number | null,
-    status: queued | running | paused | succeeded | failed | cancelled,
+    status: queued | running | paused | succeeded | failed | cancelled | string,
     error: string | null,
     created_at: string,
     started_at: string | null,
     completed_at: string | null,
-    run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | null,
+    run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | string | null,
     created_by: {
-      type: user | personal_api_key | org_api_key | system | end_user | unknown,
+      type: user | personal_api_key | org_api_key | system | end_user | unknown | string,
       id: string | null
     } | null,
     usage: {
@@ -383,7 +386,7 @@ await corsair.stackai.api.runs.start({ project_id: 'example-project', input: { '
       knowledge_base_id: string | null,
       resource_id: string | null,
       source_url: string | null,
-      source_type: knowledge_base | website | document | other,
+      source_type: knowledge_base | website | document | other | string,
       position: {
         page_index: number | null,
         chunk_index: number | null,
@@ -393,7 +396,7 @@ await corsair.stackai.api.runs.start({ project_id: 'example-project', input: { '
     pending_input: {
       question: string,
       context: string | null,
-      response_type: text | approval | choice | unknown,
+      response_type: text | approval | choice | unknown | string,
       choices: string[] | null,
       resume_token: string,
       resume_token_expires_at: string | null
@@ -407,3 +410,4 @@ await corsair.stackai.api.runs.start({ project_id: 'example-project', input: { '
 
 
 ---
+
