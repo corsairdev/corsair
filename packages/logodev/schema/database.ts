@@ -14,11 +14,3 @@ export const LogoDevBrandEntity = z.object({
 });
 
 export type LogoDevBrandEntity = z.infer<typeof LogoDevBrandEntity>;
-
-/** One logo fetch. The CDN returns bytes. The stored row is the hostname and content type. */
-export const LogoDevImageEntity = z.object({
-	domain: z.string().min(1),
-	contentType: z.string().min(1),
-});
-
-export type LogoDevImageEntity = z.infer<typeof LogoDevImageEntity>;

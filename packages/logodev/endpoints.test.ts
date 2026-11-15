@@ -134,25 +134,16 @@ describe('logos.fetch', () => {
 	});
 
 	it('returns a token-free URL and sends the key only as the token query', async () => {
-		const upsert = jest.fn().mockResolvedValue(undefined);
 		mockRequest.mockResolvedValue('image/png');
-		const result = await fetchLogo(
-			{
-				key: 'pk_test',
-				db: { images: { upsertByEntityId: upsert } },
-			} as unknown as LogoDevContext,
-			{ domain: 'shopify.com' },
-		);
+		const result = await fetchLogo(context('pk_test'), {
+			domain: 'shopify.com',
+		});
 		expect(result).toEqual({
 			url: 'https://img.logo.dev/shopify.com',
 			contentType: 'image/png',
 			status: 200,
 		});
 		expect(result.url).not.toContain('pk_test');
-		expect(upsert).toHaveBeenCalledWith('shopify.com', {
-			domain: 'shopify.com',
-			contentType: 'image/png',
-		});
 		const config = mockRequest.mock.calls[0]?.[0];
 		const options = mockRequest.mock.calls[0]?.[1];
 		expect(config?.BASE).toBe('https://img.logo.dev');

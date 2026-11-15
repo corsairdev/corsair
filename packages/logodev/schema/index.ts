@@ -1,9 +1,8 @@
-import { LogoDevBrandEntity, LogoDevImageEntity } from './database';
+import { LogoDevBrandEntity } from './database';
 
 export const LogoDevSchema = {
 	version: '1.0.0',
 	entities: {
 		brands: LogoDevBrandEntity,
-		images: LogoDevImageEntity,
 	},
 } as const;

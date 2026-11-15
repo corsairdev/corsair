@@ -4,10 +4,7 @@ import { LogoDevBrandEntity } from './schema/database';
 describe('Logo.dev schema', () => {
 	it('declares a semver version and the brands entity', () => {
 		expect(LogoDevSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
-		expect(Object.keys(LogoDevSchema.entities).sort()).toEqual([
-			'brands',
-			'images',
-		]);
+		expect(Object.keys(LogoDevSchema.entities)).toEqual(['brands']);
 	});
 
 	it('accepts a brand row and rejects one with no domain', () => {
