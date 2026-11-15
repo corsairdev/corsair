@@ -1,0 +1,68 @@
+displayName: Spotlightr
+description: 'Host and manage videos, projects and embed domains, run course access, and read view analytics.'
+domain: spotlightr.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Spotlightr under Settings, Integrations and APIs, then Get API key. The plugin sends it as the `vooKey` parameter on every request, which is the only form the API reads.
+
+  Things to know:
+
+  - **The REST API is narrow.** It covers videos, projects, embed domains, course students and access records, and view analytics. Playlist, quiz and lead management have no REST route and are not exposed.
+  - **Response bodies are barely documented.** Spotlightr's reference lists request parameters and gives one sample response, the metrics object. The plugin types that object exactly (including Spotlightr's `completitionRate` spelling) and accepts the other routes' answers as open objects, rather than inventing fields.
+  - **Booleans are 1 and 0.** The reference documents flags that way, so the plugin converts `true` to `1` before sending.
+  - **Uploads are multipart.** `videos.create` and `assets.upload` take a `Blob`, so the file never passes through JSON.
+  - **`videos.delete` cannot be undone.** There is no restore route.
+  - **A wrong key reads as a plain string.** A 401 body is literally `"Unauthorized."`, and a missing one is `"Missing token."`. Some routes answer an HTML 500 for a bad key instead of a 401.
+examples:
+  read:
+    path: videos.list
+    title: List your videos
+  write:
+    path: projects.create
+    title: Create a project
+    args:
+      name: Marketing
+apiExamples:
+  videos.list:
+    call: "{ video_group: 42 }"
+  videos.create:
+    call: "{ name: 'Product tour', url: 'https://youtu.be/abc123' }"
+  videos.updateSource:
+    call: "{ video_id: 'MTM1NzgzNQ==', url: 'https://cdn.example.com/new.mp4' }"
+  videos.delete:
+    call: "{ video_ids: [1234, 5678] }"
+  videos.listTop:
+    call: "{ days: 7, total: 5 }"
+  videos.metrics:
+    call: "{ video_id: '1357835' }"
+  videos.views:
+    call: "{ video_id: '1357835', only_watched: true }"
+  videos.updateSettings:
+    call: "{ video_id: '1357835', settings: { autoplay: true } }"
+  projects.list: {}
+  projects.create:
+    call: "{ name: 'Marketing' }"
+  domains.list: {}
+  domains.add:
+    call: "{ domain: 'acme.com' }"
+  students.create:
+    call: "{ email: 'jane@acme.com', password: 'hunter2hunter2', course_id: 42, never: true, unlocks: 0, time: 0, expires: '0000-00-00' }"
+  access.get:
+    call: "{ email: 'jane@acme.com', course_id: 42 }"
+  access.update:
+    call: "{ access_id: 555, expire: true }"
+  access.updateCode:
+    call: "{ code_id: 7, expires: true }"
+  search.search:
+    call: "{ query: 'product tour' }"
+  assets.upload:
+    call: "{ file: new Blob(['...'], { type: 'image/png' }) }"
+apiNotes:
+  videos.list: 'Pass `video_id` for one video or `video_group` to narrow to a project. The ID is the base64 value from the watch URL.'
+  videos.create: 'Pass either `url` or `file`. `url` wins when both are given, and `hls` asks for HLS encoding.'
+  videos.delete: 'There is no restore route. IDs are sent as one comma-separated value.'
+  videos.metrics: 'The only response body Spotlightr documents. The field is `completitionRate`, not `completionRate`.'
+  videos.updateSettings: '`settings` carries only the keys to change, as a JSON object.'
+  students.create: '`expires` takes a date or the literal "0000-00-00" when `never` is true.'
+  search.search: 'The term is sent in the body; the reference lists no query parameters for this route.'
+  assets.upload: 'The file is sent as multipart form data.'
