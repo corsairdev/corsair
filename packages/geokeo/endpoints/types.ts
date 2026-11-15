@@ -102,10 +102,12 @@ const CountrySchema = z
 	.optional()
 	.describe('Restricts the search to one country, such as `us` or `de`');
 
+// Geokeo also offers `xml`, but the client parses JSON only, so an XML answer
+// would fail every output schema. Only `json` is accepted.
 const FormatSchema = z
-	.enum(['json', 'xml'])
+	.enum(['json'])
 	.optional()
-	.describe('Defaults to `json`; XML would not parse into these schemas');
+	.describe('Response format; only `json`, which is also the default');
 
 const ForwardGeocodeInputSchema = z.object({
 	q: z

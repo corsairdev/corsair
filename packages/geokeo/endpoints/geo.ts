@@ -11,14 +11,11 @@ import {
 
 /**
  * The key is a query parameter here, and Geokeo has no keyless mode: without
- * one it answers `{"status":"INVALID_REQUEST"}` with HTTP 200.
+ * one it answers `{"status":"INVALID_REQUEST"}` with HTTP 200. `ctx.key` is the
+ * key the binder resolved (option, hook or stored key), so it is the one sent.
  */
-async function resolveCredentials(
-	ctx: GeokeoContext,
-): Promise<GeokeoCredentials> {
-	if (ctx.options.key) return { apiKey: ctx.options.key };
-	const stored = await ctx.keys.get_api_key();
-	return { apiKey: stored ?? undefined };
+function resolveCredentials(ctx: GeokeoContext): GeokeoCredentials {
+	return { apiKey: ctx.key };
 }
 
 /**
@@ -59,7 +56,7 @@ export const forwardGeocode: GeokeoEndpoints['geocode']['forward'] = async (
 ) => {
 	const parsed = GeokeoEndpointInputSchemas.forwardGeocode.parse(input ?? {});
 
-	const raw = await makeGeokeoRequest(await resolveCredentials(ctx), {
+	const raw = await makeGeokeoRequest(resolveCredentials(ctx), {
 		path: '/geocode/v1/search.php',
 		query: definedQuery({
 			q: parsed.q,
@@ -94,7 +91,7 @@ export const reverseGeocode: GeokeoEndpoints['geocode']['reverse'] = async (
 ) => {
 	const parsed = GeokeoEndpointInputSchemas.reverseGeocode.parse(input ?? {});
 
-	const raw = await makeGeokeoRequest(await resolveCredentials(ctx), {
+	const raw = await makeGeokeoRequest(resolveCredentials(ctx), {
 		path: '/geocode/v1/reverse.php',
 		query: definedQuery({
 			lat: parsed.lat,
@@ -112,9 +109,8 @@ export const reverseGeocode: GeokeoEndpoints['geocode']['reverse'] = async (
 		'geokeo.geocode.reverse',
 		{
 			count: result.results.length,
-			// The coordinates were the caller's own input, so they are safe to record.
-			lat: parsed.lat,
-			lng: parsed.lng,
+			// The query point stays out of the log: exact coordinates can locate a
+			// person (R8), so only the count, distance and country are kept.
 			// The nearest result is the useful summary of a reverse lookup.
 			nearest_km: result.results[0]?.distance_km ?? undefined,
 			country: result.results[0]?.address_components.country,

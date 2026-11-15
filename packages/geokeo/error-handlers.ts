@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GEOKEO_STATUS, GeokeoAPIError } from './client';
 
 /**
@@ -33,22 +34,18 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A real 429, which only a proxy in front of Geokeo would send.
+	// A real 429, which only a proxy in front of Geokeo would send. Core's
+	// request() has already retried it three times with Retry-After, so the
+	// handler does not add more (R8).
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GeokeoAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof GeokeoAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => error instanceof ApiError && error.status === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A real 5xx, which only a proxy would send. Every call here is a read, so a
 	// replay is safe.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof GeokeoAPIError && (error.status ?? 0) >= 500,
+			error instanceof ApiError && (error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

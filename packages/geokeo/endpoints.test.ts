@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GeokeoAPIError } from './client';
 import { forwardGeocode, reverseGeocode } from './endpoints';
 import {
@@ -101,7 +102,6 @@ describe('Geokeo client', () => {
 		expect(error).toBeInstanceOf(GeokeoAPIError);
 		expect(error.code).toBe('ACCESS_DENIED');
 		expect(error.isAuthError).toBe(true);
-		expect(error.status).toBeUndefined();
 		expect(error.message).toContain('ACCESS_DENIED');
 	});
 
@@ -135,6 +135,43 @@ describe('Geokeo client', () => {
 		const error = await failure(invoke(forwardGeocode, { q: 'x' }));
 
 		expect(error.transport).toBe(true);
+	});
+
+	it('sends ctx.key, the key the binder resolved, over the option and stored keys', async () => {
+		respond(empireState);
+		const ctx = {
+			key: 'hook-key',
+			options: { key: 'option-key' },
+			keys: { get_api_key: jest.fn().mockResolvedValue('stored-key') },
+		};
+		await forwardGeocode(ctx as never, { q: 'empire state building' });
+
+		expect(lastRequest().query.api).toBe('hook-key');
+		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
+	});
+
+	it('passes core ApiError through for a real HTTP error, without the key or query', async () => {
+		fetchMock.mockResolvedValue(
+			new Response('<html>Bad Gateway</html>', {
+				status: 502,
+				headers: { 'Content-Type': 'text/html' },
+			}),
+		);
+		const error = (await failure(
+			invoke(forwardGeocode, { q: 'empire state building' }),
+		)) as unknown as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(502);
+		const exposed = JSON.stringify({
+			message: error.message,
+			url: error.url,
+			request: error.request,
+			body: error.body,
+		});
+		expect(exposed).not.toContain(API_KEY);
+		expect(exposed).not.toContain('empire');
+		expect(error.url).toBe('https://geokeo.com/geocode/v1/search.php');
 	});
 });
 
@@ -295,16 +332,19 @@ describe('geokeo.geocode.reverse', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('logs the query coordinates and the nearest distance', async () => {
+	it('logs the count and nearest distance, never the query coordinates', async () => {
 		respond(reverseResult);
 		await invoke(reverseGeocode, { lat: 40.74842, lng: -73.9856 });
 
-		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
-			lat: 40.74842,
-			lng: -73.9856,
+		const payload = mockLog.mock.calls.at(-1)?.[2];
+		expect(payload).toMatchObject({
 			count: 1,
 			nearest_km: 0.0010302984507433,
 		});
+		expect(payload).not.toHaveProperty('lat');
+		expect(payload).not.toHaveProperty('lng');
+		expect(JSON.stringify(payload)).not.toContain('40.74842');
+		expect(JSON.stringify(payload)).not.toContain('73.9856');
 	});
 });
 

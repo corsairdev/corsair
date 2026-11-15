@@ -1,16 +1,31 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GEOKEO_STATUS, GeokeoAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 function apiError(options: {
-	status?: number;
 	code?: string;
 	method?: string;
 	transport?: boolean;
 	timedOut?: boolean;
-	retryAfter?: number;
 }) {
 	return new GeokeoAPIError('failed', options);
+}
+
+/** Core's error for a real HTTP status, which only a proxy would send. */
+function httpError(status: number, retryAfter?: number) {
+	return new ApiError(
+		{ method: 'GET', url: '/geocode/v1/search.php' },
+		{
+			url: 'https://geokeo.com/geocode/v1/search.php',
+			ok: false,
+			status,
+			statusText: 'error',
+			body: undefined,
+		},
+		`HTTP ${status}`,
+		{ retryAfter },
+	);
 }
 
 /**
@@ -64,18 +79,14 @@ describe('error handler selection', () => {
 		await expect(resolve(zodError)).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('retries a real 429, which only a proxy would send', async () => {
-		await expect(
-			resolve(apiError({ status: 429, retryAfter: 5000 })),
-		).resolves.toEqual({
-			maxRetries: 2,
-			headersRetryAfterMs: 5000,
-			retryStrategy: 'exponential_backoff',
+	it('leaves a real 429 to core, which already retried it with Retry-After', async () => {
+		await expect(resolve(httpError(429, 5000))).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 
 	it('retries a real 5xx, since a read is safe to replay', async () => {
-		await expect(resolve(apiError({ status: 502 }))).resolves.toMatchObject({
+		await expect(resolve(httpError(502))).resolves.toMatchObject({
 			maxRetries: 2,
 		});
 	});

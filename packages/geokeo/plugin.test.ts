@@ -122,9 +122,9 @@ describe('geokeo schemas', () => {
 		expect(reverse.safeParse({ lat: 0, lng: -181 }).success).toBe(false);
 	});
 
-	it('accepts only json or xml, since the schemas describe json', () => {
+	it('accepts only json, since the client parses JSON and xml would fail every output schema', () => {
 		expect(forward.safeParse({ q: 'x', format: 'json' }).success).toBe(true);
-		expect(forward.safeParse({ q: 'x', format: 'xml' }).success).toBe(true);
+		expect(forward.safeParse({ q: 'x', format: 'xml' }).success).toBe(false);
 		expect(forward.safeParse({ q: 'x', format: 'csv' }).success).toBe(false);
 	});
 

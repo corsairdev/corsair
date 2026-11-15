@@ -59,18 +59,16 @@ export function readStatus(body: unknown): {
 	};
 }
 
+/**
+ * A refusal Geokeo put in the body of an HTTP 200 (`code`), or a transport
+ * failure before any answer. A real HTTP error status comes through as core's
+ * `ApiError` instead.
+ */
 export class GeokeoAPIError extends Error {
-	/**
-	 * Geokeo always answers 200, so this is normally 200 or undefined. It is kept
-	 * because a proxy in front of the API can still answer a real status.
-	 */
-	readonly status?: number;
 	/** Geokeo's own code, such as `ACCESS_DENIED`. */
 	readonly code?: string;
-	/** A documentation link, when Geokeo sent one. */
+	/** The credits link Geokeo sends with each answer, when there was one. */
 	readonly creditsUrl?: string;
-	/** Milliseconds from `Retry-After`, when Geokeo sent one. */
-	readonly retryAfter?: number;
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
@@ -79,10 +77,8 @@ export class GeokeoAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
 			code?: string;
 			creditsUrl?: string;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -90,10 +86,8 @@ export class GeokeoAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'GeokeoAPIError';
-		this.status = options.status;
 		this.code = options.code;
 		this.creditsUrl = options.creditsUrl;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
@@ -112,11 +106,6 @@ export class GeokeoAPIError extends Error {
 	/** A required parameter was missing or invalid. */
 	get isValidationError(): boolean {
 		return this.code === GEOKEO_STATUS.INVALID_REQUEST;
-	}
-
-	/** A real 429, which only a proxy would send. */
-	get isRateLimit(): boolean {
-		return this.status === 429;
 	}
 }
 
@@ -145,13 +134,14 @@ export type GeokeoRequest = {
 };
 
 /**
- * The docs describe throttling rather than a hard rate limit, so a 429 would
- * come from a fronting proxy. The client does not retry on its own; the
- * handlers decide, and `OVER_QUERY_LIMIT` is never retried.
+ * The docs describe throttling rather than a hard rate limit, and a used-up
+ * quota arrives as HTTP 200 with `OVER_QUERY_LIMIT`, so a real 429 can only
+ * come from a proxy in front of the API. Core retries that 429 itself (three
+ * times, honouring `Retry-After`), so the handlers do not retry it again.
  */
 const GEOKEO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -208,15 +198,30 @@ export async function makeGeokeoRequest(
 	} catch (error) {
 		if (error instanceof GeokeoAPIError) throw error;
 		if (error instanceof ApiError) {
+			// Core's ApiError goes through (R8), so its status and retryAfter reach
+			// the handlers. It is rebuilt without the query string: core redacts
+			// `key` and `api_key` but not Geokeo's `api` parameter, so the URL and
+			// request would otherwise carry the key, plus the address or
+			// coordinates. Only Geokeo's `status` is kept from the body.
 			const fields = readStatus(error.body);
-			throw new GeokeoAPIError(
-				describeGeokeoError(error.status, error.body, error.message),
+			const safeBody = fields.status ? { status: fields.status } : undefined;
+			const url = new URL(error.url);
+			url.search = '';
+			throw new ApiError(
+				{ ...error.request, query: undefined },
 				{
+					url: url.toString(),
+					ok: false,
 					status: error.status,
-					code: fields.status,
-					creditsUrl: fields.credits,
+					statusText: error.statusText,
+					body: safeBody,
+				},
+				describeGeokeoError(error.status, safeBody, `HTTP ${error.status}`),
+				{
 					retryAfter: error.retryAfter,
-					method: 'GET',
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}
