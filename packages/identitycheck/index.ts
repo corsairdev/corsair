@@ -73,7 +73,7 @@ const meta = {
 		description: 'Start an individual verification',
 	},
 	'verification.sms': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Start a verification and invite by SMS',
 	},
 	'verification.kyb': {

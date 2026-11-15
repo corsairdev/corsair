@@ -1,6 +1,8 @@
 import { AuthMissingError } from 'corsair/core';
 import { request } from 'corsair/http';
 
+// StackGo has not published field-level request or response schemas, so the
+// body must remain open and the response unknown until the endpoint validates it.
 export async function makeIdentityCheckRequest(
 	method: 'GET' | 'POST',
 	url: string,

@@ -87,7 +87,10 @@ export const decision: CorsairWebhook<
 > = {
 	match: matchIdentityCheckWebhook,
 	handler: async (ctx, request) => {
-		if (!verifyIdentityCheckSignature(request, ctx.key))
+		if (
+			request.hubVerified !== true &&
+			!verifyIdentityCheckSignature(request, ctx.key)
+		)
 			return {
 				success: false,
 				statusCode: 401,

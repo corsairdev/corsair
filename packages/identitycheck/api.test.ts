@@ -1,3 +1,8 @@
+import {
+	createCorsair,
+	PermissionRequiredError,
+	runWithMode,
+} from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { identityCheckEndpointSchemas, identitycheck } from './index';
 
@@ -14,6 +19,17 @@ const context = { key: 'key-test' } as never;
 beforeEach(() => mockedRequest.mockReset());
 
 describe('IdentityCheck public endpoint seam', () => {
+	it('requires approval for SMS under cautious mode before making a request', async () => {
+		const corsair = createCorsair({
+			plugins: [identitycheck({ key: 'key-test' })],
+		});
+		await runWithMode('cautious', async () => {
+			await expect(
+				corsair.identitycheck.api.verification.sms({ body: {} }),
+			).rejects.toBeInstanceOf(PermissionRequiredError);
+		});
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
 	it.each([
 		['create', '/api/v1/verification/create'],
 		['sms', '/api/v1/verification/sms'],

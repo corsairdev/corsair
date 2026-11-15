@@ -1,10 +1,11 @@
 import { createHmac } from 'node:crypto';
+import { createCorsair } from 'corsair/core';
 import { identitycheck } from './index';
 
 const key = Buffer.from('test-secret');
 const secret = `whsec_${key.toString('base64')}`;
 const event = {
-	type: 'verification.decision',
+	type: 'verification.decision' as const,
 	id: 'id-123',
 	result: 'positive',
 	result_info: { verification: { status: 'approved' } },
@@ -60,4 +61,34 @@ it('uses the signed body even when the parsed payload differs', async () => {
 			{ headers, rawBody, payload: { ...event, result: 'tampered' } } as never,
 		),
 	).resolves.toEqual({ success: true, data: event });
+});
+
+it('accepts a Hub-verified decision through the bound webhook without looking up a secret', async () => {
+	const corsair = createCorsair({ plugins: [identitycheck()] });
+	await expect(
+		corsair.identitycheck.webhooks.verification.decision.handler({
+			headers,
+			rawBody,
+			payload: event,
+			hubVerified: true,
+		}),
+	).resolves.toEqual({ success: true, data: event });
+});
+
+it('validates Hub-verified bodies and still rejects unsigned direct deliveries', async () => {
+	const corsair = createCorsair({
+		plugins: [identitycheck({ webhookSecret: secret })],
+	});
+	const handler = corsair.identitycheck.webhooks.verification.decision.handler;
+	await expect(
+		handler({
+			headers,
+			rawBody: JSON.stringify({ type: 'verification.decision' }),
+			payload: event,
+			hubVerified: true,
+		}),
+	).resolves.toMatchObject({ success: false, statusCode: 400 });
+	await expect(
+		handler({ headers: {}, rawBody, payload: event }),
+	).resolves.toMatchObject({ success: false, statusCode: 401 });
 });
