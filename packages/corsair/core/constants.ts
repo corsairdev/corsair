@@ -532,6 +532,7 @@ export const BaseProviders = [
 	'svix',
 	'synthflowai',
 	'taggun',
+	'talenthr',
 	'tally',
 	'tavily',
 	'tavilymcp',
@@ -1145,6 +1146,7 @@ export const ProviderDisplayNames = {
 	svix: 'Svix',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
+	talenthr: 'TalentHR',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
@@ -1765,6 +1767,7 @@ export type AllProviders =
 	| 'svix'
 	| 'synthflowai'
 	| 'taggun'
+	| 'talenthr'
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
