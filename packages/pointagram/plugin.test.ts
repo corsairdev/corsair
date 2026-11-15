@@ -118,11 +118,16 @@ describe('pointagram plugin', () => {
 			.sort();
 
 		expect(destructive).toEqual([
-			// players.create invites an online player, and sending a message is destructive.
+			// players.create and players.update invite an online player, and
+			// sending a message is destructive.
 			'players.create',
 			'players.delete',
+			'players.update',
 			'rewardStore.purchase',
 			'rewardStore.revokePurchase',
+			// A scored point is posted to every player's feed and can push a
+			// notification to the player.
+			'scoreSeries.addPoints',
 			'teams.removePlayer',
 		]);
 		expect(meta['players.delete']?.irreversible).toBe(true);

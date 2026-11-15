@@ -294,8 +294,11 @@ const pointagramEndpointMeta = {
 			'Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice',
 	},
 	'players.update': {
-		riskLevel: 'write',
-		description: "Update a player's name, email, external id or online status",
+		// Switching a player online (offline 0) sends the Pointagram invitation
+		// that players.create sends, and R9 keeps one risk level per operation.
+		riskLevel: 'destructive',
+		description:
+			"Update a player's name, email, external id or online status; making a player online invites them",
 	},
 	'players.delete': {
 		riskLevel: 'destructive',
@@ -342,7 +345,10 @@ const pointagramEndpointMeta = {
 		description: 'Read one score series by id',
 	},
 	'scoreSeries.addPoints': {
-		riskLevel: 'write',
+		// Every scored point is posted to the feed all players see, and a score
+		// series can push a notification to the player for each point, so this
+		// sends to people (R8). create_player can also invite a new player.
+		riskLevel: 'destructive',
 		description:
 			'Score points for a player in a score series, optionally with a comment, tags and a transaction reference that makes a repeat call replace the earlier one',
 	},
