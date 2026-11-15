@@ -16,9 +16,10 @@ export async function makeParmaRequest(
 		TOKEN: token,
 	};
 	return request(config, options, {
+		// Core retries a 429 up to three times, honouring Retry-After (R8).
 		rateLimitConfig: {
 			enabled: true,
-			maxRetries: 0,
+			maxRetries: 3,
 			initialRetryDelay: 1000,
 			backoffMultiplier: 2,
 			headerNames: { retryAfter: 'retry-after' },

@@ -258,7 +258,10 @@ const cases: Case[] = [
 	},
 ];
 
-afterEach(() => jest.restoreAllMocks());
+afterEach(() => {
+	jest.useRealTimers();
+	jest.restoreAllMocks();
+});
 
 test.each(cases)(
 	'$name forwards the documented request and parses the result',
@@ -303,27 +306,55 @@ test('rejects missing credentials and invalid request bodies', async () => {
 	expect(fetchMock).not.toHaveBeenCalled();
 });
 
-test('preserves rate-limit headers without replaying writes', async () => {
-	const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-		new Response(JSON.stringify({ error: 'limited' }), {
-			status: 429,
-			headers: { 'content-type': 'application/json', 'retry-after': '7' },
-		}),
+test('retries a 429 through core and returns the next response', async () => {
+	jest.useFakeTimers();
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'limited' }), {
+				status: 429,
+				headers: { 'content-type': 'application/json', 'retry-after': '0' },
+			}),
+		)
+		.mockResolvedValueOnce(
+			new Response(JSON.stringify(one(note)), {
+				status: 201,
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
+	const pending = endpoints.notes.create(ctx, {
+		body: 'text',
+		relationship_ids: [1],
+	});
+	await jest.advanceTimersByTimeAsync(2_000);
+	await expect(pending).resolves.toEqual(one(note));
+	expect(fetchMock).toHaveBeenCalledTimes(2);
+	jest.useRealTimers();
+});
+
+test('surfaces Retry-After once core retries are spent', async () => {
+	jest.useFakeTimers();
+	const fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(
+		async () =>
+			new Response(JSON.stringify({ error: 'limited' }), {
+				status: 429,
+				headers: { 'content-type': 'application/json', 'retry-after': '0' },
+			}),
 	);
-	// A rejected promise may throw any JavaScript value; assert its type below.
-	let thrown: unknown;
-	try {
-		await endpoints.notes.create(ctx, { body: 'text', relationship_ids: [1] });
-	} catch (error) {
-		thrown = error;
-	}
+	// A rejected promise may hold any JavaScript value; assert its type below.
+	const pending: Promise<unknown> = endpoints.deals
+		.list(ctx, {})
+		.catch((error: unknown) => error);
+	await jest.advanceTimersByTimeAsync(10_000);
+	const thrown = await pending;
+	jest.useRealTimers();
 	expect(thrown).toBeInstanceOf(ApiError);
-	expect((thrown as ApiError).retryAfter).toBe(7000);
-	expect(fetchMock).toHaveBeenCalledTimes(1);
+	expect((thrown as ApiError).status).toBe(429);
+	expect(fetchMock).toHaveBeenCalledTimes(4);
 	const handler = errorHandlers.RATE_LIMIT_ERROR;
 	expect(handler.match(thrown as Error)).toBe(true);
 	await expect(handler.handler(thrown as Error)).resolves.toEqual({
 		maxRetries: 0,
-		headersRetryAfterMs: 7000,
+		headersRetryAfterMs: (thrown as ApiError).retryAfter,
 	});
 });
