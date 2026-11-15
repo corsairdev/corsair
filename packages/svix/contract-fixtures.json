@@ -1,0 +1,1485 @@
+[
+  {
+    "group": "applications",
+    "name": "list",
+    "method": "GET",
+    "path": "/api/v1/app",
+    "input": {
+      "limit": 1
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "name": "My first application",
+          "id": "app_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "metadata": { "team": "billing" },
+          "uid": null
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "applications",
+    "name": "create",
+    "method": "POST",
+    "path": "/api/v1/app",
+    "input": {
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "name": "My first application"
+      }
+    },
+    "query": null,
+    "body": {
+      "name": "My first application"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "name": "My first application",
+      "id": "app_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "metadata": {}
+    },
+    "noContent": false
+  },
+  {
+    "group": "applications",
+    "name": "get",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "name": "My first application",
+      "id": "app_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "metadata": {}
+    },
+    "noContent": false
+  },
+  {
+    "group": "applications",
+    "name": "upsert",
+    "method": "PUT",
+    "path": "/api/v1/app/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier",
+      "body": {
+        "name": "My first application"
+      }
+    },
+    "query": null,
+    "body": {
+      "name": "My first application"
+    },
+    "idempotencyKey": null,
+    "response": {
+      "name": "My first application",
+      "id": "app_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "metadata": {}
+    },
+    "noContent": false
+  },
+  {
+    "group": "applications",
+    "name": "delete",
+    "method": "DELETE",
+    "path": "/api/v1/app/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "applications",
+    "name": "patch",
+    "method": "PATCH",
+    "path": "/api/v1/app/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier",
+      "body": {}
+    },
+    "query": null,
+    "body": {},
+    "idempotencyKey": null,
+    "response": {
+      "name": "My first application",
+      "id": "app_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "metadata": {}
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "list",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/endpoint",
+    "input": {
+      "app_id": "unique-identifier",
+      "limit": 1
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "metadata": { "team": "billing" },
+          "url": "https://example.com/webhook/",
+          "description": "Webhook",
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "channels": ["project_123"],
+          "expiry": null
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "create",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/endpoint",
+    "input": {
+      "app_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "url": "https://example.com/webhook/"
+      }
+    },
+    "query": null,
+    "body": {
+      "url": "https://example.com/webhook/"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "metadata": {},
+      "url": "https://example.com/webhook/",
+      "description": "x",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "get",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "metadata": {},
+      "url": "https://example.com/webhook/",
+      "description": "x",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "upsert",
+    "method": "PUT",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "body": {
+        "url": "https://example.com/webhook/"
+      }
+    },
+    "query": null,
+    "body": {
+      "url": "https://example.com/webhook/"
+    },
+    "idempotencyKey": null,
+    "response": {
+      "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "metadata": {},
+      "url": "https://example.com/webhook/",
+      "description": "x",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "delete",
+    "method": "DELETE",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "endpoints",
+    "name": "patch",
+    "method": "PATCH",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "body": {}
+    },
+    "query": null,
+    "body": {},
+    "idempotencyKey": null,
+    "response": {
+      "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "metadata": {},
+      "url": "https://example.com/webhook/",
+      "description": "x",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "mcpEventsSubscribe",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/mcp-events/subscribe",
+    "input": {
+      "app_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "name": "user.signup",
+        "delivery": {
+          "mode": "webhook",
+          "url": "https://example.com/",
+          "secret": "whsec_C2FVsBQIhrscChlQIMV+b5sSYspob7oD"
+        }
+      }
+    },
+    "query": null,
+    "body": {
+      "name": "user.signup",
+      "delivery": {
+        "mode": "webhook",
+        "url": "https://example.com/",
+        "secret": "whsec_C2FVsBQIhrscChlQIMV+b5sSYspob7oD"
+      }
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "id": "unique-identifier",
+      "endpointId": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "truncated": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "mcpEventsUnsubscribe",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/mcp-events/unsubscribe",
+    "input": {
+      "app_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "name": "user.signup",
+        "delivery": {
+          "mode": "webhook",
+          "url": "https://example.com/"
+        }
+      }
+    },
+    "query": null,
+    "body": {
+      "name": "user.signup",
+      "delivery": {
+        "mode": "webhook",
+        "url": "https://example.com/"
+      }
+    },
+    "idempotencyKey": "fixture-key",
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "endpoints",
+    "name": "getSecret",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/secret",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "key": "whsec_C2FVsBQIhrscChlQIMV+b5sSYspob7oD"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "rotateSecret",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/secret/rotate",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {}
+    },
+    "query": null,
+    "body": {},
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "key": "whsec_C2FVsBQIhrscChlQIMV+b5sSYspob7oD"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "getHeaders",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/headers",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "headers": {
+        "X-Example": "123",
+        "X-Foobar": "Bar"
+      },
+      "sensitive": ["Authorization"]
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "setHeaders",
+    "method": "PUT",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/headers",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "body": {
+        "headers": {
+          "X-Example": "123",
+          "X-Foobar": "Bar"
+        }
+      }
+    },
+    "query": null,
+    "body": {
+      "headers": {
+        "X-Example": "123",
+        "X-Foobar": "Bar"
+      }
+    },
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "endpoints",
+    "name": "patchHeaders",
+    "method": "PATCH",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/headers",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "body": {
+        "headers": {
+          "X-Example": "123",
+          "X-Foobar": "Bar"
+        }
+      }
+    },
+    "query": null,
+    "body": {
+      "headers": {
+        "X-Example": "123",
+        "X-Foobar": "Bar"
+      }
+    },
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "endpoints",
+    "name": "transformationGet",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/transformation",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {},
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "transformationPatch",
+    "method": "PATCH",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/transformation",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "body": {}
+    },
+    "query": null,
+    "body": {},
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "endpoints",
+    "name": "replayMissing",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/replay-missing",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "since": "2026-01-01T00:00:00Z"
+      }
+    },
+    "query": null,
+    "body": {
+      "since": "2026-01-01T00:00:00Z"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "id": "qtask_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "status": "running",
+      "task": "endpoint.replay",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "bulkReplay",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/bulk-replay",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "since": "2026-01-01T00:00:00Z"
+      }
+    },
+    "query": null,
+    "body": {
+      "since": "2026-01-01T00:00:00Z"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "id": "qtask_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "status": "running",
+      "task": "endpoint.replay",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "getStats",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/stats",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "success": 0,
+      "pending": 0,
+      "sending": 0,
+      "fail": 0,
+      "canceled": 0
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "getAttemptStats",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/attempt-stats",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "success": 0,
+      "fail": 0,
+      "canceled": 0
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "recover",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/recover",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "since": "2026-01-01T00:00:00Z"
+      }
+    },
+    "query": null,
+    "body": {
+      "since": "2026-01-01T00:00:00Z"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "id": "qtask_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "status": "running",
+      "task": "endpoint.replay",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "endpoints",
+    "name": "sendExample",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/send-example",
+    "input": {
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "eventType": "user.signup"
+      }
+    },
+    "query": null,
+    "body": {
+      "eventType": "user.signup"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "eventType": "user.signup",
+      "payload": {
+        "type": "user.created",
+        "email": "test@example.com",
+        "username": "test_user"
+      },
+      "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "eventTypes",
+    "name": "list",
+    "method": "GET",
+    "path": "/api/v1/event-type",
+    "input": {
+      "limit": 1
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "name": "user.signup",
+          "description": "A user has signed up",
+          "deprecated": false,
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "schemas": {
+            "1": {
+              "type": "object",
+              "properties": { "userId": { "type": "string" } }
+            }
+          }
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "eventTypes",
+    "name": "create",
+    "method": "POST",
+    "path": "/api/v1/event-type",
+    "input": {
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "name": "user.signup",
+        "description": "A user has signed up"
+      }
+    },
+    "query": null,
+    "body": {
+      "name": "user.signup",
+      "description": "A user has signed up"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "name": "user.signup",
+      "description": "A user has signed up",
+      "deprecated": false,
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "eventTypes",
+    "name": "importOpenapi",
+    "method": "POST",
+    "path": "/api/v1/event-type/import/openapi",
+    "input": {
+      "idempotencyKey": "fixture-key",
+      "body": {}
+    },
+    "query": null,
+    "body": {},
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "data": {
+        "modified": []
+      }
+    },
+    "noContent": false
+  },
+  {
+    "group": "eventTypes",
+    "name": "get",
+    "method": "GET",
+    "path": "/api/v1/event-type/user.signup",
+    "input": {
+      "event_type_name": "user.signup"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "name": "user.signup",
+      "description": "A user has signed up",
+      "deprecated": false,
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "eventTypes",
+    "name": "upsert",
+    "method": "PUT",
+    "path": "/api/v1/event-type/user.signup",
+    "input": {
+      "event_type_name": "user.signup",
+      "body": {
+        "description": "A user has signed up"
+      }
+    },
+    "query": null,
+    "body": {
+      "description": "A user has signed up"
+    },
+    "idempotencyKey": null,
+    "response": {
+      "name": "user.signup",
+      "description": "A user has signed up",
+      "deprecated": false,
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "eventTypes",
+    "name": "delete",
+    "method": "DELETE",
+    "path": "/api/v1/event-type/user.signup",
+    "input": {
+      "event_type_name": "user.signup"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "eventTypes",
+    "name": "patch",
+    "method": "PATCH",
+    "path": "/api/v1/event-type/user.signup",
+    "input": {
+      "event_type_name": "user.signup",
+      "body": {}
+    },
+    "query": null,
+    "body": {},
+    "idempotencyKey": null,
+    "response": {
+      "name": "user.signup",
+      "description": "A user has signed up",
+      "deprecated": false,
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "list",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/msg",
+    "input": {
+      "app_id": "unique-identifier",
+      "limit": 1
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "eventType": "user.signup",
+          "payload": { "type": "user.created", "user": { "id": "123" } },
+          "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "channels": ["project_123"],
+          "deliverAt": null
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "create",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/msg",
+    "input": {
+      "app_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "eventType": "user.signup",
+        "payload": {
+          "type": "user.created",
+          "email": "test@example.com",
+          "username": "test_user"
+        }
+      }
+    },
+    "query": null,
+    "body": {
+      "eventType": "user.signup",
+      "payload": {
+        "type": "user.created",
+        "email": "test@example.com",
+        "username": "test_user"
+      }
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "eventType": "user.signup",
+      "payload": {
+        "type": "user.created",
+        "email": "test@example.com",
+        "username": "test_user"
+      },
+      "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "createBatch",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/msg/batch",
+    "input": {
+      "app_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "messages": [
+          {
+            "eventType": "user.signup",
+            "payload": {
+              "type": "user.created",
+              "email": "test@example.com",
+              "username": "test_user"
+            }
+          }
+        ]
+      }
+    },
+    "query": null,
+    "body": {
+      "messages": [
+        {
+          "eventType": "user.signup",
+          "payload": {
+            "type": "user.created",
+            "email": "test@example.com",
+            "username": "test_user"
+          }
+        }
+      ]
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {},
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "precheck",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/msg/precheck/active",
+    "input": {
+      "app_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "eventType": "user.signup"
+      }
+    },
+    "query": null,
+    "body": {
+      "eventType": "user.signup"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "active": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "get",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/msg/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier",
+      "msg_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "eventType": "user.signup",
+      "payload": {
+        "type": "user.created",
+        "email": "test@example.com",
+        "username": "test_user"
+      },
+      "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "expungeContent",
+    "method": "DELETE",
+    "path": "/api/v1/app/unique-identifier/msg/unique-identifier/content",
+    "input": {
+      "app_id": "unique-identifier",
+      "msg_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "messages",
+    "name": "bulkExpungeContent",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/msg/bulk-expunge",
+    "input": {
+      "app_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {}
+    },
+    "query": null,
+    "body": {},
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "results": {}
+    },
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "expungeAllContents",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/msg/expunge-all-contents",
+    "input": {
+      "app_id": "unique-identifier",
+      "idempotencyKey": "fixture-key"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "id": "qtask_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "status": "running",
+      "task": "endpoint.replay",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "attempts",
+    "name": "listByEndpoint",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/attempt/endpoint/unique-identifier",
+    "input": {
+      "limit": 1,
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "url": "https://example.com/webhook/",
+          "response": "{}",
+          "responseStatusCode": 200,
+          "responseDurationMs": 12,
+          "status": 0,
+          "statusText": "success",
+          "triggerType": 0,
+          "msgId": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "endpointId": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "id": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "msg": {
+            "eventType": "user.signup",
+            "payload": { "user": { "id": "123" } },
+            "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "timestamp": "2026-01-01T00:00:00Z"
+          }
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "attempts",
+    "name": "listByMsg",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/attempt/msg/unique-identifier",
+    "input": {
+      "limit": 1,
+      "app_id": "unique-identifier",
+      "msg_id": "unique-identifier"
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "url": "https://example.com/webhook/",
+          "response": "{}",
+          "responseStatusCode": 200,
+          "responseDurationMs": 12,
+          "status": 0,
+          "statusText": "success",
+          "triggerType": 0,
+          "msgId": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "endpointId": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "id": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "msg": null
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "attempts",
+    "name": "listAttemptedMessages",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/endpoint/unique-identifier/msg",
+    "input": {
+      "limit": 1,
+      "app_id": "unique-identifier",
+      "endpoint_id": "unique-identifier"
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "status": 0,
+          "statusText": "success",
+          "nextAttempt": null,
+          "eventType": "user.signup",
+          "payload": { "user": { "id": "123" } },
+          "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "channels": ["project_123"]
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "attempts",
+    "name": "listAttemptedDestinations",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/msg/unique-identifier/endpoint",
+    "input": {
+      "limit": 1,
+      "app_id": "unique-identifier",
+      "msg_id": "unique-identifier"
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "status": 0,
+          "statusText": "success",
+          "nextAttempt": null,
+          "url": "https://example.com/webhook/",
+          "description": "Webhook",
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "eventTypes": ["user.signup"],
+          "channels": ["project_123"]
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "attempts",
+    "name": "get",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/msg/unique-identifier/attempt/atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+    "input": {
+      "app_id": "unique-identifier",
+      "msg_id": "unique-identifier",
+      "attempt_id": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "url": "https://example.com/webhook/",
+      "response": "{}",
+      "responseStatusCode": 200,
+      "responseDurationMs": 0,
+      "status": 0,
+      "statusText": "success",
+      "triggerType": 0,
+      "msgId": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "endpointId": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "id": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    "noContent": false
+  },
+  {
+    "group": "attempts",
+    "name": "expungeContent",
+    "method": "DELETE",
+    "path": "/api/v1/app/unique-identifier/msg/unique-identifier/attempt/atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2/content",
+    "input": {
+      "app_id": "unique-identifier",
+      "msg_id": "unique-identifier",
+      "attempt_id": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "attempts",
+    "name": "resend",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/msg/unique-identifier/endpoint/unique-identifier/resend",
+    "input": {
+      "app_id": "unique-identifier",
+      "msg_id": "unique-identifier",
+      "endpoint_id": "unique-identifier",
+      "idempotencyKey": "fixture-key"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": "fixture-key",
+    "response": {},
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "pollerPoll",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/poller/unique-identifier",
+    "input": {
+      "app_id": "unique-identifier",
+      "sink_id": "unique-identifier",
+      "limit": 1
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "eventType": "user.signup",
+          "payload": { "user": { "id": "123" } },
+          "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "headers": { "content-type": "application/json" }
+        }
+      ],
+      "iterator": "x",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "pollerConsumerSeek",
+    "method": "POST",
+    "path": "/api/v1/app/unique-identifier/poller/unique-identifier/consumer/x/seek",
+    "input": {
+      "app_id": "unique-identifier",
+      "sink_id": "unique-identifier",
+      "consumer_id": "x",
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "after": "2025-04-21T11:20:34Z"
+      }
+    },
+    "query": null,
+    "body": {
+      "after": "2025-04-21T11:20:34Z"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "iterator": "x"
+    },
+    "noContent": false
+  },
+  {
+    "group": "messages",
+    "name": "pollerConsumerPoll",
+    "method": "GET",
+    "path": "/api/v1/app/unique-identifier/poller/unique-identifier/consumer/x",
+    "input": {
+      "app_id": "unique-identifier",
+      "sink_id": "unique-identifier",
+      "consumer_id": "x",
+      "limit": 1
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "eventType": "user.signup",
+          "payload": { "user": { "id": "123" } },
+          "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "headers": null
+        }
+      ],
+      "iterator": "x",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "list",
+    "method": "GET",
+    "path": "/api/v1/operational-webhook/endpoint",
+    "input": {
+      "limit": 1
+    },
+    "query": {
+      "limit": 1
+    },
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "data": [
+        {
+          "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "url": "https://example.com/webhook/",
+          "description": "Operational webhook",
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "metadata": { "team": "ops" },
+          "eventTypes": ["message.attempt.failing"]
+        }
+      ],
+      "iterator": "iterator",
+      "done": false
+    },
+    "noContent": false
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "create",
+    "method": "POST",
+    "path": "/api/v1/operational-webhook/endpoint",
+    "input": {
+      "idempotencyKey": "fixture-key",
+      "body": {
+        "url": "https://example.com/webhook/"
+      }
+    },
+    "query": null,
+    "body": {
+      "url": "https://example.com/webhook/"
+    },
+    "idempotencyKey": "fixture-key",
+    "response": {
+      "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "url": "https://example.com/webhook/",
+      "description": "x",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "metadata": {}
+    },
+    "noContent": false
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "get",
+    "method": "GET",
+    "path": "/api/v1/operational-webhook/endpoint/unique-identifier",
+    "input": {
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "url": "https://example.com/webhook/",
+      "description": "x",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "metadata": {}
+    },
+    "noContent": false
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "upsert",
+    "method": "PUT",
+    "path": "/api/v1/operational-webhook/endpoint/unique-identifier",
+    "input": {
+      "endpoint_id": "unique-identifier",
+      "body": {
+        "url": "https://example.com/webhook/"
+      }
+    },
+    "query": null,
+    "body": {
+      "url": "https://example.com/webhook/"
+    },
+    "idempotencyKey": null,
+    "response": {
+      "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+      "url": "https://example.com/webhook/",
+      "description": "x",
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "metadata": {}
+    },
+    "noContent": false
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "delete",
+    "method": "DELETE",
+    "path": "/api/v1/operational-webhook/endpoint/unique-identifier",
+    "input": {
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "getSecret",
+    "method": "GET",
+    "path": "/api/v1/operational-webhook/endpoint/unique-identifier/secret",
+    "input": {
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "key": "whsec_C2FVsBQIhrscChlQIMV+b5sSYspob7oD"
+    },
+    "noContent": false
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "rotateSecret",
+    "method": "POST",
+    "path": "/api/v1/operational-webhook/endpoint/unique-identifier/secret/rotate",
+    "input": {
+      "endpoint_id": "unique-identifier",
+      "idempotencyKey": "fixture-key",
+      "body": {}
+    },
+    "query": null,
+    "body": {},
+    "idempotencyKey": "fixture-key",
+    "response": null,
+    "noContent": true
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "getHeaders",
+    "method": "GET",
+    "path": "/api/v1/operational-webhook/endpoint/unique-identifier/headers",
+    "input": {
+      "endpoint_id": "unique-identifier"
+    },
+    "query": null,
+    "body": null,
+    "idempotencyKey": null,
+    "response": {
+      "headers": {
+        "X-Example": "123",
+        "X-Foobar": "Bar"
+      },
+      "sensitive": ["Authorization"]
+    },
+    "noContent": false
+  },
+  {
+    "group": "operationalWebhooks",
+    "name": "setHeaders",
+    "method": "PUT",
+    "path": "/api/v1/operational-webhook/endpoint/unique-identifier/headers",
+    "input": {
+      "endpoint_id": "unique-identifier",
+      "body": {
+        "headers": {
+          "X-Example": "123",
+          "X-Foobar": "Bar"
+        }
+      }
+    },
+    "query": null,
+    "body": {
+      "headers": {
+        "X-Example": "123",
+        "X-Foobar": "Bar"
+      }
+    },
+    "idempotencyKey": null,
+    "response": null,
+    "noContent": true
+  }
+]

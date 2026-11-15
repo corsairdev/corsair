@@ -1,0 +1,48 @@
+displayName: Prismic
+description: Headless CMS API for querying published documents and migrating content into a repository.
+domain: prismic.io
+recommendedAuth: api_key
+overviewNote: |
+  Prismic is a headless CMS built on custom types. This plugin reads published content through the Content API and writes drafts through the Migration API, which are two different hosts with two different credentials.
+
+  What to know before you call:
+
+  - **What an account stores.** Every call needs the repository id (`repository`, such as `my-repo` from `my-repo.prismic.io`), stored on the account or passed as `prismic({ repository })`. The account's key is a write token (Settings, API & Security, Write APIs), which only the `migration.*` operations need. A private repository also needs its Content API access token (`access_token`, or `prismic({ accessToken })`); a public one needs nothing for reads.
+  - **A query is pinned to a ref.** Prismic refuses a document query without one. When `ref` is omitted, the plugin reads the repository's master ref first, which is the published content. Pass a release's `ref` from `repository.info` to read that release instead.
+  - **Paging.** A search returns `next_page` while another page exists. It already carries the ref and every filter, so pass it as `nextPage` and the other fields are ignored. For a changing dataset the `after` cursor is steadier than `page`.
+  - **Predicates.** `q` takes a Prismic predicate expression such as `[[at(document.type, "page")]]`, and `orderings` takes a sort such as `[my.page.date desc]`. The plugin passes both through rather than parsing them.
+  - **Document bodies are yours.** Which fields a document has depends on the repository's custom types, so `data` is read and written as it is sent and Prismic validates it.
+  - **Migration writes are drafts.** `migration.create` and `migration.update` save into a migration release, which you publish from the Prismic UI or the client library afterwards. Prismic accepts one page per request at one request per second per repository.
+  - **An update replaces the content.** `migration.update` needs the full `data`, which replaces what is stored, and omitting `tags` deletes every tag. `type`, `lang` and the translation link cannot be changed.
+  - **Webhooks.** Prismic can call a URL when content changes, but this plugin does not handle inbound deliveries.
+references:
+  - title: Migration API technical reference
+    url: https://prismic.io/docs/migration-api-technical-reference
+  - title: Content API
+    url: https://prismic.io/docs/content-api
+examples:
+  read:
+    path: documents.search
+    title: Read the first page of documents
+    args:
+      pageSize: 20
+  write:
+    path: migration.create
+    title: Create a page as a draft
+    args:
+      title: Example page
+      type: page
+      lang: en-us
+      data:
+        title: Hello
+apiExamples:
+  repository.info:
+    call: '{}'
+  documents.search:
+    call: "{ pageSize: 20, orderings: '[my.page.date desc]' }"
+  documents.get:
+    call: "{ id: 'ZMI65RQAADkECUFM' }"
+  migration.create:
+    call: "{ title: 'Example page', type: 'page', uid: 'example-page', lang: 'en-us', tags: ['Red'], data: {} }"
+  migration.update:
+    call: "{ id: 'ZMI65RQAADkECUFM', title: 'Updated title', data: { summary: 'Updated text' } }"
