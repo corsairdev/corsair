@@ -1,2 +1,36 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: Vercel
-description: Frontend cloud platform for deploying sites, serverless functions, and edge web applications.
+description: Manage Vercel projects, deployments, environment variables, domains, DNS, aliases, teams, webhooks and Edge Config.
+domain: vercel.com
+recommendedAuth: api_key
+overviewNote: |
+  The plugin calls Vercel's REST API (`https://api.vercel.com`) with a bearer token. Things to know before you call it:
+
+  - **Access token.** Create one under [Account Settings → Tokens](https://vercel.com/account/settings/tokens). Pick the team it may reach (or full account) and an expiry. It's the connection's API key; in code you can pass it as `key`.
+  - **Teams.** Most resources belong to a team. Every operation takes an optional `teamId`, which can be the team id (`team_…`) or its slug. Without it, a call uses the connection's `team_id` field, then the plugin's `teamId` option, then the token's own scope (your default team). `teams.getTeams` lists the teams a token can reach.
+  - **OAuth.** `authType: 'oauth_2'` and `'managed'` send an OAuth access token. An integration install token (from Vercel's integration flow) never expires; the team the install was made for is saved as the connection's `team_id` automatically. A token that expires (Sign in with Vercel) is refreshed through Corsair.
+  - **Paging.** List operations take `limit`, `since` and `until` (timestamps in ms). Pass the previous page's `pagination.next` as `until` to get the next page.
+  - **Rate limits.** Vercel answers 429 with `Retry-After`; Corsair waits and retries up to three times.
+  - **Secrets.** `envs.getEnvVariable` returns a variable's decrypted value; list operations return most values encrypted. Env values, file contents and webhook secrets are kept out of the event log and the local store.
+  - **Can't be undone.** Deleting a project, a deployment or an environment variable is permanent. Promotions and rollbacks can be reversed with another promotion.
+examples:
+  read:
+    path: projects.getProjects
+    title: List projects
+    args:
+      limit: 10
+  write:
+    path: envs.createEnvVariable
+    title: Add an environment variable
+    args:
+      idOrName: my-site
+      key: NEXT_PUBLIC_API_URL
+      value: https://api.example.com
+      target:
+        - production
+        - preview
+dbExample:
+  entity: projects
+  note: Projects fetched through the API are stored locally (without their environment variable values).
+  data:
+    name: my-site

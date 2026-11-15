@@ -1,4 +1,4 @@
-import type { CorsairWebhook } from 'corsair/core';
+import type { CorsairWebhook, WebhookRequest } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { VercelContext } from '../index';
 import type { VercelWebhookOutputs } from './types';
@@ -13,7 +13,7 @@ import {
 export const deploymentHandlers = {
 	deploymentCreated: {
 		match: createVercelMatch('deployment.created'),
-		handler: async (ctx: VercelContext, request: any) => {
+		handler: async (ctx: VercelContext, request: WebhookRequest<unknown>) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
 				return {
@@ -22,9 +22,7 @@ export const deploymentHandlers = {
 					error: 'Invalid Vercel signature',
 				};
 			}
-			const event = DeploymentCreatedEventSchema.parse(
-				request.body || request.payload || request,
-			);
+			const event = DeploymentCreatedEventSchema.parse(request.payload);
 
 			if (ctx.db.deployments) {
 				await ctx.db.deployments.upsertByEntityId(event.payload.deployment.id, {
@@ -48,7 +46,7 @@ export const deploymentHandlers = {
 
 	deploymentSucceeded: {
 		match: createVercelMatch('deployment.succeeded'),
-		handler: async (ctx: VercelContext, request: any) => {
+		handler: async (ctx: VercelContext, request: WebhookRequest<unknown>) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
 				return {
@@ -57,9 +55,7 @@ export const deploymentHandlers = {
 					error: 'Invalid Vercel signature',
 				};
 			}
-			const event = DeploymentSucceededEventSchema.parse(
-				request.body || request.payload || request,
-			);
+			const event = DeploymentSucceededEventSchema.parse(request.payload);
 
 			if (ctx.db.deployments) {
 				await ctx.db.deployments.upsertByEntityId(event.payload.deployment.id, {
@@ -86,7 +82,7 @@ export const deploymentHandlers = {
 
 	deploymentError: {
 		match: createVercelMatch('deployment.error'),
-		handler: async (ctx: VercelContext, request: any) => {
+		handler: async (ctx: VercelContext, request: WebhookRequest<unknown>) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
 				return {
@@ -95,9 +91,7 @@ export const deploymentHandlers = {
 					error: 'Invalid Vercel signature',
 				};
 			}
-			const event = DeploymentErrorEventSchema.parse(
-				request.body || request.payload || request,
-			);
+			const event = DeploymentErrorEventSchema.parse(request.payload);
 
 			if (ctx.db.deployments) {
 				await ctx.db.deployments.upsertByEntityId(event.payload.deployment.id, {

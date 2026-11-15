@@ -1,93 +1,31 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { VercelAPIError } from './client';
+import { ApiError } from 'corsair/http';
+
+const status = (error: Error) =>
+	error instanceof ApiError ? error.status : undefined;
 
 export const errorHandlers = {
+	// Core's request() has already retried the 429 three times (honouring
+	// Retry-After) by the time it reaches here, so no further retries.
 	RATE_LIMIT_ERROR: {
-		match: (error, context) => {
-			if (error instanceof VercelAPIError && error.status === 429) {
-				return true;
-			}
-			const errorMessage = error.message.toLowerCase();
-			return (
-				errorMessage.includes('rate_limited') ||
-				errorMessage.includes('ratelimited') ||
-				errorMessage.includes('too_many_requests') ||
-				error.message.includes('429')
-			);
-		},
-		handler: async (error, context) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof VercelAPIError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-
-			return {
-				maxRetries: 3,
-				headersRetryAfterMs: retryAfterMs,
-			};
-		},
+		match: (error: Error) => status(error) === 429,
+		handler: async (error: Error) => ({
+			maxRetries: 0,
+			headersRetryAfterMs:
+				error instanceof ApiError ? error.retryAfter : undefined,
+		}),
 	},
+	// A 401 reaches core's OAuth refresh before these handlers; for an API key
+	// it means the token is wrong or revoked, and retrying won't change that.
 	AUTH_ERROR: {
-		match: (error, context) => {
-			if (error instanceof VercelAPIError && error.status === 401) {
-				return true;
-			}
-			const errorMessage = error.message.toLowerCase();
-			return (
-				errorMessage.includes('invalid_auth') ||
-				errorMessage.includes('unauthorized') ||
-				errorMessage.includes('authentication failed') ||
-				errorMessage.includes('invalid_token') ||
-				errorMessage.includes('token_expired') ||
-				errorMessage.includes('invalid_grant')
-			);
-		},
-		handler: async (error, context) => {
-			console.log(
-				`[VERCEL:${context.operation}] Authentication failed - check your access token`,
-			);
-
-			return {
-				maxRetries: 0,
-			};
-		},
+		match: (error: Error) => status(error) === 401,
+		handler: async () => ({ maxRetries: 0 }),
 	},
+	// 403: the token lacks the scope, or the resource belongs to a team the
+	// token can't reach (pass that team's teamId).
 	PERMISSION_ERROR: {
-		match: (error, context) => {
-			if (error instanceof VercelAPIError && error.status === 403) {
-				return true;
-			}
-			const errorMessage = error.message.toLowerCase();
-			return (
-				errorMessage.includes('permission_denied') ||
-				errorMessage.includes('forbidden') ||
-				errorMessage.includes('access_denied') ||
-				errorMessage.includes('insufficient_permissions') ||
-				errorMessage.includes('insufficient_scope')
-			);
-		},
-		handler: async (error, context) => {
-			console.warn(
-				`[VERCEL:${context.operation}] Permission denied: ${error.message}`,
-			);
-
-			return {
-				maxRetries: 0,
-			};
-		},
+		match: (error: Error) => status(error) === 403,
+		handler: async () => ({ maxRetries: 0 }),
 	},
-	DEFAULT: {
-		match: (error, context) => {
-			return true;
-		},
-		handler: async (error, context) => {
-			console.error(
-				`[VERCEL:${context.operation}] Unhandled error: ${error.message}`,
-			);
-
-			return {
-				maxRetries: 0,
-			};
-		},
-	},
+	DEFAULT: { match: () => true, handler: async () => ({ maxRetries: 0 }) },
 } satisfies CorsairErrorHandler;
