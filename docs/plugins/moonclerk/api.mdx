@@ -41,38 +41,38 @@ await corsair.moonclerk.api.customers.get({});
 
 ```ts
 {
-  id?: number,
-  account_balance?: number,
-  name?: string,
-  email?: string,
+  id?: number | null,
+  account_balance?: number | null,
+  name?: string | null,
+  email?: string | null,
   payment_method?: {
-    type?: string,
-    last4?: string,
+    type?: string | null,
+    last4?: string | null,
     exp_month?: number | null,
     exp_year?: number | null,
-    brand?: string
-  },
+    brand?: string | null
+  } | null,
   custom_id?: string | null,
   customer_reference?: string | null,
   discount?: {
     coupon?: {
-      code?: string,
-      duration?: string,
+      code?: string | null,
+      duration?: string | null,
       amount_off?: number | null,
       currency?: string | null,
       percent_off?: number | null,
       duration_in_months?: number | null,
       max_redemptions?: number | null,
       redeem_by?: string | null
-    },
+    } | null,
     starts_at?: string | null,
     ends_at?: string | null
   } | null,
-  delinquent?: boolean,
-  management_url?: string,
+  delinquent?: boolean | null,
+  management_url?: string | null,
   custom_fields?: Record<string, {
-    id?: number,
-    type?: string,
+    id?: number | null,
+    type?: string | null,
     response?: string | number | boolean | null | {
       line1?: string | null,
       line2?: string | null,
@@ -80,25 +80,25 @@ await corsair.moonclerk.api.customers.get({});
       state?: string | null,
       postal_code?: string | null,
       country?: string | null
-    }
-  }>,
-  form_id?: number,
+    } | null
+  }> | null,
+  form_id?: number | null,
   checkout?: {
-    amount_due?: number,
+    amount_due?: number | null,
     coupon_amount?: number | null,
     coupon_code?: string | null,
-    date?: string,
-    fee?: number,
-    subtotal?: number,
-    token?: string,
-    total?: number,
+    date?: string | null,
+    fee?: number | null,
+    subtotal?: number | null,
+    token?: string | null,
+    total?: number | null,
     trial_period_days?: number | null,
     upfront_amount?: number | null
-  },
+  } | null,
   subscription?: {
-    id?: number,
+    id?: number | null,
     subscription_reference?: string | null,
-    status?: active | canceled | expired | past_due | pending | unpaid,
+    status?: active | canceled | expired | past_due | pending | unpaid | string | null,
     start?: string | null,
     first_payment_attempt?: string | null,
     next_payment_attempt?: string | null,
@@ -111,15 +111,15 @@ await corsair.moonclerk.api.customers.get({});
     canceled_at?: string | null,
     ended_at?: string | null,
     plan?: {
-      id?: number,
+      id?: number | null,
       plan_reference?: string | null,
-      amount?: number,
+      amount?: number | null,
       amount_description?: string | null,
-      currency?: string,
-      interval?: string,
-      interval_count?: number
-    }
-  }
+      currency?: string | null,
+      interval?: string | null,
+      interval_count?: number | null
+    } | null
+  } | null
 }
 ```
 </Accordion>
@@ -167,38 +167,38 @@ await corsair.moonclerk.api.customers.list({});
 
 ```ts
 {
-  id?: number,
-  account_balance?: number,
-  name?: string,
-  email?: string,
+  id?: number | null,
+  account_balance?: number | null,
+  name?: string | null,
+  email?: string | null,
   payment_method?: {
-    type?: string,
-    last4?: string,
+    type?: string | null,
+    last4?: string | null,
     exp_month?: number | null,
     exp_year?: number | null,
-    brand?: string
-  },
+    brand?: string | null
+  } | null,
   custom_id?: string | null,
   customer_reference?: string | null,
   discount?: {
     coupon?: {
-      code?: string,
-      duration?: string,
+      code?: string | null,
+      duration?: string | null,
       amount_off?: number | null,
       currency?: string | null,
       percent_off?: number | null,
       duration_in_months?: number | null,
       max_redemptions?: number | null,
       redeem_by?: string | null
-    },
+    } | null,
     starts_at?: string | null,
     ends_at?: string | null
   } | null,
-  delinquent?: boolean,
-  management_url?: string,
+  delinquent?: boolean | null,
+  management_url?: string | null,
   custom_fields?: Record<string, {
-    id?: number,
-    type?: string,
+    id?: number | null,
+    type?: string | null,
     response?: string | number | boolean | null | {
       line1?: string | null,
       line2?: string | null,
@@ -206,25 +206,25 @@ await corsair.moonclerk.api.customers.list({});
       state?: string | null,
       postal_code?: string | null,
       country?: string | null
-    }
-  }>,
-  form_id?: number,
+    } | null
+  }> | null,
+  form_id?: number | null,
   checkout?: {
-    amount_due?: number,
+    amount_due?: number | null,
     coupon_amount?: number | null,
     coupon_code?: string | null,
-    date?: string,
-    fee?: number,
-    subtotal?: number,
-    token?: string,
-    total?: number,
+    date?: string | null,
+    fee?: number | null,
+    subtotal?: number | null,
+    token?: string | null,
+    total?: number | null,
     trial_period_days?: number | null,
     upfront_amount?: number | null
-  },
+  } | null,
   subscription?: {
-    id?: number,
+    id?: number | null,
     subscription_reference?: string | null,
-    status?: active | canceled | expired | past_due | pending | unpaid,
+    status?: active | canceled | expired | past_due | pending | unpaid | string | null,
     start?: string | null,
     first_payment_attempt?: string | null,
     next_payment_attempt?: string | null,
@@ -237,15 +237,15 @@ await corsair.moonclerk.api.customers.list({});
     canceled_at?: string | null,
     ended_at?: string | null,
     plan?: {
-      id?: number,
+      id?: number | null,
       plan_reference?: string | null,
-      amount?: number,
+      amount?: number | null,
       amount_description?: string | null,
-      currency?: string,
-      interval?: string,
-      interval_count?: number
-    }
-  }
+      currency?: string | null,
+      interval?: string | null,
+      interval_count?: number | null
+    } | null
+  } | null
 }[]
 ```
 </Accordion>
@@ -288,14 +288,14 @@ await corsair.moonclerk.api.forms.get({});
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  access_token?: string,
-  currency?: string,
-  payment_volume?: number,
-  successful_checkout_count?: number,
-  created_at?: string,
-  updated_at?: string
+  id?: number | null,
+  title?: string | null,
+  access_token?: string | null,
+  currency?: string | null,
+  payment_volume?: number | null,
+  successful_checkout_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }
 ```
 </Accordion>
@@ -337,14 +337,14 @@ await corsair.moonclerk.api.forms.list({});
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  access_token?: string,
-  currency?: string,
-  payment_volume?: number,
-  successful_checkout_count?: number,
-  created_at?: string,
-  updated_at?: string
+  id?: number | null,
+  title?: string | null,
+  access_token?: string | null,
+  currency?: string | null,
+  payment_volume?: number | null,
+  successful_checkout_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
 }[]
 ```
 </Accordion>
@@ -387,30 +387,30 @@ await corsair.moonclerk.api.payments.get({});
 
 ```ts
 {
-  id?: number,
-  date?: string,
-  status?: successful | refunded | failed,
-  currency?: string,
-  amount?: number,
-  fee?: number,
-  amount_refunded?: number,
+  id?: number | null,
+  date?: string | null,
+  status?: successful | refunded | failed | string | null,
+  currency?: string | null,
+  amount?: number | null,
+  fee?: number | null,
+  amount_refunded?: number | null,
   amount_description?: string | null,
-  name?: string,
-  email?: string,
+  name?: string | null,
+  email?: string | null,
   payment_method?: {
-    type?: string,
-    last4?: string,
+    type?: string | null,
+    last4?: string | null,
     exp_month?: number | null,
     exp_year?: number | null,
-    brand?: string
-  },
+    brand?: string | null
+  } | null,
   charge_reference?: string | null,
   customer_id?: number | null,
   customer_reference?: string | null,
   invoice_reference?: string | null,
   custom_fields?: Record<string, {
-    id?: number,
-    type?: string,
+    id?: number | null,
+    type?: string | null,
     response?: string | number | boolean | null | {
       line1?: string | null,
       line2?: string | null,
@@ -418,25 +418,25 @@ await corsair.moonclerk.api.payments.get({});
       state?: string | null,
       postal_code?: string | null,
       country?: string | null
-    }
-  }>,
-  form_id?: number,
+    } | null
+  }> | null,
+  form_id?: number | null,
   custom_id?: string | null,
   checkout?: {
-    amount_due?: number,
+    amount_due?: number | null,
     coupon_amount?: number | null,
     coupon_code?: string | null,
-    date?: string,
-    fee?: number,
-    subtotal?: number,
-    token?: string,
-    total?: number,
+    date?: string | null,
+    fee?: number | null,
+    subtotal?: number | null,
+    token?: string | null,
+    total?: number | null,
     trial_period_days?: number | null,
     upfront_amount?: number | null
   } | null,
   coupon?: {
-    code?: string,
-    duration?: string,
+    code?: string | null,
+    duration?: string | null,
     amount_off?: number | null,
     currency?: string | null,
     percent_off?: number | null,
@@ -490,30 +490,30 @@ await corsair.moonclerk.api.payments.list({});
 
 ```ts
 {
-  id?: number,
-  date?: string,
-  status?: successful | refunded | failed,
-  currency?: string,
-  amount?: number,
-  fee?: number,
-  amount_refunded?: number,
+  id?: number | null,
+  date?: string | null,
+  status?: successful | refunded | failed | string | null,
+  currency?: string | null,
+  amount?: number | null,
+  fee?: number | null,
+  amount_refunded?: number | null,
   amount_description?: string | null,
-  name?: string,
-  email?: string,
+  name?: string | null,
+  email?: string | null,
   payment_method?: {
-    type?: string,
-    last4?: string,
+    type?: string | null,
+    last4?: string | null,
     exp_month?: number | null,
     exp_year?: number | null,
-    brand?: string
-  },
+    brand?: string | null
+  } | null,
   charge_reference?: string | null,
   customer_id?: number | null,
   customer_reference?: string | null,
   invoice_reference?: string | null,
   custom_fields?: Record<string, {
-    id?: number,
-    type?: string,
+    id?: number | null,
+    type?: string | null,
     response?: string | number | boolean | null | {
       line1?: string | null,
       line2?: string | null,
@@ -521,25 +521,25 @@ await corsair.moonclerk.api.payments.list({});
       state?: string | null,
       postal_code?: string | null,
       country?: string | null
-    }
-  }>,
-  form_id?: number,
+    } | null
+  }> | null,
+  form_id?: number | null,
   custom_id?: string | null,
   checkout?: {
-    amount_due?: number,
+    amount_due?: number | null,
     coupon_amount?: number | null,
     coupon_code?: string | null,
-    date?: string,
-    fee?: number,
-    subtotal?: number,
-    token?: string,
-    total?: number,
+    date?: string | null,
+    fee?: number | null,
+    subtotal?: number | null,
+    token?: string | null,
+    total?: number | null,
     trial_period_days?: number | null,
     upfront_amount?: number | null
   } | null,
   coupon?: {
-    code?: string,
-    duration?: string,
+    code?: string | null,
+    duration?: string | null,
     amount_off?: number | null,
     currency?: string | null,
     percent_off?: number | null,
@@ -555,3 +555,4 @@ await corsair.moonclerk.api.payments.list({});
 
 
 ---
+
