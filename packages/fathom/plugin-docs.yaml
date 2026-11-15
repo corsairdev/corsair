@@ -1,0 +1,76 @@
+displayName: Fathom
+description: Privacy-focused web analytics platform for tracking visitors, sites, milestones, and custom aggregation reports.
+domain: usefathom.com
+recommendedAuth: api_key
+overviewNote: |
+  Fathom Analytics provides simple, privacy-first website analytics without cookies or tracking personal data.
+  To connect to the API, generate an API token from your Fathom dashboard under Settings -> API (or https://app.usefathom.com/api).
+  Provide the API token as `key` or store it in your account keys under `api_key`.
+
+  Things to know:
+  - **Rate limits:** Fathom enforces both an hourly volume limit and a concurrency limit per account. When exceeded, the API returns HTTP 429 with a `Retry-After` header.
+  - **Retired endpoints:** Fathom retired the Wipe endpoints and the event-by-ID endpoints (`events.create`, `events.get`, `events.update`, `events.delete`, `events.wipe`, `sites.wipe`); they return HTTP 410 Gone. Events now appear once your site tracks them: read them with `events.list` and set their currency with `events.setCurrency`. `events.deleteByName` only removes an event's currency setting; it does not delete the event or its completions. Wiping data is no longer possible through the API.
+  - **Aggregation filtering:** Use `reports.aggregation` to query pageview or event analytics with flexible grouping and date ranges. Filters are structured objects matching supported operators (`is`, `is not`, `is like`, `is not like`, `matching`, `not matching`).
+references:
+  - title: Fathom API Reference
+    url: https://usefathom.com/api
+  - title: Fathom OpenAPI Specification
+    url: https://usefathom.com/api/openapi.json
+examples:
+  read:
+    path: sites.list
+    title: List sites in Fathom
+    args:
+      limit: 10
+  write:
+    path: sites.create
+    title: Create a new site in Fathom
+    args:
+      name: My Portfolio Website
+apiExamples:
+  account.get:
+    call: "{}"
+  account.getToken:
+    call: "{}"
+  sites.list:
+    call: "{ limit: 10 }"
+  sites.create:
+    call: "{ name: 'My Website', sharing: 'none' }"
+  sites.get:
+    call: "{ site_id: 'CDBUGS' }"
+  sites.update:
+    call: "{ site_id: 'CDBUGS', name: 'Updated Portfolio' }"
+  sites.delete:
+    call: "{ site_id: 'CDBUGS' }"
+  sites.wipe:
+    call: "{ site_id: 'CDBUGS' }"
+  events.list:
+    call: "{ site_id: 'CDBUGS' }"
+  events.setCurrency:
+    call: "{ site_id: 'CDBUGS', name: 'Purchase early access', currency: 'pound' }"
+  events.deleteByName:
+    call: "{ site_id: 'CDBUGS', name: 'Purchase early access' }"
+  events.create:
+    call: "{ site_id: 'CDBUGS', name: 'Purchase early access' }"
+  events.get:
+    call: "{ site_id: 'CDBUGS', event_id: 'IJKLMNOP' }"
+  events.update:
+    call: "{ site_id: 'CDBUGS', event_id: 'IJKLMNOP', name: 'Updated Event' }"
+  events.delete:
+    call: "{ site_id: 'CDBUGS', event_id: 'IJKLMNOP' }"
+  events.wipe:
+    call: "{ site_id: 'CDBUGS', event_id: 'IJKLMNOP' }"
+  milestones.list:
+    call: "{ site_id: 'CDBUGS' }"
+  milestones.create:
+    call: "{ site_id: 'CDBUGS', name: 'Website Redesign Launch', milestone_date: '2024-01-15' }"
+  milestones.get:
+    call: "{ site_id: 'CDBUGS', milestone_id: 'ddc9cdff-ab83-41fa-96c6-dfb276a862e7' }"
+  milestones.update:
+    call: "{ site_id: 'CDBUGS', milestone_id: 'ddc9cdff-ab83-41fa-96c6-dfb276a862e7', name: 'Website Redesign Launch v2', milestone_date: '2024-01-20' }"
+  milestones.delete:
+    call: "{ site_id: 'CDBUGS', milestone_id: 'ddc9cdff-ab83-41fa-96c6-dfb276a862e7' }"
+  reports.aggregation:
+    call: "{ entity: 'pageview', entity_id: 'CDBUGS', aggregates: 'pageviews,visits,uniques' }"
+  reports.currentVisitors:
+    call: "{ site_id: 'CDBUGS', detailed: false }"
