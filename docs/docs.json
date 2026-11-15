@@ -4396,6 +4396,14 @@
                 ]
               },
               {
+                "group": "Sympla",
+                "pages": [
+                  "plugins/sympla/overview",
+                  "plugins/sympla/api",
+                  "plugins/sympla/database"
+                ]
+              },
+              {
                 "group": "Synthflow AI",
                 "pages": [
                   "plugins/synthflowai/overview",

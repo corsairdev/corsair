@@ -1,0 +1,69 @@
+---
+title: "Sympla API reference"
+sidebarTitle: "API"
+description: "API reference for the Sympla plugin in Corsair: every `sympla.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### list
+
+`events.list`
+
+List events for the authenticated organizer.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.events.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number. |
+| `page_size` | `number` | No | Page size. |
+| `published` | `boolean` | No | Limit the list to published events. |
+| `from` | `string` | No | Start date filter. |
+| `to` | `string` | No | End date filter. |
+| `field_sort` | `string` | No | Field used to sort the list. |
+| `sort` | `ASC \| DESC` | No | ASC or DESC. |
+
+Page starts at 1 when you set it. sort is ASC or DESC. Omit a filter to take the service default.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
