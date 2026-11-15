@@ -6,17 +6,14 @@ import type {
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
-	encryptDEK,
 	exchangeCodeForTokens,
-	generateDEK,
 } from '../core';
-import { findAccountRow } from '../core/account-lookup';
+import { upsertAccount } from '../core/account-lookup';
 import {
 	encodeOAuthState,
 	signState,
 	verifyAndDecodeState,
 } from '../core/auth/state';
-import { generateUUID } from '../core/utils';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
@@ -85,44 +82,7 @@ async function ensureAccount(
 	tenantId: string,
 	kek: string,
 ): Promise<void> {
-	await database.db.transaction().execute(async (trx) => {
-		// Lock the integration row before the check-then-insert so this
-		// cannot interleave with a concurrent disconnect (or another connect).
-		let integrationQuery = trx
-			.selectFrom('corsair_integrations')
-			.select(['id'])
-			.where('name', '=', pluginId);
-		if (database.isPg === true) integrationQuery = integrationQuery.forUpdate();
-		const integrationRow = await integrationQuery.executeTakeFirst();
-
-		if (!integrationRow) {
-			throw new Error(
-				`Integration '${pluginId}' not found. Run setupCorsair first.`,
-			);
-		}
-
-		const existing = await findAccountRow(trx, {
-			tenantId,
-			integrationId: integrationRow.id,
-		});
-		if (existing) return;
-
-		const dek = generateDEK();
-		const encryptedDek = await encryptDEK(dek, kek);
-		const now = new Date();
-		await trx
-			.insertInto('corsair_accounts')
-			.values({
-				id: generateUUID(),
-				created_at: now,
-				updated_at: now,
-				tenant_id: tenantId,
-				integration_id: integrationRow.id,
-				config: {},
-				dek: encryptedDek,
-			})
-			.execute();
-	});
+	await upsertAccount({ database, kek, integrationName: pluginId, tenantId });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

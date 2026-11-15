@@ -2,6 +2,7 @@ import {
 	AccountSelectionError,
 	listAccounts,
 	resolveAccount,
+	upsertAccount,
 } from '../core/account-lookup';
 import {
 	encryptConfig,
@@ -168,5 +169,107 @@ describe('listAccounts / resolveAccount', () => {
 			tenantId: 't2',
 		});
 		expect(await resolveAccount(input(t))).toBeUndefined();
+	});
+});
+
+describe('upsertAccount', () => {
+	let t: TestDb;
+	beforeEach(async () => {
+		t = createTestDatabase();
+		await seedIntegration(t);
+	});
+	afterEach(() => t.cleanup());
+
+	const up = (identity?: { id: string; label?: string }) =>
+		upsertAccount({
+			database: t.database,
+			kek: KEK,
+			integrationName: 'gmail',
+			tenantId: 't1',
+			identity,
+		});
+	const rowCount = async () =>
+		(await t.database.db.selectFrom('corsair_accounts').select('id').execute())
+			.length;
+	const list = () => listAccounts(input(t));
+
+	test('no identity inserts one row and returns it again on the second call', async () => {
+		const a = await up();
+		const b = await up();
+		expect(a.created).toBe(true);
+		expect(b).toEqual({ accountId: a.accountId, created: false });
+		expect(await rowCount()).toBe(1);
+	});
+
+	test('same identity twice yields one row and refreshes the label', async () => {
+		const a = await up({ id: 'r1', label: 'old@x.com' });
+		const b = await up({ id: 'r1', label: 'new@x.com' });
+		expect(b).toEqual({ accountId: a.accountId, created: false });
+		const [acct] = await list();
+		expect(acct?.ref).toBe('r1');
+		expect(acct?.label).toBe('new@x.com');
+		expect(await rowCount()).toBe(1);
+	});
+
+	test('a new identity inserts a second row; listAccounts returns both oldest-first', async () => {
+		const a = await up({ id: 'r1', label: 'a@x.com' });
+		await new Promise((r) => setTimeout(r, 5));
+		const b = await up({ id: 'r2', label: 'b@x.com' });
+		expect(b.created).toBe(true);
+		expect((await list()).map((x) => x.id)).toEqual([a.accountId, b.accountId]);
+	});
+
+	test('a legacy ref-less row is adopted by the first identity and not duplicated', async () => {
+		await seedAccount(t, 'legacy', '2026-01-01', { legacy: true });
+		const r = await up({ id: 'r1', label: 'a@x.com' });
+		expect(r).toEqual({ accountId: 'legacy', created: false });
+		const [acct] = await list();
+		expect([acct?.ref, acct?.label]).toEqual(['r1', 'a@x.com']);
+		expect(acct?.dek).not.toBeNull();
+		expect(await rowCount()).toBe(1);
+	});
+
+	test('adoption skips rows that already have a ref', async () => {
+		await seedAccount(t, 'a', '2026-01-01', { ref: 'rA', label: 'a@x.com' });
+		await seedAccount(t, 'blank', '2026-01-02', { legacy: true });
+		const r = await up({ id: 'rB', label: 'b@x.com' });
+		expect(r).toEqual({ accountId: 'blank', created: false });
+		expect(await rowCount()).toBe(2);
+	});
+
+	test('the sixth identity throws account_limit and writes nothing', async () => {
+		for (let n = 1; n <= 5; n++) await up({ id: `r${n}`, label: `${n}@x.com` });
+		const err = await up({ id: 'r6' }).catch((e) => e);
+		expect(err).toBeInstanceOf(AccountSelectionError);
+		expect(err.code).toBe('account_limit');
+		expect(err.message).toBe(
+			'Account limit reached: tenant "t1" already has 5 accounts for "gmail".',
+		);
+		expect(await rowCount()).toBe(5);
+	});
+
+	test('five concurrent connects of the same identity leave one row', async () => {
+		await Promise.all(
+			Array.from({ length: 5 }, () => up({ id: 'r1', label: 'a@x.com' })),
+		);
+		expect(await rowCount()).toBe(1);
+	});
+
+	test('no identity with two existing accounts returns the oldest without inserting', async () => {
+		await seedAccount(t, 'new', '2026-02-01', { ref: 'r2' });
+		await seedAccount(t, 'old', '2026-01-01', { ref: 'r1' });
+		expect(await up()).toEqual({ accountId: 'old', created: false });
+		expect(await rowCount()).toBe(2);
+	});
+
+	test('unknown integration keeps the existing error', async () => {
+		await expect(
+			upsertAccount({
+				database: t.database,
+				kek: KEK,
+				integrationName: 'nope',
+				tenantId: 't1',
+			}),
+		).rejects.toThrow("Integration 'nope' not found. Run setupCorsair first.");
 	});
 });

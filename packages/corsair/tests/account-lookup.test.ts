@@ -1,6 +1,7 @@
 import {
 	findAccountRow,
 	resolveIntegrationAndAccount,
+	upsertAccount,
 } from '../core/account-lookup';
 import {
 	encryptConfig,
@@ -9,7 +10,6 @@ import {
 } from '../core/auth/encryption';
 import { createAccountKeyManager } from '../core/auth/key-manager';
 import { createCorsairOrm } from '../db/orm';
-import { ensureIntegrationAccountRow } from '../hub/internal/account';
 import { createTestDatabase } from './setup-db';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
@@ -181,10 +181,16 @@ describe('pick-first sites use the oldest account', () => {
 		).toBe('acct-old');
 	});
 
-	test('ensureIntegrationAccountRow still inserts exactly one row', async () => {
+	test('upsertAccount still inserts exactly one row', async () => {
 		await seedIntegration(t.database);
-		await ensureIntegrationAccountRow(t.database, 'gmail', 't1', KEK);
-		await ensureIntegrationAccountRow(t.database, 'gmail', 't1', KEK);
+		const args = {
+			database: t.database,
+			kek: KEK,
+			integrationName: 'gmail',
+			tenantId: 't1',
+		};
+		await upsertAccount(args);
+		await upsertAccount(args);
 		const rows = await t.database.db
 			.selectFrom('corsair_accounts')
 			.select('id')

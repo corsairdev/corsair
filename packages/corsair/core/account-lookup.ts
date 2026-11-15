@@ -3,7 +3,14 @@ import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
 } from '../db/kysely/database';
-import { decryptConfig, decryptDEK } from './auth/encryption';
+import {
+	decryptConfig,
+	decryptDEK,
+	encryptConfig,
+	encryptDEK,
+	generateDEK,
+} from './auth/encryption';
+import { generateUUID } from './utils';
 
 export type AccountLookupInput = {
 	database: CorsairDatabase;
@@ -245,4 +252,128 @@ export async function resolveAccount(
 		`No account "${i.ref}" for "${name}" (tenant "${i.tenantId}"). Accounts: ${names}.`,
 		summary,
 	);
+}
+
+export const MAX_ACCOUNTS_PER_INTEGRATION = 5;
+
+export async function upsertAccount(i: {
+	database: CorsairDatabase;
+	kek: string;
+	integrationName: string;
+	tenantId: string;
+	identity?: { id: string; label?: string };
+}): Promise<{ accountId: string; created: boolean }> {
+	const { database, kek, tenantId, identity } = i;
+	return database.db.transaction().execute(async (trx) => {
+		// Lock the integration row before the check-then-insert so this
+		// cannot interleave with a concurrent disconnect (or another connect).
+		let integrationQuery = trx
+			.selectFrom('corsair_integrations')
+			.select(['id'])
+			.where('name', '=', i.integrationName);
+		if (database.isPg === true) integrationQuery = integrationQuery.forUpdate();
+		const integration = await integrationQuery.executeTakeFirst();
+		if (!integration) {
+			throw new Error(
+				`Integration '${i.integrationName}' not found. Run setupCorsair first.`,
+			);
+		}
+
+		const rows = await trx
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('tenant_id', '=', tenantId)
+			.where('integration_id', '=', integration.id)
+			.orderBy('created_at', 'asc')
+			.orderBy('id', 'asc')
+			.execute();
+
+		if (!identity) {
+			if (rows[0]) return { accountId: rows[0].id, created: false };
+			return insertRow(trx, integration.id, tenantId, kek);
+		}
+
+		const known = await Promise.all(
+			rows.map(async (r) => ({ row: r, ...(await readIdentity(r, kek)) })),
+		);
+		const same = known.find((k) => k.ref === identity.id);
+		const target = same ?? known.find((k) => !k.ref);
+		if (target) {
+			if (!same || target.label !== identity.label) {
+				await writeIdentity(trx, target.row, identity, kek);
+			}
+			return { accountId: target.row.id, created: false };
+		}
+
+		if (rows.length >= MAX_ACCOUNTS_PER_INTEGRATION) {
+			throw new AccountSelectionError(
+				'account_limit',
+				`Account limit reached: tenant "${tenantId}" already has ${rows.length} accounts for "${i.integrationName}".`,
+				known.map(({ row, ref, label }) => ({ id: row.id, ref, label })),
+			);
+		}
+		return insertRow(trx, integration.id, tenantId, kek, identity);
+	});
+}
+
+async function sealIdentity(
+	dek: string,
+	existing: Record<string, string>,
+	identity: { id: string; label?: string },
+) {
+	const { account_label: _drop, ...rest } = existing;
+	return encryptConfig(
+		{
+			...rest,
+			account_ref: identity.id,
+			...(identity.label ? { account_label: identity.label } : {}),
+		},
+		dek,
+	);
+}
+
+async function writeIdentity(
+	trx: Kysely<CorsairKyselyDatabase>,
+	row: { id: string; config: unknown; dek?: string | null },
+	identity: { id: string; label?: string },
+	kek: string,
+) {
+	const dek = row.dek ? await decryptDEK(row.dek, kek) : generateDEK();
+	const stored = parseConfig(row.config);
+	const existing =
+		row.dek && Object.keys(stored).length > 0 ? decryptConfig(stored, dek) : {};
+	await trx
+		.updateTable('corsair_accounts')
+		.set({
+			config: await sealIdentity(dek, existing, identity),
+			dek: row.dek ?? (await encryptDEK(dek, kek)),
+			updated_at: new Date(),
+		})
+		.where('id', '=', row.id)
+		.execute();
+}
+
+async function insertRow(
+	trx: Kysely<CorsairKyselyDatabase>,
+	integrationId: string,
+	tenantId: string,
+	kek: string,
+	identity?: { id: string; label?: string },
+) {
+	const dek = generateDEK();
+	const now = new Date();
+	const id = generateUUID();
+	await trx
+		.insertInto('corsair_accounts')
+		.values({
+			id,
+			created_at: now,
+			updated_at: now,
+			tenant_id: tenantId,
+			integration_id: integrationId,
+			config: identity ? await sealIdentity(dek, {}, identity) : {},
+			dek: await encryptDEK(dek, kek),
+		})
+		.execute();
+	return { accountId: id, created: true };
 }
