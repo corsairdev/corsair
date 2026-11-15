@@ -349,7 +349,7 @@ const postalyticsEndpointMeta = {
 	'account.createNewAccount': {
 		riskLevel: 'write',
 		description:
-			'Create a sub-account under the connected account; returns its id and API key',
+			'Create a sub-account under the connected account; returns its id and creation date (the API key is left out)',
 	},
 	'account.updateAccount': {
 		riskLevel: 'write',
