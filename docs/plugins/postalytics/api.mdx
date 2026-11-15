@@ -14,7 +14,7 @@ description: "API reference for the Postalytics plugin in Corsair: every `postal
 
 `account.createNewAccount`
 
-create new account
+Create a sub-account under the connected account; returns its id and API key
 
 **Risk:** `write`
 
@@ -134,50 +134,13 @@ await corsair.postalytics.api.account.getAccount({ id: 42 });
   address_state?: string | null,
   address_street?: string | null,
   address_zip?: string | null,
-  api_key?: string | null,
   company?: string | null,
   created_date?: string,
   email_address?: string | null,
   first_name?: string | null,
   last_name?: string | null,
-  password?: string | null,
   phone?: string | null,
   username?: string | null
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### getIntegrations
-
-`account.getIntegrations`
-
-get integrations
-
-**Risk:** `read`
-
-```ts
-await corsair.postalytics.api.account.getIntegrations({});
-```
-
-**Input:** _empty object_
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  displayName?: string | null,
-  intergrationName?: string | null,
-  isConnect?: number,
-  pluginId?: number,
-  userPluginId?: number
 }[]
 ```
 </Accordion>
@@ -190,7 +153,7 @@ await corsair.postalytics.api.account.getIntegrations({});
 
 `account.getMyAccount`
 
-get my account
+Get the connected account profile (credentials are left out)
 
 **Risk:** `read`
 
@@ -213,13 +176,11 @@ await corsair.postalytics.api.account.getMyAccount({});
   address_state?: string | null,
   address_street?: string | null,
   address_zip?: string | null,
-  api_key?: string | null,
   company?: string | null,
   created_date?: string,
   email_address?: string | null,
   first_name?: string | null,
   last_name?: string | null,
-  password?: string | null,
   phone?: string | null,
   username?: string | null
 }[]
@@ -289,6 +250,7 @@ await corsair.postalytics.api.account.updateAccount({
 
 
 ---
+
 ## Campaigns
 
 ### createNewCampaign
@@ -372,7 +334,7 @@ await corsair.postalytics.api.campaigns.deleteCampaign({ id: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number` | Yes | The campaign's drop_id from getAllCampaigns. The /campaigns/&#123;id&#125; routes take drop_id, not campaign_id. |
 
 
 
@@ -390,7 +352,7 @@ await corsair.postalytics.api.campaigns.deleteCampaign({ id: 42 });
 
 `campaigns.getAllCampaigns`
 
-get all campaigns
+List campaigns with delivery stats; each has campaign_id and the drop_id the other campaign operations take
 
 **Risk:** `read`
 
@@ -486,20 +448,26 @@ await corsair.postalytics.api.campaigns.getCampaign({ id: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number` | Yes | The campaign's drop_id from getAllCampaigns. The /campaigns/&#123;id&#125; routes take drop_id, not campaign_id. |
 
 
 
-**Output**
+**Output:** `object[]`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `ContactListId` | `number` | No | — |
-| `DirectMailDropId` | `number` | No | — |
-| `DirectMailName` | `string \| null` | No | — |
-| `EndPointId` | `string \| null` | No | — |
-| `Status` | `number` | No | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+  ContactListId?: number,
+  DirectMailDropId?: number,
+  DirectMailName?: string | null,
+  EndPointId?: string | null,
+  Status?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -520,7 +488,7 @@ await corsair.postalytics.api.campaigns.getCampaignEvents({ id: 42, PageNumber: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number` | Yes | The campaign's drop_id from getAllCampaigns. The /campaigns/&#123;id&#125; routes take drop_id, not campaign_id. |
 | `PageNumber` | `number` | No | — |
 | `PageSize` | `number` | No | — |
 
@@ -568,7 +536,7 @@ await corsair.postalytics.api.campaigns.getCampaignStats({ id: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number` | Yes | The campaign's drop_id from getAllCampaigns. The /campaigns/&#123;id&#125; routes take drop_id, not campaign_id. |
 
 
 
@@ -630,7 +598,7 @@ await corsair.postalytics.api.campaigns.getContactEvent({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `dataid` | `number` | Yes | — |
+| `dataid` | `number` | Yes | The campaign's drop_id from getAllCampaigns. The /campaigns/&#123;id&#125; routes take drop_id, not campaign_id. |
 | `id` | `number` | Yes | — |
 | `PageNumber` | `number` | No | — |
 | `PageSize` | `number` | No | — |
@@ -667,9 +635,9 @@ await corsair.postalytics.api.campaigns.getContactEvent({
 
 `campaigns.updateCampaignStatus`
 
-update campaign status
+Switch a triggered drip or automated file campaign between test mode and live mode. In live mode its sends print and mail real pieces billed per piece
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.postalytics.api.campaigns.updateCampaignStatus({ id: 42 });
@@ -679,7 +647,7 @@ await corsair.postalytics.api.campaigns.updateCampaignStatus({ id: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number` | Yes | The campaign's drop_id from getAllCampaigns. The /campaigns/&#123;id&#125; routes take drop_id, not campaign_id. |
 
 
 
@@ -720,7 +688,7 @@ await corsair.postalytics.api.contacts.createContactOnList({
 
 ```ts
 {
-  contact_id: number,
+  contact_id?: number,
   contact_list_id: number,
   address_city?: string | null,
   address_state?: string | null,
@@ -1123,9 +1091,9 @@ await corsair.postalytics.api.contacts.updateContactOnList({
 
 `flows.enrollContactToFlow`
 
-enroll contact to flow
+Enroll a recipient in a flow; a live flow prints and mails its pieces to them, billed per piece
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.postalytics.api.flows.enrollContactToFlow({
@@ -1335,13 +1303,13 @@ await corsair.postalytics.api.flows.unenrollContactFromFlow({ dataId: 42, endPoi
 
 `login.createLoginLink`
 
-create login link
+Create a short-lived auto-login link for the connected account, optionally landing on a page such as dashboard
 
 **Risk:** `write`
 
 ```ts
 await corsair.postalytics.api.login.createLoginLink({
-	body: { api_key: 'fixture-api-key' },
+	body: { url: 'dashboard' },
 });
 ```
 
@@ -1356,7 +1324,6 @@ await corsair.postalytics.api.login.createLoginLink({
 
 ```ts
 {
-  api_key: string,
   domain?: string | null,
   id?: string | null,
   url?: string | null
@@ -1371,8 +1338,8 @@ await corsair.postalytics.api.login.createLoginLink({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `CreatedDate` | `string` | No | — |
-| `LoginLink` | `string \| null` | No | — |
+| `created_date` | `string \| null` | No | — |
+| `login_link` | `string \| null` | No | — |
 
 
 
@@ -1568,82 +1535,47 @@ await corsair.postalytics.api.suppressionContacts.createSuppressionListContact({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ContactDetails` | `object[]` | Yes | — |
-| `ListDetails` | `object` | Yes | — |
+| `contactDetails` | `object[]` | No | — |
+| `listDetails` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="ContactDetails full type">
+<Accordion title="contactDetails full type">
 
 ```ts
 {
-  Address?: string | null,
-  Address2?: string | null,
-  City?: string | null,
-  Company?: string | null,
-  Country?: string | null,
-  CreatedDate?: string | null,
-  DataId?: number,
-  Email?: string | null,
-  FirstName?: string | null,
-  HasValidAddress?: boolean,
-  LastName?: string | null,
-  LastUpdateDate?: string | null,
-  ListId?: number,
-  Mobile?: string | null,
-  Occupation?: string | null,
-  Phone?: string | null,
-  State?: string | null,
-  VarField1?: string | null,
-  VarField10?: string | null,
-  VarField11?: string | null,
-  VarField12?: string | null,
-  VarField13?: string | null,
-  VarField14?: string | null,
-  VarField15?: string | null,
-  VarField16?: string | null,
-  VarField17?: string | null,
-  VarField18?: string | null,
-  VarField19?: string | null,
-  VarField2?: string | null,
-  VarField20?: string | null,
-  VarField21?: string | null,
-  VarField22?: string | null,
-  VarField23?: string | null,
-  VarField24?: string | null,
-  VarField25?: string | null,
-  VarField26?: string | null,
-  VarField27?: string | null,
-  VarField28?: string | null,
-  VarField29?: string | null,
-  VarField3?: string | null,
-  VarField30?: string | null,
-  VarField31?: string | null,
-  VarField32?: string | null,
-  VarField33?: string | null,
-  VarField34?: string | null,
-  VarField35?: string | null,
-  VarField4?: string | null,
-  VarField5?: string | null,
-  VarField6?: string | null,
-  VarField7?: string | null,
-  VarField8?: string | null,
-  VarField9?: string | null,
-  Website?: string | null,
-  Zip?: string | null
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  company?: string | null,
+  country?: string | null,
+  createdDate?: string | null,
+  dataId?: number,
+  email?: string | null,
+  firstName?: string | null,
+  hasValidAddress?: boolean | null,
+  lastName?: string | null,
+  lastUpdateDate?: string | null,
+  listId?: number,
+  mobile?: string | null,
+  occupation?: string | null,
+  phone?: string | null,
+  state?: string | null,
+  website?: string | null,
+  zip?: string | null
 }[]
 ```
 </Accordion>
 
-<Accordion title="ListDetails full type">
+<Accordion title="listDetails full type">
 
 ```ts
 {
-  Country?: string | null,
-  CreationDate?: string,
-  Id?: number,
-  Name?: string | null,
-  Total?: number,
-  Type?: string | null
+  country?: string | null,
+  creationDate?: string | null,
+  id?: number,
+  name?: string | null,
+  total?: number | null,
+  type?: string | null
 }
 ```
 </Accordion>
@@ -1674,12 +1606,18 @@ await corsair.postalytics.api.suppressionContacts.deleteSuppressionListContact({
 
 
 
-**Output**
+**Output:** `string \| object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `Message` | `string \| null` | No | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+string | {
+  Message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -1710,82 +1648,47 @@ await corsair.postalytics.api.suppressionContacts.getSuppressionListContact({ co
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ContactDetails` | `object[]` | Yes | — |
-| `ListDetails` | `object` | Yes | — |
+| `contactDetails` | `object[]` | No | — |
+| `listDetails` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="ContactDetails full type">
+<Accordion title="contactDetails full type">
 
 ```ts
 {
-  Address?: string | null,
-  Address2?: string | null,
-  City?: string | null,
-  Company?: string | null,
-  Country?: string | null,
-  CreatedDate?: string | null,
-  DataId?: number,
-  Email?: string | null,
-  FirstName?: string | null,
-  HasValidAddress?: boolean,
-  LastName?: string | null,
-  LastUpdateDate?: string | null,
-  ListId?: number,
-  Mobile?: string | null,
-  Occupation?: string | null,
-  Phone?: string | null,
-  State?: string | null,
-  VarField1?: string | null,
-  VarField10?: string | null,
-  VarField11?: string | null,
-  VarField12?: string | null,
-  VarField13?: string | null,
-  VarField14?: string | null,
-  VarField15?: string | null,
-  VarField16?: string | null,
-  VarField17?: string | null,
-  VarField18?: string | null,
-  VarField19?: string | null,
-  VarField2?: string | null,
-  VarField20?: string | null,
-  VarField21?: string | null,
-  VarField22?: string | null,
-  VarField23?: string | null,
-  VarField24?: string | null,
-  VarField25?: string | null,
-  VarField26?: string | null,
-  VarField27?: string | null,
-  VarField28?: string | null,
-  VarField29?: string | null,
-  VarField3?: string | null,
-  VarField30?: string | null,
-  VarField31?: string | null,
-  VarField32?: string | null,
-  VarField33?: string | null,
-  VarField34?: string | null,
-  VarField35?: string | null,
-  VarField4?: string | null,
-  VarField5?: string | null,
-  VarField6?: string | null,
-  VarField7?: string | null,
-  VarField8?: string | null,
-  VarField9?: string | null,
-  Website?: string | null,
-  Zip?: string | null
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  company?: string | null,
+  country?: string | null,
+  createdDate?: string | null,
+  dataId?: number,
+  email?: string | null,
+  firstName?: string | null,
+  hasValidAddress?: boolean | null,
+  lastName?: string | null,
+  lastUpdateDate?: string | null,
+  listId?: number,
+  mobile?: string | null,
+  occupation?: string | null,
+  phone?: string | null,
+  state?: string | null,
+  website?: string | null,
+  zip?: string | null
 }[]
 ```
 </Accordion>
 
-<Accordion title="ListDetails full type">
+<Accordion title="listDetails full type">
 
 ```ts
 {
-  Country?: string | null,
-  CreationDate?: string,
-  Id?: number,
-  Name?: string | null,
-  Total?: number,
-  Type?: string | null
+  country?: string | null,
+  creationDate?: string | null,
+  id?: number,
+  name?: string | null,
+  total?: number | null,
+  type?: string | null
 }
 ```
 </Accordion>
@@ -1820,82 +1723,47 @@ await corsair.postalytics.api.suppressionContacts.getSuppressionListContacts({ l
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ContactDetails` | `object[]` | Yes | — |
-| `ListDetails` | `object` | Yes | — |
+| `contactDetails` | `object[]` | No | — |
+| `listDetails` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="ContactDetails full type">
+<Accordion title="contactDetails full type">
 
 ```ts
 {
-  Address?: string | null,
-  Address2?: string | null,
-  City?: string | null,
-  Company?: string | null,
-  Country?: string | null,
-  CreatedDate?: string | null,
-  DataId?: number,
-  Email?: string | null,
-  FirstName?: string | null,
-  HasValidAddress?: boolean,
-  LastName?: string | null,
-  LastUpdateDate?: string | null,
-  ListId?: number,
-  Mobile?: string | null,
-  Occupation?: string | null,
-  Phone?: string | null,
-  State?: string | null,
-  VarField1?: string | null,
-  VarField10?: string | null,
-  VarField11?: string | null,
-  VarField12?: string | null,
-  VarField13?: string | null,
-  VarField14?: string | null,
-  VarField15?: string | null,
-  VarField16?: string | null,
-  VarField17?: string | null,
-  VarField18?: string | null,
-  VarField19?: string | null,
-  VarField2?: string | null,
-  VarField20?: string | null,
-  VarField21?: string | null,
-  VarField22?: string | null,
-  VarField23?: string | null,
-  VarField24?: string | null,
-  VarField25?: string | null,
-  VarField26?: string | null,
-  VarField27?: string | null,
-  VarField28?: string | null,
-  VarField29?: string | null,
-  VarField3?: string | null,
-  VarField30?: string | null,
-  VarField31?: string | null,
-  VarField32?: string | null,
-  VarField33?: string | null,
-  VarField34?: string | null,
-  VarField35?: string | null,
-  VarField4?: string | null,
-  VarField5?: string | null,
-  VarField6?: string | null,
-  VarField7?: string | null,
-  VarField8?: string | null,
-  VarField9?: string | null,
-  Website?: string | null,
-  Zip?: string | null
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  company?: string | null,
+  country?: string | null,
+  createdDate?: string | null,
+  dataId?: number,
+  email?: string | null,
+  firstName?: string | null,
+  hasValidAddress?: boolean | null,
+  lastName?: string | null,
+  lastUpdateDate?: string | null,
+  listId?: number,
+  mobile?: string | null,
+  occupation?: string | null,
+  phone?: string | null,
+  state?: string | null,
+  website?: string | null,
+  zip?: string | null
 }[]
 ```
 </Accordion>
 
-<Accordion title="ListDetails full type">
+<Accordion title="listDetails full type">
 
 ```ts
 {
-  Country?: string | null,
-  CreationDate?: string,
-  Id?: number,
-  Name?: string | null,
-  Total?: number,
-  Type?: string | null
+  country?: string | null,
+  creationDate?: string | null,
+  id?: number,
+  name?: string | null,
+  total?: number | null,
+  type?: string | null
 }
 ```
 </Accordion>
@@ -1909,7 +1777,7 @@ await corsair.postalytics.api.suppressionContacts.getSuppressionListContacts({ l
 
 `suppressionContacts.updateSuppressionListContact`
 
-update suppression list contact
+Update a suppression list contact. Address fields cannot be changed; Postalytics rejects them
 
 **Risk:** `write`
 
@@ -1994,82 +1862,47 @@ await corsair.postalytics.api.suppressionContacts.updateSuppressionListContact({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ContactDetails` | `object[]` | Yes | — |
-| `ListDetails` | `object` | Yes | — |
+| `contactDetails` | `object[]` | No | — |
+| `listDetails` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="ContactDetails full type">
+<Accordion title="contactDetails full type">
 
 ```ts
 {
-  Address?: string | null,
-  Address2?: string | null,
-  City?: string | null,
-  Company?: string | null,
-  Country?: string | null,
-  CreatedDate?: string | null,
-  DataId?: number,
-  Email?: string | null,
-  FirstName?: string | null,
-  HasValidAddress?: boolean,
-  LastName?: string | null,
-  LastUpdateDate?: string | null,
-  ListId?: number,
-  Mobile?: string | null,
-  Occupation?: string | null,
-  Phone?: string | null,
-  State?: string | null,
-  VarField1?: string | null,
-  VarField10?: string | null,
-  VarField11?: string | null,
-  VarField12?: string | null,
-  VarField13?: string | null,
-  VarField14?: string | null,
-  VarField15?: string | null,
-  VarField16?: string | null,
-  VarField17?: string | null,
-  VarField18?: string | null,
-  VarField19?: string | null,
-  VarField2?: string | null,
-  VarField20?: string | null,
-  VarField21?: string | null,
-  VarField22?: string | null,
-  VarField23?: string | null,
-  VarField24?: string | null,
-  VarField25?: string | null,
-  VarField26?: string | null,
-  VarField27?: string | null,
-  VarField28?: string | null,
-  VarField29?: string | null,
-  VarField3?: string | null,
-  VarField30?: string | null,
-  VarField31?: string | null,
-  VarField32?: string | null,
-  VarField33?: string | null,
-  VarField34?: string | null,
-  VarField35?: string | null,
-  VarField4?: string | null,
-  VarField5?: string | null,
-  VarField6?: string | null,
-  VarField7?: string | null,
-  VarField8?: string | null,
-  VarField9?: string | null,
-  Website?: string | null,
-  Zip?: string | null
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  company?: string | null,
+  country?: string | null,
+  createdDate?: string | null,
+  dataId?: number,
+  email?: string | null,
+  firstName?: string | null,
+  hasValidAddress?: boolean | null,
+  lastName?: string | null,
+  lastUpdateDate?: string | null,
+  listId?: number,
+  mobile?: string | null,
+  occupation?: string | null,
+  phone?: string | null,
+  state?: string | null,
+  website?: string | null,
+  zip?: string | null
 }[]
 ```
 </Accordion>
 
-<Accordion title="ListDetails full type">
+<Accordion title="listDetails full type">
 
 ```ts
 {
-  Country?: string | null,
-  CreationDate?: string,
-  Id?: number,
-  Name?: string | null,
-  Total?: number,
-  Type?: string | null
+  country?: string | null,
+  creationDate?: string | null,
+  id?: number,
+  name?: string | null,
+  total?: number | null,
+  type?: string | null
 }
 ```
 </Accordion>
@@ -2122,12 +1955,12 @@ await corsair.postalytics.api.suppressionLists.createSuppressionList({
 
 ```ts
 {
-  Country?: string | null,
-  CreationDate?: string,
-  Id?: number,
-  Name?: string | null,
-  Total?: number,
-  Type?: string | null
+  country?: string | null,
+  creationDate?: string | null,
+  id?: number,
+  name?: string | null,
+  total?: number | null,
+  type?: string | null
 }[]
 ```
 </Accordion>
@@ -2156,12 +1989,18 @@ await corsair.postalytics.api.suppressionLists.deleteSuppressionList({ id: 42 })
 
 
 
-**Output**
+**Output:** `string \| object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `Message` | `string \| null` | No | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+string | {
+  Message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -2193,12 +2032,12 @@ await corsair.postalytics.api.suppressionLists.getSuppressionList({ id: 42 });
 
 ```ts
 {
-  Country?: string | null,
-  CreationDate?: string,
-  Id?: number,
-  Name?: string | null,
-  Total?: number,
-  Type?: string | null
+  country?: string | null,
+  creationDate?: string | null,
+  id?: number,
+  name?: string | null,
+  total?: number | null,
+  type?: string | null
 }[]
 ```
 </Accordion>
@@ -2234,12 +2073,12 @@ await corsair.postalytics.api.suppressionLists.getSuppressionLists({ id: 2 });
 
 ```ts
 {
-  Country?: string | null,
-  CreationDate?: string,
-  Id?: number,
-  Name?: string | null,
-  Total?: number,
-  Type?: string | null
+  country?: string | null,
+  creationDate?: string | null,
+  id?: number,
+  name?: string | null,
+  total?: number | null,
+  type?: string | null
 }[]
 ```
 </Accordion>
@@ -2305,8 +2144,8 @@ await corsair.postalytics.api.templates.createTemplate({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `CreatedDate` | `string` | No | — |
-| `TemplateId` | `number` | No | — |
+| `created_date` | `string \| null` | No | — |
+| `template_id` | `number` | No | — |
 
 
 
@@ -2336,7 +2175,7 @@ await corsair.postalytics.api.templates.deleteTemplate({ id: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `DeletedDate` | `string` | No | — |
+| `deleted_date` | `string \| null` | No | — |
 
 
 
@@ -2489,7 +2328,7 @@ await corsair.postalytics.api.webhooks.createWebhook({
 
 `webhooks.deleteWebhook`
 
-delete webhook
+Unsubscribe a campaign's webhook; Postalytics keeps the record with is_subscribed 0
 
 **Risk:** `destructive`
 
@@ -2501,7 +2340,7 @@ await corsair.postalytics.api.webhooks.deleteWebhook({ id: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number` | Yes | The campaign's drop_id. Postalytics keys webhooks by campaign. |
 
 
 
@@ -2567,7 +2406,7 @@ await corsair.postalytics.api.webhooks.getWebhook({ id: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number` | Yes | The campaign's drop_id. Postalytics keys webhooks by campaign. |
 
 
 
@@ -2639,3 +2478,4 @@ await corsair.postalytics.api.webhooks.updateWebhook({
 
 
 ---
+
