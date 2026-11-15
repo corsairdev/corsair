@@ -1,0 +1,420 @@
+---
+title: "Simple Analytics API reference"
+sidebarTitle: "API"
+description: "API reference for Simple Analytics: every `simpleanalytics.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Export
+
+### datapoints
+
+`export.datapoints`
+
+Export raw page views and events for a date range as JSON datapoints, unsampled, with the fields you name
+
+**Risk:** `read`
+
+```ts
+await corsair.simpleanalytics.api.export.datapoints({ hostname: 'example.com', start: '2026-11-01', end: '2026-11-14', fields: ['added_iso', 'path', 'country_code'], type: 'pageviews' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | The website hostname as registered, such as example.com. |
+| `start` | `string` | No | Defaults to 30 days ago. |
+| `end` | `string` | No | Defaults to today. |
+| `timezone` | `string` | No | An IANA name with capitals, such as Europe/Amsterdam. |
+| `fields` | `(added_unix \| added_iso \| added_date \| hostname \| hostname_original \| path \| query \| path_and_query \| is_unique \| is_robot \| document_referrer \| referrer_hostname \| referrer_path \| utm_source \| utm_medium \| utm_campaign \| utm_content \| utm_term \| scrolled_percentage \| duration_seconds \| viewport_width \| viewport_height \| screen_width \| screen_height \| user_agent \| device_type \| country_code \| browser_name \| browser_version \| os_name \| os_version \| lang_region \| lang_language \| uuid \| datapoint \| session_id)[]` | Yes | Always send this: without it the legacy field set comes back, and type=all fails. |
+| `type` | `pageviews \| events \| all` | No | Page views, events, or both. Defaults to pageviews. |
+| `robots` | `boolean` | No | Include robots and crawlers. Defaults to false. |
+| `metadata_fields` | `string[]` | No | Metadata keys to export, such as project_text. Their storage suffix is required here, unlike in Stats filters. |
+
+Export asks for format=json, because the CSV, NDJSON, Parquet and Avro formats cannot be returned intact. Metadata columns appear only when named in metadata_fields, and need their storage suffix.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datapoints` | `object[]` | Yes | — |
+| `meta` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="datapoints full type">
+
+```ts
+{
+  added_unix?: number | null,
+  added_iso?: string | null,
+  added_date?: string | null,
+  hostname?: string | null,
+  hostname_original?: string | null,
+  path?: string | null,
+  query?: string | null,
+  path_and_query?: string | null,
+  is_unique?: boolean | null,
+  is_robot?: boolean | null,
+  document_referrer?: string | null,
+  referrer_hostname?: string | null,
+  referrer_path?: string | null,
+  utm_source?: string | null,
+  utm_medium?: string | null,
+  utm_campaign?: string | null,
+  utm_content?: string | null,
+  utm_term?: string | null,
+  scrolled_percentage?: number | null,
+  duration_seconds?: number | null,
+  viewport_width?: number | null,
+  viewport_height?: number | null,
+  screen_width?: number | null,
+  screen_height?: number | null,
+  user_agent?: string | null,
+  device_type?: string | null,
+  country_code?: string | null,
+  browser_name?: string | null,
+  browser_version?: string | null,
+  os_name?: string | null,
+  os_version?: string | null,
+  lang_region?: string | null,
+  lang_language?: string | null,
+  uuid?: string | null,
+  datapoint?: string | null,
+  session_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stats
+
+### get
+
+`stats.get`
+
+Read aggregated stats for one website: page views, visitors, top pages, countries, referrers, UTM values, browsers, operating systems, devices, time on page and event counts
+
+**Risk:** `read`
+
+```ts
+await corsair.simpleanalytics.api.stats.get({ hostname: 'example.com', start: 'today-7d', end: 'today', fields: ['pageviews', 'visitors'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | The website hostname as registered, such as example.com. |
+| `path` | `string` | No | Only this page path, such as /contact. The path goes into the URL, before .json. |
+| `start` | `string` | No | Defaults to one month ago. |
+| `end` | `string` | No | Defaults to today. |
+| `timezone` | `string` | No | An IANA name with capitals, such as Europe/Amsterdam. |
+| `fields` | `(pageviews \| visitors \| histogram \| pages \| countries \| referrers \| utm_sources \| utm_mediums \| utm_campaigns \| utm_contents \| utm_terms \| browser_names \| os_names \| device_types \| seconds_on_page)[]` | Yes | The fields to return. Always send at least one: an empty fields list returns the version 1 format. |
+| `limit` | `number` | No | How many rows each field returns, 1 to 1000. Defaults to 50. |
+| `interval` | `hour \| day \| week \| month \| year` | No | The bucket size for histogram. Defaults to day. |
+| `events` | `string[]` | No | Event names to count. Use ["*"] for every event, capped at 1000. |
+| `page` | `string` | No | One exact page path. |
+| `pages` | `string` | No | A comma separated list of paths. A trailing * matches by prefix, such as /product/*. |
+| `country` | `string` | No | A two-letter country code. |
+| `referrer` | `string` | No | — |
+| `utm_source` | `string` | No | — |
+| `utm_medium` | `string` | No | — |
+| `utm_campaign` | `string` | No | — |
+| `utm_content` | `string` | No | — |
+| `utm_term` | `string` | No | — |
+| `browser_name` | `string` | No | — |
+| `os_name` | `string` | No | — |
+| `device_type` | `mobile \| tablet \| desktop \| tv` | No | — |
+| `metadata` | `Record<string, string>` | No | Exact metadata matches, sent as metadata.&lt;key&gt;. Keys use letters, digits and underscores only, without the storage suffix. |
+
+Send at least one field; an empty list returns the version 1 format. The path form reads one page, so pass path rather than the page filter for that. Metadata filters use the bare key as metadata.<key>, without a storage suffix, and every filter given has to match.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+| `hostname` | `string \| null` | No | — |
+| `path` | `string \| null` | No | — |
+| `start` | `string \| null` | No | — |
+| `end` | `string \| null` | No | — |
+| `version` | `number \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `pageviews` | `number \| null` | No | — |
+| `visitors` | `number \| null` | No | — |
+| `seconds_on_page` | `number \| null` | No | — |
+| `histogram` | `object[] \| null` | No | — |
+| `pages` | `object[] \| null` | No | — |
+| `countries` | `object[] \| null` | No | — |
+| `referrers` | `object[] \| null` | No | — |
+| `utm_sources` | `object[] \| null` | No | — |
+| `utm_mediums` | `object[] \| null` | No | — |
+| `utm_campaigns` | `object[] \| null` | No | — |
+| `utm_contents` | `object[] \| null` | No | — |
+| `utm_terms` | `object[] \| null` | No | — |
+| `browser_names` | `object[] \| null` | No | — |
+| `os_names` | `object[] \| null` | No | — |
+| `device_types` | `object[] \| null` | No | — |
+| `events` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="histogram full type">
+
+```ts
+{
+  date?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="countries full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="referrers full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="utm_sources full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="utm_mediums full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="utm_campaigns full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="utm_contents full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="utm_terms full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="browser_names full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="os_names full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="device_types full type">
+
+```ts
+{
+  value?: string | null,
+  pageviews?: number | null,
+  visitors?: number | null,
+  seconds_on_page?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  name: string,
+  total?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Websites
+
+### add
+
+`websites.add`
+
+Add a website to the default team, optionally public, with a timezone and a label; needs the owner, admin or developer role and the user id
+
+**Risk:** `write`
+
+```ts
+await corsair.simpleanalytics.api.websites.add({ hostname: 'example.com', timezone: 'Europe/Amsterdam', isPublic: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | The website hostname as registered, such as example.com. |
+| `isPublic` | `boolean` | No | Whether the stats are public without a key. Defaults to false. |
+| `timezone` | `string` | No | An IANA name such as Europe/Amsterdam. An unrecognised value falls back to UTC. |
+| `label` | `string` | No | A note shown on the websites overview. |
+
+Needs the owner, admin or developer role, and the team must not have reached its plan website limit. An unrecognised timezone falls back to UTC.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `success` | `boolean` | Yes | — |
+| `hostname` | `string` | Yes | — |
+| `customDomain` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `validDNS` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`websites.list`
+
+List every website on the account with its timezone, visibility, whether the script is installed, and its 30-day page view and event estimates; needs the user id
+
+**Risk:** `read`
+
+```ts
+await corsair.simpleanalytics.api.websites.list({});
+```
+
+**Input:** _empty object_
+
+Needs the user id as well as the API key. The response always covers every website on the account; the team has no effect on this route.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `websites` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="websites full type">
+
+```ts
+{
+  hostname: string,
+  is_public?: boolean | null,
+  timezone?: string | null,
+  has_ssl?: boolean | null,
+  has_script?: boolean | null,
+  own_hostname?: string | null,
+  label?: string | null,
+  pageviews?: number | null,
+  events?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

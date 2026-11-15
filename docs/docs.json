@@ -4252,6 +4252,14 @@
                 ]
               },
               {
+                "group": "Simple Analytics",
+                "pages": [
+                  "plugins/simpleanalytics/overview",
+                  "plugins/simpleanalytics/api",
+                  "plugins/simpleanalytics/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",
