@@ -1,5 +1,6 @@
 import { AuthMissingError, createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { makeLiveSessionRequest } from './client';
 import { livesession } from './index';
 
 describe('livesession against the shared HTTP boundary', () => {
@@ -50,6 +51,21 @@ describe('livesession against the shared HTTP boundary', () => {
 		} finally {
 			await testDb.cleanup();
 		}
+	});
+
+	it('rejects a token with inner whitespace without echoing it', async () => {
+		// Core's `new Headers()` would throw a TypeError quoting the whole header value.
+		const error = await makeLiveSessionRequest(
+			'/sessions',
+			'abc\nsecret-part',
+		).catch((e: Error) => e);
+		expect(error).toBeInstanceOf(Error);
+		expect((error as Error).message).toBe(
+			'LiveSession API token contains whitespace or control characters',
+		);
+		const seen = `${(error as Error).message} ${(error as Error).stack} ${String((error as Error & { cause?: unknown }).cause)}`;
+		expect(seen).not.toContain('secret-part');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('fails closed with an auth-missing error when no token is configured', async () => {

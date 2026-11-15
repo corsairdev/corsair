@@ -119,6 +119,14 @@ export async function makeLiveSessionRequest<T>(
 			method,
 		});
 	}
+	// A token with a line break or other control character makes core's
+	// `new Headers()` throw a TypeError that quotes the header, token included.
+	if (/[\s\x00-\x1f\x7f]/.test(normalizedKey)) {
+		throw new LiveSessionAPIError(
+			'LiveSession API token contains whitespace or control characters',
+			{ method },
+		);
+	}
 
 	const requestOptions: ApiRequestOptions = {
 		method,
