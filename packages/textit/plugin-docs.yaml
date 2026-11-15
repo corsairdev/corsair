@@ -8,7 +8,7 @@ overviewNote: |
   - Sending messages and broadcasts and starting flows can contact real people. Bulk contact and message actions include permanent deletion.
   - Updating a contact by URN creates it if the URN is unknown. `messageActions.apply` returns `undefined` on complete success or an object `{ failures: [...] }` when some messages could not be updated; access the failed IDs through `result.failures`.
   - Upload media with a `Blob` using `media.upload`; its UUID can be used in message attachments.
-  - Rate-limited requests throw a `TextItAPIError` with `retryAfter` in milliseconds when TextIt supplies a numeric `Retry-After`. The default handlers do not retry; custom error handlers must not replay writes.
+  - Rate-limited requests are retried up to three times, waiting for TextIt's `Retry-After`. Other failures throw Corsair's `ApiError` with the HTTP `status` and TextIt's error body; the default handlers do not replay writes.
   - Outbound resthook subscription management is supported; inbound webhook verification is not included.
   - The provider's globals create example uses `/global.json`, which currently returns 404; the indexed plural `/globals.json` route is used. Its subscriber ID prose says integer while examples show strings, so both are accepted.
 examples:

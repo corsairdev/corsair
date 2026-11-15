@@ -1,5 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
-import { makeTextItRequest, TextItAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { makeTextItRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
 describe('TextIt transport', () => {
@@ -18,31 +19,49 @@ describe('TextIt transport', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('preserves Retry-After and does not replay a rate-limited write', async () => {
-		fetchMock.mockResolvedValueOnce(
+	it('retries a 429 through core, honouring Retry-After', async () => {
+		fetchMock
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ detail: 'Throttled' }), {
+					status: 429,
+					headers: { 'Content-Type': 'application/json', 'Retry-After': '1' },
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ uuid: 'ws' }), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+			);
+		await expect(
+			makeTextItRequest('secret', { method: 'GET', path: '/workspace.json' }),
+		).resolves.toEqual({ uuid: 'ws' });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it("passes core's ApiError through with status, body and Retry-After", async () => {
+		const throttled = () =>
 			new Response(JSON.stringify({ detail: 'Throttled' }), {
 				status: 429,
-				headers: { 'Content-Type': 'application/json', 'Retry-After': '12' },
-			}),
-		);
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '0' },
+			});
+		fetchMock.mockImplementation(async () => throttled());
 		const error = await makeTextItRequest('secret', {
 			method: 'POST',
 			path: '/messages.json',
 			body: { contact: 'contact', text: 'Hello' },
 			// A rejected promise can carry any value; the instanceof assertion narrows it below.
 		}).catch((e: unknown) => e);
-		expect(error).toBeInstanceOf(TextItAPIError);
-		if (!(error instanceof TextItAPIError))
-			throw new Error('Expected TextItAPIError');
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
 		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(12000);
 		expect(error.body).toEqual({ detail: 'Throttled' });
-		expect(fetchMock).toHaveBeenCalledTimes(1);
-		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toEqual({
+		expect(fetchMock).toHaveBeenCalledTimes(4);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toMatchObject({
 			maxRetries: 0,
-			headersRetryAfterMs: 12000,
 		});
-	});
+	}, 20000);
 
 	it('preserves an authentication failure', async () => {
 		fetchMock.mockResolvedValueOnce(

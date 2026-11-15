@@ -1,31 +1,29 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TextItAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
-// TextIt tells callers how long to wait but does not promise writes can be replayed.
+// Core's request() already retried a 429 three times; nothing here retries again,
+// and 5xx or network errors are not replayed because a write may have landed.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof TextItAPIError && error.status === 429,
+		match: (error: Error) => error instanceof ApiError && error.status === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 0,
 			headersRetryAfterMs:
-				error instanceof TextItAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 		}),
 	},
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof TextItAPIError && error.status === 401,
+		match: (error: Error) => error instanceof ApiError && error.status === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			error instanceof TextItAPIError && error.status === 403,
+		match: (error: Error) => error instanceof ApiError && error.status === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	VALIDATION_ERROR: {
 		match: (error: Error) =>
 			error.name === 'ZodError' ||
-			(error instanceof TextItAPIError &&
+			(error instanceof ApiError &&
 				(error.status === 400 || error.status === 404)),
 		handler: async () => ({ maxRetries: 0 }),
 	},

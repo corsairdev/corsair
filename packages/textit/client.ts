@@ -4,38 +4,19 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export const TEXTIT_API_BASE = 'https://textit.com/api/v2';
 
-// Make one attempt, while retaining Retry-After on the resulting ApiError.
+// Core retries a 429 three times, honouring Retry-After. TextIt's throttle sends
+// Retry-After; no reset-time header is read, so a long window never becomes the delay.
 const rateLimitConfig: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
-
-export class TextItAPIError extends Error {
-	readonly status?: number;
-	// Error bodies vary by status and provider response, so callers must narrow them.
-	readonly body?: unknown;
-	/** Retry-After in milliseconds, if TextIt provided it. */
-	readonly retryAfter?: number;
-	readonly method?: string;
-
-	constructor(message: string, cause: Error, method: string) {
-		super(message, { cause });
-		this.name = 'TextItAPIError';
-		if (cause instanceof ApiError) {
-			this.status = cause.status;
-			this.body = cause.body;
-			this.retryAfter = cause.retryAfter;
-		}
-		this.method = method;
-	}
-}
 
 export type TextItRequest = {
 	method: 'GET' | 'POST' | 'DELETE';
@@ -67,16 +48,7 @@ export async function makeTextItRequest(
 		formData: spec.formData,
 		mediaType: spec.body === undefined ? undefined : 'application/json',
 	};
-	try {
-		// The generic transport sees all resource shapes; the endpoint validates the result.
-		return await request<unknown>(config, options, { rateLimitConfig });
-	} catch (error) {
-		if (error instanceof Error)
-			throw new TextItAPIError(error.message, error, spec.method);
-		throw new TextItAPIError(
-			'Unknown TextIt error',
-			new Error(String(error)),
-			spec.method,
-		);
-	}
+	// The generic transport sees all resource shapes; the endpoint validates the result.
+	// Core's ApiError passes through unchanged so handlers and Corsair see its status and body.
+	return request<unknown>(config, options, { rateLimitConfig });
 }
