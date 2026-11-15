@@ -37,12 +37,12 @@ await corsair.gleap.api.boards.create({ name: 'Bug Tracker' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `type` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `path` | `string` | No | — |
-| `restrictedToUsers` | `string[]` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `path` | `string \| null` | No | — |
+| `restrictedToUsers` | `string[] \| null` | No | — |
 
 
 
@@ -106,12 +106,12 @@ await corsair.gleap.api.boards.list({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  type: string,
-  name: string,
-  path?: string,
-  restrictedToUsers?: string[]
+  id?: string | null,
+  _id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  path?: string | null,
+  restrictedToUsers?: string[] | null
 }[]
 ```
 </Accordion>
@@ -146,12 +146,12 @@ await corsair.gleap.api.boards.update({ type: 'BUG', name: 'Software Bugs' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `type` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `path` | `string` | No | — |
-| `restrictedToUsers` | `string[]` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `path` | `string \| null` | No | — |
+| `restrictedToUsers` | `string[] \| null` | No | — |
 
 
 
@@ -189,13 +189,13 @@ await corsair.gleap.api.companies.createOrUpdate({ companyId: 'comp_123', name: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `companyId` | `string` | No | — |
-| `name` | `string` | Yes | — |
-| `domain` | `string` | No | — |
-| `plan` | `string` | No | — |
-| `value` | `number` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `companyId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `plan` | `string \| null` | No | — |
+| `value` | `number \| null` | No | — |
 
 
 
@@ -257,13 +257,13 @@ await corsair.gleap.api.companies.get({ companyId: 'comp_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `companyId` | `string` | No | — |
-| `name` | `string` | Yes | — |
-| `domain` | `string` | No | — |
-| `plan` | `string` | No | — |
-| `value` | `number` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `companyId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `plan` | `string \| null` | No | — |
+| `value` | `number \| null` | No | — |
 
 
 
@@ -299,22 +299,22 @@ await corsair.gleap.api.companies.list({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  companyId?: string,
-  name: string,
-  domain?: string,
-  plan?: string,
-  value?: number
+  id?: string | null,
+  _id?: string | null,
+  companyId?: string | null,
+  name?: string | null,
+  domain?: string | null,
+  plan?: string | null,
+  value?: number | null
 }[] | {
   companies: {
-    id?: string,
-    _id?: string,
-    companyId?: string,
-    name: string,
-    domain?: string,
-    plan?: string,
-    value?: number
+    id?: string | null,
+    _id?: string | null,
+    companyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    plan?: string | null,
+    value?: number | null
   }[]
 }
 ```
@@ -330,7 +330,7 @@ await corsair.gleap.api.companies.list({});
 
 `feedback.rateConversation`
 
-Rate a support conversation with CSAT score 0 to 10
+Rate a Conversations API conversation as the customer (CSAT, integer 0 to 10)
 
 **Risk:** `write`
 
@@ -361,12 +361,12 @@ await corsair.gleap.api.feedback.rateConversation({ conversationId: 'conv_123', 
 
 `feedback.rateMessage`
 
-Rate an AI or agent message thumbs up or thumbs down
+Rate a message as the customer: positive or negative (thumbs up or down)
 
 **Risk:** `write`
 
 ```ts
-await corsair.gleap.api.feedback.rateMessage({ messageId: 'msg_123', rating: 'up' });
+await corsair.gleap.api.feedback.rateMessage({ messageId: 'msg_123' });
 ```
 
 **Input**
@@ -374,7 +374,7 @@ await corsair.gleap.api.feedback.rateMessage({ messageId: 'msg_123', rating: 'up
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messageId` | `string` | Yes | — |
-| `rating` | `string` | Yes | — |
+| `rating` | `positive \| negative` | Yes | — |
 
 
 
@@ -413,12 +413,12 @@ await corsair.gleap.api.feedback.surveysGet({ surveyId: 'survey_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `title` | `string` | No | — |
-| `status` | `string` | No | — |
-| `createdAt` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
 
 
 
@@ -454,20 +454,20 @@ await corsair.gleap.api.feedback.surveysList({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  name?: string,
-  title?: string,
-  status?: string,
-  createdAt?: string
+  id?: string | null,
+  _id?: string | null,
+  name?: string | null,
+  title?: string | null,
+  status?: string | null,
+  createdAt?: string | null
 }[] | {
   items: {
-    id?: string,
-    _id?: string,
-    name?: string,
-    title?: string,
-    status?: string,
-    createdAt?: string
+    id?: string | null,
+    _id?: string | null,
+    name?: string | null,
+    title?: string | null,
+    status?: string | null,
+    createdAt?: string | null
   }[]
 }
 ```
@@ -578,7 +578,7 @@ Create a new message or internal note in a ticket
 **Risk:** `destructive`
 
 ```ts
-await corsair.gleap.api.messages.create({ ticket: 'ticket_123', content: 'Hello from support' });
+await corsair.gleap.api.messages.create({ ticket: 'ticket_123', markdownComment: 'Hello from support' });
 ```
 
 **Input**
@@ -586,7 +586,6 @@ await corsair.gleap.api.messages.create({ ticket: 'ticket_123', content: 'Hello 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ticket` | `string` | Yes | — |
-| `content` | `string` | No | — |
 | `comment` | `string` | No | — |
 | `markdownComment` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -600,18 +599,18 @@ await corsair.gleap.api.messages.create({ ticket: 'ticket_123', content: 'Hello 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `ticket` | `string` | No | — |
-| `user` | `string` | No | — |
-| `session` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `ticket` | `any` | No | — |
+| `user` | `any` | No | — |
+| `session` | `any` | No | — |
 | `comment` | `any` | No | — |
-| `markdownComment` | `string` | No | — |
-| `type` | `string` | No | — |
-| `isNote` | `boolean` | No | — |
-| `bot` | `boolean` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `markdownComment` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `isNote` | `boolean \| null` | No | — |
+| `bot` | `boolean \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -619,9 +618,9 @@ await corsair.gleap.api.messages.create({ ticket: 'ticket_123', content: 'Hello 
 
 ```ts
 {
-  name?: string,
-  url?: string,
-  type?: string
+  name?: string | null,
+  url?: string | null,
+  type?: string | null
 }[]
 ```
 </Accordion>
@@ -635,12 +634,12 @@ await corsair.gleap.api.messages.create({ ticket: 'ticket_123', content: 'Hello 
 
 `messages.createThread`
 
-Create a thread reply for a specific message
+Reply inside a message thread (internal: visible to teammates, never to the customer)
 
 **Risk:** `destructive`
 
 ```ts
-await corsair.gleap.api.messages.createThread({ messageId: 'msg_123', content: 'Follow-up reply' });
+await corsair.gleap.api.messages.createThread({ messageId: 'msg_123', comment: 'Follow-up reply' });
 ```
 
 **Input**
@@ -648,9 +647,7 @@ await corsair.gleap.api.messages.createThread({ messageId: 'msg_123', content: '
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messageId` | `string` | Yes | — |
-| `content` | `string` | No | — |
-| `comment` | `string` | No | — |
-| `markdownComment` | `string` | No | — |
+| `comment` | `string` | Yes | — |
 | `project` | `string` | No | — |
 
 
@@ -659,18 +656,18 @@ await corsair.gleap.api.messages.createThread({ messageId: 'msg_123', content: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `ticket` | `string` | No | — |
-| `user` | `string` | No | — |
-| `session` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `ticket` | `any` | No | — |
+| `user` | `any` | No | — |
+| `session` | `any` | No | — |
 | `comment` | `any` | No | — |
-| `markdownComment` | `string` | No | — |
-| `type` | `string` | No | — |
-| `isNote` | `boolean` | No | — |
-| `bot` | `boolean` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `markdownComment` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `isNote` | `boolean \| null` | No | — |
+| `bot` | `boolean \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -678,9 +675,9 @@ await corsair.gleap.api.messages.createThread({ messageId: 'msg_123', content: '
 
 ```ts
 {
-  name?: string,
-  url?: string,
-  type?: string
+  name?: string | null,
+  url?: string | null,
+  type?: string | null
 }[]
 ```
 </Accordion>
@@ -738,52 +735,76 @@ await corsair.gleap.api.messages.getThread({ messageId: 'msg_123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messageId` | `string` | Yes | — |
+| `before` | `string` | No | — |
+| `limit` | `number` | No | — |
 | `project` | `string` | No | — |
 
 
 
-**Output:** `object[] \| object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  ticket?: string,
-  user?: string,
-  session?: string,
+  items: {
+    id?: string | null,
+    _id?: string | null,
+    ticket?: any,
+    user?: any,
+    session?: any,
+    comment?: any,
+    markdownComment?: string | null,
+    type?: string | null,
+    isNote?: boolean | null,
+    bot?: boolean | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+    attachments?: {
+      name?: string | null,
+      url?: string | null,
+      type?: string | null
+    }[]
+  }[],
+  hasMore?: boolean | null,
+  nextBefore?: string | null
+} | {
+  id?: string | null,
+  _id?: string | null,
+  ticket?: any,
+  user?: any,
+  session?: any,
   comment?: any,
-  markdownComment?: string,
-  type?: string,
-  isNote?: boolean,
-  bot?: boolean,
-  createdAt?: string,
-  updatedAt?: string,
+  markdownComment?: string | null,
+  type?: string | null,
+  isNote?: boolean | null,
+  bot?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
   attachments?: {
-    name?: string,
-    url?: string,
-    type?: string
+    name?: string | null,
+    url?: string | null,
+    type?: string | null
   }[]
 }[] | {
   messages: {
-    id?: string,
-    _id?: string,
-    ticket?: string,
-    user?: string,
-    session?: string,
+    id?: string | null,
+    _id?: string | null,
+    ticket?: any,
+    user?: any,
+    session?: any,
     comment?: any,
-    markdownComment?: string,
-    type?: string,
-    isNote?: boolean,
-    bot?: boolean,
-    createdAt?: string,
-    updatedAt?: string,
+    markdownComment?: string | null,
+    type?: string | null,
+    isNote?: boolean | null,
+    bot?: boolean | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
     attachments?: {
-      name?: string,
-      url?: string,
-      type?: string
+      name?: string | null,
+      url?: string | null,
+      type?: string | null
     }[]
   }[]
 }
@@ -826,45 +847,45 @@ await corsair.gleap.api.messages.list({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  ticket?: string,
-  user?: string,
-  session?: string,
+  id?: string | null,
+  _id?: string | null,
+  ticket?: any,
+  user?: any,
+  session?: any,
   comment?: any,
-  markdownComment?: string,
-  type?: string,
-  isNote?: boolean,
-  bot?: boolean,
-  createdAt?: string,
-  updatedAt?: string,
+  markdownComment?: string | null,
+  type?: string | null,
+  isNote?: boolean | null,
+  bot?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
   attachments?: {
-    name?: string,
-    url?: string,
-    type?: string
+    name?: string | null,
+    url?: string | null,
+    type?: string | null
   }[]
 }[] | {
   items: {
-    id?: string,
-    _id?: string,
-    ticket?: string,
-    user?: string,
-    session?: string,
+    id?: string | null,
+    _id?: string | null,
+    ticket?: any,
+    user?: any,
+    session?: any,
     comment?: any,
-    markdownComment?: string,
-    type?: string,
-    isNote?: boolean,
-    bot?: boolean,
-    createdAt?: string,
-    updatedAt?: string,
+    markdownComment?: string | null,
+    type?: string | null,
+    isNote?: boolean | null,
+    bot?: boolean | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
     attachments?: {
-      name?: string,
-      url?: string,
-      type?: string
+      name?: string | null,
+      url?: string | null,
+      type?: string | null
     }[]
   }[],
-  hasMore?: boolean,
-  nextBefore?: string
+  hasMore?: boolean | null,
+  nextBefore?: string | null
 }
 ```
 </Accordion>
@@ -877,12 +898,12 @@ await corsair.gleap.api.messages.list({});
 
 `messages.update`
 
-Update an existing message
+Replace a message's text (Gleap overwrites the whole message body)
 
 **Risk:** `write`
 
 ```ts
-await corsair.gleap.api.messages.update({ messageId: 'msg_123', content: 'Updated message' });
+await corsair.gleap.api.messages.update({ messageId: 'msg_123', comment: 'Updated message' });
 ```
 
 **Input**
@@ -890,9 +911,7 @@ await corsair.gleap.api.messages.update({ messageId: 'msg_123', content: 'Update
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messageId` | `string` | Yes | — |
-| `content` | `string` | No | — |
-| `comment` | `string` | No | — |
-| `markdownComment` | `string` | No | — |
+| `comment` | `string` | Yes | — |
 | `project` | `string` | No | — |
 
 
@@ -901,18 +920,18 @@ await corsair.gleap.api.messages.update({ messageId: 'msg_123', content: 'Update
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `ticket` | `string` | No | — |
-| `user` | `string` | No | — |
-| `session` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `ticket` | `any` | No | — |
+| `user` | `any` | No | — |
+| `session` | `any` | No | — |
 | `comment` | `any` | No | — |
-| `markdownComment` | `string` | No | — |
-| `type` | `string` | No | — |
-| `isNote` | `boolean` | No | — |
-| `bot` | `boolean` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `markdownComment` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `isNote` | `boolean \| null` | No | — |
+| `bot` | `boolean \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -920,9 +939,9 @@ await corsair.gleap.api.messages.update({ messageId: 'msg_123', content: 'Update
 
 ```ts
 {
-  name?: string,
-  url?: string,
-  type?: string
+  name?: string | null,
+  url?: string | null,
+  type?: string | null
 }[]
 ```
 </Accordion>
@@ -1005,17 +1024,17 @@ await corsair.gleap.api.sessions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `value` | `number` | No | — |
-| `plan` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `value` | `number \| null` | No | — |
+| `plan` | `string \| null` | No | — |
 | `customData` | `Record<string, any>` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -1025,7 +1044,7 @@ await corsair.gleap.api.sessions.create({});
 
 `sessions.delete`
 
-Delete a contact session and associated history
+Delete a contact session and permanently delete every ticket attached to it
 
 **Risk:** `destructive`
 
@@ -1077,17 +1096,17 @@ await corsair.gleap.api.sessions.get({ sessionId: 'sess_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `value` | `number` | No | — |
-| `plan` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `value` | `number \| null` | No | — |
+| `plan` | `string \| null` | No | — |
 | `customData` | `Record<string, any>` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -1118,17 +1137,17 @@ await corsair.gleap.api.sessions.getByUserId({ userId: 'usr_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `value` | `number` | No | — |
-| `plan` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `value` | `number \| null` | No | — |
+| `plan` | `string \| null` | No | — |
 | `customData` | `Record<string, any>` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -1164,30 +1183,30 @@ await corsair.gleap.api.sessions.list({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  userId?: string,
-  name?: string,
-  email?: string,
-  phone?: string,
-  value?: number,
-  plan?: string,
+  id?: string | null,
+  _id?: string | null,
+  userId?: string | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  value?: number | null,
+  plan?: string | null,
   customData?: Record<string, any>,
-  createdAt?: string,
-  updatedAt?: string
+  createdAt?: string | null,
+  updatedAt?: string | null
 }[] | {
   sessions: {
-    id?: string,
-    _id?: string,
-    userId?: string,
-    name?: string,
-    email?: string,
-    phone?: string,
-    value?: number,
-    plan?: string,
+    id?: string | null,
+    _id?: string | null,
+    userId?: string | null,
+    name?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    value?: number | null,
+    plan?: string | null,
     customData?: Record<string, any>,
-    createdAt?: string,
-    updatedAt?: string
+    createdAt?: string | null,
+    updatedAt?: string | null
   }[],
   total?: number
 }
@@ -1214,10 +1233,7 @@ await corsair.gleap.api.sessions.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | — |
-| `searchTerm` | `string` | No | — |
-| `skip` | `number` | No | — |
-| `limit` | `number` | No | — |
+| `searchTerm` | `string` | Yes | — |
 | `project` | `string` | No | — |
 
 
@@ -1229,30 +1245,30 @@ await corsair.gleap.api.sessions.search({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  userId?: string,
-  name?: string,
-  email?: string,
-  phone?: string,
-  value?: number,
-  plan?: string,
+  id?: string | null,
+  _id?: string | null,
+  userId?: string | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  value?: number | null,
+  plan?: string | null,
   customData?: Record<string, any>,
-  createdAt?: string,
-  updatedAt?: string
+  createdAt?: string | null,
+  updatedAt?: string | null
 }[] | {
   results: {
-    id?: string,
-    _id?: string,
-    userId?: string,
-    name?: string,
-    email?: string,
-    phone?: string,
-    value?: number,
-    plan?: string,
+    id?: string | null,
+    _id?: string | null,
+    userId?: string | null,
+    name?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    value?: number | null,
+    plan?: string | null,
     customData?: Record<string, any>,
-    createdAt?: string,
-    updatedAt?: string
+    createdAt?: string | null,
+    updatedAt?: string | null
   }[]
 }
 ```
@@ -1293,17 +1309,17 @@ await corsair.gleap.api.sessions.update({ sessionId: 'sess_123', name: 'Jane Doe
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `value` | `number` | No | — |
-| `plan` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `value` | `number \| null` | No | — |
+| `plan` | `string \| null` | No | — |
 | `customData` | `Record<string, any>` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -1320,7 +1336,10 @@ Create a new team in a project
 **Risk:** `write`
 
 ```ts
-await corsair.gleap.api.teams.create({ name: 'Support Tier 1' });
+await corsair.gleap.api.teams.create({
+	name: 'Support Tier 1',
+	members: ['user_123'],
+});
 ```
 
 **Input**
@@ -1328,8 +1347,8 @@ await corsair.gleap.api.teams.create({ name: 'Support Tier 1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `assignmentMethod` | `string` | No | — |
-| `members` | `string[]` | No | — |
+| `assignmentMethod` | `random \| balanced \| manual \| circular` | Yes | — |
+| `members` | `string[]` | Yes | — |
 | `project` | `string` | No | — |
 
 
@@ -1338,11 +1357,11 @@ await corsair.gleap.api.teams.create({ name: 'Support Tier 1' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `name` | `string` | Yes | — |
-| `assignmentMethod` | `string` | No | — |
-| `members` | `string[]` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `assignmentMethod` | `string \| null` | No | — |
+| `members` | `any[] \| null` | No | — |
 
 
 
@@ -1406,11 +1425,11 @@ await corsair.gleap.api.teams.list({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  name: string,
-  assignmentMethod?: string,
-  members?: string[]
+  id?: string | null,
+  _id?: string | null,
+  name?: string | null,
+  assignmentMethod?: string | null,
+  members?: any[] | null
 }[]
 ```
 </Accordion>
@@ -1423,12 +1442,16 @@ await corsair.gleap.api.teams.list({});
 
 `teams.update`
 
-Update team configuration and assignment method
+Replace a team's name, assignment method and full member list
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.gleap.api.teams.update({ teamId: 'team_123', name: 'Support Tier 2' });
+await corsair.gleap.api.teams.update({
+	teamId: 'team_123',
+	name: 'Support Tier 2',
+	members: ['user_123'],
+});
 ```
 
 **Input**
@@ -1436,9 +1459,9 @@ await corsair.gleap.api.teams.update({ teamId: 'team_123', name: 'Support Tier 2
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `teamId` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `assignmentMethod` | `string` | No | — |
-| `members` | `string[]` | No | — |
+| `name` | `string` | Yes | — |
+| `assignmentMethod` | `random \| balanced \| manual \| circular` | Yes | — |
+| `members` | `string[]` | Yes | — |
 | `project` | `string` | No | — |
 
 
@@ -1447,11 +1470,11 @@ await corsair.gleap.api.teams.update({ teamId: 'team_123', name: 'Support Tier 2
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `name` | `string` | Yes | — |
-| `assignmentMethod` | `string` | No | — |
-| `members` | `string[]` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `assignmentMethod` | `string \| null` | No | — |
+| `members` | `any[] \| null` | No | — |
 
 
 
@@ -1479,13 +1502,16 @@ await corsair.gleap.api.tickets.counts({});
 
 
 
-**Output:** `Record<string, number> \| object`
+**Output:** `object[] \| Record<string, number> \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-Record<string, number> | {
+{
+  _id?: string | null,
+  count: number
+}[] | Record<string, number> | {
   counts?: Record<string, number>
 }
 ```
@@ -1531,28 +1557,28 @@ await corsair.gleap.api.tickets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `ticketNumber` | `number \| string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `status` | `string` | No | — |
-| `priority` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `ticketNumber` | `number \| string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `priority` | `string \| null` | No | — |
 | `session` | `any` | No | — |
-| `project` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `project` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 | `customData` | `Record<string, any>` | No | — |
 | `formData` | `Record<string, any>` | No | — |
 | `attributes` | `Record<string, any>` | No | — |
-| `processingUser` | `string \| null` | No | — |
-| `processingTeam` | `string \| null` | No | — |
-| `slaBreached` | `boolean` | No | — |
-| `snoozed` | `boolean` | No | — |
+| `processingUser` | `any` | No | — |
+| `processingTeam` | `any` | No | — |
+| `slaBreached` | `boolean \| null` | No | — |
+| `snoozed` | `boolean \| null` | No | — |
 | `snoozedUntil` | `string \| null` | No | — |
-| `mentions` | `string[]` | No | — |
-| `linkedTickets` | `string[]` | No | — |
+| `mentions` | `any[] \| null` | No | — |
+| `linkedTickets` | `any[] \| null` | No | — |
 
 
 
@@ -1614,28 +1640,28 @@ await corsair.gleap.api.tickets.get({ ticketId: 'ticket_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `ticketNumber` | `number \| string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `status` | `string` | No | — |
-| `priority` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `ticketNumber` | `number \| string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `priority` | `string \| null` | No | — |
 | `session` | `any` | No | — |
-| `project` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `project` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 | `customData` | `Record<string, any>` | No | — |
 | `formData` | `Record<string, any>` | No | — |
 | `attributes` | `Record<string, any>` | No | — |
-| `processingUser` | `string \| null` | No | — |
-| `processingTeam` | `string \| null` | No | — |
-| `slaBreached` | `boolean` | No | — |
-| `snoozed` | `boolean` | No | — |
+| `processingUser` | `any` | No | — |
+| `processingTeam` | `any` | No | — |
+| `slaBreached` | `boolean \| null` | No | — |
+| `snoozed` | `boolean \| null` | No | — |
 | `snoozedUntil` | `string \| null` | No | — |
-| `mentions` | `string[]` | No | — |
-| `linkedTickets` | `string[]` | No | — |
+| `mentions` | `any[] \| null` | No | — |
+| `linkedTickets` | `any[] \| null` | No | — |
 
 
 
@@ -1681,54 +1707,80 @@ await corsair.gleap.api.tickets.list({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  ticketNumber?: number | string,
-  title?: string,
-  description?: string,
-  type?: string,
-  status?: string,
-  priority?: string,
+  id?: string | null,
+  _id?: string | null,
+  ticketNumber?: number | string | null,
+  title?: string | null,
+  description?: string | null,
+  type?: string | null,
+  status?: string | null,
+  priority?: string | null,
   session?: any,
-  project?: string,
-  createdAt?: string,
-  updatedAt?: string,
+  project?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
   customData?: Record<string, any>,
   formData?: Record<string, any>,
   attributes?: Record<string, any>,
-  processingUser?: string | null,
-  processingTeam?: string | null,
-  slaBreached?: boolean,
-  snoozed?: boolean,
+  processingUser?: any,
+  processingTeam?: any,
+  slaBreached?: boolean | null,
+  snoozed?: boolean | null,
   snoozedUntil?: string | null,
-  mentions?: string[],
-  linkedTickets?: string[]
+  mentions?: any[] | null,
+  linkedTickets?: any[] | null
 }[] | {
-  items: {
-    id?: string,
-    _id?: string,
-    ticketNumber?: number | string,
-    title?: string,
-    description?: string,
-    type?: string,
-    status?: string,
-    priority?: string,
+  tickets: {
+    id?: string | null,
+    _id?: string | null,
+    ticketNumber?: number | string | null,
+    title?: string | null,
+    description?: string | null,
+    type?: string | null,
+    status?: string | null,
+    priority?: string | null,
     session?: any,
-    project?: string,
-    createdAt?: string,
-    updatedAt?: string,
+    project?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
     customData?: Record<string, any>,
     formData?: Record<string, any>,
     attributes?: Record<string, any>,
-    processingUser?: string | null,
-    processingTeam?: string | null,
-    slaBreached?: boolean,
-    snoozed?: boolean,
+    processingUser?: any,
+    processingTeam?: any,
+    slaBreached?: boolean | null,
+    snoozed?: boolean | null,
     snoozedUntil?: string | null,
-    mentions?: string[],
-    linkedTickets?: string[]
+    mentions?: any[] | null,
+    linkedTickets?: any[] | null
   }[],
-  total?: number
+  count?: number | null
+} | {
+  items: {
+    id?: string | null,
+    _id?: string | null,
+    ticketNumber?: number | string | null,
+    title?: string | null,
+    description?: string | null,
+    type?: string | null,
+    status?: string | null,
+    priority?: string | null,
+    session?: any,
+    project?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+    customData?: Record<string, any>,
+    formData?: Record<string, any>,
+    attributes?: Record<string, any>,
+    processingUser?: any,
+    processingTeam?: any,
+    slaBreached?: boolean | null,
+    snoozed?: boolean | null,
+    snoozedUntil?: string | null,
+    mentions?: any[] | null,
+    linkedTickets?: any[] | null
+  }[],
+  total?: number | null
 }
 ```
 </Accordion>
@@ -1774,28 +1826,28 @@ await corsair.gleap.api.tickets.search({ searchTerm: 'checkout error' });
 ```ts
 {
   ticket?: {
-    id?: string,
-    _id?: string,
-    ticketNumber?: number | string,
-    title?: string,
-    description?: string,
-    type?: string,
-    status?: string,
-    priority?: string,
+    id?: string | null,
+    _id?: string | null,
+    ticketNumber?: number | string | null,
+    title?: string | null,
+    description?: string | null,
+    type?: string | null,
+    status?: string | null,
+    priority?: string | null,
     session?: any,
-    project?: string,
-    createdAt?: string,
-    updatedAt?: string,
+    project?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
     customData?: Record<string, any>,
     formData?: Record<string, any>,
     attributes?: Record<string, any>,
-    processingUser?: string | null,
-    processingTeam?: string | null,
-    slaBreached?: boolean,
-    snoozed?: boolean,
+    processingUser?: any,
+    processingTeam?: any,
+    slaBreached?: boolean | null,
+    snoozed?: boolean | null,
     snoozedUntil?: string | null,
-    mentions?: string[],
-    linkedTickets?: string[]
+    mentions?: any[] | null,
+    linkedTickets?: any[] | null
   },
   score?: number
 }[]
@@ -1843,28 +1895,28 @@ await corsair.gleap.api.tickets.update({ ticketId: 'ticket_123', status: 'OPEN' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `ticketNumber` | `number \| string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `type` | `string` | No | — |
-| `status` | `string` | No | — |
-| `priority` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `ticketNumber` | `number \| string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `priority` | `string \| null` | No | — |
 | `session` | `any` | No | — |
-| `project` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `project` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 | `customData` | `Record<string, any>` | No | — |
 | `formData` | `Record<string, any>` | No | — |
 | `attributes` | `Record<string, any>` | No | — |
-| `processingUser` | `string \| null` | No | — |
-| `processingTeam` | `string \| null` | No | — |
-| `slaBreached` | `boolean` | No | — |
-| `snoozed` | `boolean` | No | — |
+| `processingUser` | `any` | No | — |
+| `processingTeam` | `any` | No | — |
+| `slaBreached` | `boolean \| null` | No | — |
+| `snoozed` | `boolean \| null` | No | — |
 | `snoozedUntil` | `string \| null` | No | — |
-| `mentions` | `string[]` | No | — |
-| `linkedTickets` | `string[]` | No | — |
+| `mentions` | `any[] \| null` | No | — |
+| `linkedTickets` | `any[] \| null` | No | — |
 
 
 
@@ -1891,13 +1943,13 @@ await corsair.gleap.api.users.getMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `role` | `string` | No | — |
-| `imageUrl` | `string` | No | — |
-| `createdAt` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `imageUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
 
 
 
@@ -1930,13 +1982,13 @@ await corsair.gleap.api.users.list({});
 
 ```ts
 {
-  id?: string,
-  _id?: string,
-  name?: string,
-  email?: string,
-  role?: string,
-  imageUrl?: string,
-  createdAt?: string
+  id?: string | null,
+  _id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  role?: string | null,
+  imageUrl?: string | null,
+  createdAt?: string | null
 }[]
 ```
 </Accordion>
@@ -1949,12 +2001,12 @@ await corsair.gleap.api.users.list({});
 
 `users.update`
 
-Update an existing team member profile
+Update the API key owner's own profile (name, job title, availability); Gleap ignores the user id
 
 **Risk:** `write`
 
 ```ts
-await corsair.gleap.api.users.update({ userId: 'user_123', name: 'Alex Smith' });
+await corsair.gleap.api.users.update({ userId: 'user_123', firstName: 'Alex', lastName: 'Smith' });
 ```
 
 **Input**
@@ -1962,8 +2014,13 @@ await corsair.gleap.api.users.update({ userId: 'user_123', name: 'Alex Smith' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `department` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `available` | `boolean` | No | — |
+| `awayUntil` | `string` | No | — |
 
 
 
@@ -1971,13 +2028,13 @@ await corsair.gleap.api.users.update({ userId: 'user_123', name: 'Alex Smith' })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `_id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `role` | `string` | No | — |
-| `imageUrl` | `string` | No | — |
-| `createdAt` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `imageUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
 
 
 

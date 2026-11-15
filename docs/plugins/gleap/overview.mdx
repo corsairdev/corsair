@@ -8,8 +8,10 @@ Use **Gleap** through Corsair: one client, typed API calls.
 
 Authentication uses an API key generated in your Gleap dashboard under **Settings → Developer → API keys**.
 The API key is passed in the `Authorization: Bearer <key>` header.
-The default base URL is `https://api.gleap.io/v3` (EU region), and US-hosted projects can use `https://api.us.gleap.ai/v3` via the `baseUrl` option.
-Optionally specify your project ID from **Settings → Project → General** via `projectId`.
+API keys belong to one project, and every project-scoped call sends that project's ID in the `project` header: store the **Project ID** from **Settings → Project → General** on the connection (`project_id`).
+Keys only work in the project's data region. Leave `region` empty (or `eu`) for EU projects (`https://api.gleap.io/v3`); set it to `us` for US projects (`https://api.us.gleap.ai/v3`). Settings → Developer → API keys shows the region.
+In code, the `projectId` and `baseUrl` plugin options override the stored values.
+The API needs a Gleap Team plan or higher (Starter has no API access).
 
 **What you get:**
 
