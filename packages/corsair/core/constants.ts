@@ -399,6 +399,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'parallel',
 	'parseur',
 	'pdfco',
 	'pdfmonkey',
@@ -974,6 +975,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	parallel: 'Parallel',
 	parseur: 'Parseur',
 	pdfco: 'PDF.co',
 	pdfmonkey: 'PDFMonkey',
@@ -1556,6 +1558,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'parallel'
 	| 'parseur'
 	| 'pdfco'
 	| 'pdfmonkey'
