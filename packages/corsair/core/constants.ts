@@ -399,6 +399,7 @@ export const BaseProviders = [
 	'monday',
 	'mondaymcp',
 	'moonclerk',
+	'motion',
 	'mrscraper',
 	'nanonets',
 	'neon',
@@ -1015,6 +1016,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
 	moonclerk: 'MoonClerk',
+	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
 	neon: 'Neon',
@@ -1638,6 +1640,7 @@ export type AllProviders =
 	| 'monday'
 	| 'mondaymcp'
 	| 'moonclerk'
+	| 'motion'
 	| 'mrscraper'
 	| 'nanonets'
 	| 'neon'
