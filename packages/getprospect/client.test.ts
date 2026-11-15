@@ -88,7 +88,6 @@ describe('GetProspect HTTP client', () => {
 			errors: [
 				{
 					name: 'RATE_LIMIT',
-					message: '[email] and [redacted]',
 					payload: {
 						code: 'rate_limit_exceeded',
 						bucket: 'search',
@@ -140,6 +139,67 @@ describe('GetProspect HTTP client', () => {
 			expect(caught.message).not.toContain(leaked);
 			expect(JSON.stringify(caught.body)).not.toContain(leaked);
 		}
+	});
+
+	it('keeps only field-level validation text and redacts phone numbers and coordinates', async () => {
+		fetchSpy.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					success: false,
+					data: null,
+					errors: [
+						{
+							name: 'VALIDATION_ERROR',
+							message:
+								'phone must be E.164, got +1 415 555 0123 near 37.7749, -122.4194',
+							payload: { code: 'invalid_format' },
+						},
+					],
+				}),
+				{ status: 400, headers: { 'content-type': 'application/json' } },
+			),
+		);
+		fetchSpy.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					success: false,
+					data: null,
+					errors: [
+						{
+							name: 'NOT_FOUND',
+							message: 'No person named Jane Doe at Acme',
+						},
+					],
+				}),
+				{ status: 404, headers: { 'content-type': 'application/json' } },
+			),
+		);
+		// unknown because the rejection may be any transport/provider value; the predicate narrows it.
+		const validation = await makeGetProspectRequest(
+			'/v2/people/enrich',
+			'unit-key',
+			{ method: 'POST', body: {} },
+		).catch((error: unknown) => error);
+		// unknown because the rejection may be any transport/provider value; the predicate narrows it.
+		const notFound = await makeGetProspectRequest(
+			'/v2/people/p_1',
+			'unit-key',
+			{
+				method: 'GET',
+			},
+		).catch((error: unknown) => error);
+		if (!(validation instanceof ApiError) || !(notFound instanceof ApiError))
+			throw new Error('Expected sanitized ApiError');
+		expect(validation.message).toContain('phone must be E.164');
+		for (const leaked of ['415', '555 0123', '37.7749', '122.4194']) {
+			expect(validation.message).not.toContain(leaked);
+			expect(JSON.stringify(validation.body)).not.toContain(leaked);
+		}
+		expect(notFound.status).toBe(404);
+		expect(notFound.message).toBe(
+			'GetProspect request failed (HTTP 404): NOT_FOUND',
+		);
+		expect(JSON.stringify(notFound.body)).not.toContain('Jane Doe');
 	});
 
 	it('does not expose transport URLs or error details for non-API failures', async () => {

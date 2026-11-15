@@ -58,11 +58,15 @@ const EMAIL_PATTERN = /[^\s@"'<>()]+@[^\s@"'<>()]+\.[^\s@"'<>()]+/g;
 const URL_PATTERN = /\b(?:https?:\/\/|www\.)\S+/gi;
 const QUOTED_PATTERN = /"[^"]*"|“[^”]*”/g;
 const LONG_TOKEN_PATTERN = /[A-Za-z0-9_-]{32,}/g;
+// Phone numbers, coordinates and other long numbers: 6+ characters of digits and separators.
+const NUMBER_RUN_PATTERN = /\+?\d[\d\s().-]{4,}\d/g;
 
 /**
- * Provider messages explain what to fix ("enrich_mail is not a field of this
+ * Validation messages explain what to fix ("enrich_mail is not a field of this
  * request - did you mean enrich_email?"), so they are kept, minus anything that
- * may echo the request: the key, email addresses, URLs and quoted input values.
+ * may echo the request: the key, email addresses, URLs, quoted input values and
+ * long numbers (phones, coordinates). Other error kinds may describe a person or
+ * company in free text, so only their name and code are exposed.
  */
 function redactProviderMessage(message: string, apiKey: string): string {
 	const withoutKey = apiKey
@@ -73,6 +77,7 @@ function redactProviderMessage(message: string, apiKey: string): string {
 		.replace(URL_PATTERN, '[url]')
 		.replace(QUOTED_PATTERN, '"[value]"')
 		.replace(LONG_TOKEN_PATTERN, '[redacted]')
+		.replace(NUMBER_RUN_PATTERN, '[number]')
 		.slice(0, 300);
 }
 
@@ -87,7 +92,10 @@ function safeProviderErrorBody(
 		const safeError: NonNullable<SafeProviderErrorBody['errors']>[number] = {};
 		const name = SchemaErrorName.safeParse(providerError.name);
 		if (name.success) safeError.name = name.data;
-		if (typeof providerError.message === 'string') {
+		if (
+			safeError.name === 'VALIDATION_ERROR' &&
+			typeof providerError.message === 'string'
+		) {
 			safeError.message = redactProviderMessage(providerError.message, apiKey);
 		}
 		const providerPayload = providerError.payload;
@@ -135,9 +143,13 @@ function safeApiError(
 	apiKey: string,
 ): ApiError {
 	const body = safeProviderErrorBody(error.body, apiKey);
-	const providerMessage = body?.errors?.find(
-		(providerError) => providerError.message,
-	)?.message;
+	const firstError = body?.errors?.[0];
+	const errorCode = firstError?.payload?.code;
+	const errorKind =
+		firstError?.name && errorCode
+			? `${firstError.name} (${errorCode})`
+			: firstError?.name;
+	const providerMessage = firstError?.message ?? errorKind;
 	const safeRequest: ApiRequestOptions = {
 		method,
 		url: '/v2/[redacted]',
