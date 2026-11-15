@@ -20,8 +20,25 @@ describe('GoDial endpoint schemas', () => {
 				remarks: 'Qualified',
 				extra: 'source=website',
 				assignmentMode: 'default',
+				customFields: [{ name: 'City', value: 'Mumbai' }],
+				accountsId: 'agent-1',
+				source: 'Website',
+				address: '1 Example Street',
+				source_marketing: { source: 'google', medium: 'cpc' },
 			}).success,
 		).toBe(true);
+		// GoDial's reference and the live route both require phone.
+		expect(
+			GoDialEndpointInputSchemas.contactsAdd.safeParse({ listId: 'list-1' })
+				.success,
+		).toBe(false);
+		expect(
+			GoDialEndpointInputSchemas.contactsAdd.safeParse({
+				listId: 'list-1',
+				phone: '+15555550123',
+				assignmentMode: 'random',
+			}).success,
+		).toBe(false);
 		expect(
 			GoDialEndpointInputSchemas.contactsAdd.safeParse({ name: 'Ada' }).success,
 		).toBe(false);

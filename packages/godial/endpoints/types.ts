@@ -2,18 +2,41 @@ import { z } from 'zod';
 
 const EmptyInputSchema = z.object({}).strict();
 
+const CustomFieldSchema = z
+	.object({
+		name: z.string(),
+		value: z.string(),
+	})
+	.strict();
+
+const SourceMarketingSchema = z
+	.object({
+		source: z.string().optional(),
+		medium: z.string().optional(),
+		campaign: z.string().optional(),
+		term: z.string().optional(),
+		content: z.string().optional(),
+	})
+	.strict();
+
+// Fields from GoDial's Contact - Add reference (godial.stoplight.io); phone and listId are required.
 const AddContactInputSchema = z
 	.object({
 		name: z.string().optional(),
 		email: z.string().optional(),
-		phone: z.string().optional(),
+		phone: z.string().min(1),
 		secondPhone: z.string().optional(),
 		companyName: z.string().optional(),
 		note: z.string().optional(),
 		remarks: z.string().optional(),
 		extra: z.string().optional(),
-		assignmentMode: z.string().optional(),
-		listId: z.string(),
+		assignmentMode: z.enum(['default', 'roundrobin']).optional(),
+		customFields: z.array(CustomFieldSchema).optional(),
+		listId: z.string().min(1),
+		accountsId: z.string().optional(),
+		source: z.string().optional(),
+		address: z.string().optional(),
+		source_marketing: SourceMarketingSchema.optional(),
 	})
 	.strict();
 

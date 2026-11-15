@@ -78,7 +78,8 @@ const goDialEndpointMeta = {
 	},
 	'contacts.add': {
 		riskLevel: 'write',
-		description: 'Add a contact to a GoDial list',
+		description:
+			'Add a contact (lead) to a GoDial list; assignmentMode or accountsId assigns it to an agent for calling',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof goDialEndpointsNested>;
 
