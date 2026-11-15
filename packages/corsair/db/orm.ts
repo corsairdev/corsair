@@ -684,6 +684,8 @@ export type TypedEntity<DataSchema extends ZodTypeAny> = Omit<
 	'data'
 > & {
 	data: z.infer<DataSchema>;
+	/** Set when a read spans a tenant's accounts: the owning account's label. */
+	account?: string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

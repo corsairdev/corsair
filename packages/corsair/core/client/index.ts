@@ -7,7 +7,7 @@ import type {
 	PluginEntityClients,
 } from '../../db/orm';
 import type { HubConfig } from '../../hub';
-import { resolveIntegrationAccountIds } from '../account-lookup';
+import { listAccounts, resolveIntegrationAccountIds } from '../account-lookup';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -493,9 +493,33 @@ export function buildCorsairClient<
 				: undefined,
 		);
 
+		// api.db reads span every account of an unbound plugin; ctx.db stays strict.
+		const fanOut =
+			database && kek && accounts && !accounts[plugin.id]
+				? async () => {
+						const integration = await database.db
+							.selectFrom('corsair_integrations')
+							.select('id')
+							.where('name', '=', plugin.id)
+							.executeTakeFirst();
+						if (!integration) return [];
+						const list = await listAccounts({
+							db: database.db,
+							kek,
+							integrationId: integration.id,
+							tenantId: effectiveTenantId,
+						});
+						return list.map((a) => ({ id: a.id, label: a.label ?? a.ref }));
+					}
+				: undefined;
+
 		// Create typed entity clients from plugin schema, nested under `db`
 		if (schema?.entities) {
+			const apiClients: Record<string, EntityClient> = {};
 			const dbClients: Record<string, EntityClient> = {};
+			const atRest = internalConfig?.encryptDataAtRest
+				? { encryptDataAtRest: true as const, kek: kek ?? '' }
+				: undefined;
 			for (const [entityTypeName, dataSchema] of Object.entries(
 				schema.entities,
 			)) {
@@ -506,9 +530,7 @@ export function buildCorsairClient<
 							entityTypeName,
 							schema.version,
 							dataSchema,
-							internalConfig?.encryptDataAtRest
-								? { encryptDataAtRest: true, kek: kek ?? '' }
-								: undefined,
+							atRest,
 						)
 					: createEntityClient(
 							undefined,
@@ -518,11 +540,23 @@ export function buildCorsairClient<
 							dataSchema,
 						);
 				dbClients[entityTypeName] = entityClient;
+				apiClients[entityTypeName] =
+					database && fanOut
+						? createKyselyEntityClient(
+								database.db,
+								getAccountId,
+								entityTypeName,
+								schema.version,
+								dataSchema,
+								atRest,
+								fanOut,
+							)
+						: entityClient;
 			}
 			// ctx.db stays raw: an endpoint body runs once the guard has cleared
 			// it, and re-checking its writes would ask for a second approval.
 			pluginEntitiesUnsafe[plugin.id]!.db = dbClients;
-			apiUnsafe[plugin.id]!.db = guardEntityClients(plugin.id, dbClients);
+			apiUnsafe[plugin.id]!.db = guardEntityClients(plugin.id, apiClients);
 		}
 
 		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it
