@@ -213,22 +213,24 @@ describe('Pipedrive HTTP client', () => {
 			get_dek: async () => 'test-dek',
 			issue_new_dek: async () => 'test-dek',
 			get_access_token: async () => accessToken,
-			set_access_token: async (value: string) => {
+			set_access_token: async (value: string | null) => {
 				accessToken = value;
-				writes.push(`access:${value}`);
+				if (value) writes.push(`access:${value}`);
 			},
 			get_refresh_token: async () => refreshToken,
-			set_refresh_token: async (value: string) => {
+			set_refresh_token: async (value: string | null) => {
 				refreshToken = value;
-				writes.push(`refresh:${value}`);
+				if (value) writes.push(`refresh:${value}`);
 			},
 			get_expires_at: async () => expiresAt,
-			set_expires_at: async (value: string) => {
+			set_expires_at: async (value: string | null) => {
 				expiresAt = value;
 				writes.push('expires');
 			},
 			get_scope: async () => null,
 			set_scope: async () => undefined,
+			get_webhook_signature: async () => null,
+			set_webhook_signature: async () => undefined,
 			get_integration_credentials: async () => ({
 				client_id: 'pipedrive-client-id',
 				client_secret: 'pipedrive-client-secret',
@@ -241,6 +243,8 @@ describe('Pipedrive HTTP client', () => {
 			tenantId: 'test-tenant',
 			keys,
 		} satisfies PipedriveKeyBuilderContext;
+		const keyBuilder = plugin.keyBuilder;
+		if (!keyBuilder) throw new Error('Expected the Pipedrive key builder');
 		const originalFetch = globalThis.fetch;
 		const requests: { url: string; init: RequestInit }[] = [];
 		const responseBodies = [
@@ -265,7 +269,7 @@ describe('Pipedrive HTTP client', () => {
 			});
 		};
 		try {
-			await expect(plugin.keyBuilder(context, 'endpoint')).resolves.toBe(
+			await expect(keyBuilder(context, 'endpoint')).resolves.toBe(
 				'fresh-access-token',
 			);
 			expect(requests).toHaveLength(1);
