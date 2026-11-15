@@ -271,7 +271,7 @@ const cases: Array<{
 		call: () => endpoints.webhooks.list(ctx, ids),
 		method: 'GET',
 		url: '/teams/team/bots/bot/webhooks',
-		response: [{ id: 'hook' }],
+		response: { webhooks: [{ id: 'hook' }] },
 	},
 	{
 		name: 'webhooks.get',
@@ -429,6 +429,49 @@ describe('DocsBot API boundary', () => {
 		await expect(
 			endpoints.sources.get(ctx, { ...ids, sourceId: 'source' }),
 		).resolves.toMatchObject({ id: 'source' });
+	});
+
+	it('parses live statistics with null daily values', async () => {
+		// Trimmed from a live bots.stats response for a new bot.
+		const stats = {
+			labels: ['11/14', '11/15'],
+			countData: [0, 0],
+			couldAnswerData: [null, null],
+			csatData: [null, null],
+			answeredRateData: [null, null],
+			totalCount: 0,
+			resolutionRate: '0',
+			totalCsat: null,
+			conversationTopicData: {},
+		};
+		mockRequest.mockResolvedValue(stats);
+		await expect(endpoints.bots.stats(ctx, ids)).resolves.toMatchObject({
+			couldAnswerData: [null, null],
+			totalCsat: null,
+		});
+	});
+
+	it('reads the webhooks envelope DocsBot returns (live response)', async () => {
+		mockRequest.mockResolvedValue({
+			webhooks: [
+				{
+					id: 'hook',
+					label: 'corsair-plugin-test',
+					targetUrl: 'https://example.com/corsair-plugin-test',
+					events: ['conversation.rated'],
+					status: 'active',
+					source: 'admin',
+					expirationDate: null,
+					lastTriggeredAt: null,
+					lastResponseStatus: null,
+					lastError: null,
+					createdAt: '2026-11-15T01:04:09.058Z',
+					updatedAt: '2026-11-15T01:04:10.370Z',
+				},
+			],
+		});
+		const result = await endpoints.webhooks.list(ctx, ids);
+		expect(result.webhooks[0]?.id).toBe('hook');
 	});
 
 	it('retries a source with a bodyless PUT', async () => {
