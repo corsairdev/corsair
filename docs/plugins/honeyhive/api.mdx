@@ -514,13 +514,13 @@ await corsair.honeyhive.api.events.create({});
 | `project_id` | `string` | No | — |
 | `source` | `string` | No | — |
 | `event_name` | `string` | No | — |
-| `event_type` | `string` | No | — |
+| `event_type` | `chain \| model \| tool \| session` | Yes | — |
 | `event_id` | `string` | No | — |
 | `session_id` | `string` | No | — |
 | `parent_id` | `string` | No | — |
 | `children_ids` | `string[]` | No | — |
 | `config` | `Record<string, any>` | No | — |
-| `inputs` | `Record<string, any>` | No | — |
+| `inputs` | `Record<string, any>` | Yes | — |
 | `outputs` | `Record<string, any>` | No | — |
 | `error` | `any` | No | — |
 | `start_time` | `number` | No | — |
@@ -572,13 +572,13 @@ await corsair.honeyhive.api.events.createBatch({});
   project_id?: string,
   source?: string,
   event_name?: string,
-  event_type?: string,
+  event_type: chain | model | tool | session,
   event_id?: string,
   session_id?: string,
   parent_id?: string,
   children_ids?: string[],
   config?: Record<string, any>,
-  inputs?: Record<string, any>,
+  inputs: Record<string, any>,
   outputs?: Record<string, any>,
   error?: any,
   start_time?: number,
@@ -1431,8 +1431,21 @@ await corsair.honeyhive.api.metrics.createVersion({});
 |------|------|----------|-------------|
 | `metric_id` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
-| `content` | `Record<string, any>` | No | — |
+| `content` | `object` | Yes | — |
 | `deploy_immediately` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  name: string,
+  type: string,
+  criteria: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
