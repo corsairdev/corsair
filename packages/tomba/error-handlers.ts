@@ -1,12 +1,9 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TombaAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { tombaErrorType } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof TombaAPIError ? error.status : undefined;
-}
-
-function typeOf(error: Error): string | undefined {
-	return error instanceof TombaAPIError ? error.type : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -22,39 +19,42 @@ function typeOf(error: Error): string | undefined {
  * - 429 for a rate limit, which names the window in its message
  * - 451 when the person asked Tomba to stop processing their data
  * - 500, which the docs say to retry with backoff
+ *
+ * The client lets core's ApiError through (rebuilt only to drop the looked-up
+ * email or name from the request it carries), so these match its status and
+ * the `errors.type` in its body.
  */
 export const errorHandlers = {
-	// 402 (or `insufficient_credits`): the balance is short. No retry can fix it,
-	// and Tomba charges nothing for the attempt.
+	// 402 (or `quota_exceeded`): the balance is short. No retry can fix it, and
+	// Tomba charges nothing for the attempt.
 	INSUFFICIENT_BALANCE_ERROR: {
 		match: (error: Error) =>
-			error instanceof TombaAPIError && error.isInsufficientCredits,
+			statusOf(error) === 402 ||
+			tombaErrorType(error) === 'quota_exceeded' ||
+			tombaErrorType(error) === 'insufficient_credits',
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 451: the data is withheld permanently at the person's request. Repeating
 	// the call is inappropriate, not just useless.
 	LEGAL_BLOCK_ERROR: {
 		match: (error: Error) =>
-			error instanceof TombaAPIError && error.isLegalBlock,
+			statusOf(error) === 451 || tombaErrorType(error) === 'legal_block',
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 429, whether it names a rate window or an exhausted count balance. Tomba
-	// puts the window in the message and the wait in `Retry-After`.
+	// 429. Core's request() already retried a per-second or per-minute window
+	// three times, honouring Retry-After; a used-up daily limit or count balance
+	// is not retried at all, because nothing changes before midnight UTC.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof TombaAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TombaAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 `authentication_failed` and 401. A missing, malformed or expired
-	// credential answers 400, so the type is what identifies it.
+	// 400 `authentication_failed`/`api_key_expired` and 401. A missing,
+	// malformed or expired credential answers 400, so the type identifies it.
 	AUTH_ERROR: {
 		match: (error: Error) =>
-			statusOf(error) === 401 || typeOf(error) === 'authentication_failed',
+			statusOf(error) === 401 ||
+			tombaErrorType(error) === 'authentication_failed' ||
+			tombaErrorType(error) === 'api_key_expired',
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403: a blocked account, or a plan that does not include the endpoint.
@@ -78,12 +78,9 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 500, which the docs explicitly say to retry with backoff. Every wrapped
-	// route is a GET, so a replay is safe.
+	// route only reads (`reveal/search` is a POST search), so a replay is safe.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof TombaAPIError &&
-			error.method === 'GET' &&
-			(statusOf(error) ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

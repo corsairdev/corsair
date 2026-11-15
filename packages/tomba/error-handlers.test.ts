@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { TombaAPIError } from './client';
 import {
 	errorHandlers,
 	mergeErrorHandlers,
@@ -18,34 +18,35 @@ function classify(error: Error): HandlerName {
 	return name;
 }
 
+// Every builtin handler ignores its arguments, so none are passed.
 async function strategy(error: Error) {
-	return errorHandlers[classify(error)].handler(error);
+	return errorHandlers[classify(error)].handler();
 }
 
+// The error core's request() throws, as the client passes it on.
 function apiError(
 	status: number,
 	options: { type?: string; retryAfter?: number; method?: string } = {},
 ) {
-	return new TombaAPIError(`Tomba ${status}: failed`, { status, ...options });
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: 'me' },
+		{
+			url: 'https://api.tomba.io/v1/me',
+			ok: false,
+			status,
+			statusText: 'failed',
+			body: options.type ? { errors: { type: options.type } } : {},
+		},
+		`Tomba ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('Tomba error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = apiError(429);
+	it('does not retry a 429 again: core already did, or it was a used-up daily limit', async () => {
+		const error = apiError(429, { retryAfter: 30000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('honours Retry-After on a 429', async () => {
-		expect(await strategy(apiError(429, { retryAfter: 30000 }))).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 30000,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 402, which is an empty balance', async () => {
@@ -63,10 +64,7 @@ describe('Tomba error handlers', () => {
 	it('checks the balance before the rate limit, since a 429 can mean both', () => {
 		// Ordering matters: core takes the first matching key. A credit error
 		// that also carried a 429 must not be retried three times.
-		const error = new TombaAPIError('Tomba 429', {
-			status: 429,
-			type: 'insufficient_credits',
-		});
+		const error = apiError(429, { type: 'quota_exceeded' });
 		expect(classify(error)).toBe('INSUFFICIENT_BALANCE_ERROR');
 	});
 
@@ -106,7 +104,7 @@ describe('Tomba error handlers', () => {
 		expect(classify(new ZodError([]))).toBe('VALIDATION_ERROR');
 	});
 
-	it('does not retry a missing-credential refusal', () => {
+	it('does not retry an incomplete-credential refusal', () => {
 		expect(classify(new TombaOperationError('secret missing'))).toBe(
 			'VALIDATION_ERROR',
 		);
@@ -121,8 +119,8 @@ describe('Tomba error handlers', () => {
 		});
 	});
 
-	it('does not replay a 5xx on a write', () => {
-		expect(classify(apiError(500, { method: 'POST' }))).toBe('DEFAULT');
+	it('replays the POST company search on a 5xx, since it only reads', () => {
+		expect(classify(apiError(500, { method: 'POST' }))).toBe('SERVER_ERROR');
 	});
 
 	it('leaves anything unrecognised to DEFAULT with no retry', async () => {

@@ -8,104 +8,95 @@ import { ApiError, request } from 'corsair/http';
 
 export const TOMBA_API_BASE = 'https://api.tomba.io/v1';
 
-// error-handlers.ts owns retries. The object has to be complete: request.ts
-// replaces its defaults wholesale, so a partial one either skips the
-// rate-limit block or throws reading `headerNames`. Tomba sends `Retry-After`
-// on a 429, which the docs say names when to retry.
+/**
+ * A 429 is either a per-second or per-minute window, which `Retry-After`
+ * names and a short wait fixes, or a used-up daily limit or count/sources
+ * balance, which no retry fixes before midnight UTC. Only the first kind is
+ * handed to core's retry loop.
+ */
+export function isQuotaExhausted(
+	// unknown: the error body is untyped until the nested `errors` object is read.
+	body: unknown,
+): boolean {
+	const errors = asRecord(asRecord(body)?.errors);
+	const message = typeof errors?.message === 'string' ? errors.message : '';
+	return /daily|balance|used up|quota|credits/i.test(message);
+}
+
+// Core's request() retries a window 429 three times, honouring Retry-After.
+// No `resetTime` header: Tomba's `x-ratelimit-reset` is not an epoch, and
+// core would read it as one.
 const TOMBA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
+	isRateLimitError: (status, body) => status === 429 && !isQuotaExhausted(body),
 };
 
 /** Tomba needs both the API key and the API secret on every request. */
 export type TombaCredentials = { apiKey: string; apiSecret: string };
 
 /**
- * Tomba puts its error detail in `errors: { type, message, code }`, and the
- * `type` is the machine-readable part: `authentication_failed`,
- * `unknown_record`, `insufficient_credits`. The HTTP status alone does not
- * distinguish a bad key from a valid key whose plan ran out.
+ * The documented `errors.type` of a failed call: `authentication_failed`,
+ * `unknown_record`, `quota_exceeded`, `rate_limit`, `legal_block` and so on.
+ * Tomba answers a missing key with HTTP 400, so the type matters more than the
+ * status.
  */
-export class TombaAPIError extends Error {
-	readonly status?: number;
-	/** The documented error type, e.g. `authentication_failed`. */
-	readonly type?: string;
-	/** Milliseconds from a Retry-After header, when Tomba sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, which decides replay safety. */
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			type?: string;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'TombaAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.type = options.type ?? readErrorType(cause?.body);
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** The account is out of search or verification credits. No retry helps. */
-	get isInsufficientCredits(): boolean {
-		return this.status === 402 || this.type === 'insufficient_credits';
-	}
-
-	/**
-	 * The person asked Tomba to stop processing their data, so it is withheld
-	 * permanently. Retrying is both useless and inappropriate.
-	 */
-	get isLegalBlock(): boolean {
-		return this.status === 451 || this.type === 'legal_block';
-	}
-}
-
-// unknown: the error body is untyped until the nested `errors` object is read.
-function readErrorType(body: unknown): string | undefined {
-	const errors = asRecord(asRecord(body)?.errors);
-	const type = errors?.type;
+export function tombaErrorType(error: unknown): string | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	const type = asRecord(asRecord(error.body)?.errors)?.type;
 	return typeof type === 'string' && type.length > 0 ? type : undefined;
 }
 
+const EMAIL = /[^\s"'<>@]+@[^\s"'<>@]+\.[^\s"'<>@]+/g;
+
+// unknown: any JSON value; strings get email addresses masked.
+function maskEmails(value: unknown): unknown {
+	if (typeof value === 'string') return value.replace(EMAIL, '[email]');
+	if (Array.isArray(value)) return value.map(maskEmails);
+	const record = asRecord(value);
+	if (!record) return value;
+	return Object.fromEntries(
+		Object.entries(record).map(([key, entry]) => [key, maskEmails(entry)]),
+	);
+}
+
 /**
- * Reads the message out of `errors: { type, message, code }`. A missing key
- * answers `{ errors: { type: 'authentication_failed', message: 'No user found
- * for the API supplied.' } }` with HTTP 400, so the type matters more than the
- * status.
+ * Core's ApiError keeps the request's query and URL, and Tomba's queries are
+ * the person being looked up: email addresses, names, phone numbers, LinkedIn
+ * URLs. This rebuilds the error without them and keeps everything the error
+ * handlers and core read: status, body, Retry-After and the method.
  */
-export function describeTombaError(
-	status: number | undefined,
-	// unknown: a proxy can answer HTML or plain text where JSON is expected.
-	body: unknown,
-	fallback: string,
-): { message: string; type?: string } {
-	const record = asRecord(body);
-	const errors = asRecord(record?.errors);
-	const message =
-		(typeof errors?.message === 'string' && errors.message) ||
-		(typeof record?.message === 'string' && record.message) ||
-		fallback;
-	const type =
-		typeof errors?.type === 'string' && errors.type.length > 0
-			? errors.type
-			: undefined;
-	const label = [status, type].filter((part) => part !== undefined).join(' ');
-	return { message: label ? `Tomba ${label}: ${message}` : message, type };
+export function stripRequestData(error: ApiError): ApiError {
+	const errors = asRecord(asRecord(error.body)?.errors);
+	const type = typeof errors?.type === 'string' ? errors.type : undefined;
+	const detail =
+		typeof errors?.message === 'string' ? errors.message : error.statusText;
+	const message = String(
+		maskEmails(
+			`Tomba ${[error.status, type].filter(Boolean).join(' ')}: ${detail}`,
+		),
+	);
+	const path = error.request.url.split('?')[0] ?? error.request.url;
+	return new ApiError(
+		{ method: error.request.method, url: path },
+		{
+			url: error.url.split('?')[0] ?? '',
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: maskEmails(error.body),
+		},
+		message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 export type TombaQuery = Record<string, string | number | boolean | undefined>;
@@ -151,23 +142,7 @@ export async function makeTombaRequest(
 			rateLimitConfig: TOMBA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof TombaAPIError) throw error;
-		if (error instanceof ApiError) {
-			const described = describeTombaError(
-				error.status,
-				error.body,
-				error.message,
-			);
-			throw new TombaAPIError(described.message, {
-				cause: error,
-				type: described.type,
-				method,
-			});
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new TombaAPIError(error.message, { cause: error, method });
-		}
-		throw new TombaAPIError('Unknown Tomba error', { method });
+		if (error instanceof ApiError) throw stripRequestData(error);
+		throw error;
 	}
 }

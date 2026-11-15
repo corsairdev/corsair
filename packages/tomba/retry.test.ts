@@ -4,8 +4,8 @@ import { tomba } from './index';
 import { account, person, verification } from './test-fixtures';
 
 /**
- * `requests.test.ts` calls the HTTP client, which is built with `maxRetries: 0`
- * so only `error-handlers.ts` decides what is retried.
+ * A window 429 is retried by core's request() (three times, honouring
+ * Retry-After); `error-handlers.ts` decides the rest, such as the 5xx replay.
  */
 async function createClient() {
 	const testDb = createTestDatabase();

@@ -1,9 +1,10 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
-	describeTombaError,
+	isQuotaExhausted,
 	makeTombaRequest,
 	TOMBA_API_BASE,
-	TombaAPIError,
+	tombaErrorType,
 } from './client';
 import {
 	badKey,
@@ -96,7 +97,7 @@ describe('makeTombaRequest', () => {
 		expect(url.searchParams.has('page')).toBe(false);
 	});
 
-	it('reads the 400 authentication_failed envelope', async () => {
+	it('lets core ApiError through with the 400 authentication_failed body', async () => {
 		respond(noKey, 400);
 
 		const error = await makeTombaRequest(CREDENTIALS, {
@@ -104,15 +105,15 @@ describe('makeTombaRequest', () => {
 			path: 'me',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(TombaAPIError);
-		expect((error as TombaAPIError).status).toBe(400);
-		expect((error as TombaAPIError).type).toBe('authentication_failed');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(400);
+		expect(tombaErrorType(error)).toBe('authentication_failed');
 		expect((error as Error).message).toContain(
 			'No user found for the API supplied',
 		);
 	});
 
-	it('distinguishes a 402 from a 401', async () => {
+	it('keeps a 402 status and type for the balance handler', async () => {
 		respond(insufficientCredits, 402);
 
 		const error = await makeTombaRequest(CREDENTIALS, {
@@ -120,11 +121,11 @@ describe('makeTombaRequest', () => {
 			path: 'email-finder',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TombaAPIError).isInsufficientCredits).toBe(true);
-		expect((error as TombaAPIError).status).toBe(402);
+		expect((error as ApiError).status).toBe(402);
+		expect(tombaErrorType(error)).toBe(insufficientCredits.errors.type);
 	});
 
-	it('recognises a 451 as a permanent legal block', async () => {
+	it('keeps a 451 legal block status', async () => {
 		respond(legalBlock, 451);
 
 		const error = await makeTombaRequest(CREDENTIALS, {
@@ -132,10 +133,11 @@ describe('makeTombaRequest', () => {
 			path: 'enrich',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TombaAPIError).isLegalBlock).toBe(true);
+		expect((error as ApiError).status).toBe(451);
+		expect(tombaErrorType(error)).toBe('legal_block');
 	});
 
-	it('keeps the type of a 400 that is not about credentials', async () => {
+	it('names the type of a 400 that is not about credentials', async () => {
 		respond(unknownRecord, 400);
 
 		const error = await makeTombaRequest(CREDENTIALS, {
@@ -143,22 +145,53 @@ describe('makeTombaRequest', () => {
 			path: 'domain-search',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TombaAPIError).type).toBe('unknown_record');
+		expect(tombaErrorType(error)).toBe('unknown_record');
 		expect((error as Error).message).toContain('Tomba 400 unknown_record');
 	});
 
-	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
-		respond({ errors: { type: 'rate_limit', message: 'slow down' } }, 429, {
-			'Retry-After': '30',
-		});
+	it('drops the looked-up address and name from the error it throws', async () => {
+		respond(
+			{ errors: { type: 'legal_block', message: 'jane@stripe.com opted out' } },
+			451,
+		);
 
 		const error = await makeTombaRequest(CREDENTIALS, {
 			method: 'GET',
-			path: 'me',
+			path: 'email-verifier',
+			query: { email: 'jane@stripe.com', first_name: 'Jane' },
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TombaAPIError).retryAfter).toBe(30000);
-		expect((error as TombaAPIError).isRateLimit).toBe(true);
+		for (const text of [
+			(error as Error).message,
+			inspect(error, { depth: 10 }),
+			JSON.stringify(error),
+		]) {
+			expect(text).not.toContain('jane@stripe.com');
+			expect(text).not.toContain('Jane');
+		}
+		expect((error as ApiError).request.method).toBe('GET');
+	});
+
+	it('does not retry a 429 that says the daily limit is used up', async () => {
+		respond(
+			{
+				errors: {
+					type: 'rate_limit',
+					message: 'Rate limit exceeded (daily). Limit is 5 requests.',
+				},
+			},
+			429,
+			{ 'Retry-After': '40000' },
+		);
+
+		const error = await makeTombaRequest(CREDENTIALS, {
+			method: 'GET',
+			path: 'email-finder',
+		}).catch((caught: unknown) => caught);
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect((error as ApiError).status).toBe(429);
+		expect((error as ApiError).retryAfter).toBe(40000000);
 	});
 
 	it('records the method so a non-read is not replayed', async () => {
@@ -170,7 +203,7 @@ describe('makeTombaRequest', () => {
 			body: {},
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TombaAPIError).method).toBe('POST');
+		expect((error as ApiError).request.method).toBe('POST');
 	});
 
 	it('never puts either credential in the message or its inspection', async () => {
@@ -193,34 +226,18 @@ describe('makeTombaRequest', () => {
 	});
 });
 
-describe('describeTombaError', () => {
-	it('includes the status and the error type', () => {
-		expect(describeTombaError(400, noKey, 'x')).toEqual({
-			message:
-				'Tomba 400 authentication_failed: No user found for the API supplied. . Sign up at https://tomba.io',
-			type: 'authentication_failed',
+describe('isQuotaExhausted', () => {
+	it('tells a used-up daily limit or balance from a short window', () => {
+		const body = (message: string) => ({
+			errors: { type: 'rate_limit', message },
 		});
-	});
-
-	it('reads a body with a message but no errors object', () => {
-		expect(describeTombaError(500, { message: 'boom' }, 'x')).toEqual({
-			message: 'Tomba 500: boom',
-			type: undefined,
-		});
-	});
-
-	it('falls back for a non-JSON body', () => {
-		expect(describeTombaError(502, '<html>', 'Bad Gateway').message).toBe(
-			'Tomba 502: Bad Gateway',
-		);
-		expect(describeTombaError(undefined, null, 'offline').message).toBe(
-			'offline',
-		);
-	});
-
-	it('ignores a non-string type', () => {
+		expect(isQuotaExhausted(body('Rate limit exceeded (daily).'))).toBe(true);
+		expect(isQuotaExhausted(body('Email count balance used up'))).toBe(true);
 		expect(
-			describeTombaError(400, { errors: { type: 42, message: 'x' } }, 'y').type,
-		).toBeUndefined();
+			isQuotaExhausted(
+				body('Rate limit exceeded (rpm). Retry after 42 seconds.'),
+			),
+		).toBe(false);
+		expect(isQuotaExhausted('<html>')).toBe(false);
 	});
 });
