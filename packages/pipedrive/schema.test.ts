@@ -57,6 +57,54 @@ const validOrganization = {
 	employee_count: null,
 	custom_fields: { segment: 'enterprise' },
 };
+const validActivity = {
+	id: 31,
+	subject: 'Synthetic follow-up',
+	type: 'call',
+	owner_id: 7,
+	creator_user_id: 7,
+	is_deleted: false,
+	add_time: '2025-01-01T10:00:00Z',
+	update_time: '2025-01-01T10:00:00Z',
+	deal_id: null,
+	lead_id: null,
+	person_id: null,
+	org_id: null,
+	project_id: null,
+	due_date: '2025-01-02',
+	due_time: null,
+	duration: null,
+	busy: false,
+	done: false,
+	marked_as_done_time: null,
+	location: null,
+	participants: [],
+	attendees: [],
+	conference_meeting_client: '',
+	conference_meeting_url: '',
+	conference_meeting_id: '',
+	public_description: '',
+	priority: 0,
+	outcome: null,
+	note: '',
+};
+const validTask = {
+	id: 42,
+	title: 'Synthetic project task',
+	creator_id: 7,
+	description: null,
+	project_id: 11,
+	is_done: false,
+	is_milestone: false,
+	due_date: null,
+	start_date: null,
+	parent_task_id: null,
+	assignee_ids: [],
+	priority: null,
+	add_time: '2025-01-01T10:00:00Z',
+	update_time: '2025-01-01T10:00:00Z',
+	marked_as_done_time: null,
+};
 
 describe('Pipedrive endpoint schemas', () => {
 	it('accepts and bounds documented deal-list filters and pagination', () => {
@@ -134,23 +182,38 @@ describe('Pipedrive endpoint schemas', () => {
 
 	it('keeps endpoint implementation, schema map, and metadata synchronized', () => {
 		const plugin = pipedrive({});
-		expect(Object.keys(pipedriveEndpointSchemas).sort()).toEqual([
-			'deals.create',
-			'deals.delete',
-			'deals.get',
-			'deals.list',
-			'deals.update',
-			'organizations.create',
-			'organizations.delete',
-			'organizations.get',
-			'organizations.list',
-			'organizations.update',
-			'persons.create',
-			'persons.delete',
-			'persons.get',
-			'persons.list',
-			'persons.update',
-		]);
+		expect(Object.keys(pipedriveEndpointSchemas).sort()).toEqual(
+			[
+				'deals.create',
+				'deals.delete',
+				'deals.get',
+				'deals.list',
+				'deals.update',
+				'organizations.create',
+				'organizations.delete',
+				'organizations.get',
+				'organizations.list',
+				'organizations.update',
+				'persons.create',
+				'persons.delete',
+				'persons.get',
+				'persons.list',
+				'persons.update',
+				'activities.create',
+				'activities.delete',
+				'activities.get',
+				'activities.list',
+				'activities.update',
+				'tasks.create',
+				'tasks.delete',
+				'tasks.get',
+				'tasks.list',
+				'tasks.update',
+			].sort(),
+		);
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(
+			Object.keys(pipedriveEndpointSchemas).sort(),
+		);
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.endpoints?.deals.list).toBeDefined();
 		expect(plugin.endpointMeta?.['deals.delete']?.riskLevel).toBe(
@@ -164,6 +227,148 @@ describe('Pipedrive endpoint schemas', () => {
 		expect(plugin.endpointMeta?.['organizations.delete']?.riskLevel).toBe(
 			'destructive',
 		);
+		expect(plugin.endpoints?.activities.list).toBeDefined();
+		expect(plugin.endpointMeta?.['activities.delete']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpoints?.tasks.list).toBeDefined();
+		expect(plugin.endpointMeta?.['tasks.delete']?.riskLevel).toBe(
+			'destructive',
+		);
+	});
+
+	it('validates activity filters, strict write fields, and nullable response fields', () => {
+		expect(
+			PipedriveEndpointInputSchemas.activityList.parse({
+				ids: [31, 32],
+				include_fields: ['attendees'],
+				limit: 500,
+				cursor: 'opaque',
+			}),
+		).toMatchObject({ limit: 500, cursor: 'opaque' });
+		expect(() =>
+			PipedriveEndpointInputSchemas.activityList.parse({ limit: 501 }),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.activityCreate.parse({
+				subject: 'Call',
+				person_id: 18,
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.activityUpdate.parse({
+				id: 31,
+				callback: 'x',
+			}),
+		).toThrow(z.ZodError);
+		expect(
+			PipedriveEndpointOutputSchemas.activityList.parse({
+				success: true,
+				data: [validActivity],
+				additional_data: { next_cursor: null },
+			}),
+		).toMatchObject({
+			data: [{ outcome: null }],
+			additional_data: { next_cursor: null },
+		});
+		expect(() =>
+			PipedriveEndpointOutputSchemas.activityGet.parse({
+				success: 'yes',
+				data: validActivity,
+			}),
+		).toThrow(z.ZodError);
+		expect(
+			PipedriveEndpointOutputSchemas.activityCreate.parse({
+				success: true,
+				data: validActivity,
+			}),
+		).toMatchObject({ data: { id: 31 } });
+		expect(
+			PipedriveEndpointOutputSchemas.activityUpdate.parse({
+				success: true,
+				data: validActivity,
+			}),
+		).toMatchObject({ data: { id: 31 } });
+		expect(
+			PipedriveEndpointOutputSchemas.activityDelete.parse({
+				success: true,
+				data: { id: 31 },
+			}),
+		).toMatchObject({ data: { id: 31 } });
+	});
+
+	it('validates task beta resource request constraints and response envelopes', () => {
+		expect(
+			PipedriveEndpointInputSchemas.taskList.parse({
+				parent_task_id: null,
+				limit: 500,
+				cursor: 'opaque',
+			}),
+		).toMatchObject({ parent_task_id: null, limit: 500 });
+		expect(() =>
+			PipedriveEndpointInputSchemas.taskList.parse({ limit: 501 }),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.taskCreate.parse({
+				title: 'Missing project',
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.taskCreate.parse({
+				title: 'Task',
+				project_id: 11,
+				done: true,
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.taskUpdate.parse({
+				id: 42,
+				assignee_ids: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.taskUpdate.parse({
+				id: 42,
+				due_date: '2025-02-30',
+			}),
+		).toThrow(z.ZodError);
+		expect(
+			PipedriveEndpointOutputSchemas.taskList.parse({
+				success: true,
+				data: [validTask],
+				additional_data: { next_cursor: null },
+			}),
+		).toMatchObject({
+			data: [{ due_date: null }],
+			additional_data: { next_cursor: null },
+		});
+		for (const schema of [
+			PipedriveEndpointOutputSchemas.taskGet,
+			PipedriveEndpointOutputSchemas.taskCreate,
+			PipedriveEndpointOutputSchemas.taskUpdate,
+		]) {
+			expect(
+				schema.parse({
+					success: true,
+					data: validTask,
+					additional_data: null,
+				}),
+			).toMatchObject({ data: { id: 42 }, additional_data: null });
+		}
+		expect(
+			PipedriveEndpointOutputSchemas.taskDelete.parse({
+				success: true,
+				data: { id: 42 },
+				additional_data: null,
+			}),
+		).toMatchObject({ data: { id: 42 }, additional_data: null });
+		expect(() =>
+			PipedriveEndpointOutputSchemas.taskGet.parse({
+				success: true,
+				data: { ...validTask, priority: -1 },
+				additional_data: null,
+			}),
+		).toThrow(z.ZodError);
 	});
 
 	it('validates person pagination, enum constraints, strict writes, and nullable response fields', () => {

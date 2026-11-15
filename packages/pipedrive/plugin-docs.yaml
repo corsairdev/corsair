@@ -1,7 +1,7 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "Pipedrive"
-description: "Manage Pipedrive deals, persons, and organizations through selected v2 API operations with validated reads, writes, deletes, and cursor pagination."
-overviewNote: "This deliberately partial implementation covers v2 deal, person, and organization list, get, create, update, and delete operations only. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Deal reads require deals:read or deals:full and deal writes require deals:full. Person and organization reads require contacts:read or contacts:full; writes require contacts:full. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
+description: "Manage selected Pipedrive v2 deal, person, organization, activity, and task operations with validated requests, responses, and cursor pagination."
+overviewNote: "This deliberately partial implementation covers list, get, create, update, and delete operations for deals, persons, organizations, activities, and tasks. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Reads require the resource's documented :read or :full OAuth scope; writes and deletes require its :full scope. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
 examples:
   read:
     path: deals.get
@@ -23,6 +23,16 @@ examples:
     title: Get an organization by ID
     args:
       id: 1
+  activity:
+    path: activities.get
+    title: Get an activity by ID
+    args:
+      id: 1
+  task:
+    path: tasks.get
+    title: Get a task by ID
+    args:
+      id: 1
 apiNotes:
   deals.list: "The list operation forwards Pipedrive's opaque cursor and returns additional_data.next_cursor; pass that value as cursor to request the next page. List array query parameters are serialized as comma-separated values as required by the OpenAPI form/explode=false contract. Its documented API token cost is 10 tokens."
   deals.get: "OAuth requires the deals:read or deals:full scope. The documented API token cost is 1 token."
@@ -39,6 +49,16 @@ apiNotes:
   organizations.create: "OAuth requires contacts:full. Organization custom_fields values are arbitrary JSON; set a custom field to null to clear it, and do not send an empty array to clear a multi-option set field. The documented API token cost is 5 tokens."
   organizations.update: "OAuth requires contacts:full. Organization custom_fields values are arbitrary JSON; set a custom field to null to clear it, and do not send an empty array to clear a multi-option set field. The documented API token cost is 5 tokens."
   organizations.delete: "OAuth requires contacts:full. Deletion marks the organization deleted; Pipedrive permanently removes it after 30 days. The documented API token cost is 3 tokens."
+  activities.list: "OAuth requires activities:read or activities:full. The limit is 1–500; use the opaque additional_data.next_cursor value as cursor. Array filters are comma-separated. The documented API token cost is 10 tokens."
+  activities.get: "OAuth requires activities:read or activities:full. include_fields currently accepts attendees. To associate a person on create/update, use participants with primary: true; person_id is not an accepted body field. The documented API token cost is 1 token."
+  activities.create: "OAuth requires activities:full. All request properties are optional in the v2 schema. Use participants to set the person; the response data is an activity object. The documented API token cost is 5 tokens."
+  activities.update: "OAuth requires activities:full. The path ID is supplied as the input id and omitted from the JSON body. The documented API token cost is 5 tokens."
+  activities.delete: "OAuth requires activities:full. Deletion marks an activity deleted; Pipedrive permanently deletes it after 30 days. The documented API token cost is 3 tokens."
+  tasks.list: "OAuth requires projects:read or projects:full. The Tasks endpoints are marked beta by Pipedrive. The limit is 1–500; pass additional_data.next_cursor as cursor. parent_task_id accepts a parent ID or null to filter root tasks. The documented API token cost is 10 tokens."
+  tasks.get: "OAuth requires projects:read or projects:full. The Tasks endpoints are marked beta by Pipedrive. The response includes additional_data: null. The documented API token cost is 1 token."
+  tasks.create: "OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. title and project_id are required; done and milestone use 0/1 integers, and assignee_ids accepts up to 10 IDs. The documented API token cost is 5 tokens."
+  tasks.update: "OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. The path ID is supplied as input id and omitted from the JSON body; done and milestone use 0/1 integers. The documented API token cost is 5 tokens."
+  tasks.delete: "OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. Deleting a task also deletes its subtasks. The documented API token cost is 3 tokens."
 apiExamples:
   deals.list:
     call: "{}"
@@ -69,4 +89,24 @@ apiExamples:
   organizations.update:
     call: "{ id: 1, name: 'Updated organization' }"
   organizations.delete:
+    call: "{ id: 1 }"
+  activities.list:
+    call: "{}"
+  activities.get:
+    call: "{ id: 1 }"
+  activities.create:
+    call: "{ subject: 'Follow up', type: 'call' }"
+  activities.update:
+    call: "{ id: 1, done: true }"
+  activities.delete:
+    call: "{ id: 1 }"
+  tasks.list:
+    call: "{}"
+  tasks.get:
+    call: "{ id: 1 }"
+  tasks.create:
+    call: "{ title: 'Review proposal', project_id: 1 }"
+  tasks.update:
+    call: "{ id: 1, done: 1 }"
+  tasks.delete:
     call: "{ id: 1 }"

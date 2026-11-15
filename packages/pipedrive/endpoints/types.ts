@@ -527,6 +527,256 @@ const OrganizationDeleteResponseSchema = z
 	})
 	.passthrough();
 
+const ActivityLocationInputSchema = z
+	.object({
+		value: z.string().optional(),
+		country: z.string().optional(),
+		admin_area_level_1: z.string().optional(),
+		admin_area_level_2: z.string().optional(),
+		locality: z.string().optional(),
+		sublocality: z.string().optional(),
+		route: z.string().optional(),
+		street_number: z.string().optional(),
+		subpremise: z.string().optional(),
+		postal_code: z.string().optional(),
+	})
+	.strict();
+
+const ActivityParticipantSchema = z
+	.object({
+		person_id: z.number().int().optional(),
+		primary: z.boolean().optional(),
+	})
+	.strict();
+
+const ActivityAttendeeSchema = z
+	.object({
+		email: z.string().optional(),
+		name: z.string().optional(),
+		status: z.string().optional(),
+		is_organizer: z.boolean().optional(),
+		person_id: z.number().int().optional(),
+		user_id: z.number().int().optional(),
+	})
+	.strict();
+const ActivityParticipantResponseSchema =
+	ActivityParticipantSchema.passthrough();
+const ActivityAttendeeResponseSchema = ActivityAttendeeSchema.passthrough();
+
+const ActivityWriteFields = {
+	subject: z.string().optional(),
+	type: z.string().optional(),
+	owner_id: z.number().int().optional(),
+	deal_id: z.number().int().optional(),
+	lead_id: z.string().optional(),
+	org_id: z.number().int().optional(),
+	project_id: z.number().int().optional(),
+	due_date: z.string().optional(),
+	due_time: z.string().optional(),
+	duration: z.string().optional(),
+	busy: z.boolean().optional(),
+	done: z.boolean().optional(),
+	location: ActivityLocationInputSchema.optional(),
+	participants: z.array(ActivityParticipantSchema).optional(),
+	attendees: z.array(ActivityAttendeeSchema).optional(),
+	public_description: z.string().optional(),
+	priority: z.number().int().optional(),
+	outcome: z.number().int().nullable().optional(),
+	note: z.string().optional(),
+} as const;
+
+const ActivityIncludeFieldsSchema = z
+	.array(z.enum(['attendees']))
+	.refine(uniqueValues);
+const ActivityListInputSchema = z
+	.object({
+		filter_id: z.number().int().optional(),
+		ids: z.array(z.number().int()).max(100).refine(uniqueValues).optional(),
+		owner_id: z.number().int().optional(),
+		deal_id: z.number().int().optional(),
+		lead_id: z.string().optional(),
+		person_id: z.number().int().optional(),
+		org_id: z.number().int().optional(),
+		done: z.boolean().optional(),
+		updated_since: z.string().optional(),
+		updated_until: z.string().optional(),
+		sort_by: z.enum(['id', 'update_time', 'add_time', 'due_date']).optional(),
+		sort_direction: z.enum(['asc', 'desc']).optional(),
+		include_fields: ActivityIncludeFieldsSchema.optional(),
+		limit: z.number().int().min(1).max(500).optional(),
+		cursor: z.string().optional(),
+	})
+	.strict();
+const ActivityIdInputSchema = z.object({ id: z.number().int() }).strict();
+const ActivityGetInputSchema = ActivityIdInputSchema.extend({
+	include_fields: ActivityIncludeFieldsSchema.optional(),
+}).strict();
+const ActivityCreateInputSchema = z.object(ActivityWriteFields).strict();
+const ActivityUpdateInputSchema =
+	ActivityIdInputSchema.extend(ActivityWriteFields).strict();
+
+// Response objects are open in the specification; preserve documented provider extensions.
+const ActivityLocationResponseSchema = z
+	.object({
+		value: z.string().optional(),
+		country: z.string().nullable().optional(),
+		admin_area_level_1: z.string().nullable().optional(),
+		admin_area_level_2: z.string().nullable().optional(),
+		locality: z.string().nullable().optional(),
+		sublocality: z.string().nullable().optional(),
+		route: z.string().nullable().optional(),
+		street_number: z.string().nullable().optional(),
+		subpremise: z.string().nullable().optional(),
+		postal_code: z.string().nullable().optional(),
+	})
+	.passthrough();
+const ActivityResponseSchema = z
+	.object({
+		id: z.number().int().optional(),
+		subject: z.string().optional(),
+		type: z.string().optional(),
+		owner_id: z.number().int().optional(),
+		creator_user_id: z.number().int().optional(),
+		is_deleted: z.boolean().optional(),
+		add_time: z.string().optional(),
+		update_time: z.string().optional(),
+		deal_id: z.number().int().nullable().optional(),
+		lead_id: z.string().nullable().optional(),
+		person_id: z.number().int().nullable().optional(),
+		org_id: z.number().int().nullable().optional(),
+		project_id: z.number().int().nullable().optional(),
+		due_date: z.string().optional(),
+		due_time: z.string().nullable().optional(),
+		duration: z.string().nullable().optional(),
+		busy: z.boolean().optional(),
+		done: z.boolean().optional(),
+		marked_as_done_time: z.string().nullable().optional(),
+		location: ActivityLocationResponseSchema.nullable().optional(),
+		participants: z.array(ActivityParticipantResponseSchema).optional(),
+		attendees: z.array(ActivityAttendeeResponseSchema).optional(),
+		conference_meeting_client: z.string().optional(),
+		conference_meeting_url: z.string().optional(),
+		conference_meeting_id: z.string().optional(),
+		public_description: z.string().optional(),
+		priority: z.number().int().optional(),
+		outcome: z.number().int().nullable().optional(),
+		note: z.string().optional(),
+	})
+	.passthrough();
+const ActivityResponseEnvelopeSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: ActivityResponseSchema.optional(),
+	})
+	.passthrough();
+const ActivityListResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z.array(ActivityResponseSchema).optional(),
+		additional_data: z
+			.object({ next_cursor: z.string().nullable().optional() })
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+const ActivityDeleteResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z.object({ id: z.number().int().optional() }).optional(),
+	})
+	.passthrough();
+
+const TaskParentFilterSchema = z.union([
+	z.string(),
+	z.number().int(),
+	z.null(),
+]);
+const TaskListInputSchema = z
+	.object({
+		cursor: z.string().optional(),
+		limit: z.number().int().min(1).max(500).optional(),
+		is_done: z.boolean().optional(),
+		is_milestone: z.boolean().optional(),
+		assignee_id: z.number().int().optional(),
+		project_id: z.number().int().optional(),
+		// The route docs describe null for root tasks and integer IDs; OpenAPI types this query as a string.
+		parent_task_id: TaskParentFilterSchema.optional(),
+	})
+	.strict();
+const TaskIdInputSchema = z.object({ id: z.number().int() }).strict();
+const TaskCreateInputSchema = z
+	.object({
+		title: z.string().min(1).max(255),
+		project_id: z.number().int(),
+		parent_task_id: z.number().int().nullable().optional(),
+		description: z.string().nullable().optional(),
+		done: z.union([z.literal(0), z.literal(1)]).optional(),
+		milestone: z.union([z.literal(0), z.literal(1)]).optional(),
+		due_date: z.iso.date().nullable().optional(),
+		start_date: z.iso.date().nullable().optional(),
+		assignee_id: z.number().int().nullable().optional(),
+		assignee_ids: z.array(z.number().int()).max(10).optional(),
+		priority: z.number().int().min(0).nullable().optional(),
+	})
+	.strict();
+const TaskUpdateInputSchema = TaskIdInputSchema.extend({
+	title: z.string().min(1).max(255).optional(),
+	project_id: z.number().int().optional(),
+	parent_task_id: z.number().int().nullable().optional(),
+	description: z.string().nullable().optional(),
+	done: z.union([z.literal(0), z.literal(1)]).optional(),
+	milestone: z.union([z.literal(0), z.literal(1)]).optional(),
+	due_date: z.iso.date().nullable().optional(),
+	start_date: z.iso.date().nullable().optional(),
+	assignee_id: z.number().int().nullable().optional(),
+	assignee_ids: z.array(z.number().int()).max(10).optional(),
+	priority: z.number().int().min(0).nullable().optional(),
+}).strict();
+
+const TaskResponseSchema = z
+	.object({
+		id: z.number().int().optional(),
+		title: z.string().min(1).max(255).optional(),
+		creator_id: z.number().int().optional(),
+		description: z.string().nullable().optional(),
+		project_id: z.number().int().optional(),
+		is_done: z.boolean().optional(),
+		is_milestone: z.boolean().optional(),
+		due_date: z.iso.date().nullable().optional(),
+		start_date: z.iso.date().nullable().optional(),
+		parent_task_id: z.number().int().nullable().optional(),
+		assignee_ids: z.array(z.number().int()).optional(),
+		priority: z.number().int().min(0).nullable().optional(),
+		add_time: z.string().optional(),
+		update_time: z.string().optional(),
+		marked_as_done_time: z.string().nullable().optional(),
+	})
+	.passthrough();
+const TaskResponseEnvelopeSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: TaskResponseSchema.optional(),
+		additional_data: z.object({}).passthrough().nullable().optional(),
+	})
+	.passthrough();
+const TaskListResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z.array(TaskResponseSchema).optional(),
+		additional_data: z
+			.object({ next_cursor: z.string().nullable().optional() })
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+const TaskDeleteResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z.object({ id: z.number().int().optional() }).optional(),
+		additional_data: z.object({}).passthrough().nullable().optional(),
+	})
+	.passthrough();
+
 export type DealListInput = z.infer<typeof DealListInputSchema>;
 export type DealGetInput = z.infer<typeof DealGetInputSchema>;
 export type DealIdInput = z.infer<typeof DealIdInputSchema>;
@@ -561,6 +811,23 @@ export type OrganizationResponse = z.infer<
 export type OrganizationDeleteResponse = z.infer<
 	typeof OrganizationDeleteResponseSchema
 >;
+export type ActivityListInput = z.infer<typeof ActivityListInputSchema>;
+export type ActivityGetInput = z.infer<typeof ActivityGetInputSchema>;
+export type ActivityIdInput = z.infer<typeof ActivityIdInputSchema>;
+export type ActivityCreateInput = z.infer<typeof ActivityCreateInputSchema>;
+export type ActivityUpdateInput = z.infer<typeof ActivityUpdateInputSchema>;
+export type ActivityListResponse = z.infer<typeof ActivityListResponseSchema>;
+export type ActivityResponse = z.infer<typeof ActivityResponseEnvelopeSchema>;
+export type ActivityDeleteResponse = z.infer<
+	typeof ActivityDeleteResponseSchema
+>;
+export type TaskListInput = z.infer<typeof TaskListInputSchema>;
+export type TaskIdInput = z.infer<typeof TaskIdInputSchema>;
+export type TaskCreateInput = z.infer<typeof TaskCreateInputSchema>;
+export type TaskUpdateInput = z.infer<typeof TaskUpdateInputSchema>;
+export type TaskListResponse = z.infer<typeof TaskListResponseSchema>;
+export type TaskResponse = z.infer<typeof TaskResponseEnvelopeSchema>;
+export type TaskDeleteResponse = z.infer<typeof TaskDeleteResponseSchema>;
 
 export type PipedriveEndpointInputs = {
 	dealList: DealListInput;
@@ -578,6 +845,16 @@ export type PipedriveEndpointInputs = {
 	organizationCreate: OrganizationCreateInput;
 	organizationUpdate: OrganizationUpdateInput;
 	organizationDelete: OrganizationIdInput;
+	activityList: ActivityListInput;
+	activityGet: ActivityGetInput;
+	activityCreate: ActivityCreateInput;
+	activityUpdate: ActivityUpdateInput;
+	activityDelete: ActivityIdInput;
+	taskList: TaskListInput;
+	taskGet: TaskIdInput;
+	taskCreate: TaskCreateInput;
+	taskUpdate: TaskUpdateInput & TaskIdInput;
+	taskDelete: TaskIdInput;
 };
 
 export type PipedriveEndpointOutputs = {
@@ -596,6 +873,16 @@ export type PipedriveEndpointOutputs = {
 	organizationCreate: OrganizationResponse;
 	organizationUpdate: OrganizationResponse;
 	organizationDelete: OrganizationDeleteResponse;
+	activityList: ActivityListResponse;
+	activityGet: ActivityResponse;
+	activityCreate: ActivityResponse;
+	activityUpdate: ActivityResponse;
+	activityDelete: ActivityDeleteResponse;
+	taskList: TaskListResponse;
+	taskGet: TaskResponse;
+	taskCreate: TaskResponse;
+	taskUpdate: TaskResponse;
+	taskDelete: TaskDeleteResponse;
 };
 
 export const PipedriveEndpointInputSchemas = {
@@ -614,6 +901,16 @@ export const PipedriveEndpointInputSchemas = {
 	organizationCreate: OrganizationCreateInputSchema,
 	organizationUpdate: OrganizationUpdateInputSchema,
 	organizationDelete: OrganizationIdInputSchema,
+	activityList: ActivityListInputSchema,
+	activityGet: ActivityGetInputSchema,
+	activityCreate: ActivityCreateInputSchema,
+	activityUpdate: ActivityUpdateInputSchema,
+	activityDelete: ActivityIdInputSchema,
+	taskList: TaskListInputSchema,
+	taskGet: TaskIdInputSchema,
+	taskCreate: TaskCreateInputSchema,
+	taskUpdate: TaskUpdateInputSchema,
+	taskDelete: TaskIdInputSchema,
 } as const;
 
 export const PipedriveEndpointOutputSchemas = {
@@ -632,4 +929,14 @@ export const PipedriveEndpointOutputSchemas = {
 	organizationCreate: OrganizationResponseEnvelopeSchema,
 	organizationUpdate: OrganizationResponseEnvelopeSchema,
 	organizationDelete: OrganizationDeleteResponseSchema,
+	activityList: ActivityListResponseSchema,
+	activityGet: ActivityResponseEnvelopeSchema,
+	activityCreate: ActivityResponseEnvelopeSchema,
+	activityUpdate: ActivityResponseEnvelopeSchema,
+	activityDelete: ActivityDeleteResponseSchema,
+	taskList: TaskListResponseSchema,
+	taskGet: TaskResponseEnvelopeSchema,
+	taskCreate: TaskResponseEnvelopeSchema,
+	taskUpdate: TaskResponseEnvelopeSchema,
+	taskDelete: TaskDeleteResponseSchema,
 } as const;

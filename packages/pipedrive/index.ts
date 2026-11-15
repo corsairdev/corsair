@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Deals, Organizations, Persons } from './endpoints';
+import { Activities, Deals, Organizations, Persons, Tasks } from './endpoints';
 import type {
 	PipedriveEndpointInputs,
 	PipedriveEndpointOutputs,
@@ -66,6 +66,16 @@ export type PipedriveEndpoints = {
 	organizationCreate: PipedriveEndpoint<'organizationCreate'>;
 	organizationUpdate: PipedriveEndpoint<'organizationUpdate'>;
 	organizationDelete: PipedriveEndpoint<'organizationDelete'>;
+	activityList: PipedriveEndpoint<'activityList'>;
+	activityGet: PipedriveEndpoint<'activityGet'>;
+	activityCreate: PipedriveEndpoint<'activityCreate'>;
+	activityUpdate: PipedriveEndpoint<'activityUpdate'>;
+	activityDelete: PipedriveEndpoint<'activityDelete'>;
+	taskList: PipedriveEndpoint<'taskList'>;
+	taskGet: PipedriveEndpoint<'taskGet'>;
+	taskCreate: PipedriveEndpoint<'taskCreate'>;
+	taskUpdate: PipedriveEndpoint<'taskUpdate'>;
+	taskDelete: PipedriveEndpoint<'taskDelete'>;
 };
 
 const pipedriveEndpointsNested = {
@@ -89,6 +99,20 @@ const pipedriveEndpointsNested = {
 		create: Organizations.create,
 		update: Organizations.update,
 		delete: Organizations.delete,
+	},
+	activities: {
+		list: Activities.list,
+		get: Activities.get,
+		create: Activities.create,
+		update: Activities.update,
+		delete: Activities.delete,
+	},
+	tasks: {
+		list: Tasks.list,
+		get: Tasks.get,
+		create: Tasks.create,
+		update: Tasks.update,
+		delete: Tasks.delete,
 	},
 } as const;
 
@@ -153,6 +177,46 @@ export const pipedriveEndpointSchemas = {
 		input: PipedriveEndpointInputSchemas.organizationDelete,
 		output: PipedriveEndpointOutputSchemas.organizationDelete,
 	},
+	'activities.list': {
+		input: PipedriveEndpointInputSchemas.activityList,
+		output: PipedriveEndpointOutputSchemas.activityList,
+	},
+	'activities.get': {
+		input: PipedriveEndpointInputSchemas.activityGet,
+		output: PipedriveEndpointOutputSchemas.activityGet,
+	},
+	'activities.create': {
+		input: PipedriveEndpointInputSchemas.activityCreate,
+		output: PipedriveEndpointOutputSchemas.activityCreate,
+	},
+	'activities.update': {
+		input: PipedriveEndpointInputSchemas.activityUpdate,
+		output: PipedriveEndpointOutputSchemas.activityUpdate,
+	},
+	'activities.delete': {
+		input: PipedriveEndpointInputSchemas.activityDelete,
+		output: PipedriveEndpointOutputSchemas.activityDelete,
+	},
+	'tasks.list': {
+		input: PipedriveEndpointInputSchemas.taskList,
+		output: PipedriveEndpointOutputSchemas.taskList,
+	},
+	'tasks.get': {
+		input: PipedriveEndpointInputSchemas.taskGet,
+		output: PipedriveEndpointOutputSchemas.taskGet,
+	},
+	'tasks.create': {
+		input: PipedriveEndpointInputSchemas.taskCreate,
+		output: PipedriveEndpointOutputSchemas.taskCreate,
+	},
+	'tasks.update': {
+		input: PipedriveEndpointInputSchemas.taskUpdate,
+		output: PipedriveEndpointOutputSchemas.taskUpdate,
+	},
+	'tasks.delete': {
+		input: PipedriveEndpointInputSchemas.taskDelete,
+		output: PipedriveEndpointOutputSchemas.taskDelete,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof pipedriveEndpointsNested
 >;
@@ -202,6 +266,46 @@ const pipedriveEndpointMeta = {
 	'organizations.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete an organization',
+	},
+	'activities.list': {
+		riskLevel: 'read',
+		description: 'List activities with cursor pagination and filters',
+	},
+	'activities.get': {
+		riskLevel: 'read',
+		description: 'Get an activity by its numeric ID',
+	},
+	'activities.create': {
+		riskLevel: 'write',
+		description: 'Create a calendar activity',
+	},
+	'activities.update': {
+		riskLevel: 'write',
+		description: 'Update a calendar activity',
+	},
+	'activities.delete': {
+		riskLevel: 'destructive',
+		description: 'Mark an activity deleted',
+	},
+	'tasks.list': {
+		riskLevel: 'read',
+		description: 'List project tasks with cursor pagination',
+	},
+	'tasks.get': {
+		riskLevel: 'read',
+		description: 'Get a task by its numeric ID',
+	},
+	'tasks.create': {
+		riskLevel: 'write',
+		description: 'Create a task in a project',
+	},
+	'tasks.update': {
+		riskLevel: 'write',
+		description: 'Update a project task',
+	},
+	'tasks.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a project task and its subtasks',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof pipedriveEndpointsNested
@@ -270,6 +374,13 @@ export function pipedrive<const T extends PipedrivePluginOptions>(
 }
 
 export type {
+	ActivityCreateInput,
+	ActivityDeleteResponse,
+	ActivityGetInput,
+	ActivityListInput,
+	ActivityListResponse,
+	ActivityResponse,
+	ActivityUpdateInput,
 	DealCreateInput,
 	DealDeleteResponse,
 	DealGetInput,
@@ -294,4 +405,11 @@ export type {
 	PersonUpdateInput,
 	PipedriveEndpointInputs,
 	PipedriveEndpointOutputs,
+	TaskCreateInput,
+	TaskDeleteResponse,
+	TaskIdInput,
+	TaskListInput,
+	TaskListResponse,
+	TaskResponse,
+	TaskUpdateInput,
 } from './endpoints/types';

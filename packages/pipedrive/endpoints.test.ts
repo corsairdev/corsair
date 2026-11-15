@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
-import { Deals, Organizations, Persons } from './endpoints';
+import { Activities, Deals, Organizations, Persons, Tasks } from './endpoints';
 import type { PipedriveContext } from './index';
 
 jest.mock('corsair/core', () => {
@@ -57,6 +57,30 @@ const organization = {
 	name: 'Synthetic organization',
 	address: null,
 	custom_fields: { segment: 'enterprise' },
+};
+const activity = {
+	id: 31,
+	subject: 'Synthetic follow-up',
+	type: 'call',
+	deal_id: null,
+	outcome: null,
+};
+const task = {
+	id: 42,
+	title: 'Synthetic project task',
+	creator_id: 7,
+	description: null,
+	project_id: 11,
+	is_done: false,
+	is_milestone: false,
+	due_date: null,
+	start_date: null,
+	parent_task_id: null,
+	assignee_ids: [],
+	priority: null,
+	add_time: '2025-01-01T10:00:00Z',
+	update_time: '2025-01-01T10:00:00Z',
+	marked_as_done_time: null,
 };
 
 beforeEach(() => {
@@ -410,6 +434,243 @@ describe('Pipedrive organization endpoints', () => {
 		);
 		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
 			'Private customer company',
+		);
+	});
+});
+
+describe('Pipedrive activity endpoints', () => {
+	it('lists activities with documented filters, comma-separated arrays, and cursor', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: [activity],
+			additional_data: { next_cursor: 'activity-next' },
+		});
+		const result = await Activities.list(ctx, {
+			ids: [31, 32],
+			include_fields: ['attendees'],
+			sort_by: 'due_date',
+			limit: 100,
+			cursor: 'activity-cursor',
+		});
+		expect(result.data).toHaveLength(1);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/activities',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'GET',
+				query: {
+					ids: '31,32',
+					include_fields: 'attendees',
+					sort_by: 'due_date',
+					limit: 100,
+					cursor: 'activity-cursor',
+				},
+			},
+		);
+	});
+
+	it('gets an activity with its optional attendees query', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: activity });
+		await Activities.get(ctx, { id: 31, include_fields: ['attendees'] });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/activities/31',
+			'test-api-token',
+			'api_key',
+			{ method: 'GET', query: { include_fields: 'attendees' } },
+		);
+	});
+
+	it('creates an activity with participant-based person assignment and JSON body', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: activity });
+		await Activities.create(ctx, {
+			subject: 'Synthetic follow-up',
+			type: 'call',
+			participants: [{ person_id: 18, primary: true }],
+			outcome: null,
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/activities',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'POST',
+				body: {
+					subject: 'Synthetic follow-up',
+					type: 'call',
+					participants: [{ person_id: 18, primary: true }],
+					outcome: null,
+				},
+			},
+		);
+	});
+
+	it('updates an activity by path ID and keeps the ID out of the body', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: activity });
+		await Activities.update(ctx, { id: 31, done: true });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/activities/31',
+			'test-api-token',
+			'api_key',
+			{ method: 'PATCH', body: { done: true } },
+		);
+	});
+
+	it('deletes an activity and validates the deleted ID response', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: { id: 31 } });
+		await Activities.delete(ctx, { id: 31 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/activities/31',
+			'test-api-token',
+			'api_key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('rejects undocumented activity fields before network activity and omits notes from logs', async () => {
+		await expect(
+			Reflect.apply(Activities.create, undefined, [
+				ctx,
+				{ subject: 'Private note', callback: 'https://synthetic.invalid' },
+			]),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+		mockedRequest.mockResolvedValue({ success: true, data: activity });
+		await Activities.create(ctx, { note: 'Private activity details' });
+		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
+			'Private activity details',
+		);
+	});
+});
+
+describe('Pipedrive task endpoints', () => {
+	it('lists tasks with cursor pagination, filters, and the root-task null filter', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: [task],
+			additional_data: { next_cursor: 'task-next' },
+		});
+		const result = await Tasks.list(ctx, {
+			is_done: false,
+			is_milestone: true,
+			assignee_id: 7,
+			project_id: 11,
+			parent_task_id: null,
+			limit: 100,
+			cursor: 'task-cursor',
+		});
+		expect(result.data).toHaveLength(1);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/tasks',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'GET',
+				query: {
+					is_done: false,
+					is_milestone: true,
+					assignee_id: 7,
+					project_id: 11,
+					parent_task_id: 'null',
+					limit: 100,
+					cursor: 'task-cursor',
+				},
+			},
+		);
+	});
+
+	it('gets a task by numeric path ID', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: task,
+			additional_data: null,
+		});
+		const result = await Tasks.get(ctx, { id: 42 });
+		expect(result.data?.id).toBe(42);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/tasks/42',
+			'test-api-token',
+			'api_key',
+			{ method: 'GET' },
+		);
+	});
+
+	it('creates a task using required project fields and documented integer flags', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: task,
+			additional_data: null,
+		});
+		await Tasks.create(ctx, {
+			title: 'Synthetic project task',
+			project_id: 11,
+			done: 0,
+			milestone: 1,
+			assignee_ids: [7, 8],
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/tasks',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'POST',
+				body: {
+					title: 'Synthetic project task',
+					project_id: 11,
+					done: 0,
+					milestone: 1,
+					assignee_ids: [7, 8],
+				},
+			},
+		);
+	});
+
+	it('updates a task by path ID and validates its response envelope', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: task,
+			additional_data: null,
+		});
+		await Tasks.update(ctx, { id: 42, done: 1, description: null });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/tasks/42',
+			'test-api-token',
+			'api_key',
+			{ method: 'PATCH', body: { done: 1, description: null } },
+		);
+	});
+
+	it('deletes a task by numeric path ID', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: { id: 42 },
+			additional_data: null,
+		});
+		await Tasks.delete(ctx, { id: 42 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/tasks/42',
+			'test-api-token',
+			'api_key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('rejects missing required task fields before network activity and omits private details from logs', async () => {
+		await expect(
+			Reflect.apply(Tasks.create, undefined, [ctx, { title: 'No project' }]),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: task,
+			additional_data: null,
+		});
+		await Tasks.create(ctx, {
+			title: 'Private task title',
+			project_id: 11,
+		});
+		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
+			'Private task title',
 		);
 	});
 });

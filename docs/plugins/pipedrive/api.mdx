@@ -8,6 +8,574 @@ description: "API reference for the Pipedrive plugin in Corsair: every `pipedriv
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Activities
+
+### create
+
+`activities.create`
+
+Create a calendar activity
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.activities.create({ subject: 'Follow up', type: 'call' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `owner_id` | `number` | No | — |
+| `deal_id` | `number` | No | — |
+| `lead_id` | `string` | No | — |
+| `org_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `due_date` | `string` | No | — |
+| `due_time` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `busy` | `boolean` | No | — |
+| `done` | `boolean` | No | — |
+| `location` | `object` | No | — |
+| `participants` | `object[]` | No | — |
+| `attendees` | `object[]` | No | — |
+| `public_description` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `outcome` | `number \| null` | No | — |
+| `note` | `string` | No | — |
+
+OAuth requires activities:full. All request properties are optional in the v2 schema. Use participants to set the person; the response data is an activity object. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  value?: string,
+  country?: string,
+  admin_area_level_1?: string,
+  admin_area_level_2?: string,
+  locality?: string,
+  sublocality?: string,
+  route?: string,
+  street_number?: string,
+  subpremise?: string,
+  postal_code?: string
+}
+```
+</Accordion>
+
+<Accordion title="participants full type">
+
+```ts
+{
+  person_id?: number,
+  primary?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  email?: string,
+  name?: string,
+  status?: string,
+  is_organizer?: boolean,
+  person_id?: number,
+  user_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  subject?: string,
+  type?: string,
+  owner_id?: number,
+  creator_user_id?: number,
+  is_deleted?: boolean,
+  add_time?: string,
+  update_time?: string,
+  deal_id?: number | null,
+  lead_id?: string | null,
+  person_id?: number | null,
+  org_id?: number | null,
+  project_id?: number | null,
+  due_date?: string,
+  due_time?: string | null,
+  duration?: string | null,
+  busy?: boolean,
+  done?: boolean,
+  marked_as_done_time?: string | null,
+  location?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  participants?: {
+    person_id?: number,
+    primary?: boolean
+  }[],
+  attendees?: {
+    email?: string,
+    name?: string,
+    status?: string,
+    is_organizer?: boolean,
+    person_id?: number,
+    user_id?: number
+  }[],
+  conference_meeting_client?: string,
+  conference_meeting_url?: string,
+  conference_meeting_id?: string,
+  public_description?: string,
+  priority?: number,
+  outcome?: number | null,
+  note?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`activities.delete`
+
+Mark an activity deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.activities.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires activities:full. Deletion marks an activity deleted; Pipedrive permanently deletes it after 30 days. The documented API token cost is 3 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`activities.get`
+
+Get an activity by its numeric ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.activities.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `include_fields` | `attendees[]` | No | — |
+
+OAuth requires activities:read or activities:full. include_fields currently accepts attendees. To associate a person on create/update, use participants with primary: true; person_id is not an accepted body field. The documented API token cost is 1 token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  subject?: string,
+  type?: string,
+  owner_id?: number,
+  creator_user_id?: number,
+  is_deleted?: boolean,
+  add_time?: string,
+  update_time?: string,
+  deal_id?: number | null,
+  lead_id?: string | null,
+  person_id?: number | null,
+  org_id?: number | null,
+  project_id?: number | null,
+  due_date?: string,
+  due_time?: string | null,
+  duration?: string | null,
+  busy?: boolean,
+  done?: boolean,
+  marked_as_done_time?: string | null,
+  location?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  participants?: {
+    person_id?: number,
+    primary?: boolean
+  }[],
+  attendees?: {
+    email?: string,
+    name?: string,
+    status?: string,
+    is_organizer?: boolean,
+    person_id?: number,
+    user_id?: number
+  }[],
+  conference_meeting_client?: string,
+  conference_meeting_url?: string,
+  conference_meeting_id?: string,
+  public_description?: string,
+  priority?: number,
+  outcome?: number | null,
+  note?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`activities.list`
+
+List activities with cursor pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.activities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter_id` | `number` | No | — |
+| `ids` | `number[]` | No | — |
+| `owner_id` | `number` | No | — |
+| `deal_id` | `number` | No | — |
+| `lead_id` | `string` | No | — |
+| `person_id` | `number` | No | — |
+| `org_id` | `number` | No | — |
+| `done` | `boolean` | No | — |
+| `updated_since` | `string` | No | — |
+| `updated_until` | `string` | No | — |
+| `sort_by` | `id \| update_time \| add_time \| due_date` | No | — |
+| `sort_direction` | `asc \| desc` | No | — |
+| `include_fields` | `attendees[]` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+OAuth requires activities:read or activities:full. The limit is 1–500; use the opaque additional_data.next_cursor value as cursor. Array filters are comma-separated. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  subject?: string,
+  type?: string,
+  owner_id?: number,
+  creator_user_id?: number,
+  is_deleted?: boolean,
+  add_time?: string,
+  update_time?: string,
+  deal_id?: number | null,
+  lead_id?: string | null,
+  person_id?: number | null,
+  org_id?: number | null,
+  project_id?: number | null,
+  due_date?: string,
+  due_time?: string | null,
+  duration?: string | null,
+  busy?: boolean,
+  done?: boolean,
+  marked_as_done_time?: string | null,
+  location?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  participants?: {
+    person_id?: number,
+    primary?: boolean
+  }[],
+  attendees?: {
+    email?: string,
+    name?: string,
+    status?: string,
+    is_organizer?: boolean,
+    person_id?: number,
+    user_id?: number
+  }[],
+  conference_meeting_client?: string,
+  conference_meeting_url?: string,
+  conference_meeting_id?: string,
+  public_description?: string,
+  priority?: number,
+  outcome?: number | null,
+  note?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`activities.update`
+
+Update a calendar activity
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.activities.update({ id: 1, done: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `subject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `owner_id` | `number` | No | — |
+| `deal_id` | `number` | No | — |
+| `lead_id` | `string` | No | — |
+| `org_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `due_date` | `string` | No | — |
+| `due_time` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `busy` | `boolean` | No | — |
+| `done` | `boolean` | No | — |
+| `location` | `object` | No | — |
+| `participants` | `object[]` | No | — |
+| `attendees` | `object[]` | No | — |
+| `public_description` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `outcome` | `number \| null` | No | — |
+| `note` | `string` | No | — |
+
+OAuth requires activities:full. The path ID is supplied as the input id and omitted from the JSON body. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  value?: string,
+  country?: string,
+  admin_area_level_1?: string,
+  admin_area_level_2?: string,
+  locality?: string,
+  sublocality?: string,
+  route?: string,
+  street_number?: string,
+  subpremise?: string,
+  postal_code?: string
+}
+```
+</Accordion>
+
+<Accordion title="participants full type">
+
+```ts
+{
+  person_id?: number,
+  primary?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  email?: string,
+  name?: string,
+  status?: string,
+  is_organizer?: boolean,
+  person_id?: number,
+  user_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  subject?: string,
+  type?: string,
+  owner_id?: number,
+  creator_user_id?: number,
+  is_deleted?: boolean,
+  add_time?: string,
+  update_time?: string,
+  deal_id?: number | null,
+  lead_id?: string | null,
+  person_id?: number | null,
+  org_id?: number | null,
+  project_id?: number | null,
+  due_date?: string,
+  due_time?: string | null,
+  duration?: string | null,
+  busy?: boolean,
+  done?: boolean,
+  marked_as_done_time?: string | null,
+  location?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  participants?: {
+    person_id?: number,
+    primary?: boolean
+  }[],
+  attendees?: {
+    email?: string,
+    name?: string,
+    status?: string,
+    is_organizer?: boolean,
+    person_id?: number,
+    user_id?: number
+  }[],
+  conference_meeting_client?: string,
+  conference_meeting_url?: string,
+  conference_meeting_id?: string,
+  public_description?: string,
+  priority?: number,
+  outcome?: number | null,
+  note?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Deals
 
 ### create
@@ -102,6 +670,9 @@ API-token authentication is sent using Pipedrive's documented x-api-token header
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
 ---
 
 ### delete
@@ -1382,6 +1953,357 @@ OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_t
   job_title?: string,
   custom_fields?: Record<string, any>
 }
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.tasks.create({ title: 'Review proposal', project_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `parent_task_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `done` | `0 \| 1` | No | — |
+| `milestone` | `0 \| 1` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `assignee_id` | `number \| null` | No | — |
+| `assignee_ids` | `number[]` | No | — |
+| `priority` | `number \| null` | No | — |
+
+OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. title and project_id are required; done and milestone use 0/1 integers, and assignee_ids accepts up to 10 IDs. The documented API token cost is 5 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+| `additional_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  creator_id?: number,
+  description?: string | null,
+  project_id?: number,
+  is_done?: boolean,
+  is_milestone?: boolean,
+  due_date?: string | null,
+  start_date?: string | null,
+  parent_task_id?: number | null,
+  assignee_ids?: number[],
+  priority?: number | null,
+  add_time?: string,
+  update_time?: string,
+  marked_as_done_time?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a project task and its subtasks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.tasks.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. Deleting a task also deletes its subtasks. The documented API token cost is 3 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+| `additional_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task by its numeric ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.tasks.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires projects:read or projects:full. The Tasks endpoints are marked beta by Pipedrive. The response includes additional_data: null. The documented API token cost is 1 token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+| `additional_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  creator_id?: number,
+  description?: string | null,
+  project_id?: number,
+  is_done?: boolean,
+  is_milestone?: boolean,
+  due_date?: string | null,
+  start_date?: string | null,
+  parent_task_id?: number | null,
+  assignee_ids?: number[],
+  priority?: number | null,
+  add_time?: string,
+  update_time?: string,
+  marked_as_done_time?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List project tasks with cursor pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `is_done` | `boolean` | No | — |
+| `is_milestone` | `boolean` | No | — |
+| `assignee_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `parent_task_id` | `string \| number \| null` | No | — |
+
+OAuth requires projects:read or projects:full. The Tasks endpoints are marked beta by Pipedrive. The limit is 1–500; pass additional_data.next_cursor as cursor. parent_task_id accepts a parent ID or null to filter root tasks. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  creator_id?: number,
+  description?: string | null,
+  project_id?: number,
+  is_done?: boolean,
+  is_milestone?: boolean,
+  due_date?: string | null,
+  start_date?: string | null,
+  parent_task_id?: number | null,
+  assignee_ids?: number[],
+  priority?: number | null,
+  add_time?: string,
+  update_time?: string,
+  marked_as_done_time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a project task
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.tasks.update({ id: 1, done: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `parent_task_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `done` | `0 \| 1` | No | — |
+| `milestone` | `0 \| 1` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `assignee_id` | `number \| null` | No | — |
+| `assignee_ids` | `number[]` | No | — |
+| `priority` | `number \| null` | No | — |
+
+OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. The path ID is supplied as input id and omitted from the JSON body; done and milestone use 0/1 integers. The documented API token cost is 5 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+| `additional_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  creator_id?: number,
+  description?: string | null,
+  project_id?: number,
+  is_done?: boolean,
+  is_milestone?: boolean,
+  due_date?: string | null,
+  start_date?: string | null,
+  parent_task_id?: number | null,
+  assignee_ids?: number[],
+  priority?: number | null,
+  add_time?: string,
+  update_time?: string,
+  marked_as_done_time?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+} | null
 ```
 </Accordion>
 </AccordionGroup>

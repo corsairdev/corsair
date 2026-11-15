@@ -1,4 +1,11 @@
 import {
+	createActivity,
+	deleteActivity,
+	getActivity,
+	listActivities,
+	updateActivity,
+} from './activities';
+import {
 	createDeal,
 	deleteDeal,
 	getDeal,
@@ -19,6 +26,13 @@ import {
 	listPersons,
 	updatePerson,
 } from './persons';
+import {
+	createTask,
+	deleteTask,
+	getTask,
+	listTasks,
+	updateTask,
+} from './tasks';
 
 export const Deals = {
 	list: listDeals,
@@ -42,6 +56,22 @@ export const Organizations = {
 	create: createOrganization,
 	update: updateOrganization,
 	delete: deleteOrganization,
+};
+
+export const Activities = {
+	list: listActivities,
+	get: getActivity,
+	create: createActivity,
+	update: updateActivity,
+	delete: deleteActivity,
+};
+
+export const Tasks = {
+	list: listTasks,
+	get: getTask,
+	create: createTask,
+	update: updateTask,
+	delete: deleteTask,
 };
 
 export * from './types';
