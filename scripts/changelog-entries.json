@@ -5679,5 +5679,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/hubplanner",
+    "dir": "packages/hubplanner",
+    "name": "Hub Planner",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
