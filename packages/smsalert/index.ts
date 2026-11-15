@@ -70,18 +70,20 @@ export const smsalertEndpointSchemas = {
 	'shortUrls.delete': schema('deleteShortUrl'),
 } satisfies RequiredPluginEndpointSchemas<typeof endpoints>;
 
-const smsalertEndpointMeta = {
+export const smsalertEndpointMeta = {
 	'account.profile': {
 		riskLevel: 'read',
 		description: 'Get the account profile',
 	},
 	'account.register': {
-		riskLevel: 'write',
-		description: 'Register an SMS Alert account',
+		riskLevel: 'destructive',
+		description:
+			'Register an SMS Alert account (SMS Alert texts an OTP to the mobile number)',
 	},
 	'account.forgotPassword': {
-		riskLevel: 'write',
-		description: 'Request a password reset',
+		riskLevel: 'destructive',
+		description:
+			'Request a password reset (SMS Alert emails the account owner)',
 	},
 	'account.changePassword': {
 		riskLevel: 'write',
@@ -110,7 +112,7 @@ const smsalertEndpointMeta = {
 		description: 'Update a contact group',
 	},
 	'groups.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send SMS to contact groups',
 	},
 	'contacts.list': {
@@ -137,7 +139,7 @@ const smsalertEndpointMeta = {
 		description: 'Delete an SMS template',
 	},
 	'messages.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send or schedule an SMS, optionally requesting delivery callbacks',
 	},
@@ -155,7 +157,7 @@ const smsalertEndpointMeta = {
 		description: 'Get delivery reports for a batch',
 	},
 	'otp.generate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Generate and send an OTP',
 	},
 	'otp.validate': { riskLevel: 'write', description: 'Validate an OTP' },

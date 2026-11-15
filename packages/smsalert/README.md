@@ -14,9 +14,9 @@ pnpm add @corsair-dev/smsalert
 |-----------|--------------|------|-------------|
 | `account.balance` | `smsalert.api.account.balance` | `read` | Get available SMS credits |
 | `account.changePassword` | `smsalert.api.account.changePassword` | `write` | Change the account password |
-| `account.forgotPassword` | `smsalert.api.account.forgotPassword` | `write` | Request a password reset |
+| `account.forgotPassword` | `smsalert.api.account.forgotPassword` | `destructive` | Request a password reset (SMS Alert emails the account owner) |
 | `account.profile` | `smsalert.api.account.profile` | `read` | Get the account profile |
-| `account.register` | `smsalert.api.account.register` | `write` | Register an SMS Alert account |
+| `account.register` | `smsalert.api.account.register` | `destructive` | Register an SMS Alert account (SMS Alert texts an OTP to the mobile number) |
 | `account.senders` | `smsalert.api.account.senders` | `read` | List sender IDs |
 | `account.updateProfile` | `smsalert.api.account.updateProfile` | `write` | Update the account profile |
 | `contacts.create` | `smsalert.api.contacts.create` | `write` | Create a contact |
@@ -26,10 +26,10 @@ pnpm add @corsair-dev/smsalert
 | `groups.create` | `smsalert.api.groups.create` | `write` | Create a contact group |
 | `groups.delete` | `smsalert.api.groups.delete` | `destructive` | Delete a contact group |
 | `groups.list` | `smsalert.api.groups.list` | `read` | List contact groups |
-| `groups.send` | `smsalert.api.groups.send` | `write` | Send SMS to contact groups |
+| `groups.send` | `smsalert.api.groups.send` | `destructive` | Send SMS to contact groups |
 | `groups.update` | `smsalert.api.groups.update` | `write` | Update a contact group |
-| `messages.send` | `smsalert.api.messages.send` | `write` | Send or schedule an SMS, optionally requesting delivery callbacks |
-| `otp.generate` | `smsalert.api.otp.generate` | `write` | Generate and send an OTP |
+| `messages.send` | `smsalert.api.messages.send` | `destructive` | Send or schedule an SMS, optionally requesting delivery callbacks |
+| `otp.generate` | `smsalert.api.otp.generate` | `destructive` | Generate and send an OTP |
 | `otp.validate` | `smsalert.api.otp.validate` | `write` | Validate an OTP |
 | `reports.delivery` | `smsalert.api.reports.delivery` | `read` | Get delivery reports for a batch |
 | `reports.sent` | `smsalert.api.reports.sent` | `read` | List sent SMS campaigns |

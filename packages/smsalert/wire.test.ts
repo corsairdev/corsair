@@ -578,3 +578,17 @@ describe('SMS Alert public API', () => {
 		expect(log).not.toHaveBeenCalled();
 	});
 });
+
+describe('risk levels (R8)', () => {
+	it('marks every operation that texts or emails someone destructive', async () => {
+		const { smsalertEndpointMeta } = await import('./index');
+		for (const op of [
+			'messages.send',
+			'groups.send',
+			'otp.generate',
+			'account.register',
+			'account.forgotPassword',
+		] as const)
+			expect(smsalertEndpointMeta[op].riskLevel).toBe('destructive');
+	});
+});
