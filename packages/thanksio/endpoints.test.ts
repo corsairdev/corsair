@@ -1026,9 +1026,15 @@ it('returns image-builder rate-limit details without retrying', async () => {
 		}),
 	);
 	try {
-		await expect(
-			thanksIoEndpointsNested.imageBuilder.create(ctx, { id: 8 }),
-		).rejects.toMatchObject({
+		const error = await thanksIoEndpointsNested.imageBuilder
+			.create(ctx, { id: 8, header: 'For pat@example.com' })
+			.catch((e: unknown) => e);
+		expect(JSON.stringify(error)).not.toContain('example.com');
+		expect(String((error as { url: string }).url)).not.toContain('header');
+		expect(
+			(error as { request: { query?: unknown } }).request.query,
+		).toBeUndefined();
+		expect(error).toMatchObject({
 			name: 'ApiError',
 			status: 429,
 			retryAfter: 3000,

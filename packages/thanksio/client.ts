@@ -42,10 +42,11 @@ export async function makeThanksIoImageRequest(
 		const retryAfter = response.headers.get('retry-after');
 		// Same error type as core's request(), so the 429 handler and core's
 		// management route read status, body and retryAfter the usual way.
+		// The query carries caller text (header, URLs), so the error gets the bare route.
 		throw new ApiError(
-			{ method: 'GET', url: '/build/image-template', query },
+			{ method: 'GET', url: '/build/image-template' },
 			{
-				url: url.toString(),
+				url: `${THANKSIO_API_BASE}/build/image-template`,
 				ok: false,
 				status: response.status,
 				statusText: response.statusText,
