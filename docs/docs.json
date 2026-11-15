@@ -2552,6 +2552,22 @@
                 ]
               },
               {
+                "group": "Google Tasks",
+                "pages": [
+                  "plugins/googletasks/overview",
+                  "plugins/googletasks/api",
+                  "plugins/googletasks/database"
+                ]
+              },
+              {
+                "group": "Gorgias",
+                "pages": [
+                  "plugins/gorgias/overview",
+                  "plugins/gorgias/api",
+                  "plugins/gorgias/database"
+                ]
+              },
+              {
                 "group": "Grafana",
                 "pages": [
                   "plugins/grafana/overview",
@@ -2706,6 +2722,14 @@
                   "plugins/hunterio/overview",
                   "plugins/hunterio/api",
                   "plugins/hunterio/database"
+                ]
+              },
+              {
+                "group": "Hyperbrowser",
+                "pages": [
+                  "plugins/hyperbrowser/overview",
+                  "plugins/hyperbrowser/api",
+                  "plugins/hyperbrowser/database"
                 ]
               },
               {
@@ -2917,6 +2941,14 @@
                 ]
               },
               {
+                "group": "Kommo",
+                "pages": [
+                  "plugins/kommo/overview",
+                  "plugins/kommo/api",
+                  "plugins/kommo/database"
+                ]
+              },
+              {
                 "group": "Kontent.ai",
                 "pages": [
                   "plugins/kontentai/overview",
@@ -3053,6 +3085,14 @@
                   "plugins/mailtrap/overview",
                   "plugins/mailtrap/api",
                   "plugins/mailtrap/database"
+                ]
+              },
+              {
+                "group": "Make",
+                "pages": [
+                  "plugins/make/overview",
+                  "plugins/make/api",
+                  "plugins/make/database"
                 ]
               },
               {
@@ -3350,6 +3390,14 @@
                 ]
               },
               {
+                "group": "Parallel",
+                "pages": [
+                  "plugins/parallel/overview",
+                  "plugins/parallel/api",
+                  "plugins/parallel/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
@@ -3428,6 +3476,30 @@
                   "plugins/ploid/overview",
                   "plugins/ploid/api",
                   "plugins/ploid/database"
+                ]
+              },
+              {
+                "group": "Polygon.io",
+                "pages": [
+                  "plugins/polygonio/overview",
+                  "plugins/polygonio/api",
+                  "plugins/polygonio/database"
+                ]
+              },
+              {
+                "group": "Postmark",
+                "pages": [
+                  "plugins/postmark/overview",
+                  "plugins/postmark/api",
+                  "plugins/postmark/database"
+                ]
+              },
+              {
+                "group": "Prismic",
+                "pages": [
+                  "plugins/prismic/overview",
+                  "plugins/prismic/api",
+                  "plugins/prismic/database"
                 ]
               },
               {
@@ -3980,6 +4052,14 @@
                 ]
               },
               {
+                "group": "Shortcut",
+                "pages": [
+                  "plugins/shortcut/overview",
+                  "plugins/shortcut/api",
+                  "plugins/shortcut/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",
@@ -4105,6 +4185,14 @@
                   "plugins/suzanne/overview",
                   "plugins/suzanne/api",
                   "plugins/suzanne/database"
+                ]
+              },
+              {
+                "group": "Svix",
+                "pages": [
+                  "plugins/svix/overview",
+                  "plugins/svix/api",
+                  "plugins/svix/database"
                 ]
               },
               {
