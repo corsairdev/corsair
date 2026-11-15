@@ -9,54 +9,74 @@ import type {
 	IssueUpdateResponse,
 } from './types';
 
+// Single selection for every query that upserts issues: upsertByEntityId replaces the
+// stored row, so a thinner query would drop fields another path stored.
+const ISSUE_FIELDS = `
+  id
+  title
+  description
+  priority
+  estimate
+  sortOrder
+  number
+  identifier
+  url
+  state {
+    id
+    name
+    type
+    color
+    position
+  }
+  team {
+    id
+    name
+    key
+  }
+  assignee {
+    id
+    name
+    displayName
+    email
+    avatarUrl
+  }
+  creator {
+    id
+    name
+    displayName
+    email
+    avatarUrl
+  }
+  project {
+    id
+    name
+    state
+  }
+  cycle {
+    id
+    number
+    name
+  }
+  labels {
+    nodes {
+      id
+      name
+      color
+    }
+  }
+  dueDate
+  startedAt
+  completedAt
+  canceledAt
+  createdAt
+  updatedAt
+`;
+
 const ISSUES_LIST_QUERY = `
   query Issues($filter: IssueFilter, $orderBy: PaginationOrderBy, $first: Int!, $after: String) {
     issues(filter: $filter, orderBy: $orderBy, first: $first, after: $after) {
       nodes {
-        id
-        title
-        description
-        priority
-        estimate
-        sortOrder
-        number
-        identifier
-        url
-        state {
-          id
-          name
-          type
-          color
-          position
-        }
-        team {
-          id
-          name
-          key
-        }
-        assignee {
-          id
-          name
-          displayName
-          email
-          avatarUrl
-        }
-        creator {
-          id
-          name
-          displayName
-          email
-          avatarUrl
-        }
-        labels {
-          nodes {
-            id
-            name
-            color
-          }
-        }
-        createdAt
-        updatedAt
+        ${ISSUE_FIELDS}
       }
       pageInfo {
         hasNextPage
@@ -71,58 +91,7 @@ const ISSUES_LIST_QUERY = `
 const ISSUE_GET_QUERY = `
   query Issue($id: String!) {
     issue(id: $id) {
-      id
-      title
-      description
-      priority
-      estimate
-      sortOrder
-      number
-      identifier
-      url
-      state {
-        id
-        name
-        type
-        color
-        position
-      }
-      team {
-        id
-        name
-        key
-      }
-      assignee {
-        id
-        name
-        displayName
-        email
-        avatarUrl
-      }
-      creator {
-        id
-        name
-        displayName
-        email
-        avatarUrl
-      }
-      project {
-        id
-        name
-        state
-      }
-      cycle {
-        id
-        number
-        name
-      }
-      labels {
-        nodes {
-          id
-          name
-          color
-        }
-      }
+      ${ISSUE_FIELDS}
       subscribers {
         nodes {
           id
@@ -130,12 +99,6 @@ const ISSUE_GET_QUERY = `
           displayName
         }
       }
-      dueDate
-      startedAt
-      completedAt
-      canceledAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -262,6 +225,8 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 					teamId: issue.team?.id,
 					assigneeId: issue.assignee?.id,
 					creatorId: issue.creator?.id,
+					projectId: issue.project?.id,
+					cycleId: issue.cycle?.id,
 					createdAt: new Date(issue.createdAt ?? ''),
 					updatedAt: new Date(issue.updatedAt ?? ''),
 				});

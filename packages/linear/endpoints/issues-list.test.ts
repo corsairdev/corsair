@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
-import { list } from './issues';
+import { LinearIssue } from '../schema/database';
+import { get, list } from './issues';
 import { LinearEndpointInputSchemas } from './types';
 
 jest.mock('corsair/http', () => {
@@ -94,5 +95,85 @@ describe('linear issues.list input schema', () => {
 		['an unsupported orderBy', { orderBy: 'priority' }],
 	])('rejects %s', (_name, input) => {
 		expect(parse(input).success).toBe(false);
+	});
+});
+
+describe('linear issue rows keep assignee and state', () => {
+	const node = {
+		id: 'i1',
+		title: 'T',
+		priority: 1,
+		number: 1,
+		identifier: 'ENG-1',
+		url: 'u',
+		state: { id: 's1', name: 'In Progress', type: 'started', color: 'x' },
+		team: { id: 't1' },
+		assignee: { id: 'u1', name: 'Ada', email: 'ada@x.dev', avatarUrl: 'x' },
+		creator: { id: 'u2' },
+		createdAt: '2026-01-01T00:00:00.000Z',
+		updatedAt: '2026-01-02T00:00:00.000Z',
+	};
+	const upsert = jest.fn();
+	const dbCtx = {
+		key: 'k',
+		db: { issues: { upsertByEntityId: upsert } },
+	} as never;
+	const stored = () => LinearIssue.parse(upsert.mock.calls[0]?.[1]);
+
+	beforeEach(() => upsert.mockReset());
+
+	it('list stores assignee and state as nested objects', async () => {
+		mockRequest.mockResolvedValue({ data: { issues: { nodes: [node] } } });
+		await list(dbCtx, {});
+		expect(stored().assignee).toEqual({
+			id: 'u1',
+			name: 'Ada',
+			email: 'ada@x.dev',
+		});
+		expect(stored().state).toEqual({
+			id: 's1',
+			name: 'In Progress',
+			type: 'started',
+		});
+		expect(stored().assigneeId).toBe('u1');
+	});
+
+	it('list and get request the same issue fields', async () => {
+		mockRequest.mockResolvedValue({ data: { issues: { nodes: [] } } });
+		await list(dbCtx, {});
+		mockRequest.mockResolvedValue({ data: { issue: null } });
+		await get(dbCtx, { id: 'i1' });
+		const [listQ, getQ] = mockRequest.mock.calls.map((c) =>
+			(c[1] as { body: { query: string } }).body.query.replace(/\s+/g, ' '),
+		);
+		for (const field of [
+			'assignee { id name displayName email',
+			'completedAt',
+			'dueDate',
+			'cycle {',
+			'project {',
+		]) {
+			expect(listQ).toContain(field);
+			expect(getQ).toContain(field);
+		}
+	});
+
+	it('parses old rows and payloads without assignee or state', () => {
+		const row = LinearIssue.parse({
+			id: 'i1',
+			title: 'T',
+			priority: 0,
+			number: 1,
+			identifier: 'ENG-1',
+			url: 'u',
+			stateId: 's',
+			teamId: 't',
+			creatorId: 'c',
+		});
+		expect(row.assignee).toBeUndefined();
+		expect(row.state).toBeUndefined();
+		expect(
+			LinearIssue.parse({ ...row, assignee: null, state: null }).assignee,
+		).toBeNull();
 	});
 });

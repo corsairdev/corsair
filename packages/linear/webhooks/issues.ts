@@ -1,6 +1,22 @@
 import { logEventFromContext } from 'corsair/core';
 import type { LinearWebhooks } from '../index';
+import type { LinearIssue } from '../schema/database';
 import { createLinearMatch, verifyLinearWebhookSignature } from './types';
+
+// Webhook payloads carry assigneeId but no assignee object; keep the stored one while
+// the assignee is unchanged so the row does not lose what list/get stored.
+async function storedAssignee(
+	ctx: Parameters<LinearWebhooks['issueCreate']['handler']>[0],
+	data: { id: string; assigneeId?: string | null; assignee?: unknown },
+): Promise<LinearIssue['assignee']> {
+	if (data.assignee !== undefined)
+		return data.assignee as LinearIssue['assignee'];
+	if (!data.assigneeId) return null;
+	const prev = await ctx.db.issues?.findByEntityId(data.id);
+	return prev?.data.assignee?.id === data.assigneeId
+		? prev.data.assignee
+		: null;
+}
 
 export const issueCreate: LinearWebhooks['issueCreate'] = {
 	match: createLinearMatch('Issue', 'create'),
@@ -38,6 +54,7 @@ export const issueCreate: LinearWebhooks['issueCreate'] = {
 				const data = event.data;
 				const entity = await ctx.db.issues.upsertByEntityId(data.id, {
 					...data,
+					assignee: await storedAssignee(ctx, data),
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
 					url: event.url,
 					dueDate: data.dueDate ? new Date(data.dueDate ?? '') : null,
@@ -113,6 +130,7 @@ export const issueUpdate: LinearWebhooks['issueUpdate'] = {
 				const data = event.data;
 				const entity = await ctx.db.issues.upsertByEntityId(data.id, {
 					...data,
+					assignee: await storedAssignee(ctx, data),
 					number: parseInt(data.identifier.split('-')[1] || '0', 10),
 					url: event.url,
 					dueDate: data.dueDate ? new Date(data.dueDate ?? '') : null,
