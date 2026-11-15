@@ -1,5 +1,6 @@
 displayName: Ignisign
 description: Electronic signature and document workflow integration for Ignisign eIDAS-compliant digital signatures.
+domain: ignisign.io
 overviewNote: >-
   Ignisign operations use an API key from the IgniSign console (API page),
   sent as a Bearer token. Each key belongs to one application and one
