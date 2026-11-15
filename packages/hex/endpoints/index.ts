@@ -59,7 +59,7 @@ import {
 	projectsList,
 	projectsUpdate,
 } from './projects';
-import { semanticIngest, semanticUpdate } from './semantic';
+import { semanticUpdate } from './semantic';
 import {
 	suggestionsGet,
 	suggestionsGetV2,
@@ -151,7 +151,6 @@ export const ProjectRuns = {
 
 export const Semantic = {
 	update: semanticUpdate,
-	ingest: semanticIngest,
 } as const;
 
 export const Suggestions = {

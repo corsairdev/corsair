@@ -1,6 +1,8 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: Hex
 description: Collaborative analytics and data workspace platform — manage projects, trigger and monitor project runs, configure notebook cells, collections, data connections, user groups, and interact with AI agent threads.
+overviewNote: |
+  Semantic ZIP ingestion is not exposed by this plugin. The public OpenAPI describes the ingest route as importing a ZIP but only defines JSON flags and no archive upload field or upload contract, so Corsair cannot safely send the required project contents.
 examples:
   read:
     path: users.me
@@ -20,7 +22,8 @@ apiExamples:
   admin.listTopics:
     limit: 10
   cells.create:
-    projectId: 00000000-0000-4000-8000-000000000001
+    call: >-
+      { projectId: '00000000-0000-4000-8000-000000000001', cellType: 'CODE', contents: { codeCell: { source: "print('hello from Hex')" } } }
   cells.delete:
     cellId: 00000000-0000-4000-8000-000000000002
   cells.get:
@@ -48,7 +51,8 @@ apiExamples:
     collectionId: 00000000-0000-4000-8000-000000000003
     name: Growth Analytics
   dataConnections.create:
-    name: Production Snowflake
+    call: >-
+      { name: 'Analytics warehouse', type: 'postgres', connectionDetails: { postgres: { hostname: 'warehouse.example.com', port: 5432, database: 'analytics', username: 'hex_service', password: 'your-password' } } }
   dataConnections.get:
     dataConnectionId: 00000000-0000-4000-8000-000000000004
   dataConnections.list:
@@ -109,12 +113,33 @@ apiExamples:
     description: Probabilistic customer CLV projections
   projects.editSharingCollections:
     projectId: 00000000-0000-4000-8000-000000000001
+    sharing:
+      upsert:
+        collections:
+          - access: CAN_VIEW
+            collection:
+              id: 00000000-0000-4000-8000-000000000003
   projects.editSharingGroups:
     projectId: 00000000-0000-4000-8000-000000000001
+    sharing:
+      upsert:
+        groups:
+          - access: CAN_VIEW
+            group:
+              id: 00000000-0000-4000-8000-000000000005
   projects.editSharingOrgAndPublic:
     projectId: 00000000-0000-4000-8000-000000000001
+    sharing:
+      workspace: CAN_VIEW
+      publicWeb: NONE
   projects.editSharingUsers:
     projectId: 00000000-0000-4000-8000-000000000001
+    sharing:
+      upsert:
+        users:
+          - access: CAN_VIEW
+            user:
+              id: 00000000-0000-4000-8000-000000000008
   projects.export:
     projectId: 00000000-0000-4000-8000-000000000001
   projects.get:
@@ -126,9 +151,6 @@ apiExamples:
     limit: 10
   projects.update:
     projectId: 00000000-0000-4000-8000-000000000001
-  semantic.ingest:
-    semanticProjectId: 00000000-0000-4000-8000-000000000009
-    verbose: true
   semantic.update:
     semanticProjectId: 00000000-0000-4000-8000-000000000009
   suggestions.get:

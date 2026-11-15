@@ -106,7 +106,6 @@ export type HexEndpoints = {
 	projectsBatchUpdateComputeProfile: HexEndpoint<'projectsBatchUpdateComputeProfile'>;
 	projectsExport: HexEndpoint<'projectsExport'>;
 	semanticUpdate: HexEndpoint<'semanticUpdate'>;
-	semanticIngest: HexEndpoint<'semanticIngest'>;
 	suggestionsList: HexEndpoint<'suggestionsList'>;
 	suggestionsGet: HexEndpoint<'suggestionsGet'>;
 	suggestionsUpdate: HexEndpoint<'suggestionsUpdate'>;
@@ -189,7 +188,6 @@ const hexEndpointsNested = {
 	},
 	semantic: {
 		update: Semantic.update,
-		ingest: Semantic.ingest,
 	},
 	suggestions: {
 		list: Suggestions.list,
@@ -398,10 +396,6 @@ export const hexEndpointSchemas = {
 		input: HexEndpointInputSchemas.semanticUpdate,
 		output: HexEndpointOutputSchemas.semanticUpdate,
 	},
-	'semantic.ingest': {
-		input: HexEndpointInputSchemas.semanticIngest,
-		output: HexEndpointOutputSchemas.semanticIngest,
-	},
 	'suggestions.list': {
 		input: HexEndpointInputSchemas.suggestionsList,
 		output: HexEndpointOutputSchemas.suggestionsList,
@@ -547,8 +541,9 @@ export const hexEndpointMeta = {
 			'Use this endpoint to add or remove a status (including endorsements) from databases, schemas, and tables',
 	},
 	'embedding.createPresignedUrl': {
-		riskLevel: 'write',
-		description: 'Create an embedded url for a project',
+		riskLevel: 'destructive',
+		description:
+			'Create an embedded URL for a project. Unless testMode is enabled, this counts toward embedding usage.',
 	},
 	'groups.list': {
 		riskLevel: 'read',
@@ -616,8 +611,9 @@ export const hexEndpointMeta = {
 			'Get the status of runs of a project. By default, all run types are returned (API-triggered, scheduled, and publish/refresh runs). Use the `runTriggerFilter` parameter to filter to a specific type.',
 	},
 	'projectRuns.run': {
-		riskLevel: 'write',
-		description: 'Trigger a run of the latest published version of a project.',
+		riskLevel: 'destructive',
+		description:
+			'Trigger a run of the latest published version of a project. Runs execute project code and may send configured notifications.',
 	},
 	'projectRuns.cancel': {
 		riskLevel: 'destructive',
@@ -665,10 +661,6 @@ export const hexEndpointMeta = {
 		description:
 			'Use this endpoint to add or remove a status (including endorsements) from datasets and views within a semantic project',
 	},
-	'semantic.ingest': {
-		riskLevel: 'write',
-		description: 'Ingest a semantic project from a zip file.',
-	},
 	'suggestions.list': {
 		riskLevel: 'read',
 		description: 'List context suggestions for the workspace.',
@@ -688,9 +680,9 @@ export const hexEndpointMeta = {
 			'Update the status of an individual proposed change within a context suggestion. The change is either a file update or a data-warehouse update, selected by `updateTarget`.',
 	},
 	'suggestions.triggerReview': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Trigger a background review agent run for the given context suggestion. If a review is already in flight for this suggestion, returns the current run.',
+			'Trigger a background review agent run for the given context suggestion, which may consume agent credits. If a review is already in flight for this suggestion, returns the current run.',
 	},
 	'threads.list': {
 		riskLevel: 'read',
@@ -698,9 +690,9 @@ export const hexEndpointMeta = {
 			'List agent threads in the workspace, sorted by most recently created first. Requires Manager org role or higher. Workspace admins receive every non-private thread; managers receive threads they created plus Threads-type threads on projects they have access to. Threads marked private are returned with their title redacted.',
 	},
 	'threads.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Start an agent thread with a prompt. The Hex agent will analyze data and respond to the prompt. The thread runs asynchronously — poll its status or visit the returned URL to view progress.',
+			'Send a prompt to start asynchronous Hex agent work, which may consume agent credits. Poll the returned thread for progress.',
 	},
 	'threads.get': {
 		riskLevel: 'read',
@@ -708,9 +700,9 @@ export const hexEndpointMeta = {
 			"Get the response of an agent thread. Returns the current status (RUNNING, IDLE, or ERROR) and the agent's response content when available.",
 	},
 	'threads.continue': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Continue an existing agent thread with a follow-up prompt. This endpoint does not support queuing: the thread must be idle before a follow-up can be sent.',
+			'Send a follow-up prompt to an existing agent thread; this may consume agent credits. The thread must be idle because this endpoint does not support queuing.',
 	},
 	'threads.getMessages': {
 		riskLevel: 'read',

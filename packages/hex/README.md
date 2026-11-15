@@ -64,7 +64,6 @@ Every operation validates its input and response schemas using Zod. List operati
 | `projects.batchUpdateComputeProfile` | `POST /v1/projects/compute-profile/batch` | [Hex API Reference](https://learn.hex.tech/docs/api-integrations/api/reference) |
 | `projects.export` | `POST /v1/projects/export` | [Hex API Reference](https://learn.hex.tech/docs/api-integrations/api/reference) |
 | `semantic.update` | `PATCH /v1/semantic-projects/{semanticProjectId}` | [Hex API Reference](https://learn.hex.tech/docs/api-integrations/api/reference) |
-| `semantic.ingest` | `POST /v1/semantic-projects/{semanticProjectId}/ingest` | [Hex API Reference](https://learn.hex.tech/docs/api-integrations/api/reference) |
 | `suggestions.list` | `GET /v1/suggestions` | [Hex API Reference](https://learn.hex.tech/docs/api-integrations/api/reference) |
 | `suggestions.get` | `GET /v1/suggestions/{suggestionId}` | [Hex API Reference](https://learn.hex.tech/docs/api-integrations/api/reference) |
 | `suggestions.update` | `POST /v1/suggestions/{suggestionId}` | [Hex API Reference](https://learn.hex.tech/docs/api-integrations/api/reference) |
@@ -88,6 +87,10 @@ The plugin transparently handles `429 Too Many Requests` with retry backoff hono
 ## Webhooks
 
 Hex REST API does not provide inbound webhook subscriptions; all interactions follow request/response semantics.
+
+## Unsupported API operation
+
+Semantic ZIP ingestion is intentionally excluded. The [public Hex OpenAPI specification](https://static.hex.site/openapi.json) describes an ingest-from-ZIP operation but defines only a JSON request with `verbose`, `debug`, and `dryRun`; it specifies no archive field, multipart body, or separate upload contract. The plugin does not invent an upload format, so ZIP ingestion is unavailable through this plugin until Hex documents a supported upload contract.
 
 ## References
 

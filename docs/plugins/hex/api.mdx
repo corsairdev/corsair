@@ -206,7 +206,7 @@ Create a new cell in the draft version of a project
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.cells.create({ projectId: '00000000-0000-4000-8000-000000000001' });
+await corsair.hex.api.cells.create({ projectId: '00000000-0000-4000-8000-000000000001', cellType: 'CODE', contents: { codeCell: { source: "print('hello from Hex')" } } });
 ```
 
 **Input**
@@ -959,7 +959,7 @@ await corsair.hex.api.collections.update({ collectionId: '00000000-0000-4000-800
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.dataConnections.create({ name: 'Production Snowflake' });
+await corsair.hex.api.dataConnections.create({ name: 'Analytics warehouse', type: 'postgres', connectionDetails: { postgres: { hostname: 'warehouse.example.com', port: 5432, database: 'analytics', username: 'hex_service', password: 'your-password' } } });
 ```
 
 **Input**
@@ -2629,9 +2629,9 @@ await corsair.hex.api.dataConnections.updateSchema({ dataConnectionId: '00000000
 
 `embedding.createPresignedUrl`
 
-Create an embedded url for a project
+Create an embedded URL for a project. Unless testMode is enabled, this counts toward embedding usage.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hex.api.embedding.createPresignedUrl({ projectId: '00000000-0000-4000-8000-000000000001' });
@@ -2642,30 +2642,14 @@ await corsair.hex.api.embedding.createPresignedUrl({ projectId: '00000000-0000-4
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projectId` | `string` | Yes | — |
-| `hexUserAttributes` | `object` | No | — |
+| `hexUserAttributes` | `Record<string, string>` | No | — |
 | `scope` | `string[]` | No | — |
-| `inputParameters` | `object` | No | — |
+| `inputParameters` | `Record<string, any>` | No | — |
 | `expiresIn` | `number` | No | — |
 | `displayOptions` | `object` | No | — |
 | `testMode` | `boolean` | No | — |
 
 <AccordionGroup>
-<Accordion title="hexUserAttributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="inputParameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="displayOptions full type">
 
 ```ts
@@ -3355,9 +3339,9 @@ await corsair.hex.api.projectRuns.list({ projectId: '00000000-0000-4000-8000-000
 
 `projectRuns.run`
 
-Trigger a run of the latest published version of a project.
+Trigger a run of the latest published version of a project. Runs execute project code and may send configured notifications.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hex.api.projectRuns.run({ projectId: '00000000-0000-4000-8000-000000000001', dryRun: false, updatePublishedResults: true });
@@ -3368,7 +3352,7 @@ await corsair.hex.api.projectRuns.run({ projectId: '00000000-0000-4000-8000-0000
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projectId` | `string` | Yes | — |
-| `inputParams` | `object` | No | — |
+| `inputParams` | `Record<string, any>` | No | — |
 | `dryRun` | `boolean` | No | — |
 | `updateCache` | `boolean` | No | — |
 | `notifications` | `object[]` | No | — |
@@ -3377,14 +3361,6 @@ await corsair.hex.api.projectRuns.run({ projectId: '00000000-0000-4000-8000-0000
 | `viewId` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="inputParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="notifications full type">
 
 ```ts
@@ -3698,7 +3674,17 @@ Add a project to collections or remove it from collections.
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.projects.editSharingCollections({ projectId: '00000000-0000-4000-8000-000000000001' });
+await corsair.hex.api.projects.editSharingCollections({
+	projectId: '00000000-0000-4000-8000-000000000001',
+	sharing: {
+		upsert: {
+			collections: [{
+				access: 'CAN_VIEW',
+				collection: { id: '00000000-0000-4000-8000-000000000003' },
+			}],
+		},
+	},
+});
 ```
 
 **Input**
@@ -3872,7 +3858,17 @@ Add groups to a project or update/remove their project sharing access. Use CAN_V
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.projects.editSharingGroups({ projectId: '00000000-0000-4000-8000-000000000001' });
+await corsair.hex.api.projects.editSharingGroups({
+	projectId: '00000000-0000-4000-8000-000000000001',
+	sharing: {
+		upsert: {
+			groups: [{
+				access: 'CAN_VIEW',
+				group: { id: '00000000-0000-4000-8000-000000000005' },
+			}],
+		},
+	},
+});
 ```
 
 **Input**
@@ -4046,7 +4042,10 @@ Update workspace or public-web sharing for a project. For projects, use CAN_VIEW
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.projects.editSharingOrgAndPublic({ projectId: '00000000-0000-4000-8000-000000000001' });
+await corsair.hex.api.projects.editSharingOrgAndPublic({
+	projectId: '00000000-0000-4000-8000-000000000001',
+	sharing: { workspace: 'CAN_VIEW', publicWeb: 'NONE' },
+});
 ```
 
 **Input**
@@ -4214,7 +4213,17 @@ Add users to a project or update/remove their project sharing access. Use CAN_VI
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.projects.editSharingUsers({ projectId: '00000000-0000-4000-8000-000000000001' });
+await corsair.hex.api.projects.editSharingUsers({
+	projectId: '00000000-0000-4000-8000-000000000001',
+	sharing: {
+		upsert: {
+			users: [{
+				access: 'CAN_VIEW',
+				user: { id: '00000000-0000-4000-8000-000000000008' },
+			}],
+		},
+	},
+});
 ```
 
 **Input**
@@ -5040,81 +5049,6 @@ await corsair.hex.api.projects.update({ projectId: '00000000-0000-4000-8000-0000
 
 ## Semantic
 
-### ingest
-
-`semantic.ingest`
-
-Ingest a semantic project from a zip file.
-
-**Risk:** `write`
-
-```ts
-await corsair.hex.api.semantic.ingest({ semanticProjectId: '00000000-0000-4000-8000-000000000009', verbose: true });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `semanticProjectId` | `string` | Yes | — |
-| `verbose` | `boolean` | No | — |
-| `debug` | `boolean` | No | — |
-| `dryRun` | `boolean` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `traceId` | `string` | Yes | — |
-| `contents` | `string[]` | Yes | — |
-| `warnings` | `string[]` | No | — |
-| `skipped` | `object` | No | — |
-| `problems` | `object[]` | No | — |
-| `debug` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="skipped full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="problems full type">
-
-```ts
-(
-  {
-    severity: fatal | error | warning,
-    message: string,
-    cause_paths: (string | number)[][],
-    impact_paths: (string | number)[][],
-    validated_by_json_schema?: boolean
-  }& {
-    display: string
-  }
-)[]
-```
-</Accordion>
-
-<Accordion title="debug full type">
-
-```ts
-{
-  metricflowModelSchemas?: {
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ### update
 
 `semantic.update`
@@ -5444,9 +5378,9 @@ await corsair.hex.api.suggestions.list({ limit: 10 });
 
 `suggestions.triggerReview`
 
-Trigger a background review agent run for the given context suggestion. If a review is already in flight for this suggestion, returns the current run.
+Trigger a background review agent run for the given context suggestion, which may consume agent credits. If a review is already in flight for this suggestion, returns the current run.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hex.api.suggestions.triggerReview({ suggestionId: '00000000-0000-4000-8000-000000000010' });
@@ -5589,9 +5523,9 @@ await corsair.hex.api.suggestions.updateChange({ suggestionId: '00000000-0000-40
 
 `threads.continue`
 
-Continue an existing agent thread with a follow-up prompt. This endpoint does not support queuing: the thread must be idle before a follow-up can be sent.
+Send a follow-up prompt to an existing agent thread; this may consume agent credits. The thread must be idle because this endpoint does not support queuing.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hex.api.threads.continue({ id: '00000000-0000-4000-8000-000000000012', prompt: 'Can you break down customer churn by region?' });
@@ -5637,9 +5571,9 @@ await corsair.hex.api.threads.continue({ id: '00000000-0000-4000-8000-0000000000
 
 `threads.create`
 
-Start an agent thread with a prompt. The Hex agent will analyze data and respond to the prompt. The thread runs asynchronously — poll its status or visit the returned URL to view progress.
+Send a prompt to start asynchronous Hex agent work, which may consume agent credits. Poll the returned thread for progress.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hex.api.threads.create({ prompt: 'Analyze Q3 customer retention by cohort' });

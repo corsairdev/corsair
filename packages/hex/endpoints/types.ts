@@ -1468,9 +1468,10 @@ export type ProjectId = z.infer<typeof ProjectIdSchema>;
 
 export const EmbeddingRequestSchema = z
 	.object({
-		hexUserAttributes: z.object({}).passthrough().optional(),
+		hexUserAttributes: z.record(z.string()).optional(),
 		scope: z.array(z.string()).optional(),
-		inputParameters: z.object({}).passthrough().optional(),
+		// Hex input names and values are caller-defined serialized app state.
+		inputParameters: z.record(z.unknown()).optional(),
 		expiresIn: z.number().optional(),
 		displayOptions: z
 			.object({
@@ -2266,7 +2267,8 @@ export type ProjectRunNotification = z.infer<
 
 export const RunProjectRequestBodySchema = z
 	.object({
-		inputParams: z.object({}).passthrough().optional(),
+		// Published app input names and values are caller-defined serialized state.
+		inputParams: z.record(z.unknown()).optional(),
 		dryRun: z.boolean().optional(),
 		updateCache: z.boolean().optional(),
 		notifications: z.array(ProjectRunNotificationSchema).optional(),
@@ -3295,9 +3297,10 @@ export type DataConnectionsUpdateSchemaOutput = z.infer<
 export const embeddingCreatePresignedUrlInputSchema = z
 	.object({
 		projectId: ProjectIdSchema,
-		hexUserAttributes: z.object({}).strict().optional(),
+		hexUserAttributes: z.record(z.string()).optional(),
 		scope: z.array(z.string()).optional(),
-		inputParameters: z.object({}).strict().optional(),
+		// Hex input names and values are caller-defined serialized app state.
+		inputParameters: z.record(z.unknown()).optional(),
 		expiresIn: z.number().optional(),
 		displayOptions: z
 			.object({
@@ -3573,7 +3576,8 @@ export type ProjectRunsListOutput = z.infer<typeof projectRunsListOutputSchema>;
 export const projectRunsRunInputSchema = z
 	.object({
 		projectId: z.string(),
-		inputParams: z.object({}).strict().optional(),
+		// Published app input names and values are caller-defined serialized state.
+		inputParams: z.record(z.unknown()).optional(),
 		dryRun: z.boolean().optional(),
 		updateCache: z.boolean().optional(),
 		notifications: z.array(ProjectRunNotificationSchema).optional(),
@@ -3897,20 +3901,6 @@ export type SemanticUpdateInput = z.infer<typeof semanticUpdateInputSchema>;
 
 export const semanticUpdateOutputSchema = UpdateSemanticProjectResponseSchema;
 export type SemanticUpdateOutput = z.infer<typeof semanticUpdateOutputSchema>;
-
-export const semanticIngestInputSchema = z
-	.object({
-		semanticProjectId: SemanticProjectIdSchema,
-		verbose: z.boolean().optional(),
-		debug: z.boolean().optional(),
-		dryRun: z.boolean().optional(),
-	})
-	.strict();
-export type SemanticIngestInput = z.infer<typeof semanticIngestInputSchema>;
-
-export const semanticIngestOutputSchema =
-	SemanticProjectsSyncResponsePayloadSchema;
-export type SemanticIngestOutput = z.infer<typeof semanticIngestOutputSchema>;
 
 export const suggestionsListInputSchema = z
 	.object({
@@ -4667,7 +4657,6 @@ export type HexEndpointInputs = {
 	projectsBatchUpdateComputeProfile: ProjectsBatchUpdateComputeProfileInput;
 	projectsExport: ProjectsExportInput;
 	semanticUpdate: SemanticUpdateInput;
-	semanticIngest: SemanticIngestInput;
 	suggestionsList: SuggestionsListInput;
 	suggestionsGet: SuggestionsGetInput;
 	suggestionsUpdate: SuggestionsUpdateInput;
@@ -4731,7 +4720,6 @@ export type HexEndpointOutputs = {
 	projectsBatchUpdateComputeProfile: ProjectsBatchUpdateComputeProfileOutput;
 	projectsExport: ProjectsExportOutput;
 	semanticUpdate: SemanticUpdateOutput;
-	semanticIngest: SemanticIngestOutput;
 	suggestionsList: SuggestionsListOutput;
 	suggestionsGet: SuggestionsGetOutput;
 	suggestionsUpdate: SuggestionsUpdateOutput;
@@ -4796,7 +4784,6 @@ export const HexEndpointInputSchemas = {
 		projectsBatchUpdateComputeProfileInputSchema,
 	projectsExport: projectsExportInputSchema,
 	semanticUpdate: semanticUpdateInputSchema,
-	semanticIngest: semanticIngestInputSchema,
 	suggestionsList: suggestionsListInputSchema,
 	suggestionsGet: suggestionsGetInputSchema,
 	suggestionsUpdate: suggestionsUpdateInputSchema,
@@ -4861,7 +4848,6 @@ export const HexEndpointOutputSchemas = {
 		projectsBatchUpdateComputeProfileOutputSchema,
 	projectsExport: projectsExportOutputSchema,
 	semanticUpdate: semanticUpdateOutputSchema,
-	semanticIngest: semanticIngestOutputSchema,
 	suggestionsList: suggestionsListOutputSchema,
 	suggestionsGet: suggestionsGetOutputSchema,
 	suggestionsUpdate: suggestionsUpdateOutputSchema,

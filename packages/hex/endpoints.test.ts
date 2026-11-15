@@ -15,8 +15,8 @@ import {
 	Threads,
 	Users,
 } from './endpoints';
+import { validInputs, validOutputs } from './fixtures';
 import type { HexContext } from './index';
-import { validInputs, validOutputs } from './schema.test';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -187,9 +187,16 @@ describe('Cells endpoints', () => {
 		expect(result).toEqual(validOutputs.cellsCreate);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(new RegExp('^/v1/cells$')),
+			'/v1/cells',
 			'test-api-key',
-			expect.objectContaining({ method: 'POST' }),
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					projectId: '11111111-1111-4111-8111-111111111111',
+					cellType: 'CODE',
+					contents: { codeCell: { source: "print('hello from Hex')" } },
+				}),
+			}),
 		);
 		expectLogged('cells.create');
 	});
@@ -211,7 +218,7 @@ describe('Cells endpoints', () => {
 		expect(result).toEqual(validOutputs.cellsDelete);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(new RegExp('^/v1/cells/[^/]+$')),
+			'/v1/cells/11111111-1111-4111-8111-111111111111',
 			'test-api-key',
 			expect.objectContaining({ method: 'DELETE' }),
 		);
@@ -476,9 +483,22 @@ describe('DataConnections endpoints', () => {
 		expect(result).toEqual(validOutputs.dataConnectionsCreate);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(new RegExp('^/v1/data-connections$')),
+			'/v1/data-connections',
 			'test-api-key',
-			expect.objectContaining({ method: 'POST' }),
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					name: 'Analytics warehouse',
+					type: 'postgres',
+					connectionDetails: {
+						postgres: expect.objectContaining({
+							hostname: 'warehouse.example.com',
+							port: 5432,
+							database: 'analytics',
+						}),
+					},
+				}),
+			}),
 		);
 		expectLogged('dataConnections.create');
 	});
@@ -602,7 +622,16 @@ describe('Embedding endpoints', () => {
 				new RegExp('^/v1/embedding/createPresignedUrl/[^/]+$'),
 			),
 			'test-api-key',
-			expect.objectContaining({ method: 'POST' }),
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					hexUserAttributes: { customerTier: 'enterprise' },
+					inputParameters: {
+						region: 'US',
+						cohort: ['returning', 'new'],
+					},
+				}),
+			}),
 		);
 		expectLogged('embedding.createPresignedUrl');
 	});
@@ -860,7 +889,15 @@ describe('Projects endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			expect.stringMatching(new RegExp('^/v1/projects$')),
 			'test-api-key',
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: {
+					limit: 20,
+					after: 'projects-cursor-1',
+					sortBy: 'CREATED_AT',
+					sortDirection: 'DESC',
+				},
+			}),
 		);
 		expectLogged('projects.list');
 	});
@@ -1170,9 +1207,17 @@ describe('ProjectRuns endpoints', () => {
 		expect(result).toEqual(validOutputs.projectRunsList);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(new RegExp('^/v1/projects/[^/]+/runs$')),
+			'/v1/projects/11111111-1111-4111-8111-111111111111/runs',
 			'test-api-key',
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: {
+					limit: 7,
+					offset: 14,
+					statusFilter: 'COMPLETED',
+					runTriggerFilter: 'API',
+				},
+			}),
 		);
 		expectLogged('projectRuns.list');
 	});
@@ -1194,9 +1239,26 @@ describe('ProjectRuns endpoints', () => {
 		expect(result).toEqual(validOutputs.projectRunsRun);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(new RegExp('^/v1/projects/[^/]+/runs$')),
+			'/v1/projects/11111111-1111-4111-8111-111111111111/runs',
 			'test-api-key',
-			expect.objectContaining({ method: 'POST' }),
+			expect.objectContaining({
+				method: 'POST',
+				body: {
+					inputParams: { region: 'west', includeArchived: false },
+					dryRun: false,
+					updateCache: true,
+					notifications: expect.arrayContaining([
+						expect.objectContaining({
+							type: 'SUCCESS',
+							includeSuccessScreenshot: false,
+							userIds: ['22222222-2222-4222-8222-222222222222'],
+						}),
+					]),
+					updatePublishedResults: true,
+					useCachedSqlResults: false,
+					viewId: 'view-q3-west',
+				},
+			}),
 		);
 		expectLogged('projectRuns.run');
 	});
@@ -1248,9 +1310,12 @@ describe('ProjectRuns endpoints', () => {
 		expect(result).toEqual(validOutputs.projectRunsGetStatus);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(new RegExp('^/v1/projects/[^/]+/runs/[^/]+$')),
+			'/v1/projects/11111111-1111-4111-8111-111111111111/runs/22222222-2222-4222-8222-222222222222',
 			'test-api-key',
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				headers: { 'enable-expanded-stats': 'true' },
+			}),
 		);
 		expectLogged('projectRuns.getStatus');
 	});
@@ -1321,32 +1386,6 @@ describe('Semantic endpoints', () => {
 	it('Semantic.update rejects invalid input before network I/O', async () => {
 		// unknown because invalid input signature must bypass static typing for runtime test
 		const fn = Semantic.update as (c: unknown, i: unknown) => Promise<unknown>;
-		// unknown because a rejection value has no static type; assertions below narrow it.
-		const error = await fn(ctx, { __invalid_unexpected_field__: true }).catch(
-			(caught: unknown) => caught,
-		);
-		expect(error).toBeDefined();
-		expect(mockedRequest).not.toHaveBeenCalled();
-	});
-
-	it('Semantic.ingest executes POST /v1/semantic-(projects|models)/{semanticProjectId}/ingest', async () => {
-		mockedRequest.mockResolvedValue(validOutputs.semanticIngest);
-		const result = await Semantic.ingest(ctx, validInputs.semanticIngest);
-		expect(result).toEqual(validOutputs.semanticIngest);
-		expect(mockedRequest).toHaveBeenCalledTimes(1);
-		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(
-				new RegExp('^/v1/semantic-(projects|models)/[^/]+/ingest$'),
-			),
-			'test-api-key',
-			expect.objectContaining({ method: 'POST' }),
-		);
-		expectLogged('semantic.ingest');
-	});
-
-	it('Semantic.ingest rejects invalid input before network I/O', async () => {
-		// unknown because invalid input signature must bypass static typing for runtime test
-		const fn = Semantic.ingest as (c: unknown, i: unknown) => Promise<unknown>;
 		// unknown because a rejection value has no static type; assertions below narrow it.
 		const error = await fn(ctx, { __invalid_unexpected_field__: true }).catch(
 			(caught: unknown) => caught,
@@ -1531,7 +1570,14 @@ describe('Threads endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			expect.stringMatching(new RegExp('^/v1/threads$')),
 			'test-api-key',
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: {
+					after: 'threads-cursor-1',
+					limit: 12,
+					source: 'PUBLIC_API',
+				},
+			}),
 		);
 		expectLogged('threads.list');
 	});
@@ -1555,7 +1601,18 @@ describe('Threads endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			expect.stringMatching(new RegExp('^/v1/threads$')),
 			'test-api-key',
-			expect.objectContaining({ method: 'POST' }),
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					prompt: 'Summarize monthly revenue by region.',
+					projectId: '11111111-1111-4111-8111-111111111111',
+					attachments: expect.objectContaining({
+						dataConnectionId: '33333333-3333-4333-8333-333333333333',
+						tableIds: ['warehouse.public.monthly_revenue'],
+						projectIds: ['11111111-1111-4111-8111-111111111111'],
+					}),
+				}),
+			}),
 		);
 		expectLogged('threads.create');
 	});
@@ -1601,9 +1658,17 @@ describe('Threads endpoints', () => {
 		expect(result).toEqual(validOutputs.threadsContinue);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(new RegExp('^/v1/threads/[^/]+/followup$')),
+			'/v1/threads/44444444-4444-4444-8444-444444444444/followup',
 			'test-api-key',
-			expect.objectContaining({ method: 'POST' }),
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					prompt: 'Now compare those regions with the previous month.',
+					attachments: expect.objectContaining({
+						projectIds: ['11111111-1111-4111-8111-111111111111'],
+					}),
+				}),
+			}),
 		);
 		expectLogged('threads.continue');
 	});
@@ -1628,9 +1693,16 @@ describe('Threads endpoints', () => {
 		expect(result).toEqual(validOutputs.threadsGetMessages);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.stringMatching(new RegExp('^/v1/threads/[^/]+/messages$')),
+			'/v1/threads/44444444-4444-4444-8444-444444444444/messages',
 			'test-api-key',
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: {
+					after: 'messages-cursor-1',
+					limit: 20,
+					full: true,
+				},
+			}),
 		);
 		expectLogged('threads.getMessages');
 	});
