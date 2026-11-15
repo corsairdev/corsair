@@ -1,4 +1,4 @@
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, createCorsair } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import {
 	classicKey,
@@ -178,6 +178,62 @@ describe('HoneyHive plane-only connections and hook keys', () => {
 				}),
 			),
 		).resolves.toBe('hh_fgcp_hook');
+	});
+});
+
+describe('HoneyHive plane-only connections through bound endpoints', () => {
+	afterEach(() => jest.restoreAllMocks());
+
+	const respond = (body: Record<string, unknown>) =>
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify(body), {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
+	const sentAuth = (fetchMock: jest.SpyInstance) => {
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		return new Headers(init.headers).get('authorization');
+	};
+
+	it('runs a project-scoped data plane call with only a data plane key', async () => {
+		const fetchMock = respond({ datasets: [] });
+		const corsair = createCorsair({
+			plugins: [honeyhive({ dataPlaneKey: 'hh_fgdp_only' })],
+		});
+		await corsair.honeyhive.api.datasets.list({ project_id: 'p-1' });
+		expect(String(fetchMock.mock.calls[0]?.[0])).toContain(
+			'/v1/projects/p-1/datasets',
+		);
+		expect(sentAuth(fetchMock)).toBe('Bearer hh_fgdp_only');
+	});
+
+	it('runs a control plane call with only a control plane key, after an empty data plane option', async () => {
+		const fetchMock = respond({ success: true, project: { id: 'p-1' } });
+		const corsair = createCorsair({
+			plugins: [
+				honeyhive({ dataPlaneKey: '', controlPlaneKey: 'hh_fgcp_only' }),
+			],
+		});
+		await corsair.honeyhive.api.projects.get({ project_id: 'p-1' });
+		expect(String(fetchMock.mock.calls[0]?.[0])).toContain(
+			'api.cp.us.honeyhive.ai/v1/projects/p-1',
+		);
+		expect(sentAuth(fetchMock)).toBe('Bearer hh_fgcp_only');
+	});
+
+	it('refuses a classic route with only a plane key, before any request', async () => {
+		const fetchMock = respond({ success: true });
+		const corsair = createCorsair({
+			plugins: [honeyhive({ dataPlaneKey: 'hh_fgdp_only' })],
+		});
+		await expect(
+			corsair.honeyhive.api.events.create({
+				event_type: 'model',
+				inputs: { prompt: 'hi' },
+			}),
+		).rejects.toThrow('classic API key');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 

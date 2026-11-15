@@ -664,10 +664,11 @@ export function honeyhive<const T extends HoneyHivePluginOptions>(
 			// A connection with only fine-grained keys still reaches the
 			// project-scoped routes: pass one on, and classicKey() keeps it off
 			// the classic routes.
+			// `||`, not `??`: an empty option string falls through to the next key.
 			const planeKey =
-				options.dataPlaneKey ??
-				options.controlPlaneKey ??
-				(await ctx.keys?.get_data_plane_api_key?.()) ??
+				options.dataPlaneKey ||
+				options.controlPlaneKey ||
+				(await ctx.keys?.get_data_plane_api_key?.()) ||
 				(await ctx.keys?.get_control_plane_api_key?.());
 			if (planeKey) return planeKey;
 			throw new AuthMissingError('honeyhive', 'api_key');
