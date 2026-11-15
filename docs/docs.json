@@ -3061,6 +3061,14 @@
                 ]
               },
               {
+                "group": "Labs64 NetLicensing",
+                "pages": [
+                  "plugins/labs64netlicensing/overview",
+                  "plugins/labs64netlicensing/api",
+                  "plugins/labs64netlicensing/database"
+                ]
+              },
+              {
                 "group": "Leexi",
                 "pages": [
                   "plugins/leexi/overview",

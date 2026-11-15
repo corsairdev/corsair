@@ -1,0 +1,21 @@
+displayName: Labs64 NetLicensing
+description: List NetLicensing licenses and products. The API key is sent as HTTP Basic with the username apiKey.
+domain: netlicensing.io
+recommendedAuth: api_key
+overviewNote: |
+  Auth is HTTP Basic, username apiKey, password the connected key. Accept is application/json. An empty request to GET /license returned HTTP 401. GET /product is the documented sibling on the same host and was not probed separately. Custom properties are not stored.
+examples:
+  read:
+    path: licenses.list
+    title: List licenses
+    args: {}
+apiNotes:
+  licenses.list: |
+    GET /license. Each item is a property list. Stored fields are number and active.
+  products.list: |
+    GET /product. Stored fields are number, active, name, and version.
+apiExamples:
+  licenses.list:
+    call: "{}"
+  products.list:
+    call: "{}"

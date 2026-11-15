@@ -1,0 +1,104 @@
+---
+title: "Labs64 NetLicensing API reference"
+sidebarTitle: "API"
+description: "API reference for Labs64 NetLicensing: every `labs64netlicensing.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Licenses
+
+### list
+
+`licenses.list`
+
+List NetLicensing licenses for the connected vendor.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.licenses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+
+GET /license. Each item is a property list. Stored fields are number and active.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `licenses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="licenses full type">
+
+```ts
+{
+  number: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### list
+
+`products.list`
+
+List NetLicensing products for the connected vendor.
+
+**Risk:** `read`
+
+```ts
+await corsair.labs64netlicensing.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+
+GET /product. Stored fields are number, active, name, and version.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  number: string,
+  active?: boolean,
+  name?: string,
+  version?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
