@@ -4,7 +4,7 @@ import { ApiError } from 'corsair/http';
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => error instanceof ApiError && error.status === 429,
-		// Expose Retry-After to callers; GoDial's automatic retry policy is undocumented.
+		// Core's request() has already retried the 429 three times with Retry-After.
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {

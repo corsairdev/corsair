@@ -28,16 +28,43 @@ describe('GoDial client', () => {
 		expect(headers.has('authorization')).toBe(false);
 	});
 
-	it('extracts Retry-After without automatically replaying an undocumented request', async () => {
-		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response('{"error":"busy"}', {
-				status: 429,
-				headers: {
-					'content-type': 'application/json',
-					'Retry-After': '4',
-				},
+	it('retries a 429 through the shared transport, honouring Retry-After', async () => {
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				new Response('{"error":"busy"}', {
+					status: 429,
+					headers: {
+						'content-type': 'application/json',
+						'Retry-After': '0',
+					},
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response('[]', {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				}),
+			);
+
+		await expect(
+			makeGoDialRequest('/meta/api/externals/lists/list', {
+				method: 'GET',
+				apiKey: 'secret-token',
 			}),
-		);
+		).resolves.toEqual([]);
+		expect(fetchSpy).toHaveBeenCalledTimes(2);
+	});
+
+	it("reports GoDial's 500 for a bad token as a 401 without the token", async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(
+					'{"error":{"statusCode":500,"message":"Cannot read properties of undefined (reading \'companyId\')","name":"TypeError"}}',
+					{ status: 500, headers: { 'content-type': 'application/json' } },
+				),
+			);
 
 		// unknown because the shared transport's rejection value has no static type until narrowed.
 		const error = await makeGoDialRequest('/meta/api/externals/lists/list', {
@@ -46,8 +73,44 @@ describe('GoDial client', () => {
 		}).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
-		if (error instanceof ApiError) expect(error.retryAfter).toBe(4000);
-		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		if (error instanceof ApiError) {
+			expect(error.status).toBe(401);
+			expect(error.message).toContain('access token');
+			expect(JSON.stringify(error)).not.toContain('secret-token');
+		}
+	});
+
+	it('keeps contact details out of transport errors', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(
+					'{"error":{"statusCode":422,"message":"Contact +15555550123 already exists for ada@example.test"}}',
+					{ status: 422, headers: { 'content-type': 'application/json' } },
+				),
+			);
+
+		// unknown because the shared transport's rejection value has no static type until narrowed.
+		const error = await makeGoDialRequest('/meta/api/externals/contact/add', {
+			method: 'POST',
+			apiKey: 'secret-token',
+			body: {
+				listId: 'list-1',
+				phone: '+15555550123',
+				email: 'ada@example.test',
+				name: 'Ada Lovelace',
+			},
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (error instanceof ApiError) {
+			expect(error.status).toBe(422);
+			const serialized = `${error.message} ${JSON.stringify(error.body)} ${JSON.stringify(error.request)}`;
+			expect(serialized).not.toContain('+15555550123');
+			expect(serialized).not.toContain('ada@example.test');
+			expect(serialized).not.toContain('Ada Lovelace');
+			expect(serialized).not.toContain('secret-token');
+		}
 	});
 
 	it('redacts the query token from transport errors', async () => {
