@@ -42,10 +42,17 @@ export async function makePostalyticsRequest(
 			'Postalytics request path must be relative to the API host',
 		);
 	}
-	const url = new URL(
-		path,
-		options.sandbox ? POSTALYTICS_SANDBOX_URL : POSTALYTICS_PRODUCTION_URL,
-	);
+	const base = options.sandbox
+		? POSTALYTICS_SANDBOX_URL
+		: POSTALYTICS_PRODUCTION_URL;
+	const url = new URL(path, base);
+	// The URL parser drops tabs and newlines, so '/\t/host' passes the prefix
+	// checks above and still resolves to another host. Check the result.
+	if (url.origin !== new URL(base).origin) {
+		throw new PostalyticsAPIError(
+			'Postalytics request path must be relative to the API host',
+		);
+	}
 	for (const [key, value] of Object.entries(options.query ?? {})) {
 		if (value !== undefined) url.searchParams.set(key, String(value));
 	}

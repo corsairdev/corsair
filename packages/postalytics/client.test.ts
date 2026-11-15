@@ -154,6 +154,8 @@ describe('Postalytics request seam', () => {
 			'https://example.org',
 			'//example.org',
 			'/\\example.org',
+			'/\t/example.org',
+			'/\n/example.org',
 		]) {
 			await expect(
 				makePostalyticsRequest(path, 'test-key', { method: 'GET' }),
