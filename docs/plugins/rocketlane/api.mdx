@@ -1,0 +1,2790 @@
+---
+title: "Rocketlane API reference"
+sidebarTitle: "API"
+description: "API reference for the Rocketlane plugin in Corsair: every `rocketlane.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### create
+
+`companies.create`
+
+Create a customer company with its account owner, url and description
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketlane.api.companies.create({ company_name: 'Acme Inc', account_owner: { user_id: 401 }, company_url: 'https://acme.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_name` | `string` | Yes | The company name. |
+| `account_owner` | `object` | Yes | — |
+| `company_url` | `string` | No | The company website. |
+| `visibility` | `EVERYONE \| MEMBERS` | No | — |
+| `description` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="account_owner full type">
+
+```ts
+{
+  user_id?: number,
+  email_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldId: number,
+  value: string | number | boolean | string[] | number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  companyId?: number | null,
+  companyName?: string | null,
+  companyUrl?: string | null,
+  visibility?: string | null,
+  description?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  accountOwner?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  notes?: {
+    noteId?: number | null,
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    noteTitle?: string | null,
+    noteText?: string | null,
+    createdAt?: number | null,
+    updatedAt?: number | null,
+    tags?: {
+      tagId?: number | null,
+      label?: string | null,
+      color?: string | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`companies.delete`
+
+Delete a company permanently; the API answers 204
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.rocketlane.api.companies.delete({ company_id: 301 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `company_id` | `number \| null` | Yes | — |
+
+
+
+---
+
+### get
+
+`companies.get`
+
+Fetch one company with its owner, url, description and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.companies.get({ company_id: 301 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_id` | `number` | Yes | — |
+| `include_fields` | `string[]` | No | — |
+| `include_all_fields` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  companyId?: number | null,
+  companyName?: string | null,
+  companyUrl?: string | null,
+  visibility?: string | null,
+  description?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  accountOwner?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  notes?: {
+    noteId?: number | null,
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    noteTitle?: string | null,
+    noteText?: string | null,
+    createdAt?: number | null,
+    updatedAt?: number | null,
+    tags?: {
+      tagId?: number | null,
+      label?: string | null,
+      color?: string | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companies.list`
+
+List customer companies with search and token paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.companies.list({ company_name: { cn: 'acme' }, page_size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
+| `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
+| `include_fields` | `string[]` | No | — |
+| `include_all_fields` | `boolean` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
+| `company_name` | `object` | No | Search by company name, e.g. `{ cn: "acme" }`. |
+
+<AccordionGroup>
+<Accordion title="company_name full type">
+
+```ts
+{
+  eq?: string,
+  cn?: string,
+  nc?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_page_token` | `string \| null` | Yes | Pass as `page_token` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+| `total_record_count` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  companyId?: number | null,
+  companyName?: string | null,
+  companyUrl?: string | null,
+  visibility?: string | null,
+  description?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  accountOwner?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  notes?: {
+    noteId?: number | null,
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    noteTitle?: string | null,
+    noteText?: string | null,
+    createdAt?: number | null,
+    updatedAt?: number | null,
+    tags?: {
+      tagId?: number | null,
+      label?: string | null,
+      color?: string | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  pageSize?: number | null,
+  hasMore?: boolean | null,
+  totalRecordCount?: number | null,
+  nextPage?: string | null,
+  nextPageToken?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companies.update`
+
+Update a company: its name, owner, url or description
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketlane.api.companies.update({ company_id: 301, description: 'Enterprise customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_name` | `string` | No | The company name. |
+| `account_owner` | `object` | No | — |
+| `company_url` | `string` | No | The company website. |
+| `visibility` | `EVERYONE \| MEMBERS` | No | — |
+| `description` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `company_id` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="account_owner full type">
+
+```ts
+{
+  user_id?: number,
+  email_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldId: number,
+  value: string | number | boolean | string[] | number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  companyId?: number | null,
+  companyName?: string | null,
+  companyUrl?: string | null,
+  visibility?: string | null,
+  description?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  accountOwner?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  notes?: {
+    noteId?: number | null,
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    noteTitle?: string | null,
+    noteText?: string | null,
+    createdAt?: number | null,
+    updatedAt?: number | null,
+    tags?: {
+      tagId?: number | null,
+      label?: string | null,
+      color?: string | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### archive
+
+`projects.archive`
+
+Archive a project, which keeps its records but removes it from active lists
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketlane.api.projects.archive({ project_id: 201 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+Keeps the records and removes the project from active lists; it is not a delete.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `project_id` | `number \| null` | Yes | — |
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a project from a customer and an owner, with its dates, visibility and financial details; Rocketlane emails an invite to each team member added
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketlane.api.projects.create({ project_name: 'Acme onboarding', customer: { company_id: 301 }, owner: { email_id: 'sam@example.com' }, start_date: '2026-11-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_name` | `string` | Yes | The project title. |
+| `customer` | `object` | Yes | — |
+| `owner` | `object` | Yes | — |
+| `start_date` | `string` | No | An ISO date. |
+| `due_date` | `string` | No | An ISO date on or after `start_date`. |
+| `visibility` | `EVERYONE \| MEMBERS` | No | `EVERYONE` lets every team member in the firm see the project; `MEMBERS` limits it to invited members. |
+| `team_member_ids` | `number[]` | No | Users to add to the project. Rocketlane emails each of them an invite. |
+| `currency` | `string` | No | A three-letter currency code. |
+| `annualized_recurring_revenue` | `number` | No | — |
+| `project_fee` | `number` | No | — |
+| `budgeted_hours` | `number` | No | — |
+| `external_reference_id` | `string` | No | — |
+| `auto_create_company` | `boolean` | No | Create the customer company when it does not exist. |
+| `assign_project_owner` | `boolean` | No | — |
+| `fields` | `object[]` | No | — |
+
+The customer and owner blocks each need an id or a name.
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  company_id?: number,
+  company_name?: string
+}
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  user_id?: number,
+  email_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldId: number,
+  value: string | number | boolean | string[] | number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  projectId?: number | null,
+  projectName?: string | null,
+  startDate?: string | null,
+  dueDate?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  visibility?: string | null,
+  externalReferenceId?: string | null,
+  currency?: string | {
+    currencyCode?: string | null,
+    currencyName?: string | null,
+    currencySymbol?: string | null
+  } | null,
+  annualizedRecurringRevenue?: number | null,
+  projectFee?: number | null,
+  budgetedHours?: number | null,
+  allocatedHours?: number | null,
+  trackedHours?: number | null,
+  progressPercentage?: number | null,
+  inferredProgress?: string | null,
+  archived?: boolean | null,
+  customersInvited?: number | null,
+  customersJoined?: number | null,
+  owner?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  customer?: {
+    companyId?: number | null,
+    companyName?: string | null,
+    companyUrl?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  teamMembers?: {
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customers?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customerChampion?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    } | null
+  } | null,
+  sources?: {
+    prefix?: string | null,
+    startDate?: string | null,
+    templateId?: number | null,
+    templateName?: string | null
+  }[] | null,
+  partnerCompanies?: {
+    companyId?: number | null,
+    companyName?: string | null,
+    companyUrl?: string | null
+  }[] | null,
+  financials?: {
+    contractType?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project permanently; the API answers 204
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.rocketlane.api.projects.delete({ project_id: 201 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `project_id` | `number \| null` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Fetch one project with its customer, owner, team members, status and financial fields
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.projects.get({ project_id: 201 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | The project id, from `projects.list`. |
+| `include_fields` | `string[]` | No | — |
+| `include_all_fields` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  projectId?: number | null,
+  projectName?: string | null,
+  startDate?: string | null,
+  dueDate?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  visibility?: string | null,
+  externalReferenceId?: string | null,
+  currency?: string | {
+    currencyCode?: string | null,
+    currencyName?: string | null,
+    currencySymbol?: string | null
+  } | null,
+  annualizedRecurringRevenue?: number | null,
+  projectFee?: number | null,
+  budgetedHours?: number | null,
+  allocatedHours?: number | null,
+  trackedHours?: number | null,
+  progressPercentage?: number | null,
+  inferredProgress?: string | null,
+  archived?: boolean | null,
+  customersInvited?: number | null,
+  customersJoined?: number | null,
+  owner?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  customer?: {
+    companyId?: number | null,
+    companyName?: string | null,
+    companyUrl?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  teamMembers?: {
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customers?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customerChampion?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    } | null
+  } | null,
+  sources?: {
+    prefix?: string | null,
+    startDate?: string | null,
+    templateId?: number | null,
+    templateName?: string | null
+  }[] | null,
+  partnerCompanies?: {
+    companyId?: number | null,
+    companyName?: string | null,
+    companyUrl?: string | null
+  }[] | null,
+  financials?: {
+    contractType?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects with filters for company, customer, team member, status and financial ranges, plus token paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.projects.list({ company_id: { eq: 301 }, status: { oneOf: [2] }, page_size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
+| `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
+| `include_fields` | `string[]` | No | — |
+| `include_all_fields` | `boolean` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
+| `project_name` | `object` | No | — |
+| `status` | `object` | No | — |
+| `company_id` | `object` | No | — |
+| `customer_id` | `object` | No | — |
+| `team_member_id` | `object` | No | — |
+| `contract_type` | `object` | No | — |
+| `include_archive` | `object` | No | — |
+| `external_reference_id` | `object` | No | — |
+| `annualized_recurring_revenue` | `object` | No | — |
+| `project_fee` | `object` | No | — |
+| `budgeted_hours` | `object` | No | — |
+| `allocated_hours` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="project_name full type">
+
+```ts
+{
+  eq?: string,
+  cn?: string,
+  nc?: string
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  eq?: string | number,
+  oneOf?: (string | number)[],
+  noneOf?: (string | number)[]
+}
+```
+</Accordion>
+
+<Accordion title="company_id full type">
+
+```ts
+{
+  eq?: number,
+  oneOf?: number[],
+  noneOf?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="customer_id full type">
+
+```ts
+{
+  eq?: number,
+  oneOf?: number[],
+  noneOf?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="team_member_id full type">
+
+```ts
+{
+  eq?: number,
+  oneOf?: number[],
+  noneOf?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="contract_type full type">
+
+```ts
+{
+  eq?: string | number,
+  oneOf?: (string | number)[],
+  noneOf?: (string | number)[]
+}
+```
+</Accordion>
+
+<Accordion title="include_archive full type">
+
+```ts
+{
+  eq?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="external_reference_id full type">
+
+```ts
+{
+  eq?: string
+}
+```
+</Accordion>
+
+<Accordion title="annualized_recurring_revenue full type">
+
+```ts
+{
+  eq?: number,
+  gt?: number,
+  lt?: number
+}
+```
+</Accordion>
+
+<Accordion title="project_fee full type">
+
+```ts
+{
+  eq?: number,
+  gt?: number,
+  lt?: number
+}
+```
+</Accordion>
+
+<Accordion title="budgeted_hours full type">
+
+```ts
+{
+  eq?: number,
+  gt?: number,
+  ge?: number,
+  lt?: number,
+  le?: number
+}
+```
+</Accordion>
+
+<Accordion title="allocated_hours full type">
+
+```ts
+{
+  eq?: number,
+  gt?: number,
+  ge?: number,
+  lt?: number,
+  le?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_page_token` | `string \| null` | Yes | Pass as `page_token` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+| `total_record_count` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  projectId?: number | null,
+  projectName?: string | null,
+  startDate?: string | null,
+  dueDate?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  visibility?: string | null,
+  externalReferenceId?: string | null,
+  currency?: string | {
+    currencyCode?: string | null,
+    currencyName?: string | null,
+    currencySymbol?: string | null
+  } | null,
+  annualizedRecurringRevenue?: number | null,
+  projectFee?: number | null,
+  budgetedHours?: number | null,
+  allocatedHours?: number | null,
+  trackedHours?: number | null,
+  progressPercentage?: number | null,
+  inferredProgress?: string | null,
+  archived?: boolean | null,
+  customersInvited?: number | null,
+  customersJoined?: number | null,
+  owner?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  customer?: {
+    companyId?: number | null,
+    companyName?: string | null,
+    companyUrl?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  teamMembers?: {
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customers?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customerChampion?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    } | null
+  } | null,
+  sources?: {
+    prefix?: string | null,
+    startDate?: string | null,
+    templateId?: number | null,
+    templateName?: string | null
+  }[] | null,
+  partnerCompanies?: {
+    companyId?: number | null,
+    companyName?: string | null,
+    companyUrl?: string | null
+  }[] | null,
+  financials?: {
+    contractType?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  pageSize?: number | null,
+  hasMore?: boolean | null,
+  totalRecordCount?: number | null,
+  nextPage?: string | null,
+  nextPageToken?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project: its name, dates, visibility, owner, custom fields or financial figures
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketlane.api.projects.update({ project_id: 201, project_name: 'Acme onboarding v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_name` | `string` | No | The project title. |
+| `owner` | `object` | No | — |
+| `start_date` | `string` | No | An ISO date. |
+| `due_date` | `string` | No | An ISO date on or after `start_date`. |
+| `visibility` | `EVERYONE \| MEMBERS` | No | `EVERYONE` lets every team member in the firm see the project; `MEMBERS` limits it to invited members. |
+| `annualized_recurring_revenue` | `number` | No | — |
+| `project_fee` | `number` | No | — |
+| `budgeted_hours` | `number` | No | — |
+| `external_reference_id` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `project_id` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  user_id?: number,
+  email_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldId: number,
+  value: string | number | boolean | string[] | number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  projectId?: number | null,
+  projectName?: string | null,
+  startDate?: string | null,
+  dueDate?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  visibility?: string | null,
+  externalReferenceId?: string | null,
+  currency?: string | {
+    currencyCode?: string | null,
+    currencyName?: string | null,
+    currencySymbol?: string | null
+  } | null,
+  annualizedRecurringRevenue?: number | null,
+  projectFee?: number | null,
+  budgetedHours?: number | null,
+  allocatedHours?: number | null,
+  trackedHours?: number | null,
+  progressPercentage?: number | null,
+  inferredProgress?: string | null,
+  archived?: boolean | null,
+  customersInvited?: number | null,
+  customersJoined?: number | null,
+  owner?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  customer?: {
+    companyId?: number | null,
+    companyName?: string | null,
+    companyUrl?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  teamMembers?: {
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customers?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    customerChampion?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    } | null
+  } | null,
+  sources?: {
+    prefix?: string | null,
+    startDate?: string | null,
+    templateId?: number | null,
+    templateName?: string | null
+  }[] | null,
+  partnerCompanies?: {
+    companyId?: number | null,
+    companyName?: string | null,
+    companyUrl?: string | null
+  }[] | null,
+  financials?: {
+    contractType?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task in a project with its dates, effort, status, phase, assignees and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketlane.api.tasks.create({ task_name: 'Kickoff workshop', project_id: 201, start_date: '2026-11-10', effort_in_minutes: 240 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_name` | `string` | Yes | The task title. |
+| `project_id` | `number` | Yes | The project the task belongs to. |
+| `task_description` | `string` | No | — |
+| `task_private_note` | `string` | No | — |
+| `start_date` | `string` | No | An ISO date. |
+| `due_date` | `string` | No | An ISO date. |
+| `effort_in_minutes` | `number` | No | — |
+| `progress` | `number` | No | — |
+| `at_risk` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `phase` | `object` | No | Pick the phase by id or by name. |
+| `status` | `object` | No | The task status, by its numeric value. |
+| `external_reference_id` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `assignees` | `object[]` | No | — |
+| `follower_ids` | `number[]` | No | — |
+| `parent_task_id` | `number` | No | — |
+| `fields` | `object[]` | No | Custom field values, keyed by the field id. |
+
+Assignees take `user_id` or `email`; the body sends them as `userId` and `emailId`.
+
+<AccordionGroup>
+<Accordion title="phase full type">
+
+```ts
+{
+  phaseId?: number,
+  phaseName?: string
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  value: number
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  user_id?: number,
+  email?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldId: number,
+  value: string | number | boolean | string[] | number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  taskId?: number | null,
+  taskName?: string | null,
+  taskDescription?: string | null,
+  taskPrivateNote?: string | null,
+  startDate?: string | null,
+  dueDate?: string | null,
+  startDateActual?: string | null,
+  dueDateActual?: string | null,
+  archived?: boolean | null,
+  effortInMinutes?: number | null,
+  progress?: number | null,
+  atRisk?: boolean | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  revenueRecognitionTask?: boolean | null,
+  totalAllocatedMins?: number | null,
+  type?: string | null,
+  externalReferenceId?: string | null,
+  billable?: boolean | null,
+  csatEnabled?: boolean | null,
+  private?: boolean | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  project?: {
+    projectId?: number | null,
+    projectName?: string | null
+  } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  phase?: {
+    phaseId?: number | null,
+    phaseName?: string | null
+  } | null,
+  priority?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  assignees?: {
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    placeholders?: {
+      placeholderId?: number | null,
+      placeholderName?: string | null
+    }[] | null
+  } | null,
+  followers?: {
+    placeholders?: {
+      placeholderId?: number | null,
+      placeholderName?: string | null
+    }[] | null,
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null
+  } | null,
+  dependencies?: {
+    taskId?: number | null,
+    taskName?: string | null
+  }[] | null,
+  parent?: {
+    taskId?: number | null,
+    taskName?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task permanently; the API answers 204
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.rocketlane.api.tasks.delete({ task_id: 9001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+
+Answers 204 with no body; the deletion is permanent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `task_id` | `number \| null` | Yes | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Fetch one task by id with its project, phase, status, assignees, followers and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.tasks.get({ task_id: 9001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | The task id, from `tasks.list`. |
+| `include_fields` | `string[]` | No | — |
+| `include_all_fields` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  taskId?: number | null,
+  taskName?: string | null,
+  taskDescription?: string | null,
+  taskPrivateNote?: string | null,
+  startDate?: string | null,
+  dueDate?: string | null,
+  startDateActual?: string | null,
+  dueDateActual?: string | null,
+  archived?: boolean | null,
+  effortInMinutes?: number | null,
+  progress?: number | null,
+  atRisk?: boolean | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  revenueRecognitionTask?: boolean | null,
+  totalAllocatedMins?: number | null,
+  type?: string | null,
+  externalReferenceId?: string | null,
+  billable?: boolean | null,
+  csatEnabled?: boolean | null,
+  private?: boolean | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  project?: {
+    projectId?: number | null,
+    projectName?: string | null
+  } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  phase?: {
+    phaseId?: number | null,
+    phaseName?: string | null
+  } | null,
+  priority?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  assignees?: {
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    placeholders?: {
+      placeholderId?: number | null,
+      placeholderName?: string | null
+    }[] | null
+  } | null,
+  followers?: {
+    placeholders?: {
+      placeholderId?: number | null,
+      placeholderName?: string | null
+    }[] | null,
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null
+  } | null,
+  dependencies?: {
+    taskId?: number | null,
+    taskName?: string | null
+  }[] | null,
+  parent?: {
+    taskId?: number | null,
+    taskName?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks with filters for project, phase, status, assignee and date ranges, plus token paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.tasks.list({ project_id: { eq: 201 }, task_name: { cn: 'kickoff' }, page_size: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
+| `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
+| `include_fields` | `string[]` | No | A projection: only these fields come back. |
+| `include_all_fields` | `boolean` | No | Return every custom field as well as the defaults. |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
+| `project_id` | `object` | No | — |
+| `phase_id` | `object` | No | — |
+| `task_name` | `object` | No | — |
+| `task_status` | `object` | No | — |
+| `project_status` | `object` | No | — |
+| `include_archive` | `object` | No | — |
+| `external_reference_id` | `object` | No | — |
+| `assignee_user_id` | `object` | No | — |
+| `effort_in_minutes` | `object` | No | — |
+| `progress` | `object` | No | — |
+| `start_date` | `object` | No | — |
+| `due_date` | `object` | No | — |
+| `created_at` | `object` | No | Epoch milliseconds. |
+| `updated_at` | `object` | No | Epoch milliseconds. |
+
+Filters are `field.operator` keys; the token from `pagination.nextPageToken` expires after 15 minutes.
+
+<AccordionGroup>
+<Accordion title="project_id full type">
+
+```ts
+{
+  eq?: number
+}
+```
+</Accordion>
+
+<Accordion title="phase_id full type">
+
+```ts
+{
+  eq?: number
+}
+```
+</Accordion>
+
+<Accordion title="task_name full type">
+
+```ts
+{
+  eq?: string,
+  cn?: string,
+  nc?: string
+}
+```
+</Accordion>
+
+<Accordion title="task_status full type">
+
+```ts
+{
+  eq?: string | number,
+  oneOf?: (string | number)[],
+  noneOf?: (string | number)[]
+}
+```
+</Accordion>
+
+<Accordion title="project_status full type">
+
+```ts
+{
+  eq?: string | number,
+  oneOf?: (string | number)[],
+  noneOf?: (string | number)[]
+}
+```
+</Accordion>
+
+<Accordion title="include_archive full type">
+
+```ts
+{
+  eq?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="external_reference_id full type">
+
+```ts
+{
+  eq?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee_user_id full type">
+
+```ts
+{
+  eq?: number,
+  oneOf?: number[],
+  noneOf?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="effort_in_minutes full type">
+
+```ts
+{
+  eq?: number,
+  gt?: number,
+  lt?: number
+}
+```
+</Accordion>
+
+<Accordion title="progress full type">
+
+```ts
+{
+  eq?: number,
+  gt?: number,
+  lt?: number
+}
+```
+</Accordion>
+
+<Accordion title="start_date full type">
+
+```ts
+{
+  eq?: string,
+  gt?: string,
+  ge?: string,
+  lt?: string,
+  le?: string
+}
+```
+</Accordion>
+
+<Accordion title="due_date full type">
+
+```ts
+{
+  eq?: string,
+  gt?: string,
+  ge?: string,
+  lt?: string,
+  le?: string
+}
+```
+</Accordion>
+
+<Accordion title="created_at full type">
+
+```ts
+{
+  eq?: number,
+  gt?: number,
+  ge?: number,
+  lt?: number,
+  le?: number
+}
+```
+</Accordion>
+
+<Accordion title="updated_at full type">
+
+```ts
+{
+  eq?: number,
+  gt?: number,
+  ge?: number,
+  lt?: number,
+  le?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_page_token` | `string \| null` | Yes | Pass as `page_token` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+| `total_record_count` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  taskId?: number | null,
+  taskName?: string | null,
+  taskDescription?: string | null,
+  taskPrivateNote?: string | null,
+  startDate?: string | null,
+  dueDate?: string | null,
+  startDateActual?: string | null,
+  dueDateActual?: string | null,
+  archived?: boolean | null,
+  effortInMinutes?: number | null,
+  progress?: number | null,
+  atRisk?: boolean | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  revenueRecognitionTask?: boolean | null,
+  totalAllocatedMins?: number | null,
+  type?: string | null,
+  externalReferenceId?: string | null,
+  billable?: boolean | null,
+  csatEnabled?: boolean | null,
+  private?: boolean | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  project?: {
+    projectId?: number | null,
+    projectName?: string | null
+  } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  phase?: {
+    phaseId?: number | null,
+    phaseName?: string | null
+  } | null,
+  priority?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  assignees?: {
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    placeholders?: {
+      placeholderId?: number | null,
+      placeholderName?: string | null
+    }[] | null
+  } | null,
+  followers?: {
+    placeholders?: {
+      placeholderId?: number | null,
+      placeholderName?: string | null
+    }[] | null,
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null
+  } | null,
+  dependencies?: {
+    taskId?: number | null,
+    taskName?: string | null
+  }[] | null,
+  parent?: {
+    taskId?: number | null,
+    taskName?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  pageSize?: number | null,
+  hasMore?: boolean | null,
+  totalRecordCount?: number | null,
+  nextPage?: string | null,
+  nextPageToken?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task: its name, description, dates, effort, progress, status or custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketlane.api.tasks.update({ task_id: 9001, progress: 80, due_date: '2026-11-20' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_name` | `string` | No | The task title. |
+| `task_description` | `string` | No | — |
+| `task_private_note` | `string` | No | — |
+| `start_date` | `string` | No | An ISO date. |
+| `due_date` | `string` | No | An ISO date. |
+| `effort_in_minutes` | `number` | No | — |
+| `progress` | `number` | No | — |
+| `at_risk` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `status` | `object` | No | The task status, by its numeric value. |
+| `external_reference_id` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `fields` | `object[]` | No | Custom field values, keyed by the field id. |
+| `task_id` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  value: number
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldId: number,
+  value: string | number | boolean | string[] | number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  taskId?: number | null,
+  taskName?: string | null,
+  taskDescription?: string | null,
+  taskPrivateNote?: string | null,
+  startDate?: string | null,
+  dueDate?: string | null,
+  startDateActual?: string | null,
+  dueDateActual?: string | null,
+  archived?: boolean | null,
+  effortInMinutes?: number | null,
+  progress?: number | null,
+  atRisk?: boolean | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  revenueRecognitionTask?: boolean | null,
+  totalAllocatedMins?: number | null,
+  type?: string | null,
+  externalReferenceId?: string | null,
+  billable?: boolean | null,
+  csatEnabled?: boolean | null,
+  private?: boolean | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  project?: {
+    projectId?: number | null,
+    projectName?: string | null
+  } | null,
+  status?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  phase?: {
+    phaseId?: number | null,
+    phaseName?: string | null
+  } | null,
+  priority?: {
+    value?: number | null,
+    label?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  assignees?: {
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null,
+    placeholders?: {
+      placeholderId?: number | null,
+      placeholderName?: string | null
+    }[] | null
+  } | null,
+  followers?: {
+    placeholders?: {
+      placeholderId?: number | null,
+      placeholderName?: string | null
+    }[] | null,
+    members?: {
+      userId?: number | null,
+      emailId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null
+    }[] | null
+  } | null,
+  dependencies?: {
+    taskId?: number | null,
+    taskName?: string | null
+  }[] | null,
+  parent?: {
+    taskId?: number | null,
+    taskName?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Time Entries
+
+### create
+
+`timeEntries.create`
+
+Log time against a project or task: the date and minutes are required
+
+**Risk:** `write`
+
+```ts
+await corsair.rocketlane.api.timeEntries.create({ date: '2026-11-10', minutes: 90, project_id: 201, task_id: 9001, billable: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | The day the time was spent, as an ISO date. |
+| `minutes` | `number` | Yes | Minutes spent. Rocketlane rejects a day whose entries total more than 1440. |
+| `activity_name` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+| `project_id` | `number` | No | The project to log against. |
+| `task_id` | `number` | No | — |
+| `phase_id` | `number` | No | — |
+| `user_email` | `string` | No | The user the entry belongs to. |
+| `category_id` | `number` | No | — |
+
+Rocketlane rejects an entry that pushes a single day past 1440 minutes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="time_entry full type">
+
+```ts
+{
+  timeEntryId?: number | null,
+  date?: string | null,
+  minutes?: number | null,
+  activityName?: string | null,
+  notes?: string | null,
+  billable?: boolean | null,
+  sourceType?: string | null,
+  status?: string | null,
+  deleted?: boolean | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  submittedAt?: number | null,
+  approvedAt?: number | null,
+  rejectedAt?: number | null,
+  project?: {
+    projectId?: number | null,
+    projectName?: string | null
+  } | null,
+  task?: {
+    taskId?: number | null,
+    taskName?: string | null
+  } | null,
+  projectPhase?: {
+    phaseId?: number | null,
+    phaseName?: string | null
+  } | null,
+  user?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  category?: {
+    categoryId?: number | null,
+    categoryName?: string | null
+  } | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  submittedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  approvedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  rejectedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  costRate?: {
+    rate?: number | null,
+    currency?: string | null
+  } | null,
+  billRate?: {
+    rate?: number | null,
+    currency?: string | null
+  } | null,
+  budget?: {
+    budgetId?: number | null,
+    budgetName?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`timeEntries.delete`
+
+Delete a time entry permanently; the API answers 204
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.rocketlane.api.timeEntries.delete({ time_entry_id: 501 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `time_entry_id` | `number \| null` | Yes | — |
+
+
+
+---
+
+### get
+
+`timeEntries.get`
+
+Fetch one time entry with its project, task, user, rates and approval state
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.timeEntries.get({ time_entry_id: 501 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry_id` | `number` | Yes | — |
+| `include_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="time_entry full type">
+
+```ts
+{
+  timeEntryId?: number | null,
+  date?: string | null,
+  minutes?: number | null,
+  activityName?: string | null,
+  notes?: string | null,
+  billable?: boolean | null,
+  sourceType?: string | null,
+  status?: string | null,
+  deleted?: boolean | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  submittedAt?: number | null,
+  approvedAt?: number | null,
+  rejectedAt?: number | null,
+  project?: {
+    projectId?: number | null,
+    projectName?: string | null
+  } | null,
+  task?: {
+    taskId?: number | null,
+    taskName?: string | null
+  } | null,
+  projectPhase?: {
+    phaseId?: number | null,
+    phaseName?: string | null
+  } | null,
+  user?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  category?: {
+    categoryId?: number | null,
+    categoryName?: string | null
+  } | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  submittedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  approvedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  rejectedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  costRate?: {
+    rate?: number | null,
+    currency?: string | null
+  } | null,
+  billRate?: {
+    rate?: number | null,
+    currency?: string | null
+  } | null,
+  budget?: {
+    budgetId?: number | null,
+    budgetName?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`timeEntries.list`
+
+List time entries with filters for date, project, task, user, billable and approval status
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.timeEntries.list({ date: { ge: '2026-11-01', le: '2026-11-30' }, billable: { eq: true } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
+| `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
+| `include_fields` | `string[]` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
+| `date` | `object` | No | Filter on the entry date, as an ISO date. |
+| `project_id` | `object` | No | — |
+| `task_id` | `object` | No | — |
+| `user_email` | `object` | No | — |
+| `billable` | `object` | No | — |
+| `approval_status` | `object` | No | — |
+| `include_deleted` | `object` | No | — |
+
+The date operators are `eq`, `gt`, `ge`, `lt` and `le`.
+
+<AccordionGroup>
+<Accordion title="date full type">
+
+```ts
+{
+  eq?: string,
+  gt?: string,
+  ge?: string,
+  lt?: string,
+  le?: string
+}
+```
+</Accordion>
+
+<Accordion title="project_id full type">
+
+```ts
+{
+  eq?: number
+}
+```
+</Accordion>
+
+<Accordion title="task_id full type">
+
+```ts
+{
+  eq?: number,
+  oneOf?: number[],
+  noneOf?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="user_email full type">
+
+```ts
+{
+  eq?: string,
+  cn?: string,
+  nc?: string
+}
+```
+</Accordion>
+
+<Accordion title="billable full type">
+
+```ts
+{
+  eq?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="approval_status full type">
+
+```ts
+{
+  eq?: string
+}
+```
+</Accordion>
+
+<Accordion title="include_deleted full type">
+
+```ts
+{
+  eq?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entries` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_page_token` | `string \| null` | Yes | Pass as `page_token` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+| `total_record_count` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="time_entries full type">
+
+```ts
+{
+  timeEntryId?: number | null,
+  date?: string | null,
+  minutes?: number | null,
+  activityName?: string | null,
+  notes?: string | null,
+  billable?: boolean | null,
+  sourceType?: string | null,
+  status?: string | null,
+  deleted?: boolean | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  submittedAt?: number | null,
+  approvedAt?: number | null,
+  rejectedAt?: number | null,
+  project?: {
+    projectId?: number | null,
+    projectName?: string | null
+  } | null,
+  task?: {
+    taskId?: number | null,
+    taskName?: string | null
+  } | null,
+  projectPhase?: {
+    phaseId?: number | null,
+    phaseName?: string | null
+  } | null,
+  user?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  category?: {
+    categoryId?: number | null,
+    categoryName?: string | null
+  } | null,
+  createdBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  updatedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  submittedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  approvedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  rejectedBy?: {
+    userId?: number | null,
+    emailId?: string | null,
+    firstName?: string | null,
+    lastName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  costRate?: {
+    rate?: number | null,
+    currency?: string | null
+  } | null,
+  billRate?: {
+    rate?: number | null,
+    currency?: string | null
+  } | null,
+  budget?: {
+    budgetId?: number | null,
+    budgetName?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  pageSize?: number | null,
+  hasMore?: boolean | null,
+  totalRecordCount?: number | null,
+  nextPage?: string | null,
+  nextPageToken?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Fetch one user with their role, company, capacity and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.users.get({ user_id: 401 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `include_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  userId?: number | null,
+  email?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  type?: string | null,
+  status?: string | null,
+  profilePictureUrl?: string | null,
+  capacityInMinutes?: number | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  role?: {
+    roleId?: number | null,
+    roleName?: string | null
+  } | null,
+  company?: {
+    companyId?: number | null,
+    companyName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  permission?: {
+    permissionId?: number | null,
+    permissionName?: string | null
+  } | null,
+  holidayCalendar?: {
+    calenderId?: number | null,
+    calenderName?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List the team members on the instance with token paging
+
+**Risk:** `read`
+
+```ts
+await corsair.rocketlane.api.users.list({ page_size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | Records per page, 1 to 100. Rocketlane uses 100 when this is omitted. |
+| `page_token` | `string` | No | The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving. |
+| `include_fields` | `string[]` | No | — |
+| `match` | `all \| any` | No | How several filters combine: `all` (every filter, the default) or `any` (at least one). |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_page_token` | `string \| null` | Yes | Pass as `page_token` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+| `total_record_count` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  userId?: number | null,
+  email?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  type?: string | null,
+  status?: string | null,
+  profilePictureUrl?: string | null,
+  capacityInMinutes?: number | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  role?: {
+    roleId?: number | null,
+    roleName?: string | null
+  } | null,
+  company?: {
+    companyId?: number | null,
+    companyName?: string | null
+  } | null,
+  fields?: {
+    fieldId?: number | null,
+    fieldLabel?: string | null,
+    fieldValue?: any,
+    fieldValueLabel?: any
+  }[] | null,
+  permission?: {
+    permissionId?: number | null,
+    permissionName?: string | null
+  } | null,
+  holidayCalendar?: {
+    calenderId?: number | null,
+    calenderName?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  pageSize?: number | null,
+  hasMore?: boolean | null,
+  totalRecordCount?: number | null,
+  nextPage?: string | null,
+  nextPageToken?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,1504 @@
+{
+  "id": "rocketlane",
+  "displayName": "Rocketlane",
+  "description": "Professional services automation with Rocketlane - read and write tasks, projects, customer companies, time entries and team members, and archive a project.",
+  "npmPackageName": "@corsair-dev/rocketlane",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "rocketlane.api.companies.create",
+      "shortPath": "companies.create",
+      "description": "Create a customer company with its account owner, url and description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_name",
+            "optional": false,
+            "type": "string",
+            "description": "The company name."
+          },
+          {
+            "key": "account_owner",
+            "optional": false,
+            "type": "{ user_id?: number, email_id?: string }"
+          },
+          {
+            "key": "company_url",
+            "optional": true,
+            "type": "string",
+            "description": "The company website."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "EVERYONE | MEMBERS"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ fieldId: number, value: string | number | boolean | string[] | number[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "{ companyId?: number | null, companyName?: string | null, companyUrl?: string | null, visibility?: string | null, description?: string | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, accountOwner?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, notes?: { noteId?: number | null, fieldId?: number | null, fieldLabel?: string | null, noteTitle?: string | null, noteText?: string | null, createdAt?: number | null, updatedAt?: number | null, tags?: { tagId?: number | null, label?: string | null, color?: string | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.companies.delete",
+      "shortPath": "companies.delete",
+      "description": "Delete a company permanently; the API answers 204",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "company_id",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Fetch one company with its owner, url, description and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_all_fields",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "{ companyId?: number | null, companyName?: string | null, companyUrl?: string | null, visibility?: string | null, description?: string | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, accountOwner?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, notes?: { noteId?: number | null, fieldId?: number | null, fieldLabel?: string | null, noteTitle?: string | null, noteText?: string | null, createdAt?: number | null, updatedAt?: number | null, tags?: { tagId?: number | null, label?: string | null, color?: string | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "List customer companies with search and token paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, 1 to 100. Rocketlane uses 100 when this is omitted."
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving."
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_all_fields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "all | any",
+            "description": "How several filters combine: `all` (every filter, the default) or `any` (at least one)."
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "{ eq?: string, cn?: string, nc?: string }",
+            "description": "Search by company name, e.g. `{ cn: \"acme\" }`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companies",
+            "optional": false,
+            "type": "{ companyId?: number | null, companyName?: string | null, companyUrl?: string | null, visibility?: string | null, description?: string | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, accountOwner?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, notes?: { noteId?: number | null, fieldId?: number | null, fieldLabel?: string | null, noteTitle?: string | null, noteText?: string | null, createdAt?: number | null, updatedAt?: number | null, tags?: { tagId?: number | null, label?: string | null, color?: string | null }[] | null }[] | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ pageSize?: number | null, hasMore?: boolean | null, totalRecordCount?: number | null, nextPage?: string | null, nextPageToken?: string | null } | null"
+          },
+          {
+            "key": "next_page_token",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `page_token` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "total_record_count",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.companies.update",
+      "shortPath": "companies.update",
+      "description": "Update a company: its name, owner, url or description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string",
+            "description": "The company name."
+          },
+          {
+            "key": "account_owner",
+            "optional": true,
+            "type": "{ user_id?: number, email_id?: string }"
+          },
+          {
+            "key": "company_url",
+            "optional": true,
+            "type": "string",
+            "description": "The company website."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "EVERYONE | MEMBERS"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ fieldId: number, value: string | number | boolean | string[] | number[] }[]"
+          },
+          {
+            "key": "company_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "{ companyId?: number | null, companyName?: string | null, companyUrl?: string | null, visibility?: string | null, description?: string | null, createdAt?: number | null, updatedAt?: number | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, accountOwner?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, notes?: { noteId?: number | null, fieldId?: number | null, fieldLabel?: string | null, noteTitle?: string | null, noteText?: string | null, createdAt?: number | null, updatedAt?: number | null, tags?: { tagId?: number | null, label?: string | null, color?: string | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.projects.archive",
+      "shortPath": "projects.archive",
+      "description": "Archive a project, which keeps its records but removes it from active lists",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project from a customer and an owner, with its dates, visibility and financial details; Rocketlane emails an invite to each team member added",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_name",
+            "optional": false,
+            "type": "string",
+            "description": "The project title."
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ company_id?: number, company_name?: string }"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ user_id?: number, email_id?: string }"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO date."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO date on or after `start_date`."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "EVERYONE | MEMBERS",
+            "description": "`EVERYONE` lets every team member in the firm see the project; `MEMBERS` limits it to invited members."
+          },
+          {
+            "key": "team_member_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Users to add to the project. Rocketlane emails each of them an invite."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string",
+            "description": "A three-letter currency code."
+          },
+          {
+            "key": "annualized_recurring_revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budgeted_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_create_company",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create the customer company when it does not exist."
+          },
+          {
+            "key": "assign_project_owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ fieldId: number, value: string | number | boolean | string[] | number[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ projectId?: number | null, projectName?: string | null, startDate?: string | null, dueDate?: string | null, createdAt?: number | null, updatedAt?: number | null, visibility?: string | null, externalReferenceId?: string | null, currency?: string | { currencyCode?: string | null, currencyName?: string | null, currencySymbol?: string | null } | null, annualizedRecurringRevenue?: number | null, projectFee?: number | null, budgetedHours?: number | null, allocatedHours?: number | null, trackedHours?: number | null, progressPercentage?: number | null, inferredProgress?: string | null, archived?: boolean | null, customersInvited?: number | null, customersJoined?: number | null, owner?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, status?: { value?: number | null, label?: string | null } | null, customer?: { companyId?: number | null, companyName?: string | null, companyUrl?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, teamMembers?: { members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, customers?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, customerChampion?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null } | null, sources?: { prefix?: string | null, startDate?: string | null, templateId?: number | null, templateName?: string | null }[] | null, partnerCompanies?: { companyId?: number | null, companyName?: string | null, companyUrl?: string | null }[] | null, financials?: { contractType?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project permanently; the API answers 204",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Fetch one project with its customer, owner, team members, status and financial fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "The project id, from `projects.list`."
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_all_fields",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ projectId?: number | null, projectName?: string | null, startDate?: string | null, dueDate?: string | null, createdAt?: number | null, updatedAt?: number | null, visibility?: string | null, externalReferenceId?: string | null, currency?: string | { currencyCode?: string | null, currencyName?: string | null, currencySymbol?: string | null } | null, annualizedRecurringRevenue?: number | null, projectFee?: number | null, budgetedHours?: number | null, allocatedHours?: number | null, trackedHours?: number | null, progressPercentage?: number | null, inferredProgress?: string | null, archived?: boolean | null, customersInvited?: number | null, customersJoined?: number | null, owner?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, status?: { value?: number | null, label?: string | null } | null, customer?: { companyId?: number | null, companyName?: string | null, companyUrl?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, teamMembers?: { members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, customers?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, customerChampion?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null } | null, sources?: { prefix?: string | null, startDate?: string | null, templateId?: number | null, templateName?: string | null }[] | null, partnerCompanies?: { companyId?: number | null, companyName?: string | null, companyUrl?: string | null }[] | null, financials?: { contractType?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects with filters for company, customer, team member, status and financial ranges, plus token paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, 1 to 100. Rocketlane uses 100 when this is omitted."
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving."
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_all_fields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "all | any",
+            "description": "How several filters combine: `all` (every filter, the default) or `any` (at least one)."
+          },
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "{ eq?: string, cn?: string, nc?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ eq?: string | number, oneOf?: (string | number)[], noneOf?: (string | number)[] }"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "{ eq?: number, oneOf?: number[], noneOf?: number[] }"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "{ eq?: number, oneOf?: number[], noneOf?: number[] }"
+          },
+          {
+            "key": "team_member_id",
+            "optional": true,
+            "type": "{ eq?: number, oneOf?: number[], noneOf?: number[] }"
+          },
+          {
+            "key": "contract_type",
+            "optional": true,
+            "type": "{ eq?: string | number, oneOf?: (string | number)[], noneOf?: (string | number)[] }"
+          },
+          {
+            "key": "include_archive",
+            "optional": true,
+            "type": "{ eq?: boolean }"
+          },
+          {
+            "key": "external_reference_id",
+            "optional": true,
+            "type": "{ eq?: string }"
+          },
+          {
+            "key": "annualized_recurring_revenue",
+            "optional": true,
+            "type": "{ eq?: number, gt?: number, lt?: number }"
+          },
+          {
+            "key": "project_fee",
+            "optional": true,
+            "type": "{ eq?: number, gt?: number, lt?: number }"
+          },
+          {
+            "key": "budgeted_hours",
+            "optional": true,
+            "type": "{ eq?: number, gt?: number, ge?: number, lt?: number, le?: number }"
+          },
+          {
+            "key": "allocated_hours",
+            "optional": true,
+            "type": "{ eq?: number, gt?: number, ge?: number, lt?: number, le?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ projectId?: number | null, projectName?: string | null, startDate?: string | null, dueDate?: string | null, createdAt?: number | null, updatedAt?: number | null, visibility?: string | null, externalReferenceId?: string | null, currency?: string | { currencyCode?: string | null, currencyName?: string | null, currencySymbol?: string | null } | null, annualizedRecurringRevenue?: number | null, projectFee?: number | null, budgetedHours?: number | null, allocatedHours?: number | null, trackedHours?: number | null, progressPercentage?: number | null, inferredProgress?: string | null, archived?: boolean | null, customersInvited?: number | null, customersJoined?: number | null, owner?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, status?: { value?: number | null, label?: string | null } | null, customer?: { companyId?: number | null, companyName?: string | null, companyUrl?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, teamMembers?: { members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, customers?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, customerChampion?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null } | null, sources?: { prefix?: string | null, startDate?: string | null, templateId?: number | null, templateName?: string | null }[] | null, partnerCompanies?: { companyId?: number | null, companyName?: string | null, companyUrl?: string | null }[] | null, financials?: { contractType?: string | null } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ pageSize?: number | null, hasMore?: boolean | null, totalRecordCount?: number | null, nextPage?: string | null, nextPageToken?: string | null } | null"
+          },
+          {
+            "key": "next_page_token",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `page_token` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "total_record_count",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project: its name, dates, visibility, owner, custom fields or financial figures",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string",
+            "description": "The project title."
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ user_id?: number, email_id?: string }"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO date."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO date on or after `start_date`."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "EVERYONE | MEMBERS",
+            "description": "`EVERYONE` lets every team member in the firm see the project; `MEMBERS` limits it to invited members."
+          },
+          {
+            "key": "annualized_recurring_revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budgeted_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ fieldId: number, value: string | number | boolean | string[] | number[] }[]"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ projectId?: number | null, projectName?: string | null, startDate?: string | null, dueDate?: string | null, createdAt?: number | null, updatedAt?: number | null, visibility?: string | null, externalReferenceId?: string | null, currency?: string | { currencyCode?: string | null, currencyName?: string | null, currencySymbol?: string | null } | null, annualizedRecurringRevenue?: number | null, projectFee?: number | null, budgetedHours?: number | null, allocatedHours?: number | null, trackedHours?: number | null, progressPercentage?: number | null, inferredProgress?: string | null, archived?: boolean | null, customersInvited?: number | null, customersJoined?: number | null, owner?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, status?: { value?: number | null, label?: string | null } | null, customer?: { companyId?: number | null, companyName?: string | null, companyUrl?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, teamMembers?: { members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, customers?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, customerChampion?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null } | null, sources?: { prefix?: string | null, startDate?: string | null, templateId?: number | null, templateName?: string | null }[] | null, partnerCompanies?: { companyId?: number | null, companyName?: string | null, companyUrl?: string | null }[] | null, financials?: { contractType?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task in a project with its dates, effort, status, phase, assignees and custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_name",
+            "optional": false,
+            "type": "string",
+            "description": "The task title."
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "The project the task belongs to."
+          },
+          {
+            "key": "task_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "task_private_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO date."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO date."
+          },
+          {
+            "key": "effort_in_minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "at_risk",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": true,
+            "type": "{ phaseId?: number, phaseName?: string }",
+            "description": "Pick the phase by id or by name."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ value: number }",
+            "description": "The task status, by its numeric value."
+          },
+          {
+            "key": "external_reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ user_id?: number, email?: string }[]"
+          },
+          {
+            "key": "follower_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "parent_task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ fieldId: number, value: string | number | boolean | string[] | number[] }[]",
+            "description": "Custom field values, keyed by the field id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ taskId?: number | null, taskName?: string | null, taskDescription?: string | null, taskPrivateNote?: string | null, startDate?: string | null, dueDate?: string | null, startDateActual?: string | null, dueDateActual?: string | null, archived?: boolean | null, effortInMinutes?: number | null, progress?: number | null, atRisk?: boolean | null, createdAt?: number | null, updatedAt?: number | null, revenueRecognitionTask?: boolean | null, totalAllocatedMins?: number | null, type?: string | null, externalReferenceId?: string | null, billable?: boolean | null, csatEnabled?: boolean | null, private?: boolean | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, project?: { projectId?: number | null, projectName?: string | null } | null, status?: { value?: number | null, label?: string | null } | null, phase?: { phaseId?: number | null, phaseName?: string | null } | null, priority?: { value?: number | null, label?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, assignees?: { members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, placeholders?: { placeholderId?: number | null, placeholderName?: string | null }[] | null } | null, followers?: { placeholders?: { placeholderId?: number | null, placeholderName?: string | null }[] | null, members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null } | null, dependencies?: { taskId?: number | null, taskName?: string | null }[] | null, parent?: { taskId?: number | null, taskName?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task permanently; the API answers 204",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Fetch one task by id with its project, phase, status, assignees, followers and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number",
+            "description": "The task id, from `tasks.list`."
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_all_fields",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ taskId?: number | null, taskName?: string | null, taskDescription?: string | null, taskPrivateNote?: string | null, startDate?: string | null, dueDate?: string | null, startDateActual?: string | null, dueDateActual?: string | null, archived?: boolean | null, effortInMinutes?: number | null, progress?: number | null, atRisk?: boolean | null, createdAt?: number | null, updatedAt?: number | null, revenueRecognitionTask?: boolean | null, totalAllocatedMins?: number | null, type?: string | null, externalReferenceId?: string | null, billable?: boolean | null, csatEnabled?: boolean | null, private?: boolean | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, project?: { projectId?: number | null, projectName?: string | null } | null, status?: { value?: number | null, label?: string | null } | null, phase?: { phaseId?: number | null, phaseName?: string | null } | null, priority?: { value?: number | null, label?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, assignees?: { members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, placeholders?: { placeholderId?: number | null, placeholderName?: string | null }[] | null } | null, followers?: { placeholders?: { placeholderId?: number | null, placeholderName?: string | null }[] | null, members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null } | null, dependencies?: { taskId?: number | null, taskName?: string | null }[] | null, parent?: { taskId?: number | null, taskName?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks with filters for project, phase, status, assignee and date ranges, plus token paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, 1 to 100. Rocketlane uses 100 when this is omitted."
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving."
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "A projection: only these fields come back."
+          },
+          {
+            "key": "include_all_fields",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return every custom field as well as the defaults."
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "all | any",
+            "description": "How several filters combine: `all` (every filter, the default) or `any` (at least one)."
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "{ eq?: number }"
+          },
+          {
+            "key": "phase_id",
+            "optional": true,
+            "type": "{ eq?: number }"
+          },
+          {
+            "key": "task_name",
+            "optional": true,
+            "type": "{ eq?: string, cn?: string, nc?: string }"
+          },
+          {
+            "key": "task_status",
+            "optional": true,
+            "type": "{ eq?: string | number, oneOf?: (string | number)[], noneOf?: (string | number)[] }"
+          },
+          {
+            "key": "project_status",
+            "optional": true,
+            "type": "{ eq?: string | number, oneOf?: (string | number)[], noneOf?: (string | number)[] }"
+          },
+          {
+            "key": "include_archive",
+            "optional": true,
+            "type": "{ eq?: boolean }"
+          },
+          {
+            "key": "external_reference_id",
+            "optional": true,
+            "type": "{ eq?: string }"
+          },
+          {
+            "key": "assignee_user_id",
+            "optional": true,
+            "type": "{ eq?: number, oneOf?: number[], noneOf?: number[] }"
+          },
+          {
+            "key": "effort_in_minutes",
+            "optional": true,
+            "type": "{ eq?: number, gt?: number, lt?: number }"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "{ eq?: number, gt?: number, lt?: number }"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "{ eq?: string, gt?: string, ge?: string, lt?: string, le?: string }"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "{ eq?: string, gt?: string, ge?: string, lt?: string, le?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "{ eq?: number, gt?: number, ge?: number, lt?: number, le?: number }",
+            "description": "Epoch milliseconds."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "{ eq?: number, gt?: number, ge?: number, lt?: number, le?: number }",
+            "description": "Epoch milliseconds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ taskId?: number | null, taskName?: string | null, taskDescription?: string | null, taskPrivateNote?: string | null, startDate?: string | null, dueDate?: string | null, startDateActual?: string | null, dueDateActual?: string | null, archived?: boolean | null, effortInMinutes?: number | null, progress?: number | null, atRisk?: boolean | null, createdAt?: number | null, updatedAt?: number | null, revenueRecognitionTask?: boolean | null, totalAllocatedMins?: number | null, type?: string | null, externalReferenceId?: string | null, billable?: boolean | null, csatEnabled?: boolean | null, private?: boolean | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, project?: { projectId?: number | null, projectName?: string | null } | null, status?: { value?: number | null, label?: string | null } | null, phase?: { phaseId?: number | null, phaseName?: string | null } | null, priority?: { value?: number | null, label?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, assignees?: { members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, placeholders?: { placeholderId?: number | null, placeholderName?: string | null }[] | null } | null, followers?: { placeholders?: { placeholderId?: number | null, placeholderName?: string | null }[] | null, members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null } | null, dependencies?: { taskId?: number | null, taskName?: string | null }[] | null, parent?: { taskId?: number | null, taskName?: string | null } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ pageSize?: number | null, hasMore?: boolean | null, totalRecordCount?: number | null, nextPage?: string | null, nextPageToken?: string | null } | null"
+          },
+          {
+            "key": "next_page_token",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `page_token` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "total_record_count",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task: its name, description, dates, effort, progress, status or custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_name",
+            "optional": true,
+            "type": "string",
+            "description": "The task title."
+          },
+          {
+            "key": "task_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "task_private_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO date."
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO date."
+          },
+          {
+            "key": "effort_in_minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "at_risk",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ value: number }",
+            "description": "The task status, by its numeric value."
+          },
+          {
+            "key": "external_reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ fieldId: number, value: string | number | boolean | string[] | number[] }[]",
+            "description": "Custom field values, keyed by the field id."
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ taskId?: number | null, taskName?: string | null, taskDescription?: string | null, taskPrivateNote?: string | null, startDate?: string | null, dueDate?: string | null, startDateActual?: string | null, dueDateActual?: string | null, archived?: boolean | null, effortInMinutes?: number | null, progress?: number | null, atRisk?: boolean | null, createdAt?: number | null, updatedAt?: number | null, revenueRecognitionTask?: boolean | null, totalAllocatedMins?: number | null, type?: string | null, externalReferenceId?: string | null, billable?: boolean | null, csatEnabled?: boolean | null, private?: boolean | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, project?: { projectId?: number | null, projectName?: string | null } | null, status?: { value?: number | null, label?: string | null } | null, phase?: { phaseId?: number | null, phaseName?: string | null } | null, priority?: { value?: number | null, label?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, assignees?: { members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null, placeholders?: { placeholderId?: number | null, placeholderName?: string | null }[] | null } | null, followers?: { placeholders?: { placeholderId?: number | null, placeholderName?: string | null }[] | null, members?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null }[] | null } | null, dependencies?: { taskId?: number | null, taskName?: string | null }[] | null, parent?: { taskId?: number | null, taskName?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.timeEntries.create",
+      "shortPath": "timeEntries.create",
+      "description": "Log time against a project or task: the date and minutes are required",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "The day the time was spent, as an ISO date."
+          },
+          {
+            "key": "minutes",
+            "optional": false,
+            "type": "number",
+            "description": "Minutes spent. Rocketlane rejects a day whose entries total more than 1440."
+          },
+          {
+            "key": "activity_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "The project to log against."
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "phase_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_email",
+            "optional": true,
+            "type": "string",
+            "description": "The user the entry belongs to."
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry",
+            "optional": false,
+            "type": "{ timeEntryId?: number | null, date?: string | null, minutes?: number | null, activityName?: string | null, notes?: string | null, billable?: boolean | null, sourceType?: string | null, status?: string | null, deleted?: boolean | null, createdAt?: number | null, updatedAt?: number | null, submittedAt?: number | null, approvedAt?: number | null, rejectedAt?: number | null, project?: { projectId?: number | null, projectName?: string | null } | null, task?: { taskId?: number | null, taskName?: string | null } | null, projectPhase?: { phaseId?: number | null, phaseName?: string | null } | null, user?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, category?: { categoryId?: number | null, categoryName?: string | null } | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, submittedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, approvedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, rejectedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, costRate?: { rate?: number | null, currency?: string | null } | null, billRate?: { rate?: number | null, currency?: string | null } | null, budget?: { budgetId?: number | null, budgetName?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.timeEntries.delete",
+      "shortPath": "timeEntries.delete",
+      "description": "Delete a time entry permanently; the API answers 204",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.timeEntries.get",
+      "shortPath": "timeEntries.get",
+      "description": "Fetch one time entry with its project, task, user, rates and approval state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry",
+            "optional": false,
+            "type": "{ timeEntryId?: number | null, date?: string | null, minutes?: number | null, activityName?: string | null, notes?: string | null, billable?: boolean | null, sourceType?: string | null, status?: string | null, deleted?: boolean | null, createdAt?: number | null, updatedAt?: number | null, submittedAt?: number | null, approvedAt?: number | null, rejectedAt?: number | null, project?: { projectId?: number | null, projectName?: string | null } | null, task?: { taskId?: number | null, taskName?: string | null } | null, projectPhase?: { phaseId?: number | null, phaseName?: string | null } | null, user?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, category?: { categoryId?: number | null, categoryName?: string | null } | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, submittedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, approvedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, rejectedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, costRate?: { rate?: number | null, currency?: string | null } | null, billRate?: { rate?: number | null, currency?: string | null } | null, budget?: { budgetId?: number | null, budgetName?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.timeEntries.list",
+      "shortPath": "timeEntries.list",
+      "description": "List time entries with filters for date, project, task, user, billable and approval status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, 1 to 100. Rocketlane uses 100 when this is omitted."
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving."
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "all | any",
+            "description": "How several filters combine: `all` (every filter, the default) or `any` (at least one)."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "{ eq?: string, gt?: string, ge?: string, lt?: string, le?: string }",
+            "description": "Filter on the entry date, as an ISO date."
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "{ eq?: number }"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "{ eq?: number, oneOf?: number[], noneOf?: number[] }"
+          },
+          {
+            "key": "user_email",
+            "optional": true,
+            "type": "{ eq?: string, cn?: string, nc?: string }"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "{ eq?: boolean }"
+          },
+          {
+            "key": "approval_status",
+            "optional": true,
+            "type": "{ eq?: string }"
+          },
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "{ eq?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entries",
+            "optional": false,
+            "type": "{ timeEntryId?: number | null, date?: string | null, minutes?: number | null, activityName?: string | null, notes?: string | null, billable?: boolean | null, sourceType?: string | null, status?: string | null, deleted?: boolean | null, createdAt?: number | null, updatedAt?: number | null, submittedAt?: number | null, approvedAt?: number | null, rejectedAt?: number | null, project?: { projectId?: number | null, projectName?: string | null } | null, task?: { taskId?: number | null, taskName?: string | null } | null, projectPhase?: { phaseId?: number | null, phaseName?: string | null } | null, user?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, category?: { categoryId?: number | null, categoryName?: string | null } | null, createdBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, updatedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, submittedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, approvedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, rejectedBy?: { userId?: number | null, emailId?: string | null, firstName?: string | null, lastName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, costRate?: { rate?: number | null, currency?: string | null } | null, billRate?: { rate?: number | null, currency?: string | null } | null, budget?: { budgetId?: number | null, budgetName?: string | null } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ pageSize?: number | null, hasMore?: boolean | null, totalRecordCount?: number | null, nextPage?: string | null, nextPageToken?: string | null } | null"
+          },
+          {
+            "key": "next_page_token",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `page_token` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "total_record_count",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.users.get",
+      "shortPath": "users.get",
+      "description": "Fetch one user with their role, company, capacity and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ userId?: number | null, email?: string | null, firstName?: string | null, lastName?: string | null, type?: string | null, status?: string | null, profilePictureUrl?: string | null, capacityInMinutes?: number | null, createdAt?: number | null, updatedAt?: number | null, role?: { roleId?: number | null, roleName?: string | null } | null, company?: { companyId?: number | null, companyName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, permission?: { permissionId?: number | null, permissionName?: string | null } | null, holidayCalendar?: { calenderId?: number | null, calenderName?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rocketlane.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the team members on the instance with token paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, 1 to 100. Rocketlane uses 100 when this is omitted."
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving."
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "all | any",
+            "description": "How several filters combine: `all` (every filter, the default) or `any` (at least one)."
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ userId?: number | null, email?: string | null, firstName?: string | null, lastName?: string | null, type?: string | null, status?: string | null, profilePictureUrl?: string | null, capacityInMinutes?: number | null, createdAt?: number | null, updatedAt?: number | null, role?: { roleId?: number | null, roleName?: string | null } | null, company?: { companyId?: number | null, companyName?: string | null } | null, fields?: { fieldId?: number | null, fieldLabel?: string | null, fieldValue?: any, fieldValueLabel?: any }[] | null, permission?: { permissionId?: number | null, permissionName?: string | null } | null, holidayCalendar?: { calenderId?: number | null, calenderName?: string | null } | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ pageSize?: number | null, hasMore?: boolean | null, totalRecordCount?: number | null, nextPage?: string | null, nextPageToken?: string | null } | null"
+          },
+          {
+            "key": "next_page_token",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `page_token` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "total_record_count",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

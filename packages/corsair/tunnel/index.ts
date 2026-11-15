@@ -288,9 +288,13 @@ async function handleWebhookTunnel(
 	}
 
 	if (result.response && result.response.success === false) {
+		// A refusal (bad signature, wrong secret) is final, but a failure on our
+		// side (a 5xx, such as a tenant lookup the database couldn't answer)
+		// should reach the sender as retryable so the delivery isn't lost.
+		const statusCode = result.response.statusCode;
 		return {
 			status: 'failed',
-			retryable: false,
+			retryable: typeof statusCode === 'number' && statusCode >= 500,
 			error:
 				typeof result.response.error === 'string'
 					? result.response.error
