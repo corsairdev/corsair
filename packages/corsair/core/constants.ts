@@ -291,6 +291,7 @@ export const BaseProviders = [
 	'geocodio',
 	'geokeo',
 	'getprospect',
+	'giftup',
 	'gigasheet',
 	'giphy',
 	'github',
@@ -917,6 +918,7 @@ export const ProviderDisplayNames = {
 	geocodio: 'Geocodio',
 	geokeo: 'Geokeo',
 	getprospect: 'GetProspect',
+	giftup: 'Gift Up!',
 	gigasheet: 'Gigasheet',
 	giphy: 'Giphy',
 	github: 'GitHub',
@@ -1550,6 +1552,7 @@ export type AllProviders =
 	| 'geocodio'
 	| 'geokeo'
 	| 'getprospect'
+	| 'giftup'
 	| 'gigasheet'
 	| 'giphy'
 	| 'github'
