@@ -2,7 +2,7 @@ import { ForceManagerAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 describe('ForceManager error handling', () => {
-	it('recognizes 429 and carries Retry-After without automatic retries', async () => {
+	it('retries 429 responses and carries Retry-After', async () => {
 		const error = new ForceManagerAPIError(
 			'ForceManager request failed with HTTP 429',
 			429,
@@ -13,7 +13,7 @@ describe('ForceManager error handling', () => {
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
 		).resolves.toEqual({
-			maxRetries: 0,
+			maxRetries: 3,
 			headersRetryAfterMs: 4000,
 		});
 	});

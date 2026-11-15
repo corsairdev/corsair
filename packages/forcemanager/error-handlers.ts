@@ -6,8 +6,9 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof ForceManagerAPIError && error.status === 429,
 		handler: async (error: Error) => ({
-			// The official v4 contract publishes no retry policy; surface Retry-After without retrying writes.
-			maxRetries: 0,
+			// A 429 means ForceManager did not process the request, so retrying a write is safe; core waits for
+			// Retry-After when the response carries one.
+			maxRetries: 3,
 			headersRetryAfterMs:
 				error instanceof ForceManagerAPIError ? error.retryAfter : undefined,
 		}),
