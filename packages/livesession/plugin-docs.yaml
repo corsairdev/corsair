@@ -8,15 +8,12 @@ examples:
     path: sessions.list
     title: List recorded sessions
   write:
-    path: alerts.create
-    title: Create an alert
+    path: webhooks.create
+    title: Create an outbound webhook
     args:
-      name: Rage clicks
-      events:
-        - kind: 21
-          value: "5"
-      provider: webhooks
-      webhook_id: "542de45"
+      url: https://example.com/livesession-webhook
+      website_id: "a6b7c8d9"
+      version: v1.0
 apiNotes:
   sessions.list: "`date_from` and `date_to` take a relative value such as `TODAY-7DAYS` or an ISO 8601 datetime with a time part (`2026-01-31T00:00:00Z`); LiveSession ignores a date without a time. `tz` only applies together with a date filter. An empty result can come back as `sessions: null`."
   websites.create: "In our live run (2026-11-15) LiveSession answered 404 to `POST /websites`, with and without a token, although its API reference lists the route."

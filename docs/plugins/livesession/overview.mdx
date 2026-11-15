@@ -1,0 +1,129 @@
+---
+title: "LiveSession plugin"
+sidebarTitle: "Overview"
+description: "Session replay and product analytics API for listing recorded sessions, managing alerts and webhooks, and creating tracked websites."
+---
+
+Use **LiveSession** through Corsair: one client, typed API calls.
+
+A personal access token made in LiveSession (Settings, API, API Tokens) currently offers only the `users.sessions:read` scope, which covers `sessions.list`. Alerts, webhooks and websites need a token that also has the `alerts`, `webhooks` or `websites` scopes; with a sessions-only token LiveSession answers 401 `insufficient_scope`.
+
+**What you get:**
+
+- 11 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/livesession better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/livesession better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/livesession better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/livesession better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { livesession } from '@corsair-dev/livesession';
+
+export const corsair = createCorsair({
+	plugins: [
+		livesession(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the LiveSession API key before the first call: `pnpm corsair setup --plugin=livesession --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+livesession()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'livesession',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recorded sessions**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.livesession.api.sessions.list({});
+```
+
+
+**Create an outbound webhook**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.livesession.api.webhooks.create({ url: 'https://example.com/livesession-webhook', website_id: 'a6b7c8d9', version: 'v1.0' });
+```
+
+
+See the full list on the [API](/plugins/livesession/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/livesession/api">
+    Every `livesession.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

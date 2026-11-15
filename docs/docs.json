@@ -2991,6 +2991,14 @@
                 ]
               },
               {
+                "group": "LiveSession",
+                "pages": [
+                  "plugins/livesession/overview",
+                  "plugins/livesession/api",
+                  "plugins/livesession/database"
+                ]
+              },
+              {
                 "group": "Loyverse",
                 "pages": [
                   "plugins/loyverse/overview",
