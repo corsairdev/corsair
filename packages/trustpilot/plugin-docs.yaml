@@ -1,0 +1,66 @@
+displayName: "Trustpilot"
+description: Read Trustpilot business, service review, product review, invitation, consumer profile and Data Solutions API data.
+recommendedAuth: api_key
+overviewNote: >-
+  Public API operations need a Trustpilot API key. Private business and invitation operations need an OAuth 2.0 access token; select oauth_2 for these calls. With oauth_2, public operations send the OAuth app's client id as the API key (Trustpilot's API key is the client id), or apiKey from plugin options when it is set. Trustpilot documents authorization-code and client-credentials grants, but does not publish per-operation scopes in these references.
+apiNotes:
+  businessUnits.privateReviews: >-
+    Private reviews can include consumer email addresses, reference IDs, and Find Reviewer responses. Treat returned personal data as sensitive; the plugin omits it from logs and sanitized HTTP errors.
+  productReviews.privateList: >-
+    Private product reviews include consumer email and reference ID fields. Treat returned personal data as sensitive; the plugin omits it from logs and sanitized HTTP errors.
+  invitations.link: >-
+    Invitation links require consumer email/name fields. The plugin does not log the request or echo those values in errors.
+apiExamples:
+  businessUnits.find: { args: { name: shop.example } }
+  businessUnits.get: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.search: { args: { query: shops, country: GB, page: 1, perpage: 10 } }
+  businessUnits.profileInfo: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.webLinks: { args: { businessUnitId: 507f191e810c19729de860ea, locale: en-GB } }
+  businessUnits.logo: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.promotionBoxImage: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.headerImage: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.listCategories: { args: { businessUnitId: 507f191e810c19729de860ea, country: GB } }
+  businessUnits.publicAll: { args: { perPage: 100 } }
+  businessUnits.customerGuarantee: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.profilePromotion: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.publicPromotionBox: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.reviews: { args: { businessUnitId: 507f191e810c19729de860ea, page: 1, perPage: 10 } }
+  businessUnits.allReviews: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  businessUnits.privateReviews: { args: { businessUnitId: 507f191e810c19729de860ea, page: 1, perPage: 10 } }
+  reviews.get: { args: { reviewId: 507f191e810c19729de860ea } }
+  reviews.getPrivate: { args: { reviewId: 507f191e810c19729de860ea } }
+  reviews.latest: { args: { count: 5, language: [en] } }
+  reviews.getTags: { args: { reviewId: 507f191e810c19729de860ea } }
+  reviews.webLinks: { args: { reviewId: 507f191e810c19729de860ea, locale: en-GB } }
+  reviews.likes: { args: { reviewId: 507f191e810c19729de860ea } }
+  consumers.reviews: { args: { consumerId: 507f191e810c19729de860ea, page: 1, perPage: 10 } }
+  consumerProfiles.get: { args: { consumerId: 507f191e810c19729de860ea } }
+  consumerProfiles.getWithReviews: { args: { consumerId: 507f191e810c19729de860ea } }
+  consumerProfiles.webLinks: { args: { consumerId: 507f191e810c19729de860ea, locale: en-GB } }
+  consumerProfiles.bulk: { args: { consumerIds: [507f191e810c19729de860ea] } }
+  consumerProfiles.createDisplayName: { args: { displayName: Example Reviewer } }
+  consumerProfiles.validateDisplayName: { args: { displayName: Example Reviewer } }
+  productReviews.summary: { args: { businessUnitId: 507f191e810c19729de860ea, sku: [SKU-123] } }
+  productReviews.list: { args: { businessUnitId: 507f191e810c19729de860ea, sku: [SKU-123], page: 1 } }
+  productReviews.privateList: { args: { businessUnitId: 507f191e810c19729de860ea, page: 1, perPage: 10 } }
+  productReviews.privateGet: { args: { reviewId: 507f191e810c19729de860ea } }
+  productReviews.summaries: { args: { businessUnitId: 507f191e810c19729de860ea, page: 1 } }
+  productReviews.batchSummaries: { args: { businessUnitId: 507f191e810c19729de860ea, skus: [SKU-123] } }
+  productReviews.invitationLink: { args: { businessUnitId: 507f191e810c19729de860ea, consumer: { email: reviewer@example.com, name: Example Reviewer }, products: [{ productUrl: https://shop.example/item, name: Item }] } }
+  productReviews.createComment: { args: { conversationId: 507f191e810c19729de860ea, content: Thank you, integrationId: corsair } }
+  productReviews.getConversation: { args: { conversationId: 507f191e810c19729de860ea } }
+  productReviews.getComment: { args: { conversationId: 507f191e810c19729de860ea, commentId: 507f191e810c19729de860ea } }
+  productReviews.updateComment: { args: { conversationId: 507f191e810c19729de860ea, commentId: 507f191e810c19729de860ea, content: Updated reply, integrationId: corsair } }
+  productReviews.publicConversation: { args: { conversationId: 507f191e810c19729de860ea } }
+  productReviews.createConversation: { args: { reviewId: 507f191e810c19729de860ea } }
+  productReviews.attributeSummaries: { args: { businessUnitId: 507f191e810c19729de860ea, skus: [SKU-123] } }
+  productReviews.importedSummary: { args: { businessUnitId: 507f191e810c19729de860ea, sku: [SKU-123] } }
+  productReviews.importedReviews: { args: { businessUnitId: 507f191e810c19729de860ea, sku: [SKU-123], page: 1 } }
+  invitations.templates: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  invitations.link: { args: { businessUnitId: 507f191e810c19729de860ea, email: reviewer@example.com, name: Example Reviewer, locale: en-US } }
+  dataSolutions.searchBusinessUnits: { args: { query: shop.example, perPage: 20 } }
+  dataSolutions.findBusinessUnits: { args: { domain: shop.example, perPage: 20 } }
+  dataSolutions.businessUnitDetails: { args: { businessUnitId: 507f191e810c19729de860ea } }
+  dataSolutions.latestReviews: { args: { businessUnitId: 507f191e810c19729de860ea, limit: 5 } }
+  dataSolutions.serviceReviews: { args: { businessUnitId: 507f191e810c19729de860ea, startDate: '2025-01-01' } }
+  dataSolutions.categories: { args: { countryCode: GB } }
