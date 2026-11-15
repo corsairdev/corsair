@@ -478,7 +478,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'datasources.listDatasourceInstances': {
-				data: { datasources: [{ id: 'rec-1' }] },
+				data: { instances: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'datasources.retrieveDatasourceInstances': {
@@ -493,10 +493,7 @@ describe('Klipfolio schema', () => {
 				data: { id: 'rec-1' },
 				meta: { status: 200, success: true },
 			},
-			'datasources.retrieveDatasourceInstancesData': {
-				data: { id: 'rec-1' },
-				meta: { status: 200, success: true },
-			},
+			'datasources.retrieveDatasourceInstancesData': 'Product,Units\nBread,9\n',
 			'datasources.updateDatasourceInstancesData': {
 				data: { id: 'rec-1' },
 				meta: { status: 200, success: true },
@@ -654,7 +651,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'misc.listDashboardPublishedLinks': {
-				data: { id: 'rec-1' },
+				data: { published_links: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'misc.updateDashboardPublishedLinks': {

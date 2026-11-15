@@ -705,7 +705,8 @@ const CreateDashboardPublishedLinksInputSchema = z
 const ListDashboardPublishedLinksInputSchema = z
 	.object({
 		...KlipfolioPageInput,
-		dashboard_id: z.string().optional(),
+		// Required: without it Klipfolio answers 400 "Missing dashboard id".
+		dashboard_id: z.string().min(1),
 		client_id: z.string().optional(),
 	})
 	.passthrough();
@@ -1281,11 +1282,13 @@ export const KlipfolioEndpointOutputSchemas = {
 	retrieveDatasourceShareRights: KlipfolioSingleEnvelopeOutputSchema,
 	setDatasourceShareRights: KlipfolioWriteEnvelopeOutputSchema,
 	deleteDatasourceShareRight: KlipfolioWriteEnvelopeOutputSchema,
-	listDatasourceInstances: keyedListEnvelope('datasources'),
+	listDatasourceInstances: keyedListEnvelope('instances'),
 	retrieveDatasourceInstances: KlipfolioSingleEnvelopeOutputSchema,
 	createDatasourceInstances: KlipfolioWriteEnvelopeOutputSchema,
 	deleteDatasourceInstances: KlipfolioWriteEnvelopeOutputSchema,
-	retrieveDatasourceInstancesData: KlipfolioSingleEnvelopeOutputSchema,
+	// The stored data itself (CSV, JSON or XML as uploaded), served as
+	// application/octet-stream with no { data, meta } envelope.
+	retrieveDatasourceInstancesData: z.string(),
 	updateDatasourceInstancesData: KlipfolioWriteEnvelopeOutputSchema,
 	refreshDatasourceInstances: KlipfolioWriteEnvelopeOutputSchema,
 	refreshDatasource: KlipfolioWriteEnvelopeOutputSchema,
@@ -1325,7 +1328,7 @@ export const KlipfolioEndpointOutputSchemas = {
 	importKlip: KlipfolioWriteEnvelopeOutputSchema,
 	retrieveProfile: KlipfolioSingleEnvelopeOutputSchema,
 	createDashboardPublishedLinks: KlipfolioWriteEnvelopeOutputSchema,
-	listDashboardPublishedLinks: KlipfolioSingleEnvelopeOutputSchema,
+	listDashboardPublishedLinks: keyedListEnvelope('published_links'),
 	updateDashboardPublishedLinks: KlipfolioWriteEnvelopeOutputSchema,
 	deleteDashboardPublishedLinks: KlipfolioWriteEnvelopeOutputSchema,
 	listRoles: keyedListEnvelope('roles'),
