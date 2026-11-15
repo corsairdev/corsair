@@ -1,20 +1,28 @@
+import { quickbooks } from './index';
 import { QuickBooksSchema } from './schema';
 
-describe('QuickBooks schema', () => {
-	it('declares a semver version', () => {
+describe('QuickBooks scaffold', () => {
+	it('does not expose unverified API or auth behavior', () => {
+		const plugin = quickbooks();
+
+		expect(plugin.endpoints).toEqual({});
+		expect(plugin.webhooks).toEqual({});
+		expect(plugin.endpointMeta).toEqual({});
+		expect(plugin.endpointSchemas).toBeUndefined();
+		expect(plugin.authConfig).toBeUndefined();
+		expect(plugin.oauthConfig).toBeUndefined();
+		expect(plugin.keyBuilder).toBeUndefined();
+	});
+
+	it('declares a semver schema version', () => {
 		expect(QuickBooksSchema.version).toBeDefined();
 		expect(QuickBooksSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('has no persistence entities until their contract is known', () => {
 		expect(typeof QuickBooksSchema.entities).toBe('object');
 		expect(QuickBooksSchema.entities).not.toBeNull();
 		expect(Array.isArray(Object.keys(QuickBooksSchema.entities))).toBe(true);
-		for (const entity of Object.values(QuickBooksSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(QuickBooksSchema.entities).toEqual({});
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

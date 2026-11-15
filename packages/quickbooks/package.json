@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/quickbooks",
   "version": "0.1.0",
-  "description": "QuickBooks plugin for Corsair",
+  "description": "QuickBooks API integration scaffold blocked pending verifiable official Intuit API contracts",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -36,8 +36,14 @@
     "quickbooks",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/quickbooks"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/quickbooks",
   "files": [
     "dist"
   ]
