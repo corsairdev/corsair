@@ -2463,6 +2463,14 @@
                 ]
               },
               {
+                "group": "Globalping",
+                "pages": [
+                  "plugins/globalping/overview",
+                  "plugins/globalping/api",
+                  "plugins/globalping/database"
+                ]
+              },
+              {
                 "group": "Gmail",
                 "pages": [
                   "plugins/gmail/overview",

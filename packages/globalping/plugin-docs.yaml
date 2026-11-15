@@ -1,0 +1,33 @@
+displayName: Globalping
+description: List Globalping probes, limits, and health, and create or read a measurement.
+domain: globalping.io
+recommendedAuth: api_key
+overviewNote: |
+  Probes, limits, and health are public. GET /v1/probes and GET /v1/limits returned HTTP 200. GET /health returned the text Alive. GET /v1/measurements/does-not-exist returned HTTP 404. A connected key is sent as Bearer and is not required. Probes have no stable id and are not stored. Measurement results and the target are not stored. Creating a measurement spends credits.
+examples:
+  read:
+    path: limits.get
+    title: Read limits
+    args: {}
+apiNotes:
+  probes.list: |
+    GET /v1/probes. Resolver addresses are not returned.
+  limits.get: |
+    GET /v1/limits. Stores the measurements.create bucket.
+  health.get: |
+    GET /health. Stores the text body.
+  measurements.create: |
+    POST /v1/measurements. Stores id, probesCount, and type.
+  measurements.get: |
+    GET /v1/measurements/{id}. Stores id, type, status, and probesCount.
+apiExamples:
+  probes.list:
+    call: "{}"
+  limits.get:
+    call: "{}"
+  health.get:
+    call: "{}"
+  measurements.create:
+    call: "{ type: 'ping', target: 'example.com' }"
+  measurements.get:
+    call: "{ id: 'example' }"

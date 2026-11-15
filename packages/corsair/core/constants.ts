@@ -294,6 +294,7 @@ export const BaseProviders = [
 	'github',
 	'gitlab',
 	'gladia',
+	'globalping',
 	'gmail',
 	'gmicloud',
 	'gong',
@@ -907,6 +908,7 @@ export const ProviderDisplayNames = {
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gladia: 'Gladia',
+	globalping: 'Globalping',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
 	gong: 'Gong',
@@ -1527,6 +1529,7 @@ export type AllProviders =
 	| 'github'
 	| 'gitlab'
 	| 'gladia'
+	| 'globalping'
 	| 'gmail'
 	| 'gmicloud'
 	| 'gong'
