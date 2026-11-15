@@ -1,0 +1,142 @@
+---
+title: "GenderAPI.io plugin"
+sidebarTitle: "Overview"
+description: "Infer gender from a name, an email address or a username with GenderAPI.io - one at a time or in a batch of up to 50, with the confidence, the source that answered and the credits it cost."
+---
+
+Use **GenderAPI.io** through Corsair: one client, typed API calls.
+
+Copy your 24-character API key from the GenderAPI.io dashboard. The key travels as a bearer token, and the same key and balance work on v1 and v2.
+
+Things to know before you call:
+
+- **A key is optional, so Corsair does not prompt for one.** With no key connected, GenderAPI.io falls back to an IP-scoped trial of 10 credits per 24 hours, shared by every caller behind the same public IP (on a shared server, every tenant without a key). Connect the key with a connect link or the `key` option before paid use. `meta.access.mode` says which one was used: `api_key` or `ip_trial`. A missing or unknown key falls back too, while a disabled, expired or restricted key does **not** and answers 403. A trial batch takes at most 10 items.
+- **An unknown gender is a billed result, not an error.** The answer is HTTP 200 with `gender: null`, `result_status: "unknown"` and a `reason` such as `not_found` or `ambiguous`.
+- **`source` says who answered.** `dataset` means the name was in the database, `ai` means a model inferred it, and `none` means nothing could. `confidence_kind` follows: `observed_frequency` for the dataset, `model_reported` for AI.
+- **What a call costs.** A single request defaults to `ai_mode: 'fallback'`, which costs 1 credit in total whether the dataset or AI answers. `ai_mode: 'always'` costs 2, and so does a `forceToGenderize` call that AI answers. A batch defaults to `off`, so pass `ai_mode` (for the batch or per item) when a batch needs AI. Phone validation costs 1, and so does an unknown result.
+- **A batch item can fail without failing the batch.** Only successful items are billed, and `meta.summary` counts `total`, `succeeded`, `unknown` and `failed`.
+- **A failed prediction may already be charged.** The error catalog says to inspect `billing_status` before retrying, because a retry starts a new billed operation. The plugin does not retry a prediction or phone call after a 5xx, a timeout or a dropped connection; an HTTP failure is core's `ApiError`, whose body keeps `meta.usage.billing_status` when the API sent one (`genderApiIoErrorInfo(error).billingStatus` reads it). Only the free GET routes and a 429 are retried.
+- **`usage`, `capabilities` and `errorCatalog` are free.** They are safe to poll: the first gives the balance, the second the batch limit and AI availability, the third every error code with what to do about it.
+- **Confidence is not a calibrated probability.** The docs say so explicitly, so treat it as a ranking signal rather than a certainty.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/genderapiio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/genderapiio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/genderapiio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/genderapiio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { genderapiio } from '@corsair-dev/genderapiio';
+
+export const corsair = createCorsair({
+	plugins: [
+		genderapiio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the GenderAPI.io API key before the first call: `pnpm corsair setup --plugin=genderapiio --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+genderapiio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'genderapiio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Validate and format a phone number**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.genderapiio.api.phone.validate({ number: '+14155552671', country: 'US' });
+```
+
+
+**Infer gender for a batch of names**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.genderapiio.api.gender.batch({
+	items: [{ type: 'name', value: 'Sophia' }, { type: 'name', value: 'Michael', country: 'US' }],
+});
+```
+
+
+See the full list on the [API](/plugins/genderapiio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/genderapiio/api">
+    Every `genderapiio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

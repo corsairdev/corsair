@@ -1,0 +1,171 @@
+{
+  "tickets.listTicketTags": {
+    "data": [
+      {
+        "id": 2131657,
+        "created_datetime": "2026-11-14T19:17:22.720003+00:00",
+        "decoration": {
+          "color": "#55df52"
+        },
+        "deleted_datetime": null,
+        "description": null,
+        "name": "corsair-plugin-test",
+        "usage": 0,
+        "uri": "/api/tags/2131657/"
+      }
+    ]
+  },
+  "tickets.listTicketCustomFields": {
+    "data": [
+      {
+        "field": {
+          "id": 381941,
+          "external_id": null,
+          "object_type": "Ticket",
+          "label": "AI Intent",
+          "description": "Topics detected in tickets",
+          "priority": 7,
+          "required": false,
+          "requirement_type": "visible",
+          "managed_type": "ai_intent",
+          "definition": {
+            "data_type": "text",
+            "input_settings": {
+              "input_type": "dropdown",
+              "choices": [
+                "Other::Other::Other",
+                "Account::Deletion",
+                "Account::Login"
+              ]
+            }
+          },
+          "created_datetime": "2026-11-14T19:11:48.582266+00:00",
+          "updated_datetime": "2026-11-14T19:15:28.488016+00:00",
+          "deactivated_datetime": null
+        },
+        "prediction": null,
+        "value": "Other::Other::Other"
+      }
+    ]
+  },
+  "customers.listCustomerCustomFieldsValues": {
+    "data": [
+      {
+        "field": {
+          "id": 381951,
+          "external_id": null,
+          "object_type": "Customer",
+          "label": "corsair-plugin-test-customer",
+          "description": null,
+          "priority": 2,
+          "required": false,
+          "managed_type": null,
+          "definition": {
+            "data_type": "text",
+            "input_settings": {
+              "input_type": "input"
+            }
+          },
+          "created_datetime": "2026-11-14T19:17:22.263385+00:00",
+          "updated_datetime": "2026-11-14T19:17:22.263390+00:00",
+          "deactivated_datetime": null
+        },
+        "value": "corsair-plugin-test"
+      }
+    ]
+  },
+  "tickets.updateTicketCustomFields": {
+    "data": [
+      {
+        "field": {
+          "id": 381941,
+          "external_id": null,
+          "object_type": "Ticket",
+          "label": "AI Intent",
+          "description": "Topics detected in tickets",
+          "priority": 7,
+          "required": false,
+          "requirement_type": "visible",
+          "managed_type": "ai_intent",
+          "definition": {
+            "data_type": "text",
+            "input_settings": {
+              "input_type": "dropdown",
+              "choices": [
+                "Other::Other::Other",
+                "Account::Deletion",
+                "Account::Login"
+              ]
+            }
+          },
+          "created_datetime": "2026-11-14T19:11:48.582266+00:00",
+          "updated_datetime": "2026-11-14T19:15:28.488016+00:00",
+          "deactivated_datetime": null
+        },
+        "prediction": null,
+        "value": "Other::Other::Other"
+      }
+    ]
+  },
+  "tickets.updateTicketCustomField": {
+    "field": {
+      "id": 381950,
+      "external_id": null,
+      "object_type": "Ticket",
+      "label": "corsair-plugin-test-ticket",
+      "description": null,
+      "priority": 10,
+      "required": false,
+      "requirement_type": "visible",
+      "managed_type": null,
+      "definition": {
+        "data_type": "text",
+        "input_settings": {
+          "input_type": "input"
+        }
+      },
+      "created_datetime": "2026-11-14T19:17:21.735881+00:00",
+      "updated_datetime": "2026-11-14T19:17:21.735886+00:00",
+      "deactivated_datetime": null
+    },
+    "prediction": null,
+    "value": "corsair-plugin-test-2"
+  },
+  "customers.updateCustomerCustomFieldValue": {
+    "field": {
+      "id": 381951,
+      "external_id": null,
+      "object_type": "Customer",
+      "label": "corsair-plugin-test-customer",
+      "description": null,
+      "priority": 2,
+      "required": false,
+      "managed_type": null,
+      "definition": {
+        "data_type": "text",
+        "input_settings": {
+          "input_type": "input"
+        }
+      },
+      "created_datetime": "2026-11-14T19:17:22.263385+00:00",
+      "updated_datetime": "2026-11-14T19:17:22.263390+00:00",
+      "deactivated_datetime": null
+    },
+    "value": "corsair-plugin-test"
+  },
+  "tickets.getTicket": {
+    "id": 102877576,
+    "status": "closed",
+    "channel": "api",
+    "custom_fields": {
+      "381950": {
+        "id": 381950,
+        "value": "corsair-plugin-test-2"
+      },
+      "381941": {
+        "id": 381941,
+        "value": "Other::Other::Other"
+      }
+    }
+  }
+}

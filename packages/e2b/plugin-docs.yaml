@@ -1,0 +1,164 @@
+displayName: "E2B"
+description: "Run isolated sandboxes and manage E2B sandbox, template, volume, secret, filesystem, process, and event APIs from Corsair."
+domain: e2b.dev
+recommendedAuth: api_key
+examples:
+  read:
+    path: envd.getEnvironmentVariables
+    title: Read the environment of a sandbox
+    args:
+      headers:
+        e2bSandboxId: sandbox-test
+        e2bSandboxPort: 49983
+        e2bAccessToken: sandbox-access-token
+  write:
+    path: filesystem.createDir
+    title: Create a directory inside a sandbox
+    args:
+      headers:
+        e2bSandboxId: sandbox-test
+        e2bSandboxPort: 49983
+        e2bAccessToken: sandbox-access-token
+      body:
+        path: /tmp/corsair-e2b
+overviewNote: |
+  Platform operations use the project API key in the X-API-Key header. Sandbox envd and unary filesystem/process operations target the shared sandbox host and require e2bSandboxId, e2bSandboxPort (49983 for envd), and an e2bAccessToken where the official OpenAPI security scheme requires it. envd.health is keyless. The documented file upload/download routes are not included because they require raw file bodies or binary responses.
+
+  Four cursor-paginated collection-list operations return `{ items, nextToken? }`; pass the returned token as `query.nextToken` to fetch the next page. `templates.get` returns its build cursor beside the template data. Sandbox listing also returns `totalRunning` when E2B supplies it. Secret values are write-only and are redacted from errors and never included in event logs.
+apiExamples:
+  sandboxes.create:
+    call: '{"headers":{"idempotencyKey":"test"},"body":{"templateID":"test"}}'
+  sandboxes.list:
+    call: '{"query":{"metadata":"test","state":["running"],"order":"desc","startedAfter":"2026-01-01T00:00:00Z","template":"test","nextToken":"test","limit":100}}'
+  sandboxes.listMetrics:
+    call: '{"query":{"sandbox_ids":["test"]}}'
+  sandboxes.getLogs:
+    call: '{"path":{"sandboxID":"test"},"query":{"cursor":0,"limit":1000,"direction":"forward","level":"test","search":"test"}}'
+  sandboxes.get:
+    call: '{"path":{"sandboxID":"test"}}'
+  sandboxes.kill:
+    call: '{"path":{"sandboxID":"test"}}'
+  sandboxes.getMetrics:
+    call: '{"path":{"sandboxID":"test"},"query":{"start":0,"end":0}}'
+  sandboxes.pause:
+    call: '{"path":{"sandboxID":"test"},"body":{}}'
+  sandboxes.fork:
+    call: '{"path":{"sandboxID":"test"},"body":{}}'
+  sandboxes.connect:
+    call: '{"path":{"sandboxID":"test"},"body":{}}'
+  sandboxes.setTimeout:
+    call: '{"path":{"sandboxID":"test"},"body":{"timeout":0}}'
+  sandboxes.updateNetwork:
+    call: '{"path":{"sandboxID":"test"},"body":{}}'
+  sandboxes.refresh:
+    call: '{"path":{"sandboxID":"test"},"body":{}}'
+  sandboxes.createSnapshot:
+    call: '{"path":{"sandboxID":"test"},"headers":{"idempotencyKey":"test"},"body":{}}'
+  sandboxes.listSnapshots:
+    call: '{"query":{"sandboxID":"test","name":"test","limit":100,"nextToken":"test"}}'
+  templates.create:
+    call: '{"headers":{"idempotencyKey":"test"},"body":{}}'
+  templates.list:
+    call: '{"query":{"teamID":"test","nextToken":"test","limit":100}}'
+  templates.getBuildUploadLink:
+    call: '{"path":{"templateID":"test","hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}}'
+  templates.listDefault:
+    call: '{}'
+  templates.get:
+    call: '{"path":{"templateID":"test"},"query":{"nextToken":"test","limit":100}}'
+  templates.delete:
+    call: '{"path":{"templateID":"test"}}'
+  templates.startBuild:
+    call: '{"path":{"templateID":"test","buildID":"test"},"headers":{"idempotencyKey":"test"},"body":{}}'
+  templates.update:
+    call: '{"path":{"templateID":"test"},"body":{}}'
+  templates.getBuildStatus:
+    call: '{"path":{"templateID":"test","buildID":"test"},"query":{"logsOffset":0,"limit":100,"level":"test"}}'
+  templates.getBuildLogs:
+    call: '{"path":{"templateID":"test","buildID":"test"},"query":{"cursor":0,"limit":100,"direction":"forward","level":"test","source":"temporary"}}'
+  templates.getByAlias:
+    call: '{"path":{"alias":"test"}}'
+  tags.assign:
+    call: '{"body":{"target":"test","tags":["test"]}}'
+  tags.delete:
+    call: '{"body":{"name":"test","tags":["test"]}}'
+  tags.list:
+    call: '{"path":{"templateID":"test"}}'
+  tags.listGroups:
+    call: '{"path":{"templateID":"test"},"query":{"assignmentLimit":6,"tagsLimit":25,"tagsCursor":"test","search":"test","sort":"latest_desc"}}'
+  tags.count:
+    call: '{"path":{"templateID":"test"}}'
+  tags.exists:
+    call: '{"path":{"templateID":"test"},"query":{"tag":"test"}}'
+  tags.listAssignments:
+    call: '{"path":{"templateID":"test","tag":"test"},"query":{"cursor":"test","limit":50}}'
+  volumes.list:
+    call: '{}'
+  volumes.create:
+    call: '{"body":{"name":"test"}}'
+  volumes.get:
+    call: '{"path":{"volumeID":"test"}}'
+  volumes.delete:
+    call: '{"path":{"volumeID":"test"}}'
+  envd.health:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983}}'
+  envd.metrics:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"}}'
+  envd.getEnvironmentVariables:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"}}'
+  filesystem.createWatcher:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+  filesystem.getWatcherEvents:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+  filesystem.listDir:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}}'
+  filesystem.createDir:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}}'
+  filesystem.move:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"source":"/tmp/corsair-e2b/a.txt","destination":"/tmp/corsair-e2b/b.txt"}}'
+  filesystem.remove:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}}'
+  filesystem.removeWatcher:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+  filesystem.stat:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}}'
+  process.closeStdin:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101}}}'
+  process.list:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+  process.sendInput:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"input":{"stdin":"aGVsbG8="}}}'
+  process.sendSignal:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"signal":"SIGNAL_SIGTERM"}}'
+  process.update:
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"pty":{"size":{"cols":80,"rows":24}}}}'
+  teams.getMetrics:
+    call: '{"path":{"teamID":"test"},"query":{"start":0,"end":0}}'
+  teams.getMaxMetrics:
+    call: '{"path":{"teamID":"test"},"query":{"start":0,"end":0,"metric":"concurrent_sandboxes"}}'
+  secrets.list:
+    call: '{"query":{"nextToken":"test","limit":100}}'
+  secrets.create:
+    call: '{"body":{"name":"test","value":"test"}}'
+  secrets.get:
+    call: '{"path":{"secretID":"test"}}'
+  secrets.update:
+    call: '{"path":{"secretID":"test"},"body":{"value":"test"}}'
+  secrets.delete:
+    call: '{"path":{"secretID":"test"}}'
+  events.listBySandbox:
+    call: '{"path":{"sandboxID":"test"},"query":{"offset":0,"limit":10,"orderAsc":false,"types":["test"]}}'
+  events.list:
+    call: '{"query":{"offset":0,"limit":10,"orderAsc":false,"types":["test"]}}'
+apiNotes:
+  sandboxes.create: "metadata and envVars are string maps; mcp is an extensible JSON object, as specified by E2B's OpenAPI."
+  sandboxes.list: "The v2 list operation accepts state as a comma-separated array and returns `{ items, nextToken?, totalRunning? }`; pass nextToken as query.nextToken to continue."
+  sandboxes.listSnapshots: "Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue."
+  templates.list: "Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue."
+  templates.get: "Returns the template and its build page, including nextToken from X-Next-Token; pass it as query.nextToken to continue."
+  secrets.list: "Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue. The response never includes secret values."
+  templates.getBuildUploadLink: "Returns an upload URL and headers for a template build file. Treat the response as a short-lived capability; avoid logging it."
+  envd.getEnvironmentVariables: "Requires an E2B sandbox access token; the response contains environment values and should be handled as sensitive data."
+  secrets.create: "Secret values are accepted only on create/update and are never returned by list/get operations."
+  process.sendInput: "stdin and pty bytes use the Connect JSON base64 representation; encode the bytes before passing the string."
+  filesystem.createWatcher: "This is the unary watcher-creation operation; streaming WatchDir remains out of scope."

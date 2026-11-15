@@ -13,6 +13,17 @@ function getRetryAfter(error: Error): number | undefined {
 	return (error as Partial<AhrefsAPIError>).retryAfter;
 }
 
+/**
+ * Creates and adds are not idempotent: a 5xx can arrive after Ahrefs already
+ * made the project, list, report or post, so a retry would make a second one.
+ * Updates, deletes and POST reads (Brand Radar entities, batch analysis) are
+ * safe to repeat.
+ */
+export function isNonIdempotentWrite(operation: string): boolean {
+	const name = operation.split('.').pop() ?? '';
+	return /^(create|add)[A-Z]/.test(name);
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
@@ -84,10 +95,18 @@ export const errorHandlers = {
 			const message = error.message.toLowerCase();
 			return message.includes('500') || message.includes('server error');
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error, context) => {
+			if (isNonIdempotentWrite(context.operation)) {
+				console.warn(
+					`[AHREFS:${context.operation}] Server error on a create, not retried to avoid a duplicate: ${error.message}`,
+				);
+				return { maxRetries: 0 };
+			}
+			return {
+				maxRetries: 2,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	DEFAULT: {
 		match: () => true,

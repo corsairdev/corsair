@@ -1,0 +1,674 @@
+---
+title: "Klazify API reference"
+sidebarTitle: "API"
+description: "API reference for the Klazify plugin in Corsair: every `klazify.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Categories
+
+### iab
+
+`categories.iab`
+
+Classify a URL into IAB v1 and v3 taxonomy categories
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.categories.iab({ url: 'https://cbsnews.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+Each category carries dynamic `IAB*` keys beside `name`, mapping IAB v1 and v3 ids to their labels.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `domain` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  categories?: {
+    name: string,
+    confidence?: number | null
+  }[] | null,
+  domain_url?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listV1
+
+`categories.listV1`
+
+List the 620 categories in the Klazify v1 taxonomy
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.categories.listV1({});
+```
+
+**Input:** _empty object_
+
+The 620-category v1 taxonomy. Counts as one API call.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `version` | `string` | Yes | `v1` or `v2`, matching the taxonomy. |
+| `count` | `number` | Yes | 620 for v1, 1091 for v2. |
+| `categories` | `string[]` | Yes | Full category paths, each starting with `/`. |
+
+
+
+---
+
+### listV2
+
+`categories.listV2`
+
+List the 1,091 categories in the Klazify v2 taxonomy
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.categories.listV2({});
+```
+
+**Input:** _empty object_
+
+The 1,091-category v2 taxonomy. Counts as one API call.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `version` | `string` | Yes | `v1` or `v2`, matching the taxonomy. |
+| `count` | `number` | Yes | 620 for v1, 1091 for v2. |
+| `categories` | `string[]` | Yes | Full category paths, each starting with `/`. |
+
+
+
+---
+
+## Categorize
+
+### all
+
+`categorize.all`
+
+Classify a URL or email and return categories, logo, social profiles, company data and tech stack in one answer
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.categorize.all({ url: 'https://cbsnews.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+The widest call: categories, logo, social profiles, company data and tech stack in one answer. Give `url` or `email`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `domain` | `object` | Yes | — |
+| `objects` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  categories?: {
+    name: string,
+    confidence?: number | null
+  }[] | null,
+  domain_url?: string | null,
+  logo_url?: string | null,
+  social_media?: {
+    facebook_url?: string | null,
+    twitter_url?: string | null,
+    instagram_url?: string | null,
+    youtube_url?: string | null,
+    linkedin_url?: string | null,
+    github_url?: string | null,
+    pinterest_url?: string | null,
+    medium_url?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  company?: {
+    name?: string | null,
+    city?: string | null,
+    stateCode?: string | null,
+    countryCode?: string | null,
+    employeesRange?: string | null,
+    revenue?: string | null,
+    raised?: string | null,
+    tags?: string[] | null,
+    tech?: string[] | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### realtime
+
+`categorize.realtime`
+
+Classify a URL or email into Klazify categories, re-crawled
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.categorize.realtime({ url: 'https://cbsnews.com', refresh: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+Classification only. `refresh: true` re-crawls instead of returning the cached result.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `domain` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  categories?: {
+    name: string,
+    confidence?: number | null
+  }[] | null,
+  domain_url?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### get
+
+`company.get`
+
+Read company name, location, headcount, revenue, funding and tags for a URL
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.company.get({ url: 'https://cbsnews.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+Name, city, state, country, headcount range, revenue range, funding and tags. Revenue, funding and state are often null.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `objects` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="objects full type">
+
+```ts
+{
+  company: {
+    name?: string | null,
+    city?: string | null,
+    stateCode?: string | null,
+    countryCode?: string | null,
+    employeesRange?: string | null,
+    revenue?: string | null,
+    raised?: string | null,
+    tags?: string[] | null,
+    tech?: string[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Discovery
+
+### search
+
+`discovery.search`
+
+Search Klazify's domain database by rank, category, country, technology and company size
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.discovery.search({ filters: { category: 'Shopping', country: 'US', tech: 'shopify' }, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top_n` | `number` | No | Only domains with a global rank at or below this are searched, 1 to 1,000,000. Unranked domains are excluded when it is set. |
+| `filters` | `object` | No | — |
+| `q` | `string` | No | Free-text search across domain, company and category. |
+| `sort` | `global_rank \| domain \| company_name \| monthly_visits_latest \| popularity_score` | No | — |
+| `sort_dir` | `asc \| desc` | No | — |
+| `page` | `number` | No | Page number. Each page holds 100 results. |
+
+Searches the whole Klazify database. `page` runs 1 to 1000 with 100 results each. A `tld` filter can set `total_is_lower_bound` when its candidate scan runs out.
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  category?: string,
+  country?: string,
+  tech?: string,
+  employees?: 1-10 | 11-50 | 51-250 | 251-1K | 1K-5K | 5K-10K | 10K-50K | 50K-100K | 100K+,
+  has_company?: boolean,
+  tld?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `page` | `number \| null` | No | The page this answer holds. |
+| `total_pages` | `number` | Yes | — |
+| `total_is_lower_bound` | `boolean` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  domain?: string | null,
+  company_name?: string | null,
+  company_country?: string | null,
+  company_employees?: string | null,
+  company_revenue?: string | null,
+  primary_category?: string | null,
+  primary_iab_name?: string | null,
+  tech_stack?: string[] | null,
+  global_rank?: number | null,
+  monthly_visits?: number | null,
+  logo_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domain
+
+### get
+
+`domain.get`
+
+Read domain registration and expiration dates
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.domain.get({ url: 'https://apple.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+Registration and expiry dates plus the age in days and the days left.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `domain_registration_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain_registration_data full type">
+
+```ts
+{
+  domain_age_date?: string | null,
+  domain_age_days_ago?: number | null,
+  domain_expiration_date?: string | null,
+  domain_expiration_days_left?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Logo
+
+### get
+
+`logo.get`
+
+Fetch a website's logo URL from Klazify's CDN
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.logo.get({ email: 'someone@cbsnews.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+Returns a CDN URL, or null or an empty string when no logo was found.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `domain` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  domain_url?: string | null,
+  logo_url?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Similar Domains
+
+### get
+
+`similarDomains.get`
+
+List up to 10 domains in the same category
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.similarDomains.get({ url: 'https://cbsnews.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+Up to 10 domains that share the site's category.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `domain` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  domain_url?: string | null,
+  similar_domains?: string[] | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tech
+
+### get
+
+`tech.get`
+
+Detect the technologies a website uses
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.tech.get({ url: 'https://cbsnews.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+Lowercase snake_case identifiers, e.g. `wordpress` or `google_tag_manager`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `domain` | `object` | Yes | — |
+| `objects` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  domain_url?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  company: {
+    tech?: string[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Traffic
+
+### get
+
+`traffic.get`
+
+Read traffic rank, monthly visits, engagement and traffic sources for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.klazify.api.traffic.get({ url: 'https://cbsnews.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
+| `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
+
+Global, country and category rank; monthly visits keyed by `YYYY-MM`; engagement figures as decimal strings, not numbers.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | False when the classification failed. |
+| `traffic_intelligence` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="traffic_intelligence full type">
+
+```ts
+{
+  global_rank?: number | null,
+  country_rank?: {
+    country_code?: string | null,
+    rank?: number | null
+  } | null,
+  category_rank?: {
+    category?: string | null,
+    rank?: string | null
+  } | null,
+  monthly_visits?: Record<string, number> | null,
+  engagement?: {
+    bounce_rate?: string | null,
+    pages_per_visit?: string | null,
+    time_on_site_seconds?: string | null
+  } | null,
+  traffic_sources?: Record<string, number | string> | null,
+  top_countries?: {
+    country_code?: string | null,
+    share?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

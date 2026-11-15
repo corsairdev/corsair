@@ -398,16 +398,20 @@ function authTypeCredentialInstructions(
 	authType: string,
 	title: string,
 	base: string,
+	pluginId: string,
 ): string {
 	switch (authType) {
 		case 'managed':
 			return `No setup required. Corsair hosts the OAuth app for **${title}** — your tenants connect through Hub when they sign in.`;
 		case 'oauth_2':
 			return `Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your ${title} OAuth app.`;
+		// Corsair does not prompt for a key: a call without one throws
+		// AuthMissingError (with a connect link only when Hub or manual connect
+		// is set up). Say how the key gets stored instead.
 		case 'api_key':
-			return `No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.`;
+			return `Store the ${title} API key before the first call: \`pnpm corsair setup --plugin=${pluginId} --tenant=acme api_key=<your-key>\` (leave out \`--tenant\` without \`multiTenancy\`), or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).`;
 		case 'bot_token':
-			return `No setup required yet. When you make your first request as a tenant, Corsair prompts for the bot token.`;
+			return `Store the ${title} bot token before the first call: \`pnpm corsair setup --plugin=${pluginId} --tenant=acme bot_token=<your-token>\` (leave out \`--tenant\` without \`multiTenancy\`), or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own token on the connect page. See [API key auth](/concepts/api-key).`;
 		default:
 			return `See [Get Credentials](${base}/get-credentials) for provider-specific setup steps.`;
 	}
@@ -1113,7 +1117,7 @@ function buildMainMdx(opts: {
 ${authOrdered
 	.map((t) => {
 		const label = authTabLabel(t, recommendedAuth);
-		const note = authTypeCredentialInstructions(t, title, base);
+		const note = authTypeCredentialInstructions(t, title, base, pluginId);
 		const callSnippet = pluginFactorySnippet(
 			exportKey,
 			t,
@@ -1878,9 +1882,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 \`\`\`
 
