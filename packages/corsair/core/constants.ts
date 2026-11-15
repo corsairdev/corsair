@@ -241,8 +241,8 @@ export const BaseProviders = [
 	'enginemailer',
 	'enigma',
 	'epicgames',
-	'erpnext',
 	'esignatures',
+	'erpnext',
 	'esputnik',
 	'eventbrite',
 	'eventee',
@@ -279,10 +279,10 @@ export const BaseProviders = [
 	'formdesk',
 	'foursquare',
 	'fundable',
+	'gemini',
 	'gagelist',
 	'gamma',
 	'gatherup',
-	'gemini',
 	'genderapi',
 	'genderapiio',
 	'genderize',
@@ -387,8 +387,8 @@ export const BaseProviders = [
 	'marketstack',
 	'melo',
 	'mem0',
-	'memberspot',
 	'memberstack',
+	'memberspot',
 	'merriamwebsterdict',
 	'metaads',
 	'minerstat',
@@ -439,12 +439,12 @@ export const BaseProviders = [
 	'pointagram',
 	'polygonio',
 	'postalytics',
-	'posthog',
-	'postman',
 	'postmark',
 	'prerender',
-	'prisma',
 	'prismic',
+	'posthog',
+	'postman',
+	'prisma',
 	'pushbullet',
 	'qdrant',
 	'quaderno',
@@ -855,8 +855,8 @@ export const ProviderDisplayNames = {
 	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
-	erpnext: 'ERPNext',
 	esignatures: 'eSignatures',
+	erpnext: 'ERPNext',
 	esputnik: 'eSputnik',
 	eventbrite: 'Eventbrite',
 	eventee: 'Eventee',
@@ -893,10 +893,10 @@ export const ProviderDisplayNames = {
 	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
+	gemini: 'Gemini',
 	gagelist: 'Gagelist',
 	gamma: 'Gamma',
 	gatherup: 'GatherUp',
-	gemini: 'Gemini',
 	genderapi: 'Gender API',
 	genderapiio: 'GenderAPI.io',
 	genderize: 'Genderize',
@@ -1001,8 +1001,8 @@ export const ProviderDisplayNames = {
 	marketstack: 'Marketstack',
 	melo: 'Melo',
 	mem0: 'Mem0',
-	memberspot: 'MemberSpot',
 	memberstack: 'Memberstack',
+	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	metaads: 'Meta Ads',
 	minerstat: 'Minerstat',
@@ -1053,12 +1053,12 @@ export const ProviderDisplayNames = {
 	pointagram: 'Pointagram',
 	polygonio: 'Polygon.io',
 	postalytics: 'Postalytics',
-	posthog: 'PostHog',
-	postman: 'Postman',
 	postmark: 'Postmark',
 	prerender: 'Prerender',
-	prisma: 'Prisma',
 	prismic: 'Prismic',
+	posthog: 'PostHog',
+	postman: 'Postman',
+	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
@@ -1476,8 +1476,8 @@ export type AllProviders =
 	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
-	| 'erpnext'
 	| 'esignatures'
+	| 'erpnext'
 	| 'esputnik'
 	| 'eventbrite'
 	| 'eventee'
@@ -1514,10 +1514,10 @@ export type AllProviders =
 	| 'formdesk'
 	| 'foursquare'
 	| 'fundable'
+	| 'gemini'
 	| 'gagelist'
 	| 'gamma'
 	| 'gatherup'
-	| 'gemini'
 	| 'genderapi'
 	| 'genderapiio'
 	| 'genderize'
@@ -1622,8 +1622,8 @@ export type AllProviders =
 	| 'marketstack'
 	| 'melo'
 	| 'mem0'
-	| 'memberspot'
 	| 'memberstack'
+	| 'memberspot'
 	| 'merriamwebsterdict'
 	| 'metaads'
 	| 'minerstat'
@@ -1674,12 +1674,12 @@ export type AllProviders =
 	| 'pointagram'
 	| 'polygonio'
 	| 'postalytics'
-	| 'posthog'
-	| 'postman'
 	| 'postmark'
 	| 'prerender'
-	| 'prisma'
 	| 'prismic'
+	| 'posthog'
+	| 'postman'
+	| 'prisma'
 	| 'pushbullet'
 	| 'qdrant'
 	| 'quaderno'
