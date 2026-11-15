@@ -43,6 +43,21 @@ describe('Ignisign schema', () => {
 	});
 });
 
+describe('Ignisign risk levels', () => {
+	it.each([
+		'signatureRequests.createInOneCall',
+		'signatureRequests.publish',
+		'signatureRequests.close',
+		'seal.signM2M',
+		'signers.regenerateAuthSecret',
+		'signers.revoke',
+		'documents.remove',
+		'documents.removeContent',
+	] as const)('%s is destructive', (op) => {
+		expect(ignisignEndpointMeta[op].riskLevel).toBe('destructive');
+	});
+});
+
 describe('Ignisign endpoint schemas validation', () => {
 	it('leaves appId and appEnv optional so they come from the API key', () => {
 		const initInput: IgnisignEndpointInputs['signatureRequests.init'] = {};

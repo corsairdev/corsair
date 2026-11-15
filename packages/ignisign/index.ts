@@ -240,9 +240,9 @@ export const ignisignEndpointSchemas = {
 
 export const ignisignEndpointMeta = {
 	'signatureRequests.createInOneCall': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create, configure and publish a signature request in a single call',
+			'Create and publish a signature request in a single call; emails the signers',
 	},
 	'signatureRequests.init': {
 		riskLevel: 'write',
@@ -265,12 +265,14 @@ export const ignisignEndpointMeta = {
 		description: 'Update signature request settings, signers, and documents',
 	},
 	'signatureRequests.publish': {
-		riskLevel: 'write',
-		description: 'Publish and launch a signature request to begin signing',
+		riskLevel: 'destructive',
+		description:
+			'Publish and launch a signature request; emails the signers to start signing',
 	},
 	'signatureRequests.close': {
-		riskLevel: 'write',
-		description: 'Close an active or expired signature request',
+		riskLevel: 'destructive',
+		description:
+			'Close a signature request; signers can no longer sign it (cannot be undone)',
 	},
 	'signatureRequests.getStatus': {
 		riskLevel: 'read',
@@ -299,8 +301,9 @@ export const ignisignEndpointMeta = {
 		description: 'Revoke a signer and their active signature sessions',
 	},
 	'signers.regenerateAuthSecret': {
-		riskLevel: 'write',
-		description: 'Regenerate authentication secret for a signer',
+		riskLevel: 'destructive',
+		description:
+			'Regenerate a signer authentication secret; the previous secret stops working',
 	},
 	'signers.search': {
 		riskLevel: 'read',
@@ -407,8 +410,9 @@ export const ignisignEndpointMeta = {
 	},
 
 	'seal.signM2M': {
-		riskLevel: 'write',
-		description: 'Perform automated machine-to-machine (M2M) document sealing',
+		riskLevel: 'destructive',
+		description:
+			'Seal a document with an M2M signer (each seal is billed in production)',
 	},
 
 	'logCapsules.create': {
