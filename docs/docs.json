@@ -2707,6 +2707,14 @@
                 ]
               },
               {
+                "group": "Hub Planner",
+                "pages": [
+                  "plugins/hubplanner/overview",
+                  "plugins/hubplanner/api",
+                  "plugins/hubplanner/database"
+                ]
+              },
+              {
                 "group": "HubSpot",
                 "pages": [
                   "plugins/hubspot/overview",
