@@ -1,6 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
-import type { ProductboardOperation } from './endpoints/operations';
+import type {
+	ProductboardOperation,
+	ProductboardOperationName,
+} from './endpoints/operations';
 import {
 	createProductboardEndpoint,
 	ProductboardOperations,
@@ -9,7 +12,7 @@ import type {
 	ProductboardJsonObject,
 	ProductboardOperationInput,
 } from './endpoints/types';
-import type { ProductboardContext } from './index';
+import type { ProductboardContext, ProductboardEndpoints } from './index';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -23,6 +26,164 @@ jest.mock('./client', () => {
 
 const mockedRequest = jest.mocked(client.makeProductboardRequest);
 const mockedLogEvent = jest.mocked(logEventFromContext);
+
+// Literal method/path expectations are maintained independently of the
+// operation registry and cross-checked against the official route pages:
+// https://developer.productboard.com/reference/.
+const EXPECTED_PRODUCTBOARD_ROUTES = [
+	['notes.list', 'GET', '/notes'],
+	['notes.search', 'POST', '/notes/search'],
+	['notes.create', 'POST', '/notes'],
+	['notes.get', 'GET', '/notes/{id}'],
+	['notes.update', 'PATCH', '/notes/{id}'],
+	['notes.delete', 'DELETE', '/notes/{id}'],
+	['notes.configurations.list', 'GET', '/notes/configurations'],
+	['notes.configurations.get', 'GET', '/notes/configurations/{type}'],
+	['notes.relationships.list', 'GET', '/notes/{id}/relationships'],
+	['notes.relationships.create', 'POST', '/notes/{id}/relationships'],
+	[
+		'notes.relationships.setCustomer',
+		'PUT',
+		'/notes/{id}/relationships/customer',
+	],
+	[
+		'notes.relationships.delete',
+		'DELETE',
+		'/notes/{id}/relationships/{targetType}/{targetId}',
+	],
+	['entities.list', 'GET', '/entities'],
+	['entities.search', 'POST', '/entities/search'],
+	['entities.create', 'POST', '/entities'],
+	['entities.get', 'GET', '/entities/{id}'],
+	['entities.update', 'PATCH', '/entities/{id}'],
+	['entities.delete', 'DELETE', '/entities/{id}'],
+	['entities.configurations.list', 'GET', '/entities/configurations'],
+	['entities.configurations.get', 'GET', '/entities/configurations/{type}'],
+	['entities.relationships.list', 'GET', '/entities/{id}/relationships'],
+	['entities.relationships.create', 'POST', '/entities/{id}/relationships'],
+	[
+		'entities.relationships.setParent',
+		'PUT',
+		'/entities/{id}/relationships/parent',
+	],
+	[
+		'entities.relationships.delete',
+		'DELETE',
+		'/entities/{id}/relationships/{type}/{targetId}',
+	],
+	['entities.fieldValues.list', 'GET', '/entities/fields/{fieldId}/values'],
+	['entities.fieldValues.create', 'POST', '/entities/fields/{fieldId}/values'],
+	[
+		'entities.fieldValues.update',
+		'PATCH',
+		'/entities/fields/{fieldId}/values/{valueId}',
+	],
+	[
+		'entities.fieldValues.delete',
+		'DELETE',
+		'/entities/fields/{fieldId}/values/{valueId}',
+	],
+	['entities.customerScore', 'GET', '/entities/{id}/score'],
+	['analytics.memberActivities', 'GET', '/analytics/member-activities'],
+	['members.list', 'GET', '/members'],
+	['members.search', 'POST', '/members/search'],
+	['members.get', 'GET', '/members/{id}'],
+	['teams.list', 'GET', '/teams'],
+	['teams.search', 'POST', '/teams/search'],
+	['teams.create', 'POST', '/teams'],
+	['teams.get', 'GET', '/teams/{id}'],
+	['teams.update', 'PATCH', '/teams/{id}'],
+	['teams.delete', 'DELETE', '/teams/{id}'],
+	['teams.members', 'GET', '/teams/{id}/members'],
+	['jiraIntegrations.list', 'GET', '/jira-integrations'],
+	['jiraIntegrations.get', 'GET', '/jira-integrations/{id}'],
+	[
+		'jiraIntegrations.connections',
+		'GET',
+		'/jira-integrations/{integrationId}/connections',
+	],
+	[
+		'jiraIntegrations.connection',
+		'GET',
+		'/jira-integrations/{integrationId}/connections/{entityId}',
+	],
+	['pluginIntegrations.list', 'GET', '/plugin-integrations'],
+	['pluginIntegrations.create', 'POST', '/plugin-integrations'],
+	['pluginIntegrations.get', 'GET', '/plugin-integrations/{integrationId}'],
+	[
+		'pluginIntegrations.update',
+		'PATCH',
+		'/plugin-integrations/{integrationId}',
+	],
+	[
+		'pluginIntegrations.delete',
+		'DELETE',
+		'/plugin-integrations/{integrationId}',
+	],
+	[
+		'pluginIntegrations.connections.list',
+		'GET',
+		'/plugin-integrations/{integrationId}/connections',
+	],
+	[
+		'pluginIntegrations.connections.search',
+		'POST',
+		'/plugin-integrations/{integrationId}/connections/search',
+	],
+	[
+		'pluginIntegrations.connections.get',
+		'GET',
+		'/plugin-integrations/{integrationId}/connections/{entityId}',
+	],
+	[
+		'pluginIntegrations.connections.update',
+		'PUT',
+		'/plugin-integrations/{integrationId}/connections/{entityId}',
+	],
+	[
+		'pluginIntegrations.connections.delete',
+		'DELETE',
+		'/plugin-integrations/{integrationId}/connections/{entityId}',
+	],
+] as const satisfies readonly (readonly [
+	ProductboardOperationName,
+	ProductboardOperation['method'],
+	string,
+])[];
+
+type TypeEqual<Left, Right> = (<Value>() => Value extends Left
+	? 1
+	: 2) extends <Value>() => Value extends Right ? 1 : 2
+	? true
+	: false;
+type TypeAssert<Value extends true> = Value;
+
+export type ProductboardCallerInputTypeRegression = [
+	TypeAssert<
+		TypeEqual<
+			Parameters<ProductboardEndpoints['notes']['get']>[1],
+			{ id: string; query?: ProductboardJsonObject }
+		>
+	>,
+	TypeAssert<
+		TypeEqual<
+			Parameters<ProductboardEndpoints['notes']['create']>[1],
+			{ body: NonNullable<ProductboardOperationInput['body']> }
+		>
+	>,
+	TypeAssert<
+		TypeEqual<
+			Parameters<
+				ProductboardEndpoints['pluginIntegrations']['connections']['update']
+			>[1],
+			{
+				integrationId: string;
+				entityId: string;
+				body: NonNullable<ProductboardOperationInput['body']>;
+			}
+		>
+	>,
+];
 
 function buildContext(): ProductboardContext {
 	return {
@@ -141,6 +302,17 @@ beforeEach(() => {
 });
 
 describe('Productboard operations', () => {
+	it('matches independent official method and path expectations for all 54 routes', () => {
+		expect(EXPECTED_PRODUCTBOARD_ROUTES.map(([name]) => name).sort()).toEqual(
+			Object.keys(ProductboardOperations).sort(),
+		);
+
+		for (const [name, method, path] of EXPECTED_PRODUCTBOARD_ROUTES) {
+			expect(ProductboardOperations[name].method).toBe(method);
+			expect(ProductboardOperations[name].path).toBe(path);
+		}
+	});
+
 	for (const operation of Object.values(ProductboardOperations)) {
 		it(`${operation.name} sends the documented method, path, query, and body`, async () => {
 			const endpoint = createProductboardEndpoint(operation);

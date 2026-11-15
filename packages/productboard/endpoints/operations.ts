@@ -3,7 +3,11 @@ import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
 import type { ProductboardContext } from '..';
 import { makeProductboardRequest } from '../client';
-import type { ProductboardOperationInput, ProductboardOutput } from './types';
+import type {
+	ProductboardJsonObject,
+	ProductboardOperationInput,
+	ProductboardOutput,
+} from './types';
 import {
 	ProductboardJsonObjectSchema,
 	ProductboardOutputSchema,
@@ -32,6 +36,23 @@ export type ProductboardOperation = {
 	riskLevel: 'read' | 'write' | 'destructive';
 	description: string;
 };
+
+type ProductboardRequiredPathInput<Operation extends ProductboardOperation> =
+	Operation['pathFields'] extends readonly PathField[]
+		? { [Field in Operation['pathFields'][number]]: string }
+		: {};
+
+export type ProductboardOperationCallerInput<
+	Operation extends ProductboardOperation,
+> = Operation extends unknown
+	? ProductboardRequiredPathInput<Operation> &
+			(Operation['query'] extends true
+				? { query?: ProductboardJsonObject }
+				: {}) &
+			(Operation['body'] extends true
+				? { body: NonNullable<ProductboardOperationInput['body']> }
+				: {})
+	: never;
 
 export function productboardOperationInputSchema(
 	operation: ProductboardOperation,
@@ -605,21 +626,25 @@ const operationDefinitions = {
 	},
 } satisfies Record<string, ProductboardOperation>;
 
-export const ProductboardOperations: {
-	[Name in keyof typeof operationDefinitions]: ProductboardOperation;
-} = operationDefinitions;
+export const ProductboardOperations = operationDefinitions;
 
 export type ProductboardOperationName = keyof typeof ProductboardOperations;
 
-export function createProductboardEndpoint(
-	operation: ProductboardOperation,
+export function createProductboardEndpoint<
+	const Operation extends ProductboardOperation,
+>(
+	operation: Operation,
 ): CorsairEndpoint<
 	ProductboardContext,
-	ProductboardOperationInput,
+	ProductboardOperationCallerInput<Operation>,
 	ProductboardOutput
 > {
 	const inputSchema = productboardOperationInputSchema(operation);
-	return async (ctx, input) => {
+	const endpoint: CorsairEndpoint<
+		ProductboardContext,
+		ProductboardOperationCallerInput<Operation>,
+		ProductboardOutput
+	> = async (ctx, input) => {
 		const parsedInput = inputSchema.parse(input);
 		let path = operation.path;
 		for (const field of operation.pathFields ?? []) {
@@ -645,4 +670,5 @@ export function createProductboardEndpoint(
 		);
 		return response;
 	};
+	return endpoint;
 }

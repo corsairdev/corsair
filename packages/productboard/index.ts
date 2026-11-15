@@ -24,10 +24,7 @@ import {
 	ProductboardOperations,
 	productboardOperationInputSchema,
 } from './endpoints/operations';
-import type {
-	ProductboardOperationInput,
-	ProductboardOutput,
-} from './endpoints/types';
+import type { ProductboardOutput } from './endpoints/types';
 import { ProductboardOutputSchema } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ProductboardSchema } from './schema';
@@ -665,4 +662,5 @@ export function productboard<const T extends ProductboardPluginOptions>(
 	} satisfies InternalProductboardPlugin;
 }
 
-export type { ProductboardOperationInput, ProductboardOutput };
+export type { ProductboardOperationCallerInput } from './endpoints/operations';
+export type { ProductboardOutput };

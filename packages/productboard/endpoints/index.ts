@@ -3,8 +3,9 @@ import {
 	ProductboardOperations,
 } from './operations';
 
-const endpoint = (name: keyof typeof ProductboardOperations) =>
-	createProductboardEndpoint(ProductboardOperations[name]);
+const endpoint = <Name extends keyof typeof ProductboardOperations>(
+	name: Name,
+) => createProductboardEndpoint(ProductboardOperations[name]);
 
 export const Notes = {
 	list: endpoint('notes.list'),

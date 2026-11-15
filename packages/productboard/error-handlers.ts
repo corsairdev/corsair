@@ -7,9 +7,8 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.status === 429) return true;
 			return false;
 		},
-		// Core's request() has already retried this 429 (three times, honouring
-		// Retry-After) before it reaches a handler. Retrying the endpoint again
-		// here would multiply the attempts and the wait.
+		// The transport sets maxRetries: 0 but still extracts Retry-After; this
+		// handler also disables endpoint retries, so the 429 is not retried.
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
