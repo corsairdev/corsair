@@ -446,18 +446,21 @@ export function proabono<const T extends ProabonoPluginOptions>(
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: ProabonoKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.apiKey) {
-				return options.apiKey;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
+			if (
+				source === 'endpoint' &&
+				(options.apiKey || ctx.authType === 'api_key')
+			) {
 				// Every call also needs the agent key (the Basic username) and the
-				// account number (the host). A connection missing either must throw
-				// here, where core turns it into a connect link, rather than fail later.
+				// account number (the host), with an inline key too. A connection
+				// missing either must throw here, where core turns it into a connect
+				// link, rather than fail later.
 				const agentKey = await ctx.keys.get_agent_key();
 				const account = options.account ?? (await ctx.keys.get_account());
-				if (res && agentKey?.trim() && account?.trim()) return res;
+				if (agentKey?.trim() && account?.trim()) {
+					if (options.apiKey) return options.apiKey;
+					const res = await ctx.keys.get_api_key();
+					if (res) return res;
+				}
 			}
 
 			throw new AuthMissingError('proabono', ctx.authType ?? 'api_key');

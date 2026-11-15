@@ -190,6 +190,22 @@ describe('proabono keyBuilder', () => {
 		).resolves.toBe('inline-key');
 	});
 
+	it('checks the stored agent key and account on the inline key path too', async () => {
+		// The inline key replaces only the password; the call still needs both.
+		await expect(
+			keyBuilderOf(proabono({ apiKey: 'inline-key' }))(
+				keyBuilderContext('stored-key', { agentKey: null }),
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(
+			keyBuilderOf(proabono({ apiKey: 'inline-key' }))(
+				keyBuilderContext('stored-key', { account: null }),
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
 	it('falls back to the stored account key', async () => {
 		await expect(
 			keyBuilderOf(proabono())(keyBuilderContext('stored-key'), 'endpoint'),
