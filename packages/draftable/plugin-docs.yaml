@@ -1,0 +1,20 @@
+displayName: Draftable
+description: List document comparisons on a Draftable account. The key is sent as a Token header.
+domain: draftable.com
+recommendedAuth: api_key
+overviewNote: |
+  An empty token comes back as HTTP 401. The header is Authorization Token, not Bearer.
+examples:
+  read:
+    path: comparisons.list
+    title: List Draftable comparisons
+    args:
+      limit: 20
+      offset: 0
+apiNotes:
+  comparisons.list: |
+    Omit limit or offset to take the service default. The call does not create a comparison.
+apiExamples:
+  comparisons.list:
+    limit: 20
+    offset: 0

@@ -225,6 +225,7 @@ export const BaseProviders = [
 	'dodopayments',
 	'doppler',
 	'dovetail',
+	'draftable',
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
@@ -838,6 +839,7 @@ export const ProviderDisplayNames = {
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
 	dovetail: 'Dovetail',
+	draftable: 'Draftable',
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
@@ -1458,6 +1460,7 @@ export type AllProviders =
 	| 'dodopayments'
 	| 'doppler'
 	| 'dovetail'
+	| 'draftable'
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
