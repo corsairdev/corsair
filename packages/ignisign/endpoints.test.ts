@@ -620,6 +620,37 @@ describe('signerProfiles, applications, seal, logCapsules, & bareSignatures', ()
 		expect(result).toEqual(mockResponse);
 	});
 
+	it('signatureRequests.getContext: accepts the nulls the live API sends on a draft', async () => {
+		// Trimmed from a live DEVELOPMENT response (11-15).
+		const live = {
+			_id: 'sr_live',
+			appId: 'appId_1',
+			appEnv: 'DEVELOPMENT',
+			status: 'DRAFT',
+			title: null,
+			documentIds: ['doc_1'],
+			signerIds: [],
+			signers: [],
+			documents: [
+				{
+					_id: 'doc_1',
+					status: 'CREATED',
+					label: 'corsair-plugin-test',
+					fileName: null,
+				},
+			],
+			signatureProofsUrl: null,
+			signatureProofStatus: null,
+			expirationDate: null,
+		};
+		mockedRequest.mockResolvedValue(live);
+		const result = await SignatureRequestsEndpoints.getContext(ctx, {
+			signatureRequestId: 'sr_live',
+		});
+		expect(result.status).toBe('DRAFT');
+		expect(result.signatureProofsUrl).toBeNull();
+	});
+
 	it('applications.getContext: keeps settings and profile fields', async () => {
 		const mockResponse = {
 			appId: 'appId_1',

@@ -7,7 +7,7 @@ export const BinaryDataSchema = z.object({
 	kind: z.literal('binary'),
 	contentType: z.string(),
 	base64: z.string(),
-	size: z.number().optional(),
+	size: z.number().nullish(),
 });
 export type BinaryData = z.infer<typeof BinaryDataSchema>;
 
@@ -38,28 +38,28 @@ export type SignatureLowLevelProofType = z.infer<
 
 export const PaginationDataSchema = z.object({
 	total: z.number(),
-	page: z.number().optional(),
-	nbEventsPerPage: z.number().optional(),
+	page: z.number().nullish(),
+	nbEventsPerPage: z.number().nullish(),
 });
 export type PaginationData = z.infer<typeof PaginationDataSchema>;
 
 export const DocumentSchema = z.object({
-	_id: z.string().optional(),
-	appId: z.string().optional(),
-	appEnv: z.string().optional(),
-	documentNature: z.string().optional(),
-	status: z.string().optional(),
-	documentHash: z.string().optional(),
-	signatureRequestId: z.string().optional(),
-	externalId: z.string().optional(),
-	label: z.string().optional(),
-	description: z.string().optional(),
-	fileName: z.string().optional(),
-	fileSize: z.number().optional(),
-	mimeType: z.string().optional(),
-	dataJsonContent: z.string().optional(),
-	templateDisplayerId: z.string().optional(),
-	templateDisplayerVersion: z.number().optional(),
+	_id: z.string().nullish(),
+	appId: z.string().nullish(),
+	appEnv: z.string().nullish(),
+	documentNature: z.string().nullish(),
+	status: z.string().nullish(),
+	documentHash: z.string().nullish(),
+	signatureRequestId: z.string().nullish(),
+	externalId: z.string().nullish(),
+	label: z.string().nullish(),
+	description: z.string().nullish(),
+	fileName: z.string().nullish(),
+	fileSize: z.number().nullish(),
+	mimeType: z.string().nullish(),
+	dataJsonContent: z.string().nullish(),
+	templateDisplayerId: z.string().nullish(),
+	templateDisplayerVersion: z.number().nullish(),
 });
 export type Document = z.infer<typeof DocumentSchema>;
 
@@ -67,32 +67,32 @@ export const DocumentContextSchema = DocumentSchema.extend({
 	statements: z
 		.array(
 			z.object({
-				_id: z.string().optional(),
-				labelMd: z.string().optional(),
+				_id: z.string().nullish(),
+				labelMd: z.string().nullish(),
 			}),
 		)
-		.optional(),
+		.nullish(),
 	signatureSummaries: z
 		.array(
 			z.object({
-				signatureId: z.string().optional(),
-				signerId: z.string().optional(),
-				date: z.coerce.date().optional(),
+				signatureId: z.string().nullish(),
+				signerId: z.string().nullish(),
+				date: z.coerce.date().nullish(),
 			}),
 		)
-		.optional(),
+		.nullish(),
 });
 export type DocumentContext = z.infer<typeof DocumentContextSchema>;
 
 export const SignerSummarySchema = z.object({
-	signerId: z.string().optional(),
-	externalId: z.string().optional(),
-	firstName: z.string().optional(),
-	lastName: z.string().optional(),
-	email: z.string().optional(),
-	status: z.string().optional(),
-	isRecurrent: z.boolean().optional(),
-	signerProfileId: z.string().optional(),
+	signerId: z.string().nullish(),
+	externalId: z.string().nullish(),
+	firstName: z.string().nullish(),
+	lastName: z.string().nullish(),
+	email: z.string().nullish(),
+	status: z.string().nullish(),
+	isRecurrent: z.boolean().nullish(),
+	signerProfileId: z.string().nullish(),
 });
 export type SignerSummary = z.infer<typeof SignerSummarySchema>;
 
@@ -104,25 +104,25 @@ export const SignerContextSchema = SignerSummarySchema.extend({
 				status: z.string(),
 			}),
 		)
-		.optional(),
+		.nullish(),
 	latestSignatureRequests: z
 		.array(
 			z.object({
-				_id: z.string().optional(),
-				title: z.string().optional(),
-				status: z.string().optional(),
+				_id: z.string().nullish(),
+				title: z.string().nullish(),
+				status: z.string().nullish(),
 			}),
 		)
-		.optional(),
+		.nullish(),
 });
 export type SignerContext = z.infer<typeof SignerContextSchema>;
 
 export const SignerCreationResponseSchema = z.object({
 	signerId: z.string(),
-	entityType: z.string().optional(),
-	success: z.boolean().optional(),
-	alreadyExists: z.boolean().optional(),
-	authSecret: z.string().optional(),
+	entityType: z.string().nullish(),
+	success: z.boolean().nullish(),
+	alreadyExists: z.boolean().nullish(),
+	authSecret: z.string().nullish(),
 });
 export type SignerCreationResponse = z.infer<
 	typeof SignerCreationResponseSchema
@@ -135,34 +135,34 @@ export const SignersSearchResultSchema = z.object({
 export type SignersSearchResult = z.infer<typeof SignersSearchResultSchema>;
 
 export const SignatureRequestSchema = z.object({
-	_id: z.string().optional(),
-	appId: z.string().optional(),
-	appEnv: z.string().optional(),
-	title: z.string().optional(),
-	description: z.string().optional(),
-	status: z.string().optional(),
-	documentIds: z.array(z.string()).optional(),
-	signerIds: z.array(z.string()).optional(),
-	signedBy: z.array(z.string()).optional(),
-	externalId: z.string().optional(),
-	expirationDate: z.coerce.date().optional(),
-	closedAt: z.coerce.date().optional(),
+	_id: z.string().nullish(),
+	appId: z.string().nullish(),
+	appEnv: z.string().nullish(),
+	title: z.string().nullish(),
+	description: z.string().nullish(),
+	status: z.string().nullish(),
+	documentIds: z.array(z.string()).nullish(),
+	signerIds: z.array(z.string()).nullish(),
+	signedBy: z.array(z.string()).nullish(),
+	externalId: z.string().nullish(),
+	expirationDate: z.coerce.date().nullish(),
+	closedAt: z.coerce.date().nullish(),
 });
 export type SignatureRequest = z.infer<typeof SignatureRequestSchema>;
 
 export const SignatureRequestContextSchema = SignatureRequestSchema.extend({
-	signers: z.array(SignerSummarySchema).optional(),
-	documents: z.array(DocumentContextSchema).optional(),
+	signers: z.array(SignerSummarySchema).nullish(),
+	documents: z.array(DocumentContextSchema).nullish(),
 	statements: z
 		.array(
 			z.object({
-				_id: z.string().optional(),
-				labelMd: z.string().optional(),
+				_id: z.string().nullish(),
+				labelMd: z.string().nullish(),
 			}),
 		)
-		.optional(),
-	signatureProofsUrl: z.string().optional(),
-	signatureProofStatus: z.string().optional(),
+		.nullish(),
+	signatureProofsUrl: z.string().nullish(),
+	signatureProofStatus: z.string().nullish(),
 });
 export type SignatureRequestContext = z.infer<
 	typeof SignatureRequestContextSchema
@@ -177,24 +177,24 @@ export type SignatureRequestsPaginate = z.infer<
 >;
 
 export const SignatureRequestPublishResponseSchema = z.object({
-	signatureRequestId: z.string().optional(),
+	signatureRequestId: z.string().nullish(),
 	signersBySide: z
 		.array(
 			z.object({
 				signerId: z.string(),
-				signerExternalId: z.string().optional(),
+				signerExternalId: z.string().nullish(),
 			}),
 		)
-		.optional(),
+		.nullish(),
 	signersEmbedded: z
 		.array(
 			z.object({
 				signerId: z.string(),
-				signerExternalId: z.string().optional(),
-				token: z.string().optional(),
+				signerExternalId: z.string().nullish(),
+				token: z.string().nullish(),
 			}),
 		)
-		.optional(),
+		.nullish(),
 });
 export type SignatureRequestPublishResponse = z.infer<
 	typeof SignatureRequestPublishResponseSchema
@@ -213,26 +213,26 @@ export type SignatureRequestsStatusContainer = z.infer<
 >;
 
 export const SignatureSchema = z.object({
-	_id: z.string().optional(),
-	appId: z.string().optional(),
-	appEnv: z.string().optional(),
-	signerId: z.string().optional(),
-	signerKeyId: z.string().optional(),
-	sessionId: z.string().optional(),
-	documentId: z.string().optional(),
-	status: z.string().optional(),
-	mode: z.string().optional(),
-	signingIp: z.string().optional(),
-	eidasLevel: z.string().optional(),
+	_id: z.string().nullish(),
+	appId: z.string().nullish(),
+	appEnv: z.string().nullish(),
+	signerId: z.string().nullish(),
+	signerKeyId: z.string().nullish(),
+	sessionId: z.string().nullish(),
+	documentId: z.string().nullish(),
+	status: z.string().nullish(),
+	mode: z.string().nullish(),
+	signingIp: z.string().nullish(),
+	eidasLevel: z.string().nullish(),
 	signatures: z
 		.array(
 			z.object({
 				type: z.string(),
-				signatureFilePath: z.string().optional(),
-				signingTime: z.coerce.date().optional(),
+				signatureFilePath: z.string().nullish(),
+				signingTime: z.coerce.date().nullish(),
 			}),
 		)
-		.optional(),
+		.nullish(),
 });
 export type Signature = z.infer<typeof SignatureSchema>;
 
@@ -248,61 +248,61 @@ export const SignatureImagesSchema = z.object({
 export type SignatureImages = z.infer<typeof SignatureImagesSchema>;
 
 export const SignerProfileSchema = z.object({
-	_id: z.string().optional(),
-	appId: z.string().optional(),
-	appEnv: z.string().optional(),
-	name: z.string().optional(),
-	description: z.string().optional(),
-	status: z.string().optional(),
-	version: z.number().optional(),
-	isRecurrent: z.boolean().optional(),
-	integrationMode: z.string().optional(),
+	_id: z.string().nullish(),
+	appId: z.string().nullish(),
+	appEnv: z.string().nullish(),
+	name: z.string().nullish(),
+	description: z.string().nullish(),
+	status: z.string().nullish(),
+	version: z.number().nullish(),
+	isRecurrent: z.boolean().nullish(),
+	integrationMode: z.string().nullish(),
 });
 export type SignerProfile = z.infer<typeof SignerProfileSchema>;
 
 export const ApplicationContextSchema = z.object({
-	_createdAt: z.coerce.date().optional(),
-	appId: z.string().optional(),
-	orgId: z.string().optional(),
-	appName: z.string().optional(),
-	status: z.string().optional(),
-	appType: z.string().optional(),
-	ignisignApiVersion: z.string().optional(),
+	_createdAt: z.coerce.date().nullish(),
+	appId: z.string().nullish(),
+	orgId: z.string().nullish(),
+	appName: z.string().nullish(),
+	status: z.string().nullish(),
+	appType: z.string().nullish(),
+	ignisignApiVersion: z.string().nullish(),
 	// `unknown` because IgniSign's application settings objects are large, versioned
 	// configuration trees; they are passed through as returned.
-	envSettings: z.record(z.string(), z.unknown()).optional(),
-	config: z.record(z.string(), z.unknown()).optional(),
-	settings: z.record(z.string(), z.unknown()).optional(),
+	envSettings: z.record(z.string(), z.unknown()).nullish(),
+	config: z.record(z.string(), z.unknown()).nullish(),
+	settings: z.record(z.string(), z.unknown()).nullish(),
 	// Keyed by environment (DEVELOPMENT, STAGING, PRODUCTION), as the live API returns them.
 	// `unknown` because profile entries follow IgniSign's signer/signature profile models.
-	signerProfiles: z.record(z.string(), z.array(z.unknown())).optional(),
-	signatureProfiles: z.record(z.string(), z.array(z.unknown())).optional(),
+	signerProfiles: z.record(z.string(), z.array(z.unknown())).nullish(),
+	signatureProfiles: z.record(z.string(), z.array(z.unknown())).nullish(),
 });
 export type ApplicationContext = z.infer<typeof ApplicationContextSchema>;
 
 export const BareSignatureProofSchema = z.object({
-	appId: z.string().optional(),
-	appEnv: z.string().optional(),
-	signatureRequestId: z.string().optional(),
-	signerId: z.string().optional(),
+	appId: z.string().nullish(),
+	appEnv: z.string().nullish(),
+	signatureRequestId: z.string().nullish(),
+	signerId: z.string().nullish(),
 	proofs: z
 		.array(
 			z.object({
 				documentId: z.string(),
-				type: z.string().optional(),
-				documentHash: z.string().optional(),
-				proofB64: z.string().optional(),
-				signingTime: z.coerce.date().optional(),
+				type: z.string().nullish(),
+				documentHash: z.string().nullish(),
+				proofB64: z.string().nullish(),
+				signingTime: z.coerce.date().nullish(),
 			}),
 		)
-		.optional(),
+		.nullish(),
 	signerInformation: z
 		.object({
-			fullName: z.string().optional(),
-			lastName: z.string().optional(),
-			firstName: z.string().optional(),
+			fullName: z.string().nullish(),
+			lastName: z.string().nullish(),
+			firstName: z.string().nullish(),
 		})
-		.optional(),
+		.nullish(),
 });
 export type BareSignatureProof = z.infer<typeof BareSignatureProofSchema>;
 
@@ -703,17 +703,17 @@ export const IgnisignEndpointOutputSchemas = {
 	// signatureRequests
 	'signatureRequests.createInOneCall': SignatureRequestContextSchema,
 	'signatureRequests.init': z.object({
-		signatureRequestId: z.string().optional(),
+		signatureRequestId: z.string().nullish(),
 	}),
 	'signatureRequests.initSignerSetup': z.object({
-		signatureRequestId: z.string().optional(),
+		signatureRequestId: z.string().nullish(),
 	}),
 	'signatureRequests.list': SignatureRequestsPaginateSchema,
 	'signatureRequests.getContext': SignatureRequestContextSchema,
 	'signatureRequests.update': SignatureRequestContextSchema,
 	'signatureRequests.publish': SignatureRequestPublishResponseSchema,
 	'signatureRequests.close': z.object({
-		signatureRequestId: z.string().optional(),
+		signatureRequestId: z.string().nullish(),
 	}),
 	'signatureRequests.getStatus': SignatureRequestsStatusContainerSchema,
 
@@ -777,8 +777,8 @@ export const IgnisignEndpointOutputSchemas = {
 		signatureRequestId: z.string(),
 		documentId: z.string(),
 		documentHash: z.string(),
-		proofBase64: z.string().optional(),
-		proofType: z.string().optional(),
+		proofBase64: z.string().nullish(),
+		proofType: z.string().nullish(),
 	}),
 
 	// logCapsules
@@ -793,13 +793,13 @@ export const IgnisignEndpointOutputSchemas = {
 		appEnv: z.string(),
 		redirectUris: z.array(z.string()),
 		authorizedOrigins: z.array(z.string()),
-		eidasLevel: z.string().optional(),
+		eidasLevel: z.string().nullish(),
 	}),
 	'bareSignatures.getProofToken': z.object({
 		access_token: z.string(),
 		token_type: z.string(),
 		expires_in: z.number(),
-		scope: z.string().optional(),
+		scope: z.string().nullish(),
 	}),
 	'bareSignatures.getProofs': BareSignatureProofSchema,
 } as const;
