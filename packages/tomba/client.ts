@@ -23,16 +23,18 @@ export function isQuotaExhausted(
 	return /daily|balance|used up|quota|credits/i.test(message);
 }
 
-// Core's request() retries a window 429 three times, honouring Retry-After.
-// No `resetTime` header: Tomba's `x-ratelimit-reset` is not an epoch, and
-// core would read it as one.
+// error-handlers.ts owns 429 retries. Core's request() retries every 429 it
+// sees (its catch path checks only the status), which would sleep out a
+// daily-limit Retry-After of many hours, so its own loop is off and the
+// handler retries only a per-second or per-minute window. The object has to
+// be complete: request.ts replaces its defaults wholesale. No `resetTime`:
+// Tomba's `x-ratelimit-reset` is not an epoch.
 const TOMBA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
-	isRateLimitError: (status, body) => status === 429 && !isQuotaExhausted(body),
 };
 
 /** Tomba needs both the API key and the API secret on every request. */

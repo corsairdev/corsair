@@ -17,6 +17,7 @@ import {
 	emailSourcesLive,
 	locationLive,
 	person,
+	personFindLive,
 	phoneValidation,
 	rateLimitsLive,
 	revealLive,
@@ -309,7 +310,7 @@ describe('verifier', () => {
 			country_code: 'US',
 		});
 		expect(result.data.valid).toBe(true);
-		expect(result.data.line_type).toBe('MOBILE');
+		expect(result.data.line_type).toBe('FIXED_LINE_OR_MOBILE');
 	});
 });
 
@@ -363,7 +364,7 @@ describe('company, person and combined', () => {
 	});
 
 	it('person.find GETs v1/people/find', async () => {
-		respond({ data: person });
+		respond(personFindLive);
 
 		await invoke(PersonEndpoints.find, { email: 'jane.doe@stripe.com' });
 
@@ -375,7 +376,7 @@ describe('company, person and combined', () => {
 	});
 
 	it('combined.find GETs v1/combined/find', async () => {
-		respond({ data: { person, company } });
+		respond({ data: { person: personFindLive.data, company } });
 
 		const result = (await invoke(CombinedEndpoints.find, {
 			email: 'jane.doe@stripe.com',

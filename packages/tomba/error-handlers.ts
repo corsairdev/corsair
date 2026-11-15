@@ -1,6 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { tombaErrorType } from './client';
+import { isQuotaExhausted, tombaErrorType } from './client';
 
 function statusOf(error: Error): number | undefined {
 	return error instanceof ApiError ? error.status : undefined;
@@ -41,12 +41,25 @@ export const errorHandlers = {
 			statusOf(error) === 451 || tombaErrorType(error) === 'legal_block',
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 429. Core's request() already retried a per-second or per-minute window
-	// three times, honouring Retry-After; a used-up daily limit or count balance
-	// is not retried at all, because nothing changes before midnight UTC.
+	// A 429 for a used-up daily limit or count/sources balance. Nothing changes
+	// before midnight UTC, and its Retry-After can be hours, so no retry.
+	QUOTA_EXHAUSTED_ERROR: {
+		match: (error: Error) =>
+			statusOf(error) === 429 &&
+			error instanceof ApiError &&
+			isQuotaExhausted(error.body),
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// A per-second or per-minute 429. The client turns core's own 429 loop off,
+	// so this is the only retry: three times, after Retry-After.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (error: Error) => ({
+			maxRetries: 3,
+			headersRetryAfterMs:
+				error instanceof ApiError ? error.retryAfter : undefined,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	// 400 `authentication_failed`/`api_key_expired` and 401. A missing,
 	// malformed or expired credential answers 400, so the type identifies it.

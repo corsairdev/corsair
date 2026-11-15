@@ -172,7 +172,7 @@ describe('makeTombaRequest', () => {
 		expect((error as ApiError).request.method).toBe('GET');
 	});
 
-	it('does not retry a 429 that says the daily limit is used up', async () => {
+	it('leaves 429 retries to the error handlers and keeps Retry-After', async () => {
 		respond(
 			{
 				errors: {
@@ -192,6 +192,7 @@ describe('makeTombaRequest', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect((error as ApiError).status).toBe(429);
 		expect((error as ApiError).retryAfter).toBe(40000000);
+		expect(isQuotaExhausted((error as ApiError).body)).toBe(true);
 	});
 
 	it('records the method so a non-read is not replayed', async () => {

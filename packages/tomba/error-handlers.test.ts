@@ -18,9 +18,9 @@ function classify(error: Error): HandlerName {
 	return name;
 }
 
-// Every builtin handler ignores its arguments, so none are passed.
 async function strategy(error: Error) {
-	return errorHandlers[classify(error)].handler();
+	// The builtin handlers read only the error.
+	return errorHandlers[classify(error)].handler(error, {} as never);
 }
 
 // The error core's request() throws, as the client passes it on.
@@ -43,9 +43,35 @@ function apiError(
 }
 
 describe('Tomba error handlers', () => {
-	it('does not retry a 429 again: core already did, or it was a used-up daily limit', async () => {
+	it('retries a window 429 after Retry-After', async () => {
 		const error = apiError(429, { retryAfter: 30000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+		expect(await strategy(error)).toEqual({
+			maxRetries: 3,
+			headersRetryAfterMs: 30000,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('does not retry a 429 that says the daily limit is used up', async () => {
+		const error = new ApiError(
+			{ method: 'GET', url: 'email-finder' },
+			{
+				url: 'https://api.tomba.io/v1/email-finder',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {
+					errors: {
+						type: 'rate_limit',
+						message: 'Rate limit exceeded (daily). Limit is 5 requests.',
+					},
+				},
+			},
+			'Tomba 429 rate_limit',
+			{ retryAfter: 40_000_000 },
+		);
+		expect(classify(error)).toBe('QUOTA_EXHAUSTED_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 

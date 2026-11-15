@@ -54,17 +54,18 @@ describe('output schemas keep the provider field names', () => {
 
 	it('parses a domain search with its organization and meta block', () => {
 		const parsed = TombaEndpointOutputSchemas.domainSearch.parse({
-			data: { organization: company, emails: [person] },
-			meta: { total: 681, current_page: 1, last_page: 14, per_page: 50 },
+			data: { organization: domainSearchLive.organization, emails: [person] },
+			meta: { total: 681, pageSize: 10, current: 1, total_pages: 69 },
 		});
-		expect(parsed.data.organization?.name).toBe('Stripe');
+		expect(parsed.data.organization?.organization).toBe('Stripe');
+		expect(parsed.data.organization?.location?.city).toBe('San Francisco');
 		expect(parsed.data.emails).toHaveLength(1);
-		expect(parsed.meta?.last_page).toBe(14);
+		expect(parsed.meta?.total_pages).toBe(69);
 	});
 
 	it('parses an empty domain search', () => {
 		const parsed = TombaEndpointOutputSchemas.domainSearch.parse({
-			data: { organization: company, emails: [] },
+			data: { organization: domainSearchLive.organization, emails: [] },
 		});
 		expect(parsed.data.emails).toEqual([]);
 		expect(parsed.meta).toBeUndefined();
