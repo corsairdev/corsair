@@ -13,6 +13,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import type { ForceManagerEnvironment } from './client';
+import { packForceManagerCredentials } from './client';
 import { ForceManagerEndpoints as forceManagerEndpointsNested } from './endpoints';
 import { operationDefinitions } from './endpoints/definitions';
 import type {
@@ -35,8 +36,10 @@ export type ForceManagerContext = CorsairPluginContext<
 	typeof ForceManagerSchema,
 	ForceManagerPluginOptions
 >;
-export type ForceManagerKeyBuilderContext =
-	KeyBuilderContext<ForceManagerPluginOptions>;
+export type ForceManagerKeyBuilderContext = KeyBuilderContext<
+	ForceManagerPluginOptions,
+	typeof forceManagerAuthConfig
+>;
 export type ForceManagerBoundEndpoints = BindEndpoints<
 	typeof forceManagerEndpointsNested
 >;
@@ -2430,7 +2433,11 @@ export const forceManagerEndpointMeta = {
 >;
 
 export const forceManagerAuthConfig = {
-	api_key: {},
+	api_key: {
+		// ForceManager issues a public and a private API key and every session starts with a login that sends
+		// both. `api_key` holds the private key; the public key sits beside it so the key manager can read it.
+		account: ['public_key'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 type BaseForceManagerPlugin<T extends ForceManagerPluginOptions> =
@@ -2440,7 +2447,8 @@ type BaseForceManagerPlugin<T extends ForceManagerPluginOptions> =
 		typeof forceManagerEndpointsNested,
 		Record<string, never>,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof forceManagerAuthConfig
 	>;
 type InternalForceManagerPlugin =
 	BaseForceManagerPlugin<ForceManagerPluginOptions>;
@@ -2470,10 +2478,18 @@ export function forcemanager<const T extends ForceManagerPluginOptions>(
 		keyBuilder: async (ctx: ForceManagerKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key) return options.key;
-			if (!ctx.keys) throw new AuthMissingError('forcemanager', 'api_key');
-			const apiKey = await ctx.keys.get_api_key();
-			if (!apiKey) throw new AuthMissingError('forcemanager', 'api_key');
-			return apiKey;
+			if (ctx.authType !== 'api_key' || !ctx.keys) {
+				throw new AuthMissingError('forcemanager', 'api_key');
+			}
+			const [privateKey, publicKey] = await Promise.all([
+				ctx.keys.get_api_key(),
+				ctx.keys.get_public_key(),
+			]);
+			// The login needs both halves, so a half-configured account counts as no account.
+			if (!privateKey || !publicKey) {
+				throw new AuthMissingError('forcemanager', 'api_key');
+			}
+			return packForceManagerCredentials({ publicKey, privateKey });
 		},
 	} satisfies InternalForceManagerPlugin;
 }
