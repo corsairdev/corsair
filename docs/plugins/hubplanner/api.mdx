@@ -384,6 +384,7 @@ await corsair.hubplanner.api.bookings.update({
 	project: '5ba09b645ff58f149a2cf521',
 	start: '2026-12-01',
 	end: '2026-12-06',
+	title: 'Sprint Planning',
 });
 ```
 
@@ -407,7 +408,7 @@ await corsair.hubplanner.api.bookings.update({
 | `categoryTemplateId` | `string` | No | — |
 | `customFields` | `Record<string, any>[]` | No | — |
 
-PUT replaces the booking: send every stored field you want to keep (type, metadata, categoryTemplateId, customFields), or use bookings.patch for a partial change.
+PUT replaces the booking: send every stored field you want to keep (title, note, type, metadata, categoryTemplateId, customFields), or use bookings.patch for a partial change.
 
 
 
