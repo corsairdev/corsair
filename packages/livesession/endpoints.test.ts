@@ -206,6 +206,21 @@ describe('LiveSession HTTP client and endpoints', () => {
 		expect(result).toEqual([extendedAlert]);
 	});
 
+	it('accepts alert providers and event kinds LiveSession adds later', async () => {
+		const futureAlert = {
+			...alert,
+			provider: 'teams',
+			events: [{ kind: 99 }, { kind: 21, value: '5' }],
+		};
+		mockRequest.mockResolvedValue([futureAlert]);
+
+		const result = await livesession({
+			key: 'test-token',
+		}).endpoints!.alerts.list(mockCtx, {});
+
+		expect(result).toEqual([futureAlert]);
+	});
+
 	it('does not save webhook URLs or alert customer data in completion events', async () => {
 		mockRequest.mockResolvedValueOnce(webhook);
 		await livesession({ key: 'test-token' }).endpoints!.webhooks.create(
@@ -517,7 +532,76 @@ describe('LiveSession output validation and errors', () => {
 		).rejects.toBeInstanceOf(LiveSessionAPIError);
 	});
 
-	it('lets core ApiError through unchanged for the rate-limit handler', async () => {
+	it('drops the sent query and body from core ApiError but keeps status and Retry-After', async () => {
+		const email = 'john.doe@example.com';
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'GET',
+					url: '/sessions',
+					query: { email },
+				},
+				{
+					url: `https://api.livesession.io/v1/sessions?email=${encodeURIComponent(email)}`,
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					body: { error: { message: 'slow down' } },
+				},
+				'Too Many Requests',
+				{ retryAfter: 2 },
+			),
+		);
+
+		const error = await livesession({ key: 'test-token' })
+			.endpoints!.sessions.list(mockCtx, { email })
+			.catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(429);
+		expect(apiError.retryAfter).toBe(2);
+		expect(apiError.body).toEqual({ error: { message: 'slow down' } });
+		expect(apiError.url).toBe('https://api.livesession.io/v1/sessions');
+		expect(apiError.request.query).toBeUndefined();
+		expect(JSON.stringify(apiError)).not.toContain('john.doe');
+		expect(String(apiError.stack)).not.toContain('john.doe');
+	});
+
+	it('drops a webhook URL sent in the body from core ApiError', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/webhooks',
+					body: { url: 'https://example.com/hook?token=secret' },
+				},
+				{
+					url: 'https://api.livesession.io/v1/webhooks',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: { error: { type: 'validation_error' } },
+				},
+				'Bad Request',
+			),
+		);
+
+		const error = await livesession({ key: 'test-token' })
+			.endpoints!.webhooks.create(mockCtx, {
+				url: 'https://example.com/hook?token=secret',
+				website_id: 'website-1',
+				version: 'v1.0',
+			})
+			.catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(400);
+		expect((error as ApiError).request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('token=secret');
+	});
+
+	it('keeps core ApiError as an ApiError for the rate-limit handler', async () => {
 		const apiError = new ApiError(
 			{ method: 'GET', url: '/sites' },
 			{
@@ -532,11 +616,14 @@ describe('LiveSession output validation and errors', () => {
 		);
 		mockRequest.mockRejectedValue(apiError);
 
-		await expect(
-			livesession({ key: 'test-token' }).endpoints!.websites.list(mockCtx, {}),
-		).rejects.toBe(apiError);
-		expect(apiError.status).toBe(429);
-		expect(apiError.retryAfter).toBe(2);
+		const error = await livesession({ key: 'test-token' })
+			.endpoints!.websites.list(mockCtx, {})
+			.catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(429);
+		expect((error as ApiError).retryAfter).toBe(2);
+		expect((error as ApiError).message).toBe('Too Many Requests');
 	});
 
 	it('rejects requests when no token reaches the transport', async () => {

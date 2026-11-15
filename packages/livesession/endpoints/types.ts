@@ -78,8 +78,14 @@ export const AlertEventSchema = z
 	})
 	.strict();
 
-// Provider responses may contain additional event fields, unlike strict inputs.
-const AlertEventResponseSchema = AlertEventSchema.loose();
+// Responses stay open: LiveSession can add event kinds and fields, and a new
+// kind on one alert must not fail the whole alerts.list call. Inputs stay strict.
+const AlertEventResponseSchema = z
+	.object({
+		kind: z.number(),
+		value: z.string().optional(),
+	})
+	.loose();
 
 export const CreateAlertInputSchema = z
 	.object({
@@ -284,7 +290,8 @@ export const AlertSchema = z
 		alert_id: z.string(),
 		name: z.string().optional(),
 		events: z.array(AlertEventResponseSchema).optional(),
-		provider: AlertProviderSchema.optional(),
+		// Documented values are "slack" and "webhooks"; kept open for new providers.
+		provider: z.string().optional(),
 		slack_channel_id: z.string().optional(),
 		webhook_id: z.string().optional(),
 		enabled: z.boolean().optional(),

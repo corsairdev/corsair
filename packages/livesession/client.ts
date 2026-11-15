@@ -70,6 +70,41 @@ function config(apiKey: string): OpenAPIConfig {
 	};
 }
 
+// Core's ApiError keeps the request's query, body and full URL. For LiveSession
+// those can hold a visitor's email (sessions.list filters) or a webhook URL with
+// its own credentials, so the error is rebuilt without them. Status, provider
+// body, message, Retry-After and rate-limit headers are kept for the handlers.
+function withoutRequestData(error: ApiError): ApiError {
+	const url = new URL(error.url, LIVESESSION_API_BASE);
+	url.search = '';
+	const rebuilt = new ApiError(
+		{
+			...error.request,
+			url: error.request.url.split('?')[0] ?? error.request.url,
+			body: undefined,
+			formData: undefined,
+			query: undefined,
+		},
+		{
+			url: url.toString(),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	// Same message, so the original stack carries no sent data.
+	if (error.stack) rebuilt.stack = error.stack;
+	return rebuilt;
+}
+
 // unknown is necessary because the provider error body is arbitrary JSON; it is
 // narrowed with `in` checks before any field is read.
 export async function makeLiveSessionRequest<T>(
@@ -103,9 +138,8 @@ export async function makeLiveSessionRequest<T>(
 		});
 	} catch (error) {
 		// Core's ApiError carries the status and Retry-After the 429 handler
-		// matches on, so it must reach core unchanged; wrapping it would hide
-		// both from the handler.
-		if (error instanceof ApiError) throw error;
+		// matches on, so it stays an ApiError; only the sent data is removed.
+		if (error instanceof ApiError) throw withoutRequestData(error);
 		if (error instanceof Error) {
 			throw new LiveSessionAPIError(error.message, {
 				cause: error,
