@@ -47,8 +47,9 @@ const endpointMeta = {
 		description: 'Inspect a project version input and output schema.',
 	},
 	'runs.start': {
-		riskLevel: 'write',
-		description: 'Start an asynchronous project run.',
+		riskLevel: 'destructive',
+		description:
+			'Start an asynchronous project run. Each run executes the workflow and bills model usage.',
 	},
 	'runs.list': {
 		riskLevel: 'read',
@@ -59,12 +60,13 @@ const endpointMeta = {
 		description: 'Get a run and its current state.',
 	},
 	'runs.cancel': {
-		riskLevel: 'write',
-		description: 'Request cancellation of an owned run.',
+		riskLevel: 'destructive',
+		description: 'Request cancellation of an owned run. It cannot be undone.',
 	},
 	'runs.resume': {
-		riskLevel: 'write',
-		description: 'Resume an ask-human paused run.',
+		riskLevel: 'destructive',
+		description:
+			'Resume an ask-human paused run. The run continues executing and bills model usage.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof stackAIEndpoints>;
 const defaultAuthType = 'api_key' as const;

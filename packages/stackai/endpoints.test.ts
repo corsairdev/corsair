@@ -72,6 +72,16 @@ describe('StackAI public endpoints', () => {
 		}
 	});
 
+	it('marks billed runs, resumes and cancellations destructive', () => {
+		const meta = plugin.endpointMeta!;
+		expect(meta['runs.start']?.riskLevel).toBe('destructive');
+		expect(meta['runs.resume']?.riskLevel).toBe('destructive');
+		expect(meta['runs.cancel']?.riskLevel).toBe('destructive');
+		expect(meta['runs.list']?.riskLevel).toBe('read');
+		expect(meta['runs.get']?.riskLevel).toBe('read');
+		expect(meta['projects.ioSchema']?.riskLevel).toBe('read');
+	});
+
 	it('reads a project schema with an encoded path and version', async () => {
 		const body = {
 			data: {
