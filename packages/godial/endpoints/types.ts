@@ -40,30 +40,45 @@ const AddContactInputSchema = z
 	})
 	.strict();
 
-// unknown because the official overview does not specify response fields or nested values.
-function isJsonValue(value: unknown): boolean {
-	if (
-		value === null ||
-		typeof value === 'string' ||
-		typeof value === 'boolean'
-	) {
-		return true;
-	}
-	if (typeof value === 'number') return Number.isFinite(value);
-	if (Array.isArray(value)) return value.every(isJsonValue);
-	if (typeof value !== 'object') return false;
-	for (const key of Object.keys(value)) {
-		// unknown because object properties are untrusted until recursively checked.
-		const propertyValue: unknown = Reflect.get(value, key);
-		if (!isJsonValue(propertyValue)) return false;
-	}
-	return true;
-}
+// Response shapes from the live API (11-15); the reference shows only `{}`.
+// Loose objects keep fields GoDial adds later; every field but id is optional.
+const IdSchema = z.union([z.string(), z.number()]);
 
-const GoDialResponseSchema = z.custom<unknown>(
-	isJsonValue,
-	'Expected JSON value',
-);
+const GoDialListSchema = z.looseObject({
+	id: IdSchema,
+	name: z.string().nullish(),
+	system: z.boolean().nullish(),
+	callScript: z.string().nullish(),
+	companyId: IdSchema.nullish(),
+	teamsId: IdSchema.nullish(),
+	// Only `enabled` is kept: the IndiaMart block also holds that integration's
+	// API key (GLUSR_MOBILE_KEY), which must not reach agents.
+	indiamart: z.object({ enabled: z.boolean().nullish() }).nullish(),
+});
+
+const GoDialContactSchema = z.looseObject({
+	id: IdSchema,
+	name: z.string().nullish(),
+	phone: z.string().nullish(),
+	secondPhone: z.string().nullish(),
+	email: z.string().nullish(),
+	companyName: z.string().nullish(),
+	note: z.string().nullish(),
+	remarks: z.string().nullish(),
+	extra: z.string().nullish(),
+	listId: IdSchema.nullish(),
+	companyId: IdSchema.nullish(),
+	stageId: IdSchema.nullish(),
+	source: z.string().nullish(),
+	createdOn: z.string().nullish(),
+	called: z.boolean().nullish(),
+	dnc: z.boolean().nullish(),
+	leadScore: z.number().nullish(),
+	// unknown because custom field values are user-defined.
+	customFields: z.unknown().optional(),
+	// unknown because UTM fields are whatever the caller sent.
+	source_marketing: z.unknown().optional(),
+});
 
 export const GoDialEndpointInputSchemas = {
 	listsList: EmptyInputSchema,
@@ -71,8 +86,8 @@ export const GoDialEndpointInputSchemas = {
 } as const;
 
 export const GoDialEndpointOutputSchemas = {
-	listsList: GoDialResponseSchema,
-	contactsAdd: GoDialResponseSchema,
+	listsList: z.array(GoDialListSchema),
+	contactsAdd: GoDialContactSchema,
 } as const;
 
 export type GoDialEndpointInputs = {
@@ -80,10 +95,9 @@ export type GoDialEndpointInputs = {
 	contactsAdd: z.infer<typeof GoDialEndpointInputSchemas.contactsAdd>;
 };
 
-// unknown because the published overview gives no response fields to expose as a stable type.
 export type GoDialEndpointOutputs = {
-	listsList: unknown;
-	contactsAdd: unknown;
+	listsList: z.infer<typeof GoDialEndpointOutputSchemas.listsList>;
+	contactsAdd: z.infer<typeof GoDialEndpointOutputSchemas.contactsAdd>;
 };
 
 export type AddContactInput = GoDialEndpointInputs['contactsAdd'];

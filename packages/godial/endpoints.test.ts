@@ -24,8 +24,8 @@ const ctx = {
 	options: {},
 	db: {},
 	endpoints: {
-		lists: { list: async () => ({}) },
-		contacts: { add: async () => ({}) },
+		lists: { list: async () => [] },
+		contacts: { add: async () => ({ id: 'contact-1' }) },
 	},
 	$getAccountId: async () => 'test-account',
 	keys: {
@@ -65,10 +65,13 @@ describe('GoDial endpoints', () => {
 
 	it('adds a contact as JSON and does not include personal data in event logs', async () => {
 		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response('{"success":true}', {
-				status: 200,
-				headers: { 'content-type': 'application/json' },
-			}),
+			new Response(
+				'{"id":"contact-1","name":"Ada Lovelace","listId":"list-1"}',
+				{
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				},
+			),
 		);
 		const contact = {
 			listId: 'list-1',
@@ -77,7 +80,9 @@ describe('GoDial endpoints', () => {
 		};
 
 		await expect(Contacts.add(ctx, contact)).resolves.toEqual({
-			success: true,
+			id: 'contact-1',
+			name: 'Ada Lovelace',
+			listId: 'list-1',
 		});
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
 		const requestUrl = new URL(String(fetchSpy.mock.calls[0]?.[0]));

@@ -50,23 +50,55 @@ describe('GoDial endpoint schemas', () => {
 		).toBe(false);
 	});
 
-	it('validates provider outputs as JSON without assuming undocumented shapes', () => {
-		expect(
-			GoDialEndpointOutputSchemas.listsList.parse([{ id: 'list-1' }]),
-		).toEqual([{ id: 'list-1' }]);
-		expect(
-			GoDialEndpointOutputSchemas.contactsAdd.parse({ success: true }),
-		).toEqual({ success: true });
+	it('parses the live list response and drops the IndiaMart key', () => {
+		// Trimmed from a live GET lists/list (ids shortened).
+		const lists = GoDialEndpointOutputSchemas.listsList.parse([
+			{
+				name: 'Default',
+				system: false,
+				callScript: '',
+				twillioAudioUrl: '',
+				indiamart: {
+					enabled: true,
+					GLUSR_MOBILE: '9999999999',
+					GLUSR_MOBILE_KEY: 'indiamart-secret',
+				},
+				id: 'list-1',
+				companyId: 'company-1',
+				teamsId: 'team-1',
+			},
+		]);
+		expect(lists[0]?.id).toBe('list-1');
+		expect(lists[0]?.twillioAudioUrl).toBe('');
+		expect(lists[0]?.indiamart).toEqual({ enabled: true });
+		expect(JSON.stringify(lists)).not.toContain('indiamart-secret');
+	});
+
+	it('parses the live contact response, nulls included', () => {
+		// Trimmed from a live POST contact/add with a reserved 555 test number.
+		const contact = GoDialEndpointOutputSchemas.contactsAdd.parse({
+			id: 'contact-1',
+			name: 'corsair-plugin-test',
+			phone: '+12025550143',
+			called: false,
+			createdOn: '2026-11-15T10:00:00.000Z',
+			dnc: false,
+			leadScore: 0,
+			stageId: 'stage-1',
+			internalCompanyId: null,
+			productIds: [],
+			source_marketing: { source: 'corsair' },
+			ip: null,
+			creationSource: 'api',
+			companyId: 'company-1',
+			listId: 'list-1',
+			source: 'corsair-plugin-test',
+			customFields: {},
+		});
+		expect(contact.id).toBe('contact-1');
+		expect(contact.internalCompanyId).toBeNull();
 		expect(() =>
-			GoDialEndpointOutputSchemas.contactsAdd.parse(undefined),
-		).toThrow();
-		expect(() =>
-			GoDialEndpointOutputSchemas.listsList.parse(() => 'not JSON'),
-		).toThrow();
-		expect(() =>
-			GoDialEndpointOutputSchemas.contactsAdd.parse({
-				nested: { value: () => 1 },
-			}),
+			GoDialEndpointOutputSchemas.contactsAdd.parse({ name: 'no id' }),
 		).toThrow();
 	});
 });
