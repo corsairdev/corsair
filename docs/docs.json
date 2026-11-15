@@ -4751,6 +4751,14 @@
                 ]
               },
               {
+                "group": "Twelve Data",
+                "pages": [
+                  "plugins/twelvedata/overview",
+                  "plugins/twelvedata/api",
+                  "plugins/twelvedata/database"
+                ]
+              },
+              {
                 "group": "Twilio",
                 "pages": [
                   "plugins/twilio/overview",
