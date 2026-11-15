@@ -22,6 +22,10 @@ function endpoint<K extends Operation>(
 		ctx: TextItContext,
 		raw: TextItEndpointInputs[K],
 	): Promise<TextItEndpointOutputs[K]> => {
+		// `Inputs[key]` and `Outputs[key]` with a generic K resolve to the union of
+		// every operation's schema, so TypeScript can't tie parse()'s result back to
+		// K. Each cast restores the type of the schema `key` selects; parse() has
+		// already validated the value against that schema at runtime.
 		const input = Inputs[key].parse(raw ?? {}) as TextItEndpointInputs[K];
 		const response = await makeTextItRequest(ctx.key, build(input));
 		const result = Outputs[key].parse(response) as TextItEndpointOutputs[K];

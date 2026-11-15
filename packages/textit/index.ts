@@ -346,6 +346,9 @@ export type InternalTextItPlugin = BaseTextItPlugin<TextItPluginOptions>;
 export type ExternalTextItPlugin<T extends TextItPluginOptions> =
 	BaseTextItPlugin<T>;
 
+// The default `{}` is cast because TypeScript can't prove an empty object
+// satisfies a caller's generic T. Every option is optional, so `{}` is a valid
+// TextItPluginOptions and T only narrows what the caller passed.
 export function textit<const T extends TextItPluginOptions>(
 	incomingOptions: TextItPluginOptions & T = {} as TextItPluginOptions & T,
 ): ExternalTextItPlugin<T> {
