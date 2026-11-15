@@ -1,0 +1,525 @@
+---
+title: "Ko-fi webhooks"
+sidebarTitle: "Webhooks"
+description: "Ko-fi incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Ko-fi plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/kofi/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `commission` (`commission`)
+- `donation` (`donation`)
+- `shopOrder` (`shopOrder`)
+- `subscription` (`subscription`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Commission
+
+### Commission
+
+`commission`
+
+A paid commission. Ko-fi documents the type but publishes no example payload.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment. |
+| `message_id` | `string` | Yes | Unique per delivery, and stable across a retry. |
+| `timestamp` | `string` | Yes | When the payment happened, ISO 8601. Ko-fi documents it as required. |
+| `type` | `Donation \| Subscription \| Shop Order \| Commission` | Yes | — |
+| `is_public` | `boolean \| null` | No | — |
+| `from_name` | `string \| null` | No | The supporter’s display name, or `Anonymous`. |
+| `message` | `string \| null` | No | — |
+| `amount` | `string` | Yes | A decimal string, such as `5.00`, not a number. Ko-fi documents it as required. |
+| `url` | `string \| null` | No | A link to the transaction on Ko-fi. |
+| `email` | `string \| null` | No | Present only when the supporter shared it with the creator. |
+| `currency` | `string` | Yes | ISO 4217, such as `USD`. Ko-fi documents it as required. |
+| `is_subscription_payment` | `boolean \| null` | No | — |
+| `is_first_subscription_payment` | `boolean \| null` | No | — |
+| `kofi_transaction_id` | `string` | Yes | Ko-fi’s transaction identifier. Ko-fi documents it as required. |
+| `tier_name` | `string \| null` | No | The membership tier, on a Subscription only. |
+| `shop_items` | `object[] \| null` | No | On a Shop Order only. |
+| `shipping` | `object \| null` | No | On a physical Shop Order only. |
+
+<AccordionGroup>
+<Accordion title="shop_items full type">
+
+```ts
+{
+  direct_link_code?: string | null,
+  variation_name?: string | null,
+  quantity?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+  full_name?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state_or_province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  country_code?: string | null,
+  telephone?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  verification_token: string,
+  message_id: string,
+  timestamp: string,
+  type: Donation | Subscription | Shop Order | Commission,
+  is_public?: boolean | null,
+  from_name?: string | null,
+  message?: string | null,
+  amount: string,
+  url?: string | null,
+  email?: string | null,
+  currency: string,
+  is_subscription_payment?: boolean | null,
+  is_first_subscription_payment?: boolean | null,
+  kofi_transaction_id: string,
+  tier_name?: string | null,
+  shop_items?: {
+    direct_link_code?: string | null,
+    variation_name?: string | null,
+    quantity?: number | null
+  }[] | null,
+  shipping?: {
+    full_name?: string | null,
+    street_address?: string | null,
+    city?: string | null,
+    state_or_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    country_code?: string | null,
+    telephone?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+kofi({
+    webhookHooks: {
+        commission: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Donation
+
+### Donation
+
+`donation`
+
+A tip or donation. `amount` is a decimal string, and `message` holds the note left with it.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment. |
+| `message_id` | `string` | Yes | Unique per delivery, and stable across a retry. |
+| `timestamp` | `string` | Yes | When the payment happened, ISO 8601. Ko-fi documents it as required. |
+| `type` | `Donation \| Subscription \| Shop Order \| Commission` | Yes | — |
+| `is_public` | `boolean \| null` | No | — |
+| `from_name` | `string \| null` | No | The supporter’s display name, or `Anonymous`. |
+| `message` | `string \| null` | No | — |
+| `amount` | `string` | Yes | A decimal string, such as `5.00`, not a number. Ko-fi documents it as required. |
+| `url` | `string \| null` | No | A link to the transaction on Ko-fi. |
+| `email` | `string \| null` | No | Present only when the supporter shared it with the creator. |
+| `currency` | `string` | Yes | ISO 4217, such as `USD`. Ko-fi documents it as required. |
+| `is_subscription_payment` | `boolean \| null` | No | — |
+| `is_first_subscription_payment` | `boolean \| null` | No | — |
+| `kofi_transaction_id` | `string` | Yes | Ko-fi’s transaction identifier. Ko-fi documents it as required. |
+| `tier_name` | `string \| null` | No | The membership tier, on a Subscription only. |
+| `shop_items` | `object[] \| null` | No | On a Shop Order only. |
+| `shipping` | `object \| null` | No | On a physical Shop Order only. |
+
+<AccordionGroup>
+<Accordion title="shop_items full type">
+
+```ts
+{
+  direct_link_code?: string | null,
+  variation_name?: string | null,
+  quantity?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+  full_name?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state_or_province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  country_code?: string | null,
+  telephone?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  verification_token: string,
+  message_id: string,
+  timestamp: string,
+  type: Donation | Subscription | Shop Order | Commission,
+  is_public?: boolean | null,
+  from_name?: string | null,
+  message?: string | null,
+  amount: string,
+  url?: string | null,
+  email?: string | null,
+  currency: string,
+  is_subscription_payment?: boolean | null,
+  is_first_subscription_payment?: boolean | null,
+  kofi_transaction_id: string,
+  tier_name?: string | null,
+  shop_items?: {
+    direct_link_code?: string | null,
+    variation_name?: string | null,
+    quantity?: number | null
+  }[] | null,
+  shipping?: {
+    full_name?: string | null,
+    street_address?: string | null,
+    city?: string | null,
+    state_or_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    country_code?: string | null,
+    telephone?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+kofi({
+    webhookHooks: {
+        donation: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Shop Order
+
+### Shop Order
+
+`shopOrder`
+
+A shop purchase, with `shop_items` and, for physical goods, `shipping`.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment. |
+| `message_id` | `string` | Yes | Unique per delivery, and stable across a retry. |
+| `timestamp` | `string` | Yes | When the payment happened, ISO 8601. Ko-fi documents it as required. |
+| `type` | `Donation \| Subscription \| Shop Order \| Commission` | Yes | — |
+| `is_public` | `boolean \| null` | No | — |
+| `from_name` | `string \| null` | No | The supporter’s display name, or `Anonymous`. |
+| `message` | `string \| null` | No | — |
+| `amount` | `string` | Yes | A decimal string, such as `5.00`, not a number. Ko-fi documents it as required. |
+| `url` | `string \| null` | No | A link to the transaction on Ko-fi. |
+| `email` | `string \| null` | No | Present only when the supporter shared it with the creator. |
+| `currency` | `string` | Yes | ISO 4217, such as `USD`. Ko-fi documents it as required. |
+| `is_subscription_payment` | `boolean \| null` | No | — |
+| `is_first_subscription_payment` | `boolean \| null` | No | — |
+| `kofi_transaction_id` | `string` | Yes | Ko-fi’s transaction identifier. Ko-fi documents it as required. |
+| `tier_name` | `string \| null` | No | The membership tier, on a Subscription only. |
+| `shop_items` | `object[] \| null` | No | On a Shop Order only. |
+| `shipping` | `object \| null` | No | On a physical Shop Order only. |
+
+<AccordionGroup>
+<Accordion title="shop_items full type">
+
+```ts
+{
+  direct_link_code?: string | null,
+  variation_name?: string | null,
+  quantity?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+  full_name?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state_or_province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  country_code?: string | null,
+  telephone?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  verification_token: string,
+  message_id: string,
+  timestamp: string,
+  type: Donation | Subscription | Shop Order | Commission,
+  is_public?: boolean | null,
+  from_name?: string | null,
+  message?: string | null,
+  amount: string,
+  url?: string | null,
+  email?: string | null,
+  currency: string,
+  is_subscription_payment?: boolean | null,
+  is_first_subscription_payment?: boolean | null,
+  kofi_transaction_id: string,
+  tier_name?: string | null,
+  shop_items?: {
+    direct_link_code?: string | null,
+    variation_name?: string | null,
+    quantity?: number | null
+  }[] | null,
+  shipping?: {
+    full_name?: string | null,
+    street_address?: string | null,
+    city?: string | null,
+    state_or_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    country_code?: string | null,
+    telephone?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+kofi({
+    webhookHooks: {
+        shopOrder: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Subscription
+
+### Subscription
+
+`subscription`
+
+A membership payment, which fires on every payment including the first. `tier_name` names the tier.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment. |
+| `message_id` | `string` | Yes | Unique per delivery, and stable across a retry. |
+| `timestamp` | `string` | Yes | When the payment happened, ISO 8601. Ko-fi documents it as required. |
+| `type` | `Donation \| Subscription \| Shop Order \| Commission` | Yes | — |
+| `is_public` | `boolean \| null` | No | — |
+| `from_name` | `string \| null` | No | The supporter’s display name, or `Anonymous`. |
+| `message` | `string \| null` | No | — |
+| `amount` | `string` | Yes | A decimal string, such as `5.00`, not a number. Ko-fi documents it as required. |
+| `url` | `string \| null` | No | A link to the transaction on Ko-fi. |
+| `email` | `string \| null` | No | Present only when the supporter shared it with the creator. |
+| `currency` | `string` | Yes | ISO 4217, such as `USD`. Ko-fi documents it as required. |
+| `is_subscription_payment` | `boolean \| null` | No | — |
+| `is_first_subscription_payment` | `boolean \| null` | No | — |
+| `kofi_transaction_id` | `string` | Yes | Ko-fi’s transaction identifier. Ko-fi documents it as required. |
+| `tier_name` | `string \| null` | No | The membership tier, on a Subscription only. |
+| `shop_items` | `object[] \| null` | No | On a Shop Order only. |
+| `shipping` | `object \| null` | No | On a physical Shop Order only. |
+
+<AccordionGroup>
+<Accordion title="shop_items full type">
+
+```ts
+{
+  direct_link_code?: string | null,
+  variation_name?: string | null,
+  quantity?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+  full_name?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state_or_province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  country_code?: string | null,
+  telephone?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  verification_token: string,
+  message_id: string,
+  timestamp: string,
+  type: Donation | Subscription | Shop Order | Commission,
+  is_public?: boolean | null,
+  from_name?: string | null,
+  message?: string | null,
+  amount: string,
+  url?: string | null,
+  email?: string | null,
+  currency: string,
+  is_subscription_payment?: boolean | null,
+  is_first_subscription_payment?: boolean | null,
+  kofi_transaction_id: string,
+  tier_name?: string | null,
+  shop_items?: {
+    direct_link_code?: string | null,
+    variation_name?: string | null,
+    quantity?: number | null
+  }[] | null,
+  shipping?: {
+    full_name?: string | null,
+    street_address?: string | null,
+    city?: string | null,
+    state_or_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    country_code?: string | null,
+    telephone?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+kofi({
+    webhookHooks: {
+        subscription: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
