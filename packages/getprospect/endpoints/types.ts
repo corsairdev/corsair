@@ -1109,7 +1109,7 @@ export const getProspectOperationDefinitions = {
 		path: '/v2/people/bulk-enrich',
 		pathParams: [],
 		timeout: 20000,
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'People Bulk Enrich. Credit cost: newly revealed email; phone number found (enrich_email (on by default) / enrich_phone, per item).',
 	},
@@ -1140,7 +1140,7 @@ export const getProspectOperationDefinitions = {
 		path: '/v2/people/enrich',
 		pathParams: [],
 		timeout: 95000,
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'People Enrich. Credit cost: newly revealed email; phone number found (enrich_email (on by default) / enrich_phone).',
 	},
@@ -1184,7 +1184,7 @@ export const getProspectOperationDefinitions = {
 		path: '/v2/people/search',
 		pathParams: [],
 		timeout: 20000,
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'People Search. Credit cost: newly revealed email; phone number found (only with enrich_email / enrich_phone).',
 	},
@@ -1254,8 +1254,8 @@ export const getProspectOperationDefinitions = {
 		method: 'GET',
 		path: '/v2/email-finder',
 		pathParams: [],
-		timeout: 20000,
-		riskLevel: 'destructive',
+		timeout: 95000,
+		riskLevel: 'read',
 		description:
 			'Find Email (GET). Credit cost: served_address (a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free)).',
 	},
@@ -1347,8 +1347,8 @@ export const getProspectOperationDefinitions = {
 		method: 'GET',
 		path: '/v2/email-verifier',
 		pathParams: [],
-		timeout: 20000,
-		riskLevel: 'destructive',
+		timeout: 80000,
+		riskLevel: 'read',
 		description:
 			'Verify Email (GET). Credit cost: address (a valid, invalid or accept_all verdict, once per address per workspace).',
 	},
@@ -1359,7 +1359,7 @@ export const getProspectOperationDefinitions = {
 		path: '/v2/email/find',
 		pathParams: [],
 		timeout: 95000,
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Find Email. Credit cost: served_address (a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free)).',
 	},
@@ -1370,7 +1370,7 @@ export const getProspectOperationDefinitions = {
 		path: '/v2/email/verify',
 		pathParams: [],
 		timeout: 80000,
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Verify Email. Credit cost: address (a valid, invalid or accept_all verdict, once per address per workspace).',
 	},

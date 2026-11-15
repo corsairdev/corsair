@@ -35,21 +35,21 @@ All 71 in-scope OpenAPI v2 REST operations are listed below. Request and respons
 | --- | --- | --- | --- | --- |
 | `people.get` | GET | `/v2/people/{id}` | read | none |
 | `people.editsUpdate` | PATCH | `/v2/people/{id}/edits` | write | none |
-| `people.bulkEnrich` | POST | `/v2/people/bulk-enrich` | destructive | email_search,phone_search: newly revealed email; phone number found; enrich_email (on by default) / enrich_phone, per item |
+| `people.bulkEnrich` | POST | `/v2/people/bulk-enrich` | read | email_search,phone_search: newly revealed email; phone number found; enrich_email (on by default) / enrich_phone, per item |
 | `people.calculateCredits` | POST | `/v2/people/calculate-credits` | read | none |
 | `people.count` | POST | `/v2/people/count` | read | none |
-| `people.enrich` | POST | `/v2/people/enrich` | destructive | email_search,phone_search: newly revealed email; phone number found; enrich_email (on by default) / enrich_phone |
+| `people.enrich` | POST | `/v2/people/enrich` | read | email_search,phone_search: newly revealed email; phone number found; enrich_email (on by default) / enrich_phone |
 | `people.enrichSearch` | POST | `/v2/people/enrich-search` | destructive | phone_search: phone number found; always, until the balance runs out |
 | `people.save` | POST | `/v2/people/save` | destructive | email_search: person whose valid email is handed over and was not already owned; always; a re-save of a person already paid for is free. A person answered `searching` costs nothing until the refreshed search finds an email and the balance allows it |
 | `people.saveSearch` | POST | `/v2/people/save-search` | destructive | email_search: person whose stored valid email is handed over and was not already owned; always, in search order, until the balance runs out |
-| `people.search` | POST | `/v2/people/search` | destructive | email_search,phone_search: newly revealed email; phone number found; only with enrich_email / enrich_phone |
+| `people.search` | POST | `/v2/people/search` | read | email_search,phone_search: newly revealed email; phone number found; only with enrich_email / enrich_phone |
 | `companies.get` | GET | `/v2/companies/{id}` | read | none |
 | `companies.editsUpdate` | PATCH | `/v2/companies/{id}/edits` | write | none |
 | `companies.bulkEnrich` | POST | `/v2/companies/bulk-enrich` | read | none |
 | `companies.enrich` | POST | `/v2/companies/enrich` | read | none |
 | `companies.save` | POST | `/v2/companies/save` | write | none |
 | `companies.search` | POST | `/v2/companies/search` | read | none |
-| `email.findGet` | GET | `/v2/email-finder` | destructive | email_search: served_address; a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free) |
+| `email.findGet` | GET | `/v2/email-finder` | read | email_search: served_address; a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free) |
 | `email.verificationsList` | GET | `/v2/email-verifications` | read | none |
 | `email.verificationsCreate` | POST | `/v2/email-verifications` | destructive | email_verification: billable_row; when a `data.emails` job starts on its own after counting, for `counts.billable`; `unknown` rows and rows never verified are refunded when the job ends (a `file_key` job charges at `email_verifications_start`) |
 | `email.verificationsGet` | GET | `/v2/email-verifications/{id}` | read | none |
@@ -58,9 +58,9 @@ All 71 in-scope OpenAPI v2 REST operations are listed below. Request and respons
 | `email.verificationsStart` | POST | `/v2/email-verifications/{id}/start` | destructive | email_verification: billable_row; at start, for `counts.billable`; `unknown` rows and rows never verified are refunded when the job ends |
 | `email.verificationsHistoryList` | GET | `/v2/email-verifications/history` | read | none |
 | `email.verificationsInspect` | POST | `/v2/email-verifications/inspect` | read | none |
-| `email.verifyGet` | GET | `/v2/email-verifier` | destructive | email_verification: address; a valid, invalid or accept_all verdict, once per address per workspace |
-| `email.find` | POST | `/v2/email/find` | destructive | email_search: served_address; a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free) |
-| `email.verify` | POST | `/v2/email/verify` | destructive | email_verification: address; a valid, invalid or accept_all verdict, once per address per workspace |
+| `email.verifyGet` | GET | `/v2/email-verifier` | read | email_verification: address; a valid, invalid or accept_all verdict, once per address per workspace |
+| `email.find` | POST | `/v2/email/find` | read | email_search: served_address; a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free) |
+| `email.verify` | POST | `/v2/email/verify` | read | email_verification: address; a valid, invalid or accept_all verdict, once per address per workspace |
 | `search.matchingTitles` | POST | `/v2/search/matching-titles` | read | none |
 | `search.smartJobTitles` | POST | `/v2/search/smart-job-titles` | read | none |
 | `search.suggest` | POST | `/v2/search/suggest` | read | none |

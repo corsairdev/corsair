@@ -347,7 +347,7 @@ export const getprospectEndpointMeta: RequiredPluginEndpointMeta<
 		description: 'Edit a Saved Person. Credit cost: none.',
 	},
 	'people.bulkEnrich': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'People Bulk Enrich. Credit cost: newly revealed email; phone number found (enrich_email (on by default) / enrich_phone, per item).',
 	},
@@ -360,7 +360,7 @@ export const getprospectEndpointMeta: RequiredPluginEndpointMeta<
 		description: 'People Count. Credit cost: none.',
 	},
 	'people.enrich': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'People Enrich. Credit cost: newly revealed email; phone number found (enrich_email (on by default) / enrich_phone).',
 	},
@@ -380,7 +380,7 @@ export const getprospectEndpointMeta: RequiredPluginEndpointMeta<
 			'Save a Whole Search. Credit cost: person whose stored valid email is handed over and was not already owned (always, in search order, until the balance runs out).',
 	},
 	'people.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'People Search. Credit cost: newly revealed email; phone number found (only with enrich_email / enrich_phone).',
 	},
@@ -409,7 +409,7 @@ export const getprospectEndpointMeta: RequiredPluginEndpointMeta<
 		description: 'Companies Search. Credit cost: none.',
 	},
 	'email.findGet': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Find Email (GET). Credit cost: served_address (a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free)).',
 	},
@@ -448,17 +448,17 @@ export const getprospectEndpointMeta: RequiredPluginEndpointMeta<
 		description: 'Inspect Email File. Credit cost: none.',
 	},
 	'email.verifyGet': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Verify Email (GET). Credit cost: address (a valid, invalid or accept_all verdict, once per address per workspace).',
 	},
 	'email.find': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Find Email. Credit cost: served_address (a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free)).',
 	},
 	'email.verify': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Verify Email. Credit cost: address (a valid, invalid or accept_all verdict, once per address per workspace).',
 	},

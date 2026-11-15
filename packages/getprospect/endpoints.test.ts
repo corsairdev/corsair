@@ -784,7 +784,7 @@ const fixtures = {
 				domain: 'x',
 				company: 'x',
 			},
-			timeout: 20000,
+			timeout: 95000,
 		},
 	},
 	email_verifications_list: {
@@ -1155,7 +1155,7 @@ const fixtures = {
 		options: {
 			method: 'GET',
 			query: { email: 'person@samplemail.test' },
-			timeout: 20000,
+			timeout: 80000,
 		},
 	},
 	email_find: {
