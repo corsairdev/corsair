@@ -368,7 +368,7 @@ const shopifyEndpointMeta = {
 	},
 	'collections.create': {
 		riskLevel: 'write',
-		description: 'Create a manual or smart collection with a title and handle',
+		description: 'Create a manual collection with a title and handle',
 	},
 	'collections.addProducts': {
 		riskLevel: 'write',
@@ -533,6 +533,10 @@ export function shopify<const T extends ShopifyPluginOptions>(
 					});
 				// Called once after a 401: by the endpoint's own request path
 				// (`endpoints/call.ts`) or by core, never both.
+				// unknown: `_refreshAuth` is core's convention for a keyBuilder to
+				// hand the binder a renewal (read in core/endpoints/bind.ts), but
+				// KeyBuilderContext does not declare it, so the context is widened
+				// to the one member set here, as ramp's key builder does.
 				(
 					ctx as unknown as { _refreshAuth?: () => Promise<string> }
 				)._refreshAuth = () => mint('forced');
