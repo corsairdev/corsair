@@ -149,14 +149,16 @@ export function describePolygonError(
  * Rebuilds core's ApiError without the request body and query. Core keeps the
  * request it was built from on `error.request`, and on these routes that body is
  * either the key and secret (`/auth/token`) or customer personal data (names,
- * birth date, address). Status, body and rate-limit fields stay, so the 429
- * handler and the 401 refresh still read them.
+ * birth date, address). The response url loses its query string too, since
+ * core builds it from the full query (an email filter, exact coordinates).
+ * Status, body and rate-limit fields stay, so the 429 handler and the 401
+ * refresh still read them.
  */
 export function withoutRequestBody(error: ApiError): ApiError {
 	return new ApiError(
 		{ ...error.request, body: undefined, query: undefined },
 		{
-			url: error.url,
+			url: error.url ? error.url.split('?')[0]! : error.url,
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,

@@ -375,6 +375,52 @@ describe('makePolygonRequest', () => {
 		expect(JSON.stringify(error)).not.toContain('1990-01-01');
 	});
 
+	it.each([
+		['an email filter', '/customers', { email: 'jane@example.com' }, 'jane'],
+		[
+			'exact coordinates',
+			'/cash-locations',
+			{ provider: 'moneygram', latitude: 40.712776, longitude: -74.005974 },
+			'40.712776',
+		],
+	])(
+		'drops the query string from the ApiError url after a failed request with %s',
+		async (_label, path, query, secretPart) => {
+			// Core builds the response url from the full query string.
+			mockRequest.mockImplementation((_config, options) => {
+				const search = new URLSearchParams(
+					Object.entries(options.query ?? {}).map(
+						([k, v]): [string, string] => [k, String(v)],
+					),
+				);
+				throw new ApiError(
+					options,
+					{
+						url: `${POLYGON_HOSTS.live}${path}?${search}`,
+						ok: false,
+						status: 500,
+						statusText: 'Internal Server Error',
+						body: { error: 'Internal', code: 1000, msg: 'internal error' },
+					},
+					'internal error',
+					{ retryAfter: 1000 },
+				);
+			});
+
+			const error = await captureError(
+				makePolygonRequest('live', 'jwt', { method: 'GET', path, query }),
+			);
+
+			expect(error).toBeInstanceOf(ApiError);
+			if (!(error instanceof ApiError)) return;
+			expect(error.status).toBe(500);
+			expect(error.retryAfter).toBe(1000);
+			expect(error.url).toBe(`${POLYGON_HOSTS.live}${path}`);
+			expect(JSON.stringify(error)).not.toContain(secretPart);
+			expect(String(error.stack)).not.toContain(secretPart);
+		},
+	);
+
 	it('flags a dropped connection as a transport failure with its method', async () => {
 		mockRequest.mockRejectedValue(new Error('fetch failed'));
 
