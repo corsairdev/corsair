@@ -788,7 +788,7 @@ describe('ERPNext tenant host and local document sync', () => {
 		}
 	});
 
-	it('mirrors fetched documents and merges them with the stored row', async () => {
+	it('replaces the stored row with a full document, dropping cleared fields', async () => {
 		const upsertByEntityId = jest.fn();
 		const existingRow = {
 			doctype: 'Customer',
@@ -829,14 +829,13 @@ describe('ERPNext tenant host and local document sync', () => {
 				{ doctype: 'Customer', name: 'CUST-002' },
 			);
 			expect(upsertByEntityId).toHaveBeenCalledTimes(1);
-			// The merge keeps fields saved by an earlier fetch that this
-			// response does not carry, so a name-only list page can never
-			// wipe previously stored fields.
+			// A full GET leaves empty fields out (live ERPNext v16), so a
+			// phone_number missing from it was cleared in ERPNext: the stored
+			// row is replaced, not merged.
 			expect(upsertByEntityId).toHaveBeenCalledWith('Customer:CUST-002', {
 				doctype: 'Customer',
 				name: 'CUST-002',
 				customer_name: 'Acme',
-				phone_number: '+1 555 0100',
 			});
 		} finally {
 			mockFetch.mockRestore();
@@ -996,18 +995,21 @@ describe('ERPNext tenant host and local document sync', () => {
 					});
 				}
 				return new Response(
-					JSON.stringify({ data: { name: 'CUST-011', customer_name: 'Acme' } }),
+					JSON.stringify({
+						data: [{ name: 'CUST-011', customer_name: 'Acme' }],
+					}),
 					{ status: 200, headers: { 'content-type': 'application/json' } },
 				);
 			});
 		try {
-			const save = documentsEndpoints.get(
+			// A list page merges with the stored row, so its save reads first.
+			const save = documentsEndpoints.list(
 				{
 					key: 'test-key:test-secret',
 					options: { baseUrl: BASE_URL },
 					db: { documents: db },
 				},
-				{ doctype: 'Customer', name: 'CUST-011' },
+				{ doctype: 'Customer' },
 			);
 			await saveStartedPromise;
 			const deletion = documentsEndpoints.delete(

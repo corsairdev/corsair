@@ -75,10 +75,17 @@ function docsFromEnvelope(result: unknown): ErpnextAnyDoc[] {
 	return docs;
 }
 
+// A full document response (get, create, save, update, submit...) replaces
+// the stored row: Frappe leaves empty fields out of it (seen live on v16), so
+// merging would keep a value the provider has since cleared. A list page
+// carries only the selected fields, so it merges into the stored row.
+type ErpnextSyncMode = 'replace' | 'merge';
+
 async function syncDocuments(
 	ctx: ErpnextHandlerContext,
 	result: unknown,
 	doctype: unknown,
+	mode: ErpnextSyncMode = 'replace',
 ): Promise<void> {
 	const db: ErpnextDbDocumentsClient | undefined = ctx.db?.documents;
 	if (!db) return;
@@ -89,6 +96,10 @@ async function syncDocuments(
 			if (typeof name === 'string' && name.length > 0) {
 				const entityId = `${doctype}:${name}`;
 				await mutateStoredDocument(db, entityId, async () => {
+					if (mode === 'replace') {
+						await db.upsertByEntityId(entityId, { doctype, ...doc });
+						return;
+					}
 					// Upsert replaces the stored row, and list results carry only the
 					// fields the caller selected: merge with the document a previous
 					// fetch stored so a name-only list page never wipes saved fields.
@@ -246,7 +257,7 @@ export const list: ErpnextEndpointHandler<'documents.list'> = async (
 	input,
 ) => {
 	const result = await baseList(ctx, input);
-	await syncDocuments(ctx, result, input.doctype);
+	await syncDocuments(ctx, result, input.doctype, 'merge');
 	return result;
 };
 
@@ -255,7 +266,7 @@ export const getList: ErpnextEndpointHandler<'documents.getList'> = async (
 	input,
 ) => {
 	const result = await baseGetList(ctx, input);
-	await syncDocuments(ctx, result, input.doctype);
+	await syncDocuments(ctx, result, input.doctype, 'merge');
 	return result;
 };
 
