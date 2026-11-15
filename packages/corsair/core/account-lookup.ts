@@ -32,18 +32,25 @@ export type IntegrationAccountLookupResult = {
 	account: IntegrationAccountRow;
 };
 
-export async function findAccountRow(
+// The one ordering that defines "oldest" account.
+function orderedAccountsQuery(
 	db: Kysely<CorsairKyselyDatabase>,
 	where: { tenantId: string; integrationId: string },
-): Promise<Selectable<CorsairKyselyDatabase['corsair_accounts']> | undefined> {
+) {
 	return db
 		.selectFrom('corsair_accounts')
 		.selectAll()
 		.where('tenant_id', '=', where.tenantId)
 		.where('integration_id', '=', where.integrationId)
 		.orderBy('created_at', 'asc')
-		.orderBy('id', 'asc')
-		.executeTakeFirst();
+		.orderBy('id', 'asc');
+}
+
+export async function findAccountRow(
+	db: Kysely<CorsairKyselyDatabase>,
+	where: { tenantId: string; integrationId: string },
+): Promise<Selectable<CorsairKyselyDatabase['corsair_accounts']> | undefined> {
+	return orderedAccountsQuery(db, where).executeTakeFirst();
 }
 
 export async function resolveIntegrationAndAccount(
@@ -155,6 +162,12 @@ function parseConfig(config: unknown): Record<string, string> {
 	return (config as Record<string, string> | null) ?? {};
 }
 
+const toAccount = (r: {
+	id: string;
+	config: unknown;
+	dek?: string | null;
+}): Account => ({ id: r.id, config: r.config, dek: r.dek ?? null });
+
 async function readIdentity(
 	row: { config: unknown; dek?: string | null },
 	kek: string,
@@ -172,19 +185,10 @@ async function readIdentity(
 export async function listAccounts(
 	i: AccountIdentityScope,
 ): Promise<Account[]> {
-	const rows = await i.db
-		.selectFrom('corsair_accounts')
-		.selectAll()
-		.where('tenant_id', '=', i.tenantId)
-		.where('integration_id', '=', i.integrationId)
-		.orderBy('created_at', 'asc')
-		.orderBy('id', 'asc')
-		.execute();
+	const rows = await orderedAccountsQuery(i.db, i).execute();
 	return Promise.all(
 		rows.map(async (r) => ({
-			id: r.id,
-			config: r.config,
-			dek: r.dek ?? null,
+			...toAccount(r),
 			...(await readIdentity(r, i.kek)),
 		})),
 	);
@@ -208,27 +212,18 @@ async function integrationName(
 export async function resolveAccount(
 	i: AccountIdentityScope & { ref?: string },
 ): Promise<Account | undefined> {
-	const rows = await i.db
-		.selectFrom('corsair_accounts')
-		.selectAll()
-		.where('tenant_id', '=', i.tenantId)
-		.where('integration_id', '=', i.integrationId)
-		.orderBy('created_at', 'asc')
-		.orderBy('id', 'asc')
-		.execute();
-	const plain = (r: (typeof rows)[number]): Account => ({
-		id: r.id,
-		config: r.config,
-		dek: r.dek ?? null,
-	});
+	const rows = await orderedAccountsQuery(i.db, i).execute();
 	if (rows.length === 0) return undefined;
-	if (!i.ref && rows.length === 1) return plain(rows[0]!);
+	if (!i.ref && rows.length === 1) return toAccount(rows[0]!);
 
 	const byId = i.ref ? rows.find((r) => r.id === i.ref) : undefined;
-	if (byId) return plain(byId);
+	if (byId) return toAccount(byId);
 
 	const accounts = await Promise.all(
-		rows.map(async (r) => ({ ...plain(r), ...(await readIdentity(r, i.kek)) })),
+		rows.map(async (r) => ({
+			...toAccount(r),
+			...(await readIdentity(r, i.kek)),
+		})),
 	);
 	const wanted = i.ref?.toLowerCase();
 	const match = i.ref
@@ -279,14 +274,10 @@ export async function upsertAccount(i: {
 			);
 		}
 
-		const rows = await trx
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id)
-			.orderBy('created_at', 'asc')
-			.orderBy('id', 'asc')
-			.execute();
+		const rows = await orderedAccountsQuery(trx, {
+			tenantId,
+			integrationId: integration.id,
+		}).execute();
 
 		if (!identity) {
 			if (rows[0]) return { accountId: rows[0].id, created: false };
@@ -299,7 +290,7 @@ export async function upsertAccount(i: {
 		const same = known.find((k) => k.ref === identity.id);
 		const target = same ?? known.find((k) => !k.ref);
 		if (target) {
-			if (!same || target.label !== identity.label) {
+			if (!same || (identity.label && target.label !== identity.label)) {
 				await writeIdentity(trx, target.row, identity, kek);
 			}
 			return { accountId: target.row.id, created: false };
@@ -321,10 +312,9 @@ async function sealIdentity(
 	existing: Record<string, string>,
 	identity: { id: string; label?: string },
 ) {
-	const { account_label: _drop, ...rest } = existing;
 	return encryptConfig(
 		{
-			...rest,
+			...existing,
 			account_ref: identity.id,
 			...(identity.label ? { account_label: identity.label } : {}),
 		},
@@ -340,8 +330,8 @@ async function writeIdentity(
 ) {
 	const dek = row.dek ? await decryptDEK(row.dek, kek) : generateDEK();
 	const stored = parseConfig(row.config);
-	const existing =
-		row.dek && Object.keys(stored).length > 0 ? decryptConfig(stored, dek) : {};
+	// A null-DEK row's config was never sealed, so its values are plaintext.
+	const existing = row.dek ? decryptConfig(stored, dek) : stored;
 	await trx
 		.updateTable('corsair_accounts')
 		.set({

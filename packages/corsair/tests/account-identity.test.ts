@@ -5,6 +5,8 @@ import {
 	upsertAccount,
 } from '../core/account-lookup';
 import {
+	decryptConfig,
+	decryptDEK,
 	encryptConfig,
 	encryptDEK,
 	generateDEK,
@@ -227,6 +229,68 @@ describe('upsertAccount', () => {
 		expect([acct?.ref, acct?.label]).toEqual(['r1', 'a@x.com']);
 		expect(acct?.dek).not.toBeNull();
 		expect(await rowCount()).toBe(1);
+	});
+
+	test('adopting a row keeps its stored tokens alongside ref and label', async () => {
+		const dek = generateDEK();
+		const at = new Date('2026-01-01');
+		await t.database.db
+			.insertInto('corsair_accounts')
+			.values({
+				id: 'tok',
+				created_at: at,
+				updated_at: at,
+				tenant_id: 't1',
+				integration_id: 'integ-gmail',
+				config: encryptConfig({ access_token: 'secret' }, dek),
+				dek: await encryptDEK(dek, KEK),
+			})
+			.execute();
+		await up({ id: 'r1', label: 'a@x.com' });
+		const [acct] = await list();
+		const plain = decryptConfig(
+			JSON.parse(acct?.config as string),
+			await decryptDEK(acct?.dek as string, KEK),
+		);
+		expect(plain).toEqual({
+			access_token: 'secret',
+			account_ref: 'r1',
+			account_label: 'a@x.com',
+		});
+	});
+
+	test('adopting a null-dek row keeps its plaintext config and seals it', async () => {
+		const at = new Date('2026-01-01');
+		await t.database.db
+			.insertInto('corsair_accounts')
+			.values({
+				id: 'plain',
+				created_at: at,
+				updated_at: at,
+				tenant_id: 't1',
+				integration_id: 'integ-gmail',
+				config: { access_token: 'secret' },
+				dek: null,
+			})
+			.execute();
+		await up({ id: 'r1', label: 'a@x.com' });
+		const [acct] = await list();
+		expect(acct?.dek).not.toBeNull();
+		const plain = decryptConfig(
+			JSON.parse(acct?.config as string),
+			await decryptDEK(acct?.dek as string, KEK),
+		);
+		expect(plain).toEqual({
+			access_token: 'secret',
+			account_ref: 'r1',
+			account_label: 'a@x.com',
+		});
+	});
+
+	test('reconnecting without a label keeps the stored label', async () => {
+		await up({ id: 'r1', label: 'a@x.com' });
+		await up({ id: 'r1' });
+		expect((await list())[0]?.label).toBe('a@x.com');
 	});
 
 	test('adoption skips rows that already have a ref', async () => {
