@@ -304,6 +304,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'googleslides',
 	'googletasks',
+	'gorgias',
 	'grafana',
 	'griptape',
 	'groqcloud',
@@ -376,6 +377,7 @@ export const BaseProviders = [
 	'missive',
 	'mixmax',
 	'monday',
+	'mondaymcp',
 	'mrscraper',
 	'nanonets',
 	'neon',
@@ -400,6 +402,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'parallel',
 	'parseur',
 	'pdfco',
 	'pdfmonkey',
@@ -410,6 +413,9 @@ export const BaseProviders = [
 	'placid',
 	'plain',
 	'ploid',
+	'polygonio',
+	'postmark',
+	'prismic',
 	'posthog',
 	'postman',
 	'prisma',
@@ -477,6 +483,7 @@ export const BaseProviders = [
 	'servicenow',
 	'sharepoint',
 	'shippo',
+	'shortcut',
 	'slack',
 	'slackbot',
 	'snapchat',
@@ -879,6 +886,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	googleslides: 'Google Slides',
 	googletasks: 'Google Tasks',
+	gorgias: 'Gorgias',
 	grafana: 'Grafana',
 	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
@@ -951,6 +959,7 @@ export const ProviderDisplayNames = {
 	missive: 'Missive',
 	mixmax: 'Mixmax',
 	monday: 'Monday',
+	mondaymcp: 'Monday MCP',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
 	neon: 'Neon',
@@ -975,6 +984,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	parallel: 'Parallel',
 	parseur: 'Parseur',
 	pdfco: 'PDF.co',
 	pdfmonkey: 'PDFMonkey',
@@ -985,6 +995,9 @@ export const ProviderDisplayNames = {
 	placid: 'Placid',
 	plain: 'Plain',
 	ploid: 'Ploid',
+	polygonio: 'Polygon.io',
+	postmark: 'Postmark',
+	prismic: 'Prismic',
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
@@ -1052,6 +1065,7 @@ export const ProviderDisplayNames = {
 	servicenow: 'ServiceNow',
 	sharepoint: 'SharePoint',
 	shippo: 'Shippo',
+	shortcut: 'Shortcut',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
@@ -1461,6 +1475,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'googleslides'
 	| 'googletasks'
+	| 'gorgias'
 	| 'grafana'
 	| 'griptape'
 	| 'groqcloud'
@@ -1533,6 +1548,7 @@ export type AllProviders =
 	| 'missive'
 	| 'mixmax'
 	| 'monday'
+	| 'mondaymcp'
 	| 'mrscraper'
 	| 'nanonets'
 	| 'neon'
@@ -1557,6 +1573,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'parallel'
 	| 'parseur'
 	| 'pdfco'
 	| 'pdfmonkey'
@@ -1567,6 +1584,9 @@ export type AllProviders =
 	| 'placid'
 	| 'plain'
 	| 'ploid'
+	| 'polygonio'
+	| 'postmark'
+	| 'prismic'
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
@@ -1634,6 +1654,7 @@ export type AllProviders =
 	| 'servicenow'
 	| 'sharepoint'
 	| 'shippo'
+	| 'shortcut'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
