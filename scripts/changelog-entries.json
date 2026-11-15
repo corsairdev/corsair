@@ -6246,5 +6246,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/postiz",
+    "dir": "packages/postiz",
+    "name": "Postiz",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
