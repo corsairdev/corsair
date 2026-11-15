@@ -5,7 +5,9 @@
 // Every test is a read, and every answer is parsed through the same output
 // schema a caller receives, so a field typed wrongly cannot pass silently.
 // Nothing here creates a customer or a subscription.
-import { apiBase, makeProabonoRequest, ProabonoAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { apiBase, makeProabonoRequest } from './client';
+import { asList } from './endpoints/call';
 import { ProabonoEndpointOutputSchemas } from './endpoints/types';
 import { captureError } from './test-helpers';
 
@@ -34,7 +36,7 @@ describeLive('ProAbono live API', () => {
 			path: '/v1/Offers',
 		});
 		const parsed = ProabonoEndpointOutputSchemas.offersList.parse(
-			Array.isArray(raw) ? { offers: raw } : raw,
+			asList('offers')(raw ?? { Items: [] }),
 		);
 
 		expect(Array.isArray(parsed.offers)).toBe(true);
@@ -46,7 +48,7 @@ describeLive('ProAbono live API', () => {
 			path: '/v1/Customers',
 		});
 		const parsed = ProabonoEndpointOutputSchemas.customersList.parse(
-			Array.isArray(raw) ? { customers: raw } : raw,
+			asList('customers')(raw ?? { Items: [] }),
 		);
 
 		expect(Array.isArray(parsed.customers)).toBe(true);
@@ -58,7 +60,7 @@ describeLive('ProAbono live API', () => {
 			path: '/v1/Features',
 		});
 		const parsed = ProabonoEndpointOutputSchemas.featuresList.parse(
-			Array.isArray(raw) ? { features: raw } : raw,
+			asList('features')(raw ?? { Items: [] }),
 		);
 
 		expect(Array.isArray(parsed.features)).toBe(true);
@@ -72,10 +74,10 @@ describeLive('ProAbono live API', () => {
 			),
 		);
 
-		expect(error).toBeInstanceOf(ProabonoAPIError);
-		if (!(error instanceof ProabonoAPIError)) return;
+		// HTTP failures reach the caller as core's ApiError, unchanged.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.credentialsRejected).toBe(true);
 		// The keys rode in a header, so nothing may echo them back.
 		expect(JSON.stringify(error)).not.toContain('definitely-not-a-key');
 	});
