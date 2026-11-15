@@ -89,8 +89,12 @@ function sanitizeValue(value: unknown, secrets: string[]): unknown {
 // List filters such as recipientEmail and purchaserEmail put emails in the query.
 // `unknown` because core types query values loosely (string, number, boolean, arrays).
 function isEmailQueryParam(key: string, value: unknown): boolean {
+	if (/email/i.test(key)) return true;
+	if (typeof value === 'string') return value.includes('@');
+	// Array filters such as reports `users` can carry an email in any item
 	return (
-		/email/i.test(key) || (typeof value === 'string' && value.includes('@'))
+		Array.isArray(value) &&
+		value.some((item) => typeof item === 'string' && item.includes('@'))
 	);
 }
 
