@@ -376,7 +376,10 @@ export const request = <T>(
 					ok: response.ok,
 					status: response.status,
 					statusText: response.statusText,
-					body: responseHeader ?? responseBody,
+					// A requested header stands in for the body only on success; a
+					// failed call keeps the provider's error body for the message
+					// and the rate-limit check.
+					body: response.ok ? (responseHeader ?? responseBody) : responseBody,
 				};
 
 				if (

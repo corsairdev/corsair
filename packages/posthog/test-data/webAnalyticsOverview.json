@@ -1,0 +1,42 @@
+{
+  "cache_key": "cache_309833_2cdfe2541731d3868f5ceaf39e32d2a07f6dcc84c4151ee5477d6f97f66b7d8b_[]_pc1_vf0",
+  "cache_target_age": "2026-11-12T19:37:40.857750Z",
+  "calculation_trigger": null,
+  "dateFrom": "2026-11-05 00:00:00",
+  "dateTo": "2026-11-12 23:59:59",
+  "error": null,
+  "is_cached": false,
+  "last_refresh": "2026-11-12T13:37:40.857750Z",
+  "next_allowed_client_refresh": "2026-11-12T13:52:40.857750Z",
+  "preComputeIneligibleReason": "BelowVolumeFloor",
+  "preComputeStale": null,
+  "preComputeStrategy": "live",
+  "preComputedAt": null,
+  "query_scan": null,
+  "query_status": null,
+  "resolved_compare_date_range": null,
+  "resolved_date_range": null,
+  "results": [
+    {
+      "changeFromPreviousPct": -2,
+      "isIncreaseBad": null,
+      "key": "visitors",
+      "kind": "unit",
+      "previous": 1473,
+      "value": 1439
+    },
+    {
+      "changeFromPreviousPct": 9,
+      "isIncreaseBad": null,
+      "key": "views",
+      "kind": "unit",
+      "previous": 3449,
+      "value": 3765
+    }
+  ],
+  "samplingRate": null,
+  "timezone": "UTC",
+  "used_data_warehouse_sources": null,
+  "warehouse_suggestions": null,
+  "warnings": null
+}

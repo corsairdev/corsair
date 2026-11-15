@@ -1,0 +1,76 @@
+displayName: Rosette
+description: Language detection, entity and relationship extraction, sentiment, topics, semantic vectors, name matching and transliteration with the Rosette text-analytics API.
+domain: babelstreet.com
+recommendedAuth: api_key
+overviewNote: |
+  Rosette is now part of **Babel Street**, and both the host and the key header moved with it:
+
+  - **Host:** `analytics.babelstreet.com/rest/v1`. The old `api.rosette.com` still answers, but the current docs and the official bindings point here, so this plugin uses the new host.
+  - **Header:** `X-BabelStreetAPI-Key`. The legacy `X-RosetteAPI-Key` is still accepted by the server, but the bindings send the new one and so does the plugin.
+
+  Get a key from your Babel Street account (developer.babelstreet.com); the 30-day free trial allows 2,000 calls a month and 500 a day.
+
+  **One error body covers three different problems.** A key that is wrong, an endpoint your plan does not include, and an exhausted daily or monthly quota all answer the same `403` with `{"code":"forbidden","message":"you have either provided an invalid API key, or are not authorized to call the endpoint, or have exceeded the daily or monthly API call limits"}` — captured live on every endpoint. A `profileId` the account does not have gets the same answer. The plugin never retries that, because two of the three cannot be fixed by a retry, and it keeps the `endpoint` on the error so a failing call is identifiable.
+
+  Every analysis takes the same shape:
+
+  - **Give `content` or `contentUri`, never both.** `contentUri` fetches the page server-side over http, https, ftp or ftps. The plugin rejects a request with neither, since there is nothing to analyse, and one with both, since Rosette treats them as alternatives.
+  - **`language` and `profileId` are optional.** Setting `language` skips detection and is worth doing when you know it, because detection errors change the result of every downstream analysis. A `profileId` applies a saved profile.
+  - **A retry costs one more API call.** With `content` it returns the same answer. With `contentUri` Rosette fetches the page again, so a page that changed in between gives a different answer.
+
+  Reading the answers:
+
+  - **`language`** returns only `languageDetections`, most likely first. There is no separate top-level answer: the first candidate is the result.
+  - **`entities`** groups mentions by `entityId`, so an entity's `count` is how many times it appears, and `mentionOffsets` holds the start and end of each one. A `Q…` ID is a Wikidata item; a `T…` ID is local to the text.
+  - **`sentiment`** gives the document a `label` (`pos`, `neg` or `neu`) and a `confidence`; each entity carries its own label and confidence under `sentiment`.
+  - **`tokens`** returns the tokens only. For part-of-speech tags and lemmas, call **`morphology`**, which returns `tokens`, `posTags` and `lemmas` as arrays in the **same order**, plus `compoundComponents` and `hanReadings` with `null` for a token that has none.
+  - **`sentences`** returns each sentence as text, with its trailing whitespace.
+  - **`topics`** returns `keyphrases` (phrases from the text) and `concepts` (broader themes with a Wikidata `conceptId`), each with a salience rather than a probability, so the scores are not comparable across documents the way a probability would be.
+  - **`relationships`** links `arg1` and `arg2` (sometimes `arg3`) through a `predicate`, such as `PER-EMPLOYEE-MEMBER-OF`.
+  - **`semantics.similarTerms`** needs `resultLanguages` (for example `["eng"]`); the API refuses the call without it. The answer is keyed by language.
+  - **`semantics.vector`** returns `documentEmbedding`, one vector for the whole text.
+  - **`nameSimilarity` is not symmetric.** It scores how likely `name1` is to be the same entity as `name2`, so swapping them can change the score. Use `language`, `script` and `entityType` on each name to sharpen it.
+  - **`transliteration` is not translation.** It moves text between Latin and the native script of its `language` and keeps the words; it takes no target script. `nameTranslation` is the one that translates a name into another language.
+examples:
+  read:
+    path: sentiment
+    title: Score the sentiment of a review
+    args:
+      content: I love this product, but the delivery was slow.
+  read_2:
+    path: entities
+    title: Extract the entities from a message
+    args:
+      content: John Smith works at Acme Corp in Seattle.
+      language: eng
+apiExamples:
+  ping: {}
+  info: {}
+  language:
+    call: "{ content: 'The quick brown fox jumps over the lazy dog.' }"
+  entities:
+    call: "{ content: 'John Smith works at Acme Corp in Seattle.', language: 'eng' }"
+  sentiment:
+    call: "{ content: 'I love this product, but the delivery was slow.' }"
+  tokens:
+    call: "{ content: 'The quick brown fox', language: 'eng' }"
+  sentences:
+    call: "{ content: 'The quick brown fox. It jumped over the dog.' }"
+  morphology:
+    call: "{ content: 'running', language: 'eng' }"
+  categories:
+    call: "{ content: 'A new machine learning framework was released today.' }"
+  topics:
+    call: "{ content: 'A new machine learning framework was released today.' }"
+  relationships:
+    call: "{ content: 'John Smith works for Acme Corp.' }"
+  semantics.similarTerms:
+    call: "{ content: 'car', resultLanguages: ['eng'] }"
+  semantics.vector:
+    call: "{ content: 'A sentence to embed.' }"
+  nameSimilarity:
+    call: "{ name1: { text: 'John Smith', entityType: 'PERSON' }, name2: { text: 'Jon Smith', entityType: 'PERSON' } }"
+  nameTranslation:
+    call: "{ name: 'John Smith', targetLanguage: 'rus', entityType: 'PERSON' }"
+  transliteration:
+    call: "{ content: 'Mohammed Ali', language: 'ara' }"
