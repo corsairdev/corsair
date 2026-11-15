@@ -2,6 +2,7 @@ import type { HubConfigInput } from '../../hub';
 import type {
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
+	WithTenantOptions,
 } from '../client';
 import type { CorsairManageNamespace } from '../management';
 import type { ConnectLink } from '../management/types';
@@ -133,10 +134,7 @@ function buildCloudSurface<Plugins extends readonly CorsairPlugin[]>(
 
 	if (opts.multiTenancy) {
 		return {
-			withTenant: (
-				tenantId: string,
-				options?: { accounts?: Record<string, string | undefined> },
-			) => {
+			withTenant: (tenantId: string, options?: WithTenantOptions) => {
 				if (options?.accounts && Object.keys(options.accounts).length > 0) {
 					throw new Error(
 						'withTenant accounts is not supported in cloud mode yet',

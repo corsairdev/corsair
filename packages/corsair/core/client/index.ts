@@ -7,7 +7,10 @@ import type {
 	PluginEntityClients,
 } from '../../db/orm';
 import type { HubConfig } from '../../hub';
-import { listAccounts, resolveIntegrationAccountIds } from '../account-lookup';
+import {
+	fanOutAccounts,
+	resolveIntegrationAccountIds,
+} from '../account-lookup';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -434,6 +437,11 @@ export type BuildCorsairClientOptions = {
 	/** Internal config for lazy tenant provisioning on first use. */
 	internalConfig?: CorsairInternalConfig;
 	/** Per-plugin account refs from withTenant. Present (even empty) = strict account selection. */
+	accounts?: WithTenantOptions['accounts'];
+};
+
+/** Options of `withTenant`: per-plugin account refs. */
+export type WithTenantOptions = {
 	accounts?: Record<string, string | undefined>;
 };
 
@@ -507,29 +515,13 @@ export function buildCorsairClient<
 		// api.db reads span every account of an unbound plugin; ctx.db stays strict.
 		const fanOut =
 			database && kek && accounts && !accounts[plugin.id]
-				? async () => {
-						const integration = await database.db
-							.selectFrom('corsair_integrations')
-							.select('id')
-							.where('name', '=', plugin.id)
-							.executeTakeFirst();
-						if (!integration) return [];
-						const ids = await database.db
-							.selectFrom('corsair_accounts')
-							.select('id')
-							.where('tenant_id', '=', effectiveTenantId)
-							.where('integration_id', '=', integration.id)
-							.execute();
-						// Labels need a decrypt; a lone account is read without one.
-						if (ids.length < 2) return ids;
-						const list = await listAccounts({
+				? () =>
+						fanOutAccounts({
 							db: database.db,
 							kek,
-							integrationId: integration.id,
+							integrationName: plugin.id,
 							tenantId: effectiveTenantId,
-						});
-						return list.map((a) => ({ id: a.id, label: a.label ?? a.ref }));
-					}
+						})
 				: undefined;
 
 		// Create typed entity clients from plugin schema, nested under `db`

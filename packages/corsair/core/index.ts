@@ -7,7 +7,11 @@ import {
 	CORSAIR_TUNNEL_ZONE,
 } from '../hub/tunnel/constants';
 import { createMissingConfigProxy } from './auth/errors';
-import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
+import type {
+	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
+	WithTenantOptions,
+} from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
 import { buildCloudCorsair, hasCloudBaseUrl } from './cloud';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
@@ -119,10 +123,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	if (config.multiTenancy) {
 		const tenantWrapper = Object.assign(
 			{
-				withTenant: (
-					tenantId: string,
-					options?: { accounts?: Record<string, string | undefined> },
-				) => {
+				withTenant: (tenantId: string, options?: WithTenantOptions) => {
 					if (!tenantId) {
 						throw new Error(
 							'corsair.withTenant(tenantId): tenantId must be a non-empty string',

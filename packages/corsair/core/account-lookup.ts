@@ -145,9 +145,12 @@ type AccountIdentityScope = {
 	tenantId: string;
 };
 
+type AccountIdentity = { id: string; label?: string };
+type AccountSummary = { id: string; ref?: string; label?: string };
+
 export class AccountSelectionError extends Error {
 	code: 'account_required' | 'account_not_found' | 'account_limit';
-	accounts: { id: string; ref?: string; label?: string }[];
+	accounts: AccountSummary[];
 
 	constructor(
 		code: AccountSelectionError['code'],
@@ -192,20 +195,61 @@ async function readIdentity(
 	}
 }
 
+const withIdentity = (
+	rows: { id: string; config: unknown; dek?: string | null }[],
+	kek: string,
+): Promise<Account[]> =>
+	Promise.all(
+		rows.map(async (r) => ({
+			...toAccount(r),
+			...(await readIdentity(r, kek)),
+		})),
+	);
+
 export async function listAccounts(
 	i: AccountIdentityScope,
 ): Promise<Account[]> {
-	const rows = await orderedAccountsQuery(i.db, i).execute();
-	return Promise.all(
-		rows.map(async (r) => ({
-			...toAccount(r),
-			...(await readIdentity(r, i.kek)),
-		})),
-	);
+	return withIdentity(await orderedAccountsQuery(i.db, i).execute(), i.kek);
 }
 
-const displayName = (a: { id: string; ref?: string; label?: string }) =>
-	a.label ?? a.ref ?? a.id;
+const displayName = (a: AccountSummary) => a.label ?? a.ref ?? a.id;
+const summarize = ({ id, ref, label }: AccountSummary): AccountSummary => ({
+	id,
+	ref,
+	label,
+});
+
+/**
+ * Account ids of a tenant's plugin, oldest first. Labels (which cost a
+ * decrypt) are returned only when there are 2+ accounts to tell apart.
+ */
+export async function fanOutAccounts(i: {
+	db: Kysely<CorsairKyselyDatabase>;
+	kek: string;
+	integrationName: string;
+	tenantId: string;
+}): Promise<{ id: string; label?: string }[]> {
+	const integration = await i.db
+		.selectFrom('corsair_integrations')
+		.select('id')
+		.where('name', '=', i.integrationName)
+		.executeTakeFirst();
+	if (!integration) return [];
+	const ids = await i.db
+		.selectFrom('corsair_accounts')
+		.select('id')
+		.where('tenant_id', '=', i.tenantId)
+		.where('integration_id', '=', integration.id)
+		.execute();
+	if (ids.length < 2) return ids;
+	const list = await listAccounts({
+		db: i.db,
+		kek: i.kek,
+		integrationId: integration.id,
+		tenantId: i.tenantId,
+	});
+	return list.map((a) => ({ id: a.id, label: a.label ?? a.ref }));
+}
 
 async function integrationName(
 	db: Kysely<CorsairKyselyDatabase>,
@@ -229,12 +273,7 @@ export async function resolveAccount(
 	const byId = i.ref ? rows.find((r) => r.id === i.ref) : undefined;
 	if (byId) return toAccount(byId);
 
-	const accounts = await Promise.all(
-		rows.map(async (r) => ({
-			...toAccount(r),
-			...(await readIdentity(r, i.kek)),
-		})),
-	);
+	const accounts = await withIdentity(rows, i.kek);
 	const wanted = i.ref?.toLowerCase();
 	const exact = i.ref ? accounts.find((a) => a.ref === i.ref) : undefined;
 	if (exact) return exact;
@@ -248,11 +287,11 @@ export async function resolveAccount(
 		throw new AccountSelectionError(
 			'account_required',
 			`Label "${i.ref}" matches ${byLabel.length} accounts for "${name}" (tenant "${i.tenantId}"): ${byLabel.map((a) => a.ref ?? a.id).join(', ')}. Name one by its id.`,
-			byLabel.map(({ id, ref, label }) => ({ id, ref, label })),
+			byLabel.map(summarize),
 		);
 	}
 	const names = accounts.map(displayName).join(', ');
-	const summary = accounts.map(({ id, ref, label }) => ({ id, ref, label }));
+	const summary = accounts.map(summarize);
 	if (!i.ref) {
 		throw new AccountSelectionError(
 			'account_required',
@@ -274,7 +313,7 @@ export async function upsertAccount(i: {
 	kek: string;
 	integrationName: string;
 	tenantId: string;
-	identity?: { id: string; label?: string };
+	identity?: AccountIdentity;
 }): Promise<{ accountId: string; created: boolean }> {
 	const { database, kek, tenantId, identity } = i;
 	return database.db.transaction().execute(async (trx) => {
@@ -318,7 +357,9 @@ export async function upsertAccount(i: {
 			throw new AccountSelectionError(
 				'account_limit',
 				`Account limit reached: tenant "${tenantId}" already has ${rows.length} accounts for "${i.integrationName}".`,
-				known.map(({ row, ref, label }) => ({ id: row.id, ref, label })),
+				known.map(({ row, ref, label }) =>
+					summarize({ id: row.id, ref, label }),
+				),
 			);
 		}
 		return insertRow(trx, integration.id, tenantId, kek, identity);
@@ -328,7 +369,7 @@ export async function upsertAccount(i: {
 async function sealIdentity(
 	dek: string,
 	existing: Record<string, string>,
-	identity: { id: string; label?: string },
+	identity: AccountIdentity,
 ) {
 	return encryptConfig(
 		{
@@ -343,7 +384,7 @@ async function sealIdentity(
 async function writeIdentity(
 	trx: Kysely<CorsairKyselyDatabase>,
 	row: { id: string; config: unknown; dek?: string | null },
-	identity: { id: string; label?: string },
+	identity: AccountIdentity,
 	kek: string,
 ) {
 	const dek = row.dek ? await decryptDEK(row.dek, kek) : generateDEK();
@@ -366,7 +407,7 @@ async function insertRow(
 	integrationId: string,
 	tenantId: string,
 	kek: string,
-	identity?: { id: string; label?: string },
+	identity?: AccountIdentity,
 ) {
 	const dek = generateDEK();
 	const now = new Date();
