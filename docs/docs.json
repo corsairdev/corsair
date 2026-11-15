@@ -4391,6 +4391,14 @@
                 ]
               },
               {
+                "group": "Splitwise",
+                "pages": [
+                  "plugins/splitwise/overview",
+                  "plugins/splitwise/api",
+                  "plugins/splitwise/database"
+                ]
+              },
+              {
                 "group": "Spoki",
                 "pages": [
                   "plugins/spoki/overview",
