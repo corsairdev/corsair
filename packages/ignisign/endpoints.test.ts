@@ -625,8 +625,20 @@ describe('signerProfiles, applications, seal, logCapsules, & bareSignatures', ()
 			appId: 'appId_1',
 			appName: 'My App',
 			envSettings: { DEVELOPMENT: { webhooks: [] } },
-			signerProfiles: [{ _id: 'prof_1' }],
-			signatureProfiles: [],
+			// Shape seen on the live API (11-15): profiles keyed by environment.
+			signerProfiles: {
+				DEVELOPMENT: [
+					{
+						appId: 'appId_1',
+						appEnv: 'DEVELOPMENT',
+						name: 'Default Signer Profile',
+						status: 'PUBLISHED',
+					},
+				],
+				STAGING: [],
+				PRODUCTION: [],
+			},
+			signatureProfiles: { DEVELOPMENT: [], STAGING: [], PRODUCTION: [] },
 			config: { maxSigners: 10 },
 			settings: { defaultLanguage: 'EN' },
 		};

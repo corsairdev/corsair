@@ -6,7 +6,7 @@
 //
 // Read-only smoke checks: skips when unset, never logs keys.
 
-import { makeIgnisignRequest } from './client';
+import { appScopeFromKey, makeIgnisignRequest } from './client';
 import type { ApplicationContext } from './endpoints/types';
 import { ApplicationContextSchema } from './endpoints/types';
 
@@ -21,7 +21,8 @@ if (!LIVE_KEY) {
 
 describeLive('Ignisign live API (env-gated)', () => {
 	it('GET /v4/applications/:appId/context returns application context', async () => {
-		const appId = process.env.IGNISIGN_APP_ID || 'appId_sample';
+		const appId =
+			process.env.IGNISIGN_APP_ID || appScopeFromKey(LIVE_KEY)?.appId || '';
 		const res = await makeIgnisignRequest<ApplicationContext>(
 			`/v4/applications/${encodeURIComponent(appId)}/context`,
 			LIVE_KEY,

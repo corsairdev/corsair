@@ -273,9 +273,10 @@ export const ApplicationContextSchema = z.object({
 	envSettings: z.record(z.string(), z.unknown()).optional(),
 	config: z.record(z.string(), z.unknown()).optional(),
 	settings: z.record(z.string(), z.unknown()).optional(),
+	// Keyed by environment (DEVELOPMENT, STAGING, PRODUCTION), as the live API returns them.
 	// `unknown` because profile entries follow IgniSign's signer/signature profile models.
-	signerProfiles: z.array(z.unknown()).optional(),
-	signatureProfiles: z.array(z.unknown()).optional(),
+	signerProfiles: z.record(z.string(), z.array(z.unknown())).optional(),
+	signatureProfiles: z.record(z.string(), z.array(z.unknown())).optional(),
 });
 export type ApplicationContext = z.infer<typeof ApplicationContextSchema>;
 
