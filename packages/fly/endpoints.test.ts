@@ -1,5 +1,6 @@
 import { createCorsair } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { seg } from './client';
 import { fly } from './index';
 import { fixtures } from './test-fixtures';
 
@@ -756,6 +757,95 @@ describe('Fly requests', () => {
 		const precondition = await api.machines.delete(t).catch((e: unknown) => e);
 		expect(precondition).toBeInstanceOf(ApiError);
 		expect((precondition as ApiError).status).toBe(412);
+	});
+
+	it('refuses "." and ".." path values, which URL parsing would turn into another route', async () => {
+		// new URL('…/machines/M/metadata/..') resolves to '…/machines/M/', so a
+		// metadata delete with key '..' would otherwise delete the Machine.
+		expect(
+			new URL(`${BASE}${mp}/metadata/${encodeURIComponent('..')}`).pathname,
+		).toBe(`${mp}/`);
+		await expect(
+			api.machines.deleteMetadataKey({ ...t, key: '..' }),
+		).rejects.toThrow();
+		await expect(
+			api.machines.getMetadataKey({ ...t, key: ' . ' }),
+		).rejects.toThrow();
+		await expect(api.apps.delete({ app_name: '..' })).rejects.toThrow();
+		await expect(
+			api.machines.delete({ app_name: APP, machine_id: '.' }),
+		).rejects.toThrow();
+		await expect(
+			api.certificates.delete({ app_name: APP, hostname: '..' }),
+		).rejects.toThrow();
+		expect(sent).toHaveLength(0);
+		expect(() => seg('..')).toThrow();
+		expect(seg('a.b')).toBe('a.b');
+	});
+
+	it('accepts the documented empty snapshot reply and rejects a malformed one', async () => {
+		replies.push(empty(200), json({ Msg: { unexpected: true } }));
+		await expect(api.volumes.createSnapshot(v)).resolves.toEqual({
+			volume_id: VOL,
+			snapshot_id: null,
+			state: null,
+		});
+		await expect(api.volumes.createSnapshot(v)).rejects.toThrow();
+	});
+
+	it("keeps the request body out of a failed call's ApiError", async () => {
+		replies.push(json({ error: 'unauthorized' }, 403));
+		const error = await api.secrets
+			.set({ app_name: APP, name: 'TEST_SECRET', value: 'do-not-leak' })
+			.catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(403);
+		expect((error as ApiError).message).toBe('Forbidden');
+		expect((error as ApiError).request.body).toBe('[REDACTED]');
+		expect(JSON.stringify(error)).not.toContain('do-not-leak');
+		// The value still went to Fly; only the error copy is redacted.
+		expect(sent[0]?.body).toEqual({ value: 'do-not-leak' });
+	});
+
+	it('accepts container-only configs and passes extra guest fields through', async () => {
+		replies.push(json(fixtures.machine));
+		await api.machines.create({
+			app_name: APP,
+			config: {
+				containers: [{ name: 'web', image: 'nginx:alpine' }],
+				guest: {
+					cpus: 1,
+					memory_mb: 256,
+					kernel_args: ['quiet'],
+					persist_rootfs: 'never',
+				},
+			},
+		});
+		expect(sent[0]?.body).toEqual({
+			config: {
+				containers: [{ name: 'web', image: 'nginx:alpine' }],
+				guest: {
+					cpus: 1,
+					memory_mb: 256,
+					kernel_args: ['quiet'],
+					persist_rootfs: 'never',
+				},
+			},
+		});
+		await expect(
+			api.machines.create({ app_name: APP, config: { env: { A: '1' } } }),
+		).rejects.toThrow();
+		expect(sent).toHaveLength(1);
+	});
+
+	it('sends a metadata value as given and refuses a blank one', async () => {
+		replies.push(empty(204));
+		await api.machines.setMetadataKey({ ...t, key: 'note', value: ' padded ' });
+		expect(sent[0]?.body).toEqual({ value: ' padded ' });
+		await expect(
+			api.machines.setMetadataKey({ ...t, key: 'note', value: '   ' }),
+		).rejects.toThrow();
+		expect(sent).toHaveLength(1);
 	});
 
 	it('rejects bad input before any request', async () => {

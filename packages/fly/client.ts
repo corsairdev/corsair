@@ -1,6 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 /** Fly's public Machines REST API (https://docs.fly.io/machines/api/). */
 export const FLY_API_BASE = 'https://api.machines.dev';
@@ -28,8 +28,17 @@ export function flyAuthorization(token: string): string {
 	return trimmed.startsWith('FlyV1 ') ? trimmed : `Bearer ${trimmed}`;
 }
 
-/** Encode one value for use as a single path segment. */
-export const seg = (value: string) => encodeURIComponent(value);
+/**
+ * Encode one value for use as a single path segment. `.` and `..` survive
+ * encoding and URL parsing would resolve them into another route, so they
+ * are refused here as well as by the input schemas.
+ */
+export const seg = (value: string) => {
+	if (value === '.' || value === '..') {
+		throw new Error('Fly path values cannot be "." or ".."');
+	}
+	return encodeURIComponent(value);
+};
 
 /**
  * Send one request and return the decoded JSON body, or undefined for the
@@ -70,7 +79,41 @@ export async function makeFlyRequest(
 			422: 'Unprocessable Entity',
 		},
 	};
-	// The body is untyped JSON here; each operation's output schema parses it.
-	const body = await request<unknown>(config, options);
+	let body: unknown;
+	try {
+		// The body is untyped JSON here; each operation's output schema parses it.
+		body = await request<unknown>(config, options);
+	} catch (error) {
+		throw withoutRequestBody(error);
+	}
 	return body === '' ? undefined : body;
+}
+
+/**
+ * Core's ApiError keeps the request it failed on, body included. Request
+ * bodies here carry secret values, exec stdin and Machine env, so a failed
+ * call returns the same ApiError (status, Fly's message, rate-limit fields)
+ * with the request body replaced.
+ */
+function withoutRequestBody(error: unknown): unknown {
+	if (!(error instanceof ApiError) || error.request.body === undefined) {
+		return error;
+	}
+	return new ApiError(
+		{ ...error.request, body: '[REDACTED]' },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }

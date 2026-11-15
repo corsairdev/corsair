@@ -12,14 +12,11 @@ import {
 
 type Target = { app_name: string; volume_id: string };
 const target = { app_name: appName, volume_id: volumeId };
+// What the live API returned on 2026-11-16 (the spec documents an empty body).
 const snapshotAccepted = z.object({
-	Msg: z
-		.object({
-			backup: z
-				.object({ graph_id: z.string().nullish(), state: z.string().nullish() })
-				.nullish(),
-		})
-		.nullish(),
+	Msg: z.object({
+		backup: z.object({ graph_id: z.string().min(1), state: z.string() }),
+	}),
 });
 const volumePath = ({ app_name, volume_id }: Target, suffix = '') =>
 	`/v1/apps/${seg(app_name)}/volumes/${seg(volume_id)}${suffix}`;
@@ -106,6 +103,8 @@ export const volumes = {
 					cpu_kind: z.enum(['shared', 'performance']).optional(),
 					cpus: z.number().int().positive().optional(),
 					memory_mb: z.number().int().positive().optional(),
+					host_dedication_id: z.string().optional(),
+					required_host_features: z.array(z.string()).optional(),
 				})
 				.strict()
 				.optional()
@@ -126,8 +125,9 @@ export const volumes = {
 		request: (args) => ({ method: 'GET', path: volumePath(args) }),
 	}),
 	update: defineOperation({
-		description: "Change a volume's snapshot settings",
-		riskLevel: 'write',
+		description:
+			"Change a volume's automatic snapshots and their retention. More snapshots kept means more billed snapshot storage.",
+		riskLevel: 'destructive',
 		input: z.object({
 			...target,
 			auto_backup_enabled: z.boolean().optional(),
@@ -185,14 +185,14 @@ export const volumes = {
 			method: 'POST',
 			path: volumePath(args, '/snapshots'),
 		}),
-		// The spec documents an empty 200; the live API returns {"Msg":{"backup":{…}}}.
+		// An empty body is the documented reply; any other body must have the
+		// live shape, and a malformed one fails parsing instead of reading as success.
 		transform: (body, { volume_id }) => {
-			const backup = snapshotAccepted.safeParse(body).data?.Msg?.backup;
-			return {
-				volume_id,
-				snapshot_id: backup?.graph_id ?? null,
-				state: backup?.state ?? null,
-			};
+			if (body === undefined) {
+				return { volume_id, snapshot_id: null, state: null };
+			}
+			const { backup } = snapshotAccepted.parse(body).Msg;
+			return { volume_id, snapshot_id: backup.graph_id, state: backup.state };
 		},
 	}),
 };

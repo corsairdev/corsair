@@ -211,8 +211,9 @@ export const machines = {
 		}),
 	}),
 	start: defineOperation({
-		description: 'Start a stopped or suspended Machine',
-		riskLevel: 'write',
+		description:
+			'Start a stopped or suspended Machine. Fly bills CPU and memory while it runs.',
+		riskLevel: 'destructive',
 		input: z.object(target),
 		output: z.object({
 			previous_state: z.string().nullish(),
@@ -465,7 +466,14 @@ export const machines = {
 	setMetadataKey: defineOperation({
 		description: 'Set one metadata key on a Machine',
 		riskLevel: 'write',
-		input: z.object({ ...target, key: nonEmpty, value: nonEmpty }),
+		input: z.object({
+			...target,
+			key: nonEmpty,
+			// Sent as given; Fly rejects empty and whitespace-only values.
+			value: z
+				.string()
+				.refine((value) => value.trim().length > 0, 'Cannot be blank'),
+		}),
 		// Fly answers 204 with no body.
 		output: z.object({ key: z.string(), value: z.string() }),
 		request: ({ app_name, machine_id, key, value }) => ({

@@ -24,7 +24,9 @@ describe('Fly endpoint metadata', () => {
 	it('marks operations that spend money or run arbitrary commands destructive', () => {
 		for (const path of [
 			'machines.create',
+			'machines.start',
 			'machines.update',
+			'volumes.update',
 			'machines.exec',
 			'volumes.create',
 			'volumes.extend',

@@ -12,7 +12,12 @@ const strings = z.array(z.string()).nullish();
 const stringMap = z.record(z.string(), z.string()).nullish();
 
 /** Path values: Fly app names, Machine/volume IDs, hostnames, IPs. */
-export const nonEmpty = z.string().trim().min(1);
+export const nonEmpty = z
+	.string()
+	.trim()
+	.min(1)
+	// URL parsing would turn a "." or ".." segment into a different route.
+	.refine((value) => value !== '.' && value !== '..', 'Cannot be "." or ".."');
 export const appName = nonEmpty.describe('Fly app name');
 export const machineId = nonEmpty.describe('Machine ID');
 export const volumeId = nonEmpty.describe(
@@ -187,8 +192,13 @@ const guestInput = z
 		cpus: z.number().int().positive().optional(),
 		memory_mb: z.number().int().positive().optional(),
 		max_memory_mb: z.number().int().positive().optional(),
+		kernel_args: z.array(z.string()).optional(),
+		host_dedication_id: z.string().optional(),
+		required_host_features: z.array(z.string()).optional(),
 	})
-	.strict();
+	// Newer or deprecated guest fields (persist_rootfs…) go to Fly as given,
+	// so a config read back from machines.get can be sent to machines.update.
+	.catchall(z.unknown());
 
 const portInput = z
 	.object({
@@ -217,7 +227,17 @@ const serviceInput = z
 
 export const machineConfigInput = z
 	.object({
-		image: nonEmpty.describe('Container image to run, such as nginx:alpine'),
+		image: nonEmpty
+			.optional()
+			.describe(
+				'Container image to run, such as nginx:alpine; required unless containers is set',
+			),
+		containers: z
+			// Each container is a full Fly container spec; Fly validates it.
+			.array(z.record(z.string(), z.unknown()))
+			.min(1)
+			.optional()
+			.describe('Containers to run, each from its own image'),
 		guest: guestInput.optional(),
 		env: z.record(z.string(), z.string()).optional(),
 		metadata: z.record(z.string(), z.string()).optional(),
@@ -235,7 +255,8 @@ export const machineConfigInput = z
 				policy: z.enum(['no', 'always', 'on-failure', 'spot-price']).optional(),
 				max_retries: z.number().int().optional(),
 			})
-			.strict()
+			// Spot-price settings go to Fly as given.
+			.catchall(z.unknown())
 			.optional(),
 		auto_destroy: z.boolean().optional(),
 		schedule: z.enum(['hourly', 'daily', 'weekly', 'monthly']).optional(),
@@ -246,7 +267,11 @@ export const machineConfigInput = z
 	})
 	// The other MachineConfig sections (checks, files, init, processes, dns,
 	// containers…) are sent to Fly unchanged; Fly validates them.
-	.catchall(z.unknown());
+	.catchall(z.unknown())
+	.refine(
+		(config) => Boolean(config.image) || Boolean(config.containers?.length),
+		'Give an image or at least one container',
+	);
 
 // ---------- volumes ----------
 export const volume = z.object({
