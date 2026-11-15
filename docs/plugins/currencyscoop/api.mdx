@@ -1,0 +1,240 @@
+---
+title: "CurrencyScoop API reference"
+sidebarTitle: "API"
+description: "API reference for CurrencyScoop: every `currencyscoop.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Currencies
+
+### list
+
+`currencies.list`
+
+List supported CurrencyBeacon currency codes.
+
+**Risk:** `read`
+
+```ts
+await corsair.currencyscoop.api.currencies.list({});
+```
+
+**Input:** _empty object_
+
+GET /currencies. A row is stored when short_code is present.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currencies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="currencies full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  symbol?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quotes
+
+### convert
+
+`quotes.convert`
+
+Convert an amount between two currencies.
+
+**Risk:** `read`
+
+```ts
+await corsair.currencyscoop.api.quotes.convert({ from: 'USD', to: 'EUR', amount: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `date` | `string` | No | — |
+
+GET /convert. Returns from, to, amount, value, and date. Nothing is stored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `value` | `number` | Yes | — |
+| `date` | `string` | Yes | — |
+
+
+
+---
+
+### historical
+
+`quotes.historical`
+
+Read mid-market rates for one date.
+
+**Risk:** `read`
+
+```ts
+await corsair.currencyscoop.api.quotes.historical({ date: '2024-01-01', base: 'USD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base` | `string` | No | — |
+| `symbols` | `string` | No | — |
+| `date` | `string` | Yes | — |
+
+GET /historical. date is required. The stored row matches latest.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="quotes full type">
+
+```ts
+{
+  id: string,
+  date: string,
+  base: string,
+  code: string,
+  rate: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### latest
+
+`quotes.latest`
+
+Read the latest mid-market rates.
+
+**Risk:** `read`
+
+```ts
+await corsair.currencyscoop.api.quotes.latest({ base: 'USD', symbols: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base` | `string` | No | — |
+| `symbols` | `string` | No | — |
+
+GET /latest. Each rate is stored as date, base, code, and rate.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="quotes full type">
+
+```ts
+{
+  id: string,
+  date: string,
+  base: string,
+  code: string,
+  rate: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### timeseries
+
+`quotes.timeseries`
+
+Read daily rates between two dates.
+
+**Risk:** `read`
+
+```ts
+await corsair.currencyscoop.api.quotes.timeseries({ start_date: '2024-01-01', end_date: '2024-01-02', base: 'USD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base` | `string` | No | — |
+| `symbols` | `string` | No | — |
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+
+GET /timeseries. Stores one quote per date and currency code.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="quotes full type">
+
+```ts
+{
+  id: string,
+  date: string,
+  base: string,
+  code: string,
+  rate: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

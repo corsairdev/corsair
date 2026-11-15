@@ -191,6 +191,7 @@ export const BaseProviders = [
 	'countdownapi',
 	'craftmypdf',
 	'crowterminal',
+	'currencyscoop',
 	'currentsapi',
 	'cursor',
 	'customerio',
@@ -804,6 +805,7 @@ export const ProviderDisplayNames = {
 	countdownapi: 'Countdown API',
 	craftmypdf: 'CraftMyPDF',
 	crowterminal: 'CrowTerminal',
+	currencyscoop: 'CurrencyScoop',
 	currentsapi: 'CurrentsApi',
 	cursor: 'Cursor',
 	customerio: 'Customer.io',
@@ -1424,6 +1426,7 @@ export type AllProviders =
 	| 'countdownapi'
 	| 'craftmypdf'
 	| 'crowterminal'
+	| 'currencyscoop'
 	| 'currentsapi'
 	| 'cursor'
 	| 'customerio'
