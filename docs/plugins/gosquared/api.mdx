@@ -729,6 +729,10 @@ await corsair.gosquared.api.now.getTimeSeries({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `site_token` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `interval` | `string` | No | — |
+| `dateFormat` | `string` | No | — |
 
 
 
@@ -894,6 +898,7 @@ await corsair.gosquared.api.people.getPeople({});
 | `limit` | `number \| string` | No | — |
 | `sort` | `string` | No | — |
 | `order` | `asc \| desc` | No | — |
+| `query` | `string` | No | — |
 | `filters` | `string` | No | — |
 
 
@@ -1216,7 +1221,7 @@ await corsair.gosquared.api.tracking.trackTransaction({
 
 ```ts
 {
-  id: string,
+  id?: string,
   revenue?: number,
   quantity?: number,
   items?: {

@@ -140,6 +140,10 @@ export const getTimeSeries: GosquaredEndpoints['now.getTimeSeries'] = async (
 	const query: Record<string, string | number | boolean | undefined> = {};
 	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
+	if (parsed.from) query.from = parsed.from;
+	if (parsed.to) query.to = parsed.to;
+	if (parsed.interval) query.interval = parsed.interval;
+	if (parsed.dateFormat) query.dateFormat = parsed.dateFormat;
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['now.getTimeSeries']

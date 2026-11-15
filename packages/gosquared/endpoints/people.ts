@@ -24,6 +24,7 @@ export const getPeople: GosquaredEndpoints['people.getPeople'] = async (
 	} else if (parsed.sort) {
 		query.sort = parsed.sort;
 	}
+	if (parsed.query) query.query = parsed.query;
 	if (parsed.filters) query.filters = parsed.filters;
 
 	const response = await makeGosquaredRequest<

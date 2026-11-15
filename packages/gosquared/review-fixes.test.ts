@@ -296,3 +296,78 @@ describe('error redaction', () => {
 		expect(JSON.stringify(sanitizeError(err))).not.toContain('private message');
 	});
 });
+
+describe('round 3 review fixes', () => {
+	it('masks an email address inside a query value such as People filters', () => {
+		const url =
+			'https://api.gosquared.com/people/v1/people?filters=%5B%7B%22key%22%3A%22property%22%2C%22path%22%3A%22email%22%2C%22value%22%3A%22alice%40example.com%22%7D%5D&limit=10';
+		const err = new ApiError(
+			{ method: 'GET', url },
+			{ url, ok: false, status: 400, statusText: 'Bad Request', body: {} },
+			'Bad Request',
+		);
+		const sanitized = sanitizeError(err) as ApiError;
+		expect(decodeURIComponent(sanitized.url)).not.toContain('alice');
+		expect(decodeURIComponent(sanitized.request.url)).not.toContain('alice');
+		expect(sanitized.url).toContain('limit=10');
+	});
+
+	it('tracking.trackEvent keeps the event name out of the completion event', async () => {
+		const { logEventFromContext } = jest.requireMock('corsair/core') as {
+			logEventFromContext: jest.Mock;
+		};
+		logEventFromContext.mockClear();
+		mockMakeRequest.mockResolvedValue({ success: true });
+		await Tracking.trackEvent(buildCtx(), {
+			event: { name: 'Signup alice@example.com' },
+		});
+		expect(JSON.stringify(logEventFromContext.mock.calls)).not.toContain(
+			'alice',
+		);
+	});
+
+	it('people.getPeople accepts and forwards the documented query term', async () => {
+		await People.getPeople(buildCtx(), { query: 'Acme' });
+		expect(mockMakeRequest.mock.calls[0]?.[2]?.query).toEqual(
+			expect.objectContaining({ query: 'Acme' }),
+		);
+	});
+
+	it('tracking.trackTransaction accepts a transaction without an id', () => {
+		expect(() =>
+			GosquaredEndpointInputSchemas['tracking.trackTransaction'].parse({
+				visitor_id: 'visitor-1',
+				transaction: { items: [{ name: 'Widget', price: 10 }] },
+			}),
+		).not.toThrow();
+	});
+
+	it('now.getTimeSeries accepts and forwards from, to, interval and dateFormat', async () => {
+		await Now.getTimeSeries(buildCtx(), {
+			from: '2026-11-14',
+			to: '2026-11-15',
+			interval: '15min',
+			dateFormat: 'YYYY-MM-DD',
+		});
+		expect(mockMakeRequest).toHaveBeenCalledWith(
+			'/now/v3/timeSeries',
+			'test-api-key',
+			expect.objectContaining({
+				query: expect.objectContaining({
+					from: '2026-11-14',
+					to: '2026-11-15',
+					interval: '15min',
+					dateFormat: 'YYYY-MM-DD',
+				}),
+			}),
+		);
+	});
+
+	it('now.getCampaigns still takes no time-series fields', () => {
+		expect(() =>
+			GosquaredEndpointInputSchemas['now.getCampaigns'].parse({
+				interval: '15min',
+			}),
+		).toThrow();
+	});
+});

@@ -165,6 +165,18 @@ export const NowSimpleInputSchema = z
 	})
 	.strict();
 
+export const NowTimeSeriesInputSchema = z
+	.object({
+		site_token: z.string().optional(),
+		from: z.string().optional(),
+		to: z.string().optional(),
+		// `Xmin`, e.g. `15min`; GoSquared defaults to `5min`.
+		interval: z.string().optional(),
+		// Any Moment.js format string for the returned dates.
+		dateFormat: z.string().optional(),
+	})
+	.strict();
+
 export const NowDynamicOutputSchema = z.union([
 	DynamicRecordSchema,
 	DynamicListSchema,
@@ -203,6 +215,8 @@ export const GetPeopleInputSchema = z
 		sort: z.string().optional(),
 		// Appended to `sort` as `:<order>`; GoSquared has no separate order parameter.
 		order: z.enum(['asc', 'desc']).optional(),
+		// Free-text search term across People profiles.
+		query: z.string().optional(),
 		filters: z.string().optional(),
 	})
 	.strict();
@@ -361,7 +375,8 @@ export const TrackTransactionInputSchema = z
 	.object({
 		site_token: z.string().optional(),
 		transaction: z.object({
-			id: z.string().min(1),
+			// Optional: when given, GoSquared rejects a repeat of the same id.
+			id: z.string().min(1).optional(),
 			revenue: z.number().optional(),
 			quantity: z.number().optional(),
 			items: z
@@ -503,7 +518,7 @@ export const GosquaredEndpointInputSchemas = {
 	'now.getConcurrents': NowConcurrentsInputSchema,
 	'now.getPages': NowStandardQueryInputSchema,
 	'now.getSources': NowStandardQueryInputSchema,
-	'now.getTimeSeries': NowSimpleInputSchema,
+	'now.getTimeSeries': NowTimeSeriesInputSchema,
 	'now.getBrowsers': NowStandardQueryInputSchema,
 	'now.getCountries': NowStandardQueryInputSchema,
 	'now.getPlatforms': NowStandardQueryInputSchema,
