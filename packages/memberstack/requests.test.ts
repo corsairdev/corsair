@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	MemberstackEndpointInputSchemas,
 	MemberstackEndpointOutputSchemas,
@@ -315,7 +316,7 @@ describe('Memberstack public request seam', () => {
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
-	it('does not replay writes on 429 and preserves Retry-After', async () => {
+	it('lets core retry a 429 and honours Retry-After', async () => {
 		fetchMock.mockResolvedValueOnce(
 			new Response(
 				JSON.stringify({
@@ -324,21 +325,96 @@ describe('Memberstack public request seam', () => {
 				}),
 				{
 					status: 429,
-					headers: { 'content-type': 'application/json', 'retry-after': '2' },
+					headers: { 'content-type': 'application/json', 'retry-after': '1' },
 				},
 			),
 		);
-		// Rejections can contain any thrown value; the assertions narrow its shape.
-		const error = await api.members
-			.create(context, { email: 'member@example.com' })
-			.catch((e: unknown) => e);
-		expect(error).toMatchObject({ status: 429, retryAfter: 2000 });
-		expect(fetchMock).toHaveBeenCalledTimes(1);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
+		respond({ data: member });
+		const result = await api.members.create(context, {
+			email: 'member@example.com',
+		});
+		expect(result).toEqual({ data: member });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
 	});
+	function fail(status: number, body: object) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
+	}
+	// Rejections can contain any thrown value; the assertions narrow its shape.
+	const caught = (promise: Promise<unknown>) =>
+		promise.catch((e: unknown) => e);
+	it('keeps the email and password out of a failed member create', async () => {
+		fail(400, {
+			code: 'generic-message',
+			message: 'Email jane.secret@example.com is already in use.',
+		});
+		const error = await caught(
+			api.members.create(context, {
+				email: 'jane.secret@example.com',
+				password: 'Hunter2-password',
+				customFields: { phone: '+15550100' },
+			}),
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 400 });
+		const serialized = JSON.stringify({
+			error,
+			message: (error as Error).message,
+		});
+		expect(serialized).not.toContain('jane.secret@example.com');
+		expect(serialized).not.toContain('Hunter2-password');
+		expect(serialized).not.toContain('+15550100');
+		expect((error as ApiError).body).toEqual({
+			code: 'generic-message',
+			message: 'Email [redacted] is already in use.',
+		});
+	});
+	it('keeps the member JWT out of a failed token check', async () => {
+		fail(400, { code: 'INVALID_TOKEN', message: 'Invalid token' });
+		const error = await caught(
+			api.members.verifyToken(context, { token: 'eyJhbGciOi.secret.jwt' }),
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(JSON.stringify(error)).not.toContain('eyJhbGciOi.secret.jwt');
+		expect((error as ApiError).body).toEqual({
+			code: 'INVALID_TOKEN',
+			message: 'Invalid token',
+		});
+	});
+	it('keeps an email used as a member id out of the error url', async () => {
+		fail(400, { code: 'generic-message', message: 'Bad request' });
+		const error = (await caught(
+			api.members.get(context, { id_or_email: 'jane@example.com' }),
+		)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(JSON.stringify(error)).not.toMatch(/jane(%40|@)example\.com/);
+		expect(error.url).toContain('/members/[redacted]');
+	});
+	it('keeps status and Retry-After when 429 retries run out', async () => {
+		for (let i = 0; i < 4; i++) {
+			fetchMock.mockResolvedValueOnce(
+				new Response(JSON.stringify({ message: 'Too many requests' }), {
+					status: 429,
+					headers: { 'content-type': 'application/json', 'retry-after': '1' },
+				}),
+			);
+		}
+		const error = await caught(
+			api.members.create(context, { email: 'jane@example.com' }),
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 429, retryAfter: 1000 });
+		expect(fetchMock).toHaveBeenCalledTimes(4);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
+		expect(JSON.stringify(error)).not.toContain('jane@example.com');
+	}, 15000);
 	it('rejects malformed output instead of inventing a member', async () => {
 		respond({ data: {} });
 		await expect(
