@@ -9,22 +9,20 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
  * The Admin API also needs the user id, in a `User-Id` header, and it is a
- * second credential rather than part of the key. Every other route works with
+ * second credential rather than part of the key, so it is read from the
+ * account's stored `user_id` like the key itself. Every other route works with
  * the key alone.
  */
 export async function adminHeaders(
 	ctx: SimpleanalyticsContext,
 ): Promise<Record<string, string>> {
-	const fromOptions = ctx.options.userId;
-	if (fromOptions) return { 'User-Id': fromOptions };
-
 	const stored = await ctx.keys?.get_user_id?.();
 	if (stored) return { 'User-Id': stored };
 
 	throw new AuthMissingError(
 		'simpleanalytics',
 		'api_key',
-		'[auth-missing:simpleanalytics:user_id] The Admin API needs the user id shown next to the API key in the account settings. Set userId on the plugin or store user_id on the account.',
+		'[auth-missing:simpleanalytics:user_id] The Admin API needs the user id shown next to the API key in the account settings. Store user_id on the account.',
 	);
 }
 

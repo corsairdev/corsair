@@ -39,8 +39,6 @@ export const simpleanalyticsAuthConfig = {
 export type SimpleanalyticsPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	/** The Admin API's user id. Read from the account when omitted. */
-	userId?: string;
 	hooks?: InternalSimpleanalyticsPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof simpleanalyticsEndpointsNested>;
