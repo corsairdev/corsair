@@ -1,0 +1,91 @@
+displayName: TaxJar
+description: Sales tax automation with TaxJar - calculate tax for a cart, look up rates and nexus regions, validate addresses, record order and refund transactions, and manage tax-exempt customers.
+domain: taxjar.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a token at taxjar.com under Account, API Access. The plugin sends it as `Authorization: Bearer <token>`, which is the form TaxJar documents alongside `Token token="..."`.
+
+  Things to know before you call:
+
+  - **Amounts come back as strings.** Transaction and rate responses send money and tax rates as decimal strings (`"16.5"`, `"0.0625"`), while the `taxes` answer sends numbers. The schemas accept the form each route actually sends, and the exported `readNumber` helper converts either one.
+  - **Shipping is required on a transaction.** `orders.create` and `refunds.create` reject a payload without `shipping`, even when it is 0. The schema enforces it before the request, so you get a clear error instead of TaxJar's 422.
+  - **Calculation is not a transaction.** `taxes.calculate` reports what you should collect. It records nothing, which is why it is a read; use `orders.create` to record the sale for filing.
+  - **An update may be refused after filing.** TaxJar accepts `orders.update` and `refunds.update` until the period is filed; after that the API refuses the change. The plugin does not retry a rejected update.
+  - **A refund points at its order.** Send `transaction_reference_id` on `refunds.create` so the refund nets against the original order in reporting.
+  - **Customer exemption applies forward.** A customer created with `exemption_type` exempts later transactions that cite its `customer_id`. Omitting `exempt_regions` covers every region.
+  - **The list routes return IDs only.** `orders.list`, `refunds.list` and `customers.list` answer an array of IDs under their key, not full records; call the `get` endpoint for the details.
+  - **Date formats differ by route.** The transaction routes document `YYYY/MM/DD` and also accept `YYYY-MM-DD`.
+  - **Deletes cannot be undone.** A deleted transaction leaves the tax report, and a deleted customer loses its exemption.
+examples:
+  read:
+    path: taxes.calculate
+    title: Calculate the tax for a two-state order
+    args:
+      from_country: US
+      from_state: FL
+      from_zip: '33018'
+      to_country: US
+      to_state: OR
+      to_zip: '97035'
+      amount: 15
+      shipping: 1.5
+  write:
+    path: orders.create
+    title: Record an order transaction
+    args:
+      transaction_id: '123'
+      transaction_date: '2026-11-15'
+      to_country: US
+      to_zip: '90002'
+      to_state: CA
+      amount: 16.5
+      shipping: 1.5
+      sales_tax: 0.95
+apiExamples:
+  categories.list: {}
+  rates.get:
+    call: "{ zip: '90404', state: 'CA', city: 'SANTA MONICA' }"
+  nexusRegions.list: {}
+  summaryRates.list: {}
+  addresses.validate:
+    call: "{ country: 'US', state: 'AZ', zip: '85297', city: 'Gilbert', street: '3301 South Greenfield Rd' }"
+  taxes.calculate:
+    call: "{ from_country: 'US', from_zip: '33018', to_country: 'US', to_zip: '97035', amount: 15, shipping: 1.5 }"
+  orders.list:
+    call: "{ from_transaction_date: '2026-11-01', to_transaction_date: '2026-11-30' }"
+  orders.create:
+    call: "{ transaction_id: '123', transaction_date: '2026-11-15', to_country: 'US', to_zip: '90002', amount: 16.5, shipping: 1.5, sales_tax: 0.95 }"
+  orders.get:
+    call: "{ transactionId: '123' }"
+  orders.update:
+    call: "{ transactionId: '123', amount: 17, shipping: 2 }"
+  orders.delete:
+    call: "{ transactionId: '123' }"
+  refunds.list:
+    call: "{ from_transaction_date: '2026-11-01', to_transaction_date: '2026-11-30' }"
+  refunds.create:
+    call: "{ transaction_id: 'r1', transaction_reference_id: '123', transaction_date: '2026-11-16', to_country: 'US', amount: 16.5, shipping: 1.5 }"
+  refunds.get:
+    call: "{ transactionId: 'r1' }"
+  refunds.update:
+    call: "{ transactionId: 'r1', amount: 10, shipping: 1.5 }"
+  refunds.delete:
+    call: "{ transactionId: 'r1' }"
+  customers.list: {}
+  customers.create:
+    call: "{ customer_id: '123', exemption_type: 'wholesale', name: 'Dunder Mifflin' }"
+  customers.get:
+    call: "{ customerId: '123' }"
+  customers.update:
+    call: "{ customerId: '123', exemption_type: 'government' }"
+  customers.delete:
+    call: "{ customerId: '123' }"
+apiNotes:
+  'orders.create': 'shipping is required even when it is 0; amounts in the response come back as decimal strings.'
+  'refunds.create': 'Send transaction_reference_id with the original order transaction_id so the refund nets against it in reporting.'
+  'taxes.calculate': 'Records nothing; returns numeric amounts, unlike the transaction routes. Send either an amount or line_items.'
+  'rates.get': 'The rate values are decimal strings such as "0.0975"; a street address improves rooftop accuracy.'
+  'addresses.validate': 'Returns every match TaxJar finds, so read the first entry rather than assuming one.'
+  'customers.create': 'exemption_type is required; omitting exempt_regions exempts every region.'
+  'orders.list': 'Returns transaction IDs under the orders key, not full transactions.'
+  'refunds.list': 'Returns transaction IDs under the refunds key, not orders.'

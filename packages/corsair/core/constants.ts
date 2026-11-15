@@ -534,6 +534,7 @@ export const BaseProviders = [
 	'taggun',
 	'tally',
 	'tavily',
+	'taxjar',
 	'tavilymcp',
 	'teamcamp',
 	'teams',
@@ -1147,6 +1148,7 @@ export const ProviderDisplayNames = {
 	taggun: 'Taggun',
 	tally: 'Tally',
 	tavily: 'Tavily',
+	taxjar: 'TaxJar',
 	tavilymcp: 'Tavily MCP',
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
@@ -1767,6 +1769,7 @@ export type AllProviders =
 	| 'taggun'
 	| 'tally'
 	| 'tavily'
+	| 'taxjar'
 	| 'tavilymcp'
 	| 'teamcamp'
 	| 'teams'
