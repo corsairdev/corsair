@@ -3679,6 +3679,14 @@
                 ]
               },
               {
+                "group": "PostGrid",
+                "pages": [
+                  "plugins/postgrid/overview",
+                  "plugins/postgrid/api",
+                  "plugins/postgrid/database"
+                ]
+              },
+              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
