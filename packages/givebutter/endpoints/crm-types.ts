@@ -11,6 +11,10 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 // validating the documented top-level resource fields below.
 const JsonObject = z.object({}).loose();
 const NullableString = z.string().nullable();
+// Givebutter's spec types most ids as strings but households (and older resources) as
+// integers; responses accept both so a numeric id never fails a successful call.
+const ResourceId = z.union([z.string(), z.number()]);
+const Numeric = z.union([z.number(), z.string()]);
 const PageInput = z.object({ page: z.number().int().min(1).optional() });
 const ContactType = z.enum(['individual', 'company']);
 const Gender = z.enum(['male', 'female', 'other']);
@@ -26,9 +30,9 @@ const ActivityType = z.enum([
 
 const ContactResource = z
 	.object({
-		id: z.string(),
+		id: ResourceId,
 		external_id: NullableString.optional(),
-		type: ContactType.optional(),
+		type: z.string().optional(),
 		first_name: NullableString.optional(),
 		last_name: NullableString.optional(),
 		primary_email: NullableString.optional(),
@@ -40,16 +44,18 @@ const ContactResource = z
 
 const ActivityResource = z
 	.object({
-		id: z.string(),
-		type: ActivityType.optional(),
+		id: ResourceId,
+		// Activities include system types (transaction.succeeded, tagged, ...) beyond the
+		// seven a caller can create, so the response keeps the type open.
+		type: z.string().optional(),
 		created_at: z.string().optional(),
 	})
 	.loose();
 const FundResource = z
-	.object({ id: z.string(), name: z.string().optional() })
+	.object({ id: ResourceId.nullable(), name: z.string().optional() })
 	.loose();
 const HouseholdResource = z
-	.object({ id: z.string(), name: z.string().optional() })
+	.object({ id: ResourceId, name: z.string().optional() })
 	.loose();
 
 const PageSchema = z.object({
@@ -61,16 +67,16 @@ const PageSchema = z.object({
 		next: NullableString,
 	}),
 	meta: z.object({
-		current_page: z.number().int().min(1),
-		from: z.number().int().min(1).nullable(),
-		last_page: z.number().int().min(1),
+		current_page: z.number().int(),
+		from: z.number().int().nullable(),
+		last_page: z.number().int(),
 		links: z.array(
 			z.object({ url: NullableString, label: z.string(), active: z.boolean() }),
 		),
 		path: NullableString,
-		per_page: z.number().int().min(0),
-		to: z.number().int().min(1).nullable(),
-		total: z.number().int().min(0),
+		per_page: z.number().int(),
+		to: z.number().int().nullable(),
+		total: z.number().int(),
 	}),
 });
 

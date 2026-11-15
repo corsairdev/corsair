@@ -8,6 +8,10 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 }, 'Route identifiers must be safe path segments');
 
 const NullableString = z.string().nullable();
+// Givebutter's spec types most ids as strings but households (and older resources) as
+// integers; responses accept both so a numeric id never fails a successful call.
+const ResourceId = z.union([z.string(), z.number()]);
+const Numeric = z.union([z.number(), z.string()]);
 const PageInput = z.object({ page: z.number().int().min(1).optional() });
 // Nested financial payloads include provider-defined values whose fields vary by method.
 const JsonObject = z.object({}).loose();
@@ -46,8 +50,8 @@ const DedicationType = z.enum(['in_memory_of', 'in_honor_of']);
 
 const TransactionResource = z
 	.object({
-		id: z.string(),
-		amount: z.number().optional(),
+		id: ResourceId,
+		amount: Numeric.optional(),
 		currency: z.string().optional(),
 		status: z.string().optional(),
 		method: z.string().optional(),
@@ -58,28 +62,28 @@ const TransactionResource = z
 	.loose();
 const MessageResource = z
 	.object({
-		id: z.string(),
+		id: ResourceId,
 		status: z.string().optional(),
 		channel: z.string().optional(),
 	})
 	.loose();
 const PayoutResource = z
 	.object({
-		id: z.string(),
-		amount: z.number().optional(),
+		id: ResourceId,
+		amount: Numeric.optional(),
 		status: z.string().optional(),
 	})
 	.loose();
 const PledgeResource = z
 	.object({
-		id: z.string(),
+		id: ResourceId,
 		status: z.string().optional(),
-		amount: z.string().optional(),
+		amount: Numeric.optional(),
 	})
 	.loose();
 const WebhookResource = z
 	.object({
-		id: z.string(),
+		id: ResourceId,
 		url: z.string().optional(),
 		enabled: z.boolean().optional(),
 	})
@@ -94,16 +98,16 @@ const PageSchema = z.object({
 		next: NullableString,
 	}),
 	meta: z.object({
-		current_page: z.number().int().min(1),
-		from: z.number().int().min(1).nullable(),
-		last_page: z.number().int().min(1),
+		current_page: z.number().int(),
+		from: z.number().int().nullable(),
+		last_page: z.number().int(),
 		links: z.array(
 			z.object({ url: NullableString, label: z.string(), active: z.boolean() }),
 		),
 		path: NullableString,
-		per_page: z.number().int().min(0),
-		to: z.number().int().min(1).nullable(),
-		total: z.number().int().min(0),
+		per_page: z.number().int(),
+		to: z.number().int().nullable(),
+		total: z.number().int(),
 	}),
 });
 
@@ -261,7 +265,7 @@ export const GivebutterFinancialEndpointOutputSchemas = {
 	getPlan: JsonObject,
 	listTransactions: PageSchema.extend({
 		data: z.array(TransactionResource),
-		meta: PageSchema.shape.meta.extend({ unfiltered_total: z.number().int() }),
+		meta: PageSchema.shape.meta.extend({ unfiltered_total: Numeric }),
 	}),
 	createTransaction: TransactionResource,
 	getTransaction: TransactionResource,

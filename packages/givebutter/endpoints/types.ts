@@ -19,6 +19,10 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 // making the documented resource envelope itself untyped.
 const JsonObject = z.object({}).loose();
 const NullableString = z.string().nullable();
+// Givebutter's spec types most ids as strings but households (and older resources) as
+// integers; responses accept both so a numeric id never fails a successful call.
+const ResourceId = z.union([z.string(), z.number()]);
+const Numeric = z.union([z.number(), z.string()]);
 const PageInput = z.object({ page: z.number().int().min(1).optional() });
 const CampaignType = z.enum(['general', 'collect', 'fundraise', 'event']);
 const DiscountCodeType = z.enum(['percentage', 'fixed']);
@@ -30,10 +34,10 @@ const CampaignSettings = z
 
 const CampaignResource = z
 	.object({
-		id: z.string(),
-		code: z.string(),
-		account_id: z.string(),
-		event_id: z.string(),
+		id: ResourceId,
+		code: NullableString,
+		account_id: ResourceId,
+		event_id: ResourceId.nullable(),
 		type: z.string(),
 		title: z.string(),
 		subtitle: NullableString,
@@ -41,10 +45,11 @@ const CampaignResource = z
 		slug: z.string(),
 		url: z.string(),
 		goal: z.number().int().nullable(),
-		raised: z.number(),
+		raised: Numeric,
 		donors: z.number().int(),
 		currency: z.string(),
-		cover: z.string(),
+		// Spec says string; the update input takes a {source,type,url} object, so accept both.
+		cover: z.union([z.string(), JsonObject]).nullable(),
 		status: z.string(),
 		timezone: NullableString,
 		end_at: NullableString,
@@ -53,7 +58,7 @@ const CampaignResource = z
 		updated_at: z.string(),
 	})
 	.partial()
-	.extend({ id: z.string() })
+	.extend({ id: ResourceId })
 	.loose();
 
 const CampaignFields = {
@@ -154,7 +159,7 @@ const PageSchema = z.object({
 	}),
 });
 const CampaignPageSchema = PageSchema.extend({
-	meta: PageSchema.shape.meta.extend({ unfiltered_total: z.string() }),
+	meta: PageSchema.shape.meta.extend({ unfiltered_total: Numeric }),
 });
 const EmptyInputSchema = z.object({});
 const CampaignPathInputSchema = z.object({ campaign: RouteId });

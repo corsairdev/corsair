@@ -35,6 +35,18 @@ const page = {
 	},
 };
 const resource = { id: 'resource_1' };
+// Givebutter's OpenAPI documents household ids as integers.
+const household = {
+	id: 7,
+	name: 'Home',
+	head_contact_id: null,
+	account_id: 3,
+	envelope_name: null,
+	note: null,
+	created_at: '2026-11-15T00:00:00Z',
+	updated_at: '2026-11-15T00:00:00Z',
+	contacts: [],
+};
 
 let fetchMock: jest.SpyInstance;
 
@@ -258,7 +270,11 @@ describe('Givebutter CRM and financial operation seams', () => {
 										})
 									: Households.delete(ctx as never, { household: 1 }),
 				result:
-					action === 'list' ? [] : action === 'delete' ? undefined : resource,
+					action === 'list'
+						? [household]
+						: action === 'delete'
+							? undefined
+							: household,
 				method:
 					action === 'list' || action === 'get'
 						? 'GET'
@@ -450,4 +466,23 @@ describe('Givebutter CRM and financial operation seams', () => {
 			);
 		},
 	);
+});
+
+it('parses numeric ids, null fund ids and system activity types', async () => {
+	respond({ id: 42, type: 'individual', first_name: null, primary_email: null });
+	await expect(Contacts.get(ctx as never, { contact: 42 })).resolves.toMatchObject(
+		{ id: 42 },
+	);
+	respond({ id: null, code: null, name: 'General', raised: 0, supporters: 0 });
+	await expect(Funds.get(ctx as never, { fund: 'general' })).resolves.toMatchObject(
+		{ id: null },
+	);
+	respond({ id: 9, type: 'transaction.succeeded', created_at: '2026-11-15' });
+	await expect(
+		Activities.get(ctx as never, { contact: 42, activity: 9 }),
+	).resolves.toMatchObject({ type: 'transaction.succeeded' });
+	respond({ ...page, meta: { ...page.meta, unfiltered_total: 0 } });
+	await expect(Transactions.list(ctx as never, {})).resolves.toMatchObject({
+		data: [],
+	});
 });
