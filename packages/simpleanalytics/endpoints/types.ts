@@ -249,7 +249,7 @@ const ExportDatapointsInputSchema = z
 			.array(z.string())
 			.optional()
 			.describe(
-				'Metadata keys to export, such as project_text. Their storage suffix is required here, unlike in Stats filters.',
+				'Metadata keys to export with their storage suffix, such as project_text (sent as metadata.project_text). The suffix is required here, unlike in Stats filters.',
 			),
 	})
 	.superRefine((value, ctx) => {

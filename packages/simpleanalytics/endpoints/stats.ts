@@ -1,5 +1,5 @@
 import type { SimpleanalyticsEndpoints } from '..';
-import { statsPath } from '../client';
+import { isRootPath, statsPath } from '../client';
 import { call } from './shared';
 import {
 	SimpleanalyticsEndpointInputSchemas as Inputs,
@@ -30,7 +30,9 @@ export const get: SimpleanalyticsEndpoints['statsGet'] = (ctx, input) =>
 				limit: parsed.limit,
 				interval: parsed.interval,
 				events: parsed.events?.join(','),
-				page: parsed.page,
+				// The homepage has no segment to put before .json, so `/` is sent
+				// as the page filter instead.
+				page: parsed.page ?? (isRootPath(parsed.path) ? '/' : undefined),
 				pages: parsed.pages,
 				country: parsed.country,
 				referrer: parsed.referrer,

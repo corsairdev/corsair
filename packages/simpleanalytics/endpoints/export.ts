@@ -34,9 +34,14 @@ export const datapoints: SimpleanalyticsEndpoints['exportDatapoints'] = (
 				timezone: parsed.timezone,
 				type: parsed.type,
 				robots: parsed.robots,
-				// Metadata keys are exported only when named, and they must keep
-				// their storage suffix here, unlike a Stats filter.
-				fields: [...parsed.fields, ...(parsed.metadata_fields ?? [])].join(','),
+				// Metadata keys are exported only when named, as
+				// `metadata.<key>_<suffix>`; a bare key gets the prefix added.
+				fields: [
+					...parsed.fields,
+					...(parsed.metadata_fields ?? []).map((key) =>
+						key.startsWith('metadata.') ? key : `metadata.${key}`,
+					),
+				].join(','),
 			},
 		}),
 		{

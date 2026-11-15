@@ -1,5 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
-import { failureFromBody, SimpleanalyticsAPIError, statsPath } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	failureFromBody,
+	isAuthFailure,
+	isBadgeLock,
+	SimpleanalyticsAPIError,
+	statsPath,
+} from './client';
 import { Export, Stats, Websites } from './endpoints';
 import type { UnknownJson } from './json';
 import {
@@ -31,7 +38,7 @@ function invoke(endpoint: AnyEndpoint, input: UnknownJson) {
 	return endpoint(
 		{
 			key: API_KEY,
-			options: { userId: USER_ID },
+			options: {},
 			keys: { get_user_id: jest.fn().mockResolvedValue(USER_ID) },
 		} as never,
 		input as never,
@@ -97,6 +104,12 @@ describe('statsPath', () => {
 	it('strips a leading slash so the path does not double up', () => {
 		expect(statsPath('example.com', '//contact')).toBe(
 			'/example.com/contact.json',
+		);
+	});
+
+	it('encodes a hash-mode path so it stays in the request path', () => {
+		expect(statsPath('example.com', '/#/pricing')).toBe(
+			'/example.com/%23/pricing.json',
 		);
 	});
 });
@@ -166,6 +179,34 @@ describe('stats.get', () => {
 		const sent = lastRequest();
 		expect(sent.path).toBe('/example.com/contact.json');
 		expect(sent.query.page).toBeUndefined();
+	});
+
+	it('sends a hash-mode path encoded, with the query intact', async () => {
+		respond(stats);
+
+		await invoke(Stats.get, {
+			hostname: 'example.com',
+			path: '/#/pricing',
+			fields: ['pageviews'],
+		});
+
+		const sent = lastRequest();
+		expect(sent.path).toBe('/example.com/%23/pricing.json');
+		expect(sent.query).toMatchObject({ version: '6', fields: 'pageviews' });
+	});
+
+	it('sends the homepage path as page=/ rather than dropping it', async () => {
+		respond(stats);
+
+		await invoke(Stats.get, {
+			hostname: 'example.com',
+			path: '/',
+			fields: ['pageviews'],
+		});
+
+		const sent = lastRequest();
+		expect(sent.path).toBe('/example.com.json');
+		expect(sent.query.page).toBe('/');
 	});
 
 	it('spreads metadata filters as metadata.<key> parameters', async () => {
@@ -249,16 +290,18 @@ describe('export.datapoints', () => {
 		);
 	});
 
-	it('appends metadata fields to the fields list, with their suffix', async () => {
+	it('appends metadata fields with the metadata. prefix the API needs', async () => {
 		respond(exportDatapoints);
 
 		await invoke(Export.datapoints, {
 			hostname: 'example.com',
 			fields: ['added_iso'],
-			metadata_fields: ['project_text'],
+			metadata_fields: ['project_text', 'metadata.dark_mode_bool'],
 		});
 
-		expect(lastRequest().query.fields).toBe('added_iso,project_text');
+		expect(lastRequest().query.fields).toBe(
+			'added_iso,metadata.project_text,metadata.dark_mode_bool',
+		);
 	});
 
 	it('rejects an export field the API does not know', async () => {
@@ -296,7 +339,7 @@ describe('websites.list', () => {
 		expect(result).toMatchObject({ websites: websites.websites });
 	});
 
-	it('reads the user id from the account when the option is absent', async () => {
+	it('reads the user id stored on the account', async () => {
 		respond(websites);
 
 		await Websites.list(
@@ -369,7 +412,7 @@ describe('body-reported failures', () => {
 		expect((error as Error).message).toContain('No valid authorization');
 	});
 
-	it('turns a 400 carrying success:false into an error', async () => {
+	it('lets core ApiError through on a 400, with the provider message', async () => {
 		respond(adminFailure, 400);
 
 		const error = await invoke(Websites.list, {}).catch(
@@ -377,11 +420,14 @@ describe('body-reported failures', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect(error).toBeInstanceOf(SimpleanalyticsAPIError);
-		expect((error as SimpleanalyticsAPIError).isAuthError).toBe(true);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(400);
+		expect((error as ApiError).request.method).toBe('GET');
+		expect((error as Error).message).toContain(adminFailure.error);
+		expect(isAuthFailure(error as Error)).toBe(true);
 	});
 
-	it('reads BADGE_REQUIRED from a 423', async () => {
+	it('reads BADGE_REQUIRED from a 423 ApiError', async () => {
 		respond({ ok: false, code: 'BADGE_REQUIRED' }, 423);
 
 		const error = await invoke(Stats.get, {
@@ -392,7 +438,29 @@ describe('body-reported failures', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect((error as SimpleanalyticsAPIError).isBadgeRequired).toBe(true);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(isBadgeLock(error as Error)).toBe(true);
+	});
+
+	it('keeps the 429 Retry-After on the ApiError', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ ok: false, error: 'Too many' }), {
+				status: 429,
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '7' },
+			}),
+		);
+
+		const error = await invoke(Stats.get, {
+			hostname: 'example.com',
+			fields: ['pageviews'],
+		}).catch(
+			// unknown: a rejection reason has no static type; narrowed below.
+			(caught: UnknownJson) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(429);
+		expect((error as ApiError).retryAfter).toBe(7000);
 	});
 
 	it('keeps the API key out of util.inspect', async () => {
