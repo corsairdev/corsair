@@ -154,18 +154,49 @@ describe('makeHubPlannerRequest', () => {
 		expect((thrownError as Error).message).toContain('[REDACTED]');
 	});
 
-	it('keeps core 429 retries but ignores the daily x-ratelimit-reset header', async () => {
+	it('turns off core 429 retries and ignores the daily x-ratelimit-reset header', async () => {
 		mockRequest.mockResolvedValueOnce([]);
 		await makeHubPlannerRequest('/project', 'valid-key', { method: 'GET' });
 		const [, , transportOptions] = mockRequest.mock.calls[0] ?? [];
 		expect(transportOptions?.rateLimitConfig).toMatchObject({
 			enabled: true,
-			maxRetries: 3,
+			maxRetries: 0,
 			headerNames: { retryAfter: 'retry-after' },
 		});
 		expect(
 			transportOptions?.rateLimitConfig?.headerNames.resetTime,
 		).toBeUndefined();
+	});
+
+	it('retries a burst 429 (Retry-After present) up to three times', async () => {
+		mockRequest
+			.mockRejectedValueOnce(createApiError(429, 'Too many requests', 1))
+			.mockRejectedValueOnce(createApiError(429, 'Too many requests', 1))
+			.mockResolvedValueOnce([{ _id: 'proj-1' }]);
+		await expect(
+			makeHubPlannerRequest('/project', 'valid-key', { method: 'GET' }),
+		).resolves.toEqual([{ _id: 'proj-1' }]);
+		expect(mockRequest).toHaveBeenCalledTimes(3);
+	});
+
+	it('gives up after three burst retries', async () => {
+		mockRequest.mockRejectedValue(createApiError(429, 'Too many requests', 1));
+		await expect(
+			makeHubPlannerRequest('/project', 'valid-key', { method: 'GET' }),
+		).rejects.toMatchObject({ status: 429 });
+		expect(mockRequest).toHaveBeenCalledTimes(4);
+	});
+
+	it('does not retry a daily-quota 429 (no Retry-After)', async () => {
+		const quota = createApiError(429, 'Too many requests');
+		mockRequest.mockRejectedValue(quota);
+		await expect(
+			makeHubPlannerRequest('/booking', 'valid-key', {
+				method: 'POST',
+				body: { resource: 'r', project: 'p' },
+			}),
+		).rejects.toBe(quota);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
 	});
 
 	it('wraps unknown non-Error throws in HubPlannerAPIError', async () => {
@@ -177,8 +208,8 @@ describe('makeHubPlannerRequest', () => {
 	});
 
 	it('preserves status and retryAfter on rate-limited responses', async () => {
-		const rateLimited = createApiError(429, 'Too many requests', 5000);
-		mockRequest.mockRejectedValueOnce(rateLimited);
+		const rateLimited = createApiError(429, 'Too many requests', 5);
+		mockRequest.mockRejectedValue(rateLimited);
 
 		// `unknown` because caught rejection is untyped at runtime; narrowed by expect/assertions below.
 		let thrownError: unknown;
@@ -191,7 +222,7 @@ describe('makeHubPlannerRequest', () => {
 
 		expect(thrownError).toBe(rateLimited);
 		expect((thrownError as ApiError).status).toBe(429);
-		expect((thrownError as ApiError).retryAfter).toBe(5000);
+		expect((thrownError as ApiError).retryAfter).toBe(5);
 	});
 });
 

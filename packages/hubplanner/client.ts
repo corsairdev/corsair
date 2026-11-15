@@ -19,19 +19,31 @@ export class HubPlannerAPIError extends Error {
 export const HUBPLANNER_API_BASE = 'https://api.hubplanner.com/v1';
 
 /**
- * Core's default 429 handling, minus the `x-ratelimit-reset` header. Hub Planner sends that header on
- * every response as the epoch second its daily quota (6000 calls) resets, so the default config would
- * sleep until the next day on a quota 429. Burst 429s carry `Retry-After`, which is still honoured.
+ * Core's own 429 retries are off (`maxRetries: 0`) because core retries every 429, and Hub Planner
+ * uses 429 for two limits: the burst limit (50 calls per 5 s), sent with `Retry-After`, and the daily
+ * quota (6000 calls), sent without it. `makeHubPlannerRequest` retries only the burst case; a quota
+ * 429 can't succeed before the next day, so it fails at once. `x-ratelimit-reset` is left out: Hub
+ * Planner sends it on every response as the epoch second the daily quota resets.
  */
 export const HUBPLANNER_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: {
 		retryAfter: 'retry-after',
 	},
 };
+
+const BURST_RETRIES = 3;
+const MAX_BURST_DELAY_MS = 60_000;
+
+/** A burst-limit 429: Hub Planner adds `Retry-After` only to these, never to a daily-quota 429. */
+function burstRetryDelay(error: unknown): number | undefined {
+	if (!(error instanceof ApiError) || error.status !== 429) return undefined;
+	if (error.retryAfter === undefined) return undefined;
+	return Math.min(Math.max(error.retryAfter, 0), MAX_BURST_DELAY_MS);
+}
 
 // `unknown` because provider error bodies are arbitrary JSON (or text).
 function redactValue(value: unknown, apiKey: string): unknown {
@@ -147,9 +159,17 @@ export async function makeHubPlannerRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: HUBPLANNER_RATE_LIMIT_CONFIG,
-		});
+		for (let attempt = 0; ; attempt++) {
+			try {
+				return await request<T>(config, requestOptions, {
+					rateLimitConfig: HUBPLANNER_RATE_LIMIT_CONFIG,
+				});
+			} catch (error) {
+				const delay = burstRetryDelay(error);
+				if (delay === undefined || attempt >= BURST_RETRIES) throw error;
+				await new Promise((resolve) => setTimeout(resolve, delay));
+			}
+		}
 	} catch (error) {
 		redactInPlace(error, apiKey);
 		if (error instanceof Error) {
