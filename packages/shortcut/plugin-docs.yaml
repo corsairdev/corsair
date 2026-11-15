@@ -1,6 +1,6 @@
 displayName: Shortcut
 description: Manage Shortcut stories, epics, projects, workflows, labels, documents, and workspace resources through the REST API v3.
-domain: api.app.shortcut.com
+domain: shortcut.com
 recommendedAuth: api_key
 overviewNote: >-
   Store a Shortcut API token as the API key. Requests use the Shortcut-Token header; deprecated token query authentication is not used. Shortcut permits 200 requests per minute, and the shared transport honors Retry-After on 429 responses. Webhook receivers and webhook-integration management routes are not included.

@@ -1,5 +1,6 @@
 displayName: Grist
 description: Relational spreadsheet-database platform combining the flexibility of a spreadsheet with the robustness of a relational database.
+domain: getgrist.com
 recommendedAuth: api_key
 overviewNote: |
   Grist API calls authenticate with an API key via the `Authorization: Bearer <api_key>` header.

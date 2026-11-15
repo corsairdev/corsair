@@ -1,5 +1,6 @@
 displayName: Google Tasks
 description: Manage Google task lists and tasks with scoped OAuth access, pagination, task ordering, and schema-validated REST operations.
+domain: tasks.google.com
 recommendedAuth: oauth_2
 overviewNote: |
   OAuth uses the single narrowest scope that supports the configured operation set: `https://www.googleapis.com/auth/tasks` for read and write operations. For read-only integrations set `scopeMode: 'readonly'` to request only `https://www.googleapis.com/auth/tasks.readonly`; mutation operations then require a full-scope connection. The API has no supported webhook subscription endpoints, so changes are read through the paginated list methods.
