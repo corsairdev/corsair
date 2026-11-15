@@ -1,0 +1,152 @@
+---
+title: "Felt plugin"
+sidebarTitle: "Overview"
+description: "Collaborative mapping and geospatial visualization platform for creating maps, layers, components, and spatial analysis."
+---
+
+Use **Felt** through Corsair: one client, typed API calls.
+
+Felt authenticates via Personal Access Tokens provided as a Bearer token in the
+`Authorization: Bearer <token>` HTTP header. Generate a token in your Felt user
+account settings under Integrations & API (felt.com/settings). Provide this token
+as the `key` option when initializing the plugin or through Corsair's key manager.
+Calls without a token throw `AuthMissingError('felt', 'api_key')`.
+
+Key concepts in Felt v2 API:
+- **Maps**: Maps are the central container in Felt. Every layer, element, comment,
+  and print layout belongs to a map.
+- **Layers & Sources**: Layers visualize spatial vector or raster data from URLs,
+  files, or database sources.
+- **Elements**: Freestanding annotations, pins, and GeoJSON features drawn directly
+  on the map canvas.
+- **Layer Components**: Reusable legends, filters, and UI controls bound to map layers.
+- **Rate Limits**: Felt enforces a rate limit of 300 requests per minute per IP.
+  When a rate limit is exceeded, Felt returns HTTP 429 with standard `Retry-After`.
+  The plugin transport handles retries automatically.
+- **Privacy**: Sensitive database connection credentials provided when creating or
+  updating data sources are strictly redacted from errors and event logs.
+
+**What you get:**
+
+- 69 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/felt better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/felt better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/felt better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/felt better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { felt } from '@corsair-dev/felt';
+
+export const corsair = createCorsair({
+	plugins: [
+		felt(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Felt API key before the first call: `pnpm corsair setup --plugin=felt --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+felt()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'felt',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Get the authenticated Felt user profile**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.felt.api.users.getCurrent({});
+```
+
+
+**Create a new map**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.felt.api.maps.create({
+	title: 'Field Operations Map',
+	lat: 37.7749,
+	lon: -122.4194,
+	zoom: 12,
+});
+```
+
+
+See the full list on the [API](/plugins/felt/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/felt/api">
+    Every `felt.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,187 @@
+/**
+ * Response bodies for the tests, from https://u301.com/docs/ and the live API at
+ * https://api.u301.com/v3.
+ */
+
+import { composeU301Key } from './client';
+
+/** The two credentials every call needs, packed the way the plugin expects. */
+export const API_KEY = 'u301-test-key';
+export const WORKSPACE_ID = 'ws_test_123';
+export const COMPOSITE_KEY = composeU301Key(API_KEY, WORKSPACE_ID);
+
+/** A create answer, straight from the docs' `response-example.json`. */
+export const LINK_CREATED = {
+	id: '019a7d8c-4a85-7aa4-9862-ee2008f54854',
+	url: 'https://example.com',
+	slug: 'jtyZ',
+	isCustomSlug: false,
+	domain: 'u301.co',
+	isReused: false,
+	shortLink: 'u301.co/jtyZ',
+	comment: '',
+};
+
+/** `reuseExisting` matched, so no allowance slot was spent. */
+export const LINK_REUSED = {
+	...LINK_CREATED,
+	isReused: true,
+};
+
+/** What the bulk route actually answers: an array, even for one link. */
+export const LINK_CREATED_ARRAY = [LINK_CREATED];
+
+export const LINK = {
+	id: '019a7d8c-4a85-7aa4-9862-ee2008f54854',
+	domainName: 'u301.co',
+	slug: 'jtyZ',
+	isCustomSlug: false,
+	shortUrl: 'https://u301.co/jtyZ',
+	originalUrl: 'https://example.com',
+	allowSearchEngineIndexing: false,
+	archived: false,
+	suspended: false,
+	statsClicks: 42,
+	expiresAt: null,
+	userId: 'user_1',
+	workspaceId: WORKSPACE_ID,
+	comment: '',
+	createdAt: '2026-05-01T10:00:00.000Z',
+	updatedAt: '2026-05-01T10:00:00.000Z',
+};
+
+/** The list wraps rows in `links` and pages in `metadata`, per the SDK's schema. */
+export const LINKS = {
+	links: [LINK, { ...LINK, slug: 'abc123', statsClicks: 0 }],
+	metadata: { total: 2, perPage: 10, page: 1 },
+};
+
+export const LINK_DELETED = { message: 'success' };
+
+export const DOMAINS = [
+	{
+		domain: 'u301.co',
+		randomCodeLength: 6,
+		isPrimary: true,
+		isGlobal: true,
+	},
+	{
+		domain: 'go.example.com',
+		randomCodeLength: 5,
+		isPrimary: false,
+		isGlobal: false,
+	},
+];
+
+// Live 11-12: create and delete answer a message, not `{ success }`.
+export const DOMAIN_CREATED = { message: 'Domain created' };
+
+export const DOMAIN_DELETED = { message: 'success' };
+
+// Live 11-12: a free workspace setting either redirect.
+export const PRO_ONLY = {
+	message: 'This feature is only available for Pro Plan',
+};
+
+// Live 11-12: a query the API's own validator refuses, `perPage=5`.
+export const LIST_PER_PAGE_TOO_SMALL = {
+	success: false,
+	error: {
+		issues: [
+			{
+				code: 'too_small',
+				minimum: 10,
+				type: 'number',
+				inclusive: true,
+				exact: false,
+				message: 'Number must be greater than or equal to 10',
+				path: ['perPage'],
+			},
+		],
+		name: 'ZodError',
+	},
+};
+
+export const DOMAIN_DETAIL = {
+	domain: 'go.example.com',
+	isValid: true,
+	isArchived: false,
+	lastCheckedAt: '2026-05-01T10:00:00.000Z',
+	randomCodeLength: 5,
+	workspaceId: WORKSPACE_ID,
+	homePageRedirectUrl: 'https://example.com',
+	notFoundPageRedirectUrl: 'https://example.com/404',
+	createdAt: '2026-04-01T10:00:00.000Z',
+	updatedAt: '2026-05-01T10:00:00.000Z',
+	isPrimary: false,
+	isGlobal: false,
+	// The shape of the docs' Get Domain Details example.
+	dnsSettings: {
+		cnameValue: 'babbette971.bender.u301.com',
+		isHostedOnCloudflare: true,
+		baseDomain: 'example.com',
+		subdomain: 'go',
+		domainConnectUrl: 'api.cloudflare.com/client/v4/dns/domainconnect',
+		cloudflareAuthUrl:
+			'https://dash.cloudflare.com/domainconnect/v2/domainTemplates/providers/u301.com/services/bender/apply',
+	},
+};
+
+/** The field is spelled `actived` by the API, which the model keeps. */
+// The three per-domain settings routes answer { success: true }, not the domain.
+export const SETTINGS_OK = { success: true };
+
+export const DOMAIN_ACTIVE = { actived: true, message: 'Domain is active' };
+
+export const DOMAIN_NOT_READY = {
+	actived: false,
+	message: 'Challenge not ready',
+};
+
+export const CLICKS = {
+	start: '2026-05-01T00:00:00.000Z',
+	end: '2026-05-08T00:00:00.000Z',
+	data: [
+		{ date: '2026-05-01', click: 12 },
+		{ date: '2026-05-02', click: 30 },
+		{ date: '2026-05-03', click: 8 },
+	],
+};
+
+export const AUDIENCE = {
+	datetimeRange: ['2026-05-01T00:00:00.000Z', '2026-05-08T00:00:00.000Z'],
+	range: '7d',
+	data: [
+		{ label: 'United States', click: 210 },
+		{ label: 'Germany', click: 44 },
+	],
+};
+
+// Live: a wrong key, and every route answers it the same way.
+export const UNAUTHORIZED = { message: 'Unauthorized' };
+
+// Live: no key at all, which answers an empty message.
+export const NO_KEY = { message: '' };
+
+export const NOT_FOUND = { message: 'Short link not found' };
+
+export const BAD_REQUEST = {
+	message: 'Validation failed',
+	code: 'VALIDATION_FAILED',
+	errors: [{ field: 'url', message: 'url must be a valid URL' }],
+	requestId: 'req_123',
+};
+
+// The documented monthly-quota body (https://u301.com/docs/link-quotas): the
+// reason is in `error`, not `message`.
+export const QUOTA = {
+	error:
+		'Monthly link limit reached (100/100). Upgrade your plan or wait until next month.',
+	code: 'MONTHLY_LINK_LIMIT_REACHED',
+	limit: 100,
+	used: 100,
+	remaining: 0,
+	resets_at: '2026-12-01T00:00:00.000Z',
+};
+
+export const SERVER_ERROR = { message: 'Internal server error' };

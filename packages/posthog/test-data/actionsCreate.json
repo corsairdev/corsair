@@ -1,0 +1,45 @@
+{
+  "id": 473294,
+  "name": "corsair-plugin-test-1794490650",
+  "description": "",
+  "tags": [],
+  "post_to_slack": false,
+  "slack_message_format": "",
+  "steps": [
+    {
+      "event": "corsair_plugin_test",
+      "properties": null,
+      "selector": null,
+      "selector_regex": null,
+      "selector_warning": null,
+      "tag_name": null,
+      "text": null,
+      "text_matching": null,
+      "href": null,
+      "href_matching": null,
+      "url": null,
+      "url_matching": "contains"
+    }
+  ],
+  "created_at": "2026-11-12T13:38:19.423867Z",
+  "created_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "deleted": false,
+  "is_calculating": false,
+  "last_calculated_at": "2026-11-12T13:38:19.419974Z",
+  "team_id": 309833,
+  "is_action": true,
+  "bytecode_error": null,
+  "pinned_at": null,
+  "creation_context": null,
+  "user_access_level": "manager"
+}
