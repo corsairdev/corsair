@@ -4,13 +4,14 @@ sidebarTitle: "Overview"
 description: "Detect whether an IP address is a proxy, VPN, Tor exit, or data-center address, and return the location fields for the selected package."
 ---
 
-Use **IP2Proxy** through Corsair: one client, typed API calls.
+Use **IP2Proxy** through Corsair: one client, typed API calls, local DB sync.
 
 Each lookup spends credits. PX1 spends 1 credit and PX11 spends 11. A successful body has `response` set to `OK`. Any other `response` is a failed lookup.
 
 **What you get:**
 
 - 1 typed API operations
+- 1 synced entity (`checks`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -111,11 +112,20 @@ await tenant.ip2proxy.api.proxy.checkProxy({ ip: '8.8.8.8' });
 
 See the full list on the [API](/plugins/ip2proxy/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.ip2proxy.db.<entity>.search()` and `.list()`: `checks`.
+
+See [Database](/plugins/ip2proxy/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/ip2proxy/api">
     Every `ip2proxy.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/ip2proxy/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

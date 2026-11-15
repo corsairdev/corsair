@@ -42,8 +42,11 @@ const PX11_SAMPLE = {
 	creditsConsumed: 11,
 };
 
-function context(key: string): Ip2proxyContext {
-	return { key } as Ip2proxyContext;
+function context(key: string, upsert?: jest.Mock): Ip2proxyContext {
+	return {
+		key,
+		db: upsert ? { checks: { upsertByEntityId: upsert } } : undefined,
+	} as unknown as Ip2proxyContext;
 }
 
 describe('proxy.checkProxy', () => {
@@ -152,5 +155,61 @@ describe('proxy.checkProxy', () => {
 		await expect(
 			checkProxy(context('test-key'), { ip: '8.8.8.8' }),
 		).rejects.toBe(error);
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that has no response field', async () => {
+		mockRequest.mockResolvedValue({ countryCode: 'US' });
+		await expect(
+			checkProxy(context('test-key'), { ip: '8.8.8.8' }),
+		).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('stores the lookup under the queried address and does not log it', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue(PX11_SAMPLE);
+		await checkProxy(context('test-key', upsert), {
+			ip: '3.5.140.1',
+			package: 'PX11',
+		});
+		expect(upsert).toHaveBeenCalledWith('3.5.140.1', {
+			ip: '3.5.140.1',
+			...PX11_SAMPLE,
+		});
+		const payload = mockLog.mock.calls[0]?.[2] as Record<string, unknown>;
+		expect(payload.ip).toBeUndefined();
+		expect(JSON.stringify(upsert.mock.calls)).not.toContain('test-key');
+	});
+
+	it('does not store a lookup when the caller omitted the address', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({ response: 'OK', isProxy: 'NO' });
+		await checkProxy(context('test-key', upsert), {});
+		expect(upsert).not.toHaveBeenCalled();
+	});
+
+	it('does not store a failed lookup', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({ response: 'INVALID IP ADDRESS' });
+		await expect(
+			checkProxy(context('test-key', upsert), { ip: 'not-an-ip' }),
+		).rejects.toThrow('IP2Proxy lookup failed: INVALID IP ADDRESS');
+		expect(upsert).not.toHaveBeenCalled();
+	});
+
+	it('returns the lookup when the database write fails', async () => {
+		const upsert = jest.fn().mockRejectedValue(new Error('disk full'));
+		mockRequest.mockResolvedValue(PX11_SAMPLE);
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		await expect(
+			checkProxy(context('test-key', upsert), {
+				ip: '3.5.140.1',
+				package: 'PX11',
+			}),
+		).resolves.toEqual(PX11_SAMPLE);
+		warn.mockRestore();
 	});
 });

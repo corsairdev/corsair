@@ -3,7 +3,6 @@ import type {
 	BindEndpoints,
 	CorsairErrorHandler,
 	CorsairPlugin,
-	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -11,6 +10,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import type { Ip2proxyContext } from './context';
 import { Proxy } from './endpoints';
 import {
 	Ip2proxyEndpointInputSchemas,
@@ -19,6 +19,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { Ip2proxySchema } from './schema';
 
+export type { Ip2proxyContext };
+
 export type Ip2proxyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
@@ -26,11 +28,6 @@ export type Ip2proxyPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof ip2proxyEndpointsNested>;
 };
-
-export type Ip2proxyContext = CorsairPluginContext<
-	typeof Ip2proxySchema,
-	Ip2proxyPluginOptions
->;
 
 export type Ip2proxyKeyBuilderContext =
 	KeyBuilderContext<Ip2proxyPluginOptions>;

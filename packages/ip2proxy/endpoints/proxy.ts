@@ -1,7 +1,8 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import type { Ip2proxyContext } from '..';
 import { makeIp2proxyRequest } from '../client';
+import type { Ip2proxyContext } from '../context';
+import { Ip2proxyCheckEntity } from '../schema/database';
 import type { CheckProxyInput, CheckProxyResponse } from './types';
 import { CheckProxyInputSchema, CheckProxyResponseSchema } from './types';
 
@@ -25,6 +26,7 @@ export const checkProxy: CorsairEndpoint<
 		throw new Error(`IP2Proxy lookup failed: ${result.response}`);
 	}
 
+	await storeCheck(ctx, parsed.ip, result);
 	await logEventFromContext(
 		ctx,
 		'ip2proxy.proxy.checkProxy',
@@ -34,5 +36,20 @@ export const checkProxy: CorsairEndpoint<
 
 	return result;
 };
+
+async function storeCheck(
+	ctx: Ip2proxyContext,
+	ip: string | undefined,
+	result: CheckProxyResponse,
+): Promise<void> {
+	if (!ip || !ctx.db?.checks) return;
+	const row = Ip2proxyCheckEntity.safeParse({ ip, ...result });
+	if (!row.success) return;
+	try {
+		await ctx.db.checks.upsertByEntityId(row.data.ip, row.data);
+	} catch {
+		console.warn('Failed to save IP2Proxy check');
+	}
+}
 
 export const Proxy = { checkProxy };
