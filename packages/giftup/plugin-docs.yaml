@@ -11,7 +11,9 @@ overviewNote: |
   - **Orders and Gift Card Issuance:** Gift cards are created by placing an order via `orders.create`.
   - **Redemptions:** Full or partial redemptions are performed on the gift card resource via `giftCards.redeem` or `giftCards.redeemInFull`. Redemptions can be reversed/refunded using `giftCards.undoRedemption`.
   - **JSON Patch:** Updates to gift cards, orders, items, groups, users, and settings use RFC 6902 JSON Patch operations.
-  - **Test Mode:** Test mode can be enabled by setting `testMode: true` on plugin options or via the `x-giftup-testmode: true` request header.
+  - **Test Mode:** Set `testMode: true` in the plugin options to send the `x-giftup-testmode: true` header, so calls use the account's test data. In live mode, `orders.create` is charged Gift Up's fee.
+  - **Emails:** `orders.create` emails the gift card when `recipientDetails` is set, unless `disableAllEmails` is true. `users.invite` emails an invitation.
+  - **Lists:** `giftCards.list`, `orders.list` and `reports.listTransactions` return `{ <items>, total, hasMore }`; page with `limit` (max 100) and `offset`.
 references:
   - title: Gift Up! Developer Documentation
     url: https://developer.giftup.com/api
@@ -49,9 +51,9 @@ apiExamples:
   orders.get:
     call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }"
   orders.create:
-    call: "{ purchaserEmail: 'customer@example.com', purchaserName: 'Jane Smith', revenue: 50, itemDetails: [{ quantity: 1, name: 'Gift Card', price: 50, value: 50 }] }"
+    call: "{ disableAllEmails: true, purchaserEmail: 'customer@example.com', purchaserName: 'Jane Smith', revenue: 50, itemDetails: [{ quantity: 1, name: 'Gift Card', price: 50, value: 50 }] }"
   orders.update:
-    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', patch: [{ op: 'replace', path: '/referrer', value: 'Partner' }] }"
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', patch: [{ op: 'replace', path: '/purchasername', value: 'Jane Smith' }] }"
   orders.addNote:
     call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', content: 'Follow-up order note' }"
   orders.markAsPosted:
