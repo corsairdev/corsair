@@ -60,7 +60,7 @@ await corsair.dopplermarketingautomation.api.automations.deliverabilityRate({});
   lastName?: string | null,
   email?: string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[],
@@ -85,7 +85,7 @@ await corsair.dopplermarketingautomation.api.automations.deliverabilityRate({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -96,6 +96,7 @@ await corsair.dopplermarketingautomation.api.automations.deliverabilityRate({});
 
 
 ---
+
 ### linksTracking
 
 `automations.linksTracking`
@@ -146,7 +147,7 @@ await corsair.dopplermarketingautomation.api.automations.linksTracking({});
   lastName?: string | null,
   email?: string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[],
@@ -171,7 +172,7 @@ await corsair.dopplermarketingautomation.api.automations.linksTracking({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -229,7 +230,7 @@ await corsair.dopplermarketingautomation.api.automations.list({});
   creationDate?: string | null,
   emailSentAmount?: number | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -241,7 +242,7 @@ await corsair.dopplermarketingautomation.api.automations.list({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -303,7 +304,7 @@ await corsair.dopplermarketingautomation.api.automations.opensAndClicks({});
   lastName?: string | null,
   email?: string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[],
@@ -328,7 +329,7 @@ await corsair.dopplermarketingautomation.api.automations.opensAndClicks({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -419,7 +420,7 @@ await corsair.dopplermarketingautomation.api.automations.summary({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -481,7 +482,7 @@ await corsair.dopplermarketingautomation.api.automations.unsubscribeActivity({})
   lastName?: string | null,
   email?: string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[],
@@ -506,7 +507,7 @@ await corsair.dopplermarketingautomation.api.automations.unsubscribeActivity({})
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -553,7 +554,7 @@ await corsair.dopplermarketingautomation.api.campaigns.approve({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -600,9 +601,9 @@ await corsair.dopplermarketingautomation.api.campaigns.create({});
   preheader?: string | null,
   replyTo?: string | null,
   textCampaign?: boolean | null,
-  status?: draft | scheduled | shipping | shipped,
+  status?: draft | scheduled | shipping | shipped | string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -626,7 +627,7 @@ await corsair.dopplermarketingautomation.api.campaigns.create({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -642,9 +643,9 @@ await corsair.dopplermarketingautomation.api.campaigns.create({});
 
 `campaigns.createShipping`
 
-Send or schedule a campaign
+Send or schedule a campaign (emails its recipients)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dopplermarketingautomation.api.campaigns.createShipping({});
@@ -666,9 +667,9 @@ await corsair.dopplermarketingautomation.api.campaigns.createShipping({});
   shippingId?: string | null,
   type: immediate | scheduled,
   scheduledDate?: string | null,
-  status?: waiting | processing | sending | sent | closed | null,
+  status?: waiting | processing | sending | sent | closed | string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -692,7 +693,7 @@ await corsair.dopplermarketingautomation.api.campaigns.createShipping({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -737,7 +738,7 @@ await corsair.dopplermarketingautomation.api.campaigns.delete({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -755,7 +756,7 @@ await corsair.dopplermarketingautomation.api.campaigns.delete({});
 
 Cancel a scheduled campaign delivery
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dopplermarketingautomation.api.campaigns.deleteShipping({});
@@ -783,7 +784,7 @@ await corsair.dopplermarketingautomation.api.campaigns.deleteShipping({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -801,7 +802,7 @@ await corsair.dopplermarketingautomation.api.campaigns.deleteShipping({});
 
 Delete campaign text alternative
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dopplermarketingautomation.api.campaigns.deleteTextAlternative({});
@@ -828,7 +829,7 @@ await corsair.dopplermarketingautomation.api.campaigns.deleteTextAlternative({})
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -886,7 +887,7 @@ await corsair.dopplermarketingautomation.api.campaigns.deliveries({});
   campaignName?: string,
   campaignSubject?: string,
   subscriberEmail?: string,
-  deliveryStatus?: opened | notOpened | hardBounced | softBounced | null,
+  deliveryStatus?: opened | notOpened | hardBounced | softBounced | string | null,
   lastOpenDate?: string,
   sentDate?: string,
   opensCount?: number,
@@ -894,7 +895,7 @@ await corsair.dopplermarketingautomation.api.campaigns.deliveries({});
   isSendingNow?: boolean,
   campaignType?: string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -906,7 +907,7 @@ await corsair.dopplermarketingautomation.api.campaigns.deliveries({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -954,7 +955,7 @@ await corsair.dopplermarketingautomation.api.campaigns.get({});
 | `preheader` | `string \| null` | No | — |
 | `replyTo` | `string \| null` | No | — |
 | `textCampaign` | `boolean \| null` | No | — |
-| `status` | `draft \| scheduled \| shipping \| shipped` | No | — |
+| `status` | `draft \| scheduled \| shipping \| shipped \| string` | No | — |
 | `_links` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -962,7 +963,7 @@ await corsair.dopplermarketingautomation.api.campaigns.get({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1037,7 +1038,7 @@ await corsair.dopplermarketingautomation.api.campaigns.getRecipients({});
   id: number,
   name?: string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1052,7 +1053,7 @@ await corsair.dopplermarketingautomation.api.campaigns.getRecipients({});
   id: number,
   name?: string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1064,7 +1065,7 @@ await corsair.dopplermarketingautomation.api.campaigns.getRecipients({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1105,7 +1106,7 @@ await corsair.dopplermarketingautomation.api.campaigns.getShipping({});
 | `shippingId` | `string \| null` | No | — |
 | `type` | `immediate \| scheduled` | Yes | — |
 | `scheduledDate` | `string \| null` | No | — |
-| `status` | `waiting \| processing \| sending \| sent \| closed \| null` | No | — |
+| `status` | `waiting \| processing \| sending \| sent \| closed \| string \| null` | No | — |
 | `_links` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1113,7 +1114,7 @@ await corsair.dopplermarketingautomation.api.campaigns.getShipping({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1174,7 +1175,7 @@ await corsair.dopplermarketingautomation.api.campaigns.getSocial({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1219,7 +1220,7 @@ await corsair.dopplermarketingautomation.api.campaigns.getTextAlternative({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1284,9 +1285,9 @@ await corsair.dopplermarketingautomation.api.campaigns.list({});
   preheader?: string | null,
   replyTo?: string | null,
   textCampaign?: boolean | null,
-  status?: draft | scheduled | shipping | shipped,
+  status?: draft | scheduled | shipping | shipped | string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1298,7 +1299,7 @@ await corsair.dopplermarketingautomation.api.campaigns.list({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1375,7 +1376,7 @@ await corsair.dopplermarketingautomation.api.campaigns.resultsSummary({});
 | `totalClicks` | `number` | No | — |
 | `lastClickDate` | `string` | No | — |
 | `totalUnsubscribers` | `number` | No | — |
-| `campaignStatus` | `draft \| scheduled \| shipping \| shipped` | No | — |
+| `campaignStatus` | `draft \| scheduled \| shipping \| shipped \| string` | No | — |
 | `totalShipped` | `number` | No | — |
 | `_links` | `object[]` | No | — |
 
@@ -1384,7 +1385,7 @@ await corsair.dopplermarketingautomation.api.campaigns.resultsSummary({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1445,32 +1446,32 @@ await corsair.dopplermarketingautomation.api.campaigns.unsubscribed({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1482,7 +1483,7 @@ await corsair.dopplermarketingautomation.api.campaigns.unsubscribed({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1530,9 +1531,9 @@ await corsair.dopplermarketingautomation.api.campaigns.update({});
   preheader?: string | null,
   replyTo?: string | null,
   textCampaign?: boolean | null,
-  status?: draft | scheduled | shipping | shipped,
+  status?: draft | scheduled | shipping | shipped | string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1555,7 +1556,7 @@ await corsair.dopplermarketingautomation.api.campaigns.update({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1601,7 +1602,7 @@ await corsair.dopplermarketingautomation.api.campaigns.updateContent({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1642,7 +1643,7 @@ await corsair.dopplermarketingautomation.api.campaigns.updateRecipients({});
     id: number,
     name?: string | null,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
@@ -1651,13 +1652,13 @@ await corsair.dopplermarketingautomation.api.campaigns.updateRecipients({});
     id: number,
     name?: string | null,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1680,7 +1681,7 @@ await corsair.dopplermarketingautomation.api.campaigns.updateRecipients({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1728,7 +1729,7 @@ await corsair.dopplermarketingautomation.api.campaigns.updateSocial({});
   rssPost: boolean,
   rssDescription?: string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1751,7 +1752,7 @@ await corsair.dopplermarketingautomation.api.campaigns.updateSocial({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1790,7 +1791,7 @@ await corsair.dopplermarketingautomation.api.campaigns.updateTextAlternative({})
 {
   text: string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1813,7 +1814,7 @@ await corsair.dopplermarketingautomation.api.campaigns.updateTextAlternative({})
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1863,14 +1864,14 @@ await corsair.dopplermarketingautomation.api.fields.list({});
   predefined: boolean,
   private: boolean,
   readonly: boolean,
-  type: boolean | number | string | date | email | gender | country | consent | phone | permission,
+  type: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
   sample?: string | null,
   fieldId?: number | null,
   permissionHTML?: string | null,
   required?: boolean | null,
   allowedValues?: string[] | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -1882,7 +1883,7 @@ await corsair.dopplermarketingautomation.api.fields.list({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1928,7 +1929,7 @@ await corsair.dopplermarketingautomation.api.home.account({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -1967,7 +1968,7 @@ await corsair.dopplermarketingautomation.api.home.get({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2014,7 +2015,7 @@ await corsair.dopplermarketingautomation.api.integrations.delete({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2059,7 +2060,7 @@ await corsair.dopplermarketingautomation.api.integrations.get({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2119,7 +2120,7 @@ await corsair.dopplermarketingautomation.api.integrations.update({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2180,7 +2181,7 @@ await corsair.dopplermarketingautomation.api.lists.create({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2225,7 +2226,7 @@ await corsair.dopplermarketingautomation.api.lists.delete({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2264,7 +2265,7 @@ await corsair.dopplermarketingautomation.api.lists.get({});
 |------|------|----------|-------------|
 | `listId` | `number` | No | — |
 | `name` | `string` | Yes | — |
-| `currentStatus` | `ready \| draft \| readyToSent \| sent \| importingSubscribers \| exportingSubscribers \| mergingDestination \| mergingSource \| cancelingExportingSubscribers \| inCreationProcess \| sending \| inDeletingProcess \| deleted \| blocked` | No | — |
+| `currentStatus` | `ready \| draft \| readyToSent \| sent \| importingSubscribers \| exportingSubscribers \| mergingDestination \| mergingSource \| cancelingExportingSubscribers \| inCreationProcess \| sending \| inDeletingProcess \| deleted \| blocked \| string` | No | — |
 | `subscribersCount` | `number` | No | — |
 | `creationDate` | `string` | No | — |
 | `deletedDate` | `string` | No | — |
@@ -2281,7 +2282,7 @@ await corsair.dopplermarketingautomation.api.lists.get({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2336,7 +2337,7 @@ await corsair.dopplermarketingautomation.api.lists.list({});
 {
   listId?: number,
   name: string,
-  currentStatus?: ready | draft | readyToSent | sent | importingSubscribers | exportingSubscribers | mergingDestination | mergingSource | cancelingExportingSubscribers | inCreationProcess | sending | inDeletingProcess | deleted | blocked,
+  currentStatus?: ready | draft | readyToSent | sent | importingSubscribers | exportingSubscribers | mergingDestination | mergingSource | cancelingExportingSubscribers | inCreationProcess | sending | inDeletingProcess | deleted | blocked | string,
   subscribersCount?: number,
   creationDate?: string,
   deletedDate?: string,
@@ -2347,7 +2348,7 @@ await corsair.dopplermarketingautomation.api.lists.list({});
   hasSynchronizationAssociated?: boolean,
   removeAssociation?: boolean,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -2359,7 +2360,7 @@ await corsair.dopplermarketingautomation.api.lists.list({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2418,7 +2419,7 @@ await corsair.dopplermarketingautomation.api.lists.update({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2465,7 +2466,7 @@ await corsair.dopplermarketingautomation.api.subscribers.archive({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2511,32 +2512,32 @@ await corsair.dopplermarketingautomation.api.subscribers.associate({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -2559,7 +2560,7 @@ await corsair.dopplermarketingautomation.api.subscribers.associate({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2603,32 +2604,32 @@ await corsair.dopplermarketingautomation.api.subscribers.create({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -2651,7 +2652,7 @@ await corsair.dopplermarketingautomation.api.subscribers.create({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2707,7 +2708,7 @@ await corsair.dopplermarketingautomation.api.subscribers.deliveries({});
   campaignName?: string,
   campaignSubject?: string,
   subscriberEmail?: string,
-  deliveryStatus?: opened | notOpened | hardBounced | softBounced | null,
+  deliveryStatus?: opened | notOpened | hardBounced | softBounced | string | null,
   lastOpenDate?: string,
   sentDate?: string,
   opensCount?: number,
@@ -2715,7 +2716,7 @@ await corsair.dopplermarketingautomation.api.subscribers.deliveries({});
   isSendingNow?: boolean,
   campaignType?: string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -2727,7 +2728,7 @@ await corsair.dopplermarketingautomation.api.subscribers.deliveries({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2743,9 +2744,9 @@ await corsair.dopplermarketingautomation.api.subscribers.deliveries({});
 
 `subscribers.doubleOptIn`
 
-Associate a subscriber using double opt-in
+Associate a subscriber using double opt-in (emails the subscriber)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dopplermarketingautomation.api.subscribers.doubleOptIn({});
@@ -2773,32 +2774,32 @@ await corsair.dopplermarketingautomation.api.subscribers.doubleOptIn({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -2821,7 +2822,7 @@ await corsair.dopplermarketingautomation.api.subscribers.doubleOptIn({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2854,7 +2855,7 @@ await corsair.dopplermarketingautomation.api.subscribers.exists({});
 
 
 
-**Output:** `void`
+**Output:** `boolean`
 
 
 ---
@@ -2890,10 +2891,10 @@ await corsair.dopplermarketingautomation.api.subscribers.get({});
 | `listsHistory` | `object[]` | No | — |
 | `unsubscribedDate` | `string \| null` | No | — |
 | `unsubscriptionDate` | `string \| null` | No | — |
-| `unsubscriptionType` | `hardBounce \| softBounce \| neverOpen \| abuseLink \| feedbackLoop \| internalPolicies \| manual \| null` | No | — |
+| `unsubscriptionType` | `hardBounce \| softBounce \| neverOpen \| abuseLink \| feedbackLoop \| internalPolicies \| manual \| string \| null` | No | — |
 | `manualUnsubscriptionReason` | `administrative \| subscriberRequestNeverSubscribed \| subscriberRequestNotInterestingContent \| subscriberRequestIsSpam \| subscriberRequestTooManyEmails \| subscriberRequestOther \| null` | No | — |
 | `unsubscriptionComment` | `string \| null` | No | — |
-| `status` | `active \| pending \| unsubscribed \| standBy \| archived \| null` | No | — |
+| `status` | `active \| pending \| unsubscribed \| standBy \| archived \| string \| null` | No | — |
 | `canBeReactivated` | `boolean \| null` | No | — |
 | `isBeingReactivated` | `boolean \| null` | No | — |
 | `userId` | `number` | No | — |
@@ -2910,7 +2911,7 @@ await corsair.dopplermarketingautomation.api.subscribers.get({});
   predefined?: boolean,
   private?: boolean,
   readonly?: boolean,
-  type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+  type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
   permissionHTML?: string
 }[]
 ```
@@ -2922,9 +2923,9 @@ await corsair.dopplermarketingautomation.api.subscribers.get({});
 {
   date?: string,
   listId?: number,
-  status?: added | deleted,
+  status?: added | deleted | string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -2936,7 +2937,7 @@ await corsair.dopplermarketingautomation.api.subscribers.get({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -2981,7 +2982,7 @@ await corsair.dopplermarketingautomation.api.subscribers.import({});
       predefined?: boolean,
       private?: boolean,
       readonly?: boolean,
-      type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+      type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
       permissionHTML?: string
     }[]
   }[],
@@ -3008,7 +3009,7 @@ await corsair.dopplermarketingautomation.api.subscribers.import({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3056,7 +3057,7 @@ await corsair.dopplermarketingautomation.api.subscribers.importCsv({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3102,7 +3103,7 @@ await corsair.dopplermarketingautomation.api.subscribers.importToList({});
       predefined?: boolean,
       private?: boolean,
       readonly?: boolean,
-      type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+      type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
       permissionHTML?: string
     }[]
   }[],
@@ -3129,7 +3130,7 @@ await corsair.dopplermarketingautomation.api.subscribers.importToList({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3147,7 +3148,7 @@ await corsair.dopplermarketingautomation.api.subscribers.importToList({});
 
 Import unsubscribed subscribers
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dopplermarketingautomation.api.subscribers.importUnsubscribed({});
@@ -3189,7 +3190,7 @@ await corsair.dopplermarketingautomation.api.subscribers.importUnsubscribed({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3251,32 +3252,32 @@ await corsair.dopplermarketingautomation.api.subscribers.list({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -3288,7 +3289,7 @@ await corsair.dopplermarketingautomation.api.subscribers.list({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3349,32 +3350,32 @@ await corsair.dopplermarketingautomation.api.subscribers.listByOrigin({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -3386,7 +3387,7 @@ await corsair.dopplermarketingautomation.api.subscribers.listByOrigin({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3445,32 +3446,32 @@ await corsair.dopplermarketingautomation.api.subscribers.listForList({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -3482,7 +3483,7 @@ await corsair.dopplermarketingautomation.api.subscribers.listForList({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3542,32 +3543,32 @@ await corsair.dopplermarketingautomation.api.subscribers.listUnsubscribed({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -3579,7 +3580,7 @@ await corsair.dopplermarketingautomation.api.subscribers.listUnsubscribed({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3636,7 +3637,7 @@ await corsair.dopplermarketingautomation.api.subscribers.permissionsHistory({});
   originIP?: string,
   value?: string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -3648,7 +3649,7 @@ await corsair.dopplermarketingautomation.api.subscribers.permissionsHistory({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3694,7 +3695,7 @@ await corsair.dopplermarketingautomation.api.subscribers.removeFromList({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3712,7 +3713,7 @@ await corsair.dopplermarketingautomation.api.subscribers.removeFromList({});
 
 Unsubscribe a subscriber from the account
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dopplermarketingautomation.api.subscribers.unsubscribe({});
@@ -3737,32 +3738,32 @@ await corsair.dopplermarketingautomation.api.subscribers.unsubscribe({});
     predefined?: boolean,
     private?: boolean,
     readonly?: boolean,
-    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string,
     permissionHTML?: string
   }[],
   belongsToLists?: string[],
   listsHistory?: {
     date?: string,
     listId?: number,
-    status?: added | deleted,
+    status?: added | deleted | string,
     _links?: {
-      href: string,
+      href: string | null,
       rel: string,
       description?: string
     }[]
   }[],
   unsubscribedDate?: string | null,
   unsubscriptionDate?: string | null,
-  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null,
   manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
   unsubscriptionComment?: string | null,
-  status?: active | pending | unsubscribed | standBy | archived | null,
+  status?: active | pending | unsubscribed | standBy | archived | string | null,
   canBeReactivated?: boolean | null,
   isBeingReactivated?: boolean | null,
   userId?: number,
   score?: number,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -3785,7 +3786,7 @@ await corsair.dopplermarketingautomation.api.subscribers.unsubscribe({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3829,7 +3830,7 @@ await corsair.dopplermarketingautomation.api.tasks.get({});
 | `finishDate` | `string \| null` | No | — |
 | `taskType` | `string \| null` | No | — |
 | `itemsProcessed` | `number \| null` | No | — |
-| `status` | `unknown \| standBy \| inProgress \| completed \| failed \| null` | No | — |
+| `status` | `unknown \| standBy \| inProgress \| completed \| failed \| string \| null` | No | — |
 | `_links` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3837,7 +3838,7 @@ await corsair.dopplermarketingautomation.api.tasks.get({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3901,7 +3902,7 @@ await corsair.dopplermarketingautomation.api.tasks.importErrors({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -3957,9 +3958,9 @@ await corsair.dopplermarketingautomation.api.tasks.list({});
   finishDate?: string | null,
   taskType?: string | null,
   itemsProcessed?: number | null,
-  status?: unknown | standBy | inProgress | completed | failed | null,
+  status?: unknown | standBy | inProgress | completed | failed | string | null,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -3971,7 +3972,7 @@ await corsair.dopplermarketingautomation.api.tasks.list({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -4018,7 +4019,7 @@ await corsair.dopplermarketingautomation.api.templates.create({});
   replyTo?: string | null,
   urlLanding: string,
   _links?: {
-    href: string,
+    href: string | null,
     rel: string,
     description?: string
   }[]
@@ -4042,7 +4043,7 @@ await corsair.dopplermarketingautomation.api.templates.create({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -4094,7 +4095,7 @@ await corsair.dopplermarketingautomation.api.templates.get({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -4140,7 +4141,7 @@ await corsair.dopplermarketingautomation.api.templates.updateContent({});
 
 ```ts
 {
-  href: string,
+  href: string | null,
   rel: string,
   description?: string
 }[]
@@ -4151,3 +4152,4 @@ await corsair.dopplermarketingautomation.api.templates.updateContent({});
 
 
 ---
+
