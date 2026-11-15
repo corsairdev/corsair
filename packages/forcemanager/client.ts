@@ -92,10 +92,15 @@ function stripQuery(url: string): string {
 // with its status, Retry-After and rate-limit fields, so core's 401 and 429 handling still sees them; it
 // is rebuilt without the request body (the login body holds the private key), the query or the provider
 // body, and its message keeps only the provider's own short error text.
-function toForceManagerError(error: unknown, label: string): Error {
+function toForceManagerError(
+	error: unknown,
+	label: string,
+	sent: Set<string>,
+): Error {
 	if (error instanceof ForceManagerAPIError) return error;
 	if (error instanceof ApiError) {
-		const detail = providerMessage(error.body);
+		const raw = providerMessage(error.body);
+		const detail = raw === undefined ? undefined : scrubSent(raw, sent);
 		return new ApiError(
 			{ method: error.request.method, url: stripQuery(error.request.url) },
 			{
@@ -117,6 +122,30 @@ function toForceManagerError(error: unknown, label: string): Error {
 	return new ForceManagerAPIError(`${label} failed`);
 }
 
+const REDACTED = '[REDACTED]';
+
+// unknown because request bodies and queries mix strings, numbers, arrays and objects.
+// Only strings of three characters or more are collected: numbers here are ids, pages and flags, and
+// shorter strings are codes such as a language.
+function collectSent(value: unknown, out: Set<string>): Set<string> {
+	if (typeof value === 'string') {
+		const text = value.trim();
+		if (text.length >= 3) out.add(text);
+	} else if (Array.isArray(value)) {
+		for (const item of value) collectSent(item, out);
+	} else if (value !== null && typeof value === 'object') {
+		for (const item of Object.values(value)) collectSent(item, out);
+	}
+	return out;
+}
+
+/** Removes every value the request sent (keys, CRM fields, filters, path values) from provider text. */
+function scrubSent(text: string, sent: Set<string>): string {
+	let result = text;
+	for (const value of sent) result = result.split(value).join(REDACTED);
+	return result;
+}
+
 /**
  * Puts the route template (`/calls/phone/VALUE`) in place of the request path on an ApiError, so path
  * values such as a phone number never reach the error. Other errors pass through.
@@ -126,8 +155,11 @@ export function withRouteTemplate(
 	error: unknown,
 	templatePath: string,
 	environment: ForceManagerEnvironment,
+	// unknown because path values are numbers or strings from the validated input.
+	pathValues: unknown[] = [],
 ): unknown {
 	if (!(error instanceof ApiError)) return error;
+	const message = scrubSent(error.message, collectSent(pathValues, new Set()));
 	return new ApiError(
 		{ method: error.request.method, url: templatePath },
 		{
@@ -137,7 +169,7 @@ export function withRouteTemplate(
 			statusText: error.statusText,
 			body: undefined,
 		},
-		error.message,
+		message,
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -182,7 +214,11 @@ export async function loginForceManager(
 			{ rateLimitConfig: RATE_LIMIT_CONFIG },
 		);
 	} catch (error: unknown) {
-		throw toForceManagerError(error, 'ForceManager login');
+		throw toForceManagerError(
+			error,
+			'ForceManager login',
+			collectSent([credentials.publicKey, credentials.privateKey], new Set()),
+		);
 	}
 	const token =
 		typeof response === 'object' && response !== null
@@ -267,7 +303,11 @@ async function send<T>(
 			{ rateLimitConfig: RATE_LIMIT_CONFIG },
 		);
 	} catch (error: unknown) {
-		throw toForceManagerError(error, 'ForceManager request');
+		throw toForceManagerError(
+			error,
+			'ForceManager request',
+			collectSent([input.body, input.query, sessionKey], new Set()),
+		);
 	}
 }
 

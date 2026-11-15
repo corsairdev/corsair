@@ -161,7 +161,12 @@ export async function executeForceManagerOperation<K extends OperationKey>(
 		);
 	} catch (error: unknown) {
 		// Path values can be personal data (the phone-number lookup), so the error keeps the route template.
-		throw withRouteTemplate(error, definition.path, environment);
+		throw withRouteTemplate(
+			error,
+			definition.path,
+			environment,
+			Object.values(parsedInput.path ?? {}),
+		);
 	}
 	assertOperationOutput(key, response);
 	return response;

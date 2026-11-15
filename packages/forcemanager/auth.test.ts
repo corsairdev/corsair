@@ -334,4 +334,40 @@ describe('ForceManager response parsing', () => {
 		);
 		expect(JSON.stringify(error)).not.toContain('5555550123');
 	});
+
+	it('removes sent values that the provider echoes in its error text', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				json({ error: 'No call found for +15555550123' }, 404),
+			);
+
+		// `unknown` because a rejected promise has no reliable runtime error type until narrowed.
+		const error = await executeForceManagerOperation(
+			'getResourcesByPhoneNumber',
+			{ path: { value: '+15555550123' } },
+			'session-token',
+		).catch((caught: unknown) => caught);
+
+		if (!(error instanceof ApiError)) throw new Error('Expected an ApiError');
+		expect(error.message).toContain('No call found for [REDACTED]');
+		expect(error.message).not.toContain('5555550123');
+	});
+
+	it('removes the key pair when the login error echoes it', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				json({ error: 'unknown user public-key / private-key' }, 400),
+			);
+
+		// `unknown` because a rejected promise has no reliable runtime error type until narrowed.
+		const error = await makeForceManagerRequest('/accounts', PACKED, {
+			method: 'GET',
+		}).catch((caught: unknown) => caught);
+
+		if (!(error instanceof ApiError)) throw new Error('Expected an ApiError');
+		expect(error.message).not.toContain('public-key');
+		expect(error.message).not.toContain('private-key');
+	});
 });
