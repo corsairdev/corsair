@@ -58,7 +58,12 @@ describe('withTenant account scope', () => {
 			account: ref ? { ref } : undefined,
 		});
 
-	async function addAccount(ref: string, label: string, token: string) {
+	async function addAccount(
+		ref: string,
+		label: string,
+		token: string,
+		createdAt = new Date(ref === 'a' ? '2026-01-01' : '2026-02-01'),
+	) {
 		const integ = await env.db
 			.selectFrom('corsair_integrations')
 			.select('id')
@@ -70,8 +75,8 @@ describe('withTenant account scope', () => {
 			.insertInto('corsair_accounts')
 			.values({
 				id,
-				created_at: new Date(),
-				updated_at: new Date(),
+				created_at: createdAt,
+				updated_at: createdAt,
 				tenant_id: 't1',
 				integration_id: integ.id,
 				config: encryptConfig({ account_ref: ref, account_label: label }, dek),
@@ -109,8 +114,8 @@ describe('withTenant account scope', () => {
 	it('bound by email label works', async () => {
 		await addAccount('a', 'a@x.com', 'tok-a');
 		await addAccount('b', 'b@x.com', 'tok-b');
-		const t = corsair.withTenant('t1', { accounts: { demo: 'A@X.com' } });
-		expect(await t.demo.api.token()).toBe('tok-a');
+		const t = corsair.withTenant('t1', { accounts: { demo: 'B@X.com' } });
+		expect(await t.demo.api.token()).toBe('tok-b');
 	});
 
 	it('unknown account ref rejects with account_not_found', async () => {
@@ -120,6 +125,24 @@ describe('withTenant account scope', () => {
 			.demo.api.token()
 			.catch((e: any) => e);
 		expect(err.code).toBe('account_not_found');
+	});
+
+	it('unbound resolution is not cached: a second account added later is noticed', async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		const t = corsair.withTenant('t1');
+		expect(await t.demo.api.token()).toBe('tok-a');
+		await addAccount('b', 'b@x.com', 'tok-b');
+		const err = await t.demo.api.token().catch((e: any) => e);
+		expect(err.code).toBe('account_required');
+	});
+
+	it('unbound ctx.db resolution is not cached either', async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		const t = corsair.withTenant('t1');
+		await t.demo.api.note();
+		await addAccount('b', 'b@x.com', 'tok-b');
+		const err = await t.demo.api.note().catch((e: any) => e);
+		expect(err.code).toBe('account_required');
 	});
 
 	it('withTenant with an unknown plugin id in accounts throws', () => {

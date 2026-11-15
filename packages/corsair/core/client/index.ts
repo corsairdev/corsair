@@ -303,6 +303,9 @@ function createAccountIdResolver(
 		if (!database) {
 			throw new Error('Database not configured');
 		}
+		if (account && !account.kek) {
+			throw new Error('Selecting an account requires a kek');
+		}
 
 		const { accountId } = await resolveIntegrationAccountIds({
 			database,
@@ -485,7 +488,7 @@ export function buildCorsairClient<
 			plugin.id,
 			effectiveTenantId,
 			ensureProvisioned,
-			accounts && kek ? { ref: accounts[plugin.id], kek } : undefined,
+			accounts ? { ref: accounts[plugin.id], kek: kek ?? '' } : undefined,
 		);
 
 		// Create typed entity clients from plugin schema, nested under `db`
