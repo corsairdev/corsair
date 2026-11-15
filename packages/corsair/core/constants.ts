@@ -232,6 +232,7 @@ export const BaseProviders = [
 	'dropcontact',
 	'dynapictures',
 	'e2b',
+	'ecologi',
 	'elevenlabs',
 	'elorus',
 	'emailoctopus',
@@ -845,6 +846,7 @@ export const ProviderDisplayNames = {
 	dropcontact: 'Dropcontact',
 	dynapictures: 'Dynapictures',
 	e2b: 'E2B',
+	ecologi: 'Ecologi',
 	elevenlabs: 'ElevenLabs',
 	elorus: 'Elorus',
 	emailoctopus: 'EmailOctopus',
@@ -1465,6 +1467,7 @@ export type AllProviders =
 	| 'dropcontact'
 	| 'dynapictures'
 	| 'e2b'
+	| 'ecologi'
 	| 'elevenlabs'
 	| 'elorus'
 	| 'emailoctopus'

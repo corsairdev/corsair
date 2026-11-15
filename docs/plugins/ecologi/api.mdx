@@ -1,0 +1,251 @@
+---
+title: "Ecologi API reference"
+sidebarTitle: "API"
+description: "API reference for the Ecologi plugin in Corsair: every `ecologi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Carbon Offsets
+
+### get
+
+`carbonOffsets.get`
+
+Read the CO2e avoided by an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.carbonOffsets.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/{username}/carbon-offset. Stored fields are total and pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  id: string,
+  total: number,
+  pending: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Carbon Removals
+
+### get
+
+`carbonRemovals.get`
+
+Read the CO2e removed by an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.carbonRemovals.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/{username}/carbon-removal. Stored fields are total and pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  id: string,
+  total: number,
+  pending: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Habitats
+
+### get
+
+`habitats.get`
+
+Read the habitat restored by an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.habitats.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/{username}/habitat-restoration. Stored fields are total and pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  id: string,
+  total: number,
+  pending: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Impacts
+
+### get
+
+`impacts.get`
+
+Read the combined impact for an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.impacts.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/{username}/impact. Stores the four totals and the four pending totals.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `impact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="impact full type">
+
+```ts
+{
+  id: string,
+  trees: number,
+  carbonOffset: number,
+  carbonRemoval: number,
+  habitatRestoration: number,
+  pendingTrees: number,
+  pendingCarbonOffset: number,
+  pendingCarbonRemoval: number,
+  pendingHabitatRestoration: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trees
+
+### get
+
+`trees.get`
+
+Read the trees funded by an Ecologi username.
+
+**Risk:** `read`
+
+```ts
+await corsair.ecologi.api.trees.get({ username: 'ecologi' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+GET /users/{username}/trees. Stored fields are total and pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  id: string,
+  total: number,
+  pending: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

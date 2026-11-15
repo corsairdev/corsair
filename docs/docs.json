@@ -1952,6 +1952,14 @@
                 ]
               },
               {
+                "group": "Ecologi",
+                "pages": [
+                  "plugins/ecologi/overview",
+                  "plugins/ecologi/api",
+                  "plugins/ecologi/database"
+                ]
+              },
+              {
                 "group": "ElevenLabs",
                 "pages": [
                   "plugins/elevenlabs/overview",

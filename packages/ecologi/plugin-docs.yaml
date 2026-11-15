@@ -1,0 +1,34 @@
+displayName: Ecologi
+description: Read Ecologi reporting totals for trees, carbon, habitat, and combined impact.
+domain: ecologi.com
+recommendedAuth: api_key
+overviewNote: |
+  The reporting API is public. Requests go to https://public.ecologi.com and send no API key. GET /users/ecologi/trees, /carbon-offset, /carbon-removal, /habitat-restoration, and /impact each returned HTTP 200. GET /users/business-name/trees returned HTTP 404. Purchase endpoints are not catalog operations and are not implemented. The username is the row id and is not written to the event.
+examples:
+  read:
+    path: trees.get
+    title: Read trees
+    args:
+      username: ecologi
+apiNotes:
+  trees.get: |
+    GET /users/{username}/trees. Stored fields are total and pending.
+  carbonOffsets.get: |
+    GET /users/{username}/carbon-offset. Stored fields are total and pending.
+  carbonRemovals.get: |
+    GET /users/{username}/carbon-removal. Stored fields are total and pending.
+  habitats.get: |
+    GET /users/{username}/habitat-restoration. Stored fields are total and pending.
+  impacts.get: |
+    GET /users/{username}/impact. Stores the four totals and the four pending totals.
+apiExamples:
+  trees.get:
+    call: "{ username: 'ecologi' }"
+  carbonOffsets.get:
+    call: "{ username: 'ecologi' }"
+  carbonRemovals.get:
+    call: "{ username: 'ecologi' }"
+  habitats.get:
+    call: "{ username: 'ecologi' }"
+  impacts.get:
+    call: "{ username: 'ecologi' }"
