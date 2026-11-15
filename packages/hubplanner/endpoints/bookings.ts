@@ -1,7 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { Booking, SuccessResponse } from './types';
+import type {
+	Booking,
+	BookingsDeleteResponse,
+	BulkDeleteResult,
+} from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -152,7 +156,7 @@ export const Bookings = {
 	delete: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['bookings.delete'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BookingsDeleteResponse>(
 			`/booking/${encodeURIComponent(parsedInput.bookingId)}`,
 			ctx.key,
 			{ method: 'DELETE' },
@@ -178,7 +182,7 @@ export const Bookings = {
 			query.ids = parsedInput.ids.join(',');
 		}
 
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BulkDeleteResult>(
 			'/booking',
 			ctx.key,
 			{
@@ -192,7 +196,7 @@ export const Bookings = {
 		await logEventFromContext(
 			ctx,
 			'hubplanner.bookings.deleteBulk',
-			parsed.deletedCount == null ? {} : { count: parsed.deletedCount },
+			{ count: parsed.deletedCount },
 			'completed',
 		);
 		return parsed;

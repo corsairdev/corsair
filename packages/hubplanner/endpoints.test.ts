@@ -560,7 +560,8 @@ describe('Bookings Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		// Live DELETE /booking/:id answers with the deleted booking.
+		mockedRequest.mockResolvedValueOnce(mockBooking);
 		await Bookings.delete(ctx, { bookingId: 'b1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/booking/b1',
@@ -571,7 +572,6 @@ describe('Bookings Endpoints', () => {
 		);
 
 		mockedRequest.mockResolvedValueOnce({
-			success: true,
 			message: 'Deleted 2 bookings',
 			deletedCount: 2,
 		});
@@ -594,8 +594,8 @@ describe('Bookings Endpoints', () => {
 	});
 
 	it('rejects delete responses that are not the documented shapes', async () => {
-		mockedRequest.mockResolvedValueOnce({});
-		await expect(Bookings.delete(ctx, { bookingId: 'b1' })).rejects.toThrow();
+		mockedRequest.mockResolvedValueOnce({ message: 'Deleted' });
+		await expect(Bookings.deleteBulk(ctx, { ids: ['b1'] })).rejects.toThrow();
 		mockedRequest.mockResolvedValueOnce({ success: true });
 		await expect(Events.delete(ctx, { eventId: 'e1' })).rejects.toThrow();
 		mockedRequest.mockResolvedValueOnce({ success: true });

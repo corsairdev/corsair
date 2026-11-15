@@ -1,6 +1,7 @@
 // Response shapes taken from the live Hub Planner API (trial account, demo data), trimmed to the
 // fields that broke the original schemas. Ids are replaced with placeholders.
 import {
+	BookingsDeleteResponseSchema,
 	BookingsListResponseSchema,
 	CustomFieldTemplateSchema,
 	EventsListResponseSchema,
@@ -62,6 +63,23 @@ describe('live response shapes', () => {
 			},
 		];
 		expect(BookingsListResponseSchema.parse(bookings)).toHaveLength(1);
+	});
+
+	it('accepts the stored booking document DELETE /booking/:id answers with', () => {
+		const deleted = {
+			_id: 'b1',
+			deleted: false,
+			resource: 'r1',
+			project: 'p1',
+			note: {
+				resource: 'r1',
+				message: 'corsair-plugin-test',
+				formattedNote: 'corsair-plugin-test',
+				seenNote: ['r1'],
+				saveDate: '2026-11-15T00:23:49.032Z',
+			},
+		};
+		expect(BookingsDeleteResponseSchema.parse(deleted)._id).toBe('b1');
 	});
 
 	it('accepts events with null createdDate and updatedDate', () => {

@@ -11,17 +11,15 @@ export const TagSchema = z
 	.passthrough();
 export type Tag = z.infer<typeof TagSchema>;
 
-// Booking deletes answer `{ success: true, ... }`: the single delete adds the deleted booking's
-// fields, the bulk delete adds `message` and `deletedCount`.
-export const SuccessResponseSchema = z
+// The bulk booking delete answers `{ message: "Deleted 2 bookings", deletedCount: 2 }`.
+export const BulkDeleteResultSchema = z
 	.object({
-		success: z.boolean(),
 		message: z.string().nullish(),
-		deletedCount: z.number().nullish(),
+		deletedCount: z.number(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
-export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;
+export type BulkDeleteResult = z.infer<typeof BulkDeleteResultSchema>;
 
 // Most single deletes and the project/resource/client association calls answer a bare `true`.
 export const BooleanResultSchema = z.boolean();
@@ -567,7 +565,12 @@ export const BookingsDeleteInputSchema = z.object({
 	bookingId: z.string().min(1, 'Booking ID is required'),
 });
 export type BookingsDeleteInput = z.infer<typeof BookingsDeleteInputSchema>;
-export const BookingsDeleteResponseSchema = SuccessResponseSchema;
+// DELETE /booking/:id answers with the stored booking document, which differs from GET /booking/:id
+// (`note` is an object with `message`, `formattedNote` and more), so only the id is checked.
+export const BookingsDeleteResponseSchema = z
+	.object({ _id: z.string() })
+	// `unknown` response properties preserved: the stored document's other fields vary.
+	.passthrough();
 export type BookingsDeleteResponse = z.infer<
 	typeof BookingsDeleteResponseSchema
 >;
@@ -587,7 +590,7 @@ export const BookingsDeleteBulkInputSchema = z
 export type BookingsDeleteBulkInput = z.infer<
 	typeof BookingsDeleteBulkInputSchema
 >;
-export const BookingsDeleteBulkResponseSchema = SuccessResponseSchema;
+export const BookingsDeleteBulkResponseSchema = BulkDeleteResultSchema;
 export type BookingsDeleteBulkResponse = z.infer<
 	typeof BookingsDeleteBulkResponseSchema
 >;
