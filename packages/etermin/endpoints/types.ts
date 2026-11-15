@@ -1186,9 +1186,12 @@ export const ETerminEndpointInputSchemas = {
 			serviceid: z.string().describe('ID of the service'),
 		})
 		.strict(),
+	// The reference documents id, but eTermin answers 400 "calendarid is
+	// missing!" for it and deletes by calendarid + serviceid (live run, 11-16).
 	calendarServicesDelete: z
 		.object({
-			id: z.string().describe('ID of the calendar service assignment'),
+			calendarid: z.string().describe('ID of the calendar'),
+			serviceid: z.string().describe('ID of the service to unassign'),
 		})
 		.strict(),
 	calendarNonWorkingTimesList: z

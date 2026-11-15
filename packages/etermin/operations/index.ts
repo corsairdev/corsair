@@ -1962,13 +1962,19 @@ export const calendarServicesDelete = {
 	path: '/api/calendarservice',
 	riskLevel: 'destructive',
 	description:
-		'Use this function if you want to delete a calendar/service assignment',
+		'Use this function if you want to delete a calendar/service assignment, given by its calendar and service',
 	params: [
 		{
-			name: 'id',
+			name: 'calendarid',
 			type: 'string',
 			required: true,
-			description: 'ID of the calendar service assignment',
+			description: 'ID of the calendar',
+		},
+		{
+			name: 'serviceid',
+			type: 'string',
+			required: true,
+			description: 'ID of the service to unassign',
 		},
 	],
 	responseKind: 'opaque',

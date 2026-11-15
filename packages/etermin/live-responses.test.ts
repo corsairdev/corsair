@@ -90,4 +90,13 @@ describe('eTermin inputs the live API refuses', () => {
 			}).success,
 		).toBe(true);
 	});
+
+	it('deletes a calendar/service assignment by calendar and service', () => {
+		const schema = ETerminEndpointInputSchemas.calendarServicesDelete;
+		// 400 "calendarid is missing!" for the documented id.
+		expect(schema.safeParse({ id: '4427370' }).success).toBe(false);
+		expect(
+			schema.safeParse({ calendarid: '234554', serviceid: '700935' }).success,
+		).toBe(true);
+	});
 });
