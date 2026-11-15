@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Asana: every `asana.api.*` operation with input and output types."
+title: "Asana API reference"
+sidebarTitle: "API"
+description: "API reference for the Asana plugin in Corsair: every `asana.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `asana.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -210,8 +209,7 @@ await corsair.asana.api.projects.create({});
   default_view?: string,
   privacy_setting?: string,
   icon?: string | null,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -317,8 +315,7 @@ await corsair.asana.api.projects.createForTeam({});
   default_view?: string,
   privacy_setting?: string,
   icon?: string | null,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -425,8 +422,7 @@ await corsair.asana.api.projects.createForWorkspace({});
   default_view?: string,
   privacy_setting?: string,
   icon?: string | null,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -626,8 +622,7 @@ await corsair.asana.api.projects.get({});
   default_view?: string,
   privacy_setting?: string,
   icon?: string | null,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -715,7 +710,7 @@ await corsair.asana.api.projects.getTasks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -777,8 +772,7 @@ await corsair.asana.api.projects.getTasks({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -790,7 +784,7 @@ await corsair.asana.api.projects.getTasks({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -830,7 +824,7 @@ await corsair.asana.api.projects.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -879,8 +873,7 @@ await corsair.asana.api.projects.list({});
   default_view?: string,
   privacy_setting?: string,
   icon?: string | null,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -892,7 +885,7 @@ await corsair.asana.api.projects.list({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -931,7 +924,7 @@ await corsair.asana.api.projects.listForWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -980,8 +973,7 @@ await corsair.asana.api.projects.listForWorkspace({});
   default_view?: string,
   privacy_setting?: string,
   icon?: string | null,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -993,7 +985,7 @@ await corsair.asana.api.projects.listForWorkspace({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1189,8 +1181,7 @@ await corsair.asana.api.projects.update({});
   default_view?: string,
   privacy_setting?: string,
   icon?: string | null,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1453,7 +1444,7 @@ await corsair.asana.api.sections.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1485,7 +1476,7 @@ await corsair.asana.api.sections.list({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1771,7 +1762,7 @@ await corsair.asana.api.stories.listForTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1809,7 +1800,7 @@ await corsair.asana.api.stories.listForTask({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2173,7 +2164,7 @@ await corsair.asana.api.tags.getTasks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2235,8 +2226,7 @@ await corsair.asana.api.tags.getTasks({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -2248,7 +2238,7 @@ await corsair.asana.api.tags.getTasks({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2286,7 +2276,7 @@ await corsair.asana.api.tags.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2321,7 +2311,7 @@ await corsair.asana.api.tags.list({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2359,7 +2349,7 @@ await corsair.asana.api.tags.listForTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2394,7 +2384,7 @@ await corsair.asana.api.tags.listForTask({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2432,7 +2422,7 @@ await corsair.asana.api.tags.listForWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2467,7 +2457,7 @@ await corsair.asana.api.tags.listForWorkspace({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2814,8 +2804,7 @@ await corsair.asana.api.tasks.create({});
   completed?: boolean,
   liked?: boolean,
   resource_subtype?: string,
-  custom_fields?: {
-  },
+  custom_fields?: Record<string, any>,
   assignee_section?: string
 }
 ```
@@ -2890,8 +2879,7 @@ await corsair.asana.api.tasks.create({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3006,8 +2994,7 @@ await corsair.asana.api.tasks.createSubtask({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3214,8 +3201,7 @@ await corsair.asana.api.tasks.get({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3253,7 +3239,7 @@ await corsair.asana.api.tasks.getAttachments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3274,7 +3260,7 @@ await corsair.asana.api.tasks.getAttachments({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3311,7 +3297,7 @@ await corsair.asana.api.tasks.getStories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3349,7 +3335,7 @@ await corsair.asana.api.tasks.getStories({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3387,7 +3373,7 @@ await corsair.asana.api.tasks.getSubtasks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3449,8 +3435,7 @@ await corsair.asana.api.tasks.getSubtasks({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -3462,7 +3447,7 @@ await corsair.asana.api.tasks.getSubtasks({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3499,7 +3484,7 @@ await corsair.asana.api.tasks.getTags({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3534,7 +3519,7 @@ await corsair.asana.api.tasks.getTags({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3579,7 +3564,7 @@ await corsair.asana.api.tasks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3641,8 +3626,7 @@ await corsair.asana.api.tasks.list({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -3654,7 +3638,7 @@ await corsair.asana.api.tasks.list({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3833,7 +3817,7 @@ await corsair.asana.api.tasks.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3895,8 +3879,7 @@ await corsair.asana.api.tasks.search({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -3908,7 +3891,7 @@ await corsair.asana.api.tasks.search({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3934,7 +3917,7 @@ await corsair.asana.api.tasks.setParent({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `task_gid` | `string` | Yes | — |
-| `parent` | `string` | No | — |
+| `parent` | `string \| null` | Yes | — |
 | `insert_after` | `string` | No | — |
 | `insert_before` | `string` | No | — |
 | `opt_pretty` | `boolean` | No | — |
@@ -4007,8 +3990,7 @@ await corsair.asana.api.tasks.setParent({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -4059,8 +4041,7 @@ await corsair.asana.api.tasks.update({});
   assignee_status?: string,
   assignee_section?: string,
   workspace?: string,
-  custom_fields?: {
-  }
+  custom_fields?: Record<string, any>
 }
 ```
 </Accordion>
@@ -4134,8 +4115,7 @@ await corsair.asana.api.tasks.update({});
   permalink_url?: string,
   num_subtasks?: number,
   approval_status?: string,
-  custom_fields?: {
-  }[]
+  custom_fields?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -4356,7 +4336,7 @@ await corsair.asana.api.teams.listForUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4386,7 +4366,7 @@ await corsair.asana.api.teams.listForUser({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4424,7 +4404,7 @@ await corsair.asana.api.teams.listForWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4454,7 +4434,7 @@ await corsair.asana.api.teams.listForWorkspace({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4551,7 +4531,7 @@ await corsair.asana.api.teams.membershipsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4584,7 +4564,7 @@ await corsair.asana.api.teams.membershipsList({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4622,7 +4602,7 @@ await corsair.asana.api.teams.membershipsListForTeam({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4655,7 +4635,7 @@ await corsair.asana.api.teams.membershipsListForTeam({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4694,7 +4674,7 @@ await corsair.asana.api.teams.membershipsListForUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4727,7 +4707,7 @@ await corsair.asana.api.teams.membershipsListForUser({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4886,8 +4866,7 @@ await corsair.asana.api.users.get({});
   name?: string,
   email?: string,
   resource_type?: string,
-  photo?: {
-  } | null,
+  photo?: Record<string, string> | null,
   workspaces?: {
     gid: string,
     name?: string,
@@ -4938,8 +4917,7 @@ await corsair.asana.api.users.getCurrent({});
   name?: string,
   email?: string,
   resource_type?: string,
-  photo?: {
-  } | null,
+  photo?: Record<string, string> | null,
   workspaces?: {
     gid: string,
     name?: string,
@@ -5142,7 +5120,7 @@ await corsair.asana.api.users.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5153,8 +5131,7 @@ await corsair.asana.api.users.list({});
   name?: string,
   email?: string,
   resource_type?: string,
-  photo?: {
-  } | null,
+  photo?: Record<string, string> | null,
   workspaces?: {
     gid: string,
     name?: string,
@@ -5171,7 +5148,7 @@ await corsair.asana.api.users.list({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5208,7 +5185,7 @@ await corsair.asana.api.users.listForTeam({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5219,8 +5196,7 @@ await corsair.asana.api.users.listForTeam({});
   name?: string,
   email?: string,
   resource_type?: string,
-  photo?: {
-  } | null,
+  photo?: Record<string, string> | null,
   workspaces?: {
     gid: string,
     name?: string,
@@ -5237,7 +5213,7 @@ await corsair.asana.api.users.listForTeam({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5275,7 +5251,7 @@ await corsair.asana.api.users.listForWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5286,8 +5262,7 @@ await corsair.asana.api.users.listForWorkspace({});
   name?: string,
   email?: string,
   resource_type?: string,
-  photo?: {
-  } | null,
+  photo?: Record<string, string> | null,
   workspaces?: {
     gid: string,
     name?: string,
@@ -5304,7 +5279,7 @@ await corsair.asana.api.users.listForWorkspace({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5446,7 +5421,7 @@ await corsair.asana.api.webhookManagement.getList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5479,7 +5454,7 @@ await corsair.asana.api.webhookManagement.getList({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5639,7 +5614,7 @@ await corsair.asana.api.workspaces.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5662,7 +5637,7 @@ await corsair.asana.api.workspaces.list({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5762,7 +5737,7 @@ await corsair.asana.api.workspaces.membershipsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5799,7 +5774,7 @@ await corsair.asana.api.workspaces.membershipsList({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5837,7 +5812,7 @@ await corsair.asana.api.workspaces.membershipsListForUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `next_page` | `object` | No | — |
+| `next_page` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5874,7 +5849,7 @@ await corsair.asana.api.workspaces.membershipsListForUser({});
   offset?: string,
   path?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

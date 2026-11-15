@@ -44,7 +44,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -90,7 +90,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -136,7 +136,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -182,7 +182,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -228,7 +228,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -274,7 +274,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -320,7 +320,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -366,7 +366,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -412,7 +412,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -458,7 +458,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -504,7 +504,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -550,7 +550,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -591,57 +591,57 @@
           {
             "key": "category",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name_options",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -651,42 +651,42 @@
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null }"
+            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url?: string | null }"
+            "type": "{ url?: string | null } | null"
           },
           {
             "key": "configurations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -717,7 +717,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -732,7 +732,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ category?: number | null, code?: number | null, created?: string | null, creator?: string | null, description?: string | null, execution_id?: string | null, execution_status?: boolean | null, name?: string | null, name_options?: string | null, private?: boolean | null, project?: string | null, resource: string, shared?: boolean | null, status?: { code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null, subscription?: boolean | null, tags?: string[] | null, updated?: string | null, webhook?: { url?: string | null } | null, configurations?: {} | null, type?: number | null }[]"
+            "type": "{ category?: number | null, code?: number | null, created?: string | null, creator?: string | null, description?: string | null, execution_id?: string | null, execution_status?: boolean | null, name?: string | null, name_options?: string | null, private?: boolean | null, project?: string | null, resource: string, shared?: boolean | null, status?: { code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null, subscription?: boolean | null, tags?: string[] | null, updated?: string | null, webhook?: { url?: string | null } | null, configurations?: Record<string, any> | null, type?: number | null }[]"
           }
         ]
       }
@@ -763,7 +763,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -809,7 +809,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -855,7 +855,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -901,7 +901,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -947,7 +947,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -993,7 +993,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1069,57 +1069,57 @@
           {
             "key": "category",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name_options",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -1129,57 +1129,57 @@
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null }"
+            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url?: string | null }"
+            "type": "{ url?: string | null } | null"
           },
           {
             "key": "connection",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "engine",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public_in_organization",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1205,57 +1205,57 @@
           {
             "key": "category",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name_options",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -1265,57 +1265,57 @@
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null }"
+            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url?: string | null }"
+            "type": "{ url?: string | null } | null"
           },
           {
             "key": "connection",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "engine",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "public_in_organization",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1346,7 +1346,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1392,7 +1392,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1438,7 +1438,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1484,7 +1484,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1530,7 +1530,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1576,7 +1576,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1622,7 +1622,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1668,7 +1668,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1714,7 +1714,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1760,7 +1760,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -1816,57 +1816,57 @@
           {
             "key": "category",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name_options",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -1876,62 +1876,62 @@
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null }"
+            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url?: string | null }"
+            "type": "{ url?: string | null } | null"
           },
           {
             "key": "configuration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "configuration_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "manage_permission",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "stats",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { count?: number | null }> | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -1977,57 +1977,57 @@
           {
             "key": "category",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name_options",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -2037,62 +2037,62 @@
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null }"
+            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url?: string | null }"
+            "type": "{ url?: string | null } | null"
           },
           {
             "key": "configuration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "configuration_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "manage_permission",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "stats",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { count?: number | null }> | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -2123,7 +2123,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -2138,7 +2138,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ category?: number | null, code?: number | null, created?: string | null, creator?: string | null, description?: string | null, execution_id?: string | null, execution_status?: boolean | null, name?: string | null, name_options?: string | null, private?: boolean | null, project?: string | null, resource: string, shared?: boolean | null, status?: { code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null, subscription?: boolean | null, tags?: string[] | null, updated?: string | null, webhook?: { url?: string | null } | null, configuration?: string | null, configuration_status?: boolean | null, manage_permission?: any[] | null, stats?: {} | null, type?: number | null, user_metadata?: {} | null }[]"
+            "type": "{ category?: number | null, code?: number | null, created?: string | null, creator?: string | null, description?: string | null, execution_id?: string | null, execution_status?: boolean | null, name?: string | null, name_options?: string | null, private?: boolean | null, project?: string | null, resource: string, shared?: boolean | null, status?: { code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null, subscription?: boolean | null, tags?: string[] | null, updated?: string | null, webhook?: { url?: string | null } | null, configuration?: string | null, configuration_status?: boolean | null, manage_permission?: any[] | null, stats?: Record<string, { count?: number | null }> | null, type?: number | null, user_metadata?: Record<string, any> | null }[]"
           }
         ]
       }
@@ -2169,7 +2169,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -2215,7 +2215,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -2256,57 +2256,57 @@
           {
             "key": "category",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name_options",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -2316,342 +2316,342 @@
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null }"
+            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url?: string | null }"
+            "type": "{ url?: string | null } | null"
           },
           {
             "key": "charset",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "configuration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "configuration_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "content_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "disable_autolabel",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "disable_datetime",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "field_types",
             "optional": true,
-            "type": "{ auto_generated?: {} | null, categorical?: number | null, datetime?: number | null, image?: number | null, items?: number | null, numeric?: number | null, path?: number | null, regions?: number | null, text?: number | null, total?: number | null }"
+            "type": "{ auto_generated?: Record<string, any> | null, categorical?: number | null, datetime?: number | null, image?: number | null, items?: number | null, numeric?: number | null, path?: number | null, regions?: number | null, text?: number | null, total?: number | null } | null"
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { column_number?: number | null, description?: string | null, item_analysis?: Record<string, any> | null, label?: string | null, locale?: string | null, missing_tokens?: string[] | null, name?: string | null, order?: number | null, optype?: string | null, term_analysis?: Record<string, any> | null }> | null"
           },
           {
             "key": "fields_meta",
             "optional": true,
-            "type": "{ count?: number | null, limit?: number | null, offset?: number | null, query_total?: number | null, total?: number | null }"
+            "type": "{ count?: number | null, limit?: number | null, offset?: number | null, query_total?: number | null, total?: number | null } | null"
           },
           {
             "key": "fields_preview",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any[]> | null"
           },
           {
             "key": "file_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "formats",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "image_analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "image_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "item_analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "md5",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "new_fields",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "number_of_anomalies",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_anomalyscores",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_associations",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_associationsets",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_centroids",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_clusters",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_correlations",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_datasets",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_deepnets",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_ensembles",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_forecasts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_linearregressions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_logisticregressions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_models",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_optimls",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_pca",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_predictions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_projections",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_statisticaltests",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_timeseries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_topicdistributions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_topicmodels",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "origin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "original_height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "original_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "original_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "original_width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "parent_sources",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "remote",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shared_clonable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "shared_hash",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sharing_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "source_csv",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source_parser",
             "optional": true,
-            "type": "{ header?: boolean | null, json_fields?: string[] | null, json_key?: string | null, locale?: string | null, missing_tokens?: string[] | null, quote?: string | null, separator?: string | null, trim?: boolean | null }"
+            "type": "{ header?: boolean | null, json_fields?: string[] | null, json_key?: string | null, locale?: string | null, missing_tokens?: string[] | null, quote?: string | null, separator?: string | null, trim?: boolean | null } | null"
           },
           {
             "key": "sources",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "sources_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "synthetic",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "term_analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "types",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2682,7 +2682,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -2697,7 +2697,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ category?: number | null, code?: number | null, created?: string | null, creator?: string | null, description?: string | null, execution_id?: string | null, execution_status?: boolean | null, name?: string | null, name_options?: string | null, private?: boolean | null, project?: string | null, resource: string, shared?: boolean | null, status?: { code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null, subscription?: boolean | null, tags?: string[] | null, updated?: string | null, webhook?: { url?: string | null } | null, charset?: string | null, closed?: boolean | null, configuration?: string | null, configuration_status?: boolean | null, content_type?: string | null, disable_autolabel?: boolean | null, disable_datetime?: boolean | null, field_types?: { auto_generated?: {} | null, categorical?: number | null, datetime?: number | null, image?: number | null, items?: number | null, numeric?: number | null, path?: number | null, regions?: number | null, text?: number | null, total?: number | null } | null, fields?: {} | null, fields_meta?: { count?: number | null, limit?: number | null, offset?: number | null, query_total?: number | null, total?: number | null } | null, fields_preview?: {} | null, file_name?: string | null, format?: string | null, formats?: {} | null, height?: number | null, image_analysis?: {} | null, image_id?: string | null, item_analysis?: {} | null, md5?: string | null, new_fields?: any[] | null, number_of_anomalies?: number | null, number_of_anomalyscores?: number | null, number_of_associations?: number | null, number_of_associationsets?: number | null, number_of_centroids?: number | null, number_of_clusters?: number | null, number_of_correlations?: number | null, number_of_datasets?: number | null, number_of_deepnets?: number | null, number_of_ensembles?: number | null, number_of_forecasts?: number | null, number_of_linearregressions?: number | null, number_of_logisticregressions?: number | null, number_of_models?: number | null, number_of_optimls?: number | null, number_of_pca?: number | null, number_of_predictions?: number | null, number_of_projections?: number | null, number_of_statisticaltests?: number | null, number_of_timeseries?: number | null, number_of_topicdistributions?: number | null, number_of_topicmodels?: number | null, origin?: string | null, original_height?: number | null, original_format?: string | null, original_size?: number | null, original_width?: number | null, parent_sources?: string[] | null, remote?: string | null, shared_clonable?: boolean | null, shared_hash?: string | null, sharing_key?: string | null, size?: number | null, source_csv?: string | null, source_parser?: { header?: boolean | null, json_fields?: string[] | null, json_key?: string | null, locale?: string | null, missing_tokens?: string[] | null, quote?: string | null, separator?: string | null, trim?: boolean | null } | null, sources?: string[] | null, sources_count?: number | null, synthetic?: {} | null, term_analysis?: {} | null, type?: number | null, types?: string[] | null, width?: number | null }[]"
+            "type": "{ category?: number | null, code?: number | null, created?: string | null, creator?: string | null, description?: string | null, execution_id?: string | null, execution_status?: boolean | null, name?: string | null, name_options?: string | null, private?: boolean | null, project?: string | null, resource: string, shared?: boolean | null, status?: { code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null, subscription?: boolean | null, tags?: string[] | null, updated?: string | null, webhook?: { url?: string | null } | null, charset?: string | null, closed?: boolean | null, configuration?: string | null, configuration_status?: boolean | null, content_type?: string | null, disable_autolabel?: boolean | null, disable_datetime?: boolean | null, field_types?: { auto_generated?: Record<string, any> | null, categorical?: number | null, datetime?: number | null, image?: number | null, items?: number | null, numeric?: number | null, path?: number | null, regions?: number | null, text?: number | null, total?: number | null } | null, fields?: Record<string, { column_number?: number | null, description?: string | null, item_analysis?: Record<string, any> | null, label?: string | null, locale?: string | null, missing_tokens?: string[] | null, name?: string | null, order?: number | null, optype?: string | null, term_analysis?: Record<string, any> | null }> | null, fields_meta?: { count?: number | null, limit?: number | null, offset?: number | null, query_total?: number | null, total?: number | null } | null, fields_preview?: Record<string, any[]> | null, file_name?: string | null, format?: string | null, formats?: Record<string, any> | null, height?: number | null, image_analysis?: Record<string, any> | null, image_id?: string | null, item_analysis?: Record<string, any> | null, md5?: string | null, new_fields?: any[] | null, number_of_anomalies?: number | null, number_of_anomalyscores?: number | null, number_of_associations?: number | null, number_of_associationsets?: number | null, number_of_centroids?: number | null, number_of_clusters?: number | null, number_of_correlations?: number | null, number_of_datasets?: number | null, number_of_deepnets?: number | null, number_of_ensembles?: number | null, number_of_forecasts?: number | null, number_of_linearregressions?: number | null, number_of_logisticregressions?: number | null, number_of_models?: number | null, number_of_optimls?: number | null, number_of_pca?: number | null, number_of_predictions?: number | null, number_of_projections?: number | null, number_of_statisticaltests?: number | null, number_of_timeseries?: number | null, number_of_topicdistributions?: number | null, number_of_topicmodels?: number | null, origin?: string | null, original_height?: number | null, original_format?: string | null, original_size?: number | null, original_width?: number | null, parent_sources?: string[] | null, remote?: string | null, shared_clonable?: boolean | null, shared_hash?: string | null, sharing_key?: string | null, size?: number | null, source_csv?: string | null, source_parser?: { header?: boolean | null, json_fields?: string[] | null, json_key?: string | null, locale?: string | null, missing_tokens?: string[] | null, quote?: string | null, separator?: string | null, trim?: boolean | null } | null, sources?: string[] | null, sources_count?: number | null, synthetic?: Record<string, any> | null, term_analysis?: Record<string, any> | null, type?: number | null, types?: string[] | null, width?: number | null }[]"
           }
         ]
       }
@@ -2738,7 +2738,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { name?: string, label?: string, description?: string, optype?: string, locale?: string, missingTokens?: string[] }>"
           }
         ]
       },
@@ -2748,57 +2748,57 @@
           {
             "key": "category",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name_options",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -2808,342 +2808,342 @@
           {
             "key": "shared",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null }"
+            "type": "{ code?: number | null, elapsed?: number | null, message?: string | null, progress?: number | null } | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "updated",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url?: string | null }"
+            "type": "{ url?: string | null } | null"
           },
           {
             "key": "charset",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "configuration",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "configuration_status",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "content_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "disable_autolabel",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "disable_datetime",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "field_types",
             "optional": true,
-            "type": "{ auto_generated?: {} | null, categorical?: number | null, datetime?: number | null, image?: number | null, items?: number | null, numeric?: number | null, path?: number | null, regions?: number | null, text?: number | null, total?: number | null }"
+            "type": "{ auto_generated?: Record<string, any> | null, categorical?: number | null, datetime?: number | null, image?: number | null, items?: number | null, numeric?: number | null, path?: number | null, regions?: number | null, text?: number | null, total?: number | null } | null"
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { column_number?: number | null, description?: string | null, item_analysis?: Record<string, any> | null, label?: string | null, locale?: string | null, missing_tokens?: string[] | null, name?: string | null, order?: number | null, optype?: string | null, term_analysis?: Record<string, any> | null }> | null"
           },
           {
             "key": "fields_meta",
             "optional": true,
-            "type": "{ count?: number | null, limit?: number | null, offset?: number | null, query_total?: number | null, total?: number | null }"
+            "type": "{ count?: number | null, limit?: number | null, offset?: number | null, query_total?: number | null, total?: number | null } | null"
           },
           {
             "key": "fields_preview",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any[]> | null"
           },
           {
             "key": "file_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "formats",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "image_analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "image_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "item_analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "md5",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "new_fields",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "number_of_anomalies",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_anomalyscores",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_associations",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_associationsets",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_centroids",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_clusters",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_correlations",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_datasets",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_deepnets",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_ensembles",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_forecasts",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_linearregressions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_logisticregressions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_models",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_optimls",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_pca",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_predictions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_projections",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_statisticaltests",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_timeseries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_topicdistributions",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "number_of_topicmodels",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "origin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "original_height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "original_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "original_size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "original_width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "parent_sources",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "remote",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "shared_clonable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "shared_hash",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sharing_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "size",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "source_csv",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source_parser",
             "optional": true,
-            "type": "{ header?: boolean | null, json_fields?: string[] | null, json_key?: string | null, locale?: string | null, missing_tokens?: string[] | null, quote?: string | null, separator?: string | null, trim?: boolean | null }"
+            "type": "{ header?: boolean | null, json_fields?: string[] | null, json_key?: string | null, locale?: string | null, missing_tokens?: string[] | null, quote?: string | null, separator?: string | null, trim?: boolean | null } | null"
           },
           {
             "key": "sources",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "sources_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "synthetic",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "term_analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "types",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -3174,7 +3174,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -3220,7 +3220,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -3266,7 +3266,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -3312,7 +3312,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },

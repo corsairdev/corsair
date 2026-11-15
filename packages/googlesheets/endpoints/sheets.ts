@@ -9,6 +9,41 @@ import type {
 } from '../types';
 import type { GoogleSheetsEndpointOutputs, ListSheetsResponse } from './types';
 
+// A1-notation ranges carry the sheet in a `Sheet!...` (or `'My Sheet'!...`)
+// prefix. The stored row must name the sheet the API actually wrote to, which
+// can differ from input.sheetName when the caller passes an explicit range.
+// Quoted names may contain `!` and escape `'` as `''`, so the separator is
+// located after the closing quote instead of splitting at the first `!`.
+function sheetNameFromRange(
+	range: string | undefined,
+	fallback: string,
+): string {
+	if (range) {
+		if (range.startsWith("'")) {
+			let name = '';
+			let i = 1;
+			while (i < range.length) {
+				const ch = range[i];
+				if (ch === "'") {
+					if (range[i + 1] === "'") {
+						name += "'";
+						i += 2;
+						continue;
+					}
+					if (range[i + 1] === '!') return name;
+					break;
+				}
+				name += ch;
+				i++;
+			}
+		} else {
+			const bang = range.indexOf('!');
+			if (bang > 0) return range.slice(0, bang);
+		}
+	}
+	return fallback;
+}
+
 export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
 	ctx,
 	input,
@@ -30,12 +65,22 @@ export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
 		},
 	});
 
-	if (result.responses && result.responses.length > 0 && ctx.db.rows) {
+	if (ctx.db.rows) {
 		try {
-			const response = result.responses[0];
-			if (response) {
-				const updatedRange = response.updatedRange || range;
-				const sheetName = input.sheetName || 'Sheet1';
+			// updates.updatedRange is the only identifier of the appended row.
+			// The request range is the table search area, not the row — using
+			// it as the rowId would make repeat appends overwrite each other,
+			// so persistence is skipped when the API omits it.
+			const updatedRange = result.updates?.updatedRange;
+			if (!updatedRange) {
+				console.warn(
+					'Sheets append returned no updatedRange; skipping row persistence.',
+				);
+			} else {
+				const sheetName = sheetNameFromRange(
+					updatedRange,
+					input.sheetName || 'Sheet1',
+				);
 				const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
 				await ctx.db.rows.upsertByEntityId(rowId, {
 					rowId,

@@ -59,7 +59,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: Record<string, any> | null, bookingFieldsResponses?: Record<string, any> | null }"
           }
         ]
       }
@@ -90,7 +90,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: Record<string, any> | null, bookingFieldsResponses?: Record<string, any> | null }"
           }
         ]
       }
@@ -131,12 +131,12 @@
           {
             "key": "bookingFieldsResponses",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -151,7 +151,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: Record<string, any> | null, bookingFieldsResponses?: Record<string, any> | null }"
           }
         ]
       }
@@ -187,7 +187,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: Record<string, any> | null, bookingFieldsResponses?: Record<string, any> | null }"
           }
         ]
       }
@@ -218,7 +218,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: Record<string, any> | null, bookingFieldsResponses?: Record<string, any> | null }"
           }
         ]
       }
@@ -314,7 +314,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }[]"
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: Record<string, any> | null, bookingFieldsResponses?: Record<string, any> | null }[]"
           }
         ]
       }
@@ -355,7 +355,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: {} | null, bookingFieldsResponses?: {} | null }"
+            "type": "{ id: number, uid: string, title?: string, description?: string | null, status: string, start?: string, end?: string, duration?: number, eventTypeId?: number, eventType?: { id: number, slug?: string }, meetingUrl?: string | null, location?: string | null, absentHost?: boolean, createdAt?: string, updatedAt?: string, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone: string, language?: string, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], guests?: string[], metadata?: Record<string, any> | null, bookingFieldsResponses?: Record<string, any> | null }"
           }
         ]
       }
@@ -382,11 +382,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null }"
+            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: Record<string, any>, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: Record<string, any> | null }"
           }
         ]
       },
-      "responseType": "{ triggerEvent: BOOKING_CANCELLED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null } }",
+      "responseType": "{ triggerEvent: BOOKING_CANCELLED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: Record<string, any>, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: Record<string, any> | null } }",
       "usageExample": "cal({\n    webhookHooks: {\n        bookings: {\n            bookingCancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -409,11 +409,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null }"
+            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: Record<string, any>, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: Record<string, any> | null }"
           }
         ]
       },
-      "responseType": "{ triggerEvent: BOOKING_CREATED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null } }",
+      "responseType": "{ triggerEvent: BOOKING_CREATED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: Record<string, any>, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: Record<string, any> | null } }",
       "usageExample": "cal({\n    webhookHooks: {\n        bookings: {\n            bookingCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -436,11 +436,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null }"
+            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: Record<string, any>, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: Record<string, any> | null }"
           }
         ]
       },
-      "responseType": "{ triggerEvent: BOOKING_RESCHEDULED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null } }",
+      "responseType": "{ triggerEvent: BOOKING_RESCHEDULED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: Record<string, any>, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: Record<string, any> | null } }",
       "usageExample": "cal({\n    webhookHooks: {\n        bookings: {\n            bookingRescheduled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -463,11 +463,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null }"
+            "type": "{ bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: Record<string, any>, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: Record<string, any> | null }"
           }
         ]
       },
-      "responseType": "{ triggerEvent: MEETING_ENDED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: {}, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: {} | null } }",
+      "responseType": "{ triggerEvent: MEETING_ENDED, createdAt: string, payload: { bookingId?: number, uid: string, title?: string, description?: string | null, status?: string, startTime?: string, endTime?: string, length?: number, eventTypeId?: number, meetingUrl?: string | null, location?: string | null, cancellationReason?: string | null, reschedulingReason?: string | null, rescheduledFromUid?: string | null, attendees?: { name: string, email: string, timeZone?: string, language?: Record<string, any>, absent?: boolean }[], hosts?: { id: number, name: string, email?: string, username?: string, timeZone?: string }[], metadata?: Record<string, any> | null } }",
       "usageExample": "cal({\n    webhookHooks: {\n        bookings: {\n            meetingEnded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -490,11 +490,11 @@
           {
             "key": "payload",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ triggerEvent: PING, createdAt?: string, payload?: {} }",
+      "responseType": "{ triggerEvent: PING, createdAt?: string, payload?: Record<string, any> }",
       "usageExample": "cal({\n    webhookHooks: {\n        system: {\n            ping: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

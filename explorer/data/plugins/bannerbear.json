@@ -33,7 +33,7 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "uid",
@@ -43,22 +43,22 @@
           {
             "key": "plan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "quota",
             "optional": true,
-            "type": "{ max: number, current: number, remaining: number }"
+            "type": "{ max: number, current: number, remaining: number } | null"
           },
           {
             "key": "workspace",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_key",
             "optional": true,
-            "type": "{ name?: string | null, scopes?: string[], allowed_origins?: string[] }"
+            "type": "{ name?: string | null, scopes?: string[], allowed_origins?: string[] } | null"
           }
         ]
       }
@@ -78,7 +78,7 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "uid",
@@ -88,22 +88,22 @@
           {
             "key": "plan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "quota",
             "optional": true,
-            "type": "{ max: number, current: number, remaining: number }"
+            "type": "{ max: number, current: number, remaining: number } | null"
           },
           {
             "key": "workspace",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_key",
             "optional": true,
-            "type": "{ name?: string | null, scopes?: string[], allowed_origins?: string[] }"
+            "type": "{ name?: string | null, scopes?: string[], allowed_origins?: string[] } | null"
           }
         ]
       }
@@ -124,12 +124,12 @@
           {
             "key": "modifications",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "formats",
             "optional": true,
-            "type": "mp4 | mov[]"
+            "type": "(mp4 | mov)[]"
           },
           {
             "key": "metadata",
@@ -154,42 +154,42 @@
           {
             "key": "template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null> | null"
           },
           {
             "key": "progress",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -225,42 +225,42 @@
           {
             "key": "template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null> | null"
           },
           {
             "key": "progress",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -282,7 +282,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ uid: string, status: string, template?: string | null, files?: {} | null, progress?: number | null, metadata?: string | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
+        "type": "{ uid: string, status: string, template?: string | null, files?: Record<string, string | null> | null, progress?: number | null, metadata?: string | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
       }
     },
     {
@@ -341,32 +341,32 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frame_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "duration_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
@@ -376,12 +376,12 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -417,32 +417,32 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frame_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "duration_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
@@ -452,12 +452,12 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -498,7 +498,7 @@
           {
             "key": "modifications",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
@@ -523,37 +523,37 @@
           {
             "key": "template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null> | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -589,37 +589,37 @@
           {
             "key": "template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null> | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -641,7 +641,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ uid: string, status: string, template?: string | null, files?: {} | null, metadata?: string | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
+        "type": "{ uid: string, status: string, template?: string | null, files?: Record<string, string | null> | null, metadata?: string | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
       }
     },
     {
@@ -690,17 +690,17 @@
           {
             "key": "template_version",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "max_renders",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -720,7 +720,7 @@
           {
             "key": "template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "base_url",
@@ -730,32 +730,32 @@
           {
             "key": "sample_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "security",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signing_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -816,22 +816,22 @@
           {
             "key": "joined_pdf_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -872,7 +872,7 @@
           {
             "key": "config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -892,37 +892,37 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
@@ -932,7 +932,7 @@
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -994,37 +994,37 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
@@ -1034,7 +1034,7 @@
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1070,37 +1070,37 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "preview",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "preview_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
@@ -1110,7 +1110,7 @@
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1201,27 +1201,27 @@
           {
             "key": "resource",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signing_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1288,27 +1288,27 @@
           {
             "key": "resource",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "signing_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1329,7 +1329,7 @@
           {
             "key": "inputs",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1349,47 +1349,47 @@
           {
             "key": "workflow",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "progress",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "inputs",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "outputs",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "steps",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1425,7 +1425,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
@@ -1435,27 +1435,27 @@
           {
             "key": "inputs",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "steps",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "ui_write_access",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "api_write_access",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1491,47 +1491,47 @@
           {
             "key": "workflow",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "progress",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "inputs",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "outputs",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "steps",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "self",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "completed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1553,7 +1553,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ uid: string, status: string, workflow?: string | null, progress?: number | null, inputs?: {} | null, outputs?: {} | null, steps?: {}[] | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
+        "type": "{ uid: string, status: string, workflow?: string | null, progress?: number | null, inputs?: Record<string, any> | null, outputs?: Record<string, any> | null, steps?: Record<string, any>[] | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
       }
     },
     {
@@ -1573,7 +1573,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ uid: string, name: string, description?: string | null, tags?: string[], inputs?: {} | null, steps?: {}[] | null, ui_write_access?: string | null, api_write_access?: string | null, created_at?: string | null }[]"
+        "type": "{ uid: string, name: string, description?: string | null, tags?: string[], inputs?: Record<string, any> | null, steps?: Record<string, any>[] | null, ui_write_access?: string | null, api_write_access?: string | null, created_at?: string | null }[]"
       }
     }
   ],
@@ -1603,7 +1603,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "progress",
@@ -1632,7 +1632,7 @@
           }
         ]
       },
-      "responseType": "{ uid: string, status: completed, template?: string, files?: {}, progress?: number, metadata?: string, self?: string, created_at?: string, completed_at?: string }",
+      "responseType": "{ uid: string, status: completed, template?: string, files?: Record<string, string | null>, progress?: number, metadata?: string, self?: string, created_at?: string, completed_at?: string }",
       "usageExample": "bannerbear({\n    webhookHooks: {\n        animation: {\n            animationCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1660,7 +1660,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "metadata",
@@ -1684,7 +1684,7 @@
           }
         ]
       },
-      "responseType": "{ uid: string, status: completed, template?: string, files?: {}, metadata?: string, self?: string, created_at?: string, completed_at?: string }",
+      "responseType": "{ uid: string, status: completed, template?: string, files?: Record<string, string | null>, metadata?: string, self?: string, created_at?: string, completed_at?: string }",
       "usageExample": "bannerbear({\n    webhookHooks: {\n        image: {\n            imageCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

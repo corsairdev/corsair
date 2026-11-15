@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { user } from '@/db/auth-schema';
+import { contributorDisplayName } from '@/lib/page-seo';
 import { buildContributorRankings } from '@/server/contributor-rankings';
 import { getGithubUserAvatar } from '@/server/github-users';
 
@@ -39,7 +40,10 @@ export const contributorsRouter = createTRPCRouter({
 			const avatarUrl = await getGithubUserAvatar(profileUser.githubUsername);
 
 			return {
-				name: profileUser.name,
+				name: contributorDisplayName(
+					profileUser.name,
+					profileUser.githubUsername,
+				),
 				githubUsername: profileUser.githubUsername,
 				discordUsername: profileUser.discordUsername,
 				avatarUrl,

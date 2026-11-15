@@ -1,0 +1,287 @@
+{
+  "id": "dropcontact",
+  "displayName": "Dropcontact",
+  "description": "B2B email finding and contact enrichment from Dropcontact - submit contacts for enrichment, read qualified email results, check remaining credits, and manage the account default webhook callback URL.",
+  "npmPackageName": "@corsair-dev/dropcontact",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "dropcontact.api.account.credits",
+      "shortPath": "account.credits",
+      "description": "Read the enrichment credits left on the account; costs no credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number",
+            "description": "Enrichment credits left on the account."
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropcontact.api.enrichment.enrich",
+      "shortPath": "enrichment.enrich",
+      "description": "Submit up to 250 contacts for email finding, verification and company enrichment; spends one credit per contact and returns a request_id, not the results",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "request_id",
+        "status": {
+          "op": "enrichment.results",
+          "idArg": "request_id",
+          "statusPath": "status",
+          "done": ["ready"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ first_name?: string | null, last_name?: string | null, full_name?: string | null, civility?: string | null, email?: string | null, linkedin?: string | null, job?: string | null, job_function?: string | null, job_level?: string | null, mobile_phone?: string | null, location?: string | null, company?: string | null, website?: string | null, siret_address?: string | null, siret_zip?: string | null, siret_city?: string | null, country?: string | null, company_linkedin?: string | null, phone?: string | null, company_turnover?: string | null, company_results?: string | null, nb_employees?: string | null, num_siren?: string | null, siret?: string | null, naf5_code?: string | null, naf5_des?: string | null, vat?: string | null, industry?: string | null, employee_count?: string | null, custom_fields?: Record<string, string | null> | null }[]",
+            "description": "Up to 250 contacts. Enrichment runs as a batch, so the call returns a request_id rather than results."
+          },
+          {
+            "key": "siren",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask for French SIREN company data. Defaults to false."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language for the qualifications and civility in the result, such as \"en\" or \"fr\". Defaults to \"fr\"."
+          },
+          {
+            "key": "custom_callback_url",
+            "optional": true,
+            "type": "string",
+            "description": "Where to POST the results once the batch finishes. Overrides the account default for this request only."
+          },
+          {
+            "key": "hashed_inputs",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask for the hashed inputs in the response. Sent as the `hashedInputs` query parameter."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Pass this to `enrichment.results` to read the batch."
+          },
+          {
+            "key": "creditsLeft",
+            "optional": true,
+            "type": "number | null",
+            "description": "The balance after this request."
+          },
+          {
+            "key": "hashed_inputs",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Present only when `hashed_inputs` was set."
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ index: number, errors?: { unexpected_field?: string[] | null, only_contact_data?: boolean | null } | null, warnings?: { empty_field?: string[] | null, only_organization_data?: boolean | null } | null }[] | null",
+            "description": "The `data` array: per-record notes keyed by index. An entry here does not mean the submission failed."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropcontact.api.enrichment.results",
+      "shortPath": "enrichment.results",
+      "description": "Read the enriched contacts for a request_id: qualified emails, LinkedIn, phone and company data; reports success false with a reason while the batch is still processing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "The id `enrichment.enrich` returned."
+          },
+          {
+            "key": "force_results",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return whatever has already been enriched instead of asking you to retry. Adds a `status` per record (`ready` or `in_progress`)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ first_name?: string | null, last_name?: string | null, full_name?: string | null, civility?: string | null, email?: { email: string, qualification: string }[] | null, linkedin?: string | null, job?: string | null, job_function?: string | null, job_level?: string | null, mobile_phone?: string | null, location?: string | null, company?: string | null, website?: string | null, siret_address?: string | null, siret_zip?: string | null, siret_city?: string | null, country?: string | null, company_linkedin?: string | null, phone?: string | null, company_turnover?: string | null, company_results?: string | null, nb_employees?: string | null, num_siren?: string | null, siret?: string | null, naf5_code?: string | null, naf5_des?: string | null, vat?: string | null, industry?: string | null, employee_count?: string | null, siren?: string | null, custom_fields?: Record<string, any> | null, company_change?: string | null, errors?: { unexpected_field?: string[] | null, only_contact_data?: boolean | null } | null, warnings?: { empty_field?: string[] | null, only_organization_data?: boolean | null } | null, status?: string | null }[]",
+            "description": "One entry per submitted record, in the order they were sent. Empty while a batch has not produced anything yet."
+          },
+          {
+            "key": "creditsLeft",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "`ready` once the batch has finished, `in_progress` while Dropcontact is still processing. Dropcontact sets this field only when `force_results` is passed, so it is derived from `success` otherwise."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether this read returned usable records. It is not a completion flag: a forced partial read is successful with `status: in_progress`. A false value is a normal poll result while a batch runs, so the call returns rather than throwing."
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present when `success` is false, such as \"Request not ready yet\"."
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropcontact.api.webhook.get",
+      "shortPath": "webhook.get",
+      "description": "Read the default webhook callback URL used by enrichment requests that carry no custom callback of their own",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "The account default, or null when none is set."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropcontact.api.webhook.remove",
+      "shortPath": "webhook.remove",
+      "description": "Delete the account default webhook callback URL; afterwards only requests carrying their own custom_callback_url notify anything",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "detail",
+            "optional": false,
+            "type": "string",
+            "description": "Dropcontact's confirmation message."
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropcontact.api.webhook.set",
+      "shortPath": "webhook.set",
+      "description": "Set the account default webhook callback URL, replacing any previous one; enrichment requests without their own callback POST their results there",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callback_url",
+            "optional": false,
+            "type": "string",
+            "description": "Where to POST results for every request that does not carry its own `custom_callback_url`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callback_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

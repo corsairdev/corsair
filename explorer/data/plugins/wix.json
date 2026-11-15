@@ -1,7 +1,7 @@
 {
   "id": "wix",
   "displayName": "Wix",
-  "description": "Wix plugin for Corsair",
+  "description": "Website platform API for sites, contacts, stores, orders, bookings, members, events, forms, CMS data, media, marketing, and billing.",
   "npmPackageName": "@corsair-dev/wix",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -97,7 +97,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "assignTags",
@@ -226,7 +226,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -618,7 +618,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -699,7 +699,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -905,7 +905,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -946,7 +946,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1095,7 +1095,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -1171,7 +1171,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -1247,7 +1247,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "assignTags",
@@ -1435,7 +1435,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "moderationStatus",
@@ -1630,7 +1630,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -1711,7 +1711,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -1971,7 +1971,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "search",
@@ -2109,7 +2109,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -2185,7 +2185,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -2303,7 +2303,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -2345,7 +2345,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -2670,12 +2670,12 @@
           {
             "key": "variables",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -2685,12 +2685,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           }
         ]
       }
@@ -2793,7 +2793,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -2869,7 +2869,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -2945,7 +2945,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -3320,7 +3320,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -4257,7 +4257,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -4860,7 +4860,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -4936,7 +4936,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -5365,7 +5365,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "infoSectionIds",
@@ -5452,12 +5452,12 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "update",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5498,12 +5498,12 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "update",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "fields",
@@ -5761,7 +5761,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -5837,7 +5837,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -5913,7 +5913,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "sort",
@@ -5943,7 +5943,7 @@
           {
             "key": "search",
             "optional": true,
-            "type": "string | { search?: { expression?: string }, expression?: string, filter?: lazy, sort?: { fieldName: string, order?: ASC | DESC }[], paging?: { limit?: number, offset?: number } }"
+            "type": "string | { search?: { expression?: string }, expression?: string, filter?: Record<string, JsonValue>, sort?: { fieldName: string, order?: ASC | DESC }[], paging?: { limit?: number, offset?: number } }"
           }
         ]
       },
@@ -6072,7 +6072,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -6319,7 +6319,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "lazy"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "assignTags",

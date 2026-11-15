@@ -1,0 +1,483 @@
+{
+  "id": "roboflow",
+  "displayName": "Roboflow",
+  "description": "Read workspaces, projects, versions and trained models, create projects, upload images, and run model inference on the serverless host with Roboflow.",
+  "npmPackageName": "@corsair-dev/roboflow",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "roboflow.api.account.get",
+      "shortPath": "account.get",
+      "description": "Check that the key works; the route answers 200 either way, so `authenticated` reports whether a workspace actually came back",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "welcome",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string | null",
+            "description": "The workspace slug the key belongs to. Absent when the request was not authenticated."
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authenticated",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when a workspace came back, which is the only proof the key works."
+          }
+        ]
+      }
+    },
+    {
+      "path": "roboflow.api.images.upload",
+      "shortPath": "images.upload",
+      "description": "Upload one image to a project by URL or base64; a duplicate is reported as such rather than as a failure",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string",
+            "description": "The project URL slug, or a workspace/project ID whose workspace is the API key's own."
+          },
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly reachable image URL, or a base64 data URI. Up to 20MB."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The file name to record, when the image is a data URI."
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string",
+            "description": "A batch name to group the upload under."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags for the new image."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "duplicate",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The image ID, for a later annotation."
+          }
+        ]
+      }
+    },
+    {
+      "path": "roboflow.api.infer",
+      "shortPath": "infer",
+      "description": "Run a trained model on an image on the serverless inference host, returning predictions and their count; billed per image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelId",
+            "optional": false,
+            "type": "string",
+            "description": "The model ID from models.list `url`, in the form project/version, or workspace/model for a model not tied to a version."
+          },
+          {
+            "key": "image",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly reachable image URL, a base64 string, or a data URI. Base64 is sent as `image_type=base64`."
+          },
+          {
+            "key": "imageType",
+            "optional": true,
+            "type": "url | base64",
+            "description": "url sends `image` in the query; base64 sends the raw image in the request body. HTTP URLs select url when imageType is omitted; other strings select base64."
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number",
+            "description": "The confidence threshold, 0 to 1, to filter predictions."
+          },
+          {
+            "key": "overlap",
+            "optional": true,
+            "type": "number",
+            "description": "The IoU threshold above which two boxes are treated as duplicates."
+          },
+          {
+            "key": "maxDetections",
+            "optional": true,
+            "type": "number",
+            "description": "The most predictions to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image",
+            "optional": true,
+            "type": "Record<string, JsonValue> | Record<string, JsonValue>[] | null",
+            "description": "The input image, with its width and height."
+          },
+          {
+            "key": "predictions",
+            "optional": true,
+            "type": "{ x?: number | null, y?: number | null, width?: number | null, height?: number | null, confidence?: number | null, class?: string | null, class_id?: number | null, detection_id?: string | null }[] | Record<string, JsonValue> | null",
+            "description": "Detection and single-label classification return arrays. Multi-label classification returns a class-keyed object; semantic segmentation returns a mask object."
+          },
+          {
+            "key": "predicted_classes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "How many predictions came back."
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | null",
+            "description": "Inference time in seconds."
+          }
+        ]
+      }
+    },
+    {
+      "path": "roboflow.api.models.list",
+      "shortPath": "models.list",
+      "description": "List a project's trained models with their task, architecture and metrics; each `url` is the model ID `infer` takes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string",
+            "description": "A Neural Architecture Search run ID. Returns only that run's models, or an empty array."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ url?: string | null, version?: string | null, train?: { status?: string | null } | null, taskType?: string | null, modelType?: string | null, name?: string | null, created?: string | null, metrics?: { map50?: number | null, map5095?: number | null, precision?: number | null, recall?: number | null, f1?: number | null, accuracy?: number | null } | null }[]"
+      }
+    },
+    {
+      "path": "roboflow.api.project.create",
+      "shortPath": "project.create",
+      "description": "Create a project of a given type in an annotation group, optionally licensed onto Universe",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Letters, numbers, dashes, underscores and spaces only."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "object-detection | single-label-classification | multi-label-classification | instance-segmentation | semantic-segmentation | keypoint-detection | action-recognition | anomaly-detection",
+            "description": "anomaly-detection needs the feature turned on and its own annotation group."
+          },
+          {
+            "key": "annotation",
+            "optional": false,
+            "type": "string",
+            "description": "The annotation group: a noun for what you label, such as sharks. Projects in one group share classes."
+          },
+          {
+            "key": "license",
+            "optional": true,
+            "type": "Private | Public Domain | MIT | CC BY 4.0 | BY-NC-SA 4.0 | ODbL v1.0",
+            "description": "Private keeps the project private; any other value publishes it on Universe. Required on a public plan, which cannot create a private project."
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string",
+            "description": "A project folder ID to create it in."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The new project ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roboflow.api.project.delete",
+      "shortPath": "project.delete",
+      "description": "Delete a project and its images, versions and models",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "roboflow.api.project.get",
+      "shortPath": "project.get",
+      "description": "Read a project with its classes, splits and dataset versions, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ name?: string | null, url?: string | null, members?: number | null } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null, created?: number | null, updated?: number | null, images?: number | null, unannotated?: number | null, annotation?: string | null, versions?: number | null, public?: boolean | null, multilabel?: boolean | null, license?: string | null, splits?: Record<string, number> | null, classes?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, created?: number | null, images?: number | null, splits?: Record<string, number> | null, generating?: boolean | null, progress?: number | null }[] | null",
+            "description": "Newest first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "roboflow.api.version.delete",
+      "shortPath": "version.delete",
+      "description": "Delete a dataset version",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "roboflow.api.version.get",
+      "shortPath": "version.get",
+      "description": "Read a dataset version with its image count, splits, and the preprocessing and augmentation it applied",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number",
+            "description": "The dataset version number."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ name?: string | null, url?: string | null } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null, created?: number | null, updated?: number | null, images?: number | null, unannotated?: number | null, annotation?: string | null, versions?: number | null, public?: boolean | null, multilabel?: boolean | null, license?: string | null, splits?: Record<string, number> | null, classes?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, created?: number | null, images?: number | null, splits?: Record<string, number> | null, generating?: boolean | null, progress?: number | null, preprocessing?: Record<string, JsonValue> | null, augmentation?: Record<string, JsonValue> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roboflow.api.workspace.get",
+      "shortPath": "workspace.get",
+      "description": "Read a workspace and its projects with image, annotation and version counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace URL slug."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ name?: string | null, url?: string | null, members?: number | null, enabled_features?: Record<string, JsonValue> | null, projects?: { id?: string | null, type?: string | null, name?: string | null, created?: number | null, updated?: number | null, images?: number | null, unannotated?: number | null, annotation?: string | null, versions?: number | null, public?: boolean | null, multilabel?: boolean | null, license?: string | null, splits?: Record<string, number> | null, classes?: Record<string, JsonValue> | null }[] | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

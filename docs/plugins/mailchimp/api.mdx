@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Mailchimp: every `mailchimp.api.*` operation with input and output types."
+title: "Mailchimp API reference"
+sidebarTitle: "API"
+description: "API reference for the Mailchimp plugin in Corsair: every `mailchimp.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `mailchimp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -95,8 +94,7 @@ await corsair.mailchimp.api.campaigns.create({});
 ```ts
 {
   list_id: string,
-  segment_opts?: {
-  }
+  segment_opts?: Record<string, any>
 }
 ```
 </Accordion>
@@ -281,17 +279,7 @@ await corsair.mailchimp.api.campaigns.schedule({});
 | `campaign_id` | `string` | Yes | — |
 | `schedule_time` | `string` | Yes | — |
 | `timewarp` | `boolean` | No | — |
-| `batch_delivery` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="batch_delivery full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `batch_delivery` | `Record<string, any>` | No | — |
 
 
 
@@ -371,17 +359,7 @@ await corsair.mailchimp.api.campaigns.setContent({});
 | `campaign_id` | `string` | Yes | — |
 | `html` | `string` | No | — |
 | `plain_text` | `string` | No | — |
-| `template` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="template full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `template` | `Record<string, any>` | No | — |
 
 
 
@@ -447,8 +425,7 @@ await corsair.mailchimp.api.campaigns.update({});
 ```ts
 {
   list_id: string,
-  segment_opts?: {
-  }
+  segment_opts?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1106,27 +1083,9 @@ await corsair.mailchimp.api.members.add({});
 | `email_address` | `string` | Yes | — |
 | `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | Yes | — |
 | `email_type` | `html \| text` | No | — |
-| `merge_fields` | `object` | No | — |
-| `interests` | `object` | No | — |
+| `merge_fields` | `Record<string, any>` | No | — |
+| `interests` | `Record<string, boolean>` | No | — |
 | `tags` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="merge_fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="interests full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1376,26 +1335,8 @@ await corsair.mailchimp.api.members.update({});
 | `subscriber_hash` | `string` | Yes | — |
 | `email_address` | `string` | No | — |
 | `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
-| `merge_fields` | `object` | No | — |
-| `interests` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="merge_fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="interests full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `merge_fields` | `Record<string, any>` | No | — |
+| `interests` | `Record<string, boolean>` | No | — |
 
 
 
@@ -1472,27 +1413,9 @@ await corsair.mailchimp.api.members.upsert({});
 | `status_if_new` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
 | `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
 | `email_type` | `html \| text` | No | — |
-| `merge_fields` | `object` | No | — |
-| `interests` | `object` | No | — |
+| `merge_fields` | `Record<string, any>` | No | — |
+| `interests` | `Record<string, boolean>` | No | — |
 | `tags` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="merge_fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="interests full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1534,17 +1457,7 @@ await corsair.mailchimp.api.mergeFields.create({});
 | `required` | `boolean` | No | — |
 | `default_value` | `string` | No | — |
 | `public` | `boolean` | No | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -1687,17 +1600,7 @@ await corsair.mailchimp.api.mergeFields.update({});
 | `required` | `boolean` | No | — |
 | `default_value` | `string` | No | — |
 | `public` | `boolean` | No | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -1769,17 +1672,7 @@ await corsair.mailchimp.api.segments.create({});
 | `list_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `static_segment` | `string[]` | No | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -1995,17 +1888,7 @@ await corsair.mailchimp.api.segments.update({});
 | `segment_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `static_segment` | `string[]` | No | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 

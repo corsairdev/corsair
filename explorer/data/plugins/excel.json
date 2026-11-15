@@ -1,0 +1,2722 @@
+{
+  "id": "excel",
+  "displayName": "Excel",
+  "description": "Read and write Excel workbooks in OneDrive for Business or SharePoint through Microsoft Graph.",
+  "npmPackageName": "@corsair-dev/excel",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 41,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "excel.api.charts.add",
+      "shortPath": "charts.add",
+      "description": "Add a chart from a cell range",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceData",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "seriesBy",
+            "optional": true,
+            "type": "Auto | Columns | Rows"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.charts.delete",
+      "shortPath": "charts.delete",
+      "description": "Delete a chart",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chart",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.charts.get",
+      "shortPath": "charts.get",
+      "description": "Get one chart by name or id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chart",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.charts.list",
+      "shortPath": "charts.list",
+      "description": "List charts on a worksheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name?: string, height?: number, left?: number, top?: number, width?: number }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.charts.setData",
+      "shortPath": "charts.setData",
+      "description": "Point a chart at a different cell range",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chart",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceData",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "seriesBy",
+            "optional": true,
+            "type": "Auto | Columns | Rows"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.charts.update",
+      "shortPath": "charts.update",
+      "description": "Rename a chart or move and resize it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chart",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "left",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.comments.get",
+      "shortPath": "comments.get",
+      "description": "Get one comment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments in a workbook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, content?: string, contentType?: string }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.comments.listReplies",
+      "shortPath": "comments.listReplies",
+      "description": "List replies on a comment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, content?: string, contentType?: string }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.comments.reply",
+      "shortPath": "comments.reply",
+      "description": "Reply to a comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.files.create",
+      "shortPath": "files.create",
+      "description": "Upload a blank .xlsx workbook to OneDrive or SharePoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.files.find",
+      "shortPath": "files.find",
+      "description": "Search OneDrive or SharePoint for .xlsx files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name: string, size?: number, webUrl?: string }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.functions.calculate",
+      "shortPath": "functions.calculate",
+      "description": "Run an Excel worksheet function such as SUM or VLOOKUP",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null | { address: string }>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean | null | (string | number | boolean | null)[] | (string | number | boolean | null)[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.names.add",
+      "shortPath": "names.add",
+      "description": "Define a named range",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean | null | {}"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.names.get",
+      "shortPath": "names.get",
+      "description": "Get one named range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean | null | {}"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.names.list",
+      "shortPath": "names.list",
+      "description": "List named ranges in a workbook or worksheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "worksheet",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ name: string, comment?: string, scope?: string, type?: string, value?: string | number | boolean | null | {}, visible?: boolean }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.names.range",
+      "shortPath": "names.range",
+      "description": "Read the cells a named range points at",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "addressLocal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "columnCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "columnIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "(string | number | boolean | null)[][]"
+          },
+          {
+            "key": "formulas",
+            "optional": true,
+            "type": "(string | null)[][]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "(string | null)[][]"
+          },
+          {
+            "key": "numberFormat",
+            "optional": true,
+            "type": "string[][]"
+          },
+          {
+            "key": "valueTypes",
+            "optional": true,
+            "type": "string[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.names.update",
+      "shortPath": "names.update",
+      "description": "Change a named range comment or visibility",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean | null | {}"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.ranges.clear",
+      "shortPath": "ranges.clear",
+      "description": "Clear values or formatting in a range",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "applyTo",
+            "optional": true,
+            "type": "All | Formats | Contents"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.ranges.get",
+      "shortPath": "ranges.get",
+      "description": "Read a cell range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "addressLocal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "columnCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "columnIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "(string | number | boolean | null)[][]"
+          },
+          {
+            "key": "formulas",
+            "optional": true,
+            "type": "(string | null)[][]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "(string | null)[][]"
+          },
+          {
+            "key": "numberFormat",
+            "optional": true,
+            "type": "string[][]"
+          },
+          {
+            "key": "valueTypes",
+            "optional": true,
+            "type": "string[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.ranges.update",
+      "shortPath": "ranges.update",
+      "description": "Write values, formulas, or number formats into a range",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "string | number | boolean | null | (string | number | boolean | null)[][]"
+          },
+          {
+            "key": "formulas",
+            "optional": true,
+            "type": "string | (string | null)[][]"
+          },
+          {
+            "key": "numberFormat",
+            "optional": true,
+            "type": "string | (string | null)[][]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "addressLocal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "columnCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "columnIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "(string | number | boolean | null)[][]"
+          },
+          {
+            "key": "formulas",
+            "optional": true,
+            "type": "(string | null)[][]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "(string | null)[][]"
+          },
+          {
+            "key": "numberFormat",
+            "optional": true,
+            "type": "string[][]"
+          },
+          {
+            "key": "valueTypes",
+            "optional": true,
+            "type": "string[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.ranges.usedRange",
+      "shortPath": "ranges.usedRange",
+      "description": "Read the used range of a worksheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "valuesOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "addressLocal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "columnCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "columnIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "(string | number | boolean | null)[][]"
+          },
+          {
+            "key": "formulas",
+            "optional": true,
+            "type": "(string | null)[][]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "(string | null)[][]"
+          },
+          {
+            "key": "numberFormat",
+            "optional": true,
+            "type": "string[][]"
+          },
+          {
+            "key": "valueTypes",
+            "optional": true,
+            "type": "string[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.sessions.close",
+      "shortPath": "sessions.close",
+      "description": "Close an Excel workbook session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.sessions.create",
+      "shortPath": "sessions.create",
+      "description": "Open a persistent or temporary Excel workbook session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "persistChanges",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "persistChanges",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.sessions.refresh",
+      "shortPath": "sessions.refresh",
+      "description": "Keep an Excel workbook session alive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.tables.add",
+      "shortPath": "tables.add",
+      "description": "Create a table from a range",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hasHeaders",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "showHeaders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showTotals",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.tables.addColumn",
+      "shortPath": "tables.addColumn",
+      "description": "Insert a column into a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "(string | number | boolean | null)[][]"
+          },
+          {
+            "key": "index",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "index",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "(string | number | boolean | null)[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.tables.addRows",
+      "shortPath": "tables.addRows",
+      "description": "Insert one or more rows into a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "(string | number | boolean | null)[][]"
+          },
+          {
+            "key": "index",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "index",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "(string | number | boolean | null)[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.tables.delete",
+      "shortPath": "tables.delete",
+      "description": "Delete a table",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.tables.deleteColumn",
+      "shortPath": "tables.deleteColumn",
+      "description": "Delete a table column",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "column",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.tables.deleteRow",
+      "shortPath": "tables.deleteRow",
+      "description": "Delete a table row by index",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "index",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.tables.get",
+      "shortPath": "tables.get",
+      "description": "Get one table by name or id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "showHeaders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showTotals",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.tables.list",
+      "shortPath": "tables.list",
+      "description": "List tables in a workbook or worksheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "worksheet",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name: string, showHeaders?: boolean, showTotals?: boolean, style?: string }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.tables.listColumns",
+      "shortPath": "tables.listColumns",
+      "description": "List columns in a table",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name: string, index?: number, values?: (string | number | boolean | null)[][] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.tables.listRows",
+      "shortPath": "tables.listRows",
+      "description": "List rows in a table",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ index?: number, values?: (string | number | boolean | null)[][] }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.tables.update",
+      "shortPath": "tables.update",
+      "description": "Rename a table or change its header, total, or style",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showHeaders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showTotals",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "showHeaders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showTotals",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.worksheets.add",
+      "shortPath": "worksheets.add",
+      "description": "Add a worksheet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.worksheets.delete",
+      "shortPath": "worksheets.delete",
+      "description": "Delete a worksheet",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | null | {}"
+      }
+    },
+    {
+      "path": "excel.api.worksheets.get",
+      "shortPath": "worksheets.get",
+      "description": "Get one worksheet by name or id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.worksheets.list",
+      "shortPath": "worksheets.list",
+      "description": "List worksheets in a workbook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ id: string, name: string, position?: number, visibility?: string }[]"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "excel.api.worksheets.update",
+      "shortPath": "worksheets.update",
+      "description": "Rename a worksheet or change its position",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worksheet",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -215,7 +215,7 @@
           {
             "key": "defaultValue",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -553,7 +553,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, name?: string, size?: number, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, file?: {}, folder?: {} }[]"
+            "type": "{ id?: string, name?: string, size?: number, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, file?: Record<string, any>, folder?: Record<string, any> }[]"
           }
         ]
       }
@@ -665,12 +665,12 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "folder",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -839,17 +839,17 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "folder",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "parentReference",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -885,7 +885,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: {}, folder?: {}, parentReference?: {} }[]"
+            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: Record<string, any>, folder?: Record<string, any>, parentReference?: Record<string, any> }[]"
           }
         ]
       }
@@ -1018,17 +1018,17 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "folder",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "parentReference",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1084,17 +1084,17 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "folder",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "parentReference",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1176,17 +1176,17 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "folder",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "parentReference",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1217,7 +1217,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: {}, folder?: {}, parentReference?: {} }[]"
+            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: Record<string, any>, folder?: Record<string, any>, parentReference?: Record<string, any> }[]"
           }
         ]
       }
@@ -1243,7 +1243,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: {}, folder?: {}, parentReference?: {} }[]"
+            "type": "{ id?: string, name?: string, webUrl?: string, size?: number, createdDateTime?: string, lastModifiedDateTime?: string, file?: Record<string, any>, folder?: Record<string, any>, parentReference?: Record<string, any> }[]"
           }
         ]
       }
@@ -1351,7 +1351,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1381,7 +1381,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "@odata.etag",
@@ -1407,7 +1407,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1437,7 +1437,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "@odata.etag",
@@ -1468,7 +1468,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1498,7 +1498,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "@odata.etag",
@@ -1595,7 +1595,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "@odata.etag",
@@ -1718,7 +1718,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1774,7 +1774,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: {}, @odata.etag?: string }[]"
+            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: Record<string, any>, @odata.etag?: string }[]"
           }
         ]
       }
@@ -1851,7 +1851,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: {}, @odata.etag?: string }[]"
+            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: Record<string, any>, @odata.etag?: string }[]"
           }
         ]
       }
@@ -1908,7 +1908,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "etag",
@@ -2189,7 +2189,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: {}, @odata.etag?: string }[]"
+            "type": "{ id?: string, createdDateTime?: string, lastModifiedDateTime?: string, webUrl?: string, fields?: Record<string, any>, @odata.etag?: string }[]"
           },
           {
             "key": "@odata.deltaLink",
@@ -2286,7 +2286,7 @@
           {
             "key": "Row",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "NextHref",
@@ -2685,7 +2685,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ searchTerms?: string[], hitsContainers?: { hits?: { hitId?: string, rank?: number, summary?: string, resource?: {} }[], total?: number, moreResultsAvailable?: boolean }[] }[]"
+            "type": "{ searchTerms?: string[], hitsContainers?: { hits?: { hitId?: string, rank?: number, summary?: string, resource?: Record<string, any> }[], total?: number, moreResultsAvailable?: boolean }[] }[]"
           }
         ]
       }
@@ -2726,7 +2726,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2900,7 +2900,7 @@
           {
             "key": "jobTitle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2946,7 +2946,7 @@
           {
             "key": "jobTitle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3012,7 +3012,7 @@
           {
             "key": "jobTitle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3058,7 +3058,7 @@
           {
             "key": "jobTitle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3257,7 +3257,7 @@
           {
             "key": "siteCollection",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -3358,12 +3358,12 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "folder",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -3413,7 +3413,7 @@
           {
             "key": "siteCollection",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -3463,7 +3463,7 @@
           {
             "key": "siteCollection",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -3607,7 +3607,7 @@
           {
             "key": "clientState",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expirationDateTime",

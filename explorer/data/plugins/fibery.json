@@ -1,0 +1,955 @@
+{
+  "id": "fibery",
+  "displayName": "Fibery",
+  "description": "Manage Fibery workspace schema, entities, documents, files, views, and paginated change history through the documented HTTP APIs.",
+  "npmPackageName": "@corsair-dev/fibery",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "fibery.api.collection.add",
+      "shortPath": "collection.add",
+      "description": "Add existing entities to a Fibery collection field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "itemIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.collection.remove",
+      "shortPath": "collection.remove",
+      "description": "Remove existing entities from a Fibery collection field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "itemIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.collection.reset",
+      "shortPath": "collection.reset",
+      "description": "Clear all items from a Fibery collection field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.collection.set",
+      "shortPath": "collection.set",
+      "description": "Replace the contents of a Fibery collection field, unlinking every item not in the new list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "itemIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.document.get",
+      "shortPath": "document.get",
+      "description": "Read a Fibery collaborative document in Markdown, HTML, JSON, or plain text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "md | html | json | plain-text"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string | Record<string, JsonValue>"
+          },
+          {
+            "key": "modificationDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fibery.api.document.getBatch",
+      "shortPath": "document.getBatch",
+      "description": "Read several Fibery collaborative documents in one request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secrets",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ secret: string, content: string | Record<string, JsonValue>, modificationDate?: string }[]"
+      }
+    },
+    {
+      "path": "fibery.api.document.update",
+      "shortPath": "document.update",
+      "description": "Replace the content of a Fibery collaborative document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "md | html | json"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.document.updateBatch",
+      "shortPath": "document.updateBatch",
+      "description": "Create or replace several Fibery collaborative documents in one request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "format",
+            "optional": true,
+            "type": "md | html | json"
+          },
+          {
+            "key": "documents",
+            "optional": false,
+            "type": "{ secret: string, content: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.entity.create",
+      "shortPath": "entity.create",
+      "description": "Create a Fibery entity with primitive and relation field values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "fibery.api.entity.delete",
+      "shortPath": "entity.delete",
+      "description": "Delete a Fibery entity by database and UUID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.entity.query",
+      "shortPath": "entity.query",
+      "description": "Query Fibery entities with select, filter, order, and bounded pagination clauses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ q/from: string, q/select: JsonValue[], q/where?: JsonValue, q/order-by?: JsonValue, q/offset?: number, q/limit?: number }"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>[] | number"
+      }
+    },
+    {
+      "path": "fibery.api.entity.update",
+      "shortPath": "entity.update",
+      "description": "Update primitive and relation field values on a Fibery entity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "fibery.api.entity.upsert",
+      "shortPath": "entity.upsert",
+      "description": "Create or resolve duplicate Fibery entities using documented conflict actions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entities",
+            "optional": false,
+            "type": "{ fibery/id: string }[]"
+          },
+          {
+            "key": "conflictField",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conflictAction",
+            "optional": false,
+            "type": "skip-create | update-latest"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue[]"
+      }
+    },
+    {
+      "path": "fibery.api.file.download",
+      "shortPath": "file.download",
+      "description": "Download a Fibery file as base64-encoded binary data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fibery.api.file.signUrls",
+      "shortPath": "file.signUrls",
+      "description": "Create temporary 60-minute public URLs for Fibery files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secrets",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ secret: string, url: string, expiresAt: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fibery.api.file.upload",
+      "shortPath": "file.upload",
+      "description": "Upload a base64-encoded file to Fibery storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fibery/id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fibery/name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fibery/content-type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fibery/secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fibery/content-length",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fibery/rank",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fibery.api.history.search",
+      "shortPath": "history.search",
+      "description": "Search paginated Fibery entity change history with filters and time bounds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "where",
+            "optional": true,
+            "type": "{ field: id | action | entityPublicId | entityState | author | typeId | entityTypeId | entityName | entityId | field, operator: = | in | contains | not-in | empty | not-empty, value?: JsonValue }[]"
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "{ start: string, end: string }"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "excludeAutomaticChanges",
+            "optional": true,
+            "type": "(automations | integrations | formulas | auto-linking)[]"
+          },
+          {
+            "key": "sinceItem",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fibery.api.schema.createDatabase",
+      "shortPath": "schema.createDatabase",
+      "description": "Create a Fibery database with its documented fields and metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.createEnum",
+      "shortPath": "schema.createEnum",
+      "description": "Create a Fibery enum database for select-field options",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.createField",
+      "shortPath": "schema.createField",
+      "description": "Create a primitive or relation field in a Fibery database",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "holderType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.deleteDatabase",
+      "shortPath": "schema.deleteDatabase",
+      "description": "Delete a Fibery database and optionally its entities and related fields",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleteEntities",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleteRelatedFields",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.deleteField",
+      "shortPath": "schema.deleteField",
+      "description": "Delete a Fibery field and optionally its stored values",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "holderType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleteValues",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.installMixins",
+      "shortPath": "schema.installMixins",
+      "description": "Install documented Fibery mixins on databases",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "types",
+            "optional": false,
+            "type": "Record<string, string[]>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.query",
+      "shortPath": "schema.query",
+      "description": "Read Fibery workspace databases, fields, and schema metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "withDescription",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.renameDatabase",
+      "shortPath": "schema.renameDatabase",
+      "description": "Rename a Fibery database",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fromName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.renameField",
+      "shortPath": "schema.renameField",
+      "description": "Rename a field in a Fibery database",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "holderType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fromName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.schema.setFieldMeta",
+      "shortPath": "schema.setFieldMeta",
+      "description": "Set documented metadata on a Fibery database field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "holderType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "JsonValue"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.views.create",
+      "shortPath": "views.create",
+      "description": "Create one or more Fibery views",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "views",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.views.delete",
+      "shortPath": "views.delete",
+      "description": "Delete Fibery views by UUID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    },
+    {
+      "path": "fibery.api.views.query",
+      "shortPath": "views.query",
+      "description": "Query Fibery views by UUID, public ID, privacy, or entity container",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "publicIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "isPrivate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "container",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>[]"
+      }
+    },
+    {
+      "path": "fibery.api.views.update",
+      "shortPath": "views.update",
+      "description": "Update one or more Fibery views",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updates",
+            "optional": false,
+            "type": "{ id: string, values: Record<string, JsonValue> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "JsonValue"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

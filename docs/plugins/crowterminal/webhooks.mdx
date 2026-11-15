@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Crow Terminal incoming webhooks: event paths, payloads, and response data."
+title: "Crow Terminal webhooks"
+sidebarTitle: "Webhooks"
+description: "Crow Terminal incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Crow Terminal plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/crowterminal/overview) for setup context and the exact URL shape).
@@ -30,9 +31,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -54,17 +69,7 @@ Agent data was ingested
 | `timestamp` | `string` | Yes | — |
 | `webhookId` | `string` | Yes | — |
 | `agentId` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -77,8 +82,7 @@ Agent data was ingested
   timestamp: string,
   webhookId: string,
   agentId: string,
-  data: {
-  }
+  data: Record<string, any>
 }
 ```
 </Accordion>
@@ -120,17 +124,7 @@ Content posting completed successfully
 | `timestamp` | `string` | Yes | — |
 | `webhookId` | `string` | Yes | — |
 | `agentId` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -143,8 +137,7 @@ Content posting completed successfully
   timestamp: string,
   webhookId: string,
   agentId: string,
-  data: {
-  }
+  data: Record<string, any>
 }
 ```
 </Accordion>
@@ -184,17 +177,7 @@ Content posting failed
 | `timestamp` | `string` | Yes | — |
 | `webhookId` | `string` | Yes | — |
 | `agentId` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -207,8 +190,7 @@ Content posting failed
   timestamp: string,
   webhookId: string,
   agentId: string,
-  data: {
-  }
+  data: Record<string, any>
 }
 ```
 </Accordion>
@@ -250,17 +232,7 @@ A client skill was updated
 | `timestamp` | `string` | Yes | — |
 | `webhookId` | `string` | Yes | — |
 | `agentId` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -273,8 +245,7 @@ A client skill was updated
   timestamp: string,
   webhookId: string,
   agentId: string,
-  data: {
-  }
+  data: Record<string, any>
 }
 ```
 </Accordion>
@@ -314,17 +285,7 @@ A new skill version was created
 | `timestamp` | `string` | Yes | — |
 | `webhookId` | `string` | Yes | — |
 | `agentId` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -337,8 +298,7 @@ A new skill version was created
   timestamp: string,
   webhookId: string,
   agentId: string,
-  data: {
-  }
+  data: Record<string, any>
 }
 ```
 </Accordion>
@@ -380,17 +340,7 @@ A proposed memory change was blocked
 | `timestamp` | `string` | Yes | — |
 | `webhookId` | `string` | Yes | — |
 | `agentId` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -403,8 +353,7 @@ A proposed memory change was blocked
   timestamp: string,
   webhookId: string,
   agentId: string,
-  data: {
-  }
+  data: Record<string, any>
 }
 ```
 </Accordion>

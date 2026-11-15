@@ -311,5 +311,5 @@ export type {
 	GoogleCalendarEndpointOutputSchemas,
 	GoogleCalendarEndpointOutputs,
 } from './endpoints/types';
-
+export { GoogleCalendarSchema } from './schema';
 export type * from './types';

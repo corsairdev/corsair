@@ -1,0 +1,23 @@
+displayName: Close
+description: Sales CRM. Manage leads, contacts, opportunities, tasks, and call, note, and SMS activities, and read email activities and custom fields.
+domain: close.com
+examples:
+  read:
+    path: leads.list
+    title: List leads
+  write:
+    path: leads.create
+    title: Create a lead
+    args:
+      name: Acme Inc.
+dbExample:
+  entity: lead
+  note: >-
+    This table exists, but Close calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50
+exampleWebhook:
+  path: lead.created
+  note: Fires when a lead is created.
+  after: |
+    console.log('Close lead created:', result.data);

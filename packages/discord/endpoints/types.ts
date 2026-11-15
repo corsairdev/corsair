@@ -126,6 +126,8 @@ const MessageBaseSchema = z.object({
 	pinned: z.boolean(),
 	type: z.number(),
 	flags: z.number().optional(),
+	// Discord can return component types this plugin doesn't model, so rows stay loose here.
+	components: z.array(z.object({ type: z.number() }).passthrough()).optional(),
 	message_reference: MessageReferenceSchema.optional(),
 	thread: ChannelSchema.optional(),
 	nonce: z.union([z.string(), z.number()]).optional(),
@@ -201,12 +203,217 @@ export const GuildMemberSchema = z.object({
 });
 export type GuildMember = z.infer<typeof GuildMemberSchema>;
 
+// ── Message Components ─────────────────────────────────────────────────────────
+// https://discord.com/developers/docs/components/reference
+// Buttons and select menus, sent inside action rows. The schemas check the rules
+// Discord enforces with a 400, so a bad payload fails validation instead.
+
+const ComponentEmojiSchema = z.object({
+	id: z.string().optional(),
+	name: z.string().optional(),
+	animated: z.boolean().optional(),
+});
+
+export const ButtonStyle = {
+	Primary: 1,
+	Secondary: 2,
+	Success: 3,
+	Danger: 4,
+	Link: 5,
+	Premium: 6,
+} as const;
+
+const customId = z.string().min(1).max(100);
+
+export const ButtonComponentSchema = z
+	.object({
+		type: z.literal(2),
+		style: z.number().int().min(1).max(6),
+		label: z.string().min(1).max(80).optional(),
+		emoji: ComponentEmojiSchema.optional(),
+		custom_id: customId.optional(),
+		url: z.string().min(1).max(512).optional(),
+		sku_id: z.string().min(1).optional(),
+		disabled: z.boolean().optional(),
+	})
+	.superRefine((button, ctx) => {
+		const fail = (message: string) => ctx.addIssue({ code: 'custom', message });
+		if (button.style === ButtonStyle.Link) {
+			if (!button.url) fail('Link buttons need a url');
+			if (button.custom_id) fail('Link buttons cannot have a custom_id');
+			if (button.sku_id) fail('Link buttons cannot have a sku_id');
+		} else if (button.style === ButtonStyle.Premium) {
+			if (!button.sku_id) fail('Premium buttons need a sku_id');
+			if (button.custom_id || button.label || button.emoji || button.url) {
+				fail(
+					'Premium buttons take only a sku_id (no custom_id, label, emoji or url)',
+				);
+			}
+		} else {
+			if (!button.custom_id)
+				fail('Buttons other than link and premium need a custom_id');
+			if (button.url) fail('Only link buttons can have a url');
+			if (button.sku_id) fail('Only premium buttons can have a sku_id');
+		}
+	});
+export type ButtonComponent = z.infer<typeof ButtonComponentSchema>;
+
+function checkValueCounts(
+	select: { min_values?: number; max_values?: number },
+	ctx: z.RefinementCtx,
+	optionCount?: number,
+) {
+	// Discord defaults both to 1, so an omitted max_values still caps min_values.
+	if ((select.min_values ?? 1) > (select.max_values ?? 1)) {
+		ctx.addIssue({
+			code: 'custom',
+			message: 'min_values cannot be greater than max_values',
+		});
+	}
+	if (optionCount !== undefined) {
+		if (select.max_values !== undefined && select.max_values > optionCount) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'max_values cannot be greater than the number of options',
+			});
+		}
+		if (select.min_values !== undefined && select.min_values > optionCount) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'min_values cannot be greater than the number of options',
+			});
+		}
+	}
+}
+
+export const StringSelectComponentSchema = z
+	.object({
+		type: z.literal(3),
+		custom_id: customId,
+		options: z
+			.array(
+				z.object({
+					label: z.string().min(1).max(100),
+					value: z.string().min(1).max(100),
+					description: z.string().max(100).optional(),
+					emoji: ComponentEmojiSchema.optional(),
+					default: z.boolean().optional(),
+				}),
+			)
+			.min(1)
+			.max(25),
+		placeholder: z.string().min(1).max(150).optional(),
+		min_values: z.number().int().min(0).max(25).optional(),
+		max_values: z.number().int().min(1).max(25).optional(),
+		disabled: z.boolean().optional(),
+	})
+	.superRefine((select, ctx) =>
+		checkValueCounts(select, ctx, select.options.length),
+	);
+export type StringSelectComponent = z.infer<typeof StringSelectComponentSchema>;
+
+// User (5), role (6), mentionable (7) and channel (8) selects: Discord fills the options.
+export const AutoSelectComponentSchema = z
+	.object({
+		type: z.union([z.literal(5), z.literal(6), z.literal(7), z.literal(8)]),
+		custom_id: customId,
+		placeholder: z.string().min(1).max(150).optional(),
+		min_values: z.number().int().min(0).max(25).optional(),
+		max_values: z.number().int().min(1).max(25).optional(),
+		// Channel selects (type 8) only.
+		channel_types: z.array(z.number().int()).optional(),
+		disabled: z.boolean().optional(),
+	})
+	.superRefine((select, ctx) => {
+		if (select.channel_types && select.type !== 8) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'channel_types is only allowed on channel selects (type 8)',
+			});
+		}
+		checkValueCounts(select, ctx);
+	});
+export type AutoSelectComponent = z.infer<typeof AutoSelectComponentSchema>;
+
+export const ActionRowSchema = z
+	.object({
+		type: z.literal(1),
+		components: z
+			.array(
+				z.union([
+					ButtonComponentSchema,
+					StringSelectComponentSchema,
+					AutoSelectComponentSchema,
+				]),
+			)
+			.min(1)
+			.max(5),
+	})
+	.superRefine((row, ctx) => {
+		const hasSelect = row.components.some((c) => c.type !== 2);
+		if (hasSelect && row.components.length > 1) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'An action row holds up to 5 buttons or exactly 1 select menu',
+			});
+		}
+	});
+export type ActionRow = z.infer<typeof ActionRowSchema>;
+
+export const MessageComponentsSchema = z
+	.array(ActionRowSchema)
+	.max(5)
+	.superRefine((rows, ctx) => {
+		const seen = new Set<string>();
+		for (const component of rows.flatMap((row) => row.components)) {
+			const id = 'custom_id' in component ? component.custom_id : undefined;
+			if (!id) continue;
+			if (seen.has(id)) {
+				ctx.addIssue({
+					code: 'custom',
+					message: `custom_id "${id}" is used more than once in this message`,
+				});
+			}
+			seen.add(id);
+		}
+	});
+
+// ── Allowed Mentions ───────────────────────────────────────────────────────────
+// Controls who a message actually pings. `{ parse: [] }` pings nobody even if
+// the content contains <@id>, @everyone or <@&role>.
+
+export const AllowedMentionsSchema = z
+	.object({
+		parse: z.array(z.enum(['roles', 'users', 'everyone'])).optional(),
+		roles: z.array(z.string()).max(100).optional(),
+		users: z.array(z.string()).max(100).optional(),
+		replied_user: z.boolean().optional(),
+	})
+	.superRefine((mentions, ctx) => {
+		// Discord rejects a parse type together with an explicit list of the same type.
+		if (mentions.parse?.includes('users') && mentions.users) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Use parse: ["users"] or a users list, not both',
+			});
+		}
+		if (mentions.parse?.includes('roles') && mentions.roles) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Use parse: ["roles"] or a roles list, not both',
+			});
+		}
+	});
+export type AllowedMentions = z.infer<typeof AllowedMentionsSchema>;
+
 // ── Endpoint Input Schemas ─────────────────────────────────────────────────────
 
 export const MessagesSendInputSchema = z.object({
 	channel_id: z.string(),
 	content: z.string().optional(),
 	embeds: z.array(EmbedSchema).optional(),
+	components: MessageComponentsSchema.optional(),
+	allowed_mentions: AllowedMentionsSchema.optional(),
 	tts: z.boolean().optional(),
 	nonce: z.union([z.string(), z.number()]).optional(),
 });
@@ -217,6 +424,8 @@ export const MessagesReplyInputSchema = z.object({
 	message_id: z.string(),
 	content: z.string().optional(),
 	embeds: z.array(EmbedSchema).optional(),
+	components: MessageComponentsSchema.optional(),
+	allowed_mentions: AllowedMentionsSchema.optional(),
 	fail_if_not_exists: z.boolean().optional(),
 });
 export type MessagesReplyInput = z.infer<typeof MessagesReplyInputSchema>;
@@ -241,6 +450,8 @@ export const MessagesEditInputSchema = z.object({
 	message_id: z.string(),
 	content: z.string().optional(),
 	embeds: z.array(EmbedSchema).optional(),
+	components: MessageComponentsSchema.optional(),
+	allowed_mentions: AllowedMentionsSchema.optional(),
 });
 export type MessagesEditInput = z.infer<typeof MessagesEditInputSchema>;
 

@@ -1,0 +1,94 @@
+---
+title: "Genderize API reference"
+sidebarTitle: "API"
+description: "API reference for the Genderize plugin in Corsair: every `genderize.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Batch
+
+### names
+
+`batch.names`
+
+Predict gender for several names at once, answered in the same order. A batch counts each name against the monthly quota, and `country_id` applies to every name in it
+
+**Risk:** `read`
+
+```ts
+await corsair.genderize.api.batch.names({ names: ['peter', 'lois', 'stewie'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `names` | `string[]` | Yes | Up to 100 names to predict, answered in the same order. A batch counts each name against the monthly quota |
+| `country_id` | `string` | No | Applies to every name in the batch, not one of them |
+
+Each name counts against the monthly quota; `country_id` applies to every name in the batch.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  gender: string | null,
+  probability: number,
+  count: number,
+  country_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Name
+
+### predict
+
+`name.predict`
+
+Predict the gender behind a first or full name, with a confidence score and the number of records behind it. Scoping by country changes the answer for names such as Kim or Andrea
+
+**Risk:** `read`
+
+```ts
+await corsair.genderize.api.name.predict({ name: 'peter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A first name or a full name. A full name is more accurate, because every part of it carries signal |
+| `country_id` | `string` | No | Scope the prediction to one country, which matters for names such as Kim or Andrea |
+
+Scoping by `country_id` changes the answer for names such as Kim or Andrea.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `gender` | `string \| null` | Yes | — |
+| `probability` | `number` | Yes | — |
+| `count` | `number` | Yes | — |
+| `country_id` | `string` | No | — |
+
+
+
+---
+

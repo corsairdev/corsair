@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for ZoomInfo: every `zoominfo.api.*` operation with input and output types."
+title: "ZoomInfo API reference"
+sidebarTitle: "API"
+description: "API reference for the ZoomInfo plugin in Corsair: every `zoominfo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `zoominfo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -68,8 +67,7 @@ await corsair.zoominfo.api.zoominfo.enrichCompany({});
 {
   outputFields?: string[][],
   result: {
-    input?: {
-    },
+    input?: Record<string, any>,
     data: {
       id?: number,
       name?: string,
@@ -153,8 +151,7 @@ await corsair.zoominfo.api.zoominfo.enrichContact({});
 {
   outputFields?: string[][],
   result: {
-    input?: {
-    },
+    input?: Record<string, any>,
     data: {
       id?: number,
       firstName?: string,
@@ -760,10 +757,10 @@ await corsair.zoominfo.api.zoominfo.searchCompanies({});
 | `companyTicker` | `string[]` | No | — |
 | `certified` | `0 \| 1` | No | — |
 | `excludeDefunctCompanies` | `boolean` | No | — |
-| `businessModel` | `B2C \| B2B \| B2G[]` | No | — |
+| `businessModel` | `(B2C \| B2B \| B2G)[]` | No | — |
 | `engagementStartDate` | `string` | No | — |
 | `engagementEndDate` | `string` | No | — |
-| `engagementType` | `email \| phone \| online meeting[]` | No | — |
+| `engagementType` | `(email \| phone \| online meeting)[]` | No | — |
 | `marketingDepartmentBudgetMin` | `number` | No | — |
 | `marketingDepartmentBudgetMax` | `number` | No | — |
 | `financeDepartmentBudgetMin` | `number` | No | — |
@@ -902,7 +899,7 @@ await corsair.zoominfo.api.zoominfo.searchContacts({});
 | `positionStartDateMax` | `string` | No | — |
 | `engagementStartDate` | `string` | No | — |
 | `engagementEndDate` | `string` | No | — |
-| `engagementType` | `email \| phone \| online meeting[]` | No | — |
+| `engagementType` | `(email \| phone \| online meeting)[]` | No | — |
 
 
 

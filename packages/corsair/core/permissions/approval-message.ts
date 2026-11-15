@@ -60,9 +60,6 @@ export async function resolveApprovalUrl(
 	record: ResolveApprovalUrlInput,
 ): Promise<string | null> {
 	const result = await resolveApprovalUrlResult(internal, record);
-	if (result.error) {
-		console.error('[corsair] failed to create Hub approval link', result.error);
-	}
 	return result.approvalUrl;
 }
 
@@ -94,6 +91,12 @@ async function resolveApprovalUrlResult(
 		});
 		return { approvalUrl: session.approvalUrl, error: null };
 	} catch (error) {
+		// The caller can only report that there is no link, so the reason lands here.
+		console.warn(
+			`[corsair/${record.plugin}] could not create an approval link for '${record.endpoint}': ${
+				error instanceof Error ? error.message : String(error)
+			}`,
+		);
 		return { approvalUrl: null, error };
 	}
 }
@@ -174,9 +177,6 @@ export async function resolveAsyncApprovalMessage(
 		tenant_id: tenantId,
 		expires_at: expiresAt,
 	});
-	if (result.error) {
-		console.error('[corsair] failed to create Hub approval link', result.error);
-	}
 	const approvalUrl = result.approvalUrl;
 
 	if (usesManualApprovalConfig(manual)) {

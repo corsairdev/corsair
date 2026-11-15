@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Fireflies.ai: every `fireflies.api.*` operation with input and output types."
+title: "Fireflies.ai API reference"
+sidebarTitle: "API"
+description: "API reference for the Fireflies.ai plugin in Corsair: every `fireflies.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `fireflies.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -38,7 +37,7 @@ await corsair.fireflies.api.aiApp.getOutputs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `apps` | `object` | No | — |
+| `apps` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="apps full type">
@@ -54,7 +53,7 @@ await corsair.fireflies.api.aiApp.getOutputs({});
     prompt?: string | null,
     response?: string | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -248,7 +247,7 @@ await corsair.fireflies.api.askFred.getThread({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `askfred_thread` | `object` | No | — |
+| `askfred_thread` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="askfred_thread full type">
@@ -270,7 +269,7 @@ await corsair.fireflies.api.askFred.getThread({});
     created_at?: string | null,
     updated_at?: string | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -399,7 +398,7 @@ await corsair.fireflies.api.transcripts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `transcript` | `object` | No | — |
+| `transcript` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="transcript full type">
@@ -458,7 +457,7 @@ await corsair.fireflies.api.transcripts.get({});
     name?: string | null,
     location?: string | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -491,7 +490,7 @@ await corsair.fireflies.api.transcripts.getAnalytics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `transcript` | `object` | No | — |
+| `transcript` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="transcript full type">
@@ -511,10 +510,9 @@ await corsair.fireflies.api.transcripts.getAnalytics({});
       metrics?: number | null,
       tasks?: number | null
     } | null,
-    speakers?: {
-    }[] | null
+    speakers?: Record<string, any>[] | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -547,7 +545,7 @@ await corsair.fireflies.api.transcripts.getAudioUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `transcript` | `object` | No | — |
+| `transcript` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="transcript full type">
@@ -556,7 +554,7 @@ await corsair.fireflies.api.transcripts.getAudioUrl({});
 {
   id: string,
   audio_url?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -589,7 +587,7 @@ await corsair.fireflies.api.transcripts.getSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `transcript` | `object` | No | — |
+| `transcript` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="transcript full type">
@@ -610,7 +608,7 @@ await corsair.fireflies.api.transcripts.getSummary({});
     short_overview?: string | null,
     meeting_type?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -643,7 +641,7 @@ await corsair.fireflies.api.transcripts.getVideoUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `transcript` | `object` | No | — |
+| `transcript` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="transcript full type">
@@ -652,7 +650,7 @@ await corsair.fireflies.api.transcripts.getVideoUrl({});
 {
   id: string,
   video_url?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -741,7 +739,7 @@ await corsair.fireflies.api.users.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | No | — |
+| `user` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -755,7 +753,7 @@ await corsair.fireflies.api.users.getCurrent({});
   minutes_consumed?: number | null,
   is_admin?: boolean | null,
   integrations?: string[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

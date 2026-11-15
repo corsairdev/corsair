@@ -1,0 +1,72 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "OpenSea"
+description: "Read collections, NFTs, listings, offers and marketplace events, and search OpenSea's catalogue."
+domain: "opensea.io"
+recommendedAuth: "api_key"
+overviewNote: |-
+  OpenSea uses an `x-api-key` header. Create a key at
+  [docs.opensea.io](https://docs.opensea.io/reference/api-keys) from a signed-in
+  account, then save it for the `opensea` integration. Every marketplace route
+  requires it: a request with no key answers 401 and
+  `{"errors":["Missing an API Key, ..."]}`.
+
+  Every `chain` argument takes a slug from `chains.list`, such as `ethereum` or
+  `base`. OpenSea adds chains over time, so the slug is sent as given and the
+  API refuses one it does not index.
+
+  `collections.list` also accepts a `chain` filter.
+
+  Order lookups come in two shapes. `orders.get` wraps the result under `order`;
+  `offers.best` returns the order bare. Both carry the Seaport `protocol_data`
+  and the `order_hash` that identifies the order.
+
+  Most paged routes take a `next` cursor and return it back; pass the previous
+  response's `next` as this call's `next`, which is `null` on the last page.
+  Three routes differ: `collections.top`, `collections.trending` and
+  `collections.holders` take `cursor` instead of `next`.
+
+  `traits.list` answers the trait names on a collection, the type of each, and
+  under `counts` every value with how many NFTs carry it. To select NFTs by
+  trait, pass `collection.nfts` a `traits` filter: a JSON array sent as a
+  string, such as `[{"traitType":"Background","value":"Red"}]`. Several filters
+  are AND-combined.
+
+  Prices arrive as base-unit strings. An 18-decimal wei amount such as
+  `"5900000000000000000"` does not fit a JavaScript number, so the value stays a
+  string and `decimals` tells you where to put the point.
+examples:
+  read:
+    path: collections.get
+    title: Read one collection
+    args:
+      slug: "boredapeyachtclub"
+  write:
+    path: collections.list
+    title: List collections, ten at a time
+    args:
+      limit: 10
+apiNotes:
+  search.search: "Each result carries a `type` and one payload key. Branch on `type` before reading the rest."
+
+apiExamples:
+  collections.get: { args: { slug: "boredapeyachtclub" } }
+  collections.stats: { args: { slug: "boredapeyachtclub" } }
+  collections.floorPrices: { args: { slug: "boredapeyachtclub", timeframe: "seven_days" } }
+  collections.holders: { args: { slug: "boredapeyachtclub", limit: 5 } }
+  collections.top: { args: { limit: 5 } }
+  collections.trending: { args: { limit: 5 } }
+  collection.nfts: { args: { slug: "boredapeyachtclub", limit: 5 } }
+  contract.nfts: { call: '{ chain: "ethereum", address: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D", limit: 5 }' }
+  nfts.get: { call: '{ chain: "ethereum", address: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D", identifier: "1" }' }
+  nfts.owners: { call: '{ chain: "ethereum", address: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D", identifier: "1" }' }
+  events.collection: { args: { slug: "boredapeyachtclub", limit: 5 } }
+  search.search: { args: { query: "bored ape", limit: 5 } }
+  traits.list: { args: { slug: "boredapeyachtclub" } }
+  listings.best: { args: { slug: "boredapeyachtclub", limit: 5 } }
+  listings.all: { args: { slug: "boredapeyachtclub", limit: 5 } }
+  offers.collection: { args: { slug: "boredapeyachtclub", limit: 5 } }
+  offers.all: { args: { slug: "boredapeyachtclub", limit: 5 } }
+  offers.best: { args: { slug: "boredapeyachtclub", identifier: "1" } }
+  orders.get: { call: '{ chain: "ethereum", protocol_address: "0x0000000000000068f116a894984e2db1123eb395", order_hash: "0x830a0a93980e21a464208a182b62ba5e8eee008d8e8d3062ee10ce075beb53f4" }' }
+  accounts.get: { args: { address_or_username: "boredapeyachtclub" } }
+  accounts.portfolio: { call: '{ address: "0xaba7161a7fb69c88e16ed9f455ce62b8cc0b4d3c", timeframe: "WEEK" }' }

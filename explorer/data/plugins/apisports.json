@@ -25,7 +25,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -38,12 +38,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -70,7 +70,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -83,12 +83,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -115,7 +115,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -128,12 +128,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -160,7 +160,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -173,12 +173,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -205,7 +205,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -218,12 +218,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -250,7 +250,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -263,12 +263,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -295,7 +295,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -308,12 +308,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -340,7 +340,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -353,12 +353,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -385,7 +385,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -398,12 +398,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -430,7 +430,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -443,12 +443,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -475,7 +475,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -488,12 +488,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -520,7 +520,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -533,12 +533,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -565,7 +565,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -578,12 +578,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -610,7 +610,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -623,12 +623,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -655,7 +655,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -668,12 +668,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -700,7 +700,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -713,12 +713,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -745,7 +745,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -758,12 +758,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -790,7 +790,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -803,12 +803,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -835,7 +835,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -848,12 +848,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -880,7 +880,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -893,12 +893,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -925,7 +925,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -938,12 +938,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -970,7 +970,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -983,12 +983,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1015,7 +1015,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1028,12 +1028,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1060,7 +1060,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1073,12 +1073,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1105,7 +1105,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1118,12 +1118,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1150,7 +1150,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1163,12 +1163,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1195,7 +1195,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1208,12 +1208,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1240,7 +1240,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1253,12 +1253,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1285,7 +1285,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1298,12 +1298,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1330,7 +1330,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1343,12 +1343,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1375,7 +1375,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1388,12 +1388,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1420,7 +1420,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1433,12 +1433,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1465,7 +1465,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1478,12 +1478,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1510,7 +1510,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1523,12 +1523,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1555,7 +1555,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1568,12 +1568,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1600,7 +1600,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1613,12 +1613,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1645,7 +1645,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1658,12 +1658,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1690,7 +1690,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1703,12 +1703,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1735,7 +1735,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1748,12 +1748,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1780,7 +1780,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1793,12 +1793,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1825,7 +1825,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1838,12 +1838,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1870,7 +1870,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1883,12 +1883,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1915,7 +1915,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1928,12 +1928,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -1960,7 +1960,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -1973,12 +1973,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2005,7 +2005,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2018,12 +2018,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2050,7 +2050,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2063,12 +2063,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2095,7 +2095,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2108,12 +2108,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2140,7 +2140,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2153,12 +2153,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2185,7 +2185,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2198,12 +2198,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2230,7 +2230,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2243,12 +2243,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2275,7 +2275,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2288,12 +2288,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2320,7 +2320,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2333,12 +2333,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2365,7 +2365,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2378,12 +2378,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2410,7 +2410,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2423,12 +2423,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2455,7 +2455,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2468,12 +2468,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2500,7 +2500,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2513,12 +2513,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2545,7 +2545,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2558,12 +2558,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2590,7 +2590,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2603,12 +2603,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2635,7 +2635,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2648,12 +2648,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2680,7 +2680,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2693,12 +2693,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2725,7 +2725,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2738,12 +2738,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2770,7 +2770,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2783,12 +2783,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2815,7 +2815,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2828,12 +2828,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2860,7 +2860,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2873,12 +2873,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2905,7 +2905,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2918,12 +2918,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2950,7 +2950,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -2963,12 +2963,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",
@@ -2995,7 +2995,7 @@
       "riskLevel": "read",
       "input": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string | number | boolean | (string | number)[]>"
       },
       "output": {
         "kind": "object",
@@ -3008,12 +3008,12 @@
           {
             "key": "parameters",
             "optional": true,
-            "type": "{} | any[]"
+            "type": "Record<string, any> | any[]"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "results",

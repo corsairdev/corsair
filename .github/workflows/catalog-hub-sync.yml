@@ -1,0 +1,35 @@
+name: Start the Hub catalog sync
+
+# Hub keeps its own copy of explorer/data. When it changes here, Hub's
+# catalog-sync.yml opens a PR with the new copy.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'explorer/data/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    if: github.repository == 'corsairdev/corsair'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Get a Corsair Releases token for Hub
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: corsairdev
+          repositories: hub
+          permission-actions: write
+
+      - name: Start Hub's catalog sync
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: gh workflow run catalog-sync.yml -R corsairdev/hub --ref main -f corsair_ref="$GITHUB_SHA"

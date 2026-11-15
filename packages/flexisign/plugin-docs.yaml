@@ -1,1 +1,3 @@
+displayName: FlexiSign
+description: "Electronic signature platform; this plugin lists the document templates available in a FlexiSign account."
 domain: flexisign.io

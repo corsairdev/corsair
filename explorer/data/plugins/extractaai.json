@@ -1,7 +1,7 @@
 {
   "id": "extractaai",
-  "displayName": "Extractaai",
-  "description": "Extractaai plugin for Corsair",
+  "displayName": "Extracta.ai",
+  "description": "Document data extraction API for creating and managing extractions and classifications and checking credits.",
   "npmPackageName": "@corsair-dev/extractaai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -199,7 +199,7 @@
           {
             "key": "extractionDetails",
             "optional": false,
-            "type": "{ name: string, description?: string, language: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields: { key: string, description?: string, example?: string, type?: string | object | array, properties?: lazy[], items?: { type: string | object, example?: string, properties?: lazy[] } }[] }"
+            "type": "{ name: string, description?: string, language: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields: { key: string, description?: string, example?: string, type?: string | object | array, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[] } }[], items?: { type: string | object, example?: string, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[] } }[] }"
           }
         ]
       },
@@ -293,7 +293,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status: waiting, extractionId?: string, batchId?: string, fileId?: string } | { extractionId: string, batchId: string, fileId?: string, files: { fileId?: string, fileName?: string, status: string, result?: lazy, url?: string }[] }"
+        "type": "{ status: waiting, extractionId?: string, batchId?: string, fileId?: string } | { extractionId: string, batchId: string, fileId?: string, files: { fileId?: string, fileName?: string, status: string, result?: JsonValue, url?: string }[] }"
       }
     },
     {
@@ -312,7 +312,7 @@
           {
             "key": "extractionDetails",
             "optional": false,
-            "type": "{ name?: string, description?: string, language?: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: lazy[], items?: { type: string | object, example?: string, properties?: lazy[] } }[] }"
+            "type": "{ name?: string, description?: string, language?: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[] } }[], items?: { type: string | object, example?: string, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[] } }[] }"
           }
         ]
       },
@@ -363,7 +363,7 @@
           {
             "key": "extractionDetails",
             "optional": false,
-            "type": "{ name: string, description?: string, language: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields: { key: string, description?: string, example?: string, type?: string | object | array, properties?: lazy[], items?: { type: string | object, example?: string, properties?: lazy[] } }[], status?: string, batches?: {} }"
+            "type": "{ name: string, description?: string, language: string, options?: { hasTable?: boolean, hasVisuals?: boolean, handwrittenTextRecognition?: boolean, checkboxRecognition?: boolean, longDocument?: boolean, splitPdfPages?: boolean, specificPageProcessing?: boolean, specificPageProcessingOptions?: { from: number, to: number } }, fields: { key: string, description?: string, example?: string, type?: string | object | array, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[] } }[], items?: { type: string | object, example?: string, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: { key: string, description?: string, example?: string, type?: string | object | array, properties?: (recursive)[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[], items?: { type: string | object, example?: string, properties?: (recursive)[] } }[] } }[], status?: string, batches?: Record<string, { filesNo?: number, origin?: string, startTime?: string | number, status?: string }> }"
           }
         ]
       }

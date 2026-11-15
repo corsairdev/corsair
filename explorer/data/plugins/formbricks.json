@@ -54,7 +54,7 @@
           {
             "key": "noCodeConfig",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -69,27 +69,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "noCodeConfig",
@@ -99,12 +99,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -190,12 +190,12 @@
           {
             "key": "surveyId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contactId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -221,7 +221,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -262,7 +262,7 @@
           {
             "key": "expiresAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -288,7 +288,7 @@
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -344,47 +344,47 @@
           {
             "key": "key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dataType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isUnique",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -451,47 +451,47 @@
           {
             "key": "key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dataType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isUnique",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -522,47 +522,47 @@
           {
             "key": "key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dataType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isUnique",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -653,47 +653,47 @@
           {
             "key": "key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "dataType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isUnique",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -728,7 +728,7 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -743,7 +743,7 @@
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attributes",
@@ -753,12 +753,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -825,7 +825,7 @@
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attributes",
@@ -835,12 +835,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -871,7 +871,7 @@
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attributes",
@@ -881,12 +881,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -940,7 +940,7 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -981,12 +981,12 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1056,17 +1056,17 @@
           {
             "key": "organizationId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspacePermissions",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "environmentPermissions",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "organizationAccess",
@@ -1096,22 +1096,22 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "appSetupCompleted",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "workspace",
@@ -1146,22 +1146,22 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "appSetupCompleted",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "workspace",
@@ -1197,7 +1197,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "finished",
@@ -1207,12 +1207,12 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "ttc",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "language",
@@ -1232,17 +1232,17 @@
           {
             "key": "surveyId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "finished",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "endingId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -1277,32 +1277,32 @@
           {
             "key": "singleUseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "displayId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1389,7 +1389,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "finished",
@@ -1399,7 +1399,7 @@
           {
             "key": "variables",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "language",
@@ -1419,17 +1419,17 @@
           {
             "key": "surveyId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "finished",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "endingId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data",
@@ -1464,32 +1464,32 @@
           {
             "key": "singleUseId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "displayId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1544,7 +1544,7 @@
           {
             "key": "signedUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "presignedFields",
@@ -1554,7 +1554,7 @@
           {
             "key": "fileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1590,7 +1590,7 @@
           {
             "key": "signedUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "presignedFields",
@@ -1600,7 +1600,7 @@
           {
             "key": "fileUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1631,17 +1631,17 @@
           {
             "key": "questions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "welcomeCard",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "endings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "status",
@@ -1651,7 +1651,7 @@
           {
             "key": "triggers",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -1666,57 +1666,57 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publishOn",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closeOn",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "archivedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "welcomeCard",
@@ -1726,7 +1726,7 @@
           {
             "key": "questions",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "blocks",
@@ -1736,7 +1736,7 @@
           {
             "key": "endings",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "hiddenFields",
@@ -1746,7 +1746,7 @@
           {
             "key": "variables",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "styling",
@@ -1756,7 +1756,7 @@
           {
             "key": "languages",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "surveyClosedMessage",
@@ -1771,77 +1771,77 @@
           {
             "key": "displayOption",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recontactDays",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "displayLimit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "displayPercentage",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "autoClose",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "delay",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "autoComplete",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isVerifyEmailEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isSingleResponsePerEmailEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isBackButtonHidden",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isAutoProgressingEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isCaptureIpEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "showLanguageSwitch",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "redirectUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "singleUse",
@@ -1856,12 +1856,12 @@
           {
             "key": "customHeadScripts",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customHeadScriptsMode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspaceOverwrites",
@@ -1876,7 +1876,7 @@
           {
             "key": "triggers",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "segment",
@@ -1886,7 +1886,7 @@
           {
             "key": "followUps",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           }
         ]
       }
@@ -1978,22 +1978,22 @@
           {
             "key": "questions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "welcomeCard",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "endings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "triggers",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -2008,57 +2008,57 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publishOn",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closeOn",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "archivedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "welcomeCard",
@@ -2068,7 +2068,7 @@
           {
             "key": "questions",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "blocks",
@@ -2078,7 +2078,7 @@
           {
             "key": "endings",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "hiddenFields",
@@ -2088,7 +2088,7 @@
           {
             "key": "variables",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "styling",
@@ -2098,7 +2098,7 @@
           {
             "key": "languages",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "surveyClosedMessage",
@@ -2113,77 +2113,77 @@
           {
             "key": "displayOption",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recontactDays",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "displayLimit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "displayPercentage",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "autoClose",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "delay",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "autoComplete",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isVerifyEmailEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isSingleResponsePerEmailEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isBackButtonHidden",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isAutoProgressingEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isCaptureIpEnabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "showLanguageSwitch",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "redirectUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pin",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "singleUse",
@@ -2198,12 +2198,12 @@
           {
             "key": "customHeadScripts",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customHeadScriptsMode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspaceOverwrites",
@@ -2218,7 +2218,7 @@
           {
             "key": "triggers",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "segment",
@@ -2228,7 +2228,7 @@
           {
             "key": "followUps",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           }
         ]
       }
@@ -2365,7 +2365,7 @@
           {
             "key": "triggers",
             "optional": false,
-            "type": "responseFinished | responseCreated | responseUpdated[]"
+            "type": "(responseFinished | responseCreated | responseUpdated)[]"
           },
           {
             "key": "surveyIds",
@@ -2385,47 +2385,47 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "triggers",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "surveyIds",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2492,47 +2492,47 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "triggers",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "surveyIds",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2598,7 +2598,7 @@
           {
             "key": "triggers",
             "optional": false,
-            "type": "responseFinished | responseCreated | responseUpdated[]"
+            "type": "(responseFinished | responseCreated | responseUpdated)[]"
           },
           {
             "key": "surveyIds",
@@ -2618,47 +2618,47 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "triggers",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "surveyIds",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

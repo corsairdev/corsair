@@ -1,9 +1,8 @@
 ---
-title: API
+title: "TwitterAPI.io API reference"
+sidebarTitle: "API"
 description: "API reference for TwitterAPI.io: every `twitterapiio.api.*` operation with input and output types."
 ---
-
-Every `twitterapiio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -299,7 +298,7 @@ await corsair.twitterapiio.api.communities.getMembers({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `members` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -363,7 +362,7 @@ await corsair.twitterapiio.api.communities.getModerators({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `members` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -427,7 +426,7 @@ await corsair.twitterapiio.api.communities.getTweets({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -600,7 +599,7 @@ await corsair.twitterapiio.api.communities.searchTweets({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -711,7 +710,7 @@ await corsair.twitterapiio.api.lists.getFollowers({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -775,7 +774,7 @@ await corsair.twitterapiio.api.lists.getMembers({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -839,7 +838,7 @@ await corsair.twitterapiio.api.lists.getTweets({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -952,7 +951,7 @@ await corsair.twitterapiio.api.replies.get({});
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
 | `replies` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -1066,7 +1065,7 @@ await corsair.twitterapiio.api.replies.getV2({});
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
 | `replies` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -1342,7 +1341,7 @@ await corsair.twitterapiio.api.tweets.advancedSearch({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -1623,7 +1622,7 @@ await corsair.twitterapiio.api.tweets.getQuotations({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -1732,7 +1731,7 @@ await corsair.twitterapiio.api.tweets.getRetweeters({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -1796,7 +1795,7 @@ await corsair.twitterapiio.api.tweets.getThreadContext({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -1905,7 +1904,7 @@ await corsair.twitterapiio.api.tweets.getUserLastTweets({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -2014,7 +2013,7 @@ await corsair.twitterapiio.api.tweets.getUserMentions({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -2123,7 +2122,7 @@ await corsair.twitterapiio.api.tweets.getUserTimeline({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -2297,7 +2296,7 @@ await corsair.twitterapiio.api.tweets.search({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -2627,7 +2626,7 @@ await corsair.twitterapiio.api.users.getFollowers({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -2691,7 +2690,7 @@ await corsair.twitterapiio.api.users.getFollowings({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -2816,7 +2815,7 @@ await corsair.twitterapiio.api.users.getVerifiedFollowers({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -2916,7 +2915,7 @@ await corsair.twitterapiio.api.users.search({});
 |------|------|----------|-------------|
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
 
 <AccordionGroup>

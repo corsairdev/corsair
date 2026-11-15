@@ -34,72 +34,85 @@
           {
             "key": "max_depth",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "max_breadth",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 20."
           },
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 50."
           },
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "select_paths",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "select_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "exclude_paths",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "exclude_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "allow_external",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media[]"
+            "type": "(Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media)[]",
+            "description": "Defaults to []."
           },
           {
             "key": "extract_depth",
             "optional": true,
-            "type": "basic | advanced"
+            "type": "basic | advanced",
+            "description": "Defaults to \"basic\"."
           },
           {
             "key": "format",
             "optional": true,
-            "type": "markdown | text"
+            "type": "markdown | text",
+            "description": "Defaults to \"markdown\"."
           },
           {
             "key": "include_images",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "include_favicon",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           }
         ]
       },
@@ -150,22 +163,26 @@
           {
             "key": "include_images",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "extract_depth",
             "optional": true,
-            "type": "basic | advanced"
+            "type": "basic | advanced",
+            "description": "Defaults to \"basic\"."
           },
           {
             "key": "format",
             "optional": true,
-            "type": "markdown | text"
+            "type": "markdown | text",
+            "description": "Defaults to \"markdown\"."
           },
           {
             "key": "include_favicon",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           }
         ]
       },
@@ -211,52 +228,61 @@
           {
             "key": "max_depth",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "max_breadth",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 20."
           },
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 50."
           },
           {
             "key": "instructions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "select_paths",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "select_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "exclude_paths",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "exclude_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "allow_external",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media[]"
+            "type": "(Careers | Blog | Documentation | About | Pricing | Community | Developers | Contact | Media)[]",
+            "description": "Defaults to []."
           }
         ]
       },
@@ -302,87 +328,100 @@
           {
             "key": "search_depth",
             "optional": true,
-            "type": "advanced | basic | fast | ultra-fast"
+            "type": "advanced | basic | fast | ultra-fast",
+            "description": "Defaults to \"basic\"."
           },
           {
             "key": "chunks_per_source",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 3."
           },
           {
             "key": "max_results",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 5."
           },
           {
             "key": "topic",
             "optional": true,
-            "type": "general | news | finance"
+            "type": "general | news | finance",
+            "description": "Defaults to \"general\"."
           },
           {
             "key": "time_range",
             "optional": true,
-            "type": "day | week | month | year | d | w | m | y"
+            "type": "day | week | month | year | d | w | m | y | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "include_answer",
             "optional": true,
-            "type": "boolean | basic | advanced"
+            "type": "boolean | basic | advanced",
+            "description": "Defaults to false."
           },
           {
             "key": "include_raw_content",
             "optional": true,
-            "type": "boolean | markdown | text"
+            "type": "boolean | markdown | text",
+            "description": "Defaults to false."
           },
           {
             "key": "include_images",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "include_image_descriptions",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "include_favicon",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "include_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "exclude_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Defaults to []."
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "auto_parameters",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           },
           {
             "key": "include_usage",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false."
           }
         ]
       },
@@ -397,7 +436,7 @@
           {
             "key": "answer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "images",
@@ -427,7 +466,7 @@
           {
             "key": "auto_parameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

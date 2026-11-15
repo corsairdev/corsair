@@ -81,6 +81,10 @@ const GenerateContentInputSchema = z.object({
 	contents: z
 		.array(ContentSchema)
 		.describe('Conversation contents to generate a response for'),
+	stripFences: z
+		.boolean()
+		.optional()
+		.describe('Strip markdown code fences from the convenience text field'),
 	generationConfig: GenerationConfigSchema.optional(),
 	safetySettings: z.array(SafetySettingSchema).optional(),
 	systemInstruction: ContentSchema.optional(),
@@ -94,7 +98,7 @@ const GenerateContentResponseSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'Convenience field: first candidate text with markdown code fences stripped',
+			'Convenience field: concatenated non-thought text from the first candidate',
 		),
 });
 export type GenerateContentResponse = z.infer<

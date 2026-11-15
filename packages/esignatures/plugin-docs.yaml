@@ -1,0 +1,56 @@
+displayName: eSignatures
+description: Contracts and e-signing with eSignatures - send contracts from templates, track and withdraw them, manage signers, and read back or create templates.
+domain: esignatures.com
+recommendedAuth: api_key
+overviewNote: |
+  Copy the Secret Token from the API panel of your Automation/API/AI page in the eSignatures dashboard. The plugin sends it as HTTP Basic auth with an empty password, exactly as the docs' curl examples do. Things to know before you send:
+
+  - **Real sends.** `contracts.create` sends the sign request to every signer by email or SMS. Pass `save_as_draft: 'yes'` to create the contract without sending, then `contracts.sendDraft` when it is ready.
+  - **Demo contracts.** Pass `test: 'yes'` to mark a contract as a demo; demo contracts are not charged sending credits.
+  - **`metadata` is a string.** It is echoed in the contract payload and in webhook events, so a single string is what you get back, not a JSON object.
+  - **PDF URLs expire.** `contract_pdf_url` on a signed contract is kept for 3 days after each request that returns it; request the contract again for a fresh URL.
+  - **Withdrawing.** `contracts.withdraw` stops a sent contract from being signed. Signed contracts cannot be withdrawn, and a withdrawn contract stays withdrawn.
+  - **Signers.** `contracts.addSigner` joins a signer to a contract but sends nothing; `contracts.resendToSigner` sends the sign request. Both need the signer's `id` from the contract's `signers` (add returns no signer object, so re-read the contract).
+  - **Rate limits.** eSignatures applies adaptive rate limits and warns that frequent polling of `contracts.get` can lead to blocked requests. The plugin backs off and retries a 429 up to three times, honoring `Retry-After` when present. Prefer webhooks for status changes.
+  - **Webhooks.** The plugin does not receive webhooks; eSignatures sends them to the HTTPS endpoint configured on the same API panel.
+examples:
+  read:
+    path: contracts.get
+    title: Read a contract
+    args:
+      contract_id: 1contr11-2222
+  write:
+    path: contracts.create
+    title: Send a rental agreement from a template
+    args:
+      template_id: 4templ44-8888
+      signers:
+        - name: Sam Signer
+          email: sam@tenants.com
+      placeholder_fields:
+        - placeholder_key: tenant_name
+          replace_with_text: Sam Signer
+apiExamples:
+  contracts.create:
+    call: "{ template_id: '4templ44-8888', signers: [{ name: 'Sam Signer', email: 'sam@tenants.com' }], placeholder_fields: [{ placeholder_key: 'tenant_name', replace_with_text: 'Sam Signer' }], test: 'yes' }"
+  contracts.get:
+    call: "{ contract_id: '1contr11-2222' }"
+  contracts.withdraw:
+    call: "{ contract_id: '1contr11-2222' }"
+  contracts.sendDraft:
+    call: "{ contract_id: '1contr11-2222' }"
+  contracts.addSigner:
+    call: "{ contract_id: '1contr11-2222', signer: { name: 'Sam Signer', email: 'sam@tenants.com' } }"
+  contracts.updateSigner:
+    call: "{ contract_id: '1contr11-2222', signer_id: '6signer6-9999', signer: { name: 'Sam Signer-Smith' } }"
+  contracts.resendToSigner:
+    call: "{ contract_id: '1contr11-2222', signer_id: '6signer6-9999' }"
+  contracts.deleteSigner:
+    call: "{ contract_id: '1contr11-2222', signer_id: '6signer6-9999' }"
+  templates.list: {}
+  templates.get:
+    call: "{ template_id: '4templ44-8888' }"
+  templates.create:
+    call: "{ title: 'Rental agreement', markdown: '# Rental agreement\\n\\n{{tenant_name}} agrees to the terms.' }"
+  templates.delete:
+    call: "{ template_id: '4templ44-8888' }"

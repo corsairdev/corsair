@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "Intercom incoming webhooks: event paths, payloads, and response data."
+title: "Intercom webhooks"
+sidebarTitle: "Webhooks"
+description: "Intercom incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The Intercom plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/intercom/overview) for setup context and the exact URL shape).
@@ -29,9 +30,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -51,7 +66,7 @@ A new contact was created in Intercom
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -63,8 +78,7 @@ A new contact was created in Intercom
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -119,7 +133,7 @@ A contact was deleted from Intercom
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -131,8 +145,7 @@ A contact was deleted from Intercom
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -184,7 +197,7 @@ A tag was added to a contact
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -196,8 +209,7 @@ A tag was added to a contact
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -252,7 +264,7 @@ A conversation was assigned to an admin or team
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -264,8 +276,7 @@ A conversation was assigned to an admin or team
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -320,7 +331,7 @@ A conversation was closed
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -332,8 +343,7 @@ A conversation was closed
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -385,7 +395,7 @@ A new conversation was created
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -397,8 +407,7 @@ A new conversation was created
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>
@@ -453,7 +462,7 @@ Initial ping sent by Intercom when a webhook URL is first registered
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
-| `id` | `string` | No | — |
+| `id` | `string \| null` | Yes | — |
 | `app_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `first_sent_at` | `number` | No | — |
@@ -465,8 +474,7 @@ Initial ping sent by Intercom when a webhook URL is first registered
 ```ts
 {
   type?: string,
-  item: {
-  }
+  item: Record<string, any>
 }
 ```
 </Accordion>

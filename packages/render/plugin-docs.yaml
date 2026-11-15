@@ -1,0 +1,73 @@
+displayName: Render
+description: Manage Render services and deploys, Postgres and Key Value databases, env groups, environments, custom domains, disks, logs, metrics, webhooks and workflows.
+domain: render.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in the Render Dashboard under Account Settings, API Keys. A key can reach every workspace its user belongs to, so most create and list calls take an `ownerId` (the workspace ID, `tea-...` or `usr-...`); `owners.list` returns them. Things to know before you call:
+
+  - **`update` on a list replaces it.** `services.envVars.update`, `services.secretFiles.update`, `services.headers.update`, `services.routes.update`, `buildSources.envVars.update` and `buildSources.secretFiles.update` take the full list as `body`, and entries not in the list are removed. To change one entry, use the matching `upsert` (for example `services.envVars.upsert` or `services.envGroups.envVars.upsert`).
+  - **Secrets come back in plain text.** Env var and secret file reads return values and file contents.
+  - **Paging.** Lists return an array of `{ cursor, <resource> }` entries. Pass the last entry's `cursor` to get the next page; `limit` goes up to 100.
+  - **Rate limits.** On a 429 the plugin waits for Render's `Retry-After` (at most 60 seconds) and retries up to five times.
+  - **Not covered.** The deprecated `/redis` routes (use the Key Value operations), sandboxes, flows, and the streaming endpoints (log subscribe and task-run events). The plugin does not receive webhooks; `webhooks.create` and friends manage Render's outgoing webhooks.
+examples:
+  read:
+    path: services.list
+    title: List web services in a region
+    args:
+      type:
+        - web_service
+      region:
+        - oregon
+      limit: 20
+  write:
+    path: services.triggerDeploy
+    title: Deploy the latest commit of a service
+    args:
+      serviceId: srv-d0k1q2r3s4t5u6v7w8x9
+dbExample:
+  entity: renderOwner
+  note: >-
+    `owners.list` and `owners.retrieve` store each workspace by owner ID
+    (`id`, `name`, `email`, `type`).
+  data:
+    name: Acme
+apiExamples:
+  services.list:
+    call: "{ type: ['web_service'], region: ['oregon'], limit: 20 }"
+  services.retrieve:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9' }"
+  services.triggerDeploy:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', clearCache: 'clear' }"
+  services.listDeploys:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', status: ['live'], limit: 10 }"
+  services.rollbackDeploy:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', deployId: 'dep-d0k1q2r3s4t5u6v7w8y0' }"
+  services.scale:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', numInstances: 2 }"
+  services.environments.list:
+    call: "{ projectId: 'prj-d0k1q2r3s4t5u6v7w8x9' }"
+  services.environments.removeResources:
+    call: "{ environmentId: 'evm-d0k1q2r3s4t5u6v7w8x9', resourceIds: ['srv-d0k1q2r3s4t5u6v7w8x9'] }"
+  services.envGroups.create:
+    call: "{ name: 'shared-config', ownerId: 'tea-cjnxpkdhshc73d12t9i0', envVars: [{ key: 'LOG_LEVEL', value: 'info' }] }"
+  projects.create:
+    call: "{ name: 'storefront', ownerId: 'tea-cjnxpkdhshc73d12t9i0', environments: [{ name: 'production' }] }"
+  postgres.create:
+    call: "{ name: 'orders-db', ownerId: 'tea-cjnxpkdhshc73d12t9i0', plan: 'basic_256mb', version: '17' }"
+  logs.list:
+    call: "{ ownerId: 'tea-cjnxpkdhshc73d12t9i0', resource: ['srv-d0k1q2r3s4t5u6v7w8x9'], limit: 50 }"
+  blueprints.validate:
+    call: "{ ownerId: 'tea-cjnxpkdhshc73d12t9i0', file: 'services:\\n  - type: web\\n    name: api\\n    runtime: node\\n' }"
+  services.envVars.upsert:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'debug' }"
+  services.envVars.update:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ key: 'LOG_LEVEL', value: 'info' }, { key: 'SESSION_SECRET', generateValue: true }] }"
+  services.routes.update:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ type: 'rewrite', source: '/app/*', destination: '/index.html' }] }"
+  services.retrieveDeploy:
+    call: "{ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', deployId: 'dep-d0k1q2r3s4t5u6v7w8y0' }"
+  services.envGroups.envVars.upsert:
+    call: "{ envGroupId: 'evg-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'info' }"
+  workflows.taskRuns.create:
+    call: "{ task: 'my-workflow/send-report', input: ['weekly'] }"

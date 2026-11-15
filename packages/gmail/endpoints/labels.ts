@@ -14,10 +14,14 @@ export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {
 		try {
 			for (const label of result.labels) {
 				if (label.id) {
+					// List entries carry only id, name, visibility and type, and upsert
+					// replaces the stored row, so merge them over what get stored.
+					const stored = await ctx.db.labels.findByEntityId(label.id);
 					await ctx.db.labels.upsertByEntityId(label.id, {
+						...stored?.data,
 						...label,
 						id: label.id,
-						createdAt: new Date(),
+						createdAt: stored?.data.createdAt ?? new Date(),
 					});
 				}
 			}

@@ -1,3 +1,4 @@
+import { encryptDEK, generateDEK } from '../core/auth/encryption';
 import {
 	CONNECT_REQUEST_TTL_MS,
 	clearConnectRequest,
@@ -5,6 +6,7 @@ import {
 	recordConnectRequest,
 	recordConnectRequestBestEffort,
 } from '../core/connect-request/store';
+import { sealJson } from '../db/data-at-rest';
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createTestDatabase } from './setup-db';
 
@@ -384,6 +386,132 @@ describe('recordConnectRequestBestEffort', () => {
 			expect(await readConnectRequest(database, 'default')).toMatchObject({
 				plugin: 'linear',
 				connectUrl: 'https://hub.corsair.dev/connect/abc',
+			});
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('rejects a connect write when encryptDataAtRest is on and kek is empty', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database, 'acme', 'linear');
+			const input = {
+				tenantId: 'acme',
+				plugin: 'linear',
+				connectUrl: 'https://hub.corsair.dev/connect/secret',
+				encryptDataAtRest: true,
+				kek: '',
+			};
+			await expect(recordConnectRequest(database, input)).rejects.toThrow(
+				'encryptDataAtRest requires kek',
+			);
+			await recordConnectRequestBestEffort(database, input);
+			await expect(
+				clearConnectRequest(database, 'acme', Date.now(), 'linear', '', true),
+			).rejects.toThrow('encryptDataAtRest requires kek');
+
+			const rows = await database.db
+				.selectFrom('corsair_events')
+				.selectAll()
+				.execute();
+			expect(rows).toHaveLength(0);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('reads a sealed connect request back with the same kek', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database, 'acme', 'linear');
+			const kek = 'connect-kek';
+			const dek = generateDEK();
+			await database.db
+				.updateTable('corsair_accounts')
+				.set({ dek: await encryptDEK(dek, kek) })
+				.where('id', '=', 'acct-acme-linear')
+				.execute();
+			await recordConnectRequest(database, {
+				tenantId: 'acme',
+				plugin: 'linear',
+				connectUrl: 'https://hub.corsair.dev/connect/sealed',
+				encryptDataAtRest: true,
+				kek,
+			});
+
+			const row = await database.db
+				.selectFrom('corsair_events')
+				.selectAll()
+				.executeTakeFirstOrThrow();
+			expect(JSON.stringify(row.payload)).not.toContain('sealed');
+			await expect(
+				readConnectRequest(database, 'acme', undefined, undefined, kek),
+			).resolves.toMatchObject({
+				plugin: 'linear',
+				connectUrl: 'https://hub.corsair.dev/connect/sealed',
+			});
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('returns null for an unreadable sealed request without failing the tenant read', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database, 'acme', 'linear');
+			await seedAccount(database, 'acme', 'slack');
+			await seedAccount(database, 'acme', 'github');
+			const kek = 'connect-kek';
+			const now = new Date();
+			await database.db
+				.updateTable('corsair_accounts')
+				.set({ dek: await encryptDEK(generateDEK(), kek) })
+				.where('id', '=', 'acct-acme-linear')
+				.execute();
+			const stale = sealJson(
+				{
+					plugin: 'linear',
+					connectUrl: 'https://hub.corsair.dev/connect/stale',
+				},
+				generateDEK(),
+			);
+			await database.db
+				.insertInto('corsair_events')
+				.values([
+					{
+						id: 'unreadable-connect-request',
+						created_at: now,
+						updated_at: now,
+						account_id: 'acct-acme-linear',
+						event_type: 'connect.request',
+						payload: stale,
+					},
+					{
+						id: 'missing-dek-connect-request',
+						created_at: now,
+						updated_at: now,
+						account_id: 'acct-acme-github',
+						event_type: 'connect.request',
+						payload: stale,
+					},
+				])
+				.execute();
+			await recordConnectRequest(
+				database,
+				{
+					tenantId: 'acme',
+					plugin: 'slack',
+					connectUrl: 'https://hub.corsair.dev/connect/live',
+				},
+				now.getTime() + 1,
+			);
+
+			await expect(
+				readConnectRequest(database, 'acme', now.getTime() + 1, undefined, kek),
+			).resolves.toMatchObject({
+				plugin: 'slack',
+				connectUrl: 'https://hub.corsair.dev/connect/live',
 			});
 		} finally {
 			cleanup();

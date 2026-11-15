@@ -1,0 +1,527 @@
+{
+  "id": "coinmarketcap",
+  "displayName": "CoinMarketCap",
+  "description": "Crypto market data from CoinMarketCap - ranked market listings, price and volume quotes, ID resolution, asset metadata, global market metrics, price conversion, exchange details, and API key usage.",
+  "npmPackageName": "@corsair-dev/coinmarketcap",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "coinmarketcap.api.cryptocurrency.info",
+      "shortPath": "cryptocurrency.info",
+      "description": "Static metadata for a cryptocurrency, such as its description, logo, website and social links, by CMC ID, slug, ticker or contract address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string[]",
+            "description": "CoinMarketCap IDs, such as [\"1\", \"1027\"]."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string[]",
+            "description": "Slugs, such as [\"bitcoin\"]."
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tickers, such as [\"BTC\"]."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string",
+            "description": "A contract address, when the asset is a token."
+          },
+          {
+            "key": "skip_invalid",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip unknown identifiers instead of failing the whole call."
+          },
+          {
+            "key": "aux",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated supplemental fields: urls, logo, description, tags, platform, date_added, notice, status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cryptocurrencies",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, symbol?: string | null, category?: string | null, slug?: string | null, logo?: string | null, description?: string | null, date_added?: string | null, date_launched?: string | null, notice?: string | null, tags?: string[] | null, tag-names?: string[] | null, tag-groups?: string[] | null, subreddit?: string | null, twitter_username?: string | null, infinite_supply?: boolean | null, is_hidden?: number | null, platform?: { id?: number | string | null, slug?: string | null, name?: string | null, symbol?: string | null, token_address?: string | null } | null, urls?: { website?: string[] | null, twitter?: string[] | null, reddit?: string[] | null, message_board?: string[] | null, chat?: string[] | null, facebook?: string[] | null, explorer?: string[] | null, technical_doc?: string[] | null, source_code?: string[] | null, announcement?: string[] | null } | null, lookup_key: string }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ timestamp?: string, error_code?: number | string, error_message?: string | null, elapsed?: number | string, credit_count?: number, notice?: string | null, total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcap.api.cryptocurrency.listings",
+      "shortPath": "cryptocurrency.listings",
+      "description": "Rank every active cryptocurrency by market cap, price, volume or a percent change, with price, market cap and volume filters, paging and up to 120 quote currencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "1-based index of the first result. Defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return. Defaults to 100; the maximum is 5000. Each 250 results costs one credit."
+          },
+          {
+            "key": "price_min",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum USD price."
+          },
+          {
+            "key": "price_max",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum USD price."
+          },
+          {
+            "key": "market_cap_min",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum market cap in USD."
+          },
+          {
+            "key": "market_cap_max",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum market cap in USD."
+          },
+          {
+            "key": "volume_24h_min",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum rolling 24 hour USD volume."
+          },
+          {
+            "key": "volume_24h_max",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rolling 24 hour USD volume."
+          },
+          {
+            "key": "circulating_supply_min",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "circulating_supply_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "percent_change_24h_min",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum 24 hour percent change, so -50 for a 50% drop."
+          },
+          {
+            "key": "percent_change_24h_max",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "convert",
+            "optional": true,
+            "type": "string[]",
+            "description": "Quote currencies by symbol, such as [\"USD\"] or [\"USD\", \"EUR\"]. Each one past the first costs an extra credit, and a plan may cap how many it allows."
+          },
+          {
+            "key": "convert_id",
+            "optional": true,
+            "type": "string[]",
+            "description": "Quote currencies by CMC ID instead of symbol. Cannot be combined with `convert`."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "market_cap | market_cap_strict | name | symbol | date_added | price | circulating_supply | total_supply | max_supply | num_market_pairs | market_cap_by_total_supply_strict | volume_24h | volume_7d | volume_30d | percent_change_1h | percent_change_24h | percent_change_7d",
+            "description": "Field to sort by. Defaults to market_cap."
+          },
+          {
+            "key": "sort_dir",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction. Defaults to desc."
+          },
+          {
+            "key": "cryptocurrency_type",
+            "optional": true,
+            "type": "all | coins | tokens",
+            "description": "Limit the result to coins, tokens or both. Defaults to all."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only assets carrying this tag, such as \"defi\" or \"layer-2\"."
+          },
+          {
+            "key": "aux",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated supplemental fields, for example \"platform,first_historical_data\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, symbol?: string | null, slug?: string | null, platform?: { id?: number | string | null, slug?: string | null, name?: string | null, symbol?: string | null, token_address?: string | null } | null, tags?: (string | { slug?: string | null, name?: string | null, category?: string | null })[] | null, is_active?: number | null, infinite_supply?: boolean | null, is_market_cap_included_in_calc?: number | null, is_fiat?: number | null, circulating_supply?: number | null, total_supply?: number | null, max_supply?: number | null, date_added?: string | null, num_market_pairs?: number | null, cmc_rank?: number | null, last_updated?: string | null, tvl_ratio?: number | null, self_reported_circulating_supply?: number | null, self_reported_market_cap?: number | null, unlocked_circulating_supply?: number | null, unlocked_market_cap?: number | null, minted_market_cap?: number | null, quote: { id?: number, symbol?: string, price?: number | null, volume_24h?: number | null, cex_volume_24h?: number | null, dex_volume_24h?: number | null, volume_24h_reported?: number | null, volume_7d?: number | null, volume_7d_reported?: number | null, volume_30d?: number | null, volume_30d_reported?: number | null, volume_change_24h?: number | null, percent_change_1h?: number | null, percent_change_24h?: number | null, percent_change_7d?: number | null, percent_change_30d?: number | null, percent_change_60d?: number | null, percent_change_90d?: number | null, market_cap?: number | null, market_cap_dominance?: number | null, fully_diluted_market_cap?: number | null, minted_market_cap?: number | null, market_cap_by_total_supply?: number | null, tvl?: number | null, last_updated?: string | null }[] }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ timestamp?: string, error_code?: number | string, error_message?: string | null, elapsed?: number | string, credit_count?: number, notice?: string | null, total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcap.api.cryptocurrency.map",
+      "shortPath": "cryptocurrency.map",
+      "description": "Resolve tickers, or a page of the full asset list, to the stable CoinMarketCap IDs, names and slugs that every other call takes; it has no slug filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listing_status",
+            "optional": true,
+            "type": "(active | inactive | untracked)[]",
+            "description": "Which listing statuses to include. Defaults to active."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "1-based index of the first result. Defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return. Defaults to every match; the maximum is 5000."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "cmc_rank | id",
+            "description": "Field to sort by. Defaults to id."
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tickers to resolve to CMC IDs, such as [\"BTC\", \"ETH\"]. When set, the API ignores every other option except `aux`."
+          },
+          {
+            "key": "aux",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated supplemental fields: platform, first_historical_data, last_historical_data, is_active, status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cryptocurrencies",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, symbol?: string | null, slug?: string | null, rank?: number | null, is_active?: number | null, status?: string | null, first_historical_data?: string | null, last_historical_data?: string | null, platform?: { id?: number | string | null, slug?: string | null, name?: string | null, symbol?: string | null, token_address?: string | null } | null }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ timestamp?: string, error_code?: number | string, error_message?: string | null, elapsed?: number | string, credit_count?: number, notice?: string | null, total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcap.api.cryptocurrency.quotes",
+      "shortPath": "cryptocurrency.quotes",
+      "description": "Latest price, market cap, volume and percent changes for specific assets, by CMC ID, slug or ticker, in one or more quote currencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string[]",
+            "description": "CoinMarketCap IDs, such as [\"1\", \"1027\"]."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string[]",
+            "description": "Slugs, such as [\"bitcoin\", \"ethereum\"]."
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tickers, such as [\"BTC\", \"ETH\"]."
+          },
+          {
+            "key": "convert",
+            "optional": true,
+            "type": "string[]",
+            "description": "Quote currencies by symbol. Each one past the first costs an extra credit."
+          },
+          {
+            "key": "convert_id",
+            "optional": true,
+            "type": "string[]",
+            "description": "Quote currencies by CMC ID. Cannot be combined with `convert`."
+          },
+          {
+            "key": "aux",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated supplemental fields, for example \"platform,first_historical_data\"."
+          },
+          {
+            "key": "skip_invalid",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip unknown identifiers instead of failing the whole call. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, symbol?: string | null, slug?: string | null, platform?: { id?: number | string | null, slug?: string | null, name?: string | null, symbol?: string | null, token_address?: string | null } | null, tags?: (string | { slug?: string | null, name?: string | null, category?: string | null })[] | null, is_active?: number | null, infinite_supply?: boolean | null, is_market_cap_included_in_calc?: number | null, is_fiat?: number | null, circulating_supply?: number | null, total_supply?: number | null, max_supply?: number | null, date_added?: string | null, num_market_pairs?: number | null, cmc_rank?: number | null, last_updated?: string | null, tvl_ratio?: number | null, self_reported_circulating_supply?: number | null, self_reported_market_cap?: number | null, unlocked_circulating_supply?: number | null, unlocked_market_cap?: number | null, minted_market_cap?: number | null, quote: { id?: number, symbol?: string, price?: number | null, volume_24h?: number | null, cex_volume_24h?: number | null, dex_volume_24h?: number | null, volume_24h_reported?: number | null, volume_7d?: number | null, volume_7d_reported?: number | null, volume_30d?: number | null, volume_30d_reported?: number | null, volume_change_24h?: number | null, percent_change_1h?: number | null, percent_change_24h?: number | null, percent_change_7d?: number | null, percent_change_30d?: number | null, percent_change_60d?: number | null, percent_change_90d?: number | null, market_cap?: number | null, market_cap_dominance?: number | null, fully_diluted_market_cap?: number | null, minted_market_cap?: number | null, market_cap_by_total_supply?: number | null, tvl?: number | null, last_updated?: string | null }[] }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ timestamp?: string, error_code?: number | string, error_message?: string | null, elapsed?: number | string, credit_count?: number, notice?: string | null, total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcap.api.exchange.info",
+      "shortPath": "exchange.info",
+      "description": "Metadata for a centralised exchange, such as its description, logo, launch date and links, by CMC exchange ID or slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string[]",
+            "description": "CoinMarketCap exchange IDs, such as [\"270\"]."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string[]",
+            "description": "Exchange slugs, such as [\"binance\"]. Pass exactly one of `id` or `slug`."
+          },
+          {
+            "key": "aux",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated supplemental fields: urls, logo, description, date_launched, notice, status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exchanges",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, slug?: string | null, logo?: string | null, description?: string | null, date_launched?: string | null, notice?: string | null, is_hidden?: number | null, status?: string | null, urls?: { website?: string[] | null, twitter?: string[] | null, blog?: string[] | null, chat?: string[] | null, fee?: string[] | null, message_board?: string[] | null, actual?: string[] | null, register?: string[] | null } | null, type?: string | null, tags?: { name?: string | null, slug?: string | null, group?: string | null }[] | null, maker_fee?: number | null, taker_fee?: number | null, weekly_visits?: number | null, spot_volume_usd?: number | null, spot_volume_last_updated?: string | null, porStatus?: string | null, porAuditStatus?: string | null, porSwitch?: boolean | null, lookup_key: string }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ timestamp?: string, error_code?: number | string, error_message?: string | null, elapsed?: number | string, credit_count?: number, notice?: string | null, total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcap.api.globalMetrics.quotes",
+      "shortPath": "globalMetrics.quotes",
+      "description": "Market-wide totals: total market cap and 24 hour volume, BTC and ETH dominance, and the count of tracked assets, pairs and exchanges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "convert",
+            "optional": true,
+            "type": "string[]",
+            "description": "Quote currencies by symbol. Each one past the first costs an extra credit."
+          },
+          {
+            "key": "convert_id",
+            "optional": true,
+            "type": "string[]",
+            "description": "Quote currencies by CMC ID. Cannot be combined with `convert`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metrics",
+            "optional": false,
+            "type": "{ btc_dominance?: number | null, btc_dominance_24h_percentage_change?: number | null, eth_dominance?: number | null, eth_dominance_24h_percentage_change?: number | null, active_cryptocurrencies?: number | null, total_cryptocurrencies?: number | null, active_market_pairs?: number | null, active_exchanges?: number | null, total_exchanges?: number | null, total_crypto_dex_currencies?: number | null, today_change_percent?: number | null, past_24h_incremental_crypto_number?: number | null, past_7d_incremental_crypto_number?: number | null, past_30d_incremental_crypto_number?: number | null, last_updated?: string | null, quote: Record<string, { total_market_cap?: number | null, total_volume_24h?: number | null, total_volume_24h_reported?: number | null, altcoin_market_cap?: number | null, altcoin_volume_24h?: number | null, altcoin_volume_24h_reported?: number | null, defi_market_cap?: number | null, defi_volume_24h?: number | null, defi_volume_24h_reported?: number | null, stablecoin_market_cap?: number | null, stablecoin_volume_24h?: number | null, derivatives_volume_24h?: number | null, last_updated?: string | null }> }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ timestamp?: string, error_code?: number | string, error_message?: string | null, elapsed?: number | string, credit_count?: number, notice?: string | null, total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcap.api.key.info",
+      "shortPath": "key.info",
+      "description": "Plan and usage for the configured API key: the minute request limit, the monthly credit limit, and what is left today and this month",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "{ credit_limit_monthly?: number | null, credit_limit_monthly_reset?: string | null, credit_limit_monthly_reset_timestamp?: string | null, rate_limit_minute?: number | null }"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ current_minute?: { requests_made?: number | null, requests_left?: number | null } | null, current_day?: { credits_used?: number | null, credits_left?: number | null } | null, current_month?: { credits_used?: number | null, credits_left?: number | null } | null }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ timestamp?: string, error_code?: number | string, error_message?: string | null, elapsed?: number | string, credit_count?: number, notice?: string | null, total_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "coinmarketcap.api.tools.priceConversion",
+      "shortPath": "tools.priceConversion",
+      "description": "Convert an amount of one currency into another, optionally at a past timestamp; a ticker shared by several assets returns one result per asset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "How much of the source currency to convert, such as 1.5."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "The source currency CMC ID. CoinMarketCap takes exactly one ID here, not a list."
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string",
+            "description": "The source currency ticker. When several assets share it, one result per asset is returned."
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string",
+            "description": "A Unix or ISO 8601 timestamp to convert at. Defaults to now."
+          },
+          {
+            "key": "convert",
+            "optional": true,
+            "type": "string[]",
+            "description": "Target currencies by symbol, such as [\"USD\"]."
+          },
+          {
+            "key": "convert_id",
+            "optional": true,
+            "type": "string[]",
+            "description": "Target currencies by CMC ID. Cannot be combined with `convert`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversions",
+            "optional": false,
+            "type": "{ id: number, symbol?: string | null, name?: string | null, amount?: number | null, last_updated?: string | null, quote: Record<string, { price?: number | null, last_updated?: string | null }> }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ timestamp?: string, error_code?: number | string, error_message?: string | null, elapsed?: number | string, credit_count?: number, notice?: string | null, total_count?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,57 @@
+displayName: Adyntel
+description: Ad intelligence across Meta, Google, LinkedIn and TikTok - ad libraries, keyword searches, paid versus organic keywords.
+domain: adyntel.com
+recommendedAuth: api_key
+overviewNote: |
+  Adyntel needs two things, not one: an API key and the email of the account that owns it. Both go in the JSON body of every call, and a key without its matching email is a 401. Sign up at platform.adyntel.com/auth/sign-up for 50 free credits, then copy the key from the Integrations page of the platform dashboard. Store it as `api_key` and the account email as `email` in the account config.
+
+  Things to know before you call:
+
+  - **Every call costs credits.** One credit per scrape, one page = one credit. `google.shoppingStatus` is free. `extract_text` (Google and LinkedIn), `impression_data` (LinkedIn) and `influencer_ads` (TikTok) each add one credit on top. A 204 ("no ads found") is not charged.
+  - **A 204 is a real answer, and each endpoint reports it differently.** Adyntel answers 204 with no body when it finds nothing, and charges nothing for it. The plugin turns that into an empty result rather than an error. How you read it depends on the endpoint: `meta.ads` and `meta.adSearch` leave `results` absent, `tiktok.ads` leaves `brand_ads` absent, `tiktok.keywordSearch` leaves `data` absent, and `google.shopping` and `google.shoppingStatus` leave `ads` and `id` absent. Separately, `google.shopping` without `shopping: true` answers with an `id` for a queued scrape; that is not an empty result, so poll it with `google.shoppingStatus`. A failed body read is not a 204 and throws. On `google.ads` and `linkedin.ads` a 204 can also mean the scrape passed Adyntel's 60 second sync limit, and the status alone can't tell that from "no ads". When you need a complete answer from either, send `webhook_url` so the scrape runs as a job and the results are POSTed to you.
+  - **`company_domain` is the bare domain.** Send `clay.com`, never `https://clay.com` or `www.clay.com`. Adyntel does not reject a URL; it finds nothing and answers 204.
+  - **Paging differs by endpoint.** `meta.ads`, `meta.adSearch`, `google.ads`, `linkedin.ads` and `linkedin.keywordSearch` return a `continuation_token` that is `null` on the last page; send it back on the next call. `tiktok.ads` uses `continuation_tokens` instead, one token for brand ads and one per influencer. `tiktok.keywordSearch` has no paging input at all: it returns `has_more` and a `search_id`, but the API exposes no parameter for requesting the next page, so a caller gets the first page only. On Google, a country filter is scoped to one call: send `country_code` again with every token, because the token does not carry it.
+  - **`all_ads` is a one-way door.** On `google.ads`, `linkedin.ads` and `meta.ads` it follows the token to the end, costs one credit per page, and the docs state there is no way to stop it. It needs a `webhook_url`, and the schema rejects the call without one rather than letting Adyntel fail it. `meta.adSearch` exposes `all_ads` without a webhook input, so its pages are collected by Adyntel and only the final result is returned; it takes no `webhook_url`.
+  - **Webhooks are yours to receive.** Setting `webhook_url` makes Adyntel answer with a `jobId` and POST the results to that URL later. This plugin does not host that receiver; the response carries `jobId` or `jobIds` so you can tell a queued job from a result.
+  - **Two filters reject rather than ignore.** On Meta, an unrecognised `language` is a 422 before anything is scraped. On Google, Adyntel treats an unrecognised `media_type` as `all`, so the schema accepts only `text`, `image`, `video` and `all` and a typo fails before the call instead of widening the result.
+  - **Country support differs per endpoint.** Meta accepts one code or an array of up to 20 (the array needs `webhook_url` and costs one credit per country). Google accepts one per call. TikTok's keyword search accepts European codes only; the schema rejects `US` rather than letting the API answer with nothing.
+  - **TikTok wraps its answers.** `tiktok.keywordSearch` and `tiktok.adDetails` return `{ code, data }` and can send a non-zero `code` with a 200. The plugin throws an `AdyntelAPIError` on a non-zero code so a failure cannot read as "no ads"; its `providerCode` holds the code, and it is not retried because the scrape already ran.
+references:
+  - title: Adyntel API reference
+    url: https://docs.adyntel.com/openapi-docs/existing-endpoints
+  - title: Authorization
+    url: https://docs.adyntel.com/authorization
+examples:
+  read:
+    path: google.ads
+    title: List a company's Google ads
+    args:
+      company_domain: clay.com
+  write:
+    path: keywords.paidVsOrganic
+    title: Compare paid and organic keywords for a domain
+    args:
+      company_domain: lokalise.com
+apiExamples:
+  meta.ads:
+    call: "{ company_domain: 'zappos.com', media_type: 'video', country_code: 'US' }"
+  meta.adSearch:
+    call: "{ keyword: 'webinar', country_code: 'US' }"
+  google.ads:
+    call: "{ company_domain: 'clay.com', country_code: 'FR' }"
+  google.shopping:
+    call: "{ company_domain: 'tesla.com', shopping: true }"
+  google.shoppingStatus:
+    call: "{ id: '12172142-7717-0066-0000-f1e50ca3d579' }"
+  linkedin.ads:
+    call: "{ company_domain: 'clay.com', date_filter: { preset: 'last30d' } }"
+  linkedin.keywordSearch:
+    call: "{ keyword: 'webinar', country: 'US', dateOption: 'last-30-days' }"
+  tiktok.ads:
+    call: "{ company_domain: 'gymshark.com', influencer_ads: true }"
+  tiktok.keywordSearch:
+    call: "{ keyword: 'toys', country_code: 'DE' }"
+  tiktok.adDetails:
+    call: "{ id: '1816440843906114' }"
+  keywords.paidVsOrganic:
+    call: "{ company_domain: 'lokalise.com' }"

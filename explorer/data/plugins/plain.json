@@ -1,7 +1,7 @@
 {
   "id": "plain",
   "displayName": "Plain",
-  "description": "Plain plugin for Corsair",
+  "description": "Customer support platform for managing customers, threads, customer groups, companies, tiers, and users, with a raw GraphQL query endpoint.",
   "npmPackageName": "@corsair-dev/plain",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -38,8 +38,8 @@
         "fields": [
           {
             "key": "company",
-            "optional": true,
-            "type": "{ id: string, name: string, domainName: string, contractValue?: number | null }"
+            "optional": false,
+            "type": "{ id: string, name: string, domainName: string, contractValue?: number | null } | null"
           }
         ]
       }
@@ -85,12 +85,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "CREATED | UPDATED | NOOP"
+            "type": "CREATED | UPDATED | NOOP | null"
           },
           {
             "key": "company",
-            "optional": true,
-            "type": "{ id: string, name: string, domainName: string, contractValue?: number | null }"
+            "optional": false,
+            "type": "{ id: string, name: string, domainName: string, contractValue?: number | null } | null"
           }
         ]
       }
@@ -213,7 +213,7 @@
           {
             "key": "pageInfo",
             "optional": false,
-            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null }"
           }
         ]
       }
@@ -295,8 +295,8 @@
         "fields": [
           {
             "key": "customer",
-            "optional": true,
-            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } }"
+            "optional": false,
+            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } } | null"
           }
         ]
       }
@@ -321,8 +321,8 @@
         "fields": [
           {
             "key": "customer",
-            "optional": true,
-            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } }"
+            "optional": false,
+            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } } | null"
           }
         ]
       }
@@ -378,7 +378,7 @@
           {
             "key": "pageInfo",
             "optional": false,
-            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null }"
           },
           {
             "key": "totalCount",
@@ -419,12 +419,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "CREATED | UPDATED | NOOP"
+            "type": "CREATED | UPDATED | NOOP | null"
           },
           {
             "key": "customer",
-            "optional": true,
-            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } }"
+            "optional": false,
+            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } } | null"
           }
         ]
       }
@@ -445,7 +445,7 @@
           {
             "key": "variables",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           },
           {
             "key": "operationName",
@@ -456,7 +456,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "lazy"
+        "type": "JsonValue"
       }
     },
     {
@@ -524,8 +524,8 @@
         "fields": [
           {
             "key": "thread",
-            "optional": true,
-            "type": "{ id: string, ref: string, title: string, status: string, priority: number }"
+            "optional": false,
+            "type": "{ id: string, ref: string, title: string, status: string, priority: number } | null"
           }
         ]
       }
@@ -581,7 +581,7 @@
           {
             "key": "pageInfo",
             "optional": false,
-            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null }"
           },
           {
             "key": "totalThreads",
@@ -611,8 +611,8 @@
         "fields": [
           {
             "key": "thread",
-            "optional": true,
-            "type": "{ id: string, ref: string, title: string, status: string, priority: number }"
+            "optional": false,
+            "type": "{ id: string, ref: string, title: string, status: string, priority: number } | null"
           }
         ]
       }
@@ -628,7 +628,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{ threadIds?: string[], refs?: string[], labelTypeIds?: string[], priorities?: number[], customerIds?: string[], isAssigned?: boolean, assignedToUser?: string[], isMarkedAsSpam?: boolean, supportEmailAddresses?: string[], customerGroupIdentifiers?: { customerGroupId?: string, customerGroupKey?: string, externalId?: string }[], tierIdentifiers?: { tierId?: string, externalId?: string }[], companyIdentifiers?: { companyId?: string, companyDomainName?: string }[], tenantIdentifiers?: { tenantId?: string, externalId?: string }[], messageSource?: CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL[], participantIds?: string[], broadcastIds?: string[], statuses?: TODO | SNOOZED | DONE[] }"
+            "type": "{ threadIds?: string[], refs?: string[], labelTypeIds?: string[], priorities?: number[], customerIds?: string[], isAssigned?: boolean, assignedToUser?: string[], isMarkedAsSpam?: boolean, supportEmailAddresses?: string[], customerGroupIdentifiers?: { customerGroupId?: string, customerGroupKey?: string, externalId?: string }[], tierIdentifiers?: { tierId?: string, externalId?: string }[], companyIdentifiers?: { companyId?: string, companyDomainName?: string }[], tenantIdentifiers?: { tenantId?: string, externalId?: string }[], messageSource?: (CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL)[], participantIds?: string[], broadcastIds?: string[], statuses?: (TODO | SNOOZED | DONE)[] }"
           },
           {
             "key": "sortBy",
@@ -668,7 +668,7 @@
           {
             "key": "pageInfo",
             "optional": false,
-            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null }"
           },
           {
             "key": "totalCount",
@@ -689,7 +689,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{ threadIds?: string[], refs?: string[], labelTypeIds?: string[], priorities?: number[], customerIds?: string[], isAssigned?: boolean, assignedToUser?: string[], isMarkedAsSpam?: boolean, supportEmailAddresses?: string[], customerGroupIdentifiers?: { customerGroupId?: string, customerGroupKey?: string, externalId?: string }[], tierIdentifiers?: { tierId?: string, externalId?: string }[], companyIdentifiers?: { companyId?: string, companyDomainName?: string }[], tenantIdentifiers?: { tenantId?: string, externalId?: string }[], messageSource?: CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL[], participantIds?: string[], broadcastIds?: string[], statuses?: TODO | SNOOZED | DONE[] }"
+            "type": "{ threadIds?: string[], refs?: string[], labelTypeIds?: string[], priorities?: number[], customerIds?: string[], isAssigned?: boolean, assignedToUser?: string[], isMarkedAsSpam?: boolean, supportEmailAddresses?: string[], customerGroupIdentifiers?: { customerGroupId?: string, customerGroupKey?: string, externalId?: string }[], tierIdentifiers?: { tierId?: string, externalId?: string }[], companyIdentifiers?: { companyId?: string, companyDomainName?: string }[], tenantIdentifiers?: { tenantId?: string, externalId?: string }[], messageSource?: (CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL)[], participantIds?: string[], broadcastIds?: string[], statuses?: (TODO | SNOOZED | DONE)[] }"
           },
           {
             "key": "sortBy",
@@ -729,7 +729,7 @@
           {
             "key": "pageInfo",
             "optional": false,
-            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null }"
           },
           {
             "key": "totalCount",
@@ -810,8 +810,8 @@
         "fields": [
           {
             "key": "thread",
-            "optional": true,
-            "type": "{ id: string, ref: string, title: string, status: string, priority: number }"
+            "optional": false,
+            "type": "{ id: string, ref: string, title: string, status: string, priority: number } | null"
           }
         ]
       }
@@ -836,8 +836,8 @@
         "fields": [
           {
             "key": "tier",
-            "optional": true,
-            "type": "{ id: string, name: string, externalId?: string | null, color?: string, isDefault?: boolean }"
+            "optional": false,
+            "type": "{ id: string, name: string, externalId?: string | null, color?: string, isDefault?: boolean } | null"
           }
         ]
       }
@@ -883,7 +883,7 @@
           {
             "key": "pageInfo",
             "optional": false,
-            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null }"
           }
         ]
       }
@@ -934,8 +934,8 @@
         "fields": [
           {
             "key": "user",
-            "optional": true,
-            "type": "{ id: string, fullName: string, publicName: string, email: string, isDeleted?: boolean }"
+            "optional": false,
+            "type": "{ id: string, fullName: string, publicName: string, email: string, isDeleted?: boolean } | null"
           }
         ]
       }

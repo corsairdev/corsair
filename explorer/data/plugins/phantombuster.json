@@ -64,37 +64,37 @@
           {
             "key": "scriptOrgName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "scriptId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "script",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "staging | release"
+            "type": "staging | release | null"
           },
           {
             "key": "argument",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastEndType",
             "optional": true,
-            "type": "finished | killed | global timeout | org timeout | agent timeout | unknown | no log timeout"
+            "type": "finished | killed | global timeout | org timeout | agent timeout | unknown | no log timeout | null"
           }
         ]
       }
@@ -110,7 +110,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name?: string | null, scriptId?: string | null, scriptName?: string | null, status?: idle | running | launching | error, nbLaunches?: number, fileMgmt?: string, fileMgmtValue?: number, launchType?: string, launchTimes?: string[], launchTimezone?: string | null, cronString?: string | null, loadChrome?: boolean, disableWebSecurity?: boolean, ignoreSslErrors?: boolean, argument?: string | {}, createdAt?: string, updatedAt?: string }[]"
+        "type": "{ id: string, name?: string | null, scriptId?: string | null, scriptName?: string | null, status?: idle | running | launching | error, nbLaunches?: number, fileMgmt?: string, fileMgmtValue?: number, launchType?: string, launchTimes?: string[], launchTimezone?: string | null, cronString?: string | null, loadChrome?: boolean, disableWebSecurity?: boolean, ignoreSslErrors?: boolean, argument?: string | Record<string, any>, createdAt?: string, updatedAt?: string }[]"
       }
     },
     {
@@ -229,17 +229,17 @@
           {
             "key": "argument",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "arguments",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "bonusArgument",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "saveArgument",
@@ -295,12 +295,12 @@
           {
             "key": "argument",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "arguments",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "saveArgument",
@@ -350,17 +350,17 @@
           {
             "key": "branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
             "optional": true,
-            "type": "staging | release"
+            "type": "staging | release | null"
           },
           {
             "key": "argument",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           },
           {
             "key": "launchType",
@@ -380,12 +380,12 @@
           {
             "key": "cronString",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fileMgmt",
             "optional": true,
-            "type": "folders | mix | delete"
+            "type": "folders | mix | delete | null"
           },
           {
             "key": "fileMgmtValue",
@@ -646,32 +646,32 @@
           {
             "key": "exitCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "startTime",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "endTime",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "output",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resultObject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -753,7 +753,7 @@
           {
             "key": "output",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -779,7 +779,7 @@
           {
             "key": "resultObject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -830,7 +830,7 @@
           {
             "key": "event_data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "timestamp",
@@ -1029,7 +1029,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "totalLeads",
@@ -1453,7 +1453,7 @@
           {
             "key": "planShouldCancelAt",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1520,7 +1520,7 @@
           {
             "key": "branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "environment",
@@ -1600,17 +1600,17 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "branches",
@@ -1717,17 +1717,17 @@
           {
             "key": "branch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -1874,7 +1874,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -1914,12 +1914,12 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "orgId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1945,7 +1945,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "agentId",
@@ -1960,17 +1960,17 @@
           {
             "key": "leadId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leadSlug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leadUrn",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -2000,22 +2000,22 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "leadId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leadSlug",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "leadUrn",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2031,13 +2031,13 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ linkedinCompanyId: string, type: string, slug: string, properties: {} }[]"
+            "type": "{ linkedinCompanyId: string, type: string, slug: string, properties: Record<string, any> }[]"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "({ status: success, slug: string, result: { id: string, linkedinCompanyId: string, type: string, slug: string, properties: {}, orgId?: string | null } } | { status: error, slug: string, error: string })[]"
+        "type": "({ status: success, slug: string, result: { id: string, linkedinCompanyId: string, type: string, slug: string, properties: Record<string, any>, orgId?: string | null } } | { status: error, slug: string, error: string })[]"
       }
     },
     {
@@ -2051,7 +2051,7 @@
           {
             "key": "objects",
             "optional": false,
-            "type": "{ type: string, slug: string, properties: {}, agentId: string, leadObjectId?: string }[]"
+            "type": "{ type: string, slug: string, properties: Record<string, any>, agentId: string, leadObjectId?: string }[]"
           }
         ]
       },
@@ -2082,7 +2082,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, linkedinCompanyId: string, type: string, slug: string, properties: {}, orgId?: string | null }[] | { companiesObjects: { id: string, linkedinCompanyId: string, type: string, slug: string, properties: {}, orgId?: string | null }[], totalCount: number }"
+        "type": "{ id: string, linkedinCompanyId: string, type: string, slug: string, properties: Record<string, any>, orgId?: string | null }[] | { companiesObjects: { id: string, linkedinCompanyId: string, type: string, slug: string, properties: Record<string, any>, orgId?: string | null }[], totalCount: number }"
       }
     },
     {
@@ -2107,7 +2107,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, orgId: string, type: string, slug: string, properties: {}, leadId?: string | null, leadSlug?: string | null, leadUrn?: string | null }[] | { leadsObjects: { id: string, orgId: string, type: string, slug: string, properties: {}, leadId?: string | null, leadSlug?: string | null, leadUrn?: string | null }[], totalCount: number }"
+        "type": "{ id: string, orgId: string, type: string, slug: string, properties: Record<string, any>, leadId?: string | null, leadSlug?: string | null, leadUrn?: string | null }[] | { leadsObjects: { id: string, orgId: string, type: string, slug: string, properties: Record<string, any>, leadId?: string | null, leadSlug?: string | null, leadUrn?: string | null }[], totalCount: number }"
       }
     },
     {
@@ -2172,17 +2172,17 @@
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "newsletter",

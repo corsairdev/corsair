@@ -1,0 +1,15 @@
+displayName: Appointo
+description: Appointment scheduling platform. List products, appointments, bookings and subscriptions, check availability, and create, update, reschedule, or cancel bookings.
+domain: appointo.me
+examples:
+  read:
+    path: products.list
+    title: List products
+  write:
+    path: bookings.create
+    title: Create a booking
+    args:
+      appointment_id: 12345
+      timestring: 2026-01-15T10:00:00Z
+      email: you@example.com
+      name: Octo Cat

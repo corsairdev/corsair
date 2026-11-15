@@ -66,37 +66,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "statement_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -127,7 +127,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -158,37 +158,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "statement_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -234,37 +234,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -315,37 +315,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "statement_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -370,117 +370,117 @@
           {
             "key": "base_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "week_start_day",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "wants_timestamp_timers",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "time_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "plan_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "clock",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency_code_display",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency_symbol_display",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "decimal_symbol",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "thousands_separator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color_scheme",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "weekly_capacity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "expense_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "invoice_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "estimate_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "approval_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "team_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "saml_sign_in_required",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "day_entry_notes_required",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -516,117 +516,117 @@
           {
             "key": "base_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "week_start_day",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "wants_timestamp_timers",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "time_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "plan_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "clock",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency_code_display",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency_symbol_display",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "decimal_symbol",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "thousands_separator",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color_scheme",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "weekly_capacity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "expense_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "invoice_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "estimate_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "approval_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "team_feature",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "saml_sign_in_required",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "day_entry_notes_required",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -697,57 +697,57 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_office",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fax",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_recipient_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -778,7 +778,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -824,37 +824,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -930,57 +930,57 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_office",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone_mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fax",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invoice_recipient_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1061,117 +1061,117 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[] | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purchase_order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "issue_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "accepted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "declined_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1202,17 +1202,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1263,62 +1263,62 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sent_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_by_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_from",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_from_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "send_me_a_copy",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recipients",
             "optional": true,
-            "type": "{ name?: string | null, email?: string | null }[]"
+            "type": "{ name?: string | null, email?: string | null }[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1349,7 +1349,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1385,7 +1385,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1416,117 +1416,117 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[] | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purchase_order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "issue_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "accepted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "declined_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1572,37 +1572,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -1688,117 +1688,117 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[] | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purchase_order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "issue_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "accepted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "declined_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1834,17 +1834,17 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1910,107 +1910,107 @@
           {
             "key": "spent_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "units",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "receipt",
             "optional": true,
-            "type": "{ url?: string | null, file_name?: string | null, file_size?: number | null, content_type?: string | null }"
+            "type": "{ url?: string | null, file_name?: string | null, file_size?: number | null, content_type?: string | null } | null"
           },
           {
             "key": "approval_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_explicitly_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_billed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "locked_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reimbursement",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "expense_category",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "user_assignment",
             "optional": true,
-            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null } | null"
           },
           {
             "key": "invoice",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2056,37 +2056,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -2157,107 +2157,107 @@
           {
             "key": "spent_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "units",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "receipt",
             "optional": true,
-            "type": "{ url?: string | null, file_name?: string | null, file_size?: number | null, content_type?: string | null }"
+            "type": "{ url?: string | null, file_name?: string | null, file_size?: number | null, content_type?: string | null } | null"
           },
           {
             "key": "approval_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_explicitly_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_billed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "locked_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reimbursement",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "expense_category",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "user_assignment",
             "optional": true,
-            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null } | null"
           },
           {
             "key": "invoice",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2328,7 +2328,7 @@
           {
             "key": "payment_options",
             "optional": true,
-            "type": "ach | credit_card | paypal[]"
+            "type": "(ach | credit_card | paypal)[]"
           },
           {
             "key": "tax",
@@ -2363,167 +2363,167 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[] | null"
           },
           {
             "key": "estimate",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "retainer",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purchase_order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "due_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "period_start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "period_end",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "issue_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payment_term",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payment_options",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recurring_invoice_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2554,27 +2554,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "use_as_service",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "use_as_expense",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2640,87 +2640,87 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sent_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_by_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_from",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sent_from_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "include_link_to_client_invoice",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "send_me_a_copy",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "thank_you",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "reminder",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "send_reminder_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attach_pdf",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "event_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recipients",
             "optional": true,
-            "type": "{ name?: string | null, email?: string | null }[]"
+            "type": "{ name?: string | null, email?: string | null }[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2771,57 +2771,57 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "paid_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recorded_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recorded_by_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transaction_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payment_gateway",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2852,7 +2852,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2883,7 +2883,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2919,7 +2919,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2955,7 +2955,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2986,167 +2986,167 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[] | null"
           },
           {
             "key": "estimate",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "retainer",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purchase_order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "due_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "period_start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "period_end",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "issue_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payment_term",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payment_options",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recurring_invoice_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3212,37 +3212,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -3283,37 +3283,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -3359,37 +3359,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -3435,37 +3435,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -3541,7 +3541,7 @@
           {
             "key": "payment_options",
             "optional": true,
-            "type": "ach | credit_card | paypal[]"
+            "type": "(ach | credit_card | paypal)[]"
           },
           {
             "key": "tax",
@@ -3576,167 +3576,167 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "line_items",
             "optional": true,
-            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[] | null"
           },
           {
             "key": "estimate",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "retainer",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "creator",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "purchase_order",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "due_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tax2_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "discount_amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "period_start",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "period_end",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "issue_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payment_term",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payment_options",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paid_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recurring_invoice_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3862,122 +3862,122 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_fixed_fee",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "bill_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "budget_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "budget_is_monthly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_budget_include_expenses",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "notify_when_over_budget",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "over_budget_notification_percentage",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "over_budget_notification_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "show_budget_to_all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "fee",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "starts_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ends_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4008,7 +4008,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4039,122 +4039,122 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_fixed_fee",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "bill_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "budget_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "budget_is_monthly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_budget_include_expenses",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "notify_when_over_budget",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "over_budget_notification_percentage",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "over_budget_notification_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "show_budget_to_all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "fee",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "starts_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ends_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4205,37 +4205,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -4366,122 +4366,122 @@
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_fixed_fee",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "bill_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "budget_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "budget_is_monthly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_budget",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_budget_include_expenses",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "notify_when_over_budget",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "over_budget_notification_percentage",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "over_budget_notification_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "show_budget_to_all",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "fee",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "starts_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ends_on",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4532,37 +4532,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billable_by_default",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "default_hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_default",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4593,7 +4593,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4624,37 +4624,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billable_by_default",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "default_hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_default",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4700,37 +4700,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -4786,37 +4786,37 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billable_by_default",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "default_hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_default",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4887,147 +4887,147 @@
           {
             "key": "spent_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "hours_without_timer",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "rounded_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_explicitly_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "locked_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "approval_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_billed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "timer_started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "started_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ended_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_running",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "budgeted",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "task",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "user_assignment",
             "optional": true,
-            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null } | null"
           },
           {
             "key": "task_assignment",
             "optional": true,
-            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null }"
+            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null } | null"
           },
           {
             "key": "invoice",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "external_reference",
             "optional": true,
-            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null }"
+            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null } | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -5058,7 +5058,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -5089,147 +5089,147 @@
           {
             "key": "spent_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "hours_without_timer",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "rounded_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_explicitly_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "locked_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "approval_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_billed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "timer_started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "started_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ended_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_running",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "budgeted",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "task",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "user_assignment",
             "optional": true,
-            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null } | null"
           },
           {
             "key": "task_assignment",
             "optional": true,
-            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null }"
+            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null } | null"
           },
           {
             "key": "invoice",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "external_reference",
             "optional": true,
-            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null }"
+            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null } | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -5320,37 +5320,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -5421,147 +5421,147 @@
           {
             "key": "spent_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "hours_without_timer",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "rounded_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_explicitly_locked",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "locked_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "approval_status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_closed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_billed",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "timer_started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "started_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ended_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_running",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "budgeted",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "client",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "task",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "user_assignment",
             "optional": true,
-            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null } | null"
           },
           {
             "key": "task_assignment",
             "optional": true,
-            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null }"
+            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null } | null"
           },
           {
             "key": "invoice",
             "optional": true,
-            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null"
           },
           {
             "key": "external_reference",
             "optional": true,
-            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null }"
+            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null } | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -5652,112 +5652,112 @@
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "telephone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_access_to_all_future_projects",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_contractor",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "saml_exempt",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "weekly_capacity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "default_hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "roles",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "access_roles",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "employee_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "calendar_integration_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "calendar_integration_source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "can_create_projects",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "permissions_claims",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -5788,7 +5788,7 @@
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -5819,112 +5819,112 @@
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "telephone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_access_to_all_future_projects",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_contractor",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "saml_exempt",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "weekly_capacity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "default_hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "roles",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "access_roles",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "employee_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "calendar_integration_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "calendar_integration_source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "can_create_projects",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "permissions_claims",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }
@@ -5970,37 +5970,37 @@
           {
             "key": "per_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_entries",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null } | null"
           }
         ]
       }
@@ -6096,112 +6096,112 @@
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "telephone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_access_to_all_future_projects",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_contractor",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "saml_exempt",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "weekly_capacity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "default_hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cost_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "roles",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "access_roles",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "employee_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "calendar_integration_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "calendar_integration_source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "can_create_projects",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "permissions_claims",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           }
         ]
       }

@@ -1,0 +1,42 @@
+displayName: Enigma
+description: Business data from Enigma's small business graph - match brands by name, website, phone or a natural-language prompt, read brand details with paged operating locations and legal entities, match operating locations, and look up legal entities with their registered entities.
+domain: enigma.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the Enigma Console under API Keys. Every call goes to one GraphQL endpoint, `https://api.enigma.com/graphql`. Things to know before you query:
+
+  - **Read-only.** All four operations are GraphQL queries; none of them writes or deletes anything at Enigma.
+  - **Matching, not search listings.** `brands.match` and `locations.match` send the terms to Enigma's resolver and return the single best match, or `null` when nothing clears the confidence bar. Narrow with `address` and raise `matchThreshold` (0.0 to 1.0) to reject weak matches.
+  - **`prompt`.** `brands.match` accepts a natural-language business description instead of name, website or phone, but it cannot be combined with any of them or with `address`.
+  - **Paging.** `brands.get` pages the brand's operating locations with `locationsFirst` and the `endCursor` from the previous page's `pageInfo`. `legalEntitiesFirst` sizes the legal entities list, which is not paged. Inside `legalEntities.get`, the `registeredEntities`, `addresses` and `brands` lists return their first page of up to three entries, each with a `pageInfo.hasNextPage` flag when more exist.
+  - **Card revenue costs credits.** `cardRevenue12m` is the projected 12-month card revenue Enigma reports for the brand or location, in dollars. Enigma bills it per value returned (25 credits each on its price list as of November 2026), so `brands.get` with the default 10 locations can use about 275 credits in one call. Set `locationsFirst` lower when you only need the brand's details. `brands.match` returns one value.
+  - **Rate limits.** Limits are per plan, daily and monthly. Over the limit the API answers 429 with a `Retry-After` header; the plugin retries up to three times, honoring that header. A 402 means the account is out of credits and is not retried.
+  - **Webhooks.** Enigma does not send webhooks to this plugin.
+examples:
+  read:
+    path: brands.match
+    title: Match a brand by name and state
+    args:
+      name: Starbucks
+      address:
+        state: WA
+      matchThreshold: 0.5
+  write:
+    path: brands.get
+    title: Read a brand detail by ID
+    args:
+      id: 5f1147ed-4d0e-4f36-a1d2-c2b3f2b1a9c4
+      locationsFirst: 10
+apiExamples:
+  brands.match:
+    call: "{ name: 'Starbucks', address: { state: 'WA' }, matchThreshold: 0.5 }"
+  brands.get:
+    call: "{ id: '5f1147ed-4d0e-4f36-a1d2-c2b3f2b1a9c4', locationsFirst: 10, locationsAfter: 'cursor-from-previous-page' }"
+  locations.match:
+    call: "{ name: 'Bluestone Lane', address: { city: 'New York', state: 'NY' } }"
+  legalEntities.get:
+    call: "{ name: 'Starbucks Corporation' }"
+apiNotes:
+  brands.match: At least one of `name`, `website`, `phoneNumber` or `prompt` is required, and `prompt` cannot be combined with any of them or with `address`.
+  legalEntities.get: At least one of `id` or `name` is required. The `registeredEntities`, `addresses` and `brands` lists return their first page of up to three entries; each carries a `pageInfo` with `hasNextPage` when more exist.
+  locations.match: At least one of `name`, `website`, `phoneNumber` or `address` is required.

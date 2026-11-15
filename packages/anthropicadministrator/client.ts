@@ -1,5 +1,10 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
 
 export type AnthropicAdministratorMethod = 'GET' | 'POST' | 'DELETE';
 
@@ -15,6 +20,8 @@ export class AnthropicAdministratorAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
 	/** Admin API error bodies are `{ type: "error", error: { type, message } }`. */
+	// Safe: the body is only read through `readErrorType`, which validates it with zod.
+	// A narrower type is not practical because gateways and proxies can return non-Anthropic error bodies.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	/** HTTP method of the failed request, so retries can tell reads from writes. */
@@ -41,13 +48,13 @@ export class AnthropicAdministratorAPIError extends Error {
 	}
 }
 
+const ErrorEnvelopeSchema = z.object({ error: z.object({ type: z.string() }) });
+
 /** Pulls `error.type` out of an Anthropic error envelope when present. */
-function readErrorType(body: unknown): string | undefined {
-	if (typeof body !== 'object' || body === null) return undefined;
-	const error = (body as { error?: unknown }).error;
-	if (typeof error !== 'object' || error === null) return undefined;
-	const type = (error as { type?: unknown }).type;
-	return typeof type === 'string' ? type : undefined;
+// Safe: the value is validated with `ErrorEnvelopeSchema` before any field is read.
+// A narrower type is not practical because the body comes straight off the wire.
+export function readErrorType(body: unknown): string | undefined {
+	return ErrorEnvelopeSchema.safeParse(body).data?.error.type;
 }
 
 const ANTHROPIC_API_BASE = 'https://api.anthropic.com';
@@ -68,7 +75,9 @@ export type AnthropicAdministratorAuthType = 'api_key' | 'oauth_2';
 export type AnthropicAdministratorRequestOptions = {
 	method?: AnthropicAdministratorMethod;
 	authType?: AnthropicAdministratorAuthType;
-	/** Request payloads differ per operation; validated by per-op zod schemas. */
+	/** JSON request payload, already validated by the operation's input schema. */
+	// Safe: every body is built from an input that passed its zod schema and is only JSON-serialized.
+	// A narrower type is not practical because each of the 26 operations sends a different payload shape.
 	body?: Record<string, unknown>;
 	/**
 	 * Query values are heterogeneous across the Admin API (cursors, limits,
@@ -77,14 +86,6 @@ export type AnthropicAdministratorRequestOptions = {
 	query?: Record<string, string | number | boolean | string[] | undefined>;
 };
 
-/**
- * Performs a request against the Anthropic Admin API.
- *
- * Auth: an Admin API key (`sk-ant-admin…`) in the `x-api-key` header, or an
- * OAuth token with the `org:admin` scope in `authorization: Bearer`. Admin keys
- * are provisioned by organization admins and are distinct from standard API
- * keys.
- */
 /**
  * Upper bound on a request path.
  *
@@ -123,6 +124,19 @@ function isRetryable(
 	return false;
 }
 
+/**
+ * Retrying is owned by the loop below, so corsair's built-in 429 retry is
+ * limited to the single attempt. Rate-limit detection stays on so a final 429
+ * still carries its `Retry-After` value.
+ */
+const SINGLE_ATTEMPT: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
+
 function retryDelayMs(error: ApiError, attempt: number): number {
 	const retryAfter = error.retryAfter;
 	if (typeof retryAfter === 'number' && retryAfter > 0) {
@@ -143,11 +157,13 @@ function retryDelayMs(error: ApiError, attempt: number): number {
  * binder, so a request that succeeds on retry returns that result to the
  * caller instead of surfacing the first failure.
  */
-export async function makeAnthropicAdministratorRequest<T>(
+// Safe: callers parse the returned body with the operation's zod output schema before use.
+// A narrower type is not practical because the response shape depends on which of the 26 endpoints was called.
+export async function makeAnthropicAdministratorRequest(
 	endpoint: string,
 	apiKey: string,
 	options: AnthropicAdministratorRequestOptions = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', body, query, authType = 'api_key' } = options;
 
 	if (endpoint.length > MAX_ENDPOINT_LENGTH) {
@@ -185,31 +201,26 @@ export async function makeAnthropicAdministratorRequest<T>(
 		query,
 	};
 
-	let lastError: unknown;
-
-	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+	for (let attempt = 1; ; attempt++) {
 		try {
-			return await request<T>(config, requestOptions);
+			// Safe: the raw body is validated by the caller's output schema.
+			// A narrower type is not practical because this transport is shared by every endpoint.
+			return await request<unknown>(config, requestOptions, {
+				rateLimitConfig: SINGLE_ATTEMPT,
+			});
 		} catch (error) {
-			lastError = error;
-
-			const status = error instanceof ApiError ? error.status : undefined;
-			const canRetry =
+			if (
 				error instanceof ApiError &&
 				attempt < MAX_ATTEMPTS &&
-				isRetryable(status, method);
-
-			if (!canRetry) break;
-
-			await sleep(retryDelayMs(error as ApiError, attempt));
+				isRetryable(error.status, method)
+			) {
+				await sleep(retryDelayMs(error, attempt));
+				continue;
+			}
+			throw new AnthropicAdministratorAPIError(
+				error instanceof Error ? error.message : 'Unknown error',
+				{ cause: error instanceof Error ? error : undefined, method },
+			);
 		}
 	}
-
-	if (lastError instanceof Error) {
-		throw new AnthropicAdministratorAPIError(lastError.message, {
-			cause: lastError,
-			method,
-		});
-	}
-	throw new AnthropicAdministratorAPIError('Unknown error', { method });
 }

@@ -81,27 +81,27 @@
           {
             "key": "parent",
             "optional": true,
-            "type": "{ id: string }"
+            "type": "{ id: string } | null"
           },
           {
             "key": "editedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archivedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -158,7 +158,7 @@
           {
             "key": "nodes",
             "optional": false,
-            "type": "{ id: string, body: string, issue: { id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color: string, position: number, description?: string | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null }, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, assignee?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, creator: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, project?: { id: string, name: string, description?: string | null, icon?: string | null, color?: string | null, state: backlog | planned | started | paused | completed | canceled, priority: number, sortOrder: number, startDate?: Date | null, targetDate?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, lead?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, teams: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }[], createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, cycle?: { id: string, number: number, name?: string | null, description?: string | null, startsAt?: Date | null, endsAt?: Date | null, completedAt?: Date | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, labels: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: lazy }[], subscribers: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }[], dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: lazy }, user: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, editedAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: lazy }[]"
+            "type": "{ id: string, body: string, issue: { id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color: string, position: number, description?: string | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null }, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, assignee?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, creator: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, project?: { id: string, name: string, description?: string | null, icon?: string | null, color?: string | null, state: backlog | planned | started | paused | completed | canceled, priority: number, sortOrder: number, startDate?: Date | null, targetDate?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, lead?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, teams: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }[], createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, cycle?: { id: string, number: number, name?: string | null, description?: string | null, startsAt?: Date | null, endsAt?: Date | null, completedAt?: Date | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, labels: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: (recursive) } | null }[], subscribers: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }[], dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: { id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color: string, position: number, description?: string | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null }, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, assignee?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, creator: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, project?: { id: string, name: string, description?: string | null, icon?: string | null, color?: string | null, state: backlog | planned | started | paused | completed | canceled, priority: number, sortOrder: number, startDate?: Date | null, targetDate?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, lead?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, teams: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }[], createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, cycle?: { id: string, number: number, name?: string | null, description?: string | null, startsAt?: Date | null, endsAt?: Date | null, completedAt?: Date | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, labels: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: (recursive) } | null }[], subscribers: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }[], dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: (recursive) } | null }, user: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, editedAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: { id: string, body: string, issue: { id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color: string, position: number, description?: string | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null }, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, assignee?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, creator: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, project?: { id: string, name: string, description?: string | null, icon?: string | null, color?: string | null, state: backlog | planned | started | paused | completed | canceled, priority: number, sortOrder: number, startDate?: Date | null, targetDate?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, lead?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, teams: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }[], createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, cycle?: { id: string, number: number, name?: string | null, description?: string | null, startsAt?: Date | null, endsAt?: Date | null, completedAt?: Date | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, labels: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: (recursive) } | null }[], subscribers: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }[], dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: { id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color: string, position: number, description?: string | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null }, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, assignee?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, creator: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, project?: { id: string, name: string, description?: string | null, icon?: string | null, color?: string | null, state: backlog | planned | started | paused | completed | canceled, priority: number, sortOrder: number, startDate?: Date | null, targetDate?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, lead?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, teams: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }[], createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, cycle?: { id: string, number: number, name?: string | null, description?: string | null, startsAt?: Date | null, endsAt?: Date | null, completedAt?: Date | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, labels: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: (recursive) } | null }[], subscribers: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }[], dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: (recursive) } | null }, user: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, editedAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: (recursive) } | null }[]"
           },
           {
             "key": "pageInfo",
@@ -214,27 +214,27 @@
           {
             "key": "parent",
             "optional": true,
-            "type": "{ id: string }"
+            "type": "{ id: string } | null"
           },
           {
             "key": "editedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archivedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -330,7 +330,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
@@ -340,7 +340,7 @@
           {
             "key": "estimate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sortOrder",
@@ -375,7 +375,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+            "type": "{ id: string, name: string, displayName: string, email?: string | null } | null"
           },
           {
             "key": "creator",
@@ -385,12 +385,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -447,7 +447,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
@@ -457,7 +457,7 @@
           {
             "key": "estimate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sortOrder",
@@ -492,7 +492,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+            "type": "{ id: string, name: string, displayName: string, email?: string | null } | null"
           },
           {
             "key": "creator",
@@ -502,72 +502,72 @@
           {
             "key": "project",
             "optional": true,
-            "type": "{ id: string, name: string, state: backlog | planned | started | paused | completed | canceled }"
+            "type": "{ id: string, name: string, state: backlog | planned | started | paused | completed | canceled } | null"
           },
           {
             "key": "cycle",
             "optional": true,
-            "type": "{ id: string, number: number, name?: string | null }"
+            "type": "{ id: string, number: number, name?: string | null } | null"
           },
           {
             "key": "labels",
             "optional": true,
-            "type": "{ nodes: { id: string, name: string, color: string }[] }"
+            "type": "{ nodes: { id: string, name: string, color: string }[] } | null"
           },
           {
             "key": "subscribers",
             "optional": true,
-            "type": "{ nodes: { id: string, name: string, displayName: string, email?: string | null }[] }"
+            "type": "{ nodes: { id: string, name: string, displayName: string, email?: string | null }[] } | null"
           },
           {
             "key": "dueDate",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "startedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "completedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "canceledAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "triagedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "snoozedUntilAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archivedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "parent",
             "optional": false,
-            "type": "lazy"
+            "type": "{ id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color?: string, position?: number }, team: { id: string, name: string, key: string }, assignee?: { id: string, name: string, displayName: string, email?: string | null } | null, creator: { id: string, name: string, displayName: string, email?: string | null }, project?: { id: string, name: string, state: backlog | planned | started | paused | completed | canceled } | null, cycle?: { id: string, number: number, name?: string | null } | null, labels?: { nodes: { id: string, name: string, color: string }[] } | null, subscribers?: { nodes: { id: string, name: string, displayName: string, email?: string | null }[] } | null, dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: (recursive) } | null"
           }
         ]
       }
@@ -603,7 +603,7 @@
           {
             "key": "nodes",
             "optional": false,
-            "type": "{ id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color?: string, position?: number }, team: { id: string, name: string, key: string }, assignee?: { id: string, name: string, displayName: string, email?: string | null } | null, creator: { id: string, name: string, displayName: string, email?: string | null }, project?: { id: string, name: string, state: backlog | planned | started | paused | completed | canceled } | null, cycle?: { id: string, number: number, name?: string | null } | null, labels?: { nodes: { id: string, name: string, color: string }[] } | null, subscribers?: { nodes: { id: string, name: string, displayName: string, email?: string | null }[] } | null, dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: lazy }[]"
+            "type": "{ id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color?: string, position?: number }, team: { id: string, name: string, key: string }, assignee?: { id: string, name: string, displayName: string, email?: string | null } | null, creator: { id: string, name: string, displayName: string, email?: string | null }, project?: { id: string, name: string, state: backlog | planned | started | paused | completed | canceled } | null, cycle?: { id: string, number: number, name?: string | null } | null, labels?: { nodes: { id: string, name: string, color: string }[] } | null, subscribers?: { nodes: { id: string, name: string, displayName: string, email?: string | null }[] } | null, dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: { id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color?: string, position?: number }, team: { id: string, name: string, key: string }, assignee?: { id: string, name: string, displayName: string, email?: string | null } | null, creator: { id: string, name: string, displayName: string, email?: string | null }, project?: { id: string, name: string, state: backlog | planned | started | paused | completed | canceled } | null, cycle?: { id: string, number: number, name?: string | null } | null, labels?: { nodes: { id: string, name: string, color: string }[] } | null, subscribers?: { nodes: { id: string, name: string, displayName: string, email?: string | null }[] } | null, dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: (recursive) } | null }[]"
           },
           {
             "key": "pageInfo",
@@ -649,7 +649,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
@@ -659,7 +659,7 @@
           {
             "key": "estimate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sortOrder",
@@ -694,7 +694,7 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+            "type": "{ id: string, name: string, displayName: string, email?: string | null } | null"
           },
           {
             "key": "creator",
@@ -704,12 +704,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -790,17 +790,17 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -820,27 +820,27 @@
           {
             "key": "startDate",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "targetDate",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "completedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "canceledAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "lead",
             "optional": true,
-            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+            "type": "{ id: string, name: string, displayName: string, email?: string | null } | null"
           },
           {
             "key": "teams",
@@ -850,17 +850,17 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archivedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -917,17 +917,17 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -947,27 +947,27 @@
           {
             "key": "startDate",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "targetDate",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "completedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "canceledAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "lead",
             "optional": true,
-            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+            "type": "{ id: string, name: string, displayName: string, email?: string | null } | null"
           },
           {
             "key": "teams",
@@ -977,12 +977,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -1059,17 +1059,17 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
@@ -1089,27 +1089,27 @@
           {
             "key": "startDate",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "targetDate",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "completedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "canceledAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "lead",
             "optional": true,
-            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+            "type": "{ id: string, name: string, displayName: string, email?: string | null } | null"
           },
           {
             "key": "teams",
@@ -1119,17 +1119,17 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archivedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -1170,17 +1170,17 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "icon",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
@@ -1190,17 +1190,17 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archivedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -1272,7 +1272,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "displayName",
@@ -1282,7 +1282,7 @@
           {
             "key": "avatarUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
@@ -1297,12 +1297,12 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           }
         ]
       }
@@ -1866,6 +1866,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
           "field": "estimate",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
@@ -2003,6 +2008,11 @@
         },
         {
           "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

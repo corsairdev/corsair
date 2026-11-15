@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Brex: every `brex.api.*` operation with input and output types."
+title: "Brex API reference"
+sidebarTitle: "API"
+description: "API reference for the Brex plugin in Corsair: every `brex.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `brex.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -28,26 +27,8 @@ await corsair.brex.api.accounts.getCash({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -72,26 +53,8 @@ await corsair.brex.api.accounts.getCashPrimary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -118,26 +81,8 @@ await corsair.brex.api.accounts.listCard({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -164,26 +109,8 @@ await corsair.brex.api.accounts.listCardStatements({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -210,26 +137,8 @@ await corsair.brex.api.accounts.listCash({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -257,26 +166,8 @@ await corsair.brex.api.accounts.listCashStatements({});
 | `id` | `string` | Yes | — |
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -305,26 +196,8 @@ await corsair.brex.api.budgetPrograms.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -352,26 +225,8 @@ await corsair.brex.api.budgets.archive({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -397,26 +252,8 @@ await corsair.brex.api.budgets.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -442,26 +279,8 @@ await corsair.brex.api.budgets.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -488,26 +307,8 @@ await corsair.brex.api.budgets.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -533,26 +334,8 @@ await corsair.brex.api.budgets.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -579,39 +362,13 @@ await corsair.brex.api.cards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `owner` | `object` | Yes | — |
+| `owner` | `Record<string, any>` | Yes | — |
 | `card_name` | `string` | Yes | — |
 | `card_type` | `string` | Yes | — |
 | `limit_type` | `string` | Yes | — |
 | `idempotency_key` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="owner full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -637,26 +394,8 @@ await corsair.brex.api.cards.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -682,26 +421,8 @@ await corsair.brex.api.cards.getPan({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -729,26 +450,8 @@ await corsair.brex.api.cards.list({});
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
 | `user_id` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -774,26 +477,8 @@ await corsair.brex.api.cards.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -823,26 +508,8 @@ await corsair.brex.api.cards.updateStatus({});
 | `lock_reason` | `string \| number \| boolean` | No | — |
 | `reason` | `string \| number \| boolean` | No | — |
 | `description` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -869,26 +536,8 @@ await corsair.brex.api.company.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -916,26 +565,8 @@ await corsair.brex.api.departments.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -961,26 +592,8 @@ await corsair.brex.api.departments.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1007,26 +620,8 @@ await corsair.brex.api.departments.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1055,26 +650,8 @@ await corsair.brex.api.expenses.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `expand[]` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1101,26 +678,8 @@ await corsair.brex.api.expenses.getCard({});
 |------|------|----------|-------------|
 | `expense_id` | `string` | Yes | — |
 | `expand[]` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1154,26 +713,8 @@ await corsair.brex.api.expenses.list({});
 | `purchased_at_end` | `string \| number \| boolean` | No | — |
 | `payment_posted_at_start` | `string \| number \| boolean` | No | — |
 | `payment_posted_at_end` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1203,26 +744,8 @@ await corsair.brex.api.expenses.listByBudget({});
 | `payment_posted_at_start` | `string \| number \| boolean` | No | — |
 | `payment_posted_at_end` | `string \| number \| boolean` | No | — |
 | `budget_id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1248,26 +771,8 @@ await corsair.brex.api.expenses.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `expense_id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1295,26 +800,8 @@ await corsair.brex.api.fields.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1340,26 +827,8 @@ await corsair.brex.api.fields.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1385,26 +854,8 @@ await corsair.brex.api.fields.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1431,26 +882,8 @@ await corsair.brex.api.fields.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1476,26 +909,8 @@ await corsair.brex.api.fields.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1524,26 +939,8 @@ await corsair.brex.api.fieldValues.create({});
 |------|------|----------|-------------|
 | `field_id` | `string` | Yes | — |
 | `values` | `any[]` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1570,26 +967,8 @@ await corsair.brex.api.fieldValues.delete({});
 |------|------|----------|-------------|
 | `field_id` | `string` | Yes | — |
 | `values` | `any[]` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1616,26 +995,8 @@ await corsair.brex.api.fieldValues.get({});
 |------|------|----------|-------------|
 | `field_id` | `string` | Yes | — |
 | `brex_id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1667,26 +1028,8 @@ await corsair.brex.api.fieldValues.list({});
 | `value_id` | `string \| number \| boolean` | No | — |
 | `remote_id` | `string \| number \| boolean` | No | — |
 | `value` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1713,26 +1056,8 @@ await corsair.brex.api.fieldValues.update({});
 |------|------|----------|-------------|
 | `field_id` | `string` | Yes | — |
 | `values` | `any[]` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1760,26 +1085,8 @@ await corsair.brex.api.legalEntities.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1806,26 +1113,8 @@ await corsair.brex.api.legalEntities.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1853,26 +1142,8 @@ await corsair.brex.api.locations.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1898,26 +1169,8 @@ await corsair.brex.api.locations.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1944,26 +1197,8 @@ await corsair.brex.api.locations.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1991,26 +1226,8 @@ await corsair.brex.api.receipts.match({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `receipt_name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2037,26 +1254,8 @@ await corsair.brex.api.receipts.upload({});
 |------|------|----------|-------------|
 | `expense_id` | `string` | Yes | — |
 | `receipt_name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2083,26 +1282,8 @@ await corsair.brex.api.referrals.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2129,26 +1310,8 @@ await corsair.brex.api.referrals.createDocument({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2174,26 +1337,8 @@ await corsair.brex.api.referrals.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2220,26 +1365,8 @@ await corsair.brex.api.referrals.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2267,26 +1394,8 @@ await corsair.brex.api.spendLimits.archive({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2312,35 +1421,9 @@ await corsair.brex.api.spendLimits.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `expense_policy_id` | `string` | Yes | — |
-| `authorization_settings` | `object` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="authorization_settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `authorization_settings` | `Record<string, any>` | Yes | — |
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2366,26 +1449,8 @@ await corsair.brex.api.spendLimits.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2412,26 +1477,8 @@ await corsair.brex.api.spendLimits.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2457,26 +1504,8 @@ await corsair.brex.api.spendLimits.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2504,26 +1533,8 @@ await corsair.brex.api.spendLimitsV1.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2549,26 +1560,8 @@ await corsair.brex.api.spendLimitsV1.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2596,26 +1589,8 @@ await corsair.brex.api.titles.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2641,26 +1616,8 @@ await corsair.brex.api.titles.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2687,26 +1644,8 @@ await corsair.brex.api.titles.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2739,26 +1678,8 @@ await corsair.brex.api.transactions.byAmountRange({});
 | `max_amount` | `number` | Yes | — |
 | `posted_at_start` | `string \| number \| boolean` | No | — |
 | `posted_at_end` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2788,26 +1709,8 @@ await corsair.brex.api.transactions.byDescription({});
 | `description` | `string` | Yes | — |
 | `posted_at_start` | `string \| number \| boolean` | No | — |
 | `posted_at_end` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2835,26 +1738,8 @@ await corsair.brex.api.transactions.getById({});
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2881,26 +1766,8 @@ await corsair.brex.api.transactions.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2929,26 +1796,8 @@ await corsair.brex.api.transfers.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -2980,26 +1829,8 @@ await corsair.brex.api.trips.list({});
 | `user_id` | `string \| number \| boolean` | No | — |
 | `starts_at_start` | `string \| number \| boolean` | No | — |
 | `starts_at_end` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3029,26 +1860,8 @@ await corsair.brex.api.users.create({});
 | `first_name` | `string` | Yes | — |
 | `last_name` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3074,26 +1887,8 @@ await corsair.brex.api.users.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3119,26 +1914,8 @@ await corsair.brex.api.users.getLimit({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3163,26 +1940,8 @@ await corsair.brex.api.users.getMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3210,26 +1969,8 @@ await corsair.brex.api.users.list({});
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
 | `email` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3255,27 +1996,9 @@ await corsair.brex.api.users.setLimit({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `monthly_limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `monthly_limit` | `number \| null` | No | — |
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3301,26 +2024,8 @@ await corsair.brex.api.users.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3348,26 +2053,8 @@ await corsair.brex.api.vendors.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `company_name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3393,26 +2080,8 @@ await corsair.brex.api.vendors.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3438,26 +2107,8 @@ await corsair.brex.api.vendors.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3485,26 +2136,8 @@ await corsair.brex.api.vendors.list({});
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
 | `name` | `string \| number \| boolean` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3530,26 +2163,8 @@ await corsair.brex.api.vendors.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3578,26 +2193,8 @@ await corsair.brex.api.webhookGroups.addMembers({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `webhook_ids` | `any[]` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3623,26 +2220,8 @@ await corsair.brex.api.webhookGroups.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3668,26 +2247,8 @@ await corsair.brex.api.webhookGroups.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3714,26 +2275,8 @@ await corsair.brex.api.webhookGroups.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3761,26 +2304,8 @@ await corsair.brex.api.webhookGroups.listMembers({});
 | `id` | `string` | Yes | — |
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3809,26 +2334,8 @@ await corsair.brex.api.webhooks.create({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `event_types` | `any[]` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3854,26 +2361,8 @@ await corsair.brex.api.webhooks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3900,26 +2389,8 @@ await corsair.brex.api.webhooks.list({});
 |------|------|----------|-------------|
 | `cursor` | `string \| number \| boolean` | No | — |
 | `limit` | `number` | No | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3944,26 +2415,8 @@ await corsair.brex.api.webhooks.listSecrets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -3989,26 +2442,8 @@ await corsair.brex.api.webhooks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 

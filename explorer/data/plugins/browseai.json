@@ -39,7 +39,7 @@
           {
             "key": "inputParameters",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | number | string[]>"
           },
           {
             "key": "notifyOnCapturedScreenshotChange",
@@ -74,17 +74,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "monitor",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, status?: string | null, pausedReason?: string | null, inputParameters?: {} | null, schedules?: { type?: string | null, everyMinutes?: number | null }[] | null, schedule?: string | null, notifyOnCapturedScreenshotChange?: boolean | null, notifyOnCapturedTextChange?: boolean | null, capturedScreenshotNotificationThreshold?: number | null, createdAt?: number | null, pausedAt?: number | null, updatedAt?: number | null }"
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, pausedReason?: string | null, inputParameters?: Record<string, string | number | string[]> | null, schedules?: { type?: string | null, everyMinutes?: number | null }[] | null, schedule?: string | null, notifyOnCapturedScreenshotChange?: boolean | null, notifyOnCapturedTextChange?: boolean | null, capturedScreenshotNotificationThreshold?: number | null, createdAt?: number | null, pausedAt?: number | null, updatedAt?: number | null } | null"
           }
         ]
       }
@@ -115,12 +115,12 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -146,7 +146,7 @@
           {
             "key": "inputParameters",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, string | number | string[]>[]"
           }
         ]
       },
@@ -156,17 +156,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{ bulkRun?: { id?: string | null, title?: string | null, status?: string | null, tasksCount?: number | null, successfulTasks?: number | null, failedTasks?: number | null, robotId?: string | null, createdAt?: number | null } | null }"
+            "type": "{ bulkRun?: { id?: string | null, title?: string | null, status?: string | null, tasksCount?: number | null, successfulTasks?: number | null, failedTasks?: number | null, robotId?: string | null, createdAt?: number | null } | null } | null"
           }
         ]
       }
@@ -186,17 +186,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "robots",
             "optional": true,
-            "type": "{ totalCount?: number | null, items?: { id?: string | null, name?: string | null, createdAt?: number | null, inputParameters?: { type?: string | null, name?: string | null, label?: string | null, required?: boolean | null, encrypted?: boolean | null, defaultValue?: string | number | string[] | null, value?: string | number | string[] | null, min?: number | null, max?: number | null, pattern?: string | null, options?: { label?: string | null, value?: string | null }[] | null }[] | null }[] | null }"
+            "type": "{ totalCount?: number | null, items?: { id?: string | null, name?: string | null, createdAt?: number | null, inputParameters?: { type?: string | null, name?: string | null, label?: string | null, required?: boolean | null, encrypted?: boolean | null, defaultValue?: string | number | string[] | null, value?: string | number | string[] | null, min?: number | null, max?: number | null, pattern?: string | null, options?: { label?: string | null, value?: string | null }[] | null }[] | null }[] | null } | null"
           }
         ]
       }
@@ -222,7 +222,7 @@
           {
             "key": "inputParameters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | string[]>"
           }
         ]
       },
@@ -232,17 +232,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{ id?: string | null, inputParameters?: {} | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: {} | null, capturedScreenshots?: {} | null, capturedLists?: {} | null }"
+            "type": "{ id?: string | null, inputParameters?: Record<string, string | number | string[]> | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: Record<string, string | number | boolean | null> | null, capturedScreenshots?: Record<string, { id?: string | null, name?: string | null, src?: string | null, width?: number | null, height?: number | null, x?: number | null, y?: number | null, deviceScaleFactor?: number | null, full?: string | null, comparedToScreenshotId?: string | null, diffImageSrc?: string | null, changePercentage?: number | null, diffThreshold?: number | null, fileRemovedAt?: number | null }> | null, capturedLists?: Record<string, Record<string, string | number | boolean | null>[]> | null } | null"
           }
         ]
       }
@@ -262,17 +262,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tasksQueueStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -303,17 +303,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{ id?: string | null, inputParameters?: {} | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: {} | null, capturedScreenshots?: {} | null, capturedLists?: {} | null }"
+            "type": "{ id?: string | null, inputParameters?: Record<string, string | number | string[]> | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: Record<string, string | number | boolean | null> | null, capturedScreenshots?: Record<string, { id?: string | null, name?: string | null, src?: string | null, width?: number | null, height?: number | null, x?: number | null, y?: number | null, deviceScaleFactor?: number | null, full?: string | null, comparedToScreenshotId?: string | null, diffImageSrc?: string | null, changePercentage?: number | null, diffThreshold?: number | null, fileRemovedAt?: number | null }> | null, capturedLists?: Record<string, Record<string, string | number | boolean | null>[]> | null } | null"
           }
         ]
       }
@@ -379,17 +379,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{ robotTasks?: { totalCount?: number | null, pageNumber?: number | null, hasMore?: boolean | null, items?: { id?: string | null, inputParameters?: {} | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: {} | null, capturedScreenshots?: {} | null, capturedLists?: {} | null }[] | null } | null }"
+            "type": "{ robotTasks?: { totalCount?: number | null, pageNumber?: number | null, hasMore?: boolean | null, items?: { id?: string | null, inputParameters?: Record<string, string | number | string[]> | null, robotId?: string | null, status?: string | null, runByUserId?: string | null, robotBulkRunId?: string | null, runByTaskMonitorId?: string | null, runByAPI?: boolean | null, createdAt?: number | null, startedAt?: number | null, finishedAt?: number | null, userFriendlyError?: string | null, triedRecordingVideo?: boolean | null, videoUrl?: string | null, videoRemovedAt?: number | null, retriedOriginalTaskId?: string | null, retriedTaskId?: string | null, retriedByTaskId?: string | null, capturedDataTemporaryUrl?: string | null, capturedTexts?: Record<string, string | number | boolean | null> | null, capturedScreenshots?: Record<string, { id?: string | null, name?: string | null, src?: string | null, width?: number | null, height?: number | null, x?: number | null, y?: number | null, deviceScaleFactor?: number | null, full?: string | null, comparedToScreenshotId?: string | null, diffImageSrc?: string | null, changePercentage?: number | null, diffThreshold?: number | null, fileRemovedAt?: number | null }> | null, capturedLists?: Record<string, Record<string, string | number | boolean | null>[]> | null }[] | null } | null } | null"
           }
         ]
       }
@@ -425,17 +425,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ id?: string | null, url?: string | null, webhookEvent?: string | null, createdAt?: number | null }"
+            "type": "{ id?: string | null, url?: string | null, webhookEvent?: string | null, createdAt?: number | null } | null"
           }
         ]
       }
@@ -461,17 +461,17 @@
           {
             "key": "statusCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "messageCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhooks",
             "optional": true,
-            "type": "{ totalCount?: number | null, items?: { id?: string | null, url?: string | null, webhookEvent?: string | null, createdAt?: number | null }[] | null }"
+            "type": "{ totalCount?: number | null, items?: { id?: string | null, url?: string | null, webhookEvent?: string | null, createdAt?: number | null }[] | null } | null"
           }
         ]
       }

@@ -6,7 +6,10 @@ import {
 	buildImageGenerationConfig,
 	extractImagesFromCandidates,
 } from './endpoints/image-utils';
-import { stripMarkdownFences } from './endpoints/text-utils';
+import {
+	extractCandidateText,
+	stripMarkdownFences,
+} from './endpoints/text-utils';
 import type {
 	CountTokensResponse,
 	EmbedContentResponse,
@@ -59,6 +62,41 @@ describe('Gemini offline unit tests', () => {
 
 	it('stripMarkdownFences leaves plain text unchanged', () => {
 		expect(stripMarkdownFences('hello world')).toBe('hello world');
+	});
+
+	it('extractCandidateText concatenates non-thought text parts', () => {
+		const text = extractCandidateText({
+			content: {
+				parts: [
+					{ text: 'internal reasoning', thought: true },
+					{ text: '```typescript\nconst answer = 42;\n```' },
+					{ text: '\nDone.' },
+				],
+			},
+		});
+
+		expect(text).toBe('```typescript\nconst answer = 42;\n```\nDone.');
+	});
+
+	it('extractCandidateText strips fences only when requested', () => {
+		const candidate = {
+			content: { parts: [{ text: '```typescript\nconst answer = 42;\n```' }] },
+		};
+
+		expect(extractCandidateText(candidate)).toBe(
+			'```typescript\nconst answer = 42;\n```',
+		);
+		expect(extractCandidateText(candidate, { stripFences: true })).toBe(
+			'const answer = 42;',
+		);
+	});
+
+	it('extractCandidateText returns undefined without non-thought text', () => {
+		expect(
+			extractCandidateText({
+				content: { parts: [{ text: 'internal reasoning', thought: true }] },
+			}),
+		).toBeUndefined();
 	});
 
 	it('buildImageGenerationConfig always forces responseModalities IMAGE', () => {
@@ -148,6 +186,19 @@ describe('Gemini offline unit tests', () => {
 			model: 'gemini-2.5-flash',
 		});
 		expect(result.success).toBe(false);
+	});
+
+	it('generateContent input schema accepts stripFences', () => {
+		const result = GeminiEndpointInputSchemas.generateContent.safeParse({
+			model: 'gemini-2.5-flash',
+			contents: [{ role: 'user', parts: [{ text: 'hi' }] }],
+			stripFences: true,
+		});
+
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.stripFences).toBe(true);
+		}
 	});
 
 	it('getVideosOperation output schema accepts done+error LRO payload', () => {
@@ -354,7 +405,7 @@ describeIfApiKey('Gemini endpoint handlers (live)', () => {
 		expect(response.totalTokens).toBeGreaterThan(0);
 	});
 
-	it('Content.generateContent handler strips markdown fences into text', async () => {
+	it('Content.generateContent handler exposes candidate text', async () => {
 		const response = await Content.generateContent(ctx, {
 			model: 'gemini-2.5-flash',
 			contents: [
@@ -365,10 +416,8 @@ describeIfApiKey('Gemini endpoint handlers (live)', () => {
 			],
 		});
 		expect(response.candidates?.length).toBeGreaterThan(0);
-		// text field is produced by the handler via stripMarkdownFences
 		if (response.text !== undefined) {
 			expect(typeof response.text).toBe('string');
-			expect(response.text.includes('```')).toBe(false);
 		}
 	});
 

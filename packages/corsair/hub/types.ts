@@ -14,6 +14,12 @@ export type HubConfigInput = {
 	 * which is the Hub API host. Falls back to `CORSAIR_CLOUD_URL` when omitted.
 	 */
 	baseUrl?: string;
+	/**
+	 * Which instance of the project this Corsair is, sent to Hub on every call.
+	 * A project key spans every instance, so Hub rejects a state-changing
+	 * callback it cannot pin to one. Omit outside a multi-instance host.
+	 */
+	instanceKey?: string;
 	oauthCallbackUrl?: string;
 	/** URL the connect/approve pages send the user back to when they're done. */
 	redirectURL?: string;
@@ -30,6 +36,11 @@ export type HubConfigInput = {
 	 * object is an advanced escape hatch to override the tunnel URL zone.
 	 */
 	tunnel?: boolean | TunnelConfig;
+	/**
+	 * Set by Corsair Cloud's runtime only: signs its managed-pricing requests
+	 * to Hub. Leave unset elsewhere.
+	 */
+	runtimeProofKey?: string;
 };
 
 /**
@@ -45,10 +56,21 @@ export type HubConfig = {
 	apiUrl: string;
 	projectApiKey: string;
 	signingSecret: string;
+	/**
+	 * Which instance of the project this Corsair is. A project key spans every
+	 * instance, so Hub cannot resolve a state-changing callback from the key
+	 * alone and rejects it unpinned. Omit it outside a multi-instance host.
+	 */
+	instanceKey?: string;
 	oauthCallbackUrl?: string;
 	redirectURL?: string;
 	allowWorkflowExecution?: boolean;
 	tunnel?: boolean | TunnelConfig;
+	/**
+	 * Set by Corsair Cloud's runtime only: signs its managed-pricing requests
+	 * to Hub. Leave unset elsewhere.
+	 */
+	runtimeProofKey?: string;
 };
 
 export type HubConnectSessionInput = {

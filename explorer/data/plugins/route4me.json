@@ -1,0 +1,1201 @@
+{
+  "id": "route4me",
+  "displayName": "Route4Me",
+  "description": "Route planning and last-mile delivery with Route4Me - read routes, orders, vehicles, address book contacts, team members and optimization problems, create orders, vehicles and contacts, and submit addresses for optimization.",
+  "npmPackageName": "@corsair-dev/route4me",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "route4me.api.addresses.create",
+      "shortPath": "addresses.create",
+      "description": "Add a contact to the address book; the coordinates are required alongside the street address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address_1",
+            "optional": false,
+            "type": "string",
+            "description": "The street address."
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_state_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_country_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cached_lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cached_lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "curbside_lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "curbside_lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_email",
+            "optional": true,
+            "type": "string",
+            "description": "The contact email. Route4Me names it `address_email`, not `email`."
+          },
+          {
+            "key": "address_phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "service_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_cube",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_pieces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_reference_no",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_stop_type",
+            "optional": true,
+            "type": "DELIVERY | PICKUP | BREAK | MEETUP | SERVICE | VISIT"
+          },
+          {
+            "key": "eligible_pickup",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "eligible_depot",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_custom_data",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "{ address_id?: number | null, address_alias?: string | null, address_1?: string | null, created_timestamp?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.addresses.list",
+      "shortPath": "addresses.list",
+      "description": "List address book contacts with a display filter, a search phrase and limit/offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "display",
+            "optional": true,
+            "type": "all | routed | unrouted",
+            "description": "Which contacts to return. Route4Me defaults to `all`."
+          },
+          {
+            "key": "display_list",
+            "optional": true,
+            "type": "(routed | unrouted)[]",
+            "description": "Sent as a repeated parameter."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "A projection: only these fields come back."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return, up to 10000. Route4Me defaults to the maximum."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip, for offset paging."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ address_id?: number | null, address_group?: string | null, address_alias?: string | null, address_1?: string | null, address_2?: string | null, member_id?: number | null, first_name?: string | null, last_name?: string | null, address_email?: string | null, address_phone_number?: string | null, address_city?: string | null, address_state_id?: string | null, address_country_id?: string | null, address_zip?: string | null, cached_lat?: number | null, cached_lng?: number | null, curbside_lat?: number | null, curbside_lng?: number | null, in_route_count?: number | null, visited_count?: number | null, last_visited_timestamp?: number | null, last_routed_timestamp?: number | null, created_timestamp?: number | null, local_time_window_start?: number | null, local_time_window_end?: number | null, service_time?: number | null, local_timezone_string?: string | null, color?: string | null, address_icon?: string | null, address_stop_type?: string | null, address_cube?: number | null, address_pieces?: number | null, address_reference_no?: string | null, address_revenue?: number | null, address_weight?: number | null, address_priority?: number | null, address_customer_po?: string | null, eligible_pickup?: boolean | null, eligible_depot?: boolean | null, customer_id?: string | null, customer_name?: string | null, parent_location_id?: number | null, required_skills?: string[] | null, facility_ids?: string[] | null, address_custom_data?: Record<string, any> | any[] | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching contacts, before `limit` and `offset`."
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.optimizations.create",
+      "shortPath": "optimizations.create",
+      "description": "Submit addresses for optimization; the solver runs in the background and returns a problem id and state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ address?: string, lat?: number, lng?: number, alias?: string, address_1?: string, address_2?: string, city?: string, state_id?: string, zip?: string, service_time?: number, time_window_start?: number, time_window_end?: number, priority?: number, weight?: number, cube?: number, pieces?: number, revenue?: number, required_skills?: string[], is_depot?: boolean }[]",
+            "description": "The stops to sequence into routes."
+          },
+          {
+            "key": "route_max_duration",
+            "optional": true,
+            "type": "number",
+            "description": "The longest a single route may take, in seconds."
+          },
+          {
+            "key": "route_max_distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vehicle_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "route_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "algorithm_type",
+            "optional": true,
+            "type": "TSP | VRP | CVRP | MDVRP",
+            "description": "TSP for one vehicle, VRP for several, CVRP with capacity, MDVRP with multiple depots."
+          },
+          {
+            "key": "distance_unit",
+            "optional": true,
+            "type": "mi | km"
+          },
+          {
+            "key": "optimize",
+            "optional": true,
+            "type": "Distance | Time | time | distance",
+            "description": "What the optimizer minimises."
+          },
+          {
+            "key": "travel_mode",
+            "optional": true,
+            "type": "Driving | Walking | Trucking | Cycling"
+          },
+          {
+            "key": "shared_publicly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "optimization",
+            "optional": false,
+            "type": "{ optimization_problem_id?: string | null, state?: number | null, created_timestamp?: number | null, sent_to_background?: boolean | null, user_errors?: string[] | null, optimization_errors?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.optimizations.get",
+      "shortPath": "optimizations.get",
+      "description": "Fetch one optimization problem with its state, parameters and its solved routes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "optimization_problem_id",
+            "optional": false,
+            "type": "string",
+            "description": "The optimization id, from `optimizations.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "optimization",
+            "optional": false,
+            "type": "{ optimization_problem_id?: string | null, state?: number | null, created_timestamp?: number | null, scheduled_for?: number | null, optimization_completed_timestamp?: number | null, sent_to_background?: boolean | null, user_errors?: string[] | null, optimization_errors?: string[] | null, parameters?: Record<string, string | number | boolean> | null, addresses?: { address_id?: number | null, route_destination_id?: number | null, address?: string | null, address_1?: string | null, address_2?: string | null, alias?: string | null, cached_lat?: number | null, cached_lng?: number | null, curbside_lat?: number | null, curbside_lng?: number | null, sequence_no?: number | null, is_depot?: boolean | null, time_window_start?: number | null, time_window_end?: number | null, service_time?: number | null, priority?: number | null, weight?: number | null, cube?: number | null, pieces?: number | null, revenue?: number | null, cost?: number | null, visited?: number | null, status?: string | null, timestamp_last_visited?: number | null, notes?: { note_id?: number | null, note?: string | null }[] | null, custom_fields?: Record<string, any> | any[] | null }[] | null, routes?: { route_id?: string | null, route_name?: string | null, driver_alias?: string | null, vehicle_alias?: string | null, route_cost?: number | null, route_revenue?: number | null, trip_distance?: number | null, destination_count?: number | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.optimizations.list",
+      "shortPath": "optimizations.list",
+      "description": "List optimization problems by state and date range, or read exactly one when an id is given",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "optimization_problem_id",
+            "optional": true,
+            "type": "string",
+            "description": "Read this optimization instead of listing; v4 then answers a single object rather than a list."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "number",
+            "description": "0 New, 1 Initial, 2 MatrixProcessing, 3 Optimizing, 4 Optimized, 5 Error, 6 ComputingDirections."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "Only optimizations created on or after this date."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "Only optimizations created on or before this date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "optimizations",
+            "optional": false,
+            "type": "{ optimization_problem_id?: string | null, state?: number | null, created_timestamp?: number | null, scheduled_for?: number | null, optimization_completed_timestamp?: number | null, sent_to_background?: boolean | null, user_errors?: string[] | null, optimization_errors?: string[] | null, parameters?: Record<string, string | number | boolean> | null, addresses?: { address_id?: number | null, route_destination_id?: number | null, address?: string | null, address_1?: string | null, address_2?: string | null, alias?: string | null, cached_lat?: number | null, cached_lng?: number | null, curbside_lat?: number | null, curbside_lng?: number | null, sequence_no?: number | null, is_depot?: boolean | null, time_window_start?: number | null, time_window_end?: number | null, service_time?: number | null, priority?: number | null, weight?: number | null, cube?: number | null, pieces?: number | null, revenue?: number | null, cost?: number | null, visited?: number | null, status?: string | null, timestamp_last_visited?: number | null, notes?: { note_id?: number | null, note?: string | null }[] | null, custom_fields?: Record<string, any> | any[] | null }[] | null, routes?: { route_id?: string | null, route_name?: string | null, driver_alias?: string | null, vehicle_alias?: string | null, route_cost?: number | null, route_revenue?: number | null, trip_distance?: number | null, destination_count?: number | null }[] | null }[]"
+          },
+          {
+            "key": "total_records",
+            "optional": false,
+            "type": "number | null",
+            "description": "Route4Me's `totalRecords`, renamed to snake case."
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "The offset to request next, or null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.orders.create",
+      "shortPath": "orders.create",
+      "description": "Create a delivery order from an address, with its contact, time window, load and facility details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address_1",
+            "optional": false,
+            "type": "string",
+            "description": "The delivery street address."
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_state_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cached_lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cached_lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "curbside_lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "curbside_lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_stop_type",
+            "optional": true,
+            "type": "DELIVERY | PICKUP | BREAK | MEETUP | SERVICE | VISIT"
+          },
+          {
+            "key": "local_time_window_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "local_time_window_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "local_timezone_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "service_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cube",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pieces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom_user_fields",
+            "optional": true,
+            "type": "{ key?: string | null, value?: string | null }[]"
+          },
+          {
+            "key": "required_skills",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "facility_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ order_id?: number | null, order_uuid?: string | null, address_1?: string | null, address_alias?: string | null, created_timestamp?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List delivery orders with search, scheduled-day, status and group filters plus page paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "0-based page number."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "{ field: string, direction: asc | desc }"
+          },
+          {
+            "key": "day_scheduled_for",
+            "optional": true,
+            "type": "string[]",
+            "description": "Scheduled days in YYYYMMDD form."
+          },
+          {
+            "key": "day_added",
+            "optional": true,
+            "type": "string[]",
+            "description": "Added days in YYYYMMDD form."
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "barcode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ order_id?: number | null, order_uuid?: string | null, member_id?: number | null, root_member_id?: number | null, address_1?: string | null, address_2?: string | null, address_alias?: string | null, address_city?: string | null, address_state_id?: string | null, address_zip?: string | null, cached_lat?: number | null, cached_lng?: number | null, curbside_lat?: number | null, curbside_lng?: number | null, first_name?: string | null, last_name?: string | null, email?: string | null, phone?: string | null, tracking_number?: string | null, group?: string | null, priority?: number | null, last_status?: number | null, address_stop_type?: string | null, weight?: number | null, cube?: number | null, pieces?: number | null, revenue?: number | null, cost?: number | null, in_route_count?: number | null, visited_count?: number | null, created_timestamp?: number | null, updated_timestamp?: number | null, visited_timestamp?: number | null, routed_timestamp?: number | null, scheduled_date?: string | null, done_date?: string | null, created_date?: string | null, local_time_window_start?: number | null, local_time_window_end?: number | null, local_timezone_string?: string | null, territory_ids?: string[] | null, custom_data?: Record<string, any> | any[] | null, workflow_uuid?: string[] | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page to request next, or null on the last page."
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.routes.get",
+      "shortPath": "routes.get",
+      "description": "Fetch one route by its 32-character id, including its sequenced stops and directions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "route_id",
+            "optional": false,
+            "type": "string",
+            "description": "The 32-character route id, from `routes.list`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 500. Route4Me's own default applies when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "route_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "route_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "optimization_problem_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "route_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved_to_execute",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "driver_alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "vehicle_alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "destination_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "visited_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "trip_distance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "actual_travel_distance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "actual_travel_time",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "route_created_unix",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "route_scheduled_start_unix",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_weight",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_cube",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pieces",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_revenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ address_id?: number | null, route_destination_id?: number | null, address?: string | null, address_1?: string | null, address_2?: string | null, alias?: string | null, cached_lat?: number | null, cached_lng?: number | null, curbside_lat?: number | null, curbside_lng?: number | null, sequence_no?: number | null, is_depot?: boolean | null, time_window_start?: number | null, time_window_end?: number | null, service_time?: number | null, priority?: number | null, weight?: number | null, cube?: number | null, pieces?: number | null, revenue?: number | null, cost?: number | null, visited?: number | null, status?: string | null, timestamp_last_visited?: number | null, notes?: { note_id?: number | null, note?: string | null }[] | null, custom_fields?: Record<string, any> | any[] | null }[] | null",
+            "description": "The route stops, in the order Route4Me sequenced them."
+          },
+          {
+            "key": "directions",
+            "optional": true,
+            "type": "{ distance?: number | null, duration?: number | null, direction?: string | null, maneuver_type?: string | null }[] | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{ note_id?: number | null, note?: string | null }[] | null"
+          },
+          {
+            "key": "route_custom_data",
+            "optional": true,
+            "type": "Record<string, any> | any[] | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "When the stop list is paged, the page to request next; null otherwise."
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.routes.list",
+      "shortPath": "routes.list",
+      "description": "List routes with search, facility and id filters plus page paging, from the v5 API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A free-text search phrase."
+          },
+          {
+            "key": "search_query",
+            "optional": true,
+            "type": "string",
+            "description": "A second search field."
+          },
+          {
+            "key": "exclude_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Route ids to leave out of the result."
+          },
+          {
+            "key": "facility_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "route_id",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "One route id, or several, to read instead of listing all."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "An IANA timezone, used for the date fields in the result."
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 500. Route4Me's own default applies when omitted."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "{ field: string, direction: asc | desc }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routes",
+            "optional": false,
+            "type": "{ route_id?: string | null, route_name?: string | null, route_created_unix?: number | null, optimization_problem_id?: string | null, updated_timestamp?: number | null, route_scheduled_start_unix?: number | null, approved_to_execute?: boolean | null, destination_count?: number | null, visited_count?: number | null, notes_count?: number | null, vehicle_id?: string | null, vehicle_alias?: string | null, driver_alias?: string | null, member_id?: number | null, owner_email?: string | null, trip_distance?: number | null, actual_travel_distance?: number | null, actual_travel_time?: number | null, route_progress?: number | null, route_status?: string | null, route_status_id?: number | null, weight?: number | null, cube?: number | null, pieces?: number | null, revenue?: number | null, cost?: number | null, planned_destinations?: number | null, done_destinations?: number | null, failed_destinations?: number | null, skipped_destinations?: number | null, destinations_arrived_on_time?: number | null, destinations_arrived_early?: number | null, destinations_arrived_late?: number | null, planned_total_route_duration?: number | null, planned_total_service_time?: number | null, planned_total_travel_time?: number | null, planned_total_wait_time?: number | null, planned_total_break_time?: number | null, actual_route_duration?: number | null, actual_start_timestamp?: number | null, actual_end_timestamp?: number | null, planned_end_timestamp?: number | null, driver_open_timestamp?: number | null, has_directions?: boolean | null, is_unrouted?: boolean | null, planned_weight_load_percent?: number | null, planned_cube_load_percent?: number | null, planned_revenue_load_percent?: number | null, planned_pieces_load_percent?: number | null, actual_weight_load_percent?: number | null, actual_cube_load_percent?: number | null, actual_revenue_load_percent?: number | null, actual_pieces_load_percent?: number | null, mobile_actual_travel_distance?: string | null, telematics_actual_travel_distance?: string | null, merged_actual_travel_distance?: number | null, mobile_visited_distance_percent?: number | null, telematics_visited_distance_percent?: number | null, merged_visited_distance_percent?: number | null, facility_ids?: string[] | null, depot_timezone?: string | null, path?: string | null, route_data?: { address_id?: number | null, route_destination_id?: number | null, address?: string | null, address_1?: string | null, address_2?: string | null, alias?: string | null, cached_lat?: number | null, cached_lng?: number | null, curbside_lat?: number | null, curbside_lng?: number | null, sequence_no?: number | null, is_depot?: boolean | null, time_window_start?: number | null, time_window_end?: number | null, service_time?: number | null, priority?: number | null, weight?: number | null, cube?: number | null, pieces?: number | null, revenue?: number | null, cost?: number | null, visited?: number | null, status?: string | null, timestamp_last_visited?: number | null, notes?: { note_id?: number | null, note?: string | null }[] | null, custom_fields?: Record<string, any> | any[] | null }[] | null, facilities?: { facility_id?: string | null, facility_alias?: string | null, status?: string | null }[] | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page to request next, or null on the last page."
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.team.list",
+      "shortPath": "team.list",
+      "description": "List the team members on the account, optionally limited to drivers or to one optimization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drivers_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "optimization_problem_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facility_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ member_id?: number | null, member_first_name?: string | null, member_last_name?: string | null, member_email?: string | null, member_company?: string | null, member_phone?: string | null, member_type?: string | null, member_type_title?: string | null, member_picture?: string | null, OWNER_MEMBER_ID?: number | null, owner_member_name?: string | null, timezone?: string | null, timestamp_added?: number | null, timestamp_last_active?: number | null, authentication_count?: number | null, last_login_device?: string | null, optimization_profile_id?: number | null, optimization_profile_name?: string | null, READONLY_USER?: boolean | null, allowed_submember_types?: string[] | null, can_edit?: boolean | null, can_delete?: boolean | null, facility_ids?: string[] | null, permissions?: { id?: string | null, title?: string | null }[] | null, territories?: { id?: string | null, permission?: boolean | null }[] | null, custom_data?: Record<string, any> | any[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.team.me",
+      "shortPath": "team.me",
+      "description": "Read the account the key belongs to: owner, timezone and optimization profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member",
+            "optional": false,
+            "type": "{ member_id?: number | null, member_first_name?: string | null, member_last_name?: string | null, member_email?: string | null, member_company?: string | null, member_phone?: string | null, member_type?: string | null, member_type_title?: string | null, member_picture?: string | null, OWNER_MEMBER_ID?: number | null, owner_member_name?: string | null, timezone?: string | null, timestamp_added?: number | null, timestamp_last_active?: number | null, authentication_count?: number | null, last_login_device?: string | null, optimization_profile_id?: number | null, optimization_profile_name?: string | null, READONLY_USER?: boolean | null, allowed_submember_types?: string[] | null, can_edit?: boolean | null, can_delete?: boolean | null, facility_ids?: string[] | null, permissions?: { id?: string | null, title?: string | null }[] | null, territories?: { id?: string | null, permission?: boolean | null }[] | null, custom_data?: Record<string, any> | any[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.vehicles.create",
+      "shortPath": "vehicles.create",
+      "description": "Add a vehicle to the fleet with its plate, dimensions, capacity profile and skills",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vehicle_alias",
+            "optional": false,
+            "type": "string",
+            "description": "The name shown in the app."
+          },
+          {
+            "key": "vehicle_vin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vehicle_license_plate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vehicle_make",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vehicle_model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vehicle_model_year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vehicle_reg_state_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vehicle_reg_country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vehicle_type_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "color_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fuel_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vehicle_profile_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vehicle_capacity_profile_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_operational",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "license_start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "license_end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_weight_per_axle",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "string[]",
+            "description": "Skills this vehicle offers, matched against required skills."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vehicle",
+            "optional": false,
+            "type": "{ vehicle_id?: string | null, vehicle_alias?: string | null, vehicle_license_plate?: string | null, timestamp_added?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "route4me.api.vehicles.list",
+      "shortPath": "vehicles.list",
+      "description": "List the fleet with filters for operational state, profile and telematics connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "A field projection."
+          },
+          {
+            "key": "search_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_operational",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "only_with_profile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_multi_unit_fields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "telematics_connection_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "facility_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vehicles",
+            "optional": false,
+            "type": "{ vehicle_id?: string | null, member_id?: number | null, root_member_id?: number | null, is_deleted?: boolean | null, vehicle_alias?: string | null, vehicle_vin?: string | null, vehicle_license_plate?: string | null, vehicle_reg_state_id?: number | null, vehicle_reg_state_label?: string | null, vehicle_reg_country_id?: number | null, vehicle_reg_country_label?: string | null, vehicle_type_id?: number | null, vehicle_make?: string | null, vehicle_model?: string | null, vehicle_model_year?: number | null, vehicle_cost_new?: number | null, purchased_new?: boolean | null, vehicle_year_acquired?: number | null, color_id?: number | null, color_name?: string | null, fuel_type?: string | null, fuel_type_name?: string | null, license_start_date?: string | null, license_end_date?: string | null, is_operational?: boolean | null, status?: string | null, status_label?: string | null, timestamp_added?: number | null, timestamp_removed?: number | null, vehicle_profile_id?: number | null, vehicle_profile_name?: string | null, vehicle_capacity_profile_id?: number | null, vehicle_capacity_profile_name?: string | null, external_telematics_vehicle_id?: number | null, max_height?: number | null, max_width?: number | null, max_length?: number | null, total_weight?: number | null, max_weight_per_axle?: number | null, skills?: string[] | null, vehicle_tags?: { tag?: string | null }[] | null, metadata?: { key?: string | null, value?: string | null }[] | null, metadata_numeric?: { key?: string | null, value?: number | null }[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

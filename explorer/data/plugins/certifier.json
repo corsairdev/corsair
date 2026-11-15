@@ -126,7 +126,7 @@
           {
             "key": "customAttributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -161,22 +161,22 @@
           {
             "key": "issueDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expiryDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "customAttributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "createdAt",
@@ -217,7 +217,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, publicId?: string, groupId?: string, status?: string, recipient?: { id?: string, name?: string, email?: string }, issueDate?: string | null, expiryDate?: string | null, attributes?: {}, customAttributes?: {}, createdAt?: string, updatedAt?: string }[]"
+            "type": "{ id: string, publicId?: string, groupId?: string, status?: string, recipient?: { id?: string, name?: string, email?: string }, issueDate?: string | null, expiryDate?: string | null, attributes?: Record<string, string | null>, customAttributes?: Record<string, string | null>, createdAt?: string, updatedAt?: string }[]"
           },
           {
             "key": "pagination",
@@ -238,7 +238,7 @@
           {
             "key": "filter",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "sort",
@@ -263,7 +263,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, publicId?: string, groupId?: string, status?: string, recipient?: { id?: string, name?: string, email?: string }, issueDate?: string | null, expiryDate?: string | null, attributes?: {}, customAttributes?: {}, createdAt?: string, updatedAt?: string }[]"
+            "type": "{ id: string, publicId?: string, groupId?: string, status?: string, recipient?: { id?: string, name?: string, email?: string }, issueDate?: string | null, expiryDate?: string | null, attributes?: Record<string, string | null>, customAttributes?: Record<string, string | null>, createdAt?: string, updatedAt?: string }[]"
           },
           {
             "key": "pagination",
@@ -324,22 +324,22 @@
           {
             "key": "issueDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "expiryDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "customAttributes",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "createdAt",

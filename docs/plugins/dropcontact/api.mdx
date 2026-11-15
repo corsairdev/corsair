@@ -1,0 +1,319 @@
+---
+title: "Dropcontact API reference"
+sidebarTitle: "API"
+description: "API reference for the Dropcontact plugin in Corsair: every `dropcontact.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### credits
+
+`account.credits`
+
+Read the enrichment credits left on the account; costs no credits
+
+**Risk:** `read`
+
+```ts
+await corsair.dropcontact.api.account.credits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | Enrichment credits left on the account. |
+
+
+
+---
+
+## Enrichment
+
+### enrich
+
+`enrichment.enrich`
+
+Submit up to 250 contacts for email finding, verification and company enrichment; spends one credit per contact and returns a request_id, not the results
+
+**Risk:** `write`
+
+```ts
+await corsair.dropcontact.api.enrichment.enrich({ data: [{ first_name: 'Denis', last_name: 'Cohen', company: 'Dropcontact' }], language: 'en' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Up to 250 contacts. Enrichment runs as a batch, so the call returns a request_id rather than results. |
+| `siren` | `boolean` | No | Ask for French SIREN company data. Defaults to false. |
+| `language` | `string` | No | Language for the qualifications and civility in the result, such as "en" or "fr". Defaults to "fr". |
+| `custom_callback_url` | `string` | No | Where to POST the results once the batch finishes. Overrides the account default for this request only. |
+| `hashed_inputs` | `boolean` | No | Ask for the hashed inputs in the response. Sent as the `hashedInputs` query parameter. |
+
+Spends one credit per contact and has no cancel operation. Every record needs a company identifier, an email, or a LinkedIn URL.
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  civility?: string | null,
+  email?: string | null,
+  linkedin?: string | null,
+  job?: string | null,
+  job_function?: string | null,
+  job_level?: string | null,
+  mobile_phone?: string | null,
+  location?: string | null,
+  company?: string | null,
+  website?: string | null,
+  siret_address?: string | null,
+  siret_zip?: string | null,
+  siret_city?: string | null,
+  country?: string | null,
+  company_linkedin?: string | null,
+  phone?: string | null,
+  company_turnover?: string | null,
+  company_results?: string | null,
+  nb_employees?: string | null,
+  num_siren?: string | null,
+  siret?: string | null,
+  naf5_code?: string | null,
+  naf5_des?: string | null,
+  vat?: string | null,
+  industry?: string | null,
+  employee_count?: string | null,
+  custom_fields?: Record<string, string | null> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | Pass this to `enrichment.results` to read the batch. |
+| `creditsLeft` | `number \| null` | No | The balance after this request. |
+| `hashed_inputs` | `string[] \| null` | No | Present only when `hashed_inputs` was set. |
+| `records` | `object[] \| null` | No | The `data` array: per-record notes keyed by index. An entry here does not mean the submission failed. |
+| `error` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  index: number,
+  errors?: {
+    unexpected_field?: string[] | null,
+    only_contact_data?: boolean | null
+  } | null,
+  warnings?: {
+    empty_field?: string[] | null,
+    only_organization_data?: boolean | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### results
+
+`enrichment.results`
+
+Read the enriched contacts for a request_id: qualified emails, LinkedIn, phone and company data; reports success false with a reason while the batch is still processing
+
+**Risk:** `read`
+
+```ts
+await corsair.dropcontact.api.enrichment.results({ request_id: 'qzmxkpvlrtdnhwa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | The id `enrichment.enrich` returned. |
+| `force_results` | `boolean` | No | Return whatever has already been enriched instead of asking you to retry. Adds a `status` per record (`ready` or `in_progress`). |
+
+`status` says whether the batch is done: `in_progress` while Dropcontact is still working, `ready` once it has finished. `success` only says whether this read returned usable records, so a forced partial read can be `success: true` with `status: in_progress`. A `success: false` answer with a `reason` is a normal poll result, not a failure.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | One entry per submitted record, in the order they were sent. Empty while a batch has not produced anything yet. |
+| `creditsLeft` | `number \| null` | No | — |
+| `status` | `string` | Yes | `ready` once the batch has finished, `in_progress` while Dropcontact is still processing. Dropcontact sets this field only when `force_results` is passed, so it is derived from `success` otherwise. |
+| `error` | `boolean \| null` | No | — |
+| `success` | `boolean` | Yes | Whether this read returned usable records. It is not a completion flag: a forced partial read is successful with `status: in_progress`. A false value is a normal poll result while a batch runs, so the call returns rather than throwing. |
+| `reason` | `string \| null` | No | Present when `success` is false, such as "Request not ready yet". |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  civility?: string | null,
+  email?: {
+    email: string,
+    qualification: string
+  }[] | null,
+  linkedin?: string | null,
+  job?: string | null,
+  job_function?: string | null,
+  job_level?: string | null,
+  mobile_phone?: string | null,
+  location?: string | null,
+  company?: string | null,
+  website?: string | null,
+  siret_address?: string | null,
+  siret_zip?: string | null,
+  siret_city?: string | null,
+  country?: string | null,
+  company_linkedin?: string | null,
+  phone?: string | null,
+  company_turnover?: string | null,
+  company_results?: string | null,
+  nb_employees?: string | null,
+  num_siren?: string | null,
+  siret?: string | null,
+  naf5_code?: string | null,
+  naf5_des?: string | null,
+  vat?: string | null,
+  industry?: string | null,
+  employee_count?: string | null,
+  siren?: string | null,
+  custom_fields?: Record<string, any> | null,
+  company_change?: string | null,
+  errors?: {
+    unexpected_field?: string[] | null,
+    only_contact_data?: boolean | null
+  } | null,
+  warnings?: {
+    empty_field?: string[] | null,
+    only_organization_data?: boolean | null
+  } | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook
+
+### get
+
+`webhook.get`
+
+Read the default webhook callback URL used by enrichment requests that carry no custom callback of their own
+
+**Risk:** `read`
+
+```ts
+await corsair.dropcontact.api.webhook.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callback_url` | `string \| null` | No | The account default, or null when none is set. |
+| `error` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### remove
+
+`webhook.remove`
+
+Delete the account default webhook callback URL; afterwards only requests carrying their own custom_callback_url notify anything
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.dropcontact.api.webhook.remove({});
+```
+
+**Input:** _empty object_
+
+Deletes the account default callback URL permanently. Only requests that carry their own `custom_callback_url` notify anything afterwards.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `detail` | `string` | Yes | Dropcontact's confirmation message. |
+
+
+
+---
+
+### set
+
+`webhook.set`
+
+Set the account default webhook callback URL, replacing any previous one; enrichment requests without their own callback POST their results there
+
+**Risk:** `write`
+
+```ts
+await corsair.dropcontact.api.webhook.set({ callback_url: 'https://example.com/dropcontact/results' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callback_url` | `string` | Yes | Where to POST results for every request that does not carry its own `custom_callback_url`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callback_url` | `string` | Yes | — |
+| `error` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+

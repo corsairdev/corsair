@@ -58,37 +58,37 @@
           {
             "key": "displayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -104,7 +104,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -150,27 +150,27 @@
           {
             "key": "apiKeyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "serverTimestamp",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -233,72 +233,72 @@
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isPartner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "initialPartnerBalance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "homecareServiceNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadatas",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -313,8 +313,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -335,7 +336,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, isPartner?: boolean | null, initialPartnerBalance?: number | null, homecareServiceNumber?: string | null, userId?: string | null, metadatas?: {} | null }[]"
+        "type": "{ id: number, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, isPartner?: boolean | null, initialPartnerBalance?: number | null, homecareServiceNumber?: string | null, userId?: string | null, metadatas?: Record<string, any> | null }[]"
       }
     },
     {
@@ -419,7 +420,7 @@
           {
             "key": "metadatas",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -434,72 +435,72 @@
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isPartner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "initialPartnerBalance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "homecareServiceNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadatas",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -585,67 +586,67 @@
           {
             "key": "displayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invertedDisplayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "function",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "service",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isMain",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -701,67 +702,67 @@
           {
             "key": "displayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "invertedDisplayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "function",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "service",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isMain",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -776,8 +777,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -837,17 +839,17 @@
           {
             "key": "label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -910,17 +912,17 @@
           {
             "key": "label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -935,8 +937,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -1036,12 +1039,12 @@
           {
             "key": "billingOptions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "companyInformations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "familyId",
@@ -1066,92 +1069,92 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingOptions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "companyInformations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+            "type": "{ id?: number | null, label?: string | null, number?: string | null } | null"
           }
         ]
       }
@@ -1215,7 +1218,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, type?: string | null, companyName?: string | null, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingOptions?: {} | null, companyInformations?: {} | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null }[]"
+        "type": "{ id: number, type?: string | null, companyName?: string | null, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingOptions?: Record<string, any> | null, companyInformations?: Record<string, any> | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null }[]"
       }
     },
     {
@@ -1244,92 +1247,92 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingOptions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "companyInformations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+            "type": "{ id?: number | null, label?: string | null, number?: string | null } | null"
           }
         ]
       }
@@ -1360,92 +1363,92 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingOptions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "companyInformations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+            "type": "{ id?: number | null, label?: string | null, number?: string | null } | null"
           }
         ]
       }
@@ -1480,8 +1483,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -1502,7 +1506,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, type?: string | null, companyName?: string | null, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingOptions?: {} | null, companyInformations?: {} | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null }[]"
+        "type": "{ id: number, type?: string | null, companyName?: string | null, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingOptions?: Record<string, any> | null, companyInformations?: Record<string, any> | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null }[]"
       }
     },
     {
@@ -1586,12 +1590,12 @@
           {
             "key": "billingOptions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "companyInformations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "familyId",
@@ -1616,92 +1620,92 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingOptions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "companyInformations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+            "type": "{ id?: number | null, label?: string | null, number?: string | null } | null"
           }
         ]
       }
@@ -1737,12 +1741,12 @@
           {
             "key": "label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1805,12 +1809,12 @@
           {
             "key": "label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1825,8 +1829,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -1941,77 +1946,77 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "unitPrice",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "purchasePrice",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isUnitPriceTaxIncluded",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "defaultQuantity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unit",
             "optional": true,
-            "type": "{ code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null }"
+            "type": "{ code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null"
           },
           {
             "key": "vat",
             "optional": true,
-            "type": "{ default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null }"
+            "type": "{ default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+            "type": "{ id?: number | null, label?: string | null, number?: string | null } | null"
           },
           {
             "key": "imageUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -2119,77 +2124,77 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "unitPrice",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "purchasePrice",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isUnitPriceTaxIncluded",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "defaultQuantity",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "unit",
             "optional": true,
-            "type": "{ code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null }"
+            "type": "{ code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null"
           },
           {
             "key": "vat",
             "optional": true,
-            "type": "{ default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null }"
+            "type": "{ default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+            "type": "{ id?: number | null, label?: string | null, number?: string | null } | null"
           },
           {
             "key": "imageUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -2214,8 +2219,8 @@
         "fields": [
           {
             "key": "contentType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "body",
@@ -2246,8 +2251,9 @@
           },
           {
             "key": "mimeType",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"application/pdf\"."
           }
         ]
       },
@@ -2262,52 +2268,52 @@
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "supplier",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "taxIncludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vatReverseCharge",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pdfUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2383,7 +2389,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2398,67 +2404,67 @@
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paymentMethod",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerInternalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -2512,7 +2518,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, amount?: number | null, date?: string | null, paymentMethod?: string | null, status?: string | null, reference?: string | null, notes?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerInternalId?: string | null, internalId?: string | null, links?: {}[] | null, metadata?: {} | null }[]"
+        "type": "{ id: number, amount?: number | null, date?: string | null, paymentMethod?: string | null, status?: string | null, reference?: string | null, notes?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerInternalId?: string | null, internalId?: string | null, links?: Record<string, any>[] | null, metadata?: Record<string, any> | null }[]"
       }
     },
     {
@@ -2541,67 +2547,67 @@
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paymentMethod",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerInternalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -2616,8 +2622,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -2638,7 +2645,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, amount?: number | null, date?: string | null, paymentMethod?: string | null, status?: string | null, reference?: string | null, notes?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerInternalId?: string | null, internalId?: string | null, links?: {}[] | null, metadata?: {} | null }[]"
+        "type": "{ id: number, amount?: number | null, date?: string | null, paymentMethod?: string | null, status?: string | null, reference?: string | null, notes?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerInternalId?: string | null, internalId?: string | null, links?: Record<string, any>[] | null, metadata?: Record<string, any> | null }[]"
       }
     },
     {
@@ -2707,67 +2714,67 @@
           {
             "key": "amount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "paymentMethod",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerInternalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -2848,7 +2855,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2863,252 +2870,252 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerElectronicAddress",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerOrderReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerSiret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerVatNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "shippingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "headerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "footerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lines",
             "optional": true,
-            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null"
           },
           {
             "key": "globalDiscount",
             "optional": true,
-            "type": "{ type?: string | null, value?: number | null }"
+            "type": "{ type?: string | null, value?: number | null } | null"
           },
           {
             "key": "shippingAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "shippingVat",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "grossTaxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxIncludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "useTaxIncludedPrices",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "liableToVat",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "vatMode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatNote",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatReverseCharge",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vats",
             "optional": true,
-            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "pdfUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publicLink",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commitments",
             "optional": true,
-            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null"
           },
           {
             "key": "overdue",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vendorReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isDraft",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isPaid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isCancelled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cancelledInvoicetId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancelledInvoicetNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancellationInvoiceId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancellationInvoiceNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "replacedBy",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -3165,8 +3172,8 @@
         "fields": [
           {
             "key": "contentType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "body",
@@ -3194,7 +3201,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, cancelledInvoicetId?: number | null, cancelledInvoicetNumber?: string | null, cancellationInvoiceId?: number | null, cancellationInvoiceNumber?: string | null, replacedBy?: any | null }[]"
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: Record<string, any> | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, cancelledInvoicetId?: number | null, cancelledInvoicetNumber?: string | null, cancellationInvoiceId?: number | null, cancellationInvoiceNumber?: string | null, replacedBy?: any | null }[]"
       }
     },
     {
@@ -3223,252 +3230,252 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerElectronicAddress",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerOrderReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerSiret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerVatNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "shippingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "headerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "footerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lines",
             "optional": true,
-            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null"
           },
           {
             "key": "globalDiscount",
             "optional": true,
-            "type": "{ type?: string | null, value?: number | null }"
+            "type": "{ type?: string | null, value?: number | null } | null"
           },
           {
             "key": "shippingAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "shippingVat",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "grossTaxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxIncludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "useTaxIncludedPrices",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "liableToVat",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "vatMode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatNote",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatReverseCharge",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vats",
             "optional": true,
-            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "pdfUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publicLink",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commitments",
             "optional": true,
-            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null"
           },
           {
             "key": "overdue",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vendorReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isDraft",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isPaid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isCancelled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cancelledInvoicetId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancelledInvoicetNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancellationInvoiceId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancellationInvoiceNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "replacedBy",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -3483,8 +3490,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -3520,7 +3528,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, cancelledInvoicetId?: number | null, cancelledInvoicetNumber?: string | null, cancellationInvoiceId?: number | null, cancellationInvoiceNumber?: string | null, replacedBy?: any | null }[]"
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: Record<string, any> | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, cancelledInvoicetId?: number | null, cancelledInvoicetNumber?: string | null, cancellationInvoiceId?: number | null, cancellationInvoiceNumber?: string | null, replacedBy?: any | null }[]"
       }
     },
     {
@@ -3584,252 +3592,252 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerElectronicAddress",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerOrderReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerSiret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerVatNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "shippingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "headerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "footerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lines",
             "optional": true,
-            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null"
           },
           {
             "key": "globalDiscount",
             "optional": true,
-            "type": "{ type?: string | null, value?: number | null }"
+            "type": "{ type?: string | null, value?: number | null } | null"
           },
           {
             "key": "shippingAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "shippingVat",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "grossTaxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxIncludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "useTaxIncludedPrices",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "liableToVat",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "vatMode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatNote",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatReverseCharge",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vats",
             "optional": true,
-            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "pdfUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publicLink",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commitments",
             "optional": true,
-            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null"
           },
           {
             "key": "overdue",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vendorReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isDraft",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isPaid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isCancelled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cancelledInvoicetId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancelledInvoicetNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancellationInvoiceId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancellationInvoiceNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "replacedBy",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -3920,7 +3928,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3935,272 +3943,272 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerElectronicAddress",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerOrderReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerSiret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerVatNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "shippingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "headerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "footerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lines",
             "optional": true,
-            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null"
           },
           {
             "key": "globalDiscount",
             "optional": true,
-            "type": "{ type?: string | null, value?: number | null }"
+            "type": "{ type?: string | null, value?: number | null } | null"
           },
           {
             "key": "shippingAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "shippingVat",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "grossTaxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxIncludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "useTaxIncludedPrices",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "liableToVat",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "vatMode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatNote",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatReverseCharge",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vats",
             "optional": true,
-            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "pdfUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publicLink",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commitments",
             "optional": true,
-            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null"
           },
           {
             "key": "overdue",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vendorReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isDraft",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isPaid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isCancelled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isProforma",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cancellationCreditId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancellationCreditNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancelledCreditId",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "cancelledCreditNumber",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "eInvoicingInvoiceId",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "eInvoicingProviderId",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "eInvoicingStatus",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "replacedBy",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4257,8 +4265,8 @@
         "fields": [
           {
             "key": "contentType",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "body",
@@ -4286,7 +4294,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, isProforma?: boolean | null, cancellationCreditId?: number | null, cancellationCreditNumber?: string | null, cancelledCreditId?: any | null, cancelledCreditNumber?: any | null, eInvoicingInvoiceId?: any | null, eInvoicingProviderId?: any | null, eInvoicingStatus?: any | null, replacedBy?: number | null }[]"
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: Record<string, any> | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, isProforma?: boolean | null, cancellationCreditId?: number | null, cancellationCreditNumber?: string | null, cancelledCreditId?: any | null, cancelledCreditNumber?: any | null, eInvoicingInvoiceId?: any | null, eInvoicingProviderId?: any | null, eInvoicingStatus?: any | null, replacedBy?: number | null }[]"
       }
     },
     {
@@ -4315,272 +4323,272 @@
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customerName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerElectronicAddress",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerOrderReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerSiret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerVatNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "billingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "shippingAddress",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "billingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "shippingContact",
             "optional": true,
-            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null"
           },
           {
             "key": "headerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "footerNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lines",
             "optional": true,
-            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null"
           },
           {
             "key": "globalDiscount",
             "optional": true,
-            "type": "{ type?: string | null, value?: number | null }"
+            "type": "{ type?: string | null, value?: number | null } | null"
           },
           {
             "key": "shippingAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "shippingVat",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "balance",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "grossTaxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxExcludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "taxIncludedAmount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "useTaxIncludedPrices",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "liableToVat",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "vatMode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatNote",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vatReverseCharge",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "region",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vats",
             "optional": true,
-            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "pdfUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publicLink",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commitments",
             "optional": true,
-            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null"
           },
           {
             "key": "overdue",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "vendorReference",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isDraft",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isPaid",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isCancelled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isProforma",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "cancellationCreditId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "cancellationCreditNumber",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancelledCreditId",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "cancelledCreditNumber",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "eInvoicingInvoiceId",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "eInvoicingProviderId",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "eInvoicingStatus",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "replacedBy",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -4595,8 +4603,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -4642,7 +4651,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, isProforma?: boolean | null, cancellationCreditId?: number | null, cancellationCreditNumber?: string | null, cancelledCreditId?: any | null, cancelledCreditNumber?: any | null, eInvoicingInvoiceId?: any | null, eInvoicingProviderId?: any | null, eInvoicingStatus?: any | null, replacedBy?: number | null }[]"
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: Record<string, any> | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, isProforma?: boolean | null, cancellationCreditId?: number | null, cancellationCreditNumber?: string | null, cancelledCreditId?: any | null, cancelledCreditNumber?: any | null, eInvoicingInvoiceId?: any | null, eInvoicingProviderId?: any | null, eInvoicingStatus?: any | null, replacedBy?: number | null }[]"
       }
     },
     {
@@ -4694,7 +4703,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, status?: string | null, validityDate?: string | null, deposit?: { type?: string | null, value?: number | null } | null, acceptedAt?: string | null, refusedAt?: string | null }[]"
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: Record<string, any> | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, status?: string | null, validityDate?: string | null, deposit?: { type?: string | null, value?: number | null } | null, acceptedAt?: string | null, refusedAt?: string | null }[]"
       }
     },
     {
@@ -4707,8 +4716,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -4744,7 +4754,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, status?: string | null, validityDate?: string | null, deposit?: { type?: string | null, value?: number | null } | null, acceptedAt?: string | null, refusedAt?: string | null }[]"
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: Record<string, any> | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, status?: string | null, validityDate?: string | null, deposit?: { type?: string | null, value?: number | null } | null, acceptedAt?: string | null, refusedAt?: string | null }[]"
       }
     },
     {
@@ -4805,92 +4815,92 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "defaultPaymentMethod",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyInformations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdById",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedById",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -4925,8 +4935,9 @@
         "fields": [
           {
             "key": "pageIndex",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "pageSize",
@@ -4947,7 +4958,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, address?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, defaultPaymentMethod?: string | null, companyInformations?: {} | null, createdAt?: string | null, createdById?: string | null, updatedAt?: string | null, updatedById?: string | null }[]"
+        "type": "{ id: number, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, address?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, defaultPaymentMethod?: string | null, companyInformations?: Record<string, any> | null, createdAt?: string | null, createdById?: string | null, updatedAt?: string | null, updatedById?: string | null }[]"
       }
     },
     {
@@ -5036,92 +5047,92 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cellPhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "number",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalNotes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null"
           },
           {
             "key": "defaultPaymentMethod",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyInformations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdById",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedById",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -5161,7 +5172,7 @@
           {
             "key": "types",
             "optional": false,
-            "type": "CustomerCreated | CustomerUpdated | CustomerDeleted | ContactCreated | ContactUpdated | ContactDeleted | ProductCreated | ProductUpdated | ProductDeleted | InvoiceCreated | InvoiceUpdated | InvoiceDeleted | QuoteCreated | QuoteUpdated | QuoteDeleted[]"
+            "type": "(CustomerCreated | CustomerUpdated | CustomerDeleted | ContactCreated | ContactUpdated | ContactDeleted | ProductCreated | ProductUpdated | ProductDeleted | InvoiceCreated | InvoiceUpdated | InvoiceDeleted | QuoteCreated | QuoteUpdated | QuoteDeleted)[]"
           },
           {
             "key": "secretKey",
@@ -5181,22 +5192,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "types",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "secretKey",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

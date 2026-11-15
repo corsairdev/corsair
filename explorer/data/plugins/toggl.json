@@ -79,7 +79,7 @@
           {
             "key": "wid",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -89,22 +89,22 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "archived",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "creator_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -176,7 +176,7 @@
           {
             "key": "wid",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -186,22 +186,22 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "archived",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "creator_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -277,7 +277,7 @@
           {
             "key": "wid",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -287,22 +287,22 @@
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "archived",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "creator_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -390,77 +390,77 @@
           {
             "key": "fullname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "toggl_accounts_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_account_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "default_workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "beginning_of_week",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "has_password",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "openid_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "openid_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "oauth_providers",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -500,27 +500,27 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city_lat_long",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -560,52 +560,52 @@
           {
             "key": "BeginningOfWeek",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "timeofday_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "record_timeline",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "send_product_emails",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "send_timer_notifications",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "send_weekly_report",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pg_time_zone_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alpha_features",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           }
         ]
       }
@@ -641,7 +641,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ organization_id?: number | null, remaining: number, total: number, resets_in_secs?: number | null }[]"
+        "type": "{ organization_id: number | null, remaining: number, total: number, resets_in_secs?: number | null }[]"
       }
     },
     {
@@ -735,77 +735,77 @@
           {
             "key": "fullname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "toggl_accounts_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_account_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "default_workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "beginning_of_week",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "image_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "has_password",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "openid_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "openid_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "oauth_providers",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -841,52 +841,52 @@
           {
             "key": "BeginningOfWeek",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "timeofday_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "record_timeline",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "send_product_emails",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "send_timer_notifications",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "send_weekly_report",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "pg_time_zone_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alpha_features",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           }
         ]
       }
@@ -927,42 +927,42 @@
           {
             "key": "pricing_plan_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_multi_workspace_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "max_workspaces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "owner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "trial_info",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -993,17 +993,17 @@
           {
             "key": "group_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "organization_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -1013,17 +1013,17 @@
           {
             "key": "users",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "workspaces",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[] | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1060,7 +1060,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1130,42 +1130,42 @@
           {
             "key": "pricing_plan_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_multi_workspace_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "max_workspaces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "owner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "trial_info",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1187,7 +1187,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ group_id?: number | null, id?: number | null, organization_id?: number | null, name: string, users?: {}[] | null, workspaces?: {}[] | null, at?: string | null }[]"
+        "type": "{ group_id?: number | null, id?: number | null, organization_id?: number | null, name: string, users?: Record<string, any>[] | null, workspaces?: Record<string, any>[] | null, at?: string | null }[]"
       }
     },
     {
@@ -1207,7 +1207,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1227,7 +1227,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1277,7 +1277,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number, user_id?: number | null, organization_id?: number | null, email?: string | null, name?: string | null, admin?: boolean | null, owner?: boolean | null, joined?: boolean | null, inactive?: boolean | null, workspaces?: {}[] | null, groups?: {}[] | null }[]"
+        "type": "{ id: number, user_id?: number | null, organization_id?: number | null, email?: string | null, name?: string | null, admin?: boolean | null, owner?: boolean | null, joined?: boolean | null, inactive?: boolean | null, workspaces?: Record<string, any>[] | null, groups?: Record<string, any>[] | null }[]"
       }
     },
     {
@@ -1336,42 +1336,42 @@
           {
             "key": "pricing_plan_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_multi_workspace_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "max_workspaces",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "owner",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "trial_info",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1427,37 +1427,37 @@
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "manager",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "labour_cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1533,12 +1533,12 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -1548,77 +1548,77 @@
           {
             "key": "is_private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "estimated_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "actual_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "template",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recurring",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1726,12 +1726,12 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -1741,77 +1741,77 @@
           {
             "key": "is_private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "estimated_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "actual_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "template",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recurring",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1882,7 +1882,7 @@
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "active",
@@ -1917,12 +1917,12 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "client_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -1932,77 +1932,77 @@
           {
             "key": "is_private",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "estimated_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "actual_hours",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "start_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "end_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "template",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recurring",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2070,7 +2070,7 @@
           {
             "key": "keys",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2247,7 +2247,7 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -2257,12 +2257,12 @@
           {
             "key": "creator_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2374,7 +2374,7 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -2384,12 +2384,12 @@
           {
             "key": "creator_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2445,17 +2445,17 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -2465,27 +2465,27 @@
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "estimated_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tracked_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2567,17 +2567,17 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -2587,27 +2587,27 @@
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "estimated_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tracked_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2703,17 +2703,17 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -2723,27 +2723,27 @@
           {
             "key": "active",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "estimated_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "tracked_seconds",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2779,12 +2779,12 @@
           {
             "key": "success",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "failure",
             "optional": true,
-            "type": "{ id?: number | null, message?: string | null }[]"
+            "type": "{ id?: number | null, message?: string | null }[] | null"
           }
         ]
       }
@@ -2865,27 +2865,27 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "task_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start",
@@ -2895,7 +2895,7 @@
           {
             "key": "stop",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
@@ -2905,32 +2905,32 @@
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "duronly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tag_ids",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2997,27 +2997,27 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "task_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start",
@@ -3027,7 +3027,7 @@
           {
             "key": "stop",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
@@ -3037,32 +3037,32 @@
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "duronly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tag_ids",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3087,27 +3087,27 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "task_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start",
@@ -3117,7 +3117,7 @@
           {
             "key": "stop",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
@@ -3127,32 +3127,32 @@
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "duronly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tag_ids",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3228,27 +3228,27 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "task_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start",
@@ -3258,7 +3258,7 @@
           {
             "key": "stop",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
@@ -3268,32 +3268,32 @@
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "duronly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tag_ids",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3339,12 +3339,12 @@
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "task_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "billable",
@@ -3374,27 +3374,27 @@
           {
             "key": "workspace_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "project_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "task_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "start",
@@ -3404,7 +3404,7 @@
           {
             "key": "stop",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
@@ -3414,32 +3414,32 @@
           {
             "key": "billable",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "duronly",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "tag_ids",
             "optional": true,
-            "type": "number[]"
+            "type": "number[] | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3491,7 +3491,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, string[]>"
       }
     },
     {
@@ -3531,7 +3531,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ subscription_id?: number | null, workspace_id?: number | null, user_id?: number | null, url_callback?: string | null, enabled?: boolean | null, description?: string | null, event_filters?: {}[] | null, created_at?: string | null }[]"
+        "type": "{ subscription_id?: number | null, workspace_id?: number | null, user_id?: number | null, url_callback?: string | null, enabled?: boolean | null, description?: string | null, event_filters?: Record<string, any>[] | null, created_at?: string | null }[]"
       }
     },
     {
@@ -3560,7 +3560,7 @@
           {
             "key": "organization_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -3570,77 +3570,77 @@
           {
             "key": "premium",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "business_ws",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "only_admins_may_create_projects",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "only_admins_may_create_tags",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "only_admins_see_billable_rates",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "rounding",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "rounding_minutes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "suspended_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logo_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3666,7 +3666,7 @@
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3692,12 +3692,12 @@
           {
             "key": "initial_pricing_plan",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "hide_start_end_times",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -3793,7 +3793,7 @@
           {
             "key": "organization_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -3803,77 +3803,77 @@
           {
             "key": "premium",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "business_ws",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "admin",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "default_hourly_rate",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "only_admins_may_create_projects",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "only_admins_may_create_tags",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "only_admins_see_billable_rates",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "rounding",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "rounding_minutes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "suspended_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "server_deleted_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logo_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

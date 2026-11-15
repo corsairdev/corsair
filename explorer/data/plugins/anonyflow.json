@@ -56,7 +56,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "The data packet to anonymize"
           },
           {
@@ -78,7 +78,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -121,7 +121,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "The data packet to deanonymize"
           },
           {
@@ -143,7 +143,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

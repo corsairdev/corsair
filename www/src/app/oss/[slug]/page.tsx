@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
+import { ossIntegrationSeoText } from '@/lib/page-seo';
+import { socialMetadata } from '@/lib/social-metadata';
 import {
 	getIntegrationCapabilitiesForPage,
 	getIntegrationSummaryForPage,
@@ -24,7 +26,18 @@ export async function generateMetadata({
 
 	try {
 		const integration = await getIntegrationSummaryForPage(slug);
-		return { title: integration.name };
+		const { title, description } = ossIntegrationSeoText(integration.name);
+		const path = `/oss/${slug}`;
+		return {
+			title,
+			description,
+			alternates: { canonical: path },
+			...socialMetadata({
+				title: `${integration.name} | Corsair OSS`,
+				description,
+				path,
+			}),
+		};
 	} catch {
 		return { title: 'Integration not found' };
 	}

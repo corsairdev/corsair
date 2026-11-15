@@ -38,12 +38,12 @@
           {
             "key": "webhook_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage",
@@ -78,27 +78,27 @@
           {
             "key": "remove_symbols",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "gpt_prompt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_chars",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "{ plan_name?: string, usage_quota?: number, status?: string, expires_at?: string }"
+            "type": "{ plan_name?: string, usage_quota?: number, status?: string, expires_at?: string } | null"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -129,12 +129,12 @@
           {
             "key": "webhook_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage",
@@ -169,27 +169,27 @@
           {
             "key": "remove_symbols",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "gpt_prompt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_chars",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subscription",
             "optional": true,
-            "type": "{ plan_name?: string, usage_quota?: number, status?: string, expires_at?: string }"
+            "type": "{ plan_name?: string, usage_quota?: number, status?: string, expires_at?: string } | null"
           },
           {
             "key": "errors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -232,12 +232,12 @@
           {
             "key": "row_errors",
             "optional": true,
-            "type": "tuple[]"
+            "type": "[number, string][]"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -253,7 +253,7 @@
           {
             "key": "image",
             "optional": false,
-            "type": "{ url?: string, raw?: string, asset_id?: string, metadata?: {} }"
+            "type": "{ url?: string, raw?: string, asset_id?: string, metadata?: Record<string, any> }"
           },
           {
             "key": "async",
@@ -333,12 +333,12 @@
           {
             "key": "alt_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alt_texts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "tags",
@@ -348,7 +348,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_at",
@@ -363,12 +363,12 @@
           {
             "key": "errors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -405,12 +405,12 @@
           {
             "key": "alt_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alt_texts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "tags",
@@ -420,7 +420,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_at",
@@ -435,12 +435,12 @@
           {
             "key": "errors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -477,12 +477,12 @@
           {
             "key": "alt_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alt_texts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "tags",
@@ -492,7 +492,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_at",
@@ -507,12 +507,12 @@
           {
             "key": "errors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -551,7 +551,7 @@
           {
             "key": "images",
             "optional": false,
-            "type": "{ asset_id?: string, url?: string, alt_text?: string | null, alt_texts?: {}, tags?: string[], metadata?: {}, created_at?: number, credits_used?: number, errors?: {}, error_code?: string | null }[]"
+            "type": "{ asset_id?: string, url?: string, alt_text?: string | null, alt_texts?: Record<string, string>, tags?: string[], metadata?: Record<string, any>, created_at?: number, credits_used?: number, errors?: Record<string, any>, error_code?: string | null }[]"
           }
         ]
       }
@@ -597,7 +597,7 @@
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_processed",
@@ -607,7 +607,7 @@
           {
             "key": "errors",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "scraped_images",
@@ -649,7 +649,7 @@
           {
             "key": "images",
             "optional": false,
-            "type": "{ asset_id?: string, url?: string, alt_text?: string | null, alt_texts?: {}, tags?: string[], metadata?: {}, created_at?: number, credits_used?: number, errors?: {}, error_code?: string | null }[]"
+            "type": "{ asset_id?: string, url?: string, alt_text?: string | null, alt_texts?: Record<string, string>, tags?: string[], metadata?: Record<string, any>, created_at?: number, credits_used?: number, errors?: Record<string, any>, error_code?: string | null }[]"
           }
         ]
       }
@@ -682,7 +682,7 @@
           {
             "key": "image",
             "optional": false,
-            "type": "{ alt_text?: string, asset_id?: string, metadata?: {} }"
+            "type": "{ alt_text?: string, asset_id?: string, metadata?: Record<string, any> }"
           }
         ]
       },
@@ -702,12 +702,12 @@
           {
             "key": "alt_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "alt_texts",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "tags",
@@ -717,7 +717,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_at",
@@ -732,12 +732,12 @@
           {
             "key": "errors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

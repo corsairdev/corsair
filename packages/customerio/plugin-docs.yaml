@@ -1,0 +1,13 @@
+displayName: Customer.io
+description: Customer engagement platform for sending targeted email, SMS, and push messages, with endpoints for profiles, segments, broadcasts, transactional messages, newsletters, collections, snippets, and CDP tracking.
+domain: customer.io
+examples:
+  read:
+    path: segments.list
+    title: List segments
+  write:
+    path: profiles.trackEvent
+    title: Track an event
+    args:
+      identifier: you@example.com
+      name: signed_up

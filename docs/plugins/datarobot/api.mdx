@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for DataRobot: every `datarobot.api.*` operation with input and output types."
+title: "DataRobot API reference"
+sidebarTitle: "API"
+description: "API reference for the DataRobot plugin in Corsair: every `datarobot.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `datarobot.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -137,8 +136,8 @@ await corsair.datarobot.api.batchPredictions.batchPredictionsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -212,8 +211,8 @@ await corsair.datarobot.api.catalogItems.catalogItemsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -320,8 +319,8 @@ await corsair.datarobot.api.credentials.credentialsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -433,8 +432,8 @@ await corsair.datarobot.api.customModels.customModelsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -726,8 +725,8 @@ await corsair.datarobot.api.datasets.datasetsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -1185,8 +1184,8 @@ await corsair.datarobot.api.deployments.deploymentsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -1529,8 +1528,8 @@ await corsair.datarobot.api.modelPackages.modelPackagesList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -1590,8 +1589,8 @@ await corsair.datarobot.api.predictionServers.predictionServersList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -2148,8 +2147,8 @@ await corsair.datarobot.api.projects.projectsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -2682,8 +2681,8 @@ await corsair.datarobot.api.status.statusList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -2859,8 +2858,8 @@ await corsair.datarobot.api.useCases.useCasesList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 
@@ -2969,8 +2968,8 @@ await corsair.datarobot.api.version.versionList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `data` | `any[]` | No | — |
 
 

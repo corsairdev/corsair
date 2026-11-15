@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for HeyGen: every `heygen.api.*` operation with input and output types."
+title: "HeyGen API reference"
+sidebarTitle: "API"
+description: "API reference for the HeyGen plugin in Corsair: every `heygen.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `heygen.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -31,8 +30,8 @@ await corsair.heygen.api.aiClipping.create({});
 | `title` | `string` | No | — |
 | `input_language` | `string` | No | — |
 | `output_settings` | `object` | No | — |
-| `callback_url` | `string` | No | — |
-| `callback_id` | `string` | No | — |
+| `callback_url` | `string \| null` | No | — |
+| `callback_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="video full type">
@@ -52,7 +51,7 @@ await corsair.heygen.api.aiClipping.create({});
 
 ```ts
 {
-  duration_types: 30 | 60 | 180 | long[],
+  duration_types: (30 | 60 | 180 | long)[],
   aspect_ratio?: landscape | portrait | square,
   captions?: boolean,
   caption_style?: string,
@@ -212,7 +211,7 @@ await corsair.heygen.api.aiClipping.list({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -267,7 +266,7 @@ await corsair.heygen.api.assets.completeUpload({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `asset_id` | `string` | Yes | — |
-| `checksum_sha256` | `string` | No | — |
+| `checksum_sha256` | `string \| null` | No | — |
 
 
 
@@ -321,7 +320,7 @@ await corsair.heygen.api.assets.createFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -358,7 +357,7 @@ await corsair.heygen.api.assets.createUploadSession({});
 | `filename` | `string` | Yes | — |
 | `content_type` | `string` | Yes | — |
 | `size_bytes` | `number` | Yes | — |
-| `checksum_sha256` | `string` | No | — |
+| `checksum_sha256` | `string \| null` | No | — |
 
 
 
@@ -375,8 +374,7 @@ await corsair.heygen.api.assets.createUploadSession({});
 {
   asset_id: string,
   upload_url: string,
-  upload_headers: {
-  },
+  upload_headers: Record<string, any>,
   expires_in_seconds: number,
   max_bytes: number,
   status: pending_upload
@@ -413,18 +411,8 @@ await corsair.heygen.api.assets.deleteAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -543,7 +531,7 @@ await corsair.heygen.api.assets.getTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -588,7 +576,7 @@ await corsair.heygen.api.assets.listAssets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -596,8 +584,7 @@ await corsair.heygen.api.assets.listAssets({});
 
 ```ts
 {
-  assets: {
-  }[]
+  assets: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -632,7 +619,7 @@ await corsair.heygen.api.assets.listAssets2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -640,8 +627,7 @@ await corsair.heygen.api.assets.listAssets2({});
 
 ```ts
 {
-  assets: {
-  }[],
+  assets: Record<string, any>[],
   next_cursor?: string
 }
 ```
@@ -677,7 +663,7 @@ await corsair.heygen.api.assets.listFolders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -685,8 +671,7 @@ await corsair.heygen.api.assets.listFolders({});
 
 ```ts
 {
-  folders: {
-  }[]
+  folders: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -715,7 +700,7 @@ await corsair.heygen.api.assets.listTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -723,8 +708,7 @@ await corsair.heygen.api.assets.listTemplates({});
 
 ```ts
 {
-  templates: {
-  }[]
+  templates: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -758,18 +742,8 @@ await corsair.heygen.api.assets.restoreFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -799,18 +773,8 @@ await corsair.heygen.api.assets.trashFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -841,18 +805,8 @@ await corsair.heygen.api.assets.updateFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -883,7 +837,7 @@ await corsair.heygen.api.assets.uploadAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -977,19 +931,9 @@ await corsair.heygen.api.audio.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `next_token` | `string \| null` | Yes | — |
 
 
 
@@ -1226,7 +1170,7 @@ await corsair.heygen.api.avatars.addLooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1268,7 +1212,7 @@ await corsair.heygen.api.avatars.addMotion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1310,7 +1254,7 @@ await corsair.heygen.api.avatars.checkLookStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1414,7 +1358,7 @@ await corsair.heygen.api.avatars.create({});
 
 ```ts
 {
-  avatar_item?: {
+  avatar_item: {
     id: string,
     name: string,
     avatar_type: studio_avatar | digital_twin | photo_avatar,
@@ -1434,7 +1378,7 @@ await corsair.heygen.api.avatars.create({});
       message: string
     } | null
   } | null,
-  avatar_group?: {
+  avatar_group: {
     id: string,
     name: string,
     created_at: number,
@@ -1476,8 +1420,8 @@ await corsair.heygen.api.avatars.createConsent({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `group_id` | `string` | Yes | — |
-| `reroute_url` | `string` | No | — |
-| `consent_text` | `string` | No | — |
+| `reroute_url` | `string \| null` | No | — |
+| `consent_text` | `string \| null` | No | — |
 
 
 
@@ -1544,7 +1488,7 @@ await corsair.heygen.api.avatars.createPhotoGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1671,18 +1615,8 @@ await corsair.heygen.api.avatars.deletePhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1712,18 +1646,8 @@ await corsair.heygen.api.avatars.deletePhotoGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1753,18 +1677,8 @@ await corsair.heygen.api.avatars.deleteTalkingPhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1801,7 +1715,7 @@ await corsair.heygen.api.avatars.generatePhotos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1843,7 +1757,7 @@ await corsair.heygen.api.avatars.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1997,7 +1911,7 @@ await corsair.heygen.api.avatars.getPhotoDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2039,7 +1953,7 @@ await corsair.heygen.api.avatars.getTrainingStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2083,19 +1997,9 @@ await corsair.heygen.api.avatars.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `next_token` | `string \| null` | Yes | — |
 
 
 
@@ -2125,7 +2029,7 @@ await corsair.heygen.api.avatars.listGroupAvatars({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2133,8 +2037,7 @@ await corsair.heygen.api.avatars.listGroupAvatars({});
 
 ```ts
 {
-  avatar_list: {
-  }[]
+  avatar_list: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -2163,7 +2066,7 @@ await corsair.heygen.api.avatars.listGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2171,8 +2074,7 @@ await corsair.heygen.api.avatars.listGroups({});
 
 ```ts
 {
-  avatar_group_list: {
-  }[]
+  avatar_group_list: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -2212,7 +2114,7 @@ await corsair.heygen.api.avatars.listLooks({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2265,18 +2167,8 @@ await corsair.heygen.api.avatars.listTalkingPhotos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2308,7 +2200,7 @@ await corsair.heygen.api.avatars.searchPublicGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2316,8 +2208,7 @@ await corsair.heygen.api.avatars.searchPublicGroups({});
 
 ```ts
 {
-  avatar_group_list: {
-  }[]
+  avatar_group_list: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -2344,7 +2235,7 @@ await corsair.heygen.api.avatars.updateLook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `look_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 
 
 
@@ -2411,7 +2302,7 @@ await corsair.heygen.api.avatars.uploadTalkingPhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2453,7 +2344,7 @@ await corsair.heygen.api.avatars.upscale({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2500,7 +2391,7 @@ await corsair.heygen.api.brand.listGlossaries({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2547,7 +2438,7 @@ await corsair.heygen.api.brand.listKits({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2586,16 +2477,16 @@ await corsair.heygen.api.hyperframes.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `project` | `object` | Yes | — |
-| `fps` | `number` | No | — |
+| `fps` | `number \| null` | No | — |
 | `quality` | `draft \| standard \| high` | No | — |
 | `format` | `mp4 \| webm \| mov` | No | — |
 | `resolution` | `1080p \| 4k` | No | — |
 | `aspect_ratio` | `16:9 \| 9:16 \| 1:1` | No | — |
-| `composition` | `string` | No | — |
-| `variables` | `object` | No | — |
-| `title` | `string` | No | — |
-| `callback_id` | `string` | No | — |
-| `callback_url` | `string` | No | — |
+| `composition` | `string \| null` | No | — |
+| `variables` | `Record<string, any> \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `callback_id` | `string \| null` | No | — |
+| `callback_url` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="project full type">
@@ -2611,14 +2502,6 @@ await corsair.heygen.api.hyperframes.create({});
   type: base64,
   media_type: string,
   data: string
-}
-```
-</Accordion>
-
-<Accordion title="variables full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2771,7 +2654,7 @@ await corsair.heygen.api.hyperframes.list({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2831,7 +2714,7 @@ await corsair.heygen.api.knowledgeBases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2873,18 +2756,8 @@ await corsair.heygen.api.knowledgeBases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2909,7 +2782,7 @@ await corsair.heygen.api.knowledgeBases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2917,8 +2790,7 @@ await corsair.heygen.api.knowledgeBases.list({});
 
 ```ts
 {
-  list: {
-  }[]
+  list: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -2955,18 +2827,8 @@ await corsair.heygen.api.knowledgeBases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2994,18 +2856,18 @@ await corsair.heygen.api.lipsync.create({});
 | `audio` | `object` | Yes | — |
 | `title` | `string` | No | — |
 | `mode` | `speed \| precision` | No | — |
-| `callback_url` | `string` | No | — |
-| `callback_id` | `string` | No | — |
+| `callback_url` | `string \| null` | No | — |
+| `callback_id` | `string \| null` | No | — |
 | `enable_caption` | `boolean` | No | — |
-| `keep_the_same_format` | `boolean` | No | — |
+| `keep_the_same_format` | `boolean \| null` | No | — |
 | `enable_dynamic_duration` | `boolean` | No | — |
 | `disable_music_track` | `boolean` | No | — |
 | `enable_speech_enhancement` | `boolean` | No | — |
 | `enable_watermark` | `boolean` | No | — |
-| `start_time` | `number` | No | — |
-| `end_time` | `number` | No | — |
-| `fps_mode` | `vfr \| cfr \| passthrough` | No | — |
-| `folder_id` | `string` | No | — |
+| `start_time` | `number \| null` | No | — |
+| `end_time` | `number \| null` | No | — |
+| `fps_mode` | `vfr \| cfr \| passthrough \| null` | No | — |
+| `folder_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="video full type">
@@ -3175,7 +3037,7 @@ await corsair.heygen.api.lipsync.list({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3271,14 +3133,14 @@ await corsair.heygen.api.proofread.create({});
 | `video` | `object` | Yes | — |
 | `output_languages` | `string[]` | Yes | — |
 | `title` | `string` | Yes | — |
-| `brand_voice_id` | `string` | No | — |
-| `brand_glossary_id` | `string` | No | — |
-| `speaker_num` | `number` | No | — |
-| `folder_id` | `string` | No | — |
+| `brand_voice_id` | `string \| null` | No | — |
+| `brand_glossary_id` | `string \| null` | No | — |
+| `speaker_num` | `number \| null` | No | — |
+| `folder_id` | `string \| null` | No | — |
 | `enable_video_stretching` | `boolean` | No | — |
 | `disable_music_track` | `boolean` | No | — |
 | `enable_speech_enhancement` | `boolean` | No | — |
-| `srt` | `object` | No | — |
+| `srt` | `object \| null` | No | — |
 | `mode` | `speed \| precision` | No | — |
 | `keep_the_same_format` | `boolean` | No | — |
 
@@ -3305,7 +3167,7 @@ await corsair.heygen.api.proofread.create({});
 } | {
   type: asset_id,
   asset_id: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3395,8 +3257,8 @@ await corsair.heygen.api.proofread.generateVideo({});
 | `proofread_id` | `string` | Yes | — |
 | `captions` | `boolean` | No | — |
 | `translate_audio_only` | `boolean` | No | — |
-| `callback_id` | `string` | No | — |
-| `callback_url` | `string` | No | — |
+| `callback_id` | `string \| null` | No | — |
+| `callback_url` | `string \| null` | No | — |
 
 
 
@@ -3555,7 +3417,7 @@ await corsair.heygen.api.streaming.createToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3612,18 +3474,8 @@ await corsair.heygen.api.streaming.ice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -3653,18 +3505,8 @@ await corsair.heygen.api.streaming.interrupt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -3694,18 +3536,8 @@ await corsair.heygen.api.streaming.keepAlive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -3730,7 +3562,7 @@ await corsair.heygen.api.streaming.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3738,8 +3570,7 @@ await corsair.heygen.api.streaming.list({});
 
 ```ts
 {
-  sessions: {
-  }[]
+  sessions: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3768,18 +3599,8 @@ await corsair.heygen.api.streaming.listAvatars({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -3810,7 +3631,7 @@ await corsair.heygen.api.streaming.listSessionHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3818,8 +3639,7 @@ await corsair.heygen.api.streaming.listSessionHistory({});
 
 ```ts
 {
-  sessions: {
-  }[]
+  sessions: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -3853,7 +3673,7 @@ await corsair.heygen.api.streaming.new({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3890,19 +3710,9 @@ await corsair.heygen.api.streaming.newSession({});
 |------|------|----------|-------------|
 | `quality` | `string` | No | — |
 | `avatar_id` | `string` | No | — |
-| `voice` | `object` | No | — |
+| `voice` | `Record<string, any>` | No | — |
 | `knowledge_base_id` | `string` | No | — |
 | `version` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="voice full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3910,7 +3720,7 @@ await corsair.heygen.api.streaming.newSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -3970,7 +3780,7 @@ await corsair.heygen.api.streaming.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4012,18 +3822,8 @@ await corsair.heygen.api.streaming.stop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -4055,7 +3855,7 @@ await corsair.heygen.api.streaming.task({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4093,14 +3893,14 @@ await corsair.heygen.api.videoAgents.createSession({});
 |------|------|----------|-------------|
 | `prompt` | `string` | Yes | — |
 | `mode` | `generate \| chat` | No | — |
-| `avatar_id` | `string` | No | — |
-| `voice_id` | `string` | No | — |
-| `style_id` | `string` | No | — |
-| `brand_kit_id` | `string` | No | — |
-| `orientation` | `landscape \| portrait` | No | — |
+| `avatar_id` | `string \| null` | No | — |
+| `voice_id` | `string \| null` | No | — |
+| `style_id` | `string \| null` | No | — |
+| `brand_kit_id` | `string \| null` | No | — |
+| `orientation` | `landscape \| portrait \| null` | No | — |
 | `files` | `object[]` | No | — |
-| `callback_url` | `string` | No | — |
-| `callback_id` | `string` | No | — |
+| `callback_url` | `string \| null` | No | — |
+| `callback_id` | `string \| null` | No | — |
 | `incognito_mode` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -4189,8 +3989,7 @@ await corsair.heygen.api.videoAgents.getResource({});
   thumbnail_url?: string | null,
   preview_url?: string | null,
   created_at?: number | null,
-  metadata?: {
-  } | null
+  metadata?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -4280,7 +4079,7 @@ await corsair.heygen.api.videoAgents.listSessions({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4327,7 +4126,7 @@ await corsair.heygen.api.videoAgents.listStyles({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4375,7 +4174,7 @@ await corsair.heygen.api.videoAgents.listVideos({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4411,9 +4210,9 @@ await corsair.heygen.api.videoAgents.sendMessage({});
 |------|------|----------|-------------|
 | `session_id` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
-| `avatar_id` | `string` | No | — |
-| `voice_id` | `string` | No | — |
-| `brand_kit_id` | `string` | No | — |
+| `avatar_id` | `string \| null` | No | — |
+| `voice_id` | `string \| null` | No | — |
+| `brand_kit_id` | `string \| null` | No | — |
 | `files` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -4528,7 +4327,7 @@ await corsair.heygen.api.videos.createWebm({});
 | `voice_id` | `string` | No | — |
 | `background_color` | `string` | No | — |
 | `title` | `string` | No | — |
-| `callback_id` | `string` | No | — |
+| `callback_id` | `string \| null` | No | — |
 
 
 
@@ -4536,7 +4335,7 @@ await corsair.heygen.api.videos.createWebm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4578,18 +4377,8 @@ await corsair.heygen.api.videos.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -4656,9 +4445,9 @@ await corsair.heygen.api.videos.generate({});
 | `type` | `avatar \| image \| cinematic_avatar` | Yes | — |
 | `title` | `string` | No | — |
 | `resolution` | `string` | No | — |
-| `aspect_ratio` | `string` | No | — |
+| `aspect_ratio` | `string \| null` | No | — |
 | `callback_url` | `string` | No | — |
-| `callback_id` | `string` | No | — |
+| `callback_id` | `string \| null` | No | — |
 | `folder_id` | `string` | No | — |
 
 
@@ -4710,7 +4499,7 @@ await corsair.heygen.api.videos.getSharableUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4809,7 +4598,7 @@ await corsair.heygen.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4817,8 +4606,7 @@ await corsair.heygen.api.videos.list({});
 
 ```ts
 {
-  videos: {
-  }[],
+  videos: Record<string, any>[],
   token?: string
 }
 ```
@@ -4858,7 +4646,7 @@ await corsair.heygen.api.videos.listV3({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4913,18 +4701,8 @@ await corsair.heygen.api.videos.personalizedAddContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -4954,7 +4732,7 @@ await corsair.heygen.api.videos.personalizedProjectDetail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -4995,7 +4773,7 @@ await corsair.heygen.api.videos.templateGenerate({});
 | `test` | `boolean` | No | — |
 | `dimension` | `object` | No | — |
 | `folder_id` | `string` | No | — |
-| `variables` | `object` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="dimension full type">
@@ -5007,14 +4785,6 @@ await corsair.heygen.api.videos.templateGenerate({});
 }
 ```
 </Accordion>
-
-<Accordion title="variables full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -5023,7 +4793,7 @@ await corsair.heygen.api.videos.templateGenerate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5060,15 +4830,15 @@ await corsair.heygen.api.videos.translate({});
 | `video` | `object` | Yes | — |
 | `output_languages` | `string[]` | Yes | — |
 | `title` | `string` | No | — |
-| `audio` | `object` | No | — |
-| `input_language` | `string` | No | — |
+| `audio` | `object \| null` | No | — |
+| `input_language` | `string \| null` | No | — |
 | `translate_audio_only` | `boolean` | No | — |
-| `speaker_num` | `number` | No | — |
+| `speaker_num` | `number \| null` | No | — |
 | `mode` | `speed \| precision` | No | — |
-| `callback_url` | `string` | No | — |
-| `callback_id` | `string` | No | — |
+| `callback_url` | `string \| null` | No | — |
+| `callback_id` | `string \| null` | No | — |
 | `enable_caption` | `boolean` | No | — |
-| `folder_id` | `string` | No | — |
+| `folder_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="video full type">
@@ -5093,7 +4863,7 @@ await corsair.heygen.api.videos.translate({});
 } | {
   type: asset_id,
   asset_id: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5281,7 +5051,7 @@ await corsair.heygen.api.videoTranslations.list({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5386,7 +5156,7 @@ await corsair.heygen.api.voices.clone({});
 |------|------|----------|-------------|
 | `audio` | `object` | Yes | — |
 | `voice_name` | `string` | Yes | — |
-| `language` | `string` | No | — |
+| `language` | `string \| null` | No | — |
 | `remove_background_noise` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -5489,8 +5259,8 @@ await corsair.heygen.api.voices.design({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `prompt` | `string` | Yes | — |
-| `gender` | `string` | No | — |
-| `locale` | `string` | No | — |
+| `gender` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
 | `seed` | `number` | No | — |
 
 
@@ -5551,7 +5321,7 @@ await corsair.heygen.api.voices.generatePreview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5598,7 +5368,7 @@ await corsair.heygen.api.voices.generateSpeech({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5637,8 +5407,8 @@ await corsair.heygen.api.voices.generateSpeechV3({});
 | `voice_id` | `string` | Yes | — |
 | `input_type` | `text \| ssml` | No | — |
 | `speed` | `number` | No | — |
-| `language` | `string` | No | — |
-| `locale` | `string` | No | — |
+| `language` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
 
 
 
@@ -5739,7 +5509,7 @@ await corsair.heygen.api.voices.listBrandVoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5747,8 +5517,7 @@ await corsair.heygen.api.voices.listBrandVoices({});
 
 ```ts
 {
-  brand_voices: {
-  }[]
+  brand_voices: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -5777,7 +5546,7 @@ await corsair.heygen.api.voices.listLocales({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5785,8 +5554,7 @@ await corsair.heygen.api.voices.listLocales({});
 
 ```ts
 {
-  locales: {
-  }[]
+  locales: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -5821,7 +5589,7 @@ await corsair.heygen.api.voices.listTts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5829,8 +5597,7 @@ await corsair.heygen.api.voices.listTts({});
 
 ```ts
 {
-  voices: {
-  }[]
+  voices: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -5859,7 +5626,7 @@ await corsair.heygen.api.voices.listV1({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5867,8 +5634,7 @@ await corsair.heygen.api.voices.listV1({});
 
 ```ts
 {
-  voices: {
-  }[]
+  voices: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -5897,7 +5663,7 @@ await corsair.heygen.api.voices.listV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -5905,8 +5671,7 @@ await corsair.heygen.api.voices.listV2({});
 
 ```ts
 {
-  voices: {
-  }[]
+  voices: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -5947,7 +5712,7 @@ await corsair.heygen.api.voices.listV3({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -5998,7 +5763,7 @@ await corsair.heygen.api.webhooksQuota.addEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6033,8 +5798,8 @@ await corsair.heygen.api.webhooksQuota.addEndpointV3({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `events` | `string[]` | No | — |
-| `entity_id` | `string` | No | — |
+| `events` | `string[] \| null` | No | — |
+| `entity_id` | `string \| null` | No | — |
 
 
 
@@ -6088,18 +5853,8 @@ await corsair.heygen.api.webhooksQuota.deleteEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -6172,16 +5927,13 @@ await corsair.heygen.api.webhooksQuota.getCurrentUser({});
 ```ts
 {
   username: string,
-  email?: string | null,
-  first_name?: string | null,
-  last_name?: string | null,
+  email: string | null,
+  first_name: string | null,
+  last_name: string | null,
   billing_type?: wallet | subscription | usage_based | null,
-  wallet?: {
-  },
-  subscription?: {
-  },
-  usage_based?: {
-  }
+  wallet?: Record<string, any>,
+  subscription?: Record<string, any>,
+  usage_based?: Record<string, any>
 }
 ```
 </Accordion>
@@ -6210,18 +5962,8 @@ await corsair.heygen.api.webhooksQuota.listEndpoints({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6254,7 +5996,7 @@ await corsair.heygen.api.webhooksQuota.listEndpointsV3({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -6305,7 +6047,7 @@ await corsair.heygen.api.webhooksQuota.listEvents({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -6314,8 +6056,7 @@ await corsair.heygen.api.webhooksQuota.listEvents({});
 {
   event_id: string,
   event_type: string,
-  event_data: {
-  },
+  event_data: Record<string, any>,
   created_at: string
 }[]
 ```
@@ -6345,18 +6086,8 @@ await corsair.heygen.api.webhooksQuota.listEventTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6383,7 +6114,7 @@ await corsair.heygen.api.webhooksQuota.listEventTypesV3({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -6420,7 +6151,7 @@ await corsair.heygen.api.webhooksQuota.remainingQuota({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
+| `error` | `any \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -6506,18 +6237,8 @@ await corsair.heygen.api.webhooksQuota.updateEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `error` | `any` | No | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `error` | `any \| null` | No | — |
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -6540,8 +6261,8 @@ await corsair.heygen.api.webhooksQuota.updateEndpointV3({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `endpoint_id` | `string` | Yes | — |
-| `url` | `string` | No | — |
-| `events` | `string[]` | No | — |
+| `url` | `string \| null` | No | — |
+| `events` | `string[] \| null` | No | — |
 
 
 

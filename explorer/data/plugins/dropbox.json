@@ -558,7 +558,7 @@
           {
             "key": "matches",
             "optional": false,
-            "type": "{ metadata?: { metadata: { .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string } }, match_type?: {} }[]"
+            "type": "{ metadata?: { metadata: { .tag: file, id: string, name: string, path_lower?: string, path_display?: string, size?: number, is_downloadable?: boolean, server_modified?: string, client_modified?: string, rev?: string, content_hash?: string } | { .tag: folder, id: string, name: string, path_lower?: string, path_display?: string } | { .tag: deleted, name: string, path_lower?: string, path_display?: string } }, match_type?: Record<string, any> }[]"
           },
           {
             "key": "has_more",

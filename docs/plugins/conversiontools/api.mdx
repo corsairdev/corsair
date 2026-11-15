@@ -1,0 +1,715 @@
+---
+title: "Conversion Tools API reference"
+sidebarTitle: "API"
+description: "API reference for Conversion Tools: every `conversiontools.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getConfig
+
+`account.getConfig`
+
+Get account-specific converter configuration. https://api.conversiontools.io/openapi.yaml
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.account.getConfig({});
+```
+
+**Input:** _empty object_
+
+These snippets use a single-tenant client. With `multiTenancy: true`, bind a tenant first (`const tenant = corsair.withTenant('acme')`) and replace `corsair` with `tenant` in the API calls. The converters sit under `data.conversions` in the live response. An option's `type` is `'string'`, `'boolean'`, `'enum'` or `'number'` today, and the schema also accepts a type the catalog adds later.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  conversions?: {
+    type: string,
+    title?: string,
+    options?: {
+      key: string,
+      title?: string,
+      type?: string | boolean | enum | number | string,
+      values?: {
+        value: string,
+        label?: string
+      }[],
+      default?: JsonValue,
+      placeholder?: string
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInfo
+
+`account.getInfo`
+
+Get authenticated account information. https://api.conversiontools.io/openapi.yaml
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.account.getInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | No | — |
+| `email` | `string` | Yes | — |
+
+
+
+---
+
+### verify
+
+`account.verify`
+
+Verify the API token at the API root. https://conversiontools.io/llms-full.txt
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.account.verify({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | Yes | — |
+
+
+
+---
+
+## Conversions
+
+### get
+
+`conversions.get`
+
+Get one conversion type and its options. https://api.conversiontools.io/openapi.yaml
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.conversions.get({ type: 'convert.xml_to_json' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+
+An option's `type` is `'string'`, `'boolean'`, `'enum'` or `'number'` today, and the schema also accepts a type the catalog adds later.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | Yes | — |
+| `conversion` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conversion full type">
+
+```ts
+{
+  type: string,
+  title: string,
+  input_format: string,
+  output_format: string,
+  input_aliases?: string[],
+  output_aliases?: string[],
+  ai?: boolean,
+  options?: {
+    key: string,
+    title?: string,
+    type?: string | boolean | enum | number | string,
+    values?: {
+      value: string,
+      label?: string
+    }[],
+    default?: JsonValue,
+    placeholder?: string
+  }[],
+  file_inputs?: {
+    key: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversions.list`
+
+List conversion types with optional format and AI filters. https://conversiontools.io/api-documentation#building-a-connector
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.conversions.list({ input: 'xml', output: 'json', ai: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | No | — |
+| `output` | `string` | No | — |
+| `ai` | `boolean` | No | — |
+
+An option's `type` is `'string'`, `'boolean'`, `'enum'` or `'number'` today, and the schema also accepts a type the catalog adds later.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | Yes | — |
+| `count` | `number` | Yes | — |
+| `conversions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conversions full type">
+
+```ts
+{
+  type: string,
+  title: string,
+  input_format: string,
+  output_format: string,
+  input_aliases?: string[],
+  output_aliases?: string[],
+  ai?: boolean,
+  options?: {
+    key: string,
+    title?: string,
+    type?: string | boolean | enum | number | string,
+    values?: {
+      value: string,
+      label?: string
+    }[],
+    default?: JsonValue,
+    placeholder?: string
+  }[],
+  file_inputs?: {
+    key: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### createDownloadLink
+
+`files.createDownloadLink`
+
+Mint a temporary download credential for a file. https://conversiontools.io/llms-full.txt
+
+**Risk:** `write`
+
+```ts
+await corsair.conversiontools.api.files.createDownloadLink({ file_id: '0123456789abcdef0123456789abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | 32-character lowercase hexadecimal file ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | No | — |
+| `file_id` | `string` | Yes | 32-character lowercase hexadecimal file ID |
+| `download_id` | `string` | Yes | 32-character lowercase hexadecimal temporary download ID |
+
+
+
+---
+
+### createUploadSession
+
+`files.createUploadSession`
+
+Create a one-time upload session for a large file. https://conversiontools.io/llms-full.txt
+
+**Risk:** `write`
+
+```ts
+await corsair.conversiontools.api.files.createUploadSession({ filename: 'source.xml' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | No | — |
+| `upload_url` | `string` | Yes | — |
+| `file_id` | `string` | Yes | 32-character lowercase hexadecimal file ID |
+| `expires_in` | `number` | Yes | — |
+
+
+
+---
+
+### downloadById
+
+`files.downloadById`
+
+Download file bytes by file ID as base64 with response metadata. https://conversiontools.io/llms-full.txt
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.files.downloadById({ file_id: '0123456789abcdef0123456789abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | 32-character lowercase hexadecimal file ID |
+
+The JSON/base64 download response is capped at 10 MiB of raw file bytes. For larger files, create a temporary download link and have the consumer GET `https://api.conversiontools.io/v1/files/{download_id}/download` directly without an Authorization header.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | Yes | Raw file bytes encoded as base64 for JSON-safe output; downloads are limited to 10 MiB. Use a temporary download link for larger files. |
+| `contentType` | `string` | Yes | The response Content-Type |
+| `contentDisposition` | `string` | No | The response Content-Disposition, when provided |
+| `size` | `number` | Yes | Downloaded byte length |
+
+
+
+---
+
+### downloadFromLink
+
+`files.downloadFromLink`
+
+Download file bytes using a temporary download ID; the ID is sent without API-key auth. https://conversiontools.io/llms-full.txt
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.files.downloadFromLink({ download_id: 'abcdef0123456789abcdef0123456789' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `download_id` | `string` | Yes | 32-character lowercase hexadecimal temporary download ID |
+
+The JSON/base64 download response is capped at 10 MiB of raw file bytes. For larger files, create a temporary download link and have the consumer GET `https://api.conversiontools.io/v1/files/{download_id}/download` directly without an Authorization header.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | Yes | Raw file bytes encoded as base64 for JSON-safe output; downloads are limited to 10 MiB. Use a temporary download link for larger files. |
+| `contentType` | `string` | Yes | The response Content-Type |
+| `contentDisposition` | `string` | No | The response Content-Disposition, when provided |
+| `size` | `number` | Yes | Downloaded byte length |
+
+
+
+---
+
+### getInfo
+
+`files.getInfo`
+
+Get file metadata and a text preview when available. https://api.conversiontools.io/openapi.yaml
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.files.getInfo({ file_id: '0123456789abcdef0123456789abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | 32-character lowercase hexadecimal file ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `preview` | `boolean` | No | — |
+| `size` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `previewData` | `string \| string[] \| null` | No | — |
+| `detectedFormat` | `string \| null` | No | — |
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file as multipart form data. https://conversiontools.io/api-documentation#upload-file-to-server
+
+**Risk:** `write`
+
+```ts
+await corsair.conversiontools.api.files.upload({ file: new Blob(['<root />'], { type: 'application/xml' }) });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | Yes | — |
+| `file_id` | `string` | Yes | 32-character lowercase hexadecimal file ID |
+
+
+
+---
+
+### uploadToSession
+
+`files.uploadToSession`
+
+Upload raw file bytes to a one-time session URL. https://conversiontools.io/llms-full.txt
+
+**Risk:** `write`
+
+```ts
+await corsair.conversiontools.api.files.uploadToSession({ upload_url: 'https://api.conversiontools.io/v1/upload-sessions/session-id', file: new Blob(['<root />'], { type: 'application/xml' }) });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_url` | `string` | Yes | — |
+| `file` | `custom` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | 32-character lowercase hexadecimal file ID |
+| `filename` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create an asynchronous conversion task. https://conversiontools.io/api-documentation#run-conversion-task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.conversiontools.api.tasks.create({ type: 'convert.xml_to_json', options: { file_id: '0123456789abcdef0123456789abcdef' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `options` | `Record<string, JsonValue>` | Yes | — |
+
+Provide exactly one of `file_id` or `url` inside `options`; the plugin rejects requests with both or neither. `callbackUrl` is not accepted because this plugin does not implement callbacks. The options type remains `Record<string, JsonValue>` so converter-specific options stay open-ended.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | Yes | — |
+| `task_id` | `string` | Yes | 32-character lowercase hexadecimal task ID |
+| `sandbox` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get the current state of a conversion task. https://conversiontools.io/api-documentation#get-task-status
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.tasks.get({ task_id: 'fedcba9876543210fedcba9876543210' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | 32-character lowercase hexadecimal task ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | Yes | — |
+| `type` | `string` | No | — |
+| `status` | `PENDING \| RUNNING \| SUCCESS \| ERROR \| string` | Yes | — |
+| `file_id` | `string \| null` | Yes | 32-character lowercase hexadecimal file ID |
+| `conversionProgress` | `number` | No | — |
+| `conversionResult` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversionResult full type">
+
+```ts
+{
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List recent tasks, optionally filtered by status, with page and limit (up to 100 a page). https://api.conversiontools.io/openapi.yaml
+
+**Risk:** `read`
+
+```ts
+await corsair.conversiontools.api.tasks.list({ status: 'RUNNING', limit: 20, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `PENDING \| RUNNING \| SUCCESS \| ERROR` | No | — |
+| `page` | `number` | No | Page number, from 1 |
+| `limit` | `number` | No | Tasks per page, 1 to 100 (default 50) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  status?: PENDING | RUNNING | SUCCESS | ERROR | string,
+  error?: string | null,
+  url?: string | null,
+  dateCreated?: string,
+  dateFinished?: string | null,
+  conversionProgress?: number,
+  fileSource?: {
+    id?: string,
+    name?: string,
+    size?: number,
+    exists?: boolean
+  },
+  fileResult?: {
+    id?: string,
+    name?: string,
+    size?: number,
+    exists?: boolean
+  } | null,
+  retentionMode?: standard_24h | ttl_15m | string,
+  cleanupStatus?: none | scheduled | running | completed | failed | string,
+  dateDeleted?: string | null,
+  dateExpires?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number,
+  totalPages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`tasks.remove`
+
+Permanently schedule deletion of task files. https://api.conversiontools.io/openapi.yaml
+
+**Risk:** `destructive`
+
+```ts
+await corsair.conversiontools.api.tasks.remove({ task_id: 'fedcba9876543210fedcba9876543210' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | 32-character lowercase hexadecimal task ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | No | — |
+| `message` | `string` | Yes | — |
+| `dateDeleted` | `string` | Yes | — |
+
+
+
+---
+
+### updateRetention
+
+`tasks.updateRetention`
+
+Update task file retention mode. https://api.conversiontools.io/openapi.yaml
+
+**Risk:** `write`
+
+```ts
+await corsair.conversiontools.api.tasks.updateRetention({ task_id: 'fedcba9876543210fedcba9876543210', retentionMode: 'standard_24h' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | 32-character lowercase hexadecimal task ID |
+| `retentionMode` | `standard_24h \| ttl_15m` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | No | — |
+| `retentionMode` | `standard_24h \| ttl_15m \| string` | Yes | — |
+| `dateExpires` | `string` | Yes | — |
+
+
+
+---
+
