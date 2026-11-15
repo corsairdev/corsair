@@ -1,3 +1,4 @@
+import { isNoPersistActive } from '../../core/no-persist';
 import { generateUUID } from '../../core/utils';
 import { loadAccountDek, sealJson } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
@@ -34,7 +35,7 @@ export async function logEvent(
 	if (kek === '') {
 		throw new Error('encryptDataAtRest requires kek');
 	}
-	if (!database) {
+	if (!database || isNoPersistActive()) {
 		return null;
 	}
 	try {

@@ -4,6 +4,7 @@ import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
 import { decryptDEK } from '../../core/auth/encryption';
+import { isNoPersistActive } from '../../core/no-persist';
 import { generateUUID } from '../../core/utils';
 import { openJson, sealJson } from '../data-at-rest';
 import type { CorsairEntity } from '../index';
@@ -486,8 +487,23 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		upsertByEntityId: async (entityId, data) => {
 			const accountId = await getAccountId();
 			const parsed = dataSchema.parse(data);
-			const dataToStore = await storedData(accountId, parsed);
 			const now = new Date();
+
+			if (isNoPersistActive()) {
+				const row: TypedEntity<DataSchema> = {
+					id: generateUUID(),
+					created_at: now,
+					updated_at: now,
+					account_id: accountId,
+					entity_id: entityId,
+					entity_type: entityTypeName,
+					version,
+					data: parsed,
+				};
+				return row;
+			}
+
+			const dataToStore = await storedData(accountId, parsed);
 
 			const existing = await baseQuery(db, accountId, entityTypeName)
 				.select('id')
@@ -536,6 +552,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		},
 
 		deleteById: async (id) => {
+			if (isNoPersistActive()) return false;
 			const accountId = await getAccountId();
 			const res = await db
 				.deleteFrom('corsair_entities')
@@ -549,6 +566,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		},
 
 		deleteByEntityId: async (entityId) => {
+			if (isNoPersistActive()) return false;
 			const accountId = await getAccountId();
 			const res = await db
 				.deleteFrom('corsair_entities')

@@ -413,6 +413,7 @@ export {
 // The runtime plane throws this one, so a caller needs it to tell a provider
 // failure from a transport failure. CloudApiError extends it.
 export { ManagementApiError } from './management/errors';
+export { isNoPersistActive, runWithoutPersist } from './no-persist';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,
