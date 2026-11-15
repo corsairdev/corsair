@@ -249,6 +249,10 @@
   "googlecalendar": {
     "from": "https://svgl.app/library/google-calendar.svg"
   },
+  "googleclassroom": {
+    "from": "https://svgl.app/library/google-classroom.svg",
+    "note": "Google Classroom product icon (the classroom.google.com favicon is the generic Google G)"
+  },
   "googlecloudvision": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_cloud_vision.svg"
   },
@@ -263,6 +267,10 @@
   },
   "googlesheets": {
     "from": "https://svgl.app/library/google-sheets.svg"
+  },
+  "googletasks": {
+    "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/googletasks.svg",
+    "note": "Google Tasks product icon (the tasks.google.com favicon is the generic Google G)"
   },
   "grafana": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/grafana.svg"
