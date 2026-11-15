@@ -54,13 +54,18 @@ describe('Request timeout Tests', () => {
 		};
 		global.fetch = jest.fn(fetchMock);
 
+		// The old /{(.*?)}/g substitution took ~3s on this input (quadratic);
+		// the scanner is linear and finishes in a few milliseconds.
+		const startedAt = performance.now();
 		await request(config, {
 			method: 'GET',
 			url: `/items/{itemId}/${unmatched}`,
 			path: { itemId: 'a/b' },
 		});
+		const elapsedMs = performance.now() - startedAt;
 
 		expect(requestedUrl).toBe(`https://api.example.com/items/a/b/${unmatched}`);
+		expect(elapsedMs).toBeLessThan(1000);
 	});
 
 	it('passes a timeout-aware abort signal to fetch', async () => {
