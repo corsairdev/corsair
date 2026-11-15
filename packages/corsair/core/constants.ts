@@ -449,6 +449,7 @@ export const BaseProviders = [
 	'postmark',
 	'prerender',
 	'prismic',
+	'proabono',
 	'posthog',
 	'postman',
 	'prisma',
@@ -1073,6 +1074,7 @@ export const ProviderDisplayNames = {
 	postmark: 'Postmark',
 	prerender: 'Prerender',
 	prismic: 'Prismic',
+	proabono: 'ProAbono',
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
@@ -1704,6 +1706,7 @@ export type AllProviders =
 	| 'postmark'
 	| 'prerender'
 	| 'prismic'
+	| 'proabono'
 	| 'posthog'
 	| 'postman'
 	| 'prisma'

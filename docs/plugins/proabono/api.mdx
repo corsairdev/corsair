@@ -1,0 +1,1759 @@
+---
+title: "ProAbono API reference"
+sidebarTitle: "API"
+description: "API reference for the ProAbono plugin in Corsair: every `proabono.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Balance Lines
+
+### create
+
+`balanceLines.create`
+
+Add a balance line, such as a one-off charge or credit in cents, to a customer's next invoice
+
+**Risk:** `destructive`
+
+```ts
+await corsair.proabono.api.balanceLines.create({ ReferenceCustomer: 'cust-42', Label: 'One-off setup', Amount: 59900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `IdSubscription` | `number` | No | The ProAbono numeric id. |
+| `Label` | `string` | No | The line label, shown on the invoice. |
+| `Amount` | `number` | Yes | In cents, before taxes. A negative value is a credit. |
+| `Quantity` | `number` | No | Shown on the invoice only; it does not change the amount. |
+| `EnsureBillable` | `boolean` | No | True by default on ProAbono: a customer without valid payment information answers 403. False adds the line anyway. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSubscription` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `LabelLocalized` | `string \| null` | No | — |
+| `PricingLocalized` | `string \| null` | No | HTML. |
+| `Currency` | `string \| null` | No | — |
+| `AmountSubtotal` | `number \| null` | No | In cents, before taxes. |
+| `AmountTotal` | `number \| null` | No | In cents, with taxes. |
+| `DateMove` | `string \| null` | No | When the line is billed, for a line outside a period. |
+| `QuantityReported` | `number \| null` | No | — |
+| `QuantityBilled` | `number \| null` | No | — |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodTerm` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`balanceLines.list`
+
+List balance lines by customer, segment, feature or subscription, with their totals
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.balanceLines.list({ ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceSegment` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceFeature` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `IdSubscription` | `number` | No | The ProAbono numeric id. |
+| `Page` | `number` | No | — |
+| `SizePage` | `number` | No | Rows per page. 0 returns only the totals in `Computations`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `balanceLines` | `object[]` | Yes | — |
+| `Page` | `number \| null` | No | The page this answer holds, from 1. |
+| `SizePage` | `number \| null` | No | Rows per page. |
+| `Count` | `number \| null` | No | Rows on this page. |
+| `TotalItems` | `number \| null` | No | Rows in the whole collection, across pages. |
+| `Computations` | `object \| null` | No | Totals in cents over every matching line. |
+
+<AccordionGroup>
+<Accordion title="balanceLines full type">
+
+```ts
+{
+  IdSegment?: number | null,
+  IdCustomer?: number | null,
+  IdSubscription?: number | null,
+  ReferenceSegment?: string | null,
+  ReferenceCustomer?: string | null,
+  LabelLocalized?: string | null,
+  PricingLocalized?: string | null,
+  Currency?: string | null,
+  AmountSubtotal?: number | null,
+  AmountTotal?: number | null,
+  DateMove?: string | null,
+  QuantityReported?: number | null,
+  QuantityBilled?: number | null,
+  DatePeriodStart?: string | null,
+  DatePeriodTerm?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="Computations full type">
+
+```ts
+{
+  AmountSubtotal?: number | null,
+  AmountTotal?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### anonymize
+
+`customers.anonymize`
+
+Erase a customer's personal data. This cannot be undone, and ProAbono keeps the billing record only as it must
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.proabono.api.customers.anonymize({ ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `IsActive` | `boolean \| null` | No | — |
+
+
+
+---
+
+### create
+
+`customers.create`
+
+Create a customer with your own reference, which subscriptions and usages then identify it by
+
+**Risk:** `write`
+
+```ts
+await corsair.proabono.api.customers.create({ ReferenceCustomer: 'cust-42', Name: 'Jane Smith', Email: 'jane@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `Name` | `string` | No | Full name of the customer. |
+| `Email` | `string` | No | — |
+| `Language` | `string` | No | — |
+| `ReferenceSegment` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceOffer` | `string` | No | An offer the customer wants; the answer then carries a subscribe link. |
+| `ReferenceAffiliation` | `string` | No | The affiliate who brought the customer. |
+| `Metadata` | `Record<string, JsonValue>` | No | Your own key-value data, stored on the resource. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `FirstName` | `string \| null` | No | — |
+| `LastName` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `Company` | `string \| null` | No | — |
+| `Country` | `string \| null` | No | — |
+| `Language` | `string \| null` | No | — |
+| `Currency` | `string \| null` | No | — |
+| `IsBillable` | `boolean \| null` | No | False until the customer has valid payment information. |
+| `IsActive` | `boolean \| null` | No | — |
+| `Status` | `string \| null` | No | The customer status, such as `Enabled`. |
+| `ReferenceAffiliation` | `string \| null` | No | — |
+| `DateAffiliation` | `string \| null` | No | — |
+| `DateCreated` | `string \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer by your reference, with whether it is billable
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.customers.get({ ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `FirstName` | `string \| null` | No | — |
+| `LastName` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `Company` | `string \| null` | No | — |
+| `Country` | `string \| null` | No | — |
+| `Language` | `string \| null` | No | — |
+| `Currency` | `string \| null` | No | — |
+| `IsBillable` | `boolean \| null` | No | False until the customer has valid payment information. |
+| `IsActive` | `boolean \| null` | No | — |
+| `Status` | `string \| null` | No | The customer status, such as `Enabled`. |
+| `ReferenceAffiliation` | `string \| null` | No | — |
+| `DateAffiliation` | `string \| null` | No | — |
+| `DateCreated` | `string \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invalidate
+
+`customers.invalidate`
+
+Invalidate a customer: ProAbono replaces their reference so it can be reused and revokes their portal links. Subscriptions, invoices and payment methods stay
+
+**Risk:** `destructive`
+
+```ts
+await corsair.proabono.api.customers.invalidate({ ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `IsActive` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List the customers in a segment, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.customers.list({ Page: 1, SizePage: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceSegment` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `Page` | `number` | No | 1-based page number. |
+| `SizePage` | `number` | No | Rows per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `object[]` | Yes | — |
+| `Page` | `number \| null` | No | The page this answer holds, from 1. |
+| `SizePage` | `number \| null` | No | Rows per page. |
+| `Count` | `number \| null` | No | Rows on this page. |
+| `TotalItems` | `number \| null` | No | Rows in the whole collection, across pages. |
+
+<AccordionGroup>
+<Accordion title="customers full type">
+
+```ts
+{
+  Id?: number | null,
+  ReferenceCustomer?: string | null,
+  IdSegment?: number | null,
+  ReferenceSegment?: string | null,
+  Name?: string | null,
+  FirstName?: string | null,
+  LastName?: string | null,
+  Email?: string | null,
+  Company?: string | null,
+  Country?: string | null,
+  Language?: string | null,
+  Currency?: string | null,
+  IsBillable?: boolean | null,
+  IsActive?: boolean | null,
+  Status?: string | null,
+  ReferenceAffiliation?: string | null,
+  DateAffiliation?: string | null,
+  DateCreated?: string | null,
+  Metadata?: JsonValue | null,
+  Links?: {
+    rel?: string | null,
+    href?: string | null,
+    query?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### suspend
+
+`customers.suspend`
+
+Suspend a customer without deleting anything, so they can be reactivated
+
+**Risk:** `write`
+
+```ts
+await corsair.proabono.api.customers.suspend({ ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `IsActive` | `boolean \| null` | No | — |
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Change a customer's name, email, language, affiliation or metadata. ProAbono creates and updates on the same route, so an unknown reference creates a customer
+
+**Risk:** `write`
+
+```ts
+await corsair.proabono.api.customers.update({ ReferenceCustomer: 'cust-42', Email: 'new@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `Name` | `string` | No | — |
+| `Email` | `string` | No | — |
+| `Language` | `string` | No | — |
+| `ReferenceAffiliation` | `string` | No | — |
+| `Metadata` | `Record<string, JsonValue>` | No | Your own key-value data, stored on the resource. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `FirstName` | `string \| null` | No | — |
+| `LastName` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `Company` | `string \| null` | No | — |
+| `Country` | `string \| null` | No | — |
+| `Language` | `string \| null` | No | — |
+| `Currency` | `string \| null` | No | — |
+| `IsBillable` | `boolean \| null` | No | False until the customer has valid payment information. |
+| `IsActive` | `boolean \| null` | No | — |
+| `Status` | `string \| null` | No | The customer status, such as `Enabled`. |
+| `ReferenceAffiliation` | `string \| null` | No | — |
+| `DateAffiliation` | `string \| null` | No | — |
+| `DateCreated` | `string \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Features
+
+### get
+
+`features.get`
+
+Read one feature by its reference
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.features.get({ ReferenceFeature: 'feat-users' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceFeature` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `ReferenceSegment` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceCustomer` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `Language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceFeature` | `string \| null` | No | — |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `TitleLocalized` | `string \| null` | No | — |
+| `DescriptionLocalized` | `string \| null` | No | — |
+| `TypeFeature` | `string \| null` | No | `Limitation`, `OnOff` or `Quantifiable`. |
+| `IsVisible` | `boolean \| null` | No | — |
+| `CodeFeature` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`features.list`
+
+List the features your offers carry
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.features.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceSegment` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceCustomer` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `Language` | `string` | No | — |
+| `IsVisible` | `boolean` | No | — |
+| `Page` | `number` | No | 1-based page number. |
+| `SizePage` | `number` | No | Rows per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `features` | `object[]` | Yes | — |
+| `Page` | `number \| null` | No | The page this answer holds, from 1. |
+| `SizePage` | `number \| null` | No | Rows per page. |
+| `Count` | `number \| null` | No | Rows on this page. |
+| `TotalItems` | `number \| null` | No | Rows in the whole collection, across pages. |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  Id?: number | null,
+  ReferenceFeature?: string | null,
+  IdSegment?: number | null,
+  TitleLocalized?: string | null,
+  DescriptionLocalized?: string | null,
+  TypeFeature?: string | null,
+  IsVisible?: boolean | null,
+  CodeFeature?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### get
+
+`invoices.get`
+
+Read one invoice with its totals and links
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.invoices.get({ IdInvoice: 499734 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdInvoice` | `number` | Yes | The ProAbono numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `FullNumber` | `string \| null` | No | Such as `S-3.00000004`. |
+| `Status` | `string \| null` | No | Such as `Due` or `Paid`. |
+| `StateInvoice` | `string \| null` | No | The detailed state, such as `DuePending`. |
+| `DateIssue` | `string \| null` | No | — |
+| `DatePayment` | `string \| null` | No | — |
+| `DatePaymentLimit` | `string \| null` | No | — |
+| `TypePayment` | `string \| null` | No | — |
+| `AmountSubtotal` | `number \| null` | No | In cents. |
+| `AmountTotal` | `number \| null` | No | In cents, with taxes. |
+| `Currency` | `string \| null` | No | — |
+| `DateUpdate` | `string \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices by customer or subscription, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.invoices.list({ ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `IdSubscription` | `number` | No | The ProAbono numeric id. |
+| `Page` | `number` | No | — |
+| `SizePage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[]` | Yes | — |
+| `Page` | `number \| null` | No | The page this answer holds, from 1. |
+| `SizePage` | `number \| null` | No | Rows per page. |
+| `Count` | `number \| null` | No | Rows on this page. |
+| `TotalItems` | `number \| null` | No | Rows in the whole collection, across pages. |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  Id?: number | null,
+  IdSegment?: number | null,
+  IdCustomer?: number | null,
+  ReferenceSegment?: string | null,
+  ReferenceCustomer?: string | null,
+  FullNumber?: string | null,
+  Status?: string | null,
+  StateInvoice?: string | null,
+  DateIssue?: string | null,
+  DatePayment?: string | null,
+  DatePaymentLimit?: string | null,
+  TypePayment?: string | null,
+  AmountSubtotal?: number | null,
+  AmountTotal?: number | null,
+  Currency?: string | null,
+  DateUpdate?: string | null,
+  Links?: {
+    rel?: string | null,
+    href?: string | null,
+    query?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Offers
+
+### get
+
+`offers.get`
+
+Read one offer by its reference
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.offers.get({ ReferenceOffer: 'premium' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceOffer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `ReferenceSegment` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceCustomer` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `Upgrade` | `boolean` | No | Make the link point at the upgrade workflow. Needs `ReferenceCustomer` or `IdSubscription`. |
+| `IdSubscription` | `number` | No | The ProAbono numeric id. |
+| `IgnoreFeatures` | `boolean` | No | — |
+| `Language` | `string` | No | — |
+| `Html` | `boolean` | No | — |
+| `Links` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceOffer` | `string \| null` | No | — |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `TitleLocalized` | `string \| null` | No | — |
+| `DescriptionLocalized` | `string \| null` | No | — |
+| `PricingLocalized` | `string \| null` | No | HTML by default. |
+| `IsVisible` | `boolean \| null` | No | — |
+| `IsFree` | `boolean \| null` | No | — |
+| `Currency` | `string \| null` | No | — |
+| `AmountRecurrence` | `number \| null` | No | The recurring amount in cents. |
+| `UnitRecurrence` | `string \| null` | No | — |
+| `DurationTrial` | `number \| null` | No | — |
+| `UnitTrial` | `string \| null` | No | — |
+| `Features` | `JsonValue[] \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`offers.list`
+
+List the offers in a segment, optionally in a customer language and with their upgrade links
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.offers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceSegment` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceCustomer` | `string` | No | Read the offers in this customer's language, with links for that customer. |
+| `IsVisible` | `boolean` | No | — |
+| `IgnoreFeatures` | `boolean` | No | Leave the feature list out of the answer. |
+| `Language` | `string` | No | — |
+| `Html` | `boolean` | No | False returns the pricing as plain text. |
+| `Links` | `boolean` | No | False leaves the links out. |
+| `Page` | `number` | No | 1-based page number. |
+| `SizePage` | `number` | No | Rows per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offers` | `object[]` | Yes | — |
+| `Page` | `number \| null` | No | The page this answer holds, from 1. |
+| `SizePage` | `number \| null` | No | Rows per page. |
+| `Count` | `number \| null` | No | Rows on this page. |
+| `TotalItems` | `number \| null` | No | Rows in the whole collection, across pages. |
+
+<AccordionGroup>
+<Accordion title="offers full type">
+
+```ts
+{
+  Id?: number | null,
+  ReferenceOffer?: string | null,
+  IdSegment?: number | null,
+  ReferenceSegment?: string | null,
+  TitleLocalized?: string | null,
+  DescriptionLocalized?: string | null,
+  PricingLocalized?: string | null,
+  IsVisible?: boolean | null,
+  IsFree?: boolean | null,
+  Currency?: string | null,
+  AmountRecurrence?: number | null,
+  UnitRecurrence?: string | null,
+  DurationTrial?: number | null,
+  UnitTrial?: string | null,
+  Features?: JsonValue[] | null,
+  Links?: {
+    rel?: string | null,
+    href?: string | null,
+    query?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### create
+
+`subscriptions.create`
+
+Subscribe a customer to an offer, which starts billing when the offer is paid and the customer is billable. `TryStart: false` creates it without starting so it can be customised first
+
+**Risk:** `destructive`
+
+```ts
+await corsair.proabono.api.subscriptions.create({ ReferenceOffer: 'premium', ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceOffer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `ReferenceCustomer` | `string` | Yes | The customer, which must already exist in ProAbono. |
+| `ReferenceCustomerBuyer` | `string` | No | When the buyer is not the recipient. |
+| `Metadata` | `Record<string, JsonValue>` | No | Your own key-value data, stored on the resource. |
+| `EnsureBillable` | `boolean` | No | Check paying information even for a free offer; a customer without any answers 403. |
+| `TryStart` | `boolean` | No | False creates without starting, so the subscription can be customised first; true forces a start. |
+| `BillNow` | `boolean` | No | Bill the start immediately. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdOffer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomerBuyer` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceOffer` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `ReferenceCustomerBuyer` | `string \| null` | No | — |
+| `Status` | `string \| null` | No | The lifecycle status, such as `Active`. |
+| `StateSubscription` | `string \| null` | No | The detailed state, such as `ActiveRunning`. |
+| `DateStart` | `string \| null` | No | — |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+| `DateTerm` | `string \| null` | No | — |
+| `StatusAfterTerm` | `string \| null` | No | — |
+| `StateSubscriptionAfterTerm` | `string \| null` | No | — |
+| `IsTrial` | `boolean \| null` | No | — |
+| `CountDaysTrial` | `number \| null` | No | — |
+| `IsEngaged` | `boolean \| null` | No | — |
+| `IsCustomerBillable` | `boolean \| null` | No | — |
+| `IsPaymentCappingReached` | `boolean \| null` | No | — |
+| `DateNextBilling` | `string \| null` | No | — |
+| `TitleLocalized` | `string \| null` | No | — |
+| `PricingSubtotal` | `number \| null` | No | In cents. |
+| `PricingTotal` | `number \| null` | No | In cents, with taxes. |
+| `AmountUpFront` | `number \| null` | No | — |
+| `DurationTrial` | `number \| null` | No | — |
+| `UnitTrial` | `string \| null` | No | — |
+| `AmountRecurrence` | `number \| null` | No | — |
+| `DurationRecurrence` | `number \| null` | No | — |
+| `UnitRecurrence` | `string \| null` | No | — |
+| `CountRecurrences` | `number \| null` | No | — |
+| `CountMinRecurrences` | `number \| null` | No | — |
+| `Features` | `JsonValue[] \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `DateUpdate` | `string \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscriptions.get`
+
+Read one subscription with its state, period, next billing date and features. The docs warn against using this to check whether a user is a subscriber
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.subscriptions.get({ IdSubscription: 44082 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSubscription` | `number` | Yes | The ProAbono numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdOffer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomerBuyer` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceOffer` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `ReferenceCustomerBuyer` | `string \| null` | No | — |
+| `Status` | `string \| null` | No | The lifecycle status, such as `Active`. |
+| `StateSubscription` | `string \| null` | No | The detailed state, such as `ActiveRunning`. |
+| `DateStart` | `string \| null` | No | — |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+| `DateTerm` | `string \| null` | No | — |
+| `StatusAfterTerm` | `string \| null` | No | — |
+| `StateSubscriptionAfterTerm` | `string \| null` | No | — |
+| `IsTrial` | `boolean \| null` | No | — |
+| `CountDaysTrial` | `number \| null` | No | — |
+| `IsEngaged` | `boolean \| null` | No | — |
+| `IsCustomerBillable` | `boolean \| null` | No | — |
+| `IsPaymentCappingReached` | `boolean \| null` | No | — |
+| `DateNextBilling` | `string \| null` | No | — |
+| `TitleLocalized` | `string \| null` | No | — |
+| `PricingSubtotal` | `number \| null` | No | In cents. |
+| `PricingTotal` | `number \| null` | No | In cents, with taxes. |
+| `AmountUpFront` | `number \| null` | No | — |
+| `DurationTrial` | `number \| null` | No | — |
+| `UnitTrial` | `string \| null` | No | — |
+| `AmountRecurrence` | `number \| null` | No | — |
+| `DurationRecurrence` | `number \| null` | No | — |
+| `UnitRecurrence` | `string \| null` | No | — |
+| `CountRecurrences` | `number \| null` | No | — |
+| `CountMinRecurrences` | `number \| null` | No | — |
+| `Features` | `JsonValue[] \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `DateUpdate` | `string \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscriptions.list`
+
+List subscriptions filtered by customer, offer or segment, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.subscriptions.list({ ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceCustomerBuyer` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceSegment` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `IgnoreFeatures` | `boolean` | No | Leave the feature list out of the answer. |
+| `Page` | `number` | No | — |
+| `SizePage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptions` | `object[]` | Yes | — |
+| `Page` | `number \| null` | No | The page this answer holds, from 1. |
+| `SizePage` | `number \| null` | No | Rows per page. |
+| `Count` | `number \| null` | No | Rows on this page. |
+| `TotalItems` | `number \| null` | No | Rows in the whole collection, across pages. |
+
+<AccordionGroup>
+<Accordion title="subscriptions full type">
+
+```ts
+{
+  Id?: number | null,
+  IdSegment?: number | null,
+  IdOffer?: number | null,
+  IdCustomer?: number | null,
+  IdCustomerBuyer?: number | null,
+  ReferenceSegment?: string | null,
+  ReferenceOffer?: string | null,
+  ReferenceCustomer?: string | null,
+  ReferenceCustomerBuyer?: string | null,
+  Status?: string | null,
+  StateSubscription?: string | null,
+  DateStart?: string | null,
+  DatePeriodStart?: string | null,
+  DatePeriodEnd?: string | null,
+  DateTerm?: string | null,
+  StatusAfterTerm?: string | null,
+  StateSubscriptionAfterTerm?: string | null,
+  IsTrial?: boolean | null,
+  CountDaysTrial?: number | null,
+  IsEngaged?: boolean | null,
+  IsCustomerBillable?: boolean | null,
+  IsPaymentCappingReached?: boolean | null,
+  DateNextBilling?: string | null,
+  TitleLocalized?: string | null,
+  PricingSubtotal?: number | null,
+  PricingTotal?: number | null,
+  AmountUpFront?: number | null,
+  DurationTrial?: number | null,
+  UnitTrial?: string | null,
+  AmountRecurrence?: number | null,
+  DurationRecurrence?: number | null,
+  UnitRecurrence?: string | null,
+  CountRecurrences?: number | null,
+  CountMinRecurrences?: number | null,
+  Features?: JsonValue[] | null,
+  Metadata?: JsonValue | null,
+  DateUpdate?: string | null,
+  Links?: {
+    rel?: string | null,
+    href?: string | null,
+    query?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`subscriptions.start`
+
+Start a subscription that was created without starting, which begins billing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.proabono.api.subscriptions.start({ IdSubscription: 44082 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSubscription` | `number` | Yes | The ProAbono numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdOffer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomerBuyer` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceOffer` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `ReferenceCustomerBuyer` | `string \| null` | No | — |
+| `Status` | `string \| null` | No | The lifecycle status, such as `Active`. |
+| `StateSubscription` | `string \| null` | No | The detailed state, such as `ActiveRunning`. |
+| `DateStart` | `string \| null` | No | — |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+| `DateTerm` | `string \| null` | No | — |
+| `StatusAfterTerm` | `string \| null` | No | — |
+| `StateSubscriptionAfterTerm` | `string \| null` | No | — |
+| `IsTrial` | `boolean \| null` | No | — |
+| `CountDaysTrial` | `number \| null` | No | — |
+| `IsEngaged` | `boolean \| null` | No | — |
+| `IsCustomerBillable` | `boolean \| null` | No | — |
+| `IsPaymentCappingReached` | `boolean \| null` | No | — |
+| `DateNextBilling` | `string \| null` | No | — |
+| `TitleLocalized` | `string \| null` | No | — |
+| `PricingSubtotal` | `number \| null` | No | In cents. |
+| `PricingTotal` | `number \| null` | No | In cents, with taxes. |
+| `AmountUpFront` | `number \| null` | No | — |
+| `DurationTrial` | `number \| null` | No | — |
+| `UnitTrial` | `string \| null` | No | — |
+| `AmountRecurrence` | `number \| null` | No | — |
+| `DurationRecurrence` | `number \| null` | No | — |
+| `UnitRecurrence` | `string \| null` | No | — |
+| `CountRecurrences` | `number \| null` | No | — |
+| `CountMinRecurrences` | `number \| null` | No | — |
+| `Features` | `JsonValue[] \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `DateUpdate` | `string \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### suspend
+
+`subscriptions.suspend`
+
+Suspend a subscription without terminating it
+
+**Risk:** `write`
+
+```ts
+await corsair.proabono.api.subscriptions.suspend({ IdSubscription: 44082 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSubscription` | `number` | Yes | The ProAbono numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdOffer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomerBuyer` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceOffer` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `ReferenceCustomerBuyer` | `string \| null` | No | — |
+| `Status` | `string \| null` | No | The lifecycle status, such as `Active`. |
+| `StateSubscription` | `string \| null` | No | The detailed state, such as `ActiveRunning`. |
+| `DateStart` | `string \| null` | No | — |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+| `DateTerm` | `string \| null` | No | — |
+| `StatusAfterTerm` | `string \| null` | No | — |
+| `StateSubscriptionAfterTerm` | `string \| null` | No | — |
+| `IsTrial` | `boolean \| null` | No | — |
+| `CountDaysTrial` | `number \| null` | No | — |
+| `IsEngaged` | `boolean \| null` | No | — |
+| `IsCustomerBillable` | `boolean \| null` | No | — |
+| `IsPaymentCappingReached` | `boolean \| null` | No | — |
+| `DateNextBilling` | `string \| null` | No | — |
+| `TitleLocalized` | `string \| null` | No | — |
+| `PricingSubtotal` | `number \| null` | No | In cents. |
+| `PricingTotal` | `number \| null` | No | In cents, with taxes. |
+| `AmountUpFront` | `number \| null` | No | — |
+| `DurationTrial` | `number \| null` | No | — |
+| `UnitTrial` | `string \| null` | No | — |
+| `AmountRecurrence` | `number \| null` | No | — |
+| `DurationRecurrence` | `number \| null` | No | — |
+| `UnitRecurrence` | `string \| null` | No | — |
+| `CountRecurrences` | `number \| null` | No | — |
+| `CountMinRecurrences` | `number \| null` | No | — |
+| `Features` | `JsonValue[] \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `DateUpdate` | `string \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### terminate
+
+`subscriptions.terminate`
+
+Terminate a subscription, ending it for good; by default at the end of the current period. A later start cannot revive it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.proabono.api.subscriptions.terminate({ IdSubscription: 44082 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSubscription` | `number` | Yes | The ProAbono numeric id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdOffer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomerBuyer` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceOffer` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `ReferenceCustomerBuyer` | `string \| null` | No | — |
+| `Status` | `string \| null` | No | The lifecycle status, such as `Active`. |
+| `StateSubscription` | `string \| null` | No | The detailed state, such as `ActiveRunning`. |
+| `DateStart` | `string \| null` | No | — |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+| `DateTerm` | `string \| null` | No | — |
+| `StatusAfterTerm` | `string \| null` | No | — |
+| `StateSubscriptionAfterTerm` | `string \| null` | No | — |
+| `IsTrial` | `boolean \| null` | No | — |
+| `CountDaysTrial` | `number \| null` | No | — |
+| `IsEngaged` | `boolean \| null` | No | — |
+| `IsCustomerBillable` | `boolean \| null` | No | — |
+| `IsPaymentCappingReached` | `boolean \| null` | No | — |
+| `DateNextBilling` | `string \| null` | No | — |
+| `TitleLocalized` | `string \| null` | No | — |
+| `PricingSubtotal` | `number \| null` | No | In cents. |
+| `PricingTotal` | `number \| null` | No | In cents, with taxes. |
+| `AmountUpFront` | `number \| null` | No | — |
+| `DurationTrial` | `number \| null` | No | — |
+| `UnitTrial` | `string \| null` | No | — |
+| `AmountRecurrence` | `number \| null` | No | — |
+| `DurationRecurrence` | `number \| null` | No | — |
+| `UnitRecurrence` | `string \| null` | No | — |
+| `CountRecurrences` | `number \| null` | No | — |
+| `CountMinRecurrences` | `number \| null` | No | — |
+| `Features` | `JsonValue[] \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `DateUpdate` | `string \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTerm
+
+`subscriptions.updateTerm`
+
+Change a subscription's end date
+
+**Risk:** `write`
+
+```ts
+await corsair.proabono.api.subscriptions.updateTerm({ IdSubscription: 44082, DateTerm: '2026-12-31T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSubscription` | `number` | Yes | The ProAbono numeric id. |
+| `DateTerm` | `string` | Yes | The new end date, as an ISO 8601 timestamp. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdOffer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomerBuyer` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceOffer` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `ReferenceCustomerBuyer` | `string \| null` | No | — |
+| `Status` | `string \| null` | No | The lifecycle status, such as `Active`. |
+| `StateSubscription` | `string \| null` | No | The detailed state, such as `ActiveRunning`. |
+| `DateStart` | `string \| null` | No | — |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+| `DateTerm` | `string \| null` | No | — |
+| `StatusAfterTerm` | `string \| null` | No | — |
+| `StateSubscriptionAfterTerm` | `string \| null` | No | — |
+| `IsTrial` | `boolean \| null` | No | — |
+| `CountDaysTrial` | `number \| null` | No | — |
+| `IsEngaged` | `boolean \| null` | No | — |
+| `IsCustomerBillable` | `boolean \| null` | No | — |
+| `IsPaymentCappingReached` | `boolean \| null` | No | — |
+| `DateNextBilling` | `string \| null` | No | — |
+| `TitleLocalized` | `string \| null` | No | — |
+| `PricingSubtotal` | `number \| null` | No | In cents. |
+| `PricingTotal` | `number \| null` | No | In cents, with taxes. |
+| `AmountUpFront` | `number \| null` | No | — |
+| `DurationTrial` | `number \| null` | No | — |
+| `UnitTrial` | `string \| null` | No | — |
+| `AmountRecurrence` | `number \| null` | No | — |
+| `DurationRecurrence` | `number \| null` | No | — |
+| `UnitRecurrence` | `string \| null` | No | — |
+| `CountRecurrences` | `number \| null` | No | — |
+| `CountMinRecurrences` | `number \| null` | No | — |
+| `Features` | `JsonValue[] \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `DateUpdate` | `string \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upgrade
+
+`subscriptions.upgrade`
+
+Move a subscription to another offer, which changes what it bills from the next period
+
+**Risk:** `destructive`
+
+```ts
+await corsair.proabono.api.subscriptions.upgrade({ IdSubscription: 44082, ReferenceOffer: 'ultimate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSubscription` | `number` | Yes | The ProAbono numeric id. |
+| `ReferenceOffer` | `string` | Yes | The offer to move the subscription to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdOffer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomerBuyer` | `number \| null` | No | The ProAbono numeric id. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceOffer` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `ReferenceCustomerBuyer` | `string \| null` | No | — |
+| `Status` | `string \| null` | No | The lifecycle status, such as `Active`. |
+| `StateSubscription` | `string \| null` | No | The detailed state, such as `ActiveRunning`. |
+| `DateStart` | `string \| null` | No | — |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+| `DateTerm` | `string \| null` | No | — |
+| `StatusAfterTerm` | `string \| null` | No | — |
+| `StateSubscriptionAfterTerm` | `string \| null` | No | — |
+| `IsTrial` | `boolean \| null` | No | — |
+| `CountDaysTrial` | `number \| null` | No | — |
+| `IsEngaged` | `boolean \| null` | No | — |
+| `IsCustomerBillable` | `boolean \| null` | No | — |
+| `IsPaymentCappingReached` | `boolean \| null` | No | — |
+| `DateNextBilling` | `string \| null` | No | — |
+| `TitleLocalized` | `string \| null` | No | — |
+| `PricingSubtotal` | `number \| null` | No | In cents. |
+| `PricingTotal` | `number \| null` | No | In cents, with taxes. |
+| `AmountUpFront` | `number \| null` | No | — |
+| `DurationTrial` | `number \| null` | No | — |
+| `UnitTrial` | `string \| null` | No | — |
+| `AmountRecurrence` | `number \| null` | No | — |
+| `DurationRecurrence` | `number \| null` | No | — |
+| `UnitRecurrence` | `string \| null` | No | — |
+| `CountRecurrences` | `number \| null` | No | — |
+| `CountMinRecurrences` | `number \| null` | No | — |
+| `Features` | `JsonValue[] \| null` | No | — |
+| `Metadata` | `JsonValue \| null` | No | — |
+| `DateUpdate` | `string \| null` | No | — |
+| `Links` | `object[] \| null` | No | Links for the resource, including the encrypted portal URL. |
+
+<AccordionGroup>
+<Accordion title="Links full type">
+
+```ts
+{
+  rel?: string | null,
+  href?: string | null,
+  query?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usages
+
+### get
+
+`usages.get`
+
+Read one customer's usage of one feature: on/off, or the included and current quantities
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.usages.get({ ReferenceCustomer: 'cust-42', ReferenceFeature: 'feat-users' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `ReferenceFeature` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `IdSubscription` | `number` | No | Read the usage of this subscription when the customer has several. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdFeature` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSubscription` | `number \| null` | No | Absent when several subscriptions match the usage. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceFeature` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `TypeFeature` | `string \| null` | No | `OnOff`, `Limitation` or `Consumption`. |
+| `IsIncluded` | `boolean \| null` | No | OnOff features only. |
+| `IsEnabled` | `boolean \| null` | No | OnOff features only. |
+| `QuantityIncluded` | `number \| null` | No | Included quantity; absent means unlimited. |
+| `QuantityCurrent` | `number \| null` | No | Quantity used so far. |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+
+
+
+---
+
+### increment
+
+`usages.increment`
+
+Add to a feature’s usage for a customer, which ProAbono bills when it exceeds the included quantity. A negative increment subtracts, which is how a reversed action is recorded
+
+**Risk:** `destructive`
+
+```ts
+await corsair.proabono.api.usages.increment({ ReferenceCustomer: 'cust-42', ReferenceFeature: 'feat-users', Increment: 1, DateStamp: '2026-11-15T10:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `ReferenceFeature` | `string` | Yes | Your own identifier for the resource, unique within its kind. |
+| `IdSubscription` | `number` | No | The ProAbono numeric id. |
+| `Increment` | `number` | Yes | How much to add. A negative value subtracts. |
+| `DateStamp` | `string` | Yes | When the change happened, as an ISO 8601 timestamp. ProAbono records two changes with the same timestamp once, so it doubles as an idempotency key. |
+| `EnsureBillable` | `boolean` | No | True by default on ProAbono: a customer without valid payment information answers 403. False skips that check. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IdSegment` | `number \| null` | No | The ProAbono numeric id. |
+| `IdFeature` | `number \| null` | No | The ProAbono numeric id. |
+| `IdCustomer` | `number \| null` | No | The ProAbono numeric id. |
+| `IdSubscription` | `number \| null` | No | Absent when several subscriptions match the usage. |
+| `ReferenceSegment` | `string \| null` | No | — |
+| `ReferenceFeature` | `string \| null` | No | — |
+| `ReferenceCustomer` | `string \| null` | No | — |
+| `TypeFeature` | `string \| null` | No | `OnOff`, `Limitation` or `Consumption`. |
+| `IsIncluded` | `boolean \| null` | No | OnOff features only. |
+| `IsEnabled` | `boolean \| null` | No | OnOff features only. |
+| `QuantityIncluded` | `number \| null` | No | Included quantity; absent means unlimited. |
+| `QuantityCurrent` | `number \| null` | No | Quantity used so far. |
+| `DatePeriodStart` | `string \| null` | No | — |
+| `DatePeriodEnd` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`usages.list`
+
+List feature usages by customer, feature or subscription, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.proabono.api.usages.list({ ReferenceCustomer: 'cust-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ReferenceCustomer` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `ReferenceFeature` | `string` | No | Your own identifier for the resource, unique within its kind. |
+| `IdSubscription` | `number` | No | The ProAbono numeric id. |
+| `Page` | `number` | No | 1-based page number. |
+| `SizePage` | `number` | No | Rows per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usages` | `object[]` | Yes | — |
+| `Page` | `number \| null` | No | The page this answer holds, from 1. |
+| `SizePage` | `number \| null` | No | Rows per page. |
+| `Count` | `number \| null` | No | Rows on this page. |
+| `TotalItems` | `number \| null` | No | Rows in the whole collection, across pages. |
+
+<AccordionGroup>
+<Accordion title="usages full type">
+
+```ts
+{
+  IdSegment?: number | null,
+  IdFeature?: number | null,
+  IdCustomer?: number | null,
+  IdSubscription?: number | null,
+  ReferenceSegment?: string | null,
+  ReferenceFeature?: string | null,
+  ReferenceCustomer?: string | null,
+  TypeFeature?: string | null,
+  IsIncluded?: boolean | null,
+  IsEnabled?: boolean | null,
+  QuantityIncluded?: number | null,
+  QuantityCurrent?: number | null,
+  DatePeriodStart?: string | null,
+  DatePeriodEnd?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`usages.update`
+
+Update up to 50 usages in one call, each by increment, current quantity or on/off
+
+**Risk:** `destructive`
+
+```ts
+await corsair.proabono.api.usages.update({ usages: [{ ReferenceCustomer: 'cust-42', ReferenceFeature: 'feat-users', Increment: 1, DateStamp: '2026-11-15T10:00:00Z' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usages` | `object[]` | Yes | ProAbono asks for at most 50 rows per call. |
+
+<AccordionGroup>
+<Accordion title="usages full type">
+
+```ts
+{
+  ReferenceCustomer: string,
+  ReferenceFeature: string,
+  IdSubscription?: number,
+  Increment?: number,
+  QuantityCurrent?: number,
+  IsEnabled?: boolean,
+  DateStamp: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="usages full type">
+
+```ts
+{
+  IdSegment?: number | null,
+  IdFeature?: number | null,
+  IdCustomer?: number | null,
+  IdSubscription?: number | null,
+  ReferenceSegment?: string | null,
+  ReferenceFeature?: string | null,
+  ReferenceCustomer?: string | null,
+  TypeFeature?: string | null,
+  IsIncluded?: boolean | null,
+  IsEnabled?: boolean | null,
+  QuantityIncluded?: number | null,
+  QuantityCurrent?: number | null,
+  DatePeriodStart?: string | null,
+  DatePeriodEnd?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
