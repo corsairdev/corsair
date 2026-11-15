@@ -545,10 +545,21 @@ export const IgnisignEndpointInputSchemas = {
 		})
 		.strict(),
 
+	'documents.provideFileContent': z
+		.object({
+			documentId: z.string(),
+			fileBase64: z.string().min(1),
+			fileName: z.string().min(1),
+			mimeType: z.string().default('application/pdf'),
+		})
+		.strict(),
+
 	'documents.checkAuthenticity': z
 		.object({
 			documentId: z.string(),
-			documentHash: z.string(),
+			fileBase64: z.string().min(1),
+			fileName: z.string().min(1),
+			mimeType: z.string().default('application/pdf'),
 		})
 		.strict(),
 
@@ -724,9 +735,10 @@ export const IgnisignEndpointOutputSchemas = {
 	'documents.provideJsonContent': DocumentSchema,
 	'documents.providePrivateContent': DocumentSchema,
 	'documents.downloadOriginalDoc': BinaryDataSchema,
+	'documents.provideFileContent': DocumentSchema,
 	'documents.checkAuthenticity': z.object({
-		isValid: z.boolean(),
-		message: z.string().optional(),
+		documentId: z.string(),
+		authenticityValidated: z.boolean(),
 	}),
 
 	// signatures

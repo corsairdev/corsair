@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
 import {
 	appEnvPath,
+	fileFromBase64,
 	makeIgnisignBinaryRequest,
 	makeIgnisignRequest,
 } from '../client';
@@ -190,6 +191,36 @@ export const providePrivateContent: IgnisignEndpoint<
 	return parsed;
 };
 
+export const provideFileContent: IgnisignEndpoint<
+	'documents.provideFileContent'
+> = async (ctx, input) => {
+	const parsedInput =
+		IgnisignEndpointInputSchemas['documents.provideFileContent'].parse(input);
+	const endpoint = `/v4/documents/${encodeURIComponent(parsedInput.documentId)}/file`;
+	// `unknown` because response JSON from provider must be validated by the Zod output schema.
+	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
+		method: 'POST',
+		formData: {
+			file: fileFromBase64(
+				parsedInput.fileBase64,
+				parsedInput.fileName,
+				parsedInput.mimeType,
+			),
+		},
+	});
+	const response =
+		IgnisignEndpointOutputSchemas['documents.provideFileContent'].parse(
+			rawResponse,
+		);
+	await logEventFromContext(
+		ctx,
+		'ignisign.documents.provideFileContent',
+		{ documentId: parsedInput.documentId },
+		'completed',
+	);
+	return response;
+};
+
 export const downloadOriginalDoc: IgnisignEndpoint<
 	'documents.downloadOriginalDoc'
 > = async (ctx, input) => {
@@ -218,10 +249,17 @@ export const checkAuthenticity: IgnisignEndpoint<
 	const parsedInput =
 		IgnisignEndpointInputSchemas['documents.checkAuthenticity'].parse(input);
 	const endpoint = `/v4/documents/${encodeURIComponent(parsedInput.documentId)}/check-authenticity`;
+	// IgniSign compares the uploaded file with the signed one (multipart `file`).
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'POST',
-		body: { documentHash: parsedInput.documentHash },
+		formData: {
+			file: fileFromBase64(
+				parsedInput.fileBase64,
+				parsedInput.fileName,
+				parsedInput.mimeType,
+			),
+		},
 	});
 	const response =
 		IgnisignEndpointOutputSchemas['documents.checkAuthenticity'].parse(
@@ -230,7 +268,10 @@ export const checkAuthenticity: IgnisignEndpoint<
 	await logEventFromContext(
 		ctx,
 		'ignisign.documents.checkAuthenticity',
-		{ documentId: parsedInput.documentId, isValid: response.isValid },
+		{
+			documentId: parsedInput.documentId,
+			authenticityValidated: response.authenticityValidated,
+		},
 		'completed',
 	);
 	return response;
@@ -245,6 +286,7 @@ export const DocumentsEndpoints = {
 	removeContent,
 	provideJsonContent,
 	providePrivateContent,
+	provideFileContent,
 	downloadOriginalDoc,
 	checkAuthenticity,
 } as const;

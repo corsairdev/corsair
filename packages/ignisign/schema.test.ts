@@ -39,7 +39,7 @@ describe('Ignisign schema', () => {
 
 		expect(nestedKeys.sort()).toEqual(schemaKeys.sort());
 		expect(nestedKeys.sort()).toEqual(metaKeys.sort());
-		expect(nestedKeys.length).toBe(41);
+		expect(nestedKeys.length).toBe(42);
 	});
 });
 

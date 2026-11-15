@@ -157,6 +157,10 @@ export const ignisignEndpointSchemas = {
 		input: IgnisignEndpointInputSchemas['documents.providePrivateContent'],
 		output: IgnisignEndpointOutputSchemas['documents.providePrivateContent'],
 	},
+	'documents.provideFileContent': {
+		input: IgnisignEndpointInputSchemas['documents.provideFileContent'],
+		output: IgnisignEndpointOutputSchemas['documents.provideFileContent'],
+	},
 	'documents.downloadOriginalDoc': {
 		input: IgnisignEndpointInputSchemas['documents.downloadOriginalDoc'],
 		output: IgnisignEndpointOutputSchemas['documents.downloadOriginalDoc'],
@@ -342,13 +346,19 @@ export const ignisignEndpointMeta = {
 		description:
 			'Provide SHA-256 document hash for private client-side managed documents',
 	},
+	'documents.provideFileContent': {
+		riskLevel: 'write',
+		description:
+			'Upload the file or PDF content of a document (base64, sent as multipart)',
+	},
 	'documents.downloadOriginalDoc': {
 		riskLevel: 'read',
 		description: 'Download original document file as binary data',
 	},
 	'documents.checkAuthenticity': {
 		riskLevel: 'read',
-		description: 'Verify document authenticity and hash integrity',
+		description:
+			'Check that a file (base64) is the one that was signed for a document',
 	},
 
 	'signatures.list': {

@@ -472,13 +472,45 @@ describe('documents endpoints', () => {
 		);
 	});
 
-	it('checkAuthenticity: verifies document authenticity', async () => {
-		mockedRequest.mockResolvedValue({ isValid: true });
+	it('checkAuthenticity: uploads the file as multipart and returns authenticityValidated', async () => {
+		mockedRequest.mockResolvedValue({
+			documentId: 'doc_1',
+			authenticityValidated: true,
+		});
 		const result = await DocumentsEndpoints.checkAuthenticity(ctx, {
 			documentId: 'doc_1',
-			documentHash: 'sha256_hash',
+			fileBase64: Buffer.from('%PDF-1.4 test').toString('base64'),
+			fileName: 'signed.pdf',
 		});
-		expect(result).toEqual({ isValid: true });
+		expect(result).toEqual({
+			documentId: 'doc_1',
+			authenticityValidated: true,
+		});
+		const [endpoint, , options] = mockedRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/v4/documents/doc_1/check-authenticity');
+		expect(options?.body).toBeUndefined();
+		const file = options?.formData?.file as File;
+		expect(file).toBeInstanceOf(File);
+		expect(file.name).toBe('signed.pdf');
+		expect(file.type).toBe('application/pdf');
+		expect(await file.text()).toBe('%PDF-1.4 test');
+	});
+
+	it('provideFileContent: uploads document content as a multipart file', async () => {
+		mockedRequest.mockResolvedValue({ _id: 'doc_1', status: 'PROVIDED' });
+		const result = await DocumentsEndpoints.provideFileContent(ctx, {
+			documentId: 'doc_1',
+			fileBase64: Buffer.from('hello').toString('base64'),
+			fileName: 'note.txt',
+			mimeType: 'text/plain',
+		});
+		expect(result).toEqual({ _id: 'doc_1', status: 'PROVIDED' });
+		const [endpoint, , options] = mockedRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/v4/documents/doc_1/file');
+		expect(options?.method).toBe('POST');
+		const file = options?.formData?.file as File;
+		expect(file.name).toBe('note.txt');
+		expect(await file.text()).toBe('hello');
 	});
 });
 

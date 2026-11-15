@@ -65,6 +65,24 @@ describe('makeIgnisignRequest', () => {
 		);
 	});
 
+	it('sends multipart form data without a JSON Content-Type', async () => {
+		mockRequest.mockResolvedValue({ _id: 'doc_1' });
+		const file = new File(['x'], 'a.pdf', { type: 'application/pdf' });
+
+		await makeIgnisignRequest('/v4/documents/doc_1/file', 'sk_dev_app_sec', {
+			method: 'POST',
+			formData: { file },
+		});
+
+		const [config, options] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.HEADERS).not.toHaveProperty('Content-Type');
+		expect(options).toEqual(
+			expect.objectContaining({ method: 'POST', formData: { file } }),
+		);
+		expect(options).not.toHaveProperty('mediaType');
+		expect(options).not.toHaveProperty('body');
+	});
+
 	it('makes unauthenticated requests without Authorization header when key is undefined', async () => {
 		mockRequest.mockResolvedValue({ status: 'ok' });
 

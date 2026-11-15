@@ -95,9 +95,16 @@ apiExamples:
     documentHash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
   documents.downloadOriginalDoc:
     documentId: doc_sample
+  documents.provideFileContent:
+    documentId: doc_sample
+    fileBase64: JVBERi0xLjQK...
+    fileName: contract.pdf
+    mimeType: application/pdf
   documents.checkAuthenticity:
     documentId: doc_sample
-    documentHash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    fileBase64: JVBERi0xLjQK...
+    fileName: signed-contract.pdf
+    mimeType: application/pdf
   signatures.list:
     documentId: doc_sample
   signatures.get:

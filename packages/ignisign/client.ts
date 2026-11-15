@@ -141,6 +141,17 @@ function parseRetryAfterMs(headerValue: string | null): number | undefined {
 	return undefined;
 }
 
+/** A multipart `file` field from base64 content. */
+export function fileFromBase64(
+	base64: string,
+	fileName: string,
+	mimeType: string,
+): File {
+	return new File([Buffer.from(base64, 'base64')], fileName, {
+		type: mimeType,
+	});
+}
+
 export type BinaryResponse = {
 	kind: 'binary';
 	contentType: string;
@@ -155,10 +166,12 @@ export async function makeIgnisignRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		// Bodies are endpoint-specific JSON validated by Zod schemas before send.
 		body?: Record<string, unknown>;
+		// Multipart fields for file uploads; sent instead of `body`.
+		formData?: Record<string, Blob | string>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, formData, query } = options;
 
 	// An explicitly empty key means missing credentials.
 	if (apiKey !== undefined && apiKey.length === 0) {
@@ -174,23 +187,28 @@ export async function makeIgnisignRequest<T>(
 		VERSION: '4.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-			...authHeaders,
-		},
+		// No Content-Type for multipart: fetch sets it with the boundary.
+		HEADERS: formData
+			? { Accept: 'application/json', ...authHeaders }
+			: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+					...authHeaders,
+				},
 	};
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query,
-	};
+	const requestOptions: ApiRequestOptions = formData
+		? { method, url: endpoint, formData, query }
+		: {
+				method,
+				url: endpoint,
+				body:
+					method === 'POST' || method === 'PUT' || method === 'PATCH'
+						? body
+						: undefined,
+				mediaType: 'application/json; charset=utf-8',
+				query,
+			};
 
 	try {
 		return await request<T>(config, requestOptions);
