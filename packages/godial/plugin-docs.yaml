@@ -19,6 +19,6 @@ apiExamples:
   contacts.add:
     call: "{ listId: 'list-123', name: 'Ada Lovelace', phone: '+15555550123' }"
 apiNotes:
-  lists.list: "The official overview documents this route but does not publish its response envelope or fields. Only this route and contacts.add are verified; other GoDial operations are excluded until their API contract is available."
-  contacts.add: "The official overview documents this route but does not publish its response envelope or fields. Only this route and lists.list are verified; other GoDial operations are excluded until their API contract is available."
+  lists.list: "GoDial's reference (godial.stoplight.io) documents the route but shows only an empty example response, so the result is returned as the provider's JSON without a fixed shape."
+  contacts.add: "phone and listId are required. With assignmentMode 'roundrobin' or an accountsId the contact is assigned to an agent and joins that agent's calling queue. The reference shows only an empty example response."
 overviewNote: "Create an External API access token in the GoDial dashboard. The provider requires it as the access_token query parameter for every request."

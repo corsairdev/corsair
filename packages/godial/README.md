@@ -1,9 +1,10 @@
 # GoDial for Corsair
 
-This package exposes the two GoDial external API routes whose paths and request
-details are available in GoDial's public API overview. It is intentionally a
-partial integration: the linked Stoplight reference is currently unavailable,
-so additional routes and response fields are not inferred.
+This package exposes two GoDial external API routes: listing lists and adding a
+contact to a list. GoDial's reference at
+[godial.stoplight.io](https://godial.stoplight.io/) documents more routes
+(teams, accounts, contacts, lists, tasks, call logs) that are not part of this
+package yet.
 
 ## Install and configure
 
@@ -35,11 +36,12 @@ HTTP transport redacts this credential from error URLs and request metadata.
 | `lists.list` | `GET https://enterprise.godial.cc/meta/api/externals/lists/list` | List the account's lists |
 | `contacts.add` | `POST https://enterprise.godial.cc/meta/api/externals/contact/add` | Add a contact to a list |
 
-The contact-add input accepts `listId` and the fields shown in GoDial's example:
-`name`, `email`, `phone`, `secondPhone`, `companyName`, `note`, `remarks`,
-`extra`, and `assignmentMode`. Only `listId` is required by this wrapper based
-on the overview's description; GoDial does not publish per-field validation
-constraints in that overview.
+The contact-add input follows GoDial's Contact - Add reference: `listId` and
+`phone` are required; `name`, `email`, `secondPhone`, `companyName`, `note`,
+`remarks`, `extra`, `assignmentMode` (`default` or `roundrobin`),
+`customFields` (`[{ name, value }]`), `accountsId`, `source`, `address` and
+`source_marketing` (UTM fields) are optional. A contact assigned to an agent
+(round robin or `accountsId`) joins that agent's calling queue.
 
 ```ts
 const lists = await corsair.godial.api.lists.list({});
@@ -52,23 +54,16 @@ const result = await corsair.godial.api.contacts.add({
 
 ## Limits and incomplete inventory
 
-The public overview does not specify response envelopes, response fields,
-pagination, rate limits, or endpoint-specific retry behavior. Responses are
-validated as JSON but remain structurally opaque; the plugin does not invent a
-list/contact shape. The transport extracts `Retry-After` from HTTP 429 responses
-for callers, but automatic retries are disabled because GoDial's retry policy is
-undocumented. Contact-add server errors are also not retried because a write may
-already have succeeded.
-
-GoDial's overview says further team, agent, list, and contact operations exist.
-Its Stoplight workspace home also describes accounts, teams, lists, contacts,
-call logs, and reporting calls. Their route paths and contracts were not
-available for verification, so they are excluded. Webhooks are not included.
+GoDial's reference shows an empty example for every response and documents no
+pagination or rate limits. Responses are validated as JSON but stay
+structurally opaque; the plugin does not invent a list/contact shape. A 429 is
+retried by Corsair's transport (three times, honouring `Retry-After`); server
+errors are not retried because a contact write may already have landed.
+GoDial answers a missing or revoked token with HTTP 500, which the client
+reports as a 401. Contact details sent in a request are removed from error
+messages and bodies. Webhooks are not included.
 
 ## Official references
 
 - [GoDial API overview](https://godial.cc/blog/integrating-your-website-or-crm-with-godial-using-api/)
-- [GoDial Stoplight workspace](https://godial.stoplight.io/)
-- The workspace's own start link points to
-  [`https://godial.stoplight.io/docs/godial/`](https://godial.stoplight.io/docs/godial/),
-  which currently returns 404.
+- [GoDial External API reference (Stoplight)](https://godial.stoplight.io/docs/godial/cd4edf0828dd6-go-dial-crm-external-api)
