@@ -1403,6 +1403,43 @@ describe('Klipfolio endpoint request seams', () => {
 			[unknown, string, unknown, string]
 		>;
 		expect(calls[calls.length - 1]?.[2]).toEqual({ redacted: true });
+		const lastLogged = () =>
+			(logMock.mock.calls as Array<[unknown, string, unknown, string]>).at(
+				-1,
+			)?.[2];
+		// A simple_rest data source keeps its API key header in properties.
+		const connectorProperties = {
+			endpoint_url: 'https://example.com/api',
+			method: 'get',
+			parameters:
+				'[{"name":"x-api-key","value":"third-party-key","type":"header"}]',
+		};
+		await createDatasource(ctx, {
+			name: 'ds',
+			connector: 'simple_rest',
+			properties: connectorProperties,
+		} as never);
+		expect(JSON.stringify(lastLogged())).not.toContain('third-party-key');
+		await updateDatasourceProperties(ctx, {
+			id: 'ds-1',
+			properties: connectorProperties,
+		} as never);
+		expect(JSON.stringify(lastLogged())).not.toContain('third-party-key');
+		await updateDatasourceInstancesProperties(ctx, {
+			id: 'dsi-1',
+			properties: connectorProperties,
+		} as never);
+		expect(JSON.stringify(lastLogged())).not.toContain('third-party-key');
+		await createDatasourceInstances(ctx, {
+			datasource_id: 'ds-1',
+			properties: connectorProperties,
+		} as never);
+		expect(JSON.stringify(lastLogged())).not.toContain('third-party-key');
+		await updateDatasourceInstancesData(ctx, {
+			id: 'dsi-1',
+			rawContent: 'email,revenue\ncustomer@example.com,10',
+		} as never);
+		expect(lastLogged()).toEqual({ id: 'dsi-1', client_id: undefined });
 		await retrieveUser(ctx, { id: 'user-1' } as never);
 		const readCalls = logMock.mock.calls as Array<
 			[unknown, string, Record<string, unknown>, string]

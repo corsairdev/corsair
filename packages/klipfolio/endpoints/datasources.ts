@@ -4,6 +4,14 @@ import { makeKlipfolioRequest } from '../client';
 import { klipfolioPathParameter } from './path';
 import type { KlipfolioEndpointOutputs } from './types';
 
+// Data source properties carry connector settings, including credentials
+// (a simple_rest source's `parameters` holds its API key header), so they
+// stay out of the event log.
+const redactProperties = <T extends { properties?: unknown }>(input: T) =>
+	input.properties === undefined
+		? input
+		: { ...input, properties: '[redacted]' };
+
 export const listDatasources: KlipfolioEndpoints['listDatasources'] = async (
 	ctx,
 	input,
@@ -48,7 +56,7 @@ export const createDatasource: KlipfolioEndpoints['createDatasource'] = async (
 	await logEventFromContext(
 		ctx,
 		'klipfolio.datasources.createDatasource',
-		input,
+		redactProperties(input),
 		'completed',
 	);
 	return response;
@@ -208,7 +216,7 @@ export const updateDatasourceProperties: KlipfolioEndpoints['updateDatasourcePro
 		await logEventFromContext(
 			ctx,
 			'klipfolio.datasources.updateDatasourceProperties',
-			input,
+			redactProperties(input),
 			'completed',
 		);
 		return response;
@@ -341,7 +349,7 @@ export const createDatasourceInstances: KlipfolioEndpoints['createDatasourceInst
 		await logEventFromContext(
 			ctx,
 			'klipfolio.datasources.createDatasourceInstances',
-			input,
+			redactProperties(input),
 			'completed',
 		);
 		return response;
@@ -406,7 +414,8 @@ export const updateDatasourceInstancesData: KlipfolioEndpoints['updateDatasource
 		await logEventFromContext(
 			ctx,
 			'klipfolio.datasources.updateDatasourceInstancesData',
-			input,
+			// The uploaded rows are the customer's data; only the target is logged.
+			{ id: input.id, client_id: input.client_id },
 			'completed',
 		);
 		return response;
@@ -489,7 +498,7 @@ export const updateDatasourceInstancesProperties: KlipfolioEndpoints['updateData
 		await logEventFromContext(
 			ctx,
 			'klipfolio.datasources.updateDatasourceInstancesProperties',
-			input,
+			redactProperties(input),
 			'completed',
 		);
 		return response;
