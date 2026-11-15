@@ -3,6 +3,7 @@ import type { ApiRequestOptions } from 'corsair/http';
 import { ApiError } from 'corsair/http';
 
 const BASE_URL = 'https://restapi.fromdoppler.com';
+const REQUEST_TIMEOUT_MS = 30_000;
 
 export type DopplerRequestOptions = {
 	method: ApiRequestOptions['method'];
@@ -40,7 +41,13 @@ export async function makeDopplerMarketingAutomationRequest<T>(
 				? JSON.stringify(options.body)
 				: (options.body as string);
 	}
-	const response = await fetch(url, { method: options.method, headers, body });
+	// One deadline for the request and its body read, like core's transport.
+	const response = await fetch(url, {
+		method: options.method,
+		headers,
+		body,
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+	});
 	if (!response.ok) {
 		const text = await response.text();
 		// Provider errors can be arbitrary JSON or plain text, so their shape is

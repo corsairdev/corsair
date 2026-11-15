@@ -362,7 +362,7 @@ const endpointMeta = {
 		description: 'List unsubscribed subscribers',
 	},
 	'subscribers.unsubscribe': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Unsubscribe a subscriber from the account',
 	},
 	'subscribers.import': {
@@ -378,8 +378,9 @@ const endpointMeta = {
 		description: 'Import subscribers from CSV',
 	},
 	'subscribers.doubleOptIn': {
-		riskLevel: 'write',
-		description: 'Associate a subscriber using double opt-in',
+		riskLevel: 'destructive',
+		description:
+			'Associate a subscriber using double opt-in (emails the subscriber)',
 	},
 	'subscribers.listByOrigin': {
 		riskLevel: 'read',
@@ -394,7 +395,7 @@ const endpointMeta = {
 		description: 'List subscriber campaign deliveries',
 	},
 	'subscribers.importUnsubscribed': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Import unsubscribed subscribers',
 	},
 	'campaigns.list': { riskLevel: 'read', description: 'List campaigns' },
@@ -442,7 +443,7 @@ const endpointMeta = {
 		description: 'Update campaign text alternative',
 	},
 	'campaigns.deleteTextAlternative': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete campaign text alternative',
 	},
 	'campaigns.getRecipients': {
@@ -454,15 +455,15 @@ const endpointMeta = {
 		description: 'Update campaign recipients',
 	},
 	'campaigns.createShipping': {
-		riskLevel: 'write',
-		description: 'Send or schedule a campaign',
+		riskLevel: 'destructive',
+		description: 'Send or schedule a campaign (emails its recipients)',
 	},
 	'campaigns.getShipping': {
 		riskLevel: 'read',
 		description: 'Get a scheduled campaign delivery',
 	},
 	'campaigns.deleteShipping': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel a scheduled campaign delivery',
 	},
 	'campaigns.getSocial': {
