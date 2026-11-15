@@ -558,7 +558,8 @@ const givebutterEndpointMeta = {
 	},
 	'contactTags.sync': {
 		riskLevel: 'destructive',
-		description: 'Replace all of a contact’s tags; tags not listed are removed.',
+		description:
+			'Replace all of a contact’s tags; tags not listed are removed.',
 	},
 	'funds.list': { riskLevel: 'read', description: 'List funds.' },
 	'funds.create': { riskLevel: 'write', description: 'Create a fund.' },

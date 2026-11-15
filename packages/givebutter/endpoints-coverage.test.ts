@@ -469,14 +469,19 @@ describe('Givebutter CRM and financial operation seams', () => {
 });
 
 it('parses numeric ids, null fund ids and system activity types', async () => {
-	respond({ id: 42, type: 'individual', first_name: null, primary_email: null });
-	await expect(Contacts.get(ctx as never, { contact: 42 })).resolves.toMatchObject(
-		{ id: 42 },
-	);
+	respond({
+		id: 42,
+		type: 'individual',
+		first_name: null,
+		primary_email: null,
+	});
+	await expect(
+		Contacts.get(ctx as never, { contact: 42 }),
+	).resolves.toMatchObject({ id: 42 });
 	respond({ id: null, code: null, name: 'General', raised: 0, supporters: 0 });
-	await expect(Funds.get(ctx as never, { fund: 'general' })).resolves.toMatchObject(
-		{ id: null },
-	);
+	await expect(
+		Funds.get(ctx as never, { fund: 'general' }),
+	).resolves.toMatchObject({ id: null });
 	respond({ id: 9, type: 'transaction.succeeded', created_at: '2026-11-15' });
 	await expect(
 		Activities.get(ctx as never, { contact: 42, activity: 9 }),

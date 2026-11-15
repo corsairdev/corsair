@@ -18,7 +18,11 @@ beforeEach(() => {
 
 afterEach(() => fetchMock.mockRestore());
 
-function reply(status: number, body: object, headers: Record<string, string> = {}) {
+function reply(
+	status: number,
+	body: object,
+	headers: Record<string, string> = {},
+) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(JSON.stringify(body), {
 			status,
