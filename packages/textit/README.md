@@ -14,11 +14,11 @@ pnpm add @corsair-dev/textit
 |-----------|--------------|------|-------------|
 | `archives.list` | `textit.api.archives.list` | `read` | List archived message or flow-run data. |
 | `broadcasts.list` | `textit.api.broadcasts.list` | `read` | List outgoing broadcasts. |
-| `broadcasts.send` | `textit.api.broadcasts.send` | `write` | Send a translated broadcast to contacts, groups or URNs. |
-| `campaignEvents.create` | `textit.api.campaignEvents.create` | `write` | Create a scheduled campaign event. |
+| `broadcasts.send` | `textit.api.broadcasts.send` | `destructive` | Send a translated broadcast to contacts, groups or URNs; it messages real people. |
+| `campaignEvents.create` | `textit.api.campaignEvents.create` | `destructive` | Create a campaign event that messages or starts a flow for every contact in the campaign group. |
 | `campaignEvents.delete` | `textit.api.campaignEvents.delete` | `destructive` | Delete a campaign event. |
 | `campaignEvents.list` | `textit.api.campaignEvents.list` | `read` | List campaign events. |
-| `campaignEvents.update` | `textit.api.campaignEvents.update` | `write` | Update a scheduled campaign event. |
+| `campaignEvents.update` | `textit.api.campaignEvents.update` | `destructive` | Update a campaign event that messages or starts a flow for every contact in the campaign group. |
 | `campaigns.create` | `textit.api.campaigns.create` | `write` | Create a campaign for a contact group. |
 | `campaigns.list` | `textit.api.campaigns.list` | `read` | List campaigns. |
 | `campaigns.update` | `textit.api.campaigns.update` | `write` | Update a campaign by UUID. |
@@ -32,7 +32,7 @@ pnpm add @corsair-dev/textit
 | `fields.list` | `textit.api.fields.list` | `read` | List custom contact fields. |
 | `fields.update` | `textit.api.fields.update` | `write` | Update a custom contact field by key. |
 | `flows.list` | `textit.api.flows.list` | `read` | List flows. |
-| `flowStarts.create` | `textit.api.flowStarts.create` | `write` | Start contacts, groups or URNs in a flow. |
+| `flowStarts.create` | `textit.api.flowStarts.create` | `destructive` | Start contacts, groups or URNs in a flow, which can message them. |
 | `flowStarts.list` | `textit.api.flowStarts.list` | `read` | List manual flow starts. |
 | `globals.create` | `textit.api.globals.create` | `write` | Create a workspace global. |
 | `globals.list` | `textit.api.globals.list` | `read` | List workspace globals. |
@@ -46,9 +46,9 @@ pnpm add @corsair-dev/textit
 | `labels.list` | `textit.api.labels.list` | `read` | List message labels. |
 | `labels.update` | `textit.api.labels.update` | `write` | Update a message label. |
 | `media.upload` | `textit.api.media.upload` | `write` | Upload a media file for message attachments. |
-| `messageActions.apply` | `textit.api.messageActions.apply` | `destructive` | Apply a bulk message action, including permanent deletion; inspect failures. |
+| `messageActions.apply` | `textit.api.messageActions.apply` | `destructive` | Label, archive, restore or permanently delete incoming messages by integer id; inspect failures. |
 | `messages.list` | `textit.api.messages.list` | `read` | List messages with optional folder and label filters. |
-| `messages.send` | `textit.api.messages.send` | `write` | Send a message to a contact. |
+| `messages.send` | `textit.api.messages.send` | `destructive` | Send a message to a contact; it messages a real person. |
 | `resthookEvents.list` | `textit.api.resthookEvents.list` | `read` | List outbound resthook events. |
 | `resthooks.list` | `textit.api.resthooks.list` | `read` | List outbound resthooks. |
 | `resthookSubscribers.create` | `textit.api.resthookSubscribers.create` | `write` | Subscribe a target URL to a resthook. |

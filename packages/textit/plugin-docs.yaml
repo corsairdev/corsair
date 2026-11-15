@@ -41,7 +41,7 @@ apiExamples:
   fields.create:
     call: '{ "name": "Nickname", "type": "text" }'
   fields.update:
-    args: { key: nickname, name: Nickname, type: text }
+    call: '{ "key": "nickname", "name": "Nickname", "type": "text" }'
   flowStarts.create:
     args: { flow: "5f05311e-8f81-4a67-a5b5-1501b6d6496a", contacts: ["d33e9ad5-5c35-414c-abd4-e7451c69ff1d"] }
   globals.create:
