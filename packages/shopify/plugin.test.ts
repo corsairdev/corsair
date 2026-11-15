@@ -90,6 +90,13 @@ describe('plugin shape', () => {
 		});
 	});
 
+	it('marks orders.markAsPaid destructive, since it can capture an authorization', () => {
+		expect(endpointMeta['orders.markAsPaid']).toMatchObject({
+			riskLevel: 'destructive',
+			irreversible: true,
+		});
+	});
+
 	it('treats every mutation as a write or a delete, never a read', () => {
 		const mutations = [
 			'products.create',

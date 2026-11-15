@@ -397,9 +397,13 @@ const shopifyEndpointMeta = {
 			'Cancel an order, optionally restocking and notifying the customer; does not refund',
 	},
 	'orders.markAsPaid': {
-		riskLevel: 'write',
+		// Shopify captures an existing payment authorization when the order has
+		// one, which charges the customer and cannot be taken back without a
+		// refund (R8).
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Mark an order as paid without taking a payment; recorded against a manual gateway',
+			'Mark an order as paid: captures an existing payment authorization, or records a manual payment for the outstanding amount',
 	},
 	'orders.close': {
 		riskLevel: 'write',

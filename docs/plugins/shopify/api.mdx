@@ -1254,9 +1254,9 @@ await corsair.shopify.api.orders.listLineItems({ id: 'gid://shopify/Order/1', fi
 
 `orders.markAsPaid`
 
-Mark an order as paid without taking a payment; recorded against a manual gateway
+Mark an order as paid: captures an existing payment authorization, or records a manual payment for the outstanding amount
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.shopify.api.orders.markAsPaid({ id: 'gid://shopify/Order/1' });
