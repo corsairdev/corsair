@@ -659,10 +659,18 @@ export function honeyhive<const T extends HoneyHivePluginOptions>(
 		keyBuilder: async (ctx: HoneyHiveKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key) return options.key;
-			if (!ctx.keys) throw new AuthMissingError('honeyhive', 'api_key');
-			const apiKey = await ctx.keys.get_api_key();
-			if (!apiKey) throw new AuthMissingError('honeyhive', 'api_key');
-			return apiKey;
+			const apiKey = await ctx.keys?.get_api_key();
+			if (apiKey) return apiKey;
+			// A connection with only fine-grained keys still reaches the
+			// project-scoped routes: pass one on, and classicKey() keeps it off
+			// the classic routes.
+			const planeKey =
+				options.dataPlaneKey ??
+				options.controlPlaneKey ??
+				(await ctx.keys?.get_data_plane_api_key?.()) ??
+				(await ctx.keys?.get_control_plane_api_key?.());
+			if (planeKey) return planeKey;
+			throw new AuthMissingError('honeyhive', 'api_key');
 		},
 	} satisfies InternalHoneyHivePlugin;
 }

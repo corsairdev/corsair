@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import {
+	classicKey,
 	HONEYHIVE_API_BASE,
 	HONEYHIVE_CONTROL_PLANE_BASE,
 	normalizeHoneyHiveBaseUrl,
@@ -10,7 +11,12 @@ import {
 	resolveDataPlaneKey,
 	resolveDataPlaneUrl,
 } from './client';
-import type { HoneyHiveContext } from './index';
+import type {
+	HoneyHiveContext,
+	HoneyHiveKeyBuilderContext,
+	HoneyHivePluginOptions,
+} from './index';
+import { honeyhive } from './index';
 
 type Fields = {
 	key?: string;
@@ -101,6 +107,80 @@ describe('HoneyHive key routing', () => {
 	});
 });
 
+describe('HoneyHive plane-only connections and hook keys', () => {
+	// `unknown` cast: the keyBuilder reads only `keys`; the rest of the context is runtime-only.
+	const keyCtx = (fields: Fields) =>
+		({
+			keys: ctxWith(fields).keys,
+		}) as unknown as HoneyHiveKeyBuilderContext;
+	type KeyBuilderFn = (
+		ctx: HoneyHiveKeyBuilderContext,
+		source: 'endpoint',
+	) => Promise<string>;
+	// `unknown` cast: the public plugin type does not expose keyBuilder's parameters.
+	const keyBuilderOf = (options: HoneyHivePluginOptions = {}) =>
+		honeyhive(options).keyBuilder as unknown as KeyBuilderFn;
+	const noApiKey = (fields: Fields) => {
+		const ctx = keyCtx(fields);
+		// `unknown` cast: overrides one accessor on the typed test keys.
+		(ctx.keys as unknown as { get_api_key: () => Promise<null> }).get_api_key =
+			() => Promise.resolve(null);
+		return ctx;
+	};
+
+	it('passes a data plane key on when the account has no api_key', async () => {
+		const keyBuilder = keyBuilderOf();
+		await expect(
+			keyBuilder(noApiKey({ data_plane_api_key: 'hh_fgdp_only' }), 'endpoint'),
+		).resolves.toBe('hh_fgdp_only');
+		await expect(
+			keyBuilder(
+				noApiKey({ control_plane_api_key: 'hh_fgcp_only' }),
+				'endpoint',
+			),
+		).resolves.toBe('hh_fgcp_only');
+	});
+
+	it('still raises AuthMissingError when the account has no key at all', async () => {
+		await expect(
+			keyBuilderOf()(noApiKey({}), 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('takes a plane key from plugin options without stored credentials', async () => {
+		const keyBuilder = keyBuilderOf({ dataPlaneKey: 'hh_fgdp_opt' });
+		await expect(
+			keyBuilder({} as unknown as HoneyHiveKeyBuilderContext, 'endpoint'),
+		).resolves.toBe('hh_fgdp_opt');
+	});
+
+	it('routes a plane-only key to its resolver and keeps it off classic routes', async () => {
+		const ctx = ctxWith({ key: 'hh_fgdp_only' });
+		await expect(resolveDataPlaneKey(ctx)).resolves.toBe('hh_fgdp_only');
+		expect(() => classicKey(ctx)).toThrow(AuthMissingError);
+		expect(() => classicKey(ctxWith({ key: 'hh_fgcp_only' }))).toThrow(
+			AuthMissingError,
+		);
+		expect(classicKey(ctxWith({ key: 'hh_classic' }))).toBe('hh_classic');
+	});
+
+	it('prefers a plane key a before hook put in ctx.key over the stored one', async () => {
+		await expect(
+			resolveDataPlaneKey(
+				ctxWith({ key: 'hh_fgdp_hook', data_plane_api_key: 'hh_fgdp_stored' }),
+			),
+		).resolves.toBe('hh_fgdp_hook');
+		await expect(
+			resolveControlPlaneKey(
+				ctxWith({
+					key: 'hh_fgcp_hook',
+					control_plane_api_key: 'hh_fgcp_stored',
+				}),
+			),
+		).resolves.toBe('hh_fgcp_hook');
+	});
+});
+
 describe('HoneyHive error payloads', () => {
 	it('drops the request body (customer inputs) from a propagated ApiError', () => {
 		const error = new ApiError(
@@ -148,7 +228,9 @@ describe('HoneyHive error payloads', () => {
 		expect(out).toBe(error);
 		expect(out).toBeInstanceOf(ApiError);
 		expect(out.status).toBe(429);
-		expect(out.url).toBe('https://api.dp1.us.honeyhive.ai/v1/runs/run-1/metrics');
+		expect(out.url).toBe(
+			'https://api.dp1.us.honeyhive.ai/v1/runs/run-1/metrics',
+		);
 		expect(JSON.stringify(out.request)).not.toContain('alice');
 		expect(out.url).not.toContain('alice');
 	});

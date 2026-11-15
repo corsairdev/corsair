@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
 import {
+	classicKey,
 	makeHoneyHiveRequest,
 	resolveDataPlaneKey,
 	resolveDataPlaneUrl,
@@ -318,7 +319,7 @@ export async function listRunsLegacy(
 		HoneyHiveEndpointInputSchemas.experimentsListRunsLegacy.parse(input);
 	const response = await makeHoneyHiveRequest<ExperimentsListRunsResponse>(
 		'/v1/runs',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'GET',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -346,7 +347,7 @@ export async function createRunLegacy(
 		HoneyHiveEndpointInputSchemas.experimentsCreateRunLegacy.parse(input);
 	const response = await makeHoneyHiveRequest<ExperimentsCreateRunResponse>(
 		'/v1/runs',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -374,7 +375,7 @@ export async function getRunLegacy(
 		HoneyHiveEndpointInputSchemas.experimentsGetRunLegacy.parse(input);
 	const response = await makeHoneyHiveRequest<ExperimentsGetRunResponse>(
 		`/v1/runs/${encodeURIComponent(parsedInput.run_id)}`,
-		ctx.key,
+		classicKey(ctx),
 		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx) },
 	);
 	const parsed =

@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
-import { makeHoneyHiveRequest, resolveDataPlaneUrl } from '../client';
+import {
+	classicKey,
+	makeHoneyHiveRequest,
+	resolveDataPlaneUrl,
+} from '../client';
 import type {
 	MetricsCreateInput,
 	MetricsCreateResponse,
@@ -31,7 +35,7 @@ export async function listMetrics(
 	const parsedInput = HoneyHiveEndpointInputSchemas.metricsList.parse(input);
 	const response = await makeHoneyHiveRequest<MetricsListResponse>(
 		'/v1/metrics',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'GET',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -57,7 +61,7 @@ export async function createMetric(
 	const parsedInput = HoneyHiveEndpointInputSchemas.metricsCreate.parse(input);
 	const response = await makeHoneyHiveRequest<MetricsCreateResponse>(
 		'/v1/metrics',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -84,7 +88,7 @@ export async function updateMetric(
 	const { metric_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<MetricsUpdateResponse>(
 		`/v1/metrics/${encodeURIComponent(metric_id)}`,
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'PUT',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -110,7 +114,7 @@ export async function deleteMetric(
 	const parsedInput = HoneyHiveEndpointInputSchemas.metricsDelete.parse(input);
 	const response = await makeHoneyHiveRequest<MetricsDeleteResponse>(
 		`/v1/metrics/${encodeURIComponent(parsedInput.metric_id)}`,
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'DELETE',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -135,7 +139,7 @@ export async function runMetric(
 	const parsedInput = HoneyHiveEndpointInputSchemas.metricsRun.parse(input);
 	const response = await makeHoneyHiveRequest<MetricsRunResponse>(
 		'/v1/metrics/run',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -162,7 +166,7 @@ export async function listMetricVersions(
 		HoneyHiveEndpointInputSchemas.metricsListVersions.parse(input);
 	const response = await makeHoneyHiveRequest<MetricsListVersionsResponse>(
 		`/v1/metrics/${encodeURIComponent(parsedInput.metric_id)}/versions`,
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'GET',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -190,7 +194,7 @@ export async function createMetricVersion(
 	const { metric_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<MetricsCreateVersionResponse>(
 		`/v1/metrics/${encodeURIComponent(metric_id)}/versions`,
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -218,7 +222,7 @@ export async function deployMetricVersion(
 		HoneyHiveEndpointInputSchemas.metricsDeployVersion.parse(input);
 	const response = await makeHoneyHiveRequest<MetricsDeployVersionResponse>(
 		`/v1/metrics/${encodeURIComponent(parsedInput.metric_id)}/versions/${encodeURIComponent(parsedInput.version_name)}/deploy`,
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),

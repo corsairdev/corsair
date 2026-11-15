@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
 import {
+	classicKey,
 	makeHoneyHiveRequest,
 	resolveDataPlaneKey,
 	resolveDataPlaneUrl,
@@ -187,7 +188,7 @@ export async function listDatasetsLegacy(
 
 	const response = await makeHoneyHiveRequest<DatasetsListResponse>(
 		'/v1/datasets',
-		ctx.key,
+		classicKey(ctx),
 		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx), query },
 	);
 	const parsed =
@@ -211,7 +212,7 @@ export async function createDatasetLegacy(
 		HoneyHiveEndpointInputSchemas.datasetsCreateLegacy.parse(input);
 	const response = await makeHoneyHiveRequest<DatasetsCreateResponse>(
 		'/v1/datasets',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -240,7 +241,7 @@ export async function updateDatasetLegacy(
 	const { dataset_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<DatasetsUpdateResponse>(
 		`/v1/datasets/${encodeURIComponent(dataset_id)}`,
-		ctx.key,
+		classicKey(ctx),
 		{ method: 'PUT', baseUrl: await resolveDataPlaneUrl(ctx), body },
 	);
 	const parsed =
@@ -264,7 +265,7 @@ export async function deleteDatasetLegacy(
 		HoneyHiveEndpointInputSchemas.datasetsDeleteLegacy.parse(input);
 	const response = await makeHoneyHiveRequest<DatasetsDeleteResponse>(
 		`/v1/datasets/${encodeURIComponent(parsedInput.dataset_id)}`,
-		ctx.key,
+		classicKey(ctx),
 		{ method: 'DELETE', baseUrl: await resolveDataPlaneUrl(ctx) },
 	);
 	const parsed =

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
 import {
+	classicKey,
 	makeHoneyHiveRequest,
 	resolveDataPlaneKey,
 	resolveDataPlaneUrl,
@@ -31,7 +32,7 @@ export async function createEvent(
 	const parsedInput = HoneyHiveEndpointInputSchemas.eventsCreate.parse(input);
 	const response = await makeHoneyHiveRequest<EventsCreateResponse>(
 		'/v1/events',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -58,7 +59,7 @@ export async function createEventBatch(
 		HoneyHiveEndpointInputSchemas.eventsCreateBatch.parse(input);
 	const response = await makeHoneyHiveRequest<EventsCreateBatchResponse>(
 		'/v1/events/batch',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -108,7 +109,7 @@ export async function getEventLegacy(
 		HoneyHiveEndpointInputSchemas.eventsGetLegacy.parse(input);
 	const response = await makeHoneyHiveRequest<EventsGetResponse>(
 		`/v1/events/${encodeURIComponent(parsedInput.event_id)}`,
-		ctx.key,
+		classicKey(ctx),
 		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx) },
 	);
 	const parsed = HoneyHiveEndpointOutputSchemas.eventsGetLegacy.parse(response);
@@ -131,7 +132,7 @@ export async function updateEvent(
 	const { event_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<EventsUpdateResponse>(
 		`/v1/events/${encodeURIComponent(event_id)}`,
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'PUT',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -185,7 +186,7 @@ export async function searchEventsLegacy(
 		HoneyHiveEndpointInputSchemas.eventsSearchLegacy.parse(input);
 	const response = await makeHoneyHiveRequest<EventsSearchResponse>(
 		'/v1/events/search',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),

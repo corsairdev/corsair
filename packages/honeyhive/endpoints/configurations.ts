@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
-import { makeHoneyHiveRequest, resolveDataPlaneUrl } from '../client';
+import {
+	classicKey,
+	makeHoneyHiveRequest,
+	resolveDataPlaneUrl,
+} from '../client';
 import type {
 	ConfigurationsCreateInput,
 	ConfigurationsCreateResponse,
@@ -24,7 +28,7 @@ export async function listConfigurations(
 		HoneyHiveEndpointInputSchemas.configurationsList.parse(input);
 	const response = await makeHoneyHiveRequest<ConfigurationsListResponse>(
 		'/v1/configurations',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'GET',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -52,7 +56,7 @@ export async function createConfiguration(
 		HoneyHiveEndpointInputSchemas.configurationsCreate.parse(input);
 	const response = await makeHoneyHiveRequest<ConfigurationsCreateResponse>(
 		'/v1/configurations',
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'POST',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -81,7 +85,7 @@ export async function updateConfiguration(
 	const { configId, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<ConfigurationsUpdateResponse>(
 		`/v1/configurations/${encodeURIComponent(configId)}`,
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'PUT',
 			baseUrl: await resolveDataPlaneUrl(ctx),
@@ -109,7 +113,7 @@ export async function deleteConfiguration(
 		HoneyHiveEndpointInputSchemas.configurationsDelete.parse(input);
 	const response = await makeHoneyHiveRequest<ConfigurationsDeleteResponse>(
 		`/v1/configurations/${encodeURIComponent(parsedInput.configId)}`,
-		ctx.key,
+		classicKey(ctx),
 		{
 			method: 'DELETE',
 			baseUrl: await resolveDataPlaneUrl(ctx),

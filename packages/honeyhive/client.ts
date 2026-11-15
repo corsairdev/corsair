@@ -218,10 +218,11 @@ export function resolveControlPlaneUrl(ctx: HoneyHiveContext): string {
 export async function resolveDataPlaneKey(
 	ctx: HoneyHiveContext,
 ): Promise<string> {
+	// A data plane key in ctx.key (from the keyBuilder or a before hook) wins.
+	if (ctx.key?.startsWith('hh_fgdp_')) return ctx.key;
 	const stored =
 		ctx.options?.dataPlaneKey ?? (await ctx.keys?.get_data_plane_api_key?.());
 	if (stored) return stored;
-	if (ctx.key?.startsWith('hh_fgdp_')) return ctx.key;
 	throw new AuthMissingError(
 		'honeyhive',
 		'api_key',
@@ -236,14 +237,31 @@ export async function resolveDataPlaneKey(
 export async function resolveControlPlaneKey(
 	ctx: HoneyHiveContext,
 ): Promise<string> {
+	// A control plane key in ctx.key (from the keyBuilder or a before hook) wins.
+	if (ctx.key?.startsWith('hh_fgcp_')) return ctx.key;
 	const stored =
 		ctx.options?.controlPlaneKey ??
 		(await ctx.keys?.get_control_plane_api_key?.());
 	if (stored) return stored;
-	if (ctx.key?.startsWith('hh_fgcp_')) return ctx.key;
 	throw new AuthMissingError(
 		'honeyhive',
 		'api_key',
 		'[honeyhive] project operations need a control plane API key (hh_fgcp_...): set the control_plane_api_key account field',
 	);
+}
+
+/**
+ * Key for the classic flat routes (`/v1/events`, `/v1/metrics`, ...). A
+ * connection with only fine-grained keys passes one through the keyBuilder so
+ * project-scoped routes work; those keys are never sent to classic routes.
+ */
+export function classicKey(ctx: Pick<HoneyHiveContext, 'key'>): string {
+	if (ctx.key?.startsWith('hh_fgdp_') || ctx.key?.startsWith('hh_fgcp_')) {
+		throw new AuthMissingError(
+			'honeyhive',
+			'api_key',
+			'[honeyhive] this operation needs the classic API key: set api_key on the account',
+		);
+	}
+	return ctx.key;
 }
