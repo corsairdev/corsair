@@ -42,9 +42,12 @@ pnpm add @corsair-dev/twelvedata
 | `market.price` | `twelvedata.api.market.price` | `read` | Read the latest price for a symbol, the smallest of the market-data answers |
 | `market.quote` | `twelvedata.api.market.quote` | `read` | Read the latest quote for a symbol: open, high, low, close, change and 52-week range |
 | `market.timeSeries` | `twelvedata.api.market.timeSeries` | `read` | Read OHLC candles for a symbol over an interval, with a date window and ordering |
+| `reference.bonds` | `twelvedata.api.reference.bonds` | `read` | List the bonds Twelve Data covers, filtered by symbol, exchange or country |
 | `reference.cryptocurrencies` | `twelvedata.api.reference.cryptocurrencies` | `read` | List the cryptocurrency pairs available |
+| `reference.etf` | `twelvedata.api.reference.etf` | `read` | List the ETFs Twelve Data covers, filtered by symbol, exchange or country |
 | `reference.exchanges` | `twelvedata.api.reference.exchanges` | `read` | List the exchanges Twelve Data covers, with their timezone |
 | `reference.forexPairs` | `twelvedata.api.reference.forexPairs` | `read` | List the currency pairs available, by base or quote currency |
+| `reference.funds` | `twelvedata.api.reference.funds` | `read` | List the mutual funds Twelve Data covers, by country or symbol |
 | `reference.stocks` | `twelvedata.api.reference.stocks` | `read` | List the stocks Twelve Data covers, filtered by symbol, exchange or country |
 
 ## Auth

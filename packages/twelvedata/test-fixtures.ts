@@ -172,3 +172,58 @@ export const partialBatch = {
 	AAPL: { symbol: 'AAPL', close: '211.00', status: 'ok' },
 	BAD: { code: 400, message: 'symbol not found', status: 'error' },
 };
+
+/** An ETF, which uses the same `{ data }` envelope as a stock. */
+export const etfList = {
+	data: [
+		{
+			symbol: '0000D0',
+			name: 'Mirae Synthetic Navi Tcall Balance ETF',
+			currency: 'KRW',
+			exchange: 'KRX',
+			mic_code: 'XKRX',
+			country: 'South Korea',
+			figi_code: 'BBG01R8V5G47',
+			cfi_code: 'CECJLU',
+		},
+	],
+	count: 1,
+	status: 'ok',
+};
+
+/** Funds and bonds answer `{ result: { count, list } }` instead. */
+export const fundsList = {
+	result: {
+		count: 137321,
+		list: [
+			{
+				symbol: '0P00000AMG',
+				name: 'Morgan Stanley Investment Funds - Sustainable Asia Equity Fund B',
+				country: 'United States',
+				currency: 'USD',
+				exchange: 'OTC',
+				mic_code: 'PINX',
+				type: 'Mutual Fund',
+			},
+		],
+	},
+	status: 'ok',
+};
+
+export const bondsList = {
+	result: {
+		count: 1,
+		list: [
+			{
+				symbol: 'ABXL',
+				name: 'Abacus Global Management Inc.',
+				country: '',
+				currency: 'USD',
+				exchange: 'IEX',
+				mic_code: 'IEXG',
+				type: 'Bond',
+			},
+		],
+	},
+	status: 'ok',
+};

@@ -1546,6 +1546,67 @@ await corsair.twelvedata.api.market.timeSeries({ symbol: 'AAPL', interval: '1day
 
 ## Reference
 
+### bonds
+
+`reference.bonds`
+
+List the bonds Twelve Data covers, filtered by symbol, exchange or country
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.bonds({ symbol: 'ABXL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | — |
+| `exchange` | `string` | No | — |
+| `country` | `string` | No | — |
+
+Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  count?: number | null,
+  list: {
+    symbol: string,
+    name?: string | null,
+    currency?: string | null,
+    exchange?: string | null,
+    mic_code?: string | null,
+    country?: string | null,
+    type?: string | null,
+    figi_code?: string | null,
+    cfi_code?: string | null,
+    isin?: string | null,
+    cusip?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### cryptocurrencies
 
 `reference.cryptocurrencies`
@@ -1582,6 +1643,61 @@ await corsair.twelvedata.api.reference.cryptocurrencies({ symbol: '0xBTC/USD' })
   available_exchanges?: string[] | null,
   currency_base?: string | null,
   currency_quote?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### etf
+
+`reference.etf`
+
+List the ETFs Twelve Data covers, filtered by symbol, exchange or country
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.etf({ symbol: '0000D0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | One symbol, or several separated by commas |
+| `exchange` | `string` | No | — |
+| `country` | `string` | No | — |
+
+Uses the same `{ data }` envelope and fields as `reference.stocks`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string,
+  name?: string | null,
+  currency?: string | null,
+  exchange?: string | null,
+  mic_code?: string | null,
+  country?: string | null,
+  type?: string | null,
+  figi_code?: string | null,
+  cfi_code?: string | null,
+  isin?: string | null,
+  cusip?: string | null
 }[]
 ```
 </Accordion>
@@ -1673,6 +1789,66 @@ await corsair.twelvedata.api.reference.forexPairs({ currency_base: 'EUR' });
   currency_base?: string | null,
   currency_quote?: string | null
 }[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### funds
+
+`reference.funds`
+
+List the mutual funds Twelve Data covers, by country or symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.funds({ country: 'United States' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `symbol` | `string` | No | — |
+
+Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  count?: number | null,
+  list: {
+    symbol: string,
+    name?: string | null,
+    currency?: string | null,
+    exchange?: string | null,
+    mic_code?: string | null,
+    country?: string | null,
+    type?: string | null,
+    figi_code?: string | null,
+    cfi_code?: string | null,
+    isin?: string | null,
+    cusip?: string | null
+  }[]
+}
 ```
 </Accordion>
 </AccordionGroup>

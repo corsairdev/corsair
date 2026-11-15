@@ -56,7 +56,10 @@ const operations = [
 	'market.quote',
 	'market.timeSeries',
 	'reference.cryptocurrencies',
+	'reference.bonds',
+	'reference.etf',
 	'reference.exchanges',
+	'reference.funds',
 	'reference.forexPairs',
 	'reference.stocks',
 	...indicators.map((name) => `indicators.${name}`),
@@ -81,17 +84,17 @@ describe('twelvedata plugin definition', () => {
 		expect(nested.sort()).toEqual(operations);
 	});
 
-	it('has 34 operations', () => {
-		expect(operations).toHaveLength(34);
+	it('has 37 operations', () => {
+		expect(operations).toHaveLength(37);
 	});
 
 	it('gives every endpoint a description and reads only', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const entry of Object.values(meta)) {
-			expect(entry.description?.length).toBeGreaterThan(10);
+			expect(entry?.description?.length ?? 0).toBeGreaterThan(10);
 			// Every wrapped route is a GET over market data.
-			expect(entry.riskLevel).toBe('read');
+			expect(entry?.riskLevel).toBe('read');
 		}
 	});
 

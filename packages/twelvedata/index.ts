@@ -64,6 +64,9 @@ export type TwelveDataEndpoints = {
 	forexPairsList: TwelveDataEndpoint<'listForexPairs'>;
 	cryptocurrenciesList: TwelveDataEndpoint<'listCryptocurrencies'>;
 	exchangesList: TwelveDataEndpoint<'listExchanges'>;
+	etfList: TwelveDataEndpoint<'listEtf'>;
+	fundsList: TwelveDataEndpoint<'listFunds'>;
+	bondsList: TwelveDataEndpoint<'listBonds'>;
 	rsi: TwelveDataEndpoint<'rsi'>;
 	macd: TwelveDataEndpoint<'macd'>;
 	sma: TwelveDataEndpoint<'sma'>;
@@ -104,6 +107,9 @@ const twelvedataEndpointsNested = {
 		forexPairs: ReferenceEndpoints.forexPairs,
 		cryptocurrencies: ReferenceEndpoints.cryptocurrencies,
 		exchanges: ReferenceEndpoints.exchanges,
+		etf: ReferenceEndpoints.etf,
+		funds: ReferenceEndpoints.funds,
+		bonds: ReferenceEndpoints.bonds,
 	},
 	indicators: {
 		rsi: IndicatorsEndpoints.rsi,
@@ -170,6 +176,18 @@ export const twelvedataEndpointSchemas = {
 	'reference.exchanges': {
 		input: TwelveDataEndpointInputSchemas.listExchanges,
 		output: TwelveDataEndpointOutputSchemas.listExchanges,
+	},
+	'reference.etf': {
+		input: TwelveDataEndpointInputSchemas.listEtf,
+		output: TwelveDataEndpointOutputSchemas.listEtf,
+	},
+	'reference.funds': {
+		input: TwelveDataEndpointInputSchemas.listFunds,
+		output: TwelveDataEndpointOutputSchemas.listFunds,
+	},
+	'reference.bonds': {
+		input: TwelveDataEndpointInputSchemas.listBonds,
+		output: TwelveDataEndpointOutputSchemas.listBonds,
 	},
 	'indicators.rsi': {
 		input: TwelveDataEndpointInputSchemas.rsi,
@@ -317,6 +335,21 @@ const twelvedataEndpointMeta = {
 	'reference.exchanges': {
 		riskLevel: 'read',
 		description: 'List the exchanges Twelve Data covers, with their timezone',
+	},
+	'reference.etf': {
+		riskLevel: 'read',
+		description:
+			'List the ETFs Twelve Data covers, filtered by symbol, exchange or country',
+	},
+	'reference.funds': {
+		riskLevel: 'read',
+		description:
+			'List the mutual funds Twelve Data covers, by country or symbol',
+	},
+	'reference.bonds': {
+		riskLevel: 'read',
+		description:
+			'List the bonds Twelve Data covers, filtered by symbol, exchange or country',
 	},
 	'indicators.rsi': {
 		riskLevel: 'read',

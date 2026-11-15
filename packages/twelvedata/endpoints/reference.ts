@@ -91,3 +91,72 @@ export const exchanges: TwelveDataEndpoints['exchangesList'] = async (
 		}),
 		{ log: (_parsed, result) => ({ exchanges: result.data.length }) },
 	);
+
+/**
+ * ETFs answer the same `{ data }` envelope as `stocks`, with the same fields.
+ */
+export const etf: TwelveDataEndpoints['etfList'] = async (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'reference.etf',
+			operation: 'reference.etf',
+			input: TwelveDataEndpointInputSchemas.listEtf,
+			output: TwelveDataEndpointOutputSchemas.listEtf,
+		},
+		input,
+		(parsed) => ({
+			method: 'GET',
+			path: 'etf',
+			query: {
+				symbol: parsed.symbol,
+				exchange: parsed.exchange,
+				country: parsed.country,
+			},
+		}),
+		{ log: (_parsed, result) => ({ etfs: result.data.length }) },
+	);
+
+/**
+ * Funds and bonds answer `{ result: { count, list } }`, not the `{ data }` array
+ * the other reference lists use.
+ */
+export const funds: TwelveDataEndpoints['fundsList'] = async (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'reference.funds',
+			operation: 'reference.funds',
+			input: TwelveDataEndpointInputSchemas.listFunds,
+			output: TwelveDataEndpointOutputSchemas.listFunds,
+		},
+		input,
+		(parsed) => ({
+			method: 'GET',
+			path: 'funds',
+			query: { country: parsed.country, symbol: parsed.symbol },
+		}),
+		{ log: (_parsed, result) => ({ funds: result.result.list.length }) },
+	);
+
+export const bonds: TwelveDataEndpoints['bondsList'] = async (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'reference.bonds',
+			operation: 'reference.bonds',
+			input: TwelveDataEndpointInputSchemas.listBonds,
+			output: TwelveDataEndpointOutputSchemas.listBonds,
+		},
+		input,
+		(parsed) => ({
+			method: 'GET',
+			path: 'bonds',
+			query: {
+				symbol: parsed.symbol,
+				exchange: parsed.exchange,
+				country: parsed.country,
+			},
+		}),
+		{ log: (_parsed, result) => ({ bonds: result.result.list.length }) },
+	);

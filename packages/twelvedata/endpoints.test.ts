@@ -2,10 +2,13 @@ import { z } from 'zod';
 import { TwelveDataEndpointOutputSchemas } from './endpoints/types';
 import {
 	apiUsage,
+	bondsList,
 	cryptoList,
+	etfList,
 	exchangeRate,
 	exchangesList,
 	forexPairsList,
+	fundsList,
 	macdSeries,
 	price,
 	quote,
@@ -77,6 +80,30 @@ describe('output schemas keep the provider field names', () => {
 			TwelveDataEndpointOutputSchemas.listExchanges.parse(exchangesList);
 		expect(parsed.data[0]?.code).toBe('IEXG');
 		expect(parsed.data[0]?.timezone).toBe('America/New_York');
+	});
+
+	it('parses an ETF list through the data envelope', () => {
+		const parsed = TwelveDataEndpointOutputSchemas.listEtf.parse(etfList);
+		expect(parsed.data[0]?.symbol).toBe('0000D0');
+		expect(parsed.data[0]?.exchange).toBe('KRX');
+	});
+
+	it('parses a funds list through the result envelope', () => {
+		const parsed = TwelveDataEndpointOutputSchemas.listFunds.parse(fundsList);
+		expect(parsed.result.count).toBe(137321);
+		expect(parsed.result.list[0]?.type).toBe('Mutual Fund');
+	});
+
+	it('parses a bonds list through the result envelope', () => {
+		const parsed = TwelveDataEndpointOutputSchemas.listBonds.parse(bondsList);
+		expect(parsed.result.list[0]?.type).toBe('Bond');
+	});
+
+	it('rejects a funds body that used the data envelope instead', () => {
+		// Funds and bonds answer `{ result }`; a `{ data }` body is the wrong route.
+		expect(() =>
+			TwelveDataEndpointOutputSchemas.listFunds.parse({ data: [] }),
+		).toThrow(z.ZodError);
 	});
 
 	it('parses an exchange rate', () => {

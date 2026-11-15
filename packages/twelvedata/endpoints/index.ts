@@ -15,6 +15,9 @@ export const ReferenceEndpoints = {
 	forexPairs: Reference.forexPairs,
 	cryptocurrencies: Reference.cryptocurrencies,
 	exchanges: Reference.exchanges,
+	etf: Reference.etf,
+	funds: Reference.funds,
+	bonds: Reference.bonds,
 };
 
 export const IndicatorsEndpoints = Indicators;

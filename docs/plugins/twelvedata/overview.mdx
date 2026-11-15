@@ -15,11 +15,12 @@ Things to know:
 - **Plan limits are per endpoint.** A 403 names the plan the endpoint needs, so `earnings`, `splits`, `dividends` and `profile` are left out: they need a paid plan and are not part of this plugin.
 - **Paging is `outputsize`.** A time series returns the newest candles by default; `outputsize` caps them and `start_date` / `end_date` set a window. The free plan caps the interval history at 8 requests a minute.
 - **Indicators return one shape each.** `rsi` answers `values[].rsi`, `macd` answers `macd`, `macd_signal` and `macd_hist`, and so on. Each value is a decimal string, and the schema keeps them as an open record rather than a fixed field list per indicator.
-- **Reference lists answer without a key.** `stocks`, `forex_pairs`, `cryptocurrencies` and `exchanges` are open, which is why their shapes are the best documented here.
+- **Reference lists answer without a key.** `stocks`, `forex_pairs`, `cryptocurrencies`, `exchanges`, `etf`, `funds` and `bonds` are open, which is why their shapes are the best documented here.
+- **Two envelopes.** `stocks`, `forex_pairs`, `cryptocurrencies`, `exchanges` and `etf` answer `{ data: [...] }`. `funds` and `bonds` answer `{ result: { count, list } }`, so their schemas differ.
 
 **What you get:**
 
-- 34 typed API operations
+- 37 typed API operations
 
 ## Setup
 

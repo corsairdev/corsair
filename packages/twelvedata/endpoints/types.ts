@@ -76,6 +76,30 @@ export type ExchangeOutput = z.output<typeof ExchangeSchema>;
 const DataList = <T extends z.ZodType>(item: T) =>
 	z.object({ data: z.array(item) }).loose();
 
+/**
+ * ETFs answer the `{ data }` envelope that `stocks` uses. Funds and bonds answer
+ * a different one, `{ result: { count, list } }`, which is why they need their own
+ * schemas rather than sharing the stock one.
+ */
+const etf = StockSchema;
+
+const fund = StockSchema;
+
+const bond = StockSchema;
+
+const ResultList = <T extends z.ZodType>(item: T) =>
+	z
+		.object({
+			result: z
+				.object({
+					count: z.number().nullish(),
+					list: z.array(item),
+				})
+				.loose(),
+			...StatusSchema,
+		})
+		.loose();
+
 /** A quote: every field arrives as a string. */
 const QuoteSchema = z
 	.object({
@@ -303,6 +327,30 @@ export type ListCryptocurrenciesInput = z.input<
 const ListExchangesInputSchema = z.object({
 	country: z.string().optional(),
 });
+
+const ListEtfInputSchema = z.object({
+	symbol: z
+		.string()
+		.optional()
+		.describe('One symbol, or several separated by commas'),
+	exchange: z.string().optional(),
+	country: z.string().optional(),
+});
+
+const ListFundsInputSchema = z.object({
+	country: z.string().optional(),
+	symbol: z.string().optional(),
+});
+
+const ListBondsInputSchema = z.object({
+	symbol: z.string().optional(),
+	exchange: z.string().optional(),
+	country: z.string().optional(),
+});
+
+export type ListEtfInput = z.input<typeof ListEtfInputSchema>;
+export type ListFundsInput = z.input<typeof ListFundsInputSchema>;
+export type ListBondsInput = z.input<typeof ListBondsInputSchema>;
 export type ListExchangesInput = z.input<typeof ListExchangesInputSchema>;
 
 const ApiUsageInputSchema = z.object({});
@@ -318,6 +366,9 @@ export type TwelveDataEndpointInputs = {
 	listForexPairs: ListForexPairsInput;
 	listCryptocurrencies: ListCryptocurrenciesInput;
 	listExchanges: ListExchangesInput;
+	listEtf: ListEtfInput;
+	listFunds: ListFundsInput;
+	listBonds: ListBondsInput;
 	rsi: IndicatorInput;
 	macd: IndicatorInput;
 	sma: IndicatorInput;
@@ -357,6 +408,9 @@ export type TwelveDataEndpointOutputs = {
 		ReturnType<typeof DataList<typeof CryptoSchema>>
 	>;
 	listExchanges: z.output<ReturnType<typeof DataList<typeof ExchangeSchema>>>;
+	listEtf: z.output<ReturnType<typeof DataList<typeof etf>>>;
+	listFunds: z.output<ReturnType<typeof ResultList<typeof fund>>>;
+	listBonds: z.output<ReturnType<typeof ResultList<typeof bond>>>;
 	rsi: IndicatorOutput;
 	macd: IndicatorOutput;
 	sma: IndicatorOutput;
@@ -388,6 +442,9 @@ const StocksListSchema = DataList(StockSchema);
 const ForexPairsListSchema = DataList(ForexPairSchema);
 const CryptoListSchema = DataList(CryptoSchema);
 const ExchangesListSchema = DataList(ExchangeSchema);
+const EtfListSchema = DataList(etf);
+const FundsListSchema = ResultList(fund);
+const BondsListSchema = ResultList(bond);
 
 export const TwelveDataEndpointInputSchemas = {
 	quote: QuoteInputSchema,
@@ -399,6 +456,9 @@ export const TwelveDataEndpointInputSchemas = {
 	listForexPairs: ListForexPairsInputSchema,
 	listCryptocurrencies: ListCryptocurrenciesInputSchema,
 	listExchanges: ListExchangesInputSchema,
+	listEtf: ListEtfInputSchema,
+	listFunds: ListFundsInputSchema,
+	listBonds: ListBondsInputSchema,
 	rsi: IndicatorInputSchema,
 	macd: IndicatorInputSchema,
 	sma: IndicatorInputSchema,
@@ -436,6 +496,9 @@ export const TwelveDataEndpointOutputSchemas = {
 	listForexPairs: ForexPairsListSchema,
 	listCryptocurrencies: CryptoListSchema,
 	listExchanges: ExchangesListSchema,
+	listEtf: EtfListSchema,
+	listFunds: FundsListSchema,
+	listBonds: BondsListSchema,
 	rsi: IndicatorSchema,
 	macd: IndicatorSchema,
 	sma: IndicatorSchema,

@@ -7,10 +7,13 @@ import {
 import {
 	apiUsage,
 	badKey,
+	bondsList,
 	cryptoList,
+	etfList,
 	exchangeRate,
 	exchangesList,
 	forexPairsList,
+	fundsList,
 	macdSeries,
 	partialBatch,
 	price,
@@ -211,6 +214,43 @@ describe('reference data', () => {
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/cryptocurrencies');
+	});
+
+	it('reference.etf GETs /etf and uses the data envelope', async () => {
+		respond(etfList);
+
+		const result = (await invoke(ReferenceEndpoints.etf, {
+			symbol: '0000D0',
+		})) as { data: { symbol: string }[] };
+
+		expectAuthenticated();
+		expect(lastRequest().path).toBe('/etf');
+		expect(result.data).toHaveLength(1);
+	});
+
+	it('reference.funds GETs /funds and reads the result envelope', async () => {
+		respond(fundsList);
+
+		const result = (await invoke(ReferenceEndpoints.funds, {
+			country: 'United States',
+		})) as { result: { count?: number | null; list: unknown[] } };
+
+		expectAuthenticated();
+		expect(lastRequest().path).toBe('/funds');
+		expect(result.result.count).toBe(137321);
+		expect(result.result.list).toHaveLength(1);
+	});
+
+	it('reference.bonds GETs /bonds and reads the result envelope', async () => {
+		respond(bondsList);
+
+		const result = (await invoke(ReferenceEndpoints.bonds, {
+			symbol: 'ABXL',
+		})) as { result: { list: { symbol: string }[] } };
+
+		expectAuthenticated();
+		expect(lastRequest().path).toBe('/bonds');
+		expect(result.result.list[0]?.symbol).toBe('ABXL');
 	});
 
 	it('reference.exchanges GETs /exchanges with the country filter', async () => {
