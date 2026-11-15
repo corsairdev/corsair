@@ -12,6 +12,28 @@ const safePath = z
 		'Unsafe path segment',
 	);
 
+// Get Campaign returns EndPointId as a full URL such as
+// https://app.postalytics.com/1234567890, and the Send Mail docs tell callers to
+// pass that value. The routes take only the id, so a postalytics.com URL is cut
+// down to its last path segment. The request host never comes from this value.
+function endpointIdFromUrl(value: string): string {
+	if (!/^https:\/\//i.test(value)) return value;
+	try {
+		const url = new URL(value);
+		const host = url.hostname.toLowerCase();
+		if (host !== 'postalytics.com' && !host.endsWith('.postalytics.com'))
+			return value;
+		return url.pathname.split('/').filter(Boolean).at(-1) ?? value;
+	} catch {
+		return value;
+	}
+}
+const endpointRef = z
+	.string()
+	.min(1)
+	.transform(endpointIdFromUrl)
+	.pipe(safePath);
+
 export const getIntegrationsInputSchema = z.object({});
 export const getIntegrationsOutputSchema = z.array(
 	z
@@ -432,7 +454,7 @@ export const getContactsOnListOutputSchema = z.array(
 export const createContactOnListInputSchema = z.object({
 	body: z
 		.object({
-			contact_id: z.number().int(),
+			contact_id: z.number().int().optional(),
 			contact_list_id: z.number().int(),
 			address_city: z.string().nullable().optional(),
 			address_state: z.string().nullable().optional(),
@@ -571,7 +593,7 @@ export const getAllFlowsOutputSchema = z.array(
 		.passthrough(),
 );
 
-export const getFlowInputSchema = z.object({ endpointId: safePath });
+export const getFlowInputSchema = z.object({ endpointId: endpointRef });
 export const getFlowOutputSchema = z
 	.object({
 		contactListId: z.number().int().optional(),
@@ -585,7 +607,7 @@ export const getFlowOutputSchema = z
 	.passthrough();
 
 export const enrollContactToFlowInputSchema = z.object({
-	endPoint: safePath,
+	endPoint: endpointRef,
 	body: z
 		.object({
 			address_city: z.string(),
@@ -654,7 +676,7 @@ export const enrollContactToFlowOutputSchema = z
 
 export const unenrollContactFromFlowInputSchema = z.object({
 	dataId: z.number().int(),
-	endPoint: safePath,
+	endPoint: endpointRef,
 });
 export const unenrollContactFromFlowOutputSchema = z
 	.object({ unenrolled_date: z.string().optional() })
@@ -678,7 +700,7 @@ export const createLoginLinkOutputSchema = z
 	.passthrough();
 
 export const sendMailInputSchema = z.object({
-	endPoint: safePath,
+	endPoint: endpointRef,
 	body: z
 		.object({
 			address_city: z.string(),

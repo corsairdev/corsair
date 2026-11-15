@@ -125,6 +125,58 @@ describe('Postalytics request seam', () => {
 			'https://api.postalytics.com/api/v1/campaigns/7/events?PageNumber=2&PageSize=10',
 		);
 	});
+	it('sends mail to the id inside the EndPointId URL that Get Campaign returns', async () => {
+		mockFetch.mockImplementation(
+			async () =>
+				new Response(JSON.stringify({ send_date: '2026-11-15T12:00:00' }), {
+					status: 200,
+				}),
+		);
+		const recipient = {
+			address_city: 'New York',
+			address_state: 'NY',
+			address_street: '36 Pipers Row',
+			address_zip: '10001',
+			first_name: 'Thomas',
+			last_name: 'Anderson',
+		};
+		const input = postalyticsEndpointSchemas['mail.sendMail'].input.parse({
+			endPoint: 'https://app.postalytics.com/1234567890',
+			body: recipient,
+		});
+		await postalytics().endpoints!.mail.sendMail(ctx, input);
+		expect(mockFetch.mock.calls[0][0]).toBe(
+			'https://api.postalytics.com/api/v1/send/1234567890',
+		);
+		for (const endPoint of [
+			'https://example.org/1234567890',
+			'https://app.postalytics.com.example.org/1234567890',
+			'http://app.postalytics.com/a/..',
+		])
+			expect(() =>
+				postalyticsEndpointSchemas['mail.sendMail'].input.parse({
+					endPoint,
+					body: recipient,
+				}),
+			).toThrow();
+	});
+	it('creates a contact without a contact_id', async () => {
+		mockFetch.mockImplementation(
+			async () =>
+				new Response(JSON.stringify({ created_date: '2026-11-15T12:00:00' }), {
+					status: 200,
+				}),
+		);
+		const input = postalyticsEndpointSchemas[
+			'contacts.createContactOnList'
+		].input.parse({ body: { contact_list_id: 5, first_name: 'Thomas' } });
+		await postalytics().endpoints!.contacts.createContactOnList(ctx, input);
+		const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+		expect(JSON.parse(String(init.body))).toEqual({
+			contact_list_id: 5,
+			first_name: 'Thomas',
+		});
+	});
 	it('rejects unsafe string route parameters', () => {
 		const input = postalyticsEndpointSchemas['flows.getFlow'].input;
 		for (const endpointId of [
