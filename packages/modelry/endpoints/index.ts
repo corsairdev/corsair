@@ -1,4 +1,5 @@
 import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import type { z } from 'zod';
 import { makeModelryRequest } from '../client';
 import type { ModelryContext } from '../index';
@@ -18,6 +19,35 @@ function endpoint<I extends Schema, O extends Schema>(
 		return output.parse(await makeModelryRequest(ctx.key, build(parsed)));
 	};
 }
+// Modelry answers an empty list with 404 and `{ "data": [] }` (documented as its
+// "Not Found Response" for lists, and seen live on products and embeds), and an
+// empty modeling-request asset list with 204. Both mean "no results", so lists
+// return them instead of throwing. A 404 whose body is not an empty list (a
+// missing parent, `{ "data": null }`) still throws.
+function listEndpoint<I extends Schema, O extends Schema>(
+	input: I,
+	output: O,
+	build: (args: z.output<I>) => ApiRequestOptions,
+) {
+	return async (
+		ctx: ModelryContext,
+		args: z.input<I>,
+	): Promise<z.output<O>> => {
+		const parsed = input.parse(args);
+		try {
+			const res = await makeModelryRequest(ctx.key, build(parsed));
+			return output.parse(res === undefined ? { data: [] } : res);
+		} catch (error) {
+			const data = error instanceof ApiError ? error.body?.data : undefined;
+			if (error instanceof ApiError && error.status === 404) {
+				if (Array.isArray(data) && data.length === 0) {
+					return output.parse(error.body);
+				}
+			}
+			throw error;
+		}
+	};
+}
 type ListQueryValue = string | number | string[] | undefined;
 const arrayQuery = (
 	query: Record<string, ListQueryValue>,
@@ -30,11 +60,15 @@ const arrayQuery = (
 	);
 const body = <T extends object>(value: T) =>
 	({ body: value, mediaType: 'application/json' }) as const;
-export const products_list = endpoint(t.products_listInput, t.list, (a) => ({
-	method: 'GET',
-	url: '/v1/products',
-	query: arrayQuery(a),
-}));
+export const products_list = listEndpoint(
+	t.products_listInput,
+	t.list,
+	(a) => ({
+		method: 'GET',
+		url: '/v1/products',
+		query: arrayQuery(a),
+	}),
+);
 export const products_get = endpoint(t.products_getInput, t.single, (a) => ({
 	method: 'GET',
 	url: '/v1/products/{id}',
@@ -60,7 +94,7 @@ export const products_delete = endpoint(
 	t.empty,
 	(a) => ({ method: 'DELETE', url: '/v1/products/{id}', path: { id: a.id } }),
 );
-export const modelingRequests_list = endpoint(
+export const modelingRequests_list = listEndpoint(
 	t.modelingRequests_listInput,
 	t.list,
 	(a) => ({
@@ -97,7 +131,7 @@ export const modelingRequests_create = endpoint(
 	t.single,
 	(a) => ({ method: 'POST', url: '/v1/modeling-requests', ...body(a) }),
 );
-export const modelingRequests_assets = endpoint(
+export const modelingRequests_assets = listEndpoint(
 	t.modelingRequests_assetsInput,
 	t.list,
 	(a) => ({
@@ -126,7 +160,7 @@ export const productAssets_delete = endpoint(
 		path: a,
 	}),
 );
-export const embeds_list = endpoint(t.embeds_listInput, t.list, (a) => ({
+export const embeds_list = listEndpoint(t.embeds_listInput, t.list, (a) => ({
 	method: 'GET',
 	url: '/v1/products/{product_id}/embeds',
 	path: { product_id: a.product_id },
@@ -171,7 +205,7 @@ export const uploads_file = endpoint(
 	t.uploadOutput,
 	(a) => ({ method: 'POST', url: '/v1/uploads', ...body(a) }),
 );
-export const workspaces_list = endpoint(
+export const workspaces_list = listEndpoint(
 	t.workspaces_listInput,
 	t.list,
 	(a) => ({ method: 'GET', url: '/v1/workspaces', query: a }),

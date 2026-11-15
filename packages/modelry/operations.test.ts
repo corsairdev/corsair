@@ -310,6 +310,48 @@ it('retries a 429 through core, honouring Retry-After', async () => {
 	).resolves.toEqual(one);
 	expect(mock).toHaveBeenCalledTimes(2);
 });
+// Trimmed live responses (11-15): Modelry answers an empty list with 404.
+const emptyProducts = {
+	data: [],
+	meta: { total_pages: 0, page: 1, per_page: 5, total_records: 0 },
+};
+it.each([
+	['products.list', () => api.products.list({ per_page: 5 }), emptyProducts],
+	['embeds.list', () => api.embeds.list({ product_id: 146648 }), { data: [] }],
+	[
+		'modelingRequests.list',
+		() => api.modelingRequests.list({}),
+		{ data: [], meta: { page: 1, per_page: 25, total_records: 0 } },
+	],
+])(
+	'%s returns the empty list Modelry sends with a 404',
+	async (_name, call, body) => {
+		mock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status: 404,
+				headers: { 'Content-Type': 'application/json; charset=utf-8' },
+			}),
+		);
+		await expect(call()).resolves.toEqual(body);
+	},
+);
+it('returns an empty asset list for the documented 204', async () => {
+	mock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+	await expect(
+		api.modelingRequests.assets({ modeling_request_id_or_sku: 'SKU' }),
+	).resolves.toEqual({ data: [] });
+});
+it('still throws when a list parent is missing', async () => {
+	mock.mockResolvedValueOnce(
+		new Response(JSON.stringify({ data: null }), {
+			status: 404,
+			headers: { 'Content-Type': 'application/json; charset=utf-8' },
+		}),
+	);
+	await expect(
+		api.modelingRequests.assets({ modeling_request_id_or_sku: 999 }),
+	).rejects.toMatchObject({ status: 404 });
+});
 it('forwards array filters with the documented bracket names', async () => {
 	mock.mockResolvedValueOnce(
 		new Response(JSON.stringify(many), {
