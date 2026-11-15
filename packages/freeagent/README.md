@@ -40,6 +40,8 @@ FreeAgent's company API integration for Corsair. The API uses OAuth 2.0 bearer a
 
 Invoice creation and duplication produce Draft invoices. Emailing, payment, and invoice state transitions are separate destructive operations. Direct debit is only available for sent invoices with a GoCardless pre-authorised mandate and no previous payment. PDF content is returned by FreeAgent as base64 inside JSON. `invoices.sendEmail` supports the documented template flag, message fields, and base64 attachment records (maximum 5 MiB per attachment).
 
+For update/delete and invoice action routes whose official response documents only a status code, the output schema accepts either an empty JSON object or no response body; it does not fabricate a response payload.
+
 ## Pagination, limits, and errors
 
 Collection calls accept `page` and `per_page` (1–100). FreeAgent documents 25 items per page by default and returns pagination in the `Link` header plus a total in `X-Total-Count`. The three implemented collection operations return these values under `pagination.link` and `pagination.total_count` (the total remains the header's decimal string). A missing header is `null`. The company API limits are 120 requests per user per minute, 3,600 per hour, and 15 token refreshes per minute; HTTP 429 responses include `Retry-After`. The paginated GET client retries 429 responses up to three times, honoring `Retry-After`, with bounded exponential fallback when that header is absent. Other calls use Corsair's shared transport.

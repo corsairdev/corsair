@@ -85,6 +85,14 @@ describe('FreeAgent schemas', () => {
 				],
 			}).success,
 		).toBe(true);
+		expect(
+			FreeAgentEndpointOutputSchemas.invoicesDirectDebit.safeParse(undefined)
+				.success,
+		).toBe(true);
+		expect(
+			FreeAgentEndpointOutputSchemas.contactsDelete.safeParse(undefined)
+				.success,
+		).toBe(true);
 	});
 
 	it('validates documented pagination bounds and dates', () => {

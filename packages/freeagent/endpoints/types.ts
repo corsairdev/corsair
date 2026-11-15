@@ -292,6 +292,10 @@ const PaginationHeadersSchema = z.object({
 	link: z.string().nullable(),
 	total_count: z.string().regex(/^\d+$/).nullable(),
 });
+const EmptyResponseSchema = z.union([
+	z.object({}).passthrough(),
+	z.undefined(),
+]);
 
 const ContactsListResponseSchema = z
 	.object({ contacts: z.array(ContactSchema) })
@@ -411,29 +415,29 @@ export const FreeAgentEndpointOutputSchemas = {
 	}).passthrough(),
 	contactsGet: z.object({ contact: ContactSchema }).passthrough(),
 	contactsCreate: z.object({ contact: ContactSchema }).passthrough(),
-	contactsUpdate: z.object({}).passthrough(),
-	contactsDelete: z.object({}).passthrough(),
+	contactsUpdate: EmptyResponseSchema,
+	contactsDelete: EmptyResponseSchema,
 	projectsList: ProjectsListResponseSchema.extend({
 		pagination: PaginationHeadersSchema,
 	}).passthrough(),
 	projectsGet: z.object({ project: ProjectSchema }).passthrough(),
 	projectsCreate: z.object({ project: ProjectSchema }).passthrough(),
-	projectsUpdate: z.object({}).passthrough(),
-	projectsDelete: z.object({}).passthrough(),
+	projectsUpdate: EmptyResponseSchema,
+	projectsDelete: EmptyResponseSchema,
 	invoicesList: InvoicesListResponseSchema.extend({
 		pagination: PaginationHeadersSchema,
 	}).passthrough(),
 	invoicesGet: z.object({ invoice: InvoiceSchema }).passthrough(),
 	invoicesCreate: z.object({ invoice: InvoiceSchema }).passthrough(),
-	invoicesUpdate: z.object({}).passthrough(),
-	invoicesDelete: z.object({}).passthrough(),
-	invoicesMarkSent: z.object({}).passthrough(),
-	invoicesSendEmail: z.object({}).passthrough(),
+	invoicesUpdate: EmptyResponseSchema,
+	invoicesDelete: EmptyResponseSchema,
+	invoicesMarkSent: EmptyResponseSchema,
+	invoicesSendEmail: EmptyResponseSchema,
 	invoicesDuplicate: z.object({ invoice: InvoiceSchema }).passthrough(),
-	invoicesMarkScheduled: z.object({}).passthrough(),
-	invoicesMarkDraft: z.object({}).passthrough(),
-	invoicesMarkCancelled: z.object({}).passthrough(),
-	invoicesDirectDebit: z.object({}).passthrough(),
+	invoicesMarkScheduled: EmptyResponseSchema,
+	invoicesMarkDraft: EmptyResponseSchema,
+	invoicesMarkCancelled: EmptyResponseSchema,
+	invoicesDirectDebit: EmptyResponseSchema,
 	invoicesTimeline: z
 		.object({ invoice_timeline_items: z.array(InvoiceTimelineItemSchema) })
 		.passthrough(),
@@ -443,7 +447,7 @@ export const FreeAgentEndpointOutputSchemas = {
 	invoicesDefaultAdditionalTextUpdate: z
 		.object({ default_additional_text: z.string() })
 		.passthrough(),
-	invoicesDefaultAdditionalTextDelete: z.object({}).passthrough(),
+	invoicesDefaultAdditionalTextDelete: EmptyResponseSchema,
 	invoicesPdf: z
 		.object({ pdf: z.object({ content: z.string().min(1) }) })
 		.passthrough(),
