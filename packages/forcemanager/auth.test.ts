@@ -181,6 +181,53 @@ describe('ForceManager session login', () => {
 		expect(error.message).not.toContain('public-key');
 	});
 
+	it('scrubs a sent key before cutting the message, so no part of it survives the cut', async () => {
+		const privateKey = 'PRIVATEKEYSTRADDLINGTHECUT0123456789';
+		const packed = packForceManagerCredentials({
+			publicKey: 'public-key',
+			privateKey,
+		});
+		// The key starts at character 290, so a 300-character cut made before scrubbing
+		// would split it and leave its first 10 characters in the message.
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				json({ error: `${'x'.repeat(290)}${privateKey} rejected` }, 400),
+			);
+
+		// `unknown` because a rejected promise has no reliable runtime error type until narrowed.
+		const error = await makeForceManagerRequest('/accounts', packed, {
+			method: 'GET',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw new Error('Expected an ApiError');
+		expect(error.message).not.toContain(privateKey.slice(0, 10));
+		expect(error.message).toContain('[REDACTED');
+	});
+
+	it('scrubs the private key whole when the public key is its prefix', async () => {
+		const packed = packForceManagerCredentials({
+			publicKey: 'sharedprefix',
+			privateKey: 'sharedprefixSECRETTAIL',
+		});
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				json({ error: 'bad password sharedprefixSECRETTAIL' }, 400),
+			);
+
+		// `unknown` because a rejected promise has no reliable runtime error type until narrowed.
+		const error = await makeForceManagerRequest('/accounts', packed, {
+			method: 'GET',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw new Error('Expected an ApiError');
+		expect(error.message).not.toContain('SECRETTAIL');
+		expect(error.message).toContain('bad password [REDACTED]');
+	});
+
 	it('keeps the provider error text on API failures', async () => {
 		jest
 			.spyOn(globalThis, 'fetch')

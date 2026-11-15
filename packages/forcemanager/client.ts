@@ -76,8 +76,10 @@ function providerMessage(body: unknown): string | undefined {
 	const record = body as Record<string, unknown>;
 	for (const field of ['message', 'error']) {
 		const value = record[field];
+		// Not cut here: the caller scrubs sent values first, then cuts, so a cut can't split a value
+		// and leave part of it behind.
 		if (typeof value === 'string' && value.trim().length > 0) {
-			return value.trim().slice(0, MAX_PROVIDER_MESSAGE_LENGTH);
+			return value.trim();
 		}
 	}
 	return undefined;
@@ -100,7 +102,10 @@ function toForceManagerError(
 	if (error instanceof ForceManagerAPIError) return error;
 	if (error instanceof ApiError) {
 		const raw = providerMessage(error.body);
-		const detail = raw === undefined ? undefined : scrubSent(raw, sent);
+		const detail =
+			raw === undefined
+				? undefined
+				: scrubSent(raw, sent).slice(0, MAX_PROVIDER_MESSAGE_LENGTH);
 		return new ApiError(
 			{ method: error.request.method, url: stripQuery(error.request.url) },
 			{
@@ -141,8 +146,11 @@ function collectSent(value: unknown, out: Set<string>): Set<string> {
 
 /** Removes every value the request sent (keys, CRM fields, filters, path values) from provider text. */
 function scrubSent(text: string, sent: Set<string>): string {
+	// Longest first: when one value starts another (a public key that prefixes the private key),
+	// replacing the shorter one first would leave the rest of the longer one in the text.
+	const values = [...sent].sort((a, b) => b.length - a.length);
 	let result = text;
-	for (const value of sent) result = result.split(value).join(REDACTED);
+	for (const value of values) result = result.split(value).join(REDACTED);
 	return result;
 }
 
