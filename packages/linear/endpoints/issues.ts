@@ -10,67 +10,8 @@ import type {
 } from './types';
 
 const ISSUES_LIST_QUERY = `
-  query Issues($teamId: ID!, $first: Int!, $after: String) {
-    issues(filter: { team: { id: { eq: $teamId } } }, first: $first, after: $after) {
-      nodes {
-        id
-        title
-        description
-        priority
-        estimate
-        sortOrder
-        number
-        identifier
-        url
-        state {
-          id
-          name
-          type
-          color
-          position
-        }
-        team {
-          id
-          name
-          key
-        }
-        assignee {
-          id
-          name
-          displayName
-          email
-          avatarUrl
-        }
-        creator {
-          id
-          name
-          displayName
-          email
-          avatarUrl
-        }
-        labels {
-          nodes {
-            id
-            name
-            color
-          }
-        }
-        createdAt
-        updatedAt
-      }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-    }
-  }
-`;
-
-const ISSUES_LIST_QUERY_NO_FILTER = `
-  query Issues($first: Int!, $after: String) {
-    issues(first: $first, after: $after) {
+  query Issues($filter: IssueFilter, $orderBy: PaginationOrderBy, $first: Int!, $after: String) {
+    issues(filter: $filter, orderBy: $orderBy, first: $first, after: $after) {
       nodes {
         id
         title
@@ -284,19 +225,28 @@ const ISSUE_DELETE_MUTATION = `
 `;
 
 export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
-	const query = input.teamId ? ISSUES_LIST_QUERY : ISSUES_LIST_QUERY_NO_FILTER;
+	const teamFilter = input.teamId
+		? { team: { id: { eq: input.teamId } } }
+		: undefined;
+	const filter =
+		teamFilter && input.filter
+			? { and: [teamFilter, input.filter] }
+			: (teamFilter ?? input.filter);
 	const variables: Record<string, unknown> = {
 		first: input.first || 50,
 	};
-	if (input.teamId) {
-		variables.teamId = input.teamId;
+	if (filter) {
+		variables.filter = filter;
+	}
+	if (input.orderBy) {
+		variables.orderBy = input.orderBy;
 	}
 	if (input.after) {
 		variables.after = input.after;
 	}
 
 	const response = await makeLinearRequest<IssuesListResponse>(
-		query,
+		ISSUES_LIST_QUERY,
 		ctx.key,
 		variables,
 	);
