@@ -13,6 +13,7 @@ if (!key) {
 }
 
 const endpoints = moonclerk().endpoints;
+if (!endpoints) throw new Error('MoonClerk endpoints are missing');
 const ctx = { key } as MoonClerkContext;
 // An id no account has, to check the get routes answer 404 rather than 401.
 const MISSING_ID = 999999999;
