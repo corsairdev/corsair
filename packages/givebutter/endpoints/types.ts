@@ -137,6 +137,16 @@ const TicketCreateInputSchema = z.object({
 	pictures: z.array(z.string()).nullable().optional(),
 });
 
+// SsoAccountResource: key fields typed, the rest kept loose.
+const SsoAccountResource = z
+	.object({
+		id: ResourceId,
+		name: NullableString.optional(),
+		slug: NullableString.optional(),
+		url: NullableString.optional(),
+		email: NullableString.optional(),
+	})
+	.loose();
 const PageSchema = z.object({
 	data: z.array(JsonObject),
 	links: z.object({
@@ -233,7 +243,7 @@ export const GivebutterEndpointOutputSchemas = {
 	getTicketItem: JsonObject,
 	listTickets: PageSchema,
 	getTicket: JsonObject,
-	getSsoAccount: JsonObject,
+	getSsoAccount: SsoAccountResource,
 	getSsoCampaign: JsonObject,
 	...GivebutterCrmEndpointOutputSchemas,
 	...GivebutterFinancialEndpointOutputSchemas,

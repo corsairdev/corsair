@@ -303,7 +303,8 @@ export const GivebutterCrmEndpointOutputSchemas = {
 	listHouseholdContacts: PageSchema,
 	addHouseholdContact: JsonObject,
 	getHouseholdContact: JsonObject,
-	removeHouseholdContact: JsonObject,
+	// Givebutter returns the household the contact was removed from.
+	removeHouseholdContact: HouseholdResource,
 } as const;
 
 export type GivebutterCrmEndpointInputs = {

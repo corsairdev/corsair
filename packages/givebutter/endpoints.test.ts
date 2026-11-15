@@ -303,7 +303,7 @@ describe('every implemented Givebutter campaign/catalog operation', () => {
 		{
 			name: 'sso.account',
 			invoke: () => Sso.account(ctx as never, {}),
-			body: {},
+			body: { id: 1, name: 'Acme' },
 			method: 'GET',
 			path: '/sso/v1/account',
 		},

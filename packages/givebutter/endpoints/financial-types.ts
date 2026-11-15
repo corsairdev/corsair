@@ -81,6 +81,19 @@ const PledgeResource = z
 		amount: Numeric.optional(),
 	})
 	.loose();
+// RecurringPlanResource: key fields typed, loose like the other resources
+// because the spec's all-string types don't match what Givebutter sends.
+const RecurringPlanResource = z
+	.object({
+		id: ResourceId,
+		contact_id: ResourceId.nullable().optional(),
+		amount: Numeric.nullable().optional(),
+		status: NullableString.optional(),
+		frequency: NullableString.optional(),
+		next_bill_date: NullableString.optional(),
+		canceled_at: NullableString.optional(),
+	})
+	.loose();
 const WebhookResource = z
 	.object({
 		id: ResourceId,
@@ -261,8 +274,8 @@ export const GivebutterFinancialEndpointOutputSchemas = {
 	getPayout: PayoutResource,
 	listPledges: PageSchema.extend({ data: z.array(PledgeResource) }),
 	getPledge: PledgeResource,
-	listPlans: PageSchema,
-	getPlan: JsonObject,
+	listPlans: PageSchema.extend({ data: z.array(RecurringPlanResource) }),
+	getPlan: RecurringPlanResource,
 	listTransactions: PageSchema.extend({
 		data: z.array(TransactionResource),
 		meta: PageSchema.shape.meta.extend({ unfiltered_total: Numeric }),
