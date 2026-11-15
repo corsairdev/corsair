@@ -207,6 +207,16 @@ describe('StackAI public endpoints', () => {
 			(await errorHandlers.RATE_LIMIT_ERROR.handler(error as Error)).maxRetries,
 		).toBe(0);
 	});
+	it('does not wait out a long Retry-After on reads', async () => {
+		const longWait = new StackAIAPIError(429, undefined, 86_400_000, 'GET');
+		expect(
+			(await errorHandlers.RATE_LIMIT_ERROR.handler(longWait)).maxRetries,
+		).toBe(0);
+		const shortWait = new StackAIAPIError(429, undefined, 2000, 'GET');
+		expect(
+			(await errorHandlers.RATE_LIMIT_ERROR.handler(shortWait)).maxRetries,
+		).toBe(3);
+	});
 	it('rejects missing credentials before making a request', async () => {
 		await expect(
 			plugin.endpoints!.runs.list({ key: '', options: {} } as never, {}),
