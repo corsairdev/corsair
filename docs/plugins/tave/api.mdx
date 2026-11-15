@@ -1,0 +1,1830 @@
+---
+title: "Tave API reference"
+sidebarTitle: "API"
+description: "API reference for the Tave plugin in Corsair: every `tave.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Brands
+
+### list
+
+`brands.list`
+
+List the brands of the studio
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.brands.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  alias?: string | null,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### create
+
+`jobs.create`
+
+Create a lead or job with its type, lead source, brand and event date
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.jobs.create({ title: 'Smith wedding', stage: 'lead', eventDate: '2026-06-15', guestCount: 120 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | The job title. |
+| `name` | `string` | No | The job name. |
+| `stage` | `lead \| booked \| fulfillment \| completed` | No | The pipeline stage. |
+| `jobTypeId` | `string` | No | The job type. |
+| `leadSourceId` | `string` | No | The lead source. |
+| `leadStatusId` | `string` | No | The lead status. |
+| `brandId` | `string` | No | The brand. |
+| `eventDate` | `string` | No | The event date. |
+| `inquiryDate` | `string` | No | The inquiry date. |
+| `guestCount` | `number` | No | The guest count. |
+| `closedReasonId` | `string` | No | The closed reason. |
+
+stage defaults to the studio pipeline start; jobTypeId and leadSourceId come from their list routes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `stage` | `string \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `closedReasonId` | `string \| null` | No | — |
+| `closedReasonName` | `string \| null` | No | — |
+| `closedDate` | `string \| null` | No | — |
+| `inquiryDate` | `string \| null` | No | — |
+| `bookingDate` | `string \| null` | No | — |
+| `eventDate` | `string \| null` | No | — |
+| `completedDate` | `string \| null` | No | — |
+| `fulfillmentDate` | `string \| null` | No | — |
+| `clientContacts` | `string[] \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `customNumber` | `string \| null` | No | — |
+| `jobTypeId` | `string \| null` | No | — |
+| `jobTypeName` | `string \| null` | No | — |
+| `leadSourceId` | `string \| null` | No | — |
+| `leadSourceName` | `string \| null` | No | — |
+| `leadStatusId` | `string \| null` | No | — |
+| `leadStatusName` | `string \| null` | No | — |
+| `accountBalance` | `number \| null` | No | — |
+| `creditBalance` | `number \| null` | No | — |
+| `totalCost` | `number \| null` | No | — |
+| `totalProfit` | `number \| null` | No | — |
+| `totalRevenue` | `number \| null` | No | — |
+| `guestCount` | `number \| null` | No | — |
+| `brandId` | `string \| null` | No | — |
+| `workflowId` | `string \| null` | No | — |
+| `workflowName` | `string \| null` | No | — |
+| `pinned` | `boolean \| null` | No | — |
+| `sample` | `boolean \| null` | No | — |
+| `webLead` | `boolean \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`jobs.delete`
+
+Permanently delete a job with its orders, invoices and notes
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tave.api.jobs.delete({ jobId: '01h35ccwymj5ctckp8px1azhg6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | A lowercase ULID entity ID. |
+
+Removes the job with its orders, invoices and notes; it cannot be undone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`jobs.get`
+
+Read one job with its contacts, orders, invoices and totals
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.jobs.get({ jobId: '01h35ccwymj5ctckp8px1azhg6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `stage` | `string \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `closedReasonId` | `string \| null` | No | — |
+| `closedReasonName` | `string \| null` | No | — |
+| `closedDate` | `string \| null` | No | — |
+| `inquiryDate` | `string \| null` | No | — |
+| `bookingDate` | `string \| null` | No | — |
+| `eventDate` | `string \| null` | No | — |
+| `completedDate` | `string \| null` | No | — |
+| `fulfillmentDate` | `string \| null` | No | — |
+| `clientContacts` | `string[] \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `customNumber` | `string \| null` | No | — |
+| `jobTypeId` | `string \| null` | No | — |
+| `jobTypeName` | `string \| null` | No | — |
+| `leadSourceId` | `string \| null` | No | — |
+| `leadSourceName` | `string \| null` | No | — |
+| `leadStatusId` | `string \| null` | No | — |
+| `leadStatusName` | `string \| null` | No | — |
+| `accountBalance` | `number \| null` | No | — |
+| `creditBalance` | `number \| null` | No | — |
+| `totalCost` | `number \| null` | No | — |
+| `totalProfit` | `number \| null` | No | — |
+| `totalRevenue` | `number \| null` | No | — |
+| `guestCount` | `number \| null` | No | — |
+| `brandId` | `string \| null` | No | — |
+| `workflowId` | `string \| null` | No | — |
+| `workflowName` | `string \| null` | No | — |
+| `pinned` | `boolean \| null` | No | — |
+| `sample` | `boolean \| null` | No | — |
+| `webLead` | `boolean \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+List jobs with their stage, balances and event dates, filtered by stage, lead status or event date range
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.jobs.list({ page: 1, pageSize: 50, includeClosed: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+| `sortBy` | `string` | No | A property to sort by, optionally followed by " asc" or " desc", e.g. "modified desc". |
+| `includeClosed` | `boolean` | No | Include jobs that have been closed. Defaults to false. |
+| `expand` | `string` | No | Entity-qualified dot paths to expand inline, comma-separated, e.g. "Job.clientContacts". |
+| `stage` | `(lead \| booked \| fulfillment \| completed)[]` | No | Only jobs in these stages. |
+| `leadStatusId` | `string` | No | Only jobs with this lead status. |
+| `eventDateFrom` | `string` | No | Only jobs whose event date is on or after this date; jobs without an event date are excluded. |
+| `eventDateTo` | `string` | No | Only jobs whose event date is on or before this date; jobs without an event date are excluded. |
+| `staleBefore` | `string` | No | Only jobs whose stale date is on or before this date. |
+
+Returns leads and jobs together; stage accepts lead, booked, fulfillment and completed, and closed jobs need includeClosed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null,
+  title?: string | null,
+  name?: string | null,
+  stage?: string | null,
+  closed?: boolean | null,
+  closedReasonId?: string | null,
+  closedReasonName?: string | null,
+  closedDate?: string | null,
+  inquiryDate?: string | null,
+  bookingDate?: string | null,
+  eventDate?: string | null,
+  completedDate?: string | null,
+  fulfillmentDate?: string | null,
+  clientContacts?: string[] | null,
+  contacts?: {
+    id?: string | null
+  }[] | null,
+  customNumber?: string | null,
+  jobTypeId?: string | null,
+  jobTypeName?: string | null,
+  leadSourceId?: string | null,
+  leadSourceName?: string | null,
+  leadStatusId?: string | null,
+  leadStatusName?: string | null,
+  accountBalance?: number | null,
+  creditBalance?: number | null,
+  totalCost?: number | null,
+  totalProfit?: number | null,
+  totalRevenue?: number | null,
+  guestCount?: number | null,
+  brandId?: string | null,
+  workflowId?: string | null,
+  workflowName?: string | null,
+  pinned?: boolean | null,
+  sample?: boolean | null,
+  webLead?: boolean | null,
+  links?: {
+    self?: {
+      href?: string | null,
+      title?: string | null,
+      type?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### payments
+
+`jobs.payments`
+
+List the payments recorded against one job
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.jobs.payments({ jobId: '01h35ccwymj5ctckp8px1azhg6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null,
+  jobId?: string | null,
+  payerId?: string | null,
+  paymentMethodId?: string | null,
+  invoiceItemId?: string | null,
+  status?: string | null,
+  amount?: number | null,
+  refundedAmount?: number | null,
+  memo?: string | null,
+  checkNumber?: string | null,
+  transactionId?: string | null,
+  authCode?: string | null,
+  received?: string | null,
+  links?: {
+    self?: {
+      href?: string | null,
+      title?: string | null,
+      type?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`jobs.update`
+
+Change a job's stage, dates, type, lead source, brand or closed state
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.jobs.update({ jobId: '01h35ccwymj5ctckp8px1azhg6', stage: 'booked', closed: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | A lowercase ULID entity ID. |
+| `title` | `string` | No | — |
+| `name` | `string` | No | — |
+| `stage` | `lead \| booked \| fulfillment \| completed` | No | — |
+| `jobTypeId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `leadSourceId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `leadStatusId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `brandId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `eventDate` | `string \| null` | No | A calendar date as "YYYY-MM-DD". |
+| `inquiryDate` | `string \| null` | No | A calendar date as "YYYY-MM-DD". |
+| `guestCount` | `number` | No | — |
+| `closed` | `boolean` | No | — |
+| `closedReasonId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `closedDate` | `string \| null` | No | A calendar date as "YYYY-MM-DD". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `stage` | `string \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `closedReasonId` | `string \| null` | No | — |
+| `closedReasonName` | `string \| null` | No | — |
+| `closedDate` | `string \| null` | No | — |
+| `inquiryDate` | `string \| null` | No | — |
+| `bookingDate` | `string \| null` | No | — |
+| `eventDate` | `string \| null` | No | — |
+| `completedDate` | `string \| null` | No | — |
+| `fulfillmentDate` | `string \| null` | No | — |
+| `clientContacts` | `string[] \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `customNumber` | `string \| null` | No | — |
+| `jobTypeId` | `string \| null` | No | — |
+| `jobTypeName` | `string \| null` | No | — |
+| `leadSourceId` | `string \| null` | No | — |
+| `leadSourceName` | `string \| null` | No | — |
+| `leadStatusId` | `string \| null` | No | — |
+| `leadStatusName` | `string \| null` | No | — |
+| `accountBalance` | `number \| null` | No | — |
+| `creditBalance` | `number \| null` | No | — |
+| `totalCost` | `number \| null` | No | — |
+| `totalProfit` | `number \| null` | No | — |
+| `totalRevenue` | `number \| null` | No | — |
+| `guestCount` | `number \| null` | No | — |
+| `brandId` | `string \| null` | No | — |
+| `workflowId` | `string \| null` | No | — |
+| `workflowName` | `string \| null` | No | — |
+| `pinned` | `boolean \| null` | No | — |
+| `sample` | `boolean \| null` | No | — |
+| `webLead` | `boolean \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Job Types
+
+### list
+
+`jobTypes.list`
+
+List the job types, whose IDs jobs.create takes
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.jobTypes.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  alias?: string | null,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lead Sources
+
+### list
+
+`leadSources.list`
+
+List the lead sources, for reporting where a lead came from
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.leadSources.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  alias?: string | null,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lead Statuses
+
+### list
+
+`leadStatuses.list`
+
+List the lead statuses, whose IDs jobs.list filters by
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.leadStatuses.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  alias?: string | null,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Add an HTML note to a job or a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.notes.create({ contentHtml: '<p>Called about the timeline.</p>', jobId: '01h35ccwymj5ctckp8px1azhg6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentHtml` | `string` | Yes | The note body as HTML. |
+| `jobId` | `string` | No | A lowercase ULID entity ID. |
+| `contactId` | `string` | No | A lowercase ULID entity ID. |
+| `date` | `string` | No | A calendar date as "YYYY-MM-DD". |
+
+contentHtml takes HTML, not plain text.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `contentHtml` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `jobId` | `string \| null` | No | — |
+| `contactId` | `string \| null` | No | — |
+| `authorId` | `string \| null` | No | — |
+| `author` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Permanently delete a note
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tave.api.notes.delete({ noteId: '01h35ccwymj5ctckp8px1azhgh' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `noteId` | `string` | Yes | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`notes.list`
+
+List notes, optionally only those on one job
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.notes.list({ page: 1, jobId: '01h35ccwymj5ctckp8px1azhg6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+| `jobId` | `string` | No | Only notes on this job. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null,
+  contentHtml?: string | null,
+  date?: string | null,
+  jobId?: string | null,
+  contactId?: string | null,
+  authorId?: string | null,
+  author?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### create
+
+`payments.create`
+
+Record a payment against a job, which changes that job balance
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.payments.create({ jobId: '01h35ccwymj5ctckp8px1azhg6', amount: 75000, memo: 'Deposit' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | The job the payment belongs to. |
+| `amount` | `number` | Yes | The amount as an integer in the studio currency, above 0. |
+| `status` | `future \| confirmed-future \| posted \| failed \| pending` | No | The payment status. The API defaults it to "posted". |
+| `paymentMethodId` | `string` | No | A lowercase ULID entity ID. |
+| `payerId` | `string` | No | A lowercase ULID entity ID. |
+| `invoiceItemId` | `string` | No | A lowercase ULID entity ID. |
+| `memo` | `string` | No | — |
+| `checkNumber` | `string` | No | — |
+| `transactionId` | `string` | No | — |
+| `authCode` | `string` | No | — |
+| `received` | `string` | No | When the payment was received. |
+
+amount is an integer in the studio currency; status accepts future, confirmed-future, posted, failed or pending and defaults to posted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `jobId` | `string \| null` | No | — |
+| `payerId` | `string \| null` | No | — |
+| `paymentMethodId` | `string \| null` | No | — |
+| `invoiceItemId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `refundedAmount` | `number \| null` | No | — |
+| `memo` | `string \| null` | No | — |
+| `checkNumber` | `string \| null` | No | — |
+| `transactionId` | `string \| null` | No | — |
+| `authCode` | `string \| null` | No | — |
+| `received` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`payments.delete`
+
+Delete a payment, which removes it from the job balance
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tave.api.payments.delete({ paymentId: '01h35ccwymj5ctckp8px1azhgc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `string` | Yes | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`payments.get`
+
+Read one payment with its refunded amount and memo
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.payments.get({ paymentId: '01h35ccwymj5ctckp8px1azhgc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `string` | Yes | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `jobId` | `string \| null` | No | — |
+| `payerId` | `string \| null` | No | — |
+| `paymentMethodId` | `string \| null` | No | — |
+| `invoiceItemId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `refundedAmount` | `number \| null` | No | — |
+| `memo` | `string \| null` | No | — |
+| `checkNumber` | `string \| null` | No | — |
+| `transactionId` | `string \| null` | No | — |
+| `authCode` | `string \| null` | No | — |
+| `received` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payments.list`
+
+List payments with their job, amount, status and method
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.payments.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+| `sortBy` | `string` | No | A property to sort by, optionally followed by " asc" or " desc", e.g. "modified desc". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null,
+  jobId?: string | null,
+  payerId?: string | null,
+  paymentMethodId?: string | null,
+  invoiceItemId?: string | null,
+  status?: string | null,
+  amount?: number | null,
+  refundedAmount?: number | null,
+  memo?: string | null,
+  checkNumber?: string | null,
+  transactionId?: string | null,
+  authCode?: string | null,
+  received?: string | null,
+  links?: {
+    self?: {
+      href?: string | null,
+      title?: string | null,
+      type?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`payments.update`
+
+Change a payment's amount, status, memo or method
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.payments.update({ paymentId: '01h35ccwymj5ctckp8px1azhgc', amount: 80000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `string` | Yes | A lowercase ULID entity ID. |
+| `amount` | `number` | No | — |
+| `status` | `future \| confirmed-future \| posted \| failed \| pending` | No | — |
+| `paymentMethodId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `payerId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `memo` | `string \| null` | No | — |
+| `checkNumber` | `string \| null` | No | — |
+| `transactionId` | `string \| null` | No | — |
+| `authCode` | `string \| null` | No | — |
+| `received` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `jobId` | `string \| null` | No | — |
+| `payerId` | `string \| null` | No | — |
+| `paymentMethodId` | `string \| null` | No | — |
+| `invoiceItemId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `refundedAmount` | `number \| null` | No | — |
+| `memo` | `string \| null` | No | — |
+| `checkNumber` | `string \| null` | No | — |
+| `transactionId` | `string \| null` | No | — |
+| `authCode` | `string \| null` | No | — |
+| `received` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Add a product to the price list
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.products.create({ name: 'Wedding album', price: 25000, taxable: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The product name. |
+| `price` | `number` | Yes | The price as an integer in the studio currency, not a decimal. |
+| `type` | `string` | No | The product type. |
+| `sku` | `string` | No | — |
+| `descriptionHtml` | `string` | No | — |
+| `manualEntry` | `boolean` | No | — |
+| `taxable` | `boolean` | No | — |
+| `deliverable` | `boolean` | No | — |
+| `vendorId` | `string` | No | A lowercase ULID entity ID. |
+| `expenseCategoryId` | `string` | No | A lowercase ULID entity ID. |
+
+price is an integer in the studio currency, so 25000 is 250.00; a decimal is rejected.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `price` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+| `descriptionHtml` | `string \| null` | No | — |
+| `manualEntry` | `boolean \| null` | No | — |
+| `taxable` | `boolean \| null` | No | — |
+| `deliverable` | `boolean \| null` | No | — |
+| `vendorId` | `string \| null` | No | — |
+| `expenseCategoryId` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete a product; orders that already include it keep their line item
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tave.api.products.delete({ productId: '01h35ccwymj5ctckp8px1azhga' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productId` | `string` | Yes | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`products.get`
+
+Read one product with its price, SKU and flags
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.products.get({ productId: '01h35ccwymj5ctckp8px1azhga' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productId` | `string` | Yes | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `price` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+| `descriptionHtml` | `string \| null` | No | — |
+| `manualEntry` | `boolean \| null` | No | — |
+| `taxable` | `boolean \| null` | No | — |
+| `deliverable` | `boolean \| null` | No | — |
+| `vendorId` | `string \| null` | No | — |
+| `expenseCategoryId` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`products.list`
+
+List the products in your price list
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.products.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `string` | No | A property to sort by, optionally followed by " asc" or " desc", e.g. "modified desc". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null,
+  name?: string | null,
+  price?: number | null,
+  type?: string | null,
+  sku?: string | null,
+  descriptionHtml?: string | null,
+  manualEntry?: boolean | null,
+  taxable?: boolean | null,
+  deliverable?: boolean | null,
+  vendorId?: string | null,
+  expenseCategoryId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Change a product's name, price, SKU or flags
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.products.update({ productId: '01h35ccwymj5ctckp8px1azhga', price: 30000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productId` | `string` | Yes | A lowercase ULID entity ID. |
+| `name` | `string` | No | — |
+| `price` | `number` | No | — |
+| `type` | `string \| null` | No | A lowercase ULID entity ID. |
+| `sku` | `string \| null` | No | — |
+| `descriptionHtml` | `string \| null` | No | — |
+| `manualEntry` | `boolean` | No | — |
+| `taxable` | `boolean` | No | — |
+| `deliverable` | `boolean` | No | — |
+| `vendorId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `expenseCategoryId` | `string \| null` | No | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `price` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+| `descriptionHtml` | `string \| null` | No | — |
+| `manualEntry` | `boolean \| null` | No | — |
+| `taxable` | `boolean \| null` | No | — |
+| `deliverable` | `boolean \| null` | No | — |
+| `vendorId` | `string \| null` | No | — |
+| `expenseCategoryId` | `string \| null` | No | — |
+
+
+
+---
+
+## Studio
+
+### get
+
+`studio.get`
+
+Read the studio profile, including its currency and timezone
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.studio.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `alias` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Task Lists
+
+### list
+
+`taskLists.list`
+
+List the task lists, whose IDs tasks.create takes
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.taskLists.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  created?: string | null,
+  modified?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task in a task list, optionally on a job
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.tasks.create({ name: 'Send the contract', taskListId: '01h35ccwymj5ctckp8px1azhgf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The task name. |
+| `taskListId` | `string` | Yes | The task list the task belongs to. |
+| `jobId` | `string` | No | A lowercase ULID entity ID. |
+| `userId` | `string` | No | The user the task is assigned to. |
+| `dueDate` | `string` | No | A calendar date as "YYYY-MM-DD". |
+| `completed` | `boolean` | No | — |
+
+name and taskListId are both required; get the list ID from taskLists.list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `taskListId` | `string \| null` | No | — |
+| `jobId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `completed` | `boolean \| null` | No | — |
+| `completedAt` | `string \| null` | No | — |
+| `completedById` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Permanently delete a task
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tave.api.tasks.delete({ taskId: '01h35ccwymj5ctckp8px1azhge' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | A lowercase ULID entity ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks with their list, assignee and due date
+
+**Risk:** `read`
+
+```ts
+await corsair.tave.api.tasks.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 1. Defaults to 1. |
+| `pageSize` | `number` | No | Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  created?: string | null,
+  modified?: string | null,
+  hidden?: boolean | null,
+  name?: string | null,
+  taskListId?: string | null,
+  jobId?: string | null,
+  userId?: string | null,
+  completed?: boolean | null,
+  completedAt?: string | null,
+  completedById?: string | null,
+  dueDate?: string | null,
+  links?: {
+    self?: {
+      href?: string | null,
+      title?: string | null,
+      type?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  currentPage?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  pageSize?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Change a task's name, assignee, due date or completed state
+
+**Risk:** `write`
+
+```ts
+await corsair.tave.api.tasks.update({ taskId: '01h35ccwymj5ctckp8px1azhge', completed: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | A lowercase ULID entity ID. |
+| `name` | `string` | No | — |
+| `completed` | `boolean` | No | — |
+| `userId` | `string \| null` | No | A lowercase ULID entity ID. |
+| `dueDate` | `string \| null` | No | A calendar date as "YYYY-MM-DD". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `taskListId` | `string \| null` | No | — |
+| `jobId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `completed` | `boolean \| null` | No | — |
+| `completedAt` | `string \| null` | No | — |
+| `completedById` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: {
+    href?: string | null,
+    title?: string | null,
+    type?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

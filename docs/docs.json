@@ -4421,6 +4421,14 @@
                 ]
               },
               {
+                "group": "Tave",
+                "pages": [
+                  "plugins/tave/overview",
+                  "plugins/tave/api",
+                  "plugins/tave/database"
+                ]
+              },
+              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
