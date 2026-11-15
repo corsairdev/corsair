@@ -1,0 +1,1659 @@
+{
+  "id": "kadoa",
+  "displayName": "Kadoa",
+  "description": "Web data extraction with Kadoa - build and manage workflows that scrape a site on a schedule, read the extracted rows and the changes Kadoa detects between runs, and manage the schemas, variables and delivery destinations those workflows use.",
+  "npmPackageName": "@corsair-dev/kadoa",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kadoa.api.changes.get",
+      "shortPath": "changes.get",
+      "description": "One detected data change with its differences and current data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "changeId",
+            "optional": false,
+            "type": "string",
+            "description": "The change ID from `changes.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflowId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "dataPending",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "differences",
+            "optional": true,
+            "type": "{ type: string, fields?: { key: string, value?: string | null, previousValue?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "differencesCounts",
+            "optional": true,
+            "type": "{ added?: number | null, removed?: number | null, changed?: number | null } | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "screenshotUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.changes.list",
+      "shortPath": "changes.list",
+      "description": "Data changes detected across workflows in a date window, with the changed fields and counts; `exclude` drops the large arrays",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only changes in these workflows, sent comma-separated. Omit for every ACTIVE workflow."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "Earliest change, as an ISO date or date-time."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Latest change, as an ISO date or date-time. A date alone covers that whole day."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Changes to skip."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Changes to return, at most 100. Defaults to 25."
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "(data | differences)[]",
+            "description": "Drop these large fields from each change. The counts stay available."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "changesCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "changes",
+            "optional": false,
+            "type": "{ id: string, workflowId?: string | null, data?: Record<string, any>[] | null, dataPending?: boolean | null, differences?: { type: string, fields?: { key: string, value?: string | null, previousValue?: string | null }[] | null }[] | null, differencesCounts?: { added?: number | null, removed?: number | null, changed?: number | null } | null, url?: string | null, summary?: string | null, screenshotUrl?: string | null, createdAt?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalCount?: number | null, page?: number | null, totalPages?: number | null, limit?: number | null } | null"
+          },
+          {
+            "key": "nextSkip",
+            "optional": false,
+            "type": "number | null",
+            "description": "The `skip` for the next page while this one came back full; null otherwise."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "Countries a workflow can scrape from, with their ISO codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": false,
+            "type": "{ countryName?: string | null, isoCode?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.schemas.create",
+      "shortPath": "schemas.create",
+      "description": "Create an extraction schema from typed data fields or classification fields, for workflows to reuse",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The schema name."
+          },
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "string",
+            "description": "Entity the schema describes, such as `Product`."
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ name: string, fieldType: SCHEMA | CLASSIFICATION, description?: string, dataType?: STRING | NUMBER | BOOLEAN | DATE | DATETIME | MONEY | IMAGE | LINK | OBJECT | ARRAY, isKey?: boolean, categories?: { title: string, definition: string }[], mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize, mapperConfig?: Record<string, any> }[]",
+            "description": "The fields to extract."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.schemas.delete",
+      "shortPath": "schemas.delete",
+      "description": "Delete a schema and every revision of it; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string",
+            "description": "The schema ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.schemas.get",
+      "shortPath": "schemas.get",
+      "description": "One extraction schema with its fields and entity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string",
+            "description": "The schema ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, isPublic?: boolean | null, entity?: string | null, schema?: { name?: string | null, description?: string | null, example?: string | string[] | null, dataType?: string | null, isKey?: boolean | null, isRequired?: boolean | null, isUnique?: boolean | null }[] | null, description?: { hintText?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.schemas.list",
+      "shortPath": "schemas.list",
+      "description": "Every extraction schema the caller can see",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, isPublic?: boolean | null, entity?: string | null, schema?: { name?: string | null, description?: string | null, example?: string | string[] | null, dataType?: string | null, isKey?: boolean | null, isRequired?: boolean | null, isUnique?: boolean | null }[] | null, description?: { hintText?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.schemas.update",
+      "shortPath": "schemas.update",
+      "description": "Rename a schema, change its entity, or publish a new revision from replacement fields; workflows on the old revision keep it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string",
+            "description": "The schema ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "string | null",
+            "description": "The entity name. Send null to clear it."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ name: string, fieldType: SCHEMA | CLASSIFICATION, description?: string, dataType?: STRING | NUMBER | BOOLEAN | DATE | DATETIME | MONEY | IMAGE | LINK | OBJECT | ARRAY, isKey?: boolean, categories?: { title: string, definition: string }[], mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize, mapperConfig?: Record<string, any> }[]",
+            "description": "Replace every field. Kadoa keeps the previous revision, so workflows on it keep the old shape."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedSchema",
+            "optional": true,
+            "type": "{ id: string, name: string, isPublic?: boolean | null, entity?: string | null, schema?: { name?: string | null, description?: string | null, example?: string | string[] | null, dataType?: string | null, isKey?: boolean | null, isRequired?: boolean | null, isUnique?: boolean | null }[] | null, description?: { hintText?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.triggers.list",
+      "shortPath": "triggers.list",
+      "description": "Triggers where this workflow is the source, plus the incoming ones that start it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "triggers",
+            "optional": false,
+            "type": "{ id: string, sourceWorkflowId?: string | null, targetWorkflowId?: string | null, targetWorkflowName?: string | null, eventType?: string | null, enabled?: boolean | null, createdAt?: string | null }[]",
+            "description": "Triggers where this workflow is the source."
+          },
+          {
+            "key": "incoming",
+            "optional": false,
+            "type": "{ id: string, sourceWorkflowId?: string | null, targetWorkflowId?: string | null, targetWorkflowName?: string | null, eventType?: string | null, enabled?: boolean | null, createdAt?: string | null }[]",
+            "description": "Triggers where this workflow is the target."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.variables.create",
+      "shortPath": "variables.create",
+      "description": "Create a string, number, object or array variable, or a secret held by Kadoa or read from your Google Secret Manager",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Unique within the team."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "The value. For OBJECT and ARRAY, a JSON string. May be empty, except for a Kadoa-managed secret. Omit only for a CUSTOMER_MANAGED secret."
+          },
+          {
+            "key": "dataType",
+            "optional": true,
+            "type": "STRING | OBJECT | ARRAY | NUMBER | SECRET",
+            "description": "Defaults to STRING."
+          },
+          {
+            "key": "managementMode",
+            "optional": true,
+            "type": "KADOA_MANAGED | CUSTOMER_MANAGED",
+            "description": "SECRET only. Defaults to KADOA_MANAGED."
+          },
+          {
+            "key": "providerConnectionId",
+            "optional": true,
+            "type": "string",
+            "description": "SECRET with CUSTOMER_MANAGED: the Google Secret Manager connection."
+          },
+          {
+            "key": "resourceReference",
+            "optional": true,
+            "type": "string",
+            "description": "SECRET with CUSTOMER_MANAGED: the secret resource to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "{ id: string, key: string, value?: string | null, dataType?: string | null, provider?: string | null, managementMode?: string | null, status?: string | null, currentVersion?: string | null, lastResolvedVersion?: string | null, createdAt?: string | null, updatedAt?: string | null, lastRotatedAt?: string | null, lastResolvedAt?: string | null, workflowCount?: number | null, workflows?: { id: string, name: string }[] | null } | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.variables.delete",
+      "shortPath": "variables.delete",
+      "description": "Delete a variable; a secret still bound to a connection is refused with a 409",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variableId",
+            "optional": false,
+            "type": "string",
+            "description": "The variable ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "{ id: string, key: string, value?: string | null, dataType?: string | null, provider?: string | null, managementMode?: string | null, status?: string | null, currentVersion?: string | null, lastResolvedVersion?: string | null, createdAt?: string | null, updatedAt?: string | null, lastRotatedAt?: string | null, lastResolvedAt?: string | null, workflowCount?: number | null, workflows?: { id: string, name: string }[] | null } | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.variables.get",
+      "shortPath": "variables.get",
+      "description": "One variable by ID; a secret comes back without its value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variableId",
+            "optional": false,
+            "type": "string",
+            "description": "The variable ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "{ id: string, key: string, value?: string | null, dataType?: string | null, provider?: string | null, managementMode?: string | null, status?: string | null, currentVersion?: string | null, lastResolvedVersion?: string | null, createdAt?: string | null, updatedAt?: string | null, lastRotatedAt?: string | null, lastResolvedAt?: string | null, workflowCount?: number | null, workflows?: { id: string, name: string }[] | null } | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.variables.list",
+      "shortPath": "variables.list",
+      "description": "Team variables with their keys and values, optionally limited to one workflow’s; a secret’s value is never returned",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": true,
+            "type": "string",
+            "description": "Only variables this workflow references."
+          },
+          {
+            "key": "includeWorkflows",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also list the workflows that reference each variable."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variables",
+            "optional": false,
+            "type": "{ id: string, key: string, value?: string | null, dataType?: string | null, provider?: string | null, managementMode?: string | null, status?: string | null, currentVersion?: string | null, lastResolvedVersion?: string | null, createdAt?: string | null, updatedAt?: string | null, lastRotatedAt?: string | null, lastResolvedAt?: string | null, workflowCount?: number | null, workflows?: { id: string, name: string }[] | null }[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.variables.update",
+      "shortPath": "variables.update",
+      "description": "Change a variable’s key or value; a stored value cannot change type, and a secret’s new value is written only",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variableId",
+            "optional": false,
+            "type": "string",
+            "description": "The variable ID."
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "New value. For OBJECT and ARRAY, a JSON string. Empty is rejected by Kadoa for a secret."
+          },
+          {
+            "key": "dataType",
+            "optional": true,
+            "type": "STRING | OBJECT | ARRAY | NUMBER | SECRET",
+            "description": "Accepted but cannot change the stored type, which Kadoa keeps. A mismatch is rejected by Kadoa."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "{ id: string, key: string, value?: string | null, dataType?: string | null, provider?: string | null, managementMode?: string | null, status?: string | null, currentVersion?: string | null, lastResolvedVersion?: string | null, createdAt?: string | null, updatedAt?: string | null, lastRotatedAt?: string | null, lastResolvedAt?: string | null, workflowCount?: number | null, workflows?: { id: string, name: string }[] | null } | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.connectors",
+      "shortPath": "workflows.connectors",
+      "description": "Destinations that receive this workflow’s results after each run, with the format each takes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connectors",
+            "optional": false,
+            "type": "{ name?: string | null, provider?: string | null, destination?: string | null, formats?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.create",
+      "shortPath": "workflows.create",
+      "description": "Create a workflow from a prompt, an existing schema, inline entity and fields, or a template; every URL must belong to one website. Spends Kadoa credits once it runs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]",
+            "description": "Sources. Several URLs must belong to one website: subdomains and country domains of the same name count as one, and a request spanning two sites is rejected."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Human-readable workflow name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "What the workflow does, at most 500 characters."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags for grouping. Each is at least two characters."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "Maximum records per run. Omit or send null for no limit."
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "ONLY_ONCE | EVERY_10_MINUTES | EVERY_20_MINUTES | HALF_HOURLY | HOURLY | TWO_HOURLY | THREE_HOURLY | FOUR_HOURLY | SIX_HOURLY | TWELVE_HOURLY | EIGHTEEN_HOURLY | DAILY | TWO_DAY | THREE_DAY | WEEKLY | BIWEEKLY | TRIWEEKLY | FOUR_WEEKS | MONTHLY | CUSTOM",
+            "description": "How often the workflow runs. Defaults to Kadoa’s choice for the workflow type."
+          },
+          {
+            "key": "schedules",
+            "optional": true,
+            "type": "string[]",
+            "description": "Cron expressions. Overrides `interval`."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for `schedules`, such as `America/New_York`. Defaults to UTC."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ type: auto | manual, isoCode?: string }"
+          },
+          {
+            "key": "userPrompt",
+            "optional": true,
+            "type": "string",
+            "description": "What to extract and how to navigate the site. Required unless the workflow is built from `schemaId`, `entity` with `fields`, or `templateId`."
+          },
+          {
+            "key": "schemaId",
+            "optional": true,
+            "type": "string",
+            "description": "Build from an existing schema instead of inline fields."
+          },
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "string",
+            "description": "Entity name for inline extraction, such as `Product`. Needs `fields` unless `userPrompt` is set."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ name: string, fieldType: SCHEMA | CLASSIFICATION, description?: string, dataType?: STRING | NUMBER | BOOLEAN | DATE | DATETIME | MONEY | IMAGE | LINK | OBJECT | ARRAY, isKey?: boolean, categories?: { title: string, definition: string }[], mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize, mapperConfig?: Record<string, any> }[]",
+            "description": "Inline extraction fields. Need `entity` unless `userPrompt` is set."
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string",
+            "description": "Build from a published template."
+          },
+          {
+            "key": "templateVersion",
+            "optional": true,
+            "type": "number",
+            "description": "Pin a template version. Omit for the latest published one."
+          },
+          {
+            "key": "bypassPreview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip preview and validation and deploy at once. Only for a configuration you are sure of."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.data",
+      "shortPath": "workflows.data",
+      "description": "Extracted rows of a workflow’s latest published run, with filters, sorting and paging; `limit: 0` streams every row at once",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          },
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string",
+            "description": "Read a specific run’s data."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction. Defaults to asc."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ field: string, operator: string, value?: string | number | boolean | (string | number | boolean)[] }[]",
+            "description": "Row filters, sent JSON-encoded."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page. Defaults to 25; 0 streams every row and ignores paging."
+          },
+          {
+            "key": "rowIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these row IDs, sent comma-separated."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "executedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalCount?: number | null, page?: number | null, totalPages?: number | null, limit?: number | null } | null"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next page number while more rows remain; null on the last page and when every row was streamed at once."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.delete",
+      "shortPath": "workflows.delete",
+      "description": "Delete a workflow along with its run history and stored data; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.get",
+      "shortPath": "workflows.get",
+      "description": "One workflow with its sources, schema, schedule, latest run state and pending fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayState",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reviewReason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "inSupport",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "awaitingUserInput",
+            "optional": true,
+            "type": "{ since: string, prompt?: string | null } | null"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updateInterval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isRealTime",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastDataChangedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "runState",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "schemaName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schemaId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null, example?: string | string[] | null, dataType?: string | null, isKey?: boolean | null, isRequired?: boolean | null, isUnique?: boolean | null }[] | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ errorCode?: string | null, message?: string | null, occurredAt?: string | null, screenshot?: string | null, context?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateVersion",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "templateLatestVersion",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "templateIsOutdated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "schedules",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "scheduleTimezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nextInvocation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isSchemaEditable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "dataQualityIssues",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "extractionSpec",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "transformation",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.history",
+      "shortPath": "workflows.history",
+      "description": "Past runs of a workflow with their state, record count and errors, paged or by run ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Runs per page. Defaults to 25."
+          },
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string",
+            "description": "Read one run, whatever the page."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "success | failed | in_progress | stopped",
+            "description": "Only runs with this outcome."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflowRuns",
+            "optional": false,
+            "type": "{ id: string, state?: string | null, startedAt?: string | null, finishedAt?: string | null, screenshot?: string | null, records?: number | null, startedBy?: string | null, stoppedBy?: { kind?: string | null, name?: string | null, via?: string | null } | null, errors?: { errorCode?: string | null, message?: string | null, occurredAt?: string | null, screenshot?: string | null, context?: Record<string, any> | null }[] | null }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalCount?: number | null, page?: number | null, totalPages?: number | null, limit?: number | null } | null"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next page number, null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.jobStatus",
+      "shortPath": "workflows.jobStatus",
+      "description": "Where a run stands: IN_PROGRESS, FINISHED, FAILED, NOT_SUPPORTED or FAILED_INSUFFICIENT_FUNDS, with any errors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "The `jobId` a run returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "finishedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "estimatedFinishedAtUtc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "workflowId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ errorCode?: string | null, message?: string | null, occurredAt?: string | null, screenshot?: string | null, context?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.list",
+      "shortPath": "workflows.list",
+      "description": "List workflows by name, ID, state or tag, with paging by skip; `statusFilters: [\"group:attention\"]` returns the ones waiting on you",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Filter workflows by name or workflow ID."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Number of workflows to skip. Defaults to 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum workflows to return. Defaults to 25."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "ACTIVE | DRAFT | PAUSED | PREVIEW | QUEUED | SETUP | COMPLIANCE_REVIEW | COMPLIANCE_REJECTED | NOT_SUPPORTED | ERROR | DELETED",
+            "description": "Only workflows in this persisted state. DRAFT is excluded unless asked for."
+          },
+          {
+            "key": "runState",
+            "optional": true,
+            "type": "FAILED | FINISHED | RUNNING | STOPPED",
+            "description": "Only workflows whose latest run is in this state."
+          },
+          {
+            "key": "displayState",
+            "optional": true,
+            "type": "(ACTIVE | DRAFT | PAUSED | PREVIEW | FAILED | RUNNING | VALIDATING | INVESTIGATING | PENDING_START | COMPLIANCE_REVIEW | COMPLIANCE_REJECTED)[]",
+            "description": "Only workflows whose computed operational state is one of these. Sent comma-separated."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only workflows carrying at least one of these tags."
+          },
+          {
+            "key": "statusFilters",
+            "optional": true,
+            "type": "string[]",
+            "description": "Dashboard category filter, such as `group:attention` for workflows waiting on the caller."
+          },
+          {
+            "key": "monitoring",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only workflows with change monitoring on or off."
+          },
+          {
+            "key": "updateInterval",
+            "optional": true,
+            "type": "HOURLY | DAILY | WEEKLY | MONTHLY | REAL_TIME",
+            "description": "Only workflows on this schedule."
+          },
+          {
+            "key": "scheduleType",
+            "optional": true,
+            "type": "RUN_ONCE | RECURRING",
+            "description": "RUN_ONCE for no recurring schedule, RECURRING for one."
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only workflows created from these templates."
+          },
+          {
+            "key": "includeDeleted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include deleted workflows. Only useful for compliance officers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflows",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, description?: string | null, state?: string | null, displayState?: string | null, reviewReason?: string | null, inSupport?: boolean | null, awaitingUserInput?: { since: string, prompt?: string | null } | null, userId?: string | null, userName?: string | null, userEmail?: string | null, createdAt?: string | null, updateInterval?: string | null, isRealTime?: boolean | null, lastDataChangedAt?: string | null, tags?: string[] | null, limit?: number | null, runState?: string | null, jobId?: string | null, totalRecords?: number | null, url?: string | null, urls?: string[] | null, schemaName?: string | null, schemaId?: string | null, schema?: { name?: string | null, description?: string | null, example?: string | string[] | null, dataType?: string | null, isKey?: boolean | null, isRequired?: boolean | null, isUnique?: boolean | null }[] | null, errors?: { errorCode?: string | null, message?: string | null, occurredAt?: string | null, screenshot?: string | null, context?: Record<string, any> | null }[] | null, templateId?: string | null, templateVersion?: number | null, templateLatestVersion?: number | null, templateIsOutdated?: boolean | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalCount?: number | null, page?: number | null, totalPages?: number | null, limit?: number | null } | null"
+          },
+          {
+            "key": "nextSkip",
+            "optional": false,
+            "type": "number | null",
+            "description": "The `skip` for the next page while this one came back full; null otherwise."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.pause",
+      "shortPath": "workflows.pause",
+      "description": "Pause a workflow so its schedule stops starting runs; workflows.resume turns it back on",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.resume",
+      "shortPath": "workflows.resume",
+      "description": "Unpause a paused workflow, or resume a preview or error workflow; a 202 means a fresh preview run was started and returned a jobId",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A new preview run, set when the preview no longer matched the settings."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.run",
+      "shortPath": "workflows.run",
+      "description": "Start a run and get a jobId back at once; spends Kadoa credits. Follow it with workflows.jobStatus({ workflowId, jobId }), or read the result with workflows.data",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Values for the workflow’s variables, as text."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum records this run processes."
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Rerun the preview of a PREVIEW workflow instead of starting a production run."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.schedule",
+      "shortPath": "workflows.schedule",
+      "description": "Set when a workflow’s next run starts, as a UTC time; the workflow needs a schedule for this to work",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "When to run next, in UTC, such as 2026-03-01T09:00:00.000Z."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.stop",
+      "shortPath": "workflows.stop",
+      "description": "Stop the workflow’s active run; queued steps are dropped and the step already running may finish",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kadoa.api.workflows.updateMetadata",
+      "shortPath": "workflows.updateMetadata",
+      "description": "Change a workflow’s name, description, tags, sources, record limit, schedule, location or monitored fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The workflow ID, as returned by `workflows.list`."
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replace the workflow’s sources."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "Maximum records per run. Send null to remove the limit."
+          },
+          {
+            "key": "updateInterval",
+            "optional": true,
+            "type": "ONLY_ONCE | EVERY_10_MINUTES | HALF_HOURLY | HOURLY | THREE_HOURLY | SIX_HOURLY | TWELVE_HOURLY | EIGHTEEN_HOURLY | DAILY | TWO_DAY | THREE_DAY | WEEKLY | BIWEEKLY | TRIWEEKLY | FOUR_WEEKS | MONTHLY | CUSTOM"
+          },
+          {
+            "key": "schedules",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for `schedules`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ type: auto | manual, isoCode?: string }"
+          },
+          {
+            "key": "monitoring",
+            "optional": true,
+            "type": "{ fields: { fieldName: string, operator: changed | added | removed, isKeyField?: boolean }[] }",
+            "description": "Change monitoring: the fields to watch."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

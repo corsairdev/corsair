@@ -1,0 +1,2774 @@
+{
+  "id": "docsbotai",
+  "displayName": "DocsBot AI",
+  "description": "Manage DocsBot teams, bots, sources, conversations, and outbound webhook subscriptions.",
+  "npmPackageName": "@corsair-dev/docsbotai",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 34,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "docsbotai.api.bots.create",
+      "shortPath": "bots.create",
+      "description": "Create a bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "retrieverTags",
+            "optional": true,
+            "type": "{ key: string, description: string }[]"
+          },
+          {
+            "key": "embeddingModel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "copyFrom",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "indexId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embeddingModel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customPrompt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "questionCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sourceCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "chunkCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitMessages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitIPAllowlist",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "logRetentionDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "recordIP",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "classify",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowedDomains",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alignment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "botIcon",
+            "optional": true,
+            "type": "string | false | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "supportLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "showButtonLabel",
+            "optional": true,
+            "type": "string | false | null"
+          },
+          {
+            "key": "showCopyButton",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hideSources",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowSourceDownloads",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "glossary",
+            "optional": true,
+            "type": "{ word: string, translation: string }[] | null"
+          },
+          {
+            "key": "retrieverTags",
+            "optional": true,
+            "type": "{ key: string, description: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.bots.delete",
+      "shortPath": "bots.delete",
+      "description": "Delete a bot",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.bots.get",
+      "shortPath": "bots.get",
+      "description": "Get a bot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "indexId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embeddingModel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customPrompt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "questionCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sourceCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "chunkCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitMessages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitIPAllowlist",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "logRetentionDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "recordIP",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "classify",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowedDomains",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alignment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "botIcon",
+            "optional": true,
+            "type": "string | false | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "supportLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "showButtonLabel",
+            "optional": true,
+            "type": "string | false | null"
+          },
+          {
+            "key": "showCopyButton",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hideSources",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowSourceDownloads",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "glossary",
+            "optional": true,
+            "type": "{ word: string, translation: string }[] | null"
+          },
+          {
+            "key": "retrieverTags",
+            "optional": true,
+            "type": "{ key: string, description: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.bots.list",
+      "shortPath": "bots.list",
+      "description": "List bots",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | newest | ai-credits | conversations"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "full | summary"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, privacy?: string | null, indexId?: string | null, model?: string | null, embeddingModel?: string | null, customPrompt?: string | null, language?: string | null, createdAt?: string | null, status?: string | null, questionCount?: number | null, pageCount?: number | null, sourceCount?: number | null, chunkCount?: number | null, rateLimitMessages?: number | null, rateLimitSeconds?: number | null, rateLimitIPAllowlist?: string[] | null, logRetentionDays?: number | null, recordIP?: boolean | null, classify?: boolean | null, allowedDomains?: string[] | null, color?: string | null, icon?: string | null, alignment?: string | null, botIcon?: string | false | null, logo?: string | null, branding?: boolean | null, supportLink?: string | null, showButtonLabel?: string | false | null, showCopyButton?: boolean | null, hideSources?: boolean | null, allowSourceDownloads?: boolean | null, labels?: Record<string, any> | null, tools?: Record<string, any> | null, glossary?: { word: string, translation: string }[] | null, retrieverTags?: { key: string, description: string }[] | null }[] | { bots: { id: string, name?: string | null, description?: string | null, privacy?: string | null, indexId?: string | null, model?: string | null, embeddingModel?: string | null, customPrompt?: string | null, language?: string | null, createdAt?: string | null, status?: string | null, questionCount?: number | null, pageCount?: number | null, sourceCount?: number | null, chunkCount?: number | null, rateLimitMessages?: number | null, rateLimitSeconds?: number | null, rateLimitIPAllowlist?: string[] | null, logRetentionDays?: number | null, recordIP?: boolean | null, classify?: boolean | null, allowedDomains?: string[] | null, color?: string | null, icon?: string | null, alignment?: string | null, botIcon?: string | false | null, logo?: string | null, branding?: boolean | null, supportLink?: string | null, showButtonLabel?: string | false | null, showCopyButton?: boolean | null, hideSources?: boolean | null, allowSourceDownloads?: boolean | null, labels?: Record<string, any> | null, tools?: Record<string, any> | null, glossary?: { word: string, translation: string }[] | null, retrieverTags?: { key: string, description: string }[] | null }[], totalCount: number, page: number, pageSize: number, totalPages: number }"
+      }
+    },
+    {
+      "path": "docsbotai.api.bots.reports",
+      "shortPath": "bots.reports",
+      "description": "Get monthly reports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "month",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "availableReports",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "report",
+            "optional": false,
+            "type": "{ month?: string | null, totalQuestions?: number | null, resolved?: number | null, unresolved?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.bots.stats",
+      "shortPath": "bots.stats",
+      "description": "Get bot statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeDelta",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalMessages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalConversations",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "resolutionRate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "couldAnswerRate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deflectionRate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeSaved",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "countData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "negativeData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "positiveData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "couldAnswerData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "escalatedData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "messagesData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "percentageLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "counts",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "escalatedLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "escalatedCounts",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "answerLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "answerCounts",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "conversationData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "resolvedConfirmedData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "resolvedAssumedData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "unresolvedData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "escalatedHandledData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "escalatedTriggeredData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "csatData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "answeredRateData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "conversationDeflectionData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "avgSentimentData",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "resolvedLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "resolvedCounts",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "conversationEscalatedLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "conversationEscalatedCounts",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "sentimentLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "sentimentCounts",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "conversationAnsweredLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "conversationAnsweredCounts",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          },
+          {
+            "key": "conversationTopicLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "conversationTopicData",
+            "optional": true,
+            "type": "Record<string, (number | null)[]> | null"
+          },
+          {
+            "key": "conversationTopicPieLabels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "conversationTopicCounts",
+            "optional": true,
+            "type": "(number | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.bots.update",
+      "shortPath": "bots.update",
+      "description": "Update a bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "retrieverTags",
+            "optional": true,
+            "type": "{ key: string, description: string }[]"
+          },
+          {
+            "key": "customPrompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowedDomains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alignment",
+            "optional": true,
+            "type": "left | right"
+          },
+          {
+            "key": "botIcon",
+            "optional": true,
+            "type": "string | false"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showButtonLabel",
+            "optional": true,
+            "type": "string | false"
+          },
+          {
+            "key": "showCopyButton",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideSources",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowSourceDownloads",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "glossary",
+            "optional": true,
+            "type": "{ word: string, translation: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "indexId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embeddingModel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customPrompt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "questionCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sourceCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "chunkCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitMessages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rateLimitIPAllowlist",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "logRetentionDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "recordIP",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "classify",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowedDomains",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alignment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "botIcon",
+            "optional": true,
+            "type": "string | false | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "supportLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "showButtonLabel",
+            "optional": true,
+            "type": "string | false | null"
+          },
+          {
+            "key": "showCopyButton",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hideSources",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowSourceDownloads",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "glossary",
+            "optional": true,
+            "type": "{ word: string, translation: string }[] | null"
+          },
+          {
+            "key": "retrieverTags",
+            "optional": true,
+            "type": "{ key: string, description: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.conversations.captureLead",
+      "shortPath": "conversations.captureLead",
+      "description": "Capture a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "docsbotai.api.conversations.delete",
+      "shortPath": "conversations.delete",
+      "description": "Delete a conversation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string | null, updatedAt?: string | null, title?: string | null, summary?: string | null, sentiment?: string | null, model?: string | null, email?: string | null, metadata?: Record<string, any> | null, answered?: boolean | null, resolved?: string | null, escalated?: string | null, alias?: string | null, ip?: string | null, truncated?: boolean | null, topic?: string | null, testing?: boolean | null, channel?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, perPage?: number, totalCount?: number, hasMorePages?: boolean, viewableCount?: number, planLimit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.conversations.ticket",
+      "shortPath": "conversations.ticket",
+      "description": "Generate a support ticket from a conversation with the AI model",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.leads.delete",
+      "shortPath": "leads.delete",
+      "description": "Delete a lead",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.leads.list",
+      "shortPath": "leads.list",
+      "description": "List leads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string | null, updatedAt?: string | null, metadata?: Record<string, any> | null, ip?: string | null, alias?: string | null, email?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, perPage?: number, totalCount?: number, hasMorePages?: boolean, viewableCount?: number, planLimit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.questions.delete",
+      "shortPath": "questions.delete",
+      "description": "Delete a question",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "questionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.questions.list",
+      "shortPath": "questions.list",
+      "description": "List questions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ascending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "-1 | 0 | 1"
+          },
+          {
+            "key": "escalated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "couldAnswer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "questions",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string | null, question?: string | null, answer?: string | null, standaloneQuestion?: string | null, sources?: Record<string, any>[] | null, rating?: number | null, escalation?: boolean | null, deleted?: boolean | null, couldAnswer?: boolean | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, perPage?: number, totalCount?: number, hasMorePages?: boolean, viewableCount?: number, planLimit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.questions.rate",
+      "shortPath": "questions.rate",
+      "description": "Rate an answer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "answerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rating",
+            "optional": false,
+            "type": "-1 | 0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "docsbotai.api.research.list",
+      "shortPath": "research.list",
+      "description": "List research jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ jobId: string, status?: string | null, title?: string | null, question?: string | null, response?: Record<string, any> | null, createdAt?: string | null, completedAt?: string | null, cancelledAt?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, perPage?: number, totalCount?: number, hasMorePages?: boolean, viewableCount?: number, planLimit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search bot content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top_k",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "autocut",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "alpha",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "use_glossary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "include_untagged",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ title?: string | null, url?: string | null, fileId?: string | null, page?: number | null, content: string }[]"
+      }
+    },
+    {
+      "path": "docsbotai.api.sources.create",
+      "shortPath": "sources.create",
+      "description": "Create a source and start indexing it (uses page quota; OCR bills AI credits per page)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "url | document | sitemap | wp | urls | csv | rss | qa | youtube"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileDir",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "faqs",
+            "optional": true,
+            "type": "{ question: string, answer: string }[]"
+          },
+          {
+            "key": "scheduleInterval",
+            "optional": true,
+            "type": "daily | weekly | monthly | none"
+          },
+          {
+            "key": "processImages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ocr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ p: string, n?: number | null }[] | null"
+          },
+          {
+            "key": "processedPages",
+            "optional": true,
+            "type": "{ count: number, total: number } | null"
+          },
+          {
+            "key": "faqs",
+            "optional": true,
+            "type": "{ question: string, answer: string }[] | null"
+          },
+          {
+            "key": "indexedUrls",
+            "optional": true,
+            "type": "{ source: string, title: string }[] | null"
+          },
+          {
+            "key": "warnsList",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "carbonFiles",
+            "optional": true,
+            "type": "number | { id?: string | null, type?: string | null, name?: string | null, url?: string | null }[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "chunkCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "scheduleInterval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "processImages",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ocr",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.sources.delete",
+      "shortPath": "sources.delete",
+      "description": "Delete a source",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.sources.get",
+      "shortPath": "sources.get",
+      "description": "Get a source",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ p: string, n?: number | null }[] | null"
+          },
+          {
+            "key": "processedPages",
+            "optional": true,
+            "type": "{ count: number, total: number } | null"
+          },
+          {
+            "key": "faqs",
+            "optional": true,
+            "type": "{ question: string, answer: string }[] | null"
+          },
+          {
+            "key": "indexedUrls",
+            "optional": true,
+            "type": "{ source: string, title: string }[] | null"
+          },
+          {
+            "key": "warnsList",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "carbonFiles",
+            "optional": true,
+            "type": "number | { id?: string | null, type?: string | null, name?: string | null, url?: string | null }[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "chunkCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "scheduleInterval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "processImages",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ocr",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.sources.getUploadUrl",
+      "shortPath": "sources.getUploadUrl",
+      "description": "Get a presigned source upload URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.sources.list",
+      "shortPath": "sources.list",
+      "description": "List sources",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, status?: string | null, title?: string | null, url?: string | null, file?: string | null, files?: { p: string, n?: number | null }[] | null, processedPages?: { count: number, total: number } | null, faqs?: { question: string, answer: string }[] | null, indexedUrls?: { source: string, title: string }[] | null, warnsList?: string[] | null, carbonFiles?: number | { id?: string | null, type?: string | null, name?: string | null, url?: string | null }[] | null, createdAt?: string | null, pageCount?: number | null, chunkCount?: number | null, tags?: string[] | null, scheduleInterval?: string | null, processImages?: boolean | null, ocr?: boolean | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page?: number, perPage?: number, totalCount?: number, hasMorePages?: boolean, viewableCount?: number, planLimit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.sources.retry",
+      "shortPath": "sources.retry",
+      "description": "Re-index a failed source (uses page quota; OCR bills AI credits per page)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ p: string, n?: number | null }[] | null"
+          },
+          {
+            "key": "processedPages",
+            "optional": true,
+            "type": "{ count: number, total: number } | null"
+          },
+          {
+            "key": "faqs",
+            "optional": true,
+            "type": "{ question: string, answer: string }[] | null"
+          },
+          {
+            "key": "indexedUrls",
+            "optional": true,
+            "type": "{ source: string, title: string }[] | null"
+          },
+          {
+            "key": "warnsList",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "carbonFiles",
+            "optional": true,
+            "type": "number | { id?: string | null, type?: string | null, name?: string | null, url?: string | null }[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "chunkCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "scheduleInterval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "processImages",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ocr",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.sources.uploadFile",
+      "shortPath": "sources.uploadFile",
+      "description": "Upload bytes to a presigned source URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uploadUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "docsbotai.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "questionCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sourceCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "chunkCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "botCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "openAIKey",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, createdAt?: string | null, status?: string | null, questionCount?: number | null, pageCount?: number | null, sourceCount?: number | null, chunkCount?: number | null, botCount?: number | null, openAIKey?: string | null, plan?: Record<string, any> | null, roles?: Record<string, any> | null }[]"
+      }
+    },
+    {
+      "path": "docsbotai.api.teams.listMembers",
+      "shortPath": "teams.listMembers",
+      "description": "List team members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uid: string, displayName?: string | null, email?: string | null, photoURL?: string | null, role?: string | null }[]"
+      }
+    },
+    {
+      "path": "docsbotai.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openAIKey",
+            "optional": true,
+            "type": "string | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "questionCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sourceCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "chunkCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "botCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "openAIKey",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "(lead.created | deep_research.done | conversation.escalated | conversation.rated)[]"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a webhook subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: string, targetUrl?: string | null, events?: string[] | null, status?: string | null, label?: string | null, expirationDate?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docsbotai.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

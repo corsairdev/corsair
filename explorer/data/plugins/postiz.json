@@ -1,0 +1,451 @@
+{
+  "id": "postiz",
+  "displayName": "Postiz",
+  "description": "Social media scheduling API for publishing, scheduling and managing posts across connected channels.",
+  "npmPackageName": "@corsair-dev/postiz",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "base_url"]
+    }
+  ],
+  "api": [
+    {
+      "path": "postiz.api.analytics.platform",
+      "shortPath": "analytics.platform",
+      "description": "Read one channel's analytics rows for a period",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integration",
+            "optional": false,
+            "type": "string",
+            "description": "The integration id to read analytics for."
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "How many days to look back, such as `7`, `30` or `90`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "analytics",
+            "optional": false,
+            "type": "{ label?: string | null, percentageChange?: number | null, data?: { total?: string | number | null, date?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.integrations.findSlot",
+      "shortPath": "integrations.findSlot",
+      "description": "Read a channel's next free posting slot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The integration id whose posting schedule to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "The next free slot, as an ISO 8601 UTC timestamp."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.integrations.isConnected",
+      "shortPath": "integrations.isConnected",
+      "description": "Confirm the API key is valid and the workspace is reachable",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connected",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when the key is valid and the workspace is reachable."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.integrations.list",
+      "shortPath": "integrations.list",
+      "description": "List the connected channels, optionally narrowed to one customer group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string",
+            "description": "Only channels assigned to this customer (group) id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrations",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, identifier?: string | null, picture?: string | null, disabled?: boolean | null, profile?: string | null, customer?: { id?: string | null, name?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.media.list",
+      "shortPath": "media.list",
+      "description": "Page through the organization's media library, optionally filtered by file name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. The library returns 18 files per page."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Case-insensitive filter on the original file name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of pages."
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, originalName?: string | null, path?: string | null, thumbnail?: string | null, alt?: string | null, createdAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.media.uploadFromUrl",
+      "shortPath": "media.uploadFromUrl",
+      "description": "Copy a file from a public URL into the media library, for use as a post attachment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "A public http(s) URL Postiz downloads the file from."
+          },
+          {
+            "key": "adjust",
+            "optional": true,
+            "type": "boolean",
+            "description": "Resize and re-encode the file to the platforms' limits after the upload. Runs in the background; the result's `status` is `processing` until it is done."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The uploaded media id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The hosted URL of the file."
+          },
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`processing` while `adjust` runs, otherwise `ready`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.notifications.list",
+      "shortPath": "notifications.list",
+      "description": "Page through the organization notifications, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 0. The API returns 100 notifications per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notifications",
+            "optional": false,
+            "type": "{ id?: string | null, content?: string | null, link?: string | null, createdAt?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Notifications across all pages."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "This page, starting at 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when another page exists."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.posts.changeStatus",
+      "shortPath": "posts.changeStatus",
+      "description": "Move a post between draft and scheduled. Scheduling queues it to publish at its stored date to every channel it targets",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The post id to move."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | schedule",
+            "description": "`draft` pulls the post back to a draft, and `schedule` returns it to the queue."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "The new state, `DRAFT` or `QUEUE`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.posts.create",
+      "shortPath": "posts.create",
+      "description": "Create a post as a draft, scheduled, or published immediately. A schedule or an immediate post goes out to every listed channel and cannot be recalled by this plugin once published",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "draft | schedule | now",
+            "description": "`draft` saves without publishing, `schedule` queues for `date`, and `now` publishes as soon as Postiz takes it."
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "When to publish, as an ISO 8601 UTC timestamp."
+          },
+          {
+            "key": "shortLink",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether Postiz shortens the links in the post."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ value: string, label: string }[]",
+            "description": "Tags to attach to the post."
+          },
+          {
+            "key": "posts",
+            "optional": true,
+            "type": "{ integration: { id: string }, value: { content: string, image?: { id: string, path: string, thumbnailTimestamp?: number }[], id?: string }[], group?: string, settings?: { __type?: string | null } }[]",
+            "description": "The per-integration posts. Required unless `type` is `draft`."
+          },
+          {
+            "key": "inter",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes between the parts of a thread."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ postId?: string | null, integration?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.posts.delete",
+      "shortPath": "posts.delete",
+      "description": "Delete a post, which also deletes every post in its group. A published post stays live on the platform",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The post id. Deleting one removes every post in its group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The id that was deleted."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postiz.api.posts.list",
+      "shortPath": "posts.list",
+      "description": "List posts in a date window with their state, release URL and any platform error",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive start of the window, as an ISO 8601 timestamp."
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive end of the window, as an ISO 8601 timestamp."
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string",
+            "description": "Only posts for this customer (group) id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id?: string | null, content?: string | null, settings?: { __type?: string | null } | null, publishDate?: string | null, releaseURL?: string | null, state?: string | null, error?: string | null, integration?: { id?: string | null, providerIdentifier?: string | null, name?: string | null, picture?: string | null } | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

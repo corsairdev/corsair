@@ -1,0 +1,864 @@
+---
+title: "Roam HQ API reference"
+sidebarTitle: "API"
+description: "API reference for the Roam HQ plugin in Corsair: every `roam.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chat
+
+### history
+
+`chat.history`
+
+Read a chat or group’s messages with time-window and thread filters plus cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.chat.history({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', limit: 100, ascending: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | No | The chat uuid. |
+| `group_id` | `string` | No | The group uuid. |
+| `user_ids` | `string[]` | No | Read the direct or multi-person chat with these users instead of a chat or group. |
+| `thread_timestamp` | `number` | No | Only the replies in this thread. |
+| `after` | `string` | No | Only messages after this timestamp. |
+| `before` | `string` | No | Only messages before this timestamp. |
+| `ascending` | `boolean` | No | — |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
+| `limit` | `number` | No | Records per page, at most 200. Roam applies its own default when omitted. |
+| `expand` | `string[]` | No | Relations to inline, as a comma-separated list on the wire. |
+
+Needs exactly one of `chat_id`, `group_id` or `user_ids`. Poll options come back as `{ id, text }` objects.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+| `addresses` | `object` | No | Present only with `expand: ['addresses']`: display info for the ids in this page, keyed by id. |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  type?: string | null,
+  userId?: string | null,
+  userType?: string | null,
+  chatId?: string | null,
+  timestamp?: number | null,
+  threadTimestamp?: number | null,
+  replyTimestamp?: number | null,
+  ephemeral?: boolean | null,
+  contentType?: string | null,
+  text?: string | null,
+  color?: string | null,
+  replyCount?: number | null,
+  items?: {
+    id?: string | null,
+    type?: string | null,
+    mime?: string | null,
+    created?: string | null,
+    name?: string | null,
+    url?: string | null,
+    thumbnail?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  mentions?: string[] | null,
+  sender?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null,
+    imageUrl?: string | null,
+    email?: string | null
+  } | null,
+  poll?: {
+    question?: string | null,
+    options?: {
+      id?: string | null,
+      text?: string | null
+    }[] | null,
+    allowMultipleAnswers?: boolean | null,
+    closesAt?: string | null
+  } | null,
+  blocks?: {
+    type?: string | null
+  }[] | null,
+  voice?: {
+    audioUrl?: string | null,
+    duration?: number | null,
+    transcript?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+Record<string, {
+  id?: string | null,
+  type?: string | null,
+  displayName?: string | null,
+  displayImageUrl?: string | null,
+  email?: string | null,
+  isGuest?: boolean | null,
+  botCode?: string | null,
+  integrationId?: string | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`chat.list`
+
+List the chats the token can see, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.chat.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, at most 50. Roam applies its own default when omitted. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
+| `expand` | `string[]` | No | Relations to inline, as a comma-separated list on the wire. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chats` | `object[]` | Yes | — |
+| `addresses` | `object` | No | Present only with `expand: ['addresses']`: display info for the ids in this page, keyed by id. |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="chats full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  groupId?: string | null,
+  threadTimestamp?: number | null,
+  created?: string | null,
+  lastMessageTime?: string | null,
+  isUnread?: boolean | null,
+  preview?: {
+    text?: string | null,
+    contentType?: string | null,
+    senderId?: string | null,
+    mentioned?: boolean | null
+  } | null,
+  isMuted?: boolean | null,
+  isPinned?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+Record<string, {
+  id?: string | null,
+  type?: string | null,
+  displayName?: string | null,
+  displayImageUrl?: string | null,
+  email?: string | null,
+  isGuest?: boolean | null,
+  botCode?: string | null,
+  integrationId?: string | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`chat.post`
+
+Post a message to a chat, group or direct conversation, or schedule one for later
+
+**Risk:** `write`
+
+```ts
+await corsair.roam.api.chat.post({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', text: 'Standup in five', sync: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | No | The chat to post into. |
+| `group_id` | `string` | No | The group to post into. |
+| `user_ids` | `string[]` | No | Open a direct chat with these users. |
+| `thread_timestamp` | `number` | No | — |
+| `thread_key` | `string` | No | An external id that threads every post sharing it under the first one. |
+| `reply_timestamp` | `number` | No | — |
+| `text` | `string` | No | — |
+| `markdown` | `boolean` | No | — |
+| `items` | `string[]` | No | Item ids to attach to the message. |
+| `asset_ids` | `string[]` | No | — |
+| `blocks` | `object[]` | No | Block Kit blocks, at most ten and 8,000 bytes in total. |
+| `color` | `string` | No | — |
+| `poll` | `object` | No | — |
+| `sender` | `object` | No | — |
+| `sync` | `boolean` | No | Wait for the post and return its `timestamp`, which `chat.update`, `reactions.add` and thread replies need. Without it the answer has no timestamp. |
+| `send_at` | `string` | No | Schedule the post for this ISO 8601 time instead of sending now: in the future, within 30 days, on a 15-minute UTC boundary. |
+
+Pass `sync: true` to get the `timestamp` back. `text`, `items` and `asset_ids` combine; `blocks` and `poll` stand alone; `send_at` schedules instead of sending.
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+  type: header | section | context | divider | actions,
+  text?: JsonValue,
+  fields?: JsonValue[],
+  elements?: JsonValue[],
+  accessory?: JsonValue,
+  block_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="poll full type">
+
+```ts
+{
+  question: string,
+  options: string[],
+  allowMultipleAnswers?: boolean,
+  closesAt?: string
+}
+```
+</Accordion>
+
+<Accordion title="sender full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  imageUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  ok?: boolean | null,
+  chatId?: string | null,
+  threadTimestamp?: number | null,
+  timestamp?: number | null,
+  scheduledMessageId?: string | null,
+  sendAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`chat.update`
+
+Edit a message the token posted, replacing its content
+
+**Risk:** `write`
+
+```ts
+await corsair.roam.api.chat.update({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032, text: 'Standup in ten' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | — |
+| `timestamp` | `number` | Yes | The message timestamp to edit. |
+| `thread_timestamp` | `number` | No | — |
+| `text` | `string` | No | — |
+| `markdown` | `boolean` | No | — |
+| `items` | `string[]` | No | — |
+| `asset_ids` | `string[]` | No | — |
+| `blocks` | `object[]` | No | — |
+| `color` | `string` | No | — |
+
+Needs `text` or `blocks`, and identifies the message by chat and timestamp.
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+  type: header | section | context | divider | actions,
+  text?: JsonValue,
+  fields?: JsonValue[],
+  elements?: JsonValue[],
+  accessory?: JsonValue,
+  block_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `update` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="update full type">
+
+```ts
+{
+  ok?: boolean | null,
+  chatId?: string | null,
+  timestamp?: number | null,
+  threadTimestamp?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### list
+
+`groups.list`
+
+List groups with a search phrase and type filter, plus cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.groups.list({ limit: 20, type: 'standard' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | A search phrase. |
+| `type` | `string` | No | Comma-separated group types: `standard`, `magicast`, `meeting`, `roam` or `onair`. |
+| `limit` | `number` | No | Records per page, at most 100. Roam applies its own default when omitted. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: string | null,
+  chatId?: string | null,
+  name?: string | null,
+  type?: string | null,
+  accessMode?: string | null,
+  groupManagement?: string | null,
+  enforceThreadedMode?: boolean | null,
+  dateCreated?: string | null,
+  imageUrl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meetings
+
+### list
+
+`meetings.list`
+
+List meetings with a time window, plus cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.meetings.list({ after: '2026-11-01T00:00:00.000Z', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before` | `string` | No | Only meetings before this timestamp. |
+| `after` | `string` | No | Only meetings after this timestamp. |
+| `limit` | `number` | No | Records per page, at most 100. Roam applies its own default when omitted. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
+| `expand` | `(summary \| actionItems \| chapters)[]` | No | Fields to inline on each meeting. Roam caps `limit` at 10 when any is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetings` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meetings full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  subtitle?: string | null,
+  start?: string | null,
+  participantCount?: number | null,
+  hasVideo?: boolean | null,
+  videoStatus?: string | null,
+  host?: {
+    type?: string | null,
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  summary?: string | null,
+  actionItems?: {
+    id?: string | null,
+    title?: string | null,
+    complete?: boolean | null,
+    assigneeId?: string | null
+  }[] | null,
+  chapters?: {
+    name?: string | null,
+    start?: number | null,
+    synopsis?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transcript
+
+`meetings.transcript`
+
+Fetch a meeting’s transcript cues with their speaker id and timing
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.meetings.transcript({ meeting_id: '11111111-2222-3333-4444-555555555555' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meeting_id` | `string` | Yes | The meeting uuid. |
+
+Returns `cues` with the speaker's user id, start and end; the plugin asks for JSON rather than WebVTT.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcript` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  id?: string | null,
+  cues?: {
+    speakerId?: string | null,
+    text?: string | null,
+    start?: number | null,
+    end?: number | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reactions
+
+### add
+
+`reactions.add`
+
+Add an emoji reaction to a message
+
+**Risk:** `write`
+
+```ts
+await corsair.roam.api.reactions.add({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032, name: 'thumbsup' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | — |
+| `timestamp` | `number` | Yes | The message timestamp to react to. |
+| `thread_timestamp` | `number` | No | — |
+| `name` | `string` | Yes | The emoji name, such as `thumbsup`. |
+
+The `name` is an emoji name such as `thumbsup`, not the emoji character.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reaction` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reaction full type">
+
+```ts
+{
+  ok?: boolean | null,
+  chatId?: string | null,
+  timestamp?: number | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`reactions.list`
+
+List the reactions on a message, and the votes on each option when it is a poll
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.reactions.list({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | — |
+| `timestamp` | `number` | Yes | — |
+| `thread_timestamp` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reactions` | `object[]` | Yes | — |
+| `pollVotes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reactions full type">
+
+```ts
+{
+  name?: string | null,
+  count?: number | null,
+  users?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pollVotes full type">
+
+```ts
+{
+  optionId?: string | null,
+  text?: string | null,
+  count?: number | null,
+  users?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Token
+
+### info
+
+`token.info`
+
+Read the account behind the token: its user, bot, workspace and granted scopes
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.token.info({});
+```
+
+**Input:** _empty object_
+
+Also reports the API client id, the bot the token posts as, the workspace and the granted scopes.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="token full type">
+
+```ts
+{
+  user?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null,
+    imageUrl?: string | null,
+    email?: string | null,
+    isGuest?: boolean | null,
+    isAdmin?: boolean | null,
+    jobTitle?: string | null,
+    location?: string | null,
+    status?: string | null,
+    available?: boolean | null,
+    botCode?: string | null,
+    integrationId?: string | null,
+    willReturn?: {
+      returnTime?: string | null,
+      reason?: string | null
+    } | null
+  } | null,
+  bot?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null,
+    imageUrl?: string | null,
+    email?: string | null
+  } | null,
+  clientId?: string | null,
+  scopes?: string[] | null,
+  roam?: {
+    id?: string | null,
+    name?: string | null,
+    imageUrl?: string | null,
+    iconUrl?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### info
+
+`users.info`
+
+Look up one person or bot by uuid or email, including their role and availability
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.users.info({ email: 'sam@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | The user uuid. |
+| `email` | `string` | No | The user email. |
+| `expand` | `string[]` | No | Relations to inline, as a comma-separated list on the wire. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  imageUrl?: string | null,
+  email?: string | null,
+  isGuest?: boolean | null,
+  isAdmin?: boolean | null,
+  jobTitle?: string | null,
+  location?: string | null,
+  status?: string | null,
+  available?: boolean | null,
+  botCode?: string | null,
+  integrationId?: string | null,
+  willReturn?: {
+    returnTime?: string | null,
+    reason?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List directory members with a search phrase or an explicit id list, plus cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.roam.api.users.list({ limit: 50, q: 'sam' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | Only these user uuids, up to 100. Not combinable with `q`, `limit` or `cursor`. |
+| `q` | `string` | No | A search phrase. |
+| `limit` | `number` | No | Records per page, at most 100. Roam applies its own default when omitted. |
+| `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
+| `expand` | `string[]` | No | Relations to inline, as a comma-separated list on the wire. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | Yes | Pass as `cursor` to read the next page; null on the last. |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  imageUrl?: string | null,
+  email?: string | null,
+  isGuest?: boolean | null,
+  isAdmin?: boolean | null,
+  jobTitle?: string | null,
+  location?: string | null,
+  status?: string | null,
+  available?: boolean | null,
+  botCode?: string | null,
+  integrationId?: string | null,
+  willReturn?: {
+    returnTime?: string | null,
+    reason?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

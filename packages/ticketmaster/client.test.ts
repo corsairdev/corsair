@@ -275,7 +275,8 @@ describe('makeTicketmasterRequest', () => {
 			url?: string;
 			request?: { query?: unknown };
 		};
-		expect(cause.url).toBe(
+		// Core redacts first and URL-encodes the marker; either way the key is gone.
+		expect(decodeURIComponent(cause.url ?? '')).toBe(
 			'https://app.ticketmaster.com/discovery/v2/events.json?apikey=[REDACTED]',
 		);
 		expect(JSON.stringify(cause.request)).not.toContain(API_KEY);

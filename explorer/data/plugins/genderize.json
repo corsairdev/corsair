@@ -1,0 +1,104 @@
+{
+  "id": "genderize",
+  "displayName": "Genderize",
+  "description": "Predict the gender behind a first or full name with Genderize - one name or a batch, each answer scored with a confidence and the number of records behind it.",
+  "npmPackageName": "@corsair-dev/genderize",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "genderize.api.batch.names",
+      "shortPath": "batch.names",
+      "description": "Predict gender for several names at once, answered in the same order. A batch counts each name against the monthly quota, and `country_id` applies to every name in it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "names",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 100 names to predict, answered in the same order. A batch counts each name against the monthly quota"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "string",
+            "description": "Applies to every name in the batch, not one of them"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, gender: string | null, probability: number, count: number, country_id?: string }[]"
+      }
+    },
+    {
+      "path": "genderize.api.name.predict",
+      "shortPath": "name.predict",
+      "description": "Predict the gender behind a first or full name, with a confidence score and the number of records behind it. Scoping by country changes the answer for names such as Kim or Andrea",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A first name or a full name. A full name is more accurate, because every part of it carries signal"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "string",
+            "description": "Scope the prediction to one country, which matters for names such as Kim or Andrea"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "probability",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

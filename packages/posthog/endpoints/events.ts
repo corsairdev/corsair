@@ -1,29 +1,80 @@
 import { logEventFromContext } from 'corsair/core';
-import { makePostHogRequest } from '../client';
+import {
+	invalidateCaptureToken,
+	isPersonalApiKey,
+	makePostHogRequest,
+	PostHogAPIError,
+	resolveCaptureTarget,
+	unpackPostHogCredentials,
+} from '../client';
 import type { PostHogEndpoints } from '../index';
 import type { PostHogEndpointOutputs } from './types';
+import {
+	PostHogEndpointInputSchemas,
+	PostHogSuccessResponseSchema,
+} from './types';
+
+/**
+ * Sends one event to `/capture/`. With a personal key the project token is
+ * looked up and cached; if PostHog rejects it (rotated token), the cache entry
+ * is dropped and the event is sent once more with a fresh token.
+ */
+async function capture<T>(
+	ctxKey: string,
+	// Capture payload; its fields come from the capture input schema.
+	payload: Record<string, unknown>,
+): Promise<T> {
+	const credentials = unpackPostHogCredentials(ctxKey);
+	const send = async () => {
+		const { token, base } = await resolveCaptureTarget(credentials);
+		return makePostHogRequest<T>('/capture/', token, {
+			method: 'POST',
+			body: { ...payload, api_key: token },
+			base,
+		});
+	};
+	let response: T;
+	try {
+		response = await send();
+	} catch (error) {
+		if (
+			!(
+				error instanceof PostHogAPIError &&
+				error.status === 401 &&
+				isPersonalApiKey(credentials.key)
+			)
+		) {
+			throw error;
+		}
+		invalidateCaptureToken(credentials);
+		response = await send();
+	}
+	// Throws if /capture/ answers with something other than its success shape.
+	PostHogSuccessResponseSchema.parse(response);
+	return response;
+}
+
+/** Optional timestamp and uuid, only when given. */
+function eventMeta(input: { timestamp?: string; uuid?: string }) {
+	return {
+		...(input.timestamp ? { timestamp: input.timestamp } : {}),
+		...(input.uuid ? { uuid: input.uuid } : {}),
+	};
+}
 
 export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const payload = {
-		api_key: ctx.key,
-		event: '$create_alias',
-		properties: {
+	const input = PostHogEndpointInputSchemas.aliasCreate.parse(rawInput);
+	const response = await capture<PostHogEndpointOutputs['aliasCreate']>(
+		ctx.key,
+		{
+			event: '$create_alias',
+			properties: { distinct_id: input.distinct_id, alias: input.alias },
 			distinct_id: input.distinct_id,
-			alias: input.alias,
 		},
-		distinct_id: input.distinct_id,
-	};
-
-	const response = await makePostHogRequest<
-		PostHogEndpointOutputs['aliasCreate']
-	>('/capture/', ctx.key, {
-		method: 'POST',
-		body: payload,
-	});
-
+	);
 	await logEventFromContext(
 		ctx,
 		'posthog.alias.create',
@@ -35,32 +86,18 @@ export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (
 
 export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const payload: any = {
-		api_key: ctx.key,
-		event: input.event,
-		properties: {
-			...input.properties,
+	const input = PostHogEndpointInputSchemas.eventCreate.parse(rawInput);
+	const response = await capture<PostHogEndpointOutputs['eventCreate']>(
+		ctx.key,
+		{
+			event: input.event,
+			properties: { ...input.properties, distinct_id: input.distinct_id },
 			distinct_id: input.distinct_id,
+			...eventMeta(input),
 		},
-		distinct_id: input.distinct_id,
-	};
-
-	if (input.timestamp) {
-		payload.timestamp = input.timestamp;
-	}
-
-	if (input.uuid) {
-		payload.uuid = input.uuid;
-	}
-
-	const response = await makePostHogRequest<
-		PostHogEndpointOutputs['eventCreate']
-	>('/capture/', ctx.key, {
-		method: 'POST',
-		body: payload,
-	});
+	);
 
 	if (response && ctx.db.events) {
 		try {
@@ -86,25 +123,17 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 
 export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const payload = {
-		api_key: ctx.key,
-		event: '$identify',
-		properties: {
-			...input.properties,
+	const input = PostHogEndpointInputSchemas.identityCreate.parse(rawInput);
+	const response = await capture<PostHogEndpointOutputs['identityCreate']>(
+		ctx.key,
+		{
+			event: '$identify',
+			properties: { ...input.properties, distinct_id: input.distinct_id },
 			distinct_id: input.distinct_id,
 		},
-		distinct_id: input.distinct_id,
-	};
-
-	const response = await makePostHogRequest<
-		PostHogEndpointOutputs['identityCreate']
-	>('/capture/', ctx.key, {
-		method: 'POST',
-		body: payload,
-	});
-
+	);
 	await logEventFromContext(
 		ctx,
 		'posthog.identity.create',
@@ -114,9 +143,12 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 	return response;
 };
 
-export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
-	const payload: any = {
-		api_key: ctx.key,
+export const trackPage: PostHogEndpoints['trackPage'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = PostHogEndpointInputSchemas.trackPage.parse(rawInput);
+	const response = await capture<PostHogEndpointOutputs['trackPage']>(ctx.key, {
 		event: '$pageview',
 		properties: {
 			...input.properties,
@@ -124,23 +156,8 @@ export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
 			distinct_id: input.distinct_id,
 		},
 		distinct_id: input.distinct_id,
-	};
-
-	if (input.timestamp) {
-		payload.timestamp = input.timestamp;
-	}
-
-	if (input.uuid) {
-		payload.uuid = input.uuid;
-	}
-
-	const response = await makePostHogRequest<
-		PostHogEndpointOutputs['trackPage']
-	>('/capture/', ctx.key, {
-		method: 'POST',
-		body: payload,
+		...eventMeta(input),
 	});
-
 	await logEventFromContext(
 		ctx,
 		'posthog.track.page',
@@ -152,34 +169,22 @@ export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
 
 export const trackScreen: PostHogEndpoints['trackScreen'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const payload: any = {
-		api_key: ctx.key,
-		event: '$screen',
-		properties: {
-			...input.properties,
-			$screen_name: input.screen_name,
+	const input = PostHogEndpointInputSchemas.trackScreen.parse(rawInput);
+	const response = await capture<PostHogEndpointOutputs['trackScreen']>(
+		ctx.key,
+		{
+			event: '$screen',
+			properties: {
+				...input.properties,
+				$screen_name: input.screen_name,
+				distinct_id: input.distinct_id,
+			},
 			distinct_id: input.distinct_id,
+			...eventMeta(input),
 		},
-		distinct_id: input.distinct_id,
-	};
-
-	if (input.timestamp) {
-		payload.timestamp = input.timestamp;
-	}
-
-	if (input.uuid) {
-		payload.uuid = input.uuid;
-	}
-
-	const response = await makePostHogRequest<
-		PostHogEndpointOutputs['trackScreen']
-	>('/capture/', ctx.key, {
-		method: 'POST',
-		body: payload,
-	});
-
+	);
 	await logEventFromContext(
 		ctx,
 		'posthog.track.screen',

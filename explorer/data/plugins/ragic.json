@@ -1,0 +1,720 @@
+{
+  "id": "ragic",
+  "displayName": "Ragic",
+  "description": "Read, filter, create, update and delete records on any Ragic sheet, post comments, lock records and read a sheet's field schema.",
+  "npmPackageName": "@corsair-dev/ragic",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ragic.api.records.comment",
+      "shortPath": "records.comment",
+      "description": "Post a comment on a record and return the comment that was added",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "number",
+            "description": "The record id, which is the _ragicId value."
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string",
+            "description": "The comment text."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, Record<string, JsonValue>>"
+      }
+    },
+    {
+      "path": "ragic.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create a record from field ID to value, including subtable rows grouped by negative row id, with control over formulas, workflows, AI Agents and notifications",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, JsonValue>",
+            "description": "Field ID to value. A multi-select takes an array; a date needs yyyy/MM/dd or yyyy/MM/dd HH:mm:ss; a subtable is `_subtable_<id>` keyed by a negative row id that groups a row’s values."
+          },
+          {
+            "key": "doFormula",
+            "optional": true,
+            "type": "boolean",
+            "description": "Recalculate every formula before saving."
+          },
+          {
+            "key": "doDefaultValue",
+            "optional": true,
+            "type": "boolean",
+            "description": "Load every default value before saving."
+          },
+          {
+            "key": "doLinkLoad",
+            "optional": true,
+            "type": "boolean | first",
+            "description": "Run link and load operations: true after the formula recalculation, \"first\" before it. Either way doFormula must also be set when a recalculation is needed."
+          },
+          {
+            "key": "doWorkflow",
+            "optional": true,
+            "type": "boolean",
+            "description": "False skips the workflow scripts, which otherwise run."
+          },
+          {
+            "key": "doAIAgent",
+            "optional": true,
+            "type": "boolean",
+            "description": "False skips the AI Agents, which otherwise run."
+          },
+          {
+            "key": "notification",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true: the save sends notifications."
+          },
+          {
+            "key": "doValidation",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run the sheet’s field validation rules first. A failing field rejects the save."
+          },
+          {
+            "key": "checkLock",
+            "optional": true,
+            "type": "boolean",
+            "description": "Refuse the update when the record is locked. Without it Ragic ignores the lock and saves the update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "SUCCESS when the record was saved."
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ragicId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The record id (_ragicId)."
+          },
+          {
+            "key": "rv",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "The saved record, keyed by field ID, with its reserved keys."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ragic.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Delete one record by id. Ragic moves it to the sheet's recycle bin, where it can be restored from the Ragic UI",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "number",
+            "description": "The record id, which is the _ragicId value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string | null",
+            "description": "Says the record went to the recycle bin."
+          },
+          {
+            "key": "ragicId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The deleted record id."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ragic.api.records.get",
+      "shortPath": "records.get",
+      "description": "Read one record by id, optionally with its subtable, comments, history or unmasked fields. An unknown or deleted id answers an empty object",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "number",
+            "description": "The record id, which is the _ragicId value."
+          },
+          {
+            "key": "naming",
+            "optional": true,
+            "type": "EID | FNAME"
+          },
+          {
+            "key": "subtables",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignoreMask",
+            "optional": true,
+            "type": "boolean",
+            "description": "Unmask masked text, when your groups allow it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, Record<string, JsonValue>>"
+      }
+    },
+    {
+      "path": "ragic.api.records.list",
+      "shortPath": "records.list",
+      "description": "List records from a sheet with filters, full-text search, a saved view, paging and ordering; pass a taskId to check a mass operation instead",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "{ fieldId: number | string, op: eq | regex | gte | lte | gt | lt | like | eqeq, value?: string | number }[]",
+            "description": "Filter conditions. Several on the same field combine as the docs describe."
+          },
+          {
+            "key": "fts",
+            "optional": true,
+            "type": "string",
+            "description": "A full-text search term."
+          },
+          {
+            "key": "filterId",
+            "optional": true,
+            "type": "number",
+            "description": "A saved Shared View id, as an alternative to building filters."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many records to return. Defaults to 1,000; above that, set it explicitly."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "How many records to skip first."
+          },
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string",
+            "description": "Check a mass operation’s progress instead of listing records."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ fieldId: number | string, direction: ASC | DESC }",
+            "description": "Sort by one field."
+          },
+          {
+            "key": "reverse",
+            "optional": true,
+            "type": "boolean",
+            "description": "Reverse the default creation-date ordering, newest first."
+          },
+          {
+            "key": "naming",
+            "optional": true,
+            "type": "EID | FNAME",
+            "description": "Name each field in the response by its ID (EID) or its name (FNAME, the default)."
+          },
+          {
+            "key": "subtables",
+            "optional": true,
+            "type": "boolean",
+            "description": "False omits subtable data, which makes the response much smaller."
+          },
+          {
+            "key": "listing",
+            "optional": true,
+            "type": "boolean",
+            "description": "True returns only the fields shown on the listing page."
+          },
+          {
+            "key": "fetchDomainIds",
+            "optional": true,
+            "type": "(number | string)[]",
+            "description": "Return only these field IDs."
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add create date and create user to each record."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add the comment thread to each record."
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add the edit history to each record."
+          },
+          {
+            "key": "conversation",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add the email conversation to each record."
+          },
+          {
+            "key": "approval",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add the approval information to each record."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, Record<string, JsonValue>> | { status: string, progress?: number | null, total?: number | null, message?: string | null }"
+      }
+    },
+    {
+      "path": "ragic.api.records.lock",
+      "shortPath": "records.lock",
+      "description": "Lock a record so it cannot be edited in the Ragic UI until it is unlocked; an API update still saves unless it passes checkLock: true. The same permission as locking in the form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "number",
+            "description": "The record id, which is the _ragicId value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "SUCCESS on success."
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ragic.api.records.unlock",
+      "shortPath": "records.unlock",
+      "description": "Unlock a record that was locked",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "number",
+            "description": "The record id, which is the _ragicId value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "SUCCESS on success."
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ragic.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update only the fields you send on one record, edit a subtable row by its row id, or delete one with _DELSUB_",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, JsonValue>",
+            "description": "Field ID to value, only for the fields to change. A multi-select takes an array; a date needs yyyy/MM/dd or yyyy/MM/dd HH:mm:ss. A subtable is `_subtable_<id>` keyed by row id: an existing row’s positive id (read from the record) edits that row, a negative id adds a new row. `_DELSUB_<subtable id>` with an array of row ids deletes those rows."
+          },
+          {
+            "key": "doFormula",
+            "optional": true,
+            "type": "boolean",
+            "description": "Recalculate every formula before saving."
+          },
+          {
+            "key": "doDefaultValue",
+            "optional": true,
+            "type": "boolean",
+            "description": "Load every default value before saving."
+          },
+          {
+            "key": "doLinkLoad",
+            "optional": true,
+            "type": "boolean | first",
+            "description": "Run link and load operations: true after the formula recalculation, \"first\" before it. Either way doFormula must also be set when a recalculation is needed."
+          },
+          {
+            "key": "doWorkflow",
+            "optional": true,
+            "type": "boolean",
+            "description": "False skips the workflow scripts, which otherwise run."
+          },
+          {
+            "key": "doAIAgent",
+            "optional": true,
+            "type": "boolean",
+            "description": "False skips the AI Agents, which otherwise run."
+          },
+          {
+            "key": "notification",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true: the save sends notifications."
+          },
+          {
+            "key": "doValidation",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run the sheet’s field validation rules first. A failing field rejects the save."
+          },
+          {
+            "key": "checkLock",
+            "optional": true,
+            "type": "boolean",
+            "description": "Refuse the update when the record is locked. Without it Ragic ignores the lock and saves the update."
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "number",
+            "description": "The record id, which is the _ragicId value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "SUCCESS when the record was saved."
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ragicId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The record id (_ragicId)."
+          },
+          {
+            "key": "rv",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "The saved record, keyed by field ID, with its reserved keys."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ragic.api.schema.get",
+      "shortPath": "schema.get",
+      "description": "Read a sheet's field schema, including field IDs, types and subtables, so a write can be built without guessing. Needs an account manager's API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "string",
+            "description": "The account name from your Ragic URL, such as \"demo\" in www.ragic.com/demo/sales."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The folder path from your URL, starting with a slash, such as /sales."
+          },
+          {
+            "key": "sheetIndex",
+            "optional": false,
+            "type": "number",
+            "description": "The sheet number from your URL, the number after the folder path."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sheet",
+            "optional": true,
+            "type": "{ sheetPath?: string | null, sheetIndex?: number | string | null, sheetName?: string | null, keyFieldId?: number | string | null } | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ fieldId?: number | string | null, fieldName?: string | null, type?: string | null, required?: boolean | null, readOnly?: boolean | null, computed?: boolean | null, hidden?: boolean | null, selectionOptionsPreview?: string[] | null }[] | null"
+          },
+          {
+            "key": "subtables",
+            "optional": true,
+            "type": "{ subtableKey?: number | string | null, fields?: { fieldId?: number | string | null, fieldName?: string | null, type?: string | null, required?: boolean | null, readOnly?: boolean | null, computed?: boolean | null, hidden?: boolean | null, selectionOptionsPreview?: string[] | null }[] | null }[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

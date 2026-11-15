@@ -1,0 +1,816 @@
+---
+title: "RudderStack Transformations API reference"
+sidebarTitle: "API"
+description: "API reference for RudderStack Transformations: every `rudderstacktransform.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Libraries
+
+### create
+
+`libraries.create`
+
+Create a reusable library whose importName transformations import it by
+
+**Risk:** `write`
+
+```ts
+await corsair.rudderstacktransform.api.libraries.create({ name: 'cool library', language: 'javascript', code: 'export function add(a,b) { return a+b; }', publish: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The library name, used as the module name when imported. |
+| `language` | `javascript \| pythonfaas` | Yes | javascript or pythonfaas. A resource cannot change language after it is created. |
+| `code` | `string` | Yes | The library code. |
+| `description` | `string` | No | — |
+| `publish` | `boolean` | No | True publishes the library immediately. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `importName` | `string \| null` | No | The name a transformation imports this library by. It cannot be changed after creation. |
+| `isPublished` | `boolean \| null` | No | Documented on revision rows, but the live API left it out on 11-12. |
+
+
+
+---
+
+### delete
+
+`libraries.delete`
+
+Delete a library by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.rudderstacktransform.api.libraries.delete({ id: '2LyH0PQOBAJo7UgFXfDoMacGDPZ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The library to delete. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`libraries.get`
+
+Read one published library by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.rudderstacktransform.api.libraries.get({ id: '2DmDQHMNpAk1HvvWBK2SlWhmPS2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The published library ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `importName` | `string \| null` | No | The name a transformation imports this library by. It cannot be changed after creation. |
+| `isPublished` | `boolean \| null` | No | Documented on revision rows, but the live API left it out on 11-12. |
+
+
+
+---
+
+### getVersion
+
+`libraries.getVersion`
+
+Read one revision of a library
+
+**Risk:** `read`
+
+```ts
+await corsair.rudderstacktransform.api.libraries.getVersion({ id: '1pT7933tHRBPlEMIZt5Zi3VIht1', versionId: '1pT8KDAD66mQxnaUQxJpNs9qLFn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The library ID. |
+| `versionId` | `string` | Yes | The revision to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `importName` | `string \| null` | No | The name a transformation imports this library by. It cannot be changed after creation. |
+| `isPublished` | `boolean \| null` | No | Documented on revision rows, but the live API left it out on 11-12. |
+
+
+
+---
+
+### list
+
+`libraries.list`
+
+List the published libraries in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.rudderstacktransform.api.libraries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `libraries` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="libraries full type">
+
+```ts
+{
+  id?: string | null,
+  versionId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  code?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  importName?: string | null,
+  isPublished?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVersions
+
+`libraries.listVersions`
+
+List the revisions of a library, newest or oldest first
+
+**Risk:** `read`
+
+```ts
+await corsair.rudderstacktransform.api.libraries.listVersions({ id: '1pT7933tHRBPlEMIZt5Zi3VIht1', count: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | How many revisions to return. Defaults to the first 5. |
+| `orderBy` | `asc \| desc` | No | Order on createdAt. Defaults to asc. |
+| `id` | `string` | Yes | The library whose revisions to list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `libraryVersions` | `object[] \| null` | No | The revisions. The live API sends them under `libraries`; the plugin moves them here. |
+
+<AccordionGroup>
+<Accordion title="libraryVersions full type">
+
+```ts
+{
+  id?: string | null,
+  versionId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  code?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  importName?: string | null,
+  isPublished?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`libraries.publish`
+
+Publish chosen transformation and library revisions after RudderStack runs their code, so a failing test publishes nothing
+
+**Risk:** `write`
+
+```ts
+await corsair.rudderstacktransform.api.libraries.publish({ transformations: [{ versionId: '2MTC30bbSUANEeLb7TeknDbBeFy' }], libraries: [{ versionId: '2MTDbAFBqzB7Wg8mWyWNBIk5DOU' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transformations` | `object[]` | No | — |
+| `libraries` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="transformations full type">
+
+```ts
+{
+  versionId: string,
+  testInput?: Record<string, JsonValue>[]
+}[]
+```
+</Accordion>
+
+<Accordion title="libraries full type">
+
+```ts
+{
+  versionId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `published` | `boolean \| null` | No | True when every revision passed and went live. |
+
+
+
+---
+
+### update
+
+`libraries.update`
+
+Update a library, writing a new revision and publishing it only when publish is true; the name and language cannot change
+
+**Risk:** `write`
+
+```ts
+await corsair.rudderstacktransform.api.libraries.update({ id: '2MTEP4IhlKLXYtnbOqAOx1kKcBd', code: 'export function sum(a, b) { return a + b; }', language: 'javascript', publish: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The library to update. |
+| `code` | `string` | Yes | The updated library code. |
+| `language` | `javascript \| pythonfaas` | Yes | The library's language. It cannot be changed from the one it was created with. |
+| `description` | `string` | No | — |
+| `publish` | `boolean` | No | True publishes the new revision. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `importName` | `string \| null` | No | The name a transformation imports this library by. It cannot be changed after creation. |
+| `isPublished` | `boolean \| null` | No | Documented on revision rows, but the live API left it out on 11-12. |
+
+
+
+---
+
+## Transformations
+
+### connect
+
+`transformations.connect`
+
+Connect a published transformation to a destination, replacing any transformation already connected to it
+
+**Risk:** `write`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.connect({ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', destinationId: '2C8YtptB4KF2eL3KRi9mCFkY3BF' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destinationId` | `string` | Yes | The destination to act on. |
+| `id` | `string` | Yes | The transformation to connect. It must be published, or RudderStack answers 400 "Transformation is not published". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | Identifies this revision; pass it to libraries.publish. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | The JavaScript or Python code. |
+| `codeVersion` | `string \| null` | No | Always "1" for API calls, as RudderStack sends it. |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `workspaceId` | `string \| Record<string, JsonValue> \| null` | No | A string ID or a workspace object, depending on the route. |
+| `destinations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  enabled?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`transformations.create`
+
+Create a transformation; unpublished unless publish is true, and only a published one can be connected to a destination
+
+**Risk:** `write`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.create({ name: 'Get metadata', language: 'javascript', code: 'export function transformEvent(event) { return event; }', publish: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The transformation name. |
+| `language` | `javascript \| pythonfaas` | Yes | javascript or pythonfaas. A resource cannot change language after it is created. |
+| `description` | `string` | No | — |
+| `code` | `string` | No | The transformation code. |
+| `publish` | `boolean` | No | True makes the code live for incoming traffic and allows destinations to be connected. Defaults to false, which only creates a revision. |
+| `destinationIds` | `string[]` | No | Destinations to connect. Ignored unless publish is true. |
+| `events` | `Record<string, JsonValue>[]` | No | JSON events to test the code against while creating it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | Identifies this revision; pass it to libraries.publish. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | The JavaScript or Python code. |
+| `codeVersion` | `string \| null` | No | Always "1" for API calls, as RudderStack sends it. |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `workspaceId` | `string \| Record<string, JsonValue> \| null` | No | A string ID or a workspace object, depending on the route. |
+| `destinations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  enabled?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`transformations.delete`
+
+Delete a published transformation; its revisions are never deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.delete({ id: '2LyH0PQOBAJo7UgFXfDoMacGDPZ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The published transformation to delete. Its revisions are never deleted. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### disconnect
+
+`transformations.disconnect`
+
+Disconnect a transformation from a destination
+
+**Risk:** `write`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.disconnect({ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', destinationId: '2C8YtptB4KF2eL3KRi9mCFkY3BF' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destinationId` | `string` | Yes | The destination to act on. |
+| `id` | `string` | Yes | The transformation to connect. It must be published, or RudderStack answers 400 "Transformation is not published". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | Identifies this revision; pass it to libraries.publish. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | The JavaScript or Python code. |
+| `codeVersion` | `string \| null` | No | Always "1" for API calls, as RudderStack sends it. |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `workspaceId` | `string \| Record<string, JsonValue> \| null` | No | A string ID or a workspace object, depending on the route. |
+| `destinations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  enabled?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`transformations.get`
+
+Read one published transformation by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.get({ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The published transformation ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | Identifies this revision; pass it to libraries.publish. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | The JavaScript or Python code. |
+| `codeVersion` | `string \| null` | No | Always "1" for API calls, as RudderStack sends it. |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `workspaceId` | `string \| Record<string, JsonValue> \| null` | No | A string ID or a workspace object, depending on the route. |
+| `destinations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  enabled?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVersion
+
+`transformations.getVersion`
+
+Read one revision of a transformation
+
+**Risk:** `read`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.getVersion({ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', versionId: '2C8ifOCgRIpxgyF9voHIgUHFP4c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The transformation ID. |
+| `versionId` | `string` | Yes | The revision to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | Identifies this revision; pass it to libraries.publish. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | The JavaScript or Python code. |
+| `codeVersion` | `string \| null` | No | Always "1" for API calls, as RudderStack sends it. |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `workspaceId` | `string \| Record<string, JsonValue> \| null` | No | A string ID or a workspace object, depending on the route. |
+| `destinations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  enabled?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transformations.list`
+
+List the published transformations in the workspace with their code, language and connected destinations
+
+**Risk:** `read`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transformations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="transformations full type">
+
+```ts
+{
+  id?: string | null,
+  versionId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  code?: string | null,
+  codeVersion?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  workspaceId?: string | Record<string, JsonValue> | null,
+  destinations?: {
+    id?: string | null,
+    name?: string | null,
+    enabled?: boolean | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVersions
+
+`transformations.listVersions`
+
+List the revisions of a transformation, newest or oldest first
+
+**Risk:** `read`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.listVersions({ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', count: 5, orderBy: 'desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | How many revisions to return. Defaults to the first 5. |
+| `orderBy` | `asc \| desc` | No | Order on createdAt. Defaults to asc. |
+| `id` | `string` | Yes | The transformation whose revisions to list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TransformationVersions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="TransformationVersions full type">
+
+```ts
+{
+  id?: string | null,
+  versionId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  code?: string | null,
+  codeVersion?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  workspaceId?: string | Record<string, JsonValue> | null,
+  destinations?: {
+    id?: string | null,
+    name?: string | null,
+    enabled?: boolean | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transformations.update`
+
+Update a transformation, which always writes a new revision and makes it live only when publish is true
+
+**Risk:** `write`
+
+```ts
+await corsair.rudderstacktransform.api.transformations.update({ id: '2C8Vk2wj8qkofy00YzJbvJOGeqa', name: 'Updated transformation', code: 'export function transformEvent(event) { return event; }', publish: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The transformation to update. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `code` | `string` | No | — |
+| `publish` | `boolean` | No | True publishes the new revision, making it live. False only creates a revision. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | Identifies this revision; pass it to libraries.publish. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `code` | `string \| null` | No | The JavaScript or Python code. |
+| `codeVersion` | `string \| null` | No | Always "1" for API calls, as RudderStack sends it. |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `workspaceId` | `string \| Record<string, JsonValue> \| null` | No | A string ID or a workspace object, depending on the route. |
+| `destinations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  enabled?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

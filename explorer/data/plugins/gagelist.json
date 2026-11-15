@@ -1,0 +1,1668 @@
+{
+  "id": "gagelist",
+  "displayName": "GageList",
+  "description": "Gauge calibration management with GageList - manage gages and their calibration records, read calibration certificates, and manage manufacturers, custom field values and the account's plan limits.",
+  "npmPackageName": "@corsair-dev/gagelist",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gagelist.api.account.status",
+      "shortPath": "account.status",
+      "description": "The site’s plan limits and usage: gage and user counts, gages due and past due, and what the client may change",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ MaxUsers?: number | null, MaxGages?: number | null, MaxRecords?: number | null, AssignedUsers?: number | null, TotalGages?: number | null, ActiveGages?: number | null, InactiveGages?: number | null, GagesDueThisMonth?: number | null, GagesDue30Days?: number | null, GagesPastDue?: number | null, AllowAttachments?: boolean | null, AllowCustomFields?: boolean | null, CanAdd?: boolean | null, CanEdit?: boolean | null, CurrentSiteId?: number | null }"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.calibrations.certificate",
+      "shortPath": "calibrations.certificate",
+      "description": "Render a calibration certificate PDF for a record, returned base64-encoded with its content type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The GageList record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "certificate",
+            "optional": false,
+            "type": "string",
+            "description": "The certificate: base64 bytes when `encoding` is `base64`, otherwise the text GageList sent."
+          },
+          {
+            "key": "encoding",
+            "optional": false,
+            "type": "base64 | text"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The Content-Type GageList sent, usually `application/pdf`."
+          },
+          {
+            "key": "byteLength",
+            "optional": true,
+            "type": "number",
+            "description": "Size of the decoded file."
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.calibrations.create",
+      "shortPath": "calibrations.create",
+      "description": "Record a calibration against a gage, with the readings, standard used and next due date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "RecordNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EquipmentRefId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The gage this calibration records."
+          },
+          {
+            "key": "EquipmentAsFound",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EquipmentAsLeft",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastCalibrationDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationDueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "MasterStandard",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Manufacturer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SerialNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TypesMeasurement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnitOfMeasure",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "RangeOrSize",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tolerance",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ResponsibleUser",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Interval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Years",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Months",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Days",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Uncertainty",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTest",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OtherInformation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ControlNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AssetNo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationInstructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationEnvironment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTestMode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ConditionReceived",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AdjustmentsRequired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "RepairsRequired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ExernalCalibrationRecord",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestEquipmentFalls",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestEquipmentFallsAsFound",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AppropriateNotified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ToleranceCondition",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ProductRecalled",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ToleranceComment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AdditionalComments",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateCalibrated",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "NextCalibrationDue",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "CalibrationDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "TestEquipmentAvailability",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestCost",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTechinician",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DescribedRepairs",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ActionRequired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FitIntendedPurpose",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTests",
+            "optional": true,
+            "type": "{ Id: number, CalibrationRefId?: number | null, TestNumber?: string | null, Parameter?: string | null, ExpectedResult?: string | null, RefStandardID?: string | null, AsFound?: string | null, AsLeft?: string | null, ChkAsLeft?: string | null, PassFail?: string | null }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.calibrations.delete",
+      "shortPath": "calibrations.delete",
+      "description": "Delete a calibration record",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The GageList record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "number | boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.calibrations.get",
+      "shortPath": "calibrations.get",
+      "description": "One calibration record with its as-found and as-left readings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The GageList record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Id: number, RecordNumber?: string | null, EquipmentRefId?: number | null, SerialNumber?: string | null, ControlNumber?: string | null, AssetNo?: string | null, EquipmentAsFound?: string | null, EquipmentAsLeft?: string | null, LastCalibrationDate?: string | null, CalibrationDueDate?: string | null, MasterStandard?: string | null, Type?: string | null, Manufacturer?: string | null, Website?: string | null, Model?: string | null, TypesMeasurement?: string | null, UnitOfMeasure?: string | null, RangeOrSize?: string | null, Tolerance?: string | null, Location?: string | null, ResponsibleUser?: string | null, Interval?: string | null, Years?: number | null, Months?: number | null, Days?: number | null, Uncertainty?: string | null, CalibrationTest?: string | null, OtherInformation?: string | null, CreatedBy?: string | null, UpdatedBy?: string | null, IsDeleted?: boolean | null, UpdatedDate?: string | null }"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.calibrations.list",
+      "shortPath": "calibrations.list",
+      "description": "Calibration records, paged; each names the gage it was run on through `EquipmentRefId`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_number",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Id: number, RecordNumber?: string | null, EquipmentRefId?: number | null, SerialNumber?: string | null, ControlNumber?: string | null, AssetNo?: string | null, EquipmentAsFound?: string | null, EquipmentAsLeft?: string | null, LastCalibrationDate?: string | null, CalibrationDueDate?: string | null, MasterStandard?: string | null, Type?: string | null, Manufacturer?: string | null, Website?: string | null, Model?: string | null, TypesMeasurement?: string | null, UnitOfMeasure?: string | null, RangeOrSize?: string | null, Tolerance?: string | null, Location?: string | null, ResponsibleUser?: string | null, Interval?: string | null, Years?: number | null, Months?: number | null, Days?: number | null, Uncertainty?: string | null, CalibrationTest?: string | null, OtherInformation?: string | null, CreatedBy?: string | null, UpdatedBy?: string | null, IsDeleted?: boolean | null, UpdatedDate?: string | null }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_start",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.calibrations.update",
+      "shortPath": "calibrations.update",
+      "description": "Update a calibration record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "nonoptional"
+          },
+          {
+            "key": "RecordNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EquipmentRefId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The gage this calibration records."
+          },
+          {
+            "key": "EquipmentAsFound",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EquipmentAsLeft",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastCalibrationDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationDueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "MasterStandard",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Manufacturer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SerialNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TypesMeasurement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnitOfMeasure",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "RangeOrSize",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tolerance",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ResponsibleUser",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Interval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Years",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Months",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Days",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Uncertainty",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTest",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OtherInformation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ControlNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AssetNo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationInstructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationEnvironment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTestMode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ConditionReceived",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AdjustmentsRequired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "RepairsRequired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ExernalCalibrationRecord",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestEquipmentFalls",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestEquipmentFallsAsFound",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AppropriateNotified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ToleranceCondition",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ProductRecalled",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ToleranceComment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AdditionalComments",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateCalibrated",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "NextCalibrationDue",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "CalibrationDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "TestEquipmentAvailability",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestCost",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTechinician",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DescribedRepairs",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ActionRequired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FitIntendedPurpose",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTests",
+            "optional": true,
+            "type": "{ Id: number, CalibrationRefId?: number | null, TestNumber?: string | null, Parameter?: string | null, ExpectedResult?: string | null, RefStandardID?: string | null, AsFound?: string | null, AsLeft?: string | null, ChkAsLeft?: string | null, PassFail?: string | null }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "number | boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.customFields.list",
+      "shortPath": "customFields.list",
+      "description": "The account’s custom fields: each `Id` is the `FieldId` a value write takes, and `ForType` says whether it belongs on gages or calibrations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Id?: number | null, FieldName?: string | null, FieldType?: string | null, FieldOptions?: string | null, Status?: string | null, ForType?: string | null, GageRequired?: number | null, CalibrationRequired?: number | null, DisplayOrder?: number | null, UpdatedDate?: string | null }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.customFields.updateValues",
+      "shortPath": "customFields.updateValues",
+      "description": "Create or update custom field values on a gage or a calibration. `RefType` is `1` for a gage and `2` for a calibration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": false,
+            "type": "{ Id: number, FieldId: number, RefID: number, RefType: 1 | 2, FieldValue: string }[]",
+            "description": "Sent as a bare JSON array, which is what this route takes rather than the usual object."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.gages.create",
+      "shortPath": "gages.create",
+      "description": "Add a gage, with its serial and control numbers, calibration interval and responsible user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number",
+            "description": "`0` on a create."
+          },
+          {
+            "key": "SerialNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ControlNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AssetNo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PurchasePrice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastCalibrationDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "CalibrationDueDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "MasterStandard",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Manufacturer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TypesMeasurement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnitOfMeasure",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "RangeOrSize",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tolerance",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateAquired",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "SourceOrVendor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ConditionAquired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ResponsibleUser",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NotificationList",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Interval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Years",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Months",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Days",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CalibrationEnvironment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationInstructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OtherInformation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTestMode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Area",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NISTNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestTemplates",
+            "optional": true,
+            "type": "{ Id: number, EquipmentRefId?: number | null, TestNumber?: string | null, Parameter?: string | null, ExpectedResult?: string | null, RefStandardID?: string | null }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.gages.delete",
+      "shortPath": "gages.delete",
+      "description": "Delete a gage. GageList marks it deleted rather than erasing it, but it stops appearing in the active list",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The GageList record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "number | boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.gages.get",
+      "shortPath": "gages.get",
+      "description": "One gage with its calibration dates, interval and assigned user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The GageList record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Id: number, SerialNumber?: string | null, ControlNumber?: string | null, AssetNo?: string | null, PurchasePrice?: number | null, Status?: string | null, LastCalibrationDate?: string | null, CalibrationDueDate?: string | null, MasterStandard?: string | null, Type?: string | null, Manufacturer?: string | null, Website?: string | null, Model?: string | null, TypesMeasurement?: string | null, UnitOfMeasure?: string | null, RangeOrSize?: string | null, Tolerance?: string | null, DateAquired?: string | null, SourceOrVendor?: string | null, ConditionAquired?: string | null, Location?: string | null, ResponsibleUser?: string | null, NotificationList?: string | null, Interval?: string | null, Years?: number | null, Months?: number | null, Days?: number | null, CalibrationEnvironment?: string | null, CalibrationInstructions?: string | null, OtherInformation?: string | null, CalibrationTestMode?: string | null, CreatedBy?: string | null, UpdatedBy?: string | null, IsDeleted?: boolean | null, Area?: string | null, NISTNumber?: string | null, UpdatedDate?: string | null, IntervalCategory?: string | null, LastCalibrationDateStr?: string | null, CalibrationCount?: number | null, CreatedDate?: string | null, ImageName?: string | null }"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.gages.list",
+      "shortPath": "gages.list",
+      "description": "Gages on the site, paged by `start` and `record_number` in the request body; `next_start` gives the next page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip. Defaults to 0."
+          },
+          {
+            "key": "record_number",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return in this page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Every gage on the site."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Gages in this page."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Id: number, SerialNumber?: string | null, ControlNumber?: string | null, AssetNo?: string | null, PurchasePrice?: number | null, Status?: string | null, LastCalibrationDate?: string | null, CalibrationDueDate?: string | null, MasterStandard?: string | null, Type?: string | null, Manufacturer?: string | null, Website?: string | null, Model?: string | null, TypesMeasurement?: string | null, UnitOfMeasure?: string | null, RangeOrSize?: string | null, Tolerance?: string | null, DateAquired?: string | null, SourceOrVendor?: string | null, ConditionAquired?: string | null, Location?: string | null, ResponsibleUser?: string | null, NotificationList?: string | null, Interval?: string | null, Years?: number | null, Months?: number | null, Days?: number | null, CalibrationEnvironment?: string | null, CalibrationInstructions?: string | null, OtherInformation?: string | null, CalibrationTestMode?: string | null, CreatedBy?: string | null, UpdatedBy?: string | null, IsDeleted?: boolean | null, Area?: string | null, NISTNumber?: string | null, UpdatedDate?: string | null, IntervalCategory?: string | null, LastCalibrationDateStr?: string | null, CalibrationCount?: number | null, CreatedDate?: string | null, ImageName?: string | null }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_start",
+            "optional": false,
+            "type": "number | null",
+            "description": "The `start` for the next page; null on the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.gages.update",
+      "shortPath": "gages.update",
+      "description": "Update a gage. The body is the whole record with its `Id`, not a partial patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "nonoptional"
+          },
+          {
+            "key": "SerialNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ControlNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AssetNo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PurchasePrice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastCalibrationDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "CalibrationDueDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "MasterStandard",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Manufacturer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TypesMeasurement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnitOfMeasure",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "RangeOrSize",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tolerance",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateAquired",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "SourceOrVendor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ConditionAquired",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ResponsibleUser",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NotificationList",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Interval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Years",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Months",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Days",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CalibrationEnvironment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationInstructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OtherInformation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalibrationTestMode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Area",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "NISTNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TestTemplates",
+            "optional": true,
+            "type": "{ Id: number, EquipmentRefId?: number | null, TestNumber?: string | null, Parameter?: string | null, ExpectedResult?: string | null, RefStandardID?: string | null }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "number | boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.manufacturers.create",
+      "shortPath": "manufacturers.create",
+      "description": "Add a manufacturer with its address and contact details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Website",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.manufacturers.delete",
+      "shortPath": "manufacturers.delete",
+      "description": "Delete a manufacturer",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The GageList record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "number | boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.manufacturers.list",
+      "shortPath": "manufacturers.list",
+      "description": "Instrument manufacturers, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_number",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Id: number, Name?: string | null, Address?: string | null, Phone?: string | null, Fax?: string | null, Website?: string | null }[]"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_start",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gagelist.api.manufacturers.update",
+      "shortPath": "manufacturers.update",
+      "description": "Update a manufacturer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "nonoptional"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Website",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "number | boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

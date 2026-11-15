@@ -1,0 +1,763 @@
+{
+  "id": "raisely",
+  "displayName": "Raisely",
+  "description": "Charity fundraising with Raisely - read campaigns, donations, fundraising profiles and designations, record a donation, and update a fundraising profile through the Raisely API.",
+  "npmPackageName": "@corsair-dev/raisely",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "raisely.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Fetch one campaign by uuid or path, including its totals, goal and public URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign uuid or path, as returned by `campaigns.list`."
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full record. Only meaningful with a token that can see private fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, path?: string | null, url?: string | null, mode?: string | null, status?: string | null, currency?: string | null, goal?: number | null, total?: number | null, totalPercent?: number | null, grandTotal?: number | null, version?: string | null, theme?: string | null, primaryDomain?: string | null, organisationUuid?: string | null, campaignEndsAt?: string | null, createdAt?: string | null, deletedAt?: string | null, defaultDesignation?: string | null, isTaxDeductible?: boolean | null, enablePartialTaxReceipting?: boolean | null, allowExperiments?: boolean | null, showRaiselyCheckbox?: boolean | null, publicKey?: string | null, profile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, urls?: string[] | null, config?: Record<string, any> | null, public?: Record<string, any> | null, private?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "raisely.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List the organisation’s campaigns with path, mode and status filters plus offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. Raisely applies its own default when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip. Pass the `next_offset` from the previous page rather than computing it."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A search phrase."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The attribute to sort on, used with `order`."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "The sort direction; only applied when `sort` is also set."
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full record. Only meaningful with a token that can see private fields."
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string",
+            "description": "Only the campaign with this path."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string",
+            "description": "The campaign mode."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "The campaign status."
+          },
+          {
+            "key": "prune_config",
+            "optional": true,
+            "type": "boolean",
+            "description": "Drop `config` from each record to shrink the response."
+          },
+          {
+            "key": "include_tags",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaigns",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, path?: string | null, url?: string | null, mode?: string | null, status?: string | null, currency?: string | null, goal?: number | null, total?: number | null, totalPercent?: number | null, grandTotal?: number | null, version?: string | null, theme?: string | null, primaryDomain?: string | null, organisationUuid?: string | null, campaignEndsAt?: string | null, createdAt?: string | null, deletedAt?: string | null, defaultDesignation?: string | null, isTaxDeductible?: boolean | null, enablePartialTaxReceipting?: boolean | null, allowExperiments?: boolean | null, showRaiselyCheckbox?: boolean | null, publicKey?: string | null, profile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, urls?: string[] | null, config?: Record<string, any> | null, public?: Record<string, any> | null, private?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total?: number | null, pages?: number | null, offset?: number | null, limit?: number | null, prevUrl?: string | boolean | null, nextUrl?: string | boolean | null } | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `offset` to read the next page; null on the last."
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "raisely.api.designations.list",
+      "shortPath": "designations.list",
+      "description": "List the designations a donation can be attributed to, optionally for one campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. Raisely applies its own default when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip. Pass the `next_offset` from the previous page rather than computing it."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A search phrase."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The attribute to sort on, used with `order`."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "The sort direction; only applied when `sort` is also set."
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full record. Only meaningful with a token that can see private fields."
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "string",
+            "description": "Only the designations of this campaign."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designations",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, publicName?: string | null, externalId?: string | null, status?: string | null, organisationId?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total?: number | null, pages?: number | null, offset?: number | null, limit?: number | null, prevUrl?: string | boolean | null, nextUrl?: string | boolean | null } | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `offset` to read the next page; null on the last."
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "raisely.api.donations.create",
+      "shortPath": "donations.create",
+      "description": "Record a donation already paid elsewhere, with the donor details and the gateway it came through; it charges no one and sends no receipt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "The donation total in the smallest currency unit, so 2500 is $25.00."
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string",
+            "description": "A three-letter currency code."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The donor email."
+          },
+          {
+            "key": "method",
+            "optional": false,
+            "type": "string",
+            "description": "The payment gateway, such as `CREDIT_CARD`, `PAYPAL` or `APPLE_PAY`."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "ONLINE | OFFLINE",
+            "description": "Raisely stores every donation recorded on this route as `OFFLINE`, whatever is sent, so pass `OFFLINE`. The route only records a payment made elsewhere and charges nothing."
+          },
+          {
+            "key": "campaign_uuid",
+            "optional": true,
+            "type": "string",
+            "description": "The campaign the donation belongs to."
+          },
+          {
+            "key": "profile_uuid",
+            "optional": true,
+            "type": "string",
+            "description": "The fundraising profile the donation is credited to."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preferredName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "anonymous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 8601 timestamp."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "LIVE | TEST"
+          },
+          {
+            "key": "designation",
+            "optional": true,
+            "type": "string",
+            "description": "The designation uuid to attribute the donation to."
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | Record<string, string | number | boolean | null> | (string | number | boolean)[] | null> | null"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | Record<string, string | number | boolean | null> | (string | number | boolean)[] | null> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "donation",
+            "optional": false,
+            "type": "{ uuid?: string | null, id?: number | null, amount?: number | null, amountRefunded?: number | null, currency?: string | null, currencySymbol?: string | null, campaignCurrency?: string | null, campaignAmount?: number | null, campaignUuid?: string | null, displayTotal?: number | null, donationTotal?: number | null, organisationUuid?: string | null, profileUuid?: string | null, profile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, date?: string | null, createdAt?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, preferredName?: string | null, message?: string | null, anonymous?: boolean | null, method?: string | null, methodType?: string | null, mode?: string | null, status?: string | null, processing?: string | null, declineCode?: string | null, isFraud?: boolean | null, isSuspicious?: boolean | null, fee?: number | null, feeOptIn?: boolean | null, feeModel?: string | null, gst?: number | null, includesGiftAid?: boolean | null, giftAidText?: string | null, country?: string | null, postcode?: string | null, phoneNumber?: string | null, designationUuid?: string | null, designation?: { uuid?: string | null, name?: string | null, publicName?: string | null } | null, allocations?: { amount?: number | null, amountRefunded?: number | null, campaignAmount?: number | null, campaignAmountRefunded?: number | null, designationUuid?: string | null, designation?: { uuid?: string | null, name?: string | null, publicName?: string | null } | null }[] | null, items?: { amount?: number | null, amountRefunded?: number | null, attendance?: string | null, quantity?: number | null, description?: string | null, name?: string | null }[] | null, itemTypes?: string[] | null, context?: Record<string, string> | null, public?: Record<string, any> | null, private?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "raisely.api.donations.get",
+      "shortPath": "donations.get",
+      "description": "Fetch one donation by uuid with its amount, gateway state and designation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "donation_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The donation uuid."
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full record. Only meaningful with a token that can see private fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "donation",
+            "optional": false,
+            "type": "{ uuid?: string | null, id?: number | null, amount?: number | null, amountRefunded?: number | null, currency?: string | null, currencySymbol?: string | null, campaignCurrency?: string | null, campaignAmount?: number | null, campaignUuid?: string | null, displayTotal?: number | null, donationTotal?: number | null, organisationUuid?: string | null, profileUuid?: string | null, profile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, date?: string | null, createdAt?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, preferredName?: string | null, message?: string | null, anonymous?: boolean | null, method?: string | null, methodType?: string | null, mode?: string | null, status?: string | null, processing?: string | null, declineCode?: string | null, isFraud?: boolean | null, isSuspicious?: boolean | null, fee?: number | null, feeOptIn?: boolean | null, feeModel?: string | null, gst?: number | null, includesGiftAid?: boolean | null, giftAidText?: string | null, country?: string | null, postcode?: string | null, phoneNumber?: string | null, designationUuid?: string | null, designation?: { uuid?: string | null, name?: string | null, publicName?: string | null } | null, allocations?: { amount?: number | null, amountRefunded?: number | null, campaignAmount?: number | null, campaignAmountRefunded?: number | null, designationUuid?: string | null, designation?: { uuid?: string | null, name?: string | null, publicName?: string | null } | null }[] | null, items?: { amount?: number | null, amountRefunded?: number | null, attendance?: string | null, quantity?: number | null, description?: string | null, name?: string | null }[] | null, itemTypes?: string[] | null, context?: Record<string, string> | null, public?: Record<string, any> | null, private?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "raisely.api.donations.list",
+      "shortPath": "donations.list",
+      "description": "List donations with campaign, profile, status, mode and currency filters plus offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. Raisely applies its own default when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip. Pass the `next_offset` from the previous page rather than computing it."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A search phrase."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The attribute to sort on, used with `order`."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "The sort direction; only applied when `sort` is also set."
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full record. Only meaningful with a token that can see private fields."
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "string",
+            "description": "Only this campaign uuid."
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string",
+            "description": "Only this profile uuid."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "Only this user uuid."
+          },
+          {
+            "key": "organisation",
+            "optional": true,
+            "type": "string",
+            "description": "Only this organisation uuid."
+          },
+          {
+            "key": "designation",
+            "optional": true,
+            "type": "string",
+            "description": "Only this designation uuid."
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string",
+            "description": "`LIVE` or `TEST`."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "The donation type."
+          },
+          {
+            "key": "is_suspicious",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "donations",
+            "optional": false,
+            "type": "{ uuid?: string | null, id?: number | null, amount?: number | null, amountRefunded?: number | null, currency?: string | null, currencySymbol?: string | null, campaignCurrency?: string | null, campaignAmount?: number | null, campaignUuid?: string | null, displayTotal?: number | null, donationTotal?: number | null, organisationUuid?: string | null, profileUuid?: string | null, profile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, date?: string | null, createdAt?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, preferredName?: string | null, message?: string | null, anonymous?: boolean | null, method?: string | null, methodType?: string | null, mode?: string | null, status?: string | null, processing?: string | null, declineCode?: string | null, isFraud?: boolean | null, isSuspicious?: boolean | null, fee?: number | null, feeOptIn?: boolean | null, feeModel?: string | null, gst?: number | null, includesGiftAid?: boolean | null, giftAidText?: string | null, country?: string | null, postcode?: string | null, phoneNumber?: string | null, designationUuid?: string | null, designation?: { uuid?: string | null, name?: string | null, publicName?: string | null } | null, allocations?: { amount?: number | null, amountRefunded?: number | null, campaignAmount?: number | null, campaignAmountRefunded?: number | null, designationUuid?: string | null, designation?: { uuid?: string | null, name?: string | null, publicName?: string | null } | null }[] | null, items?: { amount?: number | null, amountRefunded?: number | null, attendance?: string | null, quantity?: number | null, description?: string | null, name?: string | null }[] | null, itemTypes?: string[] | null, context?: Record<string, string> | null, public?: Record<string, any> | null, private?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total?: number | null, pages?: number | null, offset?: number | null, limit?: number | null, prevUrl?: string | boolean | null, nextUrl?: string | boolean | null } | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `offset` to read the next page; null on the last."
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "raisely.api.profiles.get",
+      "shortPath": "profiles.get",
+      "description": "Fetch one fundraising profile by its path, including its totals and goal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_path",
+            "optional": false,
+            "type": "string",
+            "description": "The profile uuid or path, as returned by `profiles.list`."
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full record. Only meaningful with a token that can see private fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null, type?: string | null, status?: string | null, description?: string | null, currency?: string | null, goal?: number | null, total?: number | null, grandTotal?: number | null, campaignTotal?: number | null, campaignDisplayTotal?: number | null, activityTotal?: number | null, activityTotalPercent?: number | null, donationCount?: number | null, donationRecordCount?: number | null, uniqueDonors?: number | null, selfDonationTotal?: number | null, nonSelfDonationTotal?: number | null, exerciseTotal?: number | null, exerciseTotalTime?: number | null, exerciseGoal?: number | null, exerciseGoalTime?: number | null, isCampaignProfile?: boolean | null, paid?: boolean | null, shared?: boolean | null, pronouns?: string | null, fundraiserTheme?: string | null, facebookFundraiserId?: string | null, subscriptionCount?: number | null, teamProfileCount?: number | null, organisationProfileCount?: number | null, individualProfileCount?: number | null, campaignUuid?: string | null, userUuid?: string | null, parentUuid?: string | null, createdAt?: string | null, updatedAt?: string | null, user?: { uuid?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, photoUrl?: string | null } | null, parent?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, teamProfile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, organisationProfile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, tags?: string[] | null, public?: Record<string, any> | null, private?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "raisely.api.profiles.list",
+      "shortPath": "profiles.list",
+      "description": "List the fundraising profiles in a campaign with their totals, goals and donation counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. Raisely applies its own default when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip. Pass the `next_offset` from the previous page rather than computing it."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A search phrase."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The attribute to sort on, used with `order`."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "The sort direction; only applied when `sort` is also set."
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full record. Only meaningful with a token that can see private fields."
+          },
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign uuid or path. Raisely requires this on `/profiles`."
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the rank fields."
+          },
+          {
+            "key": "rank_donors",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rank_activity_total",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rank_activity_time",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profiles",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null, type?: string | null, status?: string | null, description?: string | null, currency?: string | null, goal?: number | null, total?: number | null, grandTotal?: number | null, campaignTotal?: number | null, campaignDisplayTotal?: number | null, activityTotal?: number | null, activityTotalPercent?: number | null, donationCount?: number | null, donationRecordCount?: number | null, uniqueDonors?: number | null, selfDonationTotal?: number | null, nonSelfDonationTotal?: number | null, exerciseTotal?: number | null, exerciseTotalTime?: number | null, exerciseGoal?: number | null, exerciseGoalTime?: number | null, isCampaignProfile?: boolean | null, paid?: boolean | null, shared?: boolean | null, pronouns?: string | null, fundraiserTheme?: string | null, facebookFundraiserId?: string | null, subscriptionCount?: number | null, teamProfileCount?: number | null, organisationProfileCount?: number | null, individualProfileCount?: number | null, campaignUuid?: string | null, userUuid?: string | null, parentUuid?: string | null, createdAt?: string | null, updatedAt?: string | null, user?: { uuid?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, photoUrl?: string | null } | null, parent?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, teamProfile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, organisationProfile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, tags?: string[] | null, public?: Record<string, any> | null, private?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total?: number | null, pages?: number | null, offset?: number | null, limit?: number | null, prevUrl?: string | boolean | null, nextUrl?: string | boolean | null } | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `offset` to read the next page; null on the last."
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "raisely.api.profiles.update",
+      "shortPath": "profiles.update",
+      "description": "Update a fundraising profile: its name, description, goal, photo or custom values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "The profile description; null clears it."
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "photoUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "The profile photo URL; null clears it."
+          },
+          {
+            "key": "pronouns",
+            "optional": true,
+            "type": "string | null",
+            "description": "The fundraiser pronouns; null clears them."
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | Record<string, string | number | boolean | null> | (string | number | boolean)[] | null> | null"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | Record<string, string | number | boolean | null> | (string | number | boolean)[] | null> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null, type?: string | null, status?: string | null, description?: string | null, currency?: string | null, goal?: number | null, total?: number | null, grandTotal?: number | null, campaignTotal?: number | null, campaignDisplayTotal?: number | null, activityTotal?: number | null, activityTotalPercent?: number | null, donationCount?: number | null, donationRecordCount?: number | null, uniqueDonors?: number | null, selfDonationTotal?: number | null, nonSelfDonationTotal?: number | null, exerciseTotal?: number | null, exerciseTotalTime?: number | null, exerciseGoal?: number | null, exerciseGoalTime?: number | null, isCampaignProfile?: boolean | null, paid?: boolean | null, shared?: boolean | null, pronouns?: string | null, fundraiserTheme?: string | null, facebookFundraiserId?: string | null, subscriptionCount?: number | null, teamProfileCount?: number | null, organisationProfileCount?: number | null, individualProfileCount?: number | null, campaignUuid?: string | null, userUuid?: string | null, parentUuid?: string | null, createdAt?: string | null, updatedAt?: string | null, user?: { uuid?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, photoUrl?: string | null } | null, parent?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, teamProfile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, organisationProfile?: { uuid?: string | null, name?: string | null, path?: string | null, photoUrl?: string | null } | null, tags?: string[] | null, public?: Record<string, any> | null, private?: Record<string, any> | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
