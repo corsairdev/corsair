@@ -14,16 +14,27 @@ const ETerminOpaqueResponseSchema = z.union([
  * instead of enumerating every account language. Keep schemas strict for all
  * other keys while accepting those documented string-valued parameters.
  */
-function withLanguageFields<T extends z.ZodObject<z.ZodRawShape>>(
-	schema: T,
+function withLanguageFields<Shape extends z.ZodRawShape>(
+	schema: z.ZodObject<Shape>,
 	fieldName: RegExp,
 ) {
-	return schema.catchall(z.string()).superRefine((value, context) => {
-		for (const key of Object.keys(value)) {
-			if (!(key in schema.shape) && !fieldName.test(key)) {
+	// Typed by the concrete shape so callers keep the declared fields (a
+	// numeric, required id); a string catchall would clash with those, so the
+	// extra keys are typed unknown and their names and string values are
+	// checked at runtime below.
+	return schema.catchall(z.unknown()).superRefine((value, context) => {
+		for (const [key, fieldValue] of Object.entries(value)) {
+			if (key in schema.shape) continue;
+			if (!fieldName.test(key)) {
 				context.addIssue({
 					code: 'custom',
 					message: `Unrecognized input field: ${key}`,
+					path: [key],
+				});
+			} else if (typeof fieldValue !== 'string') {
+				context.addIssue({
+					code: 'custom',
+					message: `${key} must be a string`,
 					path: [key],
 				});
 			}
