@@ -113,6 +113,32 @@ describe('GoDial client', () => {
 		}
 	});
 
+	it('redacts a two-letter name as a whole word only', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(
+					'{"error":{"statusCode":422,"message":"Contact Al is invalid"}}',
+					{ status: 422, headers: { 'content-type': 'application/json' } },
+				),
+			);
+
+		// unknown because the shared transport's rejection value has no static type until narrowed.
+		const error = await makeGoDialRequest('/meta/api/externals/contact/add', {
+			method: 'POST',
+			apiKey: 'secret-token',
+			body: { listId: 'list-1', phone: '+15555550123', name: 'Al' },
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		const serialized = `${error.message} ${JSON.stringify(error.body)}`;
+		expect(serialized).not.toMatch(/\bAl\b/);
+		expect(JSON.stringify(error.body)).toContain(
+			'Contact [REDACTED] is invalid',
+		);
+	});
+
 	it('redacts the query token from transport errors', async () => {
 		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response('{"error":"denied"}', {

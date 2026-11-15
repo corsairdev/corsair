@@ -31,9 +31,10 @@ export type GoDialRequestOptions = {
 	body?: Record<string, unknown>;
 };
 
+// unknown because contact bodies mix strings, arrays and objects.
 function collectStrings(value: unknown, out: Set<string>): void {
 	if (typeof value === 'string') {
-		if (value.length >= 3) out.add(value);
+		if (value.length > 0) out.add(value);
 		return;
 	}
 	if (Array.isArray(value)) {
@@ -45,9 +46,22 @@ function collectStrings(value: unknown, out: Set<string>): void {
 	}
 }
 
+// Values of three characters or more are replaced wherever they appear. A
+// shorter value (a two-letter name) is replaced only as a whole word, so a
+// name like "Al" doesn't turn every "al" inside other words into [REDACTED].
 function scrubString(text: string, secrets: Set<string>): string {
 	let result = text;
-	for (const secret of secrets) result = result.split(secret).join(REDACTED);
+	for (const secret of secrets) {
+		if (secret.length >= 3) {
+			result = result.split(secret).join(REDACTED);
+			continue;
+		}
+		const escaped = secret.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		result = result.replace(
+			new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, 'gu'),
+			REDACTED,
+		);
+	}
 	return result;
 }
 
