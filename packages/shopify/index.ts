@@ -16,7 +16,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import type { ShopifyAuthContext, ShopifyCredentials } from './auth';
-import { resolveShopifyCredentials } from './auth';
+import { resolveShopDomain, resolveShopifyCredentials } from './auth';
 import { Shopify } from './endpoints';
 import type {
 	ShopifyEndpointInputs,
@@ -28,6 +28,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { ShopifySchema } from './schema';
+import {
+	isTokenFresh,
+	requestShopifyClientCredentialsToken,
+	shareMint,
+} from './token';
 import { ShopifyWebhookHandlers } from './webhooks';
 import type { ShopifyWebhookOutput } from './webhooks/receive';
 import {
@@ -39,10 +44,24 @@ import {
 
 export const shopifyAuthConfig = {
 	api_key: {
-		// Both are account-level: a token is scoped to one shop, and the domain
-		// has to travel with it. `get_integration_credentials` is only installed
-		// for oauth_2, so putting the domain under `integration` would throw.
-		account: ['shop_domain'] as const,
+		// All account-level: a token, and the app that mints it, are scoped to
+		// one shop, and the domain has to travel with them.
+		// `get_integration_credentials` is only installed for oauth_2, so
+		// putting these under `integration` would throw.
+		//
+		// Two ways to connect:
+		// - `api_key`: a static Admin API token (`shpat_…` from a legacy custom
+		//   app), which does not expire.
+		// - `client_id` + `client_secret` of a Dev Dashboard app: the key
+		//   builder mints a 24-hour token with them and keeps it in `api_key`,
+		//   with its expiry in `expires_at`. Core and Hub never ask for
+		//   `expires_at`; the plugin writes it.
+		account: [
+			'shop_domain',
+			'client_id',
+			'client_secret',
+			'expires_at',
+		] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -483,19 +502,55 @@ export function shopify<const T extends ShopifyPluginOptions>(
 				return stored;
 			}
 
-			// The key builder returns one string, but a Shopify call needs a
-			// token *and* a shop domain. The token is returned here because core
-			// assigns it to `ctx.key`; the endpoints read both through
-			// `resolveShopifyCredentials`, which normalises the domain.
+			// An instance-level token wins, as before.
+			if (options.key?.trim()) {
+				await resolveShopDomain(ctx, options);
+				return options.key.trim();
+			}
+
+			// A Dev Dashboard app: mint a 24-hour token from its client
+			// credentials, reuse it until shortly before it expires, and give
+			// core a way to mint a new one when Shopify rejects it early.
+			const [clientId, clientSecret] = await Promise.all([
+				ctx.keys.get_client_id(),
+				ctx.keys.get_client_secret(),
+			]);
+			if (clientId?.trim() && clientSecret?.trim()) {
+				const shopDomain = await resolveShopDomain(ctx, options);
+				const mint = (kind: 'routine' | 'forced') =>
+					shareMint(ctx.keys, kind, async () => {
+						const token = await requestShopifyClientCredentialsToken({
+							shopDomain,
+							clientId: clientId.trim(),
+							clientSecret: clientSecret.trim(),
+						});
+						// Token first, then its expiry: the writes are separate, and
+						// a new expiry beside the old token would keep a dead token
+						// looking fresh.
+						await ctx.keys.set_api_key(token.accessToken);
+						await ctx.keys.set_expires_at(String(token.expiresAt));
+						return token.accessToken;
+					});
+				// Called once after a 401: by the endpoint's own request path
+				// (`endpoints/call.ts`) or by core, never both.
+				(
+					ctx as unknown as { _refreshAuth?: () => Promise<string> }
+				)._refreshAuth = () => mint('forced');
+				const [cached, expiresAt] = await Promise.all([
+					ctx.keys.get_api_key(),
+					ctx.keys.get_expires_at(),
+				]);
+				if (cached && isTokenFresh(expiresAt)) return cached;
+				return mint('routine');
+			}
+
+			// A static Admin API token (legacy custom app), which never expires.
 			const credentials: ShopifyCredentials = await resolveShopifyCredentials(
 				// unknown: the key builder's context carries the account key
 				// manager; ShopifyAuthContext is the structural slice it needs,
 				// including the domain accessor generated from authConfig.
 				ctx as unknown as ShopifyAuthContext,
-				{
-					key: options.key,
-					shopDomain: options.shopDomain,
-				},
+				{ shopDomain: options.shopDomain },
 			);
 			return credentials.accessToken;
 		},
@@ -515,4 +570,10 @@ export type {
 	ShopifyEndpointInputs,
 	ShopifyEndpointOutputs,
 } from './endpoints/types';
+export {
+	isTokenFresh,
+	requestShopifyClientCredentialsToken,
+	ShopifyTokenError,
+	TOKEN_RENEW_BEFORE_SECONDS,
+} from './token';
 export type { ShopifyWebhookOutput } from './webhooks/receive';

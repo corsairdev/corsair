@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import type { z } from 'zod';
 import type { ShopifyContext } from '..';
 import { resolveShopDomain } from '../auth';
@@ -40,6 +41,15 @@ export function assertNoUserErrors(
 	throw new ShopifyUserError(
 		`${operation} was rejected: ${first?.message ?? 'no message'}`,
 		errors,
+	);
+}
+
+/** HTTP 401 from Shopify: the token was not accepted. */
+// unknown: a caught value; only its `status` is read.
+function isUnauthorized(error: unknown): boolean {
+	return (
+		(error instanceof ApiError || error instanceof ShopifyAPIError) &&
+		error.status === 401
 	);
 }
 
@@ -99,7 +109,33 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	// not part of the key, so it is resolved separately.
 	const shopDomain = await resolveShopDomain(ctx, ctx.options ?? {});
 
+	// Set by the key builder for a Dev Dashboard app (client credentials).
+	// Shopify can reject a token before its recorded expiry (the app was
+	// reinstalled, the secret rotated); one renewal and one retry cover that.
+	// A 401 means Shopify did not run the operation, so the retry is safe for
+	// a mutation too. Core skips its own retry once this one has run.
+	const renew = (ctx as { _refreshAuth?: () => Promise<string> })._refreshAuth;
+	let accessToken = ctx.key;
+	let renewed = false;
+
 	const send = async (
+		query: string,
+		// unknown: variables differ per operation and are serialised as JSON.
+		variables: Record<string, unknown>,
+	): Promise<Record<string, unknown>> => {
+		try {
+			return await sendOnce(query, variables);
+		} catch (error) {
+			if (renewed || typeof renew !== 'function' || !isUnauthorized(error)) {
+				throw error;
+			}
+			renewed = true;
+			accessToken = await renew();
+			return await sendOnce(query, variables);
+		}
+	};
+
+	const sendOnce = async (
 		query: string,
 		// unknown: variables differ per operation and are serialised as JSON.
 		variables: Record<string, unknown>,
@@ -108,7 +144,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		// record and each shape function narrows the part it needs.
 		const response = await makeShopifyGraphqlRequest<Record<string, unknown>>({
 			shopDomain,
-			accessToken: ctx.key,
+			accessToken,
 			query,
 			variables,
 			// A retry is safe for reads and for the polling query, which has no
