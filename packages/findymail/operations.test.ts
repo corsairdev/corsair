@@ -679,6 +679,24 @@ it('accepts monitor responses that echo object and array request fields', async 
 	await expect(api.monitors.list({})).resolves.toEqual([response]);
 });
 
+it('accepts icp_filters as a JSON string, the form the OpenAPI file declares', async () => {
+	const response = {
+		...monitor,
+		icp_filters: '{"industries":["Biotechnology"]}',
+	};
+	fetchMock
+		.mockResolvedValueOnce(jsonResponse(response, 201))
+		.mockResolvedValueOnce(jsonResponse(response))
+		.mockResolvedValueOnce(jsonResponse([response]));
+	await expect(
+		api.monitors.create({ name: 'm', signal_type: 'keyword_mention' }),
+	).resolves.toEqual(response);
+	await expect(api.monitors.update({ id: 1, name: 'm' })).resolves.toEqual(
+		response,
+	);
+	await expect(api.monitors.list({})).resolves.toEqual([response]);
+});
+
 it('accepts null fields the provider sends in lookup responses', async () => {
 	fetchMock
 		.mockResolvedValueOnce(

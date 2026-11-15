@@ -835,7 +835,7 @@ await corsair.findymail.api.monitors.create({});
 | `signal_level` | `string \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `keywords` | `string[] \| null` | No | — |
-| `icp_filters` | `object \| null` | No | — |
+| `icp_filters` | `object \| string \| null` | No | — |
 | `webhook_url` | `string \| null` | No | — |
 | `webhook_paused_at` | `string \| null` | No | — |
 | `post_url` | `string \| null` | No | — |
@@ -865,7 +865,7 @@ await corsair.findymail.api.monitors.create({});
   countries?: string[] | null,
   job_title_keywords?: string[] | null,
   seniority_levels?: number[] | null
-} | null
+} | string | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -939,7 +939,7 @@ await corsair.findymail.api.monitors.list({});
     countries?: string[] | null,
     job_title_keywords?: string[] | null,
     seniority_levels?: number[] | null
-  } | null,
+  } | string | null,
   webhook_url?: string | null,
   webhook_paused_at?: string | null,
   post_url?: string | null,
@@ -1024,7 +1024,7 @@ await corsair.findymail.api.monitors.update({});
 | `signal_level` | `string \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `keywords` | `string[] \| null` | No | — |
-| `icp_filters` | `object \| null` | No | — |
+| `icp_filters` | `object \| string \| null` | No | — |
 | `webhook_url` | `string \| null` | No | — |
 | `webhook_paused_at` | `string \| null` | No | — |
 | `post_url` | `string \| null` | No | — |
@@ -1053,7 +1053,7 @@ await corsair.findymail.api.monitors.update({});
   countries?: string[] | null,
   job_title_keywords?: string[] | null,
   seniority_levels?: number[] | null
-} | null
+} | string | null
 ```
 </Accordion>
 </AccordionGroup>

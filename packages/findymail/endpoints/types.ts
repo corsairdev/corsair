@@ -541,16 +541,21 @@ export const signals_listOutput = z
 
 // Monitor responses echo request fields that are sent as objects and arrays
 // (icp_filters, engagement_types, target_companies); the documented examples
-// only show them as null, so both the request form and a string are accepted.
+// only show them as null and the OpenAPI file types icp_filters as a string, so
+// both the request form and a string are accepted.
 const monitorIcpFiltersOutput = z
-	.object({
-		industries: z.array(z.string()).nullish(),
-		employee_count_ranges: z.array(z.string()).nullish(),
-		countries: z.array(z.string()).nullish(),
-		job_title_keywords: z.array(z.string()).nullish(),
-		seniority_levels: z.array(z.number()).nullish(),
-	})
-	.loose()
+	.union([
+		z
+			.object({
+				industries: z.array(z.string()).nullish(),
+				employee_count_ranges: z.array(z.string()).nullish(),
+				countries: z.array(z.string()).nullish(),
+				job_title_keywords: z.array(z.string()).nullish(),
+				seniority_levels: z.array(z.number()).nullish(),
+			})
+			.loose(),
+		z.string(),
+	])
 	.nullish();
 const monitorStringListOutput = z
 	.union([z.array(z.string()), z.string()])
