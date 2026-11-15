@@ -157,11 +157,9 @@ apiExamples:
   categories.create:
     groupId: "66e81d231d512707a7266d32"
     name: "Design Review"
-    type: "CUSTOM"
   categories.update:
     categoryId: "5f057949f338cd432a794a12"
     name: "Design Sprint"
-    type: "CUSTOM"
   categories.search:
     query:
       name: "Design"
