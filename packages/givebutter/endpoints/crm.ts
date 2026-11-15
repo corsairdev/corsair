@@ -107,7 +107,7 @@ export const Activities = {
 	list: define('listActivities', {
 		method: 'GET',
 		path: ({ contact }) => `/v1/contacts/${pathValue(contact)}/activities`,
-		query: ({ type, page }) => ({ type, page }),
+		query: ({ type, page, per_page }) => ({ type, page, per_page }),
 	}),
 	create: define('createActivity', {
 		method: 'POST',
@@ -155,7 +155,7 @@ export const Funds = {
 	list: define('listFunds', {
 		method: 'GET',
 		path: () => '/v1/funds',
-		query: ({ page }) => ({ page }),
+		query: ({ page, per_page }) => ({ page, per_page }),
 	}),
 	create: define('createFund', {
 		method: 'POST',
@@ -209,7 +209,7 @@ export const HouseholdContacts = {
 	list: define('listHouseholdContacts', {
 		method: 'GET',
 		path: ({ household }) => `/v1/households/${pathValue(household)}/contacts`,
-		query: ({ page }) => ({ page }),
+		query: ({ page, per_page }) => ({ page, per_page }),
 	}),
 	add: define('addHouseholdContact', {
 		method: 'POST',

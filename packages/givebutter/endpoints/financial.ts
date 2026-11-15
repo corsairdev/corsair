@@ -77,7 +77,7 @@ export const Messages = {
 	list: define('listMessages', {
 		method: 'GET',
 		path: () => '/v1/messages',
-		query: ({ page }) => ({ page }),
+		query: ({ page, per_page }) => ({ page, per_page }),
 	}),
 	get: define('getMessage', {
 		method: 'GET',
@@ -89,7 +89,7 @@ export const Payouts = {
 	list: define('listPayouts', {
 		method: 'GET',
 		path: () => '/v1/payouts',
-		query: ({ page }) => ({ page }),
+		query: ({ page, per_page }) => ({ page, per_page }),
 	}),
 	get: define('getPayout', {
 		method: 'GET',
@@ -101,7 +101,7 @@ export const Pledges = {
 	list: define('listPledges', {
 		method: 'GET',
 		path: () => '/v1/pledges',
-		query: ({ page }) => ({ page }),
+		query: ({ page, per_page }) => ({ page, per_page }),
 	}),
 	get: define('getPledge', {
 		method: 'GET',
@@ -113,7 +113,8 @@ export const Plans = {
 	list: define('listPlans', {
 		method: 'GET',
 		path: () => '/v1/plans',
-		query: ({ contacts, page }) => toQuery({ contacts, page }),
+		query: ({ contacts, page, per_page }) =>
+			toQuery({ contacts, page, per_page }),
 	}),
 	get: define('getPlan', {
 		method: 'GET',
@@ -153,7 +154,7 @@ export const Webhooks = {
 	list: define('listWebhooks', {
 		method: 'GET',
 		path: () => '/v1/webhooks',
-		query: ({ page }) => ({ page }),
+		query: ({ page, per_page }) => ({ page, per_page }),
 	}),
 	create: define('createWebhook', {
 		method: 'POST',
@@ -180,7 +181,7 @@ export const WebhookActivities = {
 	list: define('listWebhookActivities', {
 		method: 'GET',
 		path: ({ webhook }) => `/v1/webhooks/${pathValue(webhook)}/activities`,
-		query: ({ page }) => ({ page }),
+		query: ({ page, per_page }) => ({ page, per_page }),
 	}),
 	get: define('getWebhookActivity', {
 		method: 'GET',

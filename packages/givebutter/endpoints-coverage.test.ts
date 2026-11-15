@@ -105,6 +105,54 @@ it.each([
 	expect(url).toBe(`https://api.givebutter.com${path}`);
 });
 
+it.each([
+	{
+		name: 'contacts',
+		list: () => Contacts.list(ctx as never, { page: 2, per_page: 50 }),
+		path: '/v1/contacts?page=2&per_page=50',
+		body: page,
+	},
+	{
+		name: 'transactions',
+		list: () => Transactions.list(ctx as never, { page: 2, per_page: 50 }),
+		path: '/v1/transactions?page=2&per_page=50',
+		body: { ...page, meta: { ...page.meta, unfiltered_total: 0 } },
+	},
+	{
+		name: 'households',
+		list: () => Households.list(ctx as never, { per_page: 100 }),
+		path: '/v1/households?per_page=100',
+		body: [],
+	},
+	{
+		name: 'plans',
+		list: () => Plans.list(ctx as never, { per_page: 50 }),
+		path: '/v1/plans?per_page=50',
+		body: page,
+	},
+	{
+		name: 'webhooks',
+		list: () => Webhooks.list(ctx as never, { page: 3, per_page: 25 }),
+		path: '/v1/webhooks?page=3&per_page=25',
+		body: page,
+	},
+])(
+	'forwards the documented per_page for $name',
+	async ({ list, path, body }) => {
+		respond(body);
+		await list();
+		const [url] = fetchMock.mock.calls[0] as [string];
+		expect(url).toBe(`https://api.givebutter.com${path}`);
+	},
+);
+
+it('rejects per_page above the documented maximum of 100', async () => {
+	await expect(
+		Contacts.list(ctx as never, { per_page: 101 }),
+	).rejects.toThrow();
+	expect(fetchMock).not.toHaveBeenCalled();
+});
+
 it('accepts documented cleared contact resource fields', async () => {
 	respond({
 		id: 'contact_1',

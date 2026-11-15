@@ -15,7 +15,11 @@ const NullableString = z.string().nullable();
 // integers; responses accept both so a numeric id never fails a successful call.
 const ResourceId = z.union([z.string(), z.number()]);
 const Numeric = z.union([z.number(), z.string()]);
-const PageInput = z.object({ page: z.number().int().min(1).optional() });
+// Givebutter's pagination guide documents `page` and `per_page` (default 20, max 100).
+const PageInput = z.object({
+	page: z.number().int().min(1).optional(),
+	per_page: z.number().int().min(1).max(100).optional(),
+});
 const ContactType = z.enum(['individual', 'company']);
 const Gender = z.enum(['male', 'female', 'other']);
 const ActivityType = z.enum([
@@ -247,9 +251,7 @@ export const GivebutterCrmEndpointInputSchemas = {
 		query: z.string().optional(),
 		sortBy: z.string().optional(),
 		sortByDesc: z.string().optional(),
-		// `page` is the only pagination query parameter documented by Givebutter's
-		// OpenAPI contract; the other paginated responses expose navigation links only.
-		page: z.number().int().min(1).optional(),
+		...PageInput.shape,
 	}),
 	createHousehold: z.object({
 		name: z.string().max(255),

@@ -23,7 +23,11 @@ const NullableString = z.string().nullable();
 // integers; responses accept both so a numeric id never fails a successful call.
 const ResourceId = z.union([z.string(), z.number()]);
 const Numeric = z.union([z.number(), z.string()]);
-const PageInput = z.object({ page: z.number().int().min(1).optional() });
+// Givebutter's pagination guide documents `page` and `per_page` (default 20, max 100).
+const PageInput = z.object({
+	page: z.number().int().min(1).optional(),
+	per_page: z.number().int().min(1).max(100).optional(),
+});
 const CampaignType = z.enum(['general', 'collect', 'fundraise', 'event']);
 const DiscountCodeType = z.enum(['percentage', 'fixed']);
 
