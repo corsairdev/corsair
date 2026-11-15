@@ -1,4 +1,4 @@
-import { createCorsair } from 'corsair/core';
+import { AuthMissingError, createCorsair } from 'corsair/core';
 import { minerstat, minerstatEndpointSchemas } from './index';
 
 const api = createCorsair({ plugins: [minerstat({ key: 'test-key' })] })
@@ -384,6 +384,41 @@ it('rejects malformed responses and missing credentials', async () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	} finally {
 		if (previous !== undefined) process.env.MINERSTAT_API_KEY = previous;
+	}
+});
+it('uses only stored credentials, never a server environment key', async () => {
+	const keyBuilder = minerstat().keyBuilder as NonNullable<
+		ReturnType<typeof minerstat>['keyBuilder']
+	>;
+	// The keyBuilder only reads authType and keys.get_api_key; a full
+	// KeyBuilderContext needs a database, so the test passes a minimal stub.
+	const ctx = (stored: string | null) =>
+		({
+			authType: 'api_key',
+			keys: { get_api_key: async () => stored },
+		}) as unknown as Parameters<typeof keyBuilder>[0];
+	const previous = process.env.MINERSTAT_API_KEY;
+	process.env.MINERSTAT_API_KEY = 'server-env-key';
+	try {
+		await expect(keyBuilder(ctx(null), 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		await expect(keyBuilder(ctx('  '), 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		await expect(keyBuilder(ctx('stored-key'), 'endpoint')).resolves.toBe(
+			'stored-key',
+		);
+		await expect(
+			createCorsair({ plugins: [minerstat()] }).minerstat.api.coins.list({}),
+		).rejects.toBeDefined();
+		expect(fetchMock).not.toHaveBeenCalled();
+	} finally {
+		if (previous === undefined) {
+			Reflect.deleteProperty(process.env, 'MINERSTAT_API_KEY');
+		} else {
+			process.env.MINERSTAT_API_KEY = previous;
+		}
 	}
 });
 it('parses trimmed live responses from the free plan', async () => {

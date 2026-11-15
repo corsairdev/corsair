@@ -186,8 +186,6 @@ export function minerstat<const T extends MinerstatPluginOptions>(
 				const key = await ctx.keys.get_api_key();
 				if (key?.trim()) return key;
 			}
-			const key = process.env.MINERSTAT_API_KEY;
-			if (key?.trim()) return key;
 			throw new AuthMissingError('minerstat', 'api_key');
 		},
 	} satisfies InternalMinerstatPlugin;
