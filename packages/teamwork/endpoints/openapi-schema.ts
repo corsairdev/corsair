@@ -175,6 +175,7 @@ const v3TaskRequestOperationIds = new Set([
 	'v3_post_projects_api_v3_tasks_taskid_subtasks_json',
 ]);
 
+// Teamwork's official V3 task examples use compact arrays and strings; keep these request-only compatibility shapes limited to task.Request operations.
 function v3TaskRequestDefinitions(
 	definitions: Record<string, TeamworkOpenApiSchema>,
 	requireTaskName: boolean,
