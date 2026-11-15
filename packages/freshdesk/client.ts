@@ -145,7 +145,9 @@ function sanitizeApiError(error: ApiError, templatePath: string): ApiError {
 
 // Multipart parts can't carry an empty array or a null, so a field clear sent
 // with an attachment would be dropped and the old value kept. Name the first
-// such field (never its value) and refuse the request instead.
+// such top-level field and refuse the request instead. Only the top-level
+// name is reported: it comes from the route's strict body schema, while
+// nested keys such as custom_fields names are caller data.
 function findMultipartClear(
 	body: FreshdeskRouteInput['body'],
 ): string | undefined {
@@ -156,12 +158,12 @@ function findMultipartClear(
 			continue;
 		}
 		if (typeof value === 'object' && !JSON_PART_FIELDS.has(key)) {
-			for (const [nestedKey, nestedValue] of Object.entries(value)) {
+			for (const nestedValue of Object.values(value)) {
 				if (
 					nestedValue === null ||
 					(Array.isArray(nestedValue) && nestedValue.length === 0)
 				)
-					return `${key}.${nestedKey}`;
+					return key;
 			}
 		}
 	}

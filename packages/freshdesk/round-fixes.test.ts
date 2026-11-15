@@ -202,7 +202,7 @@ describe('Freshdesk bot round fixes', () => {
 	// be dropped silently; the client refuses it before any request.
 	it.each([
 		[{ tags: [] }, 'tags'],
-		[{ custom_fields: { cf_region: null } }, 'custom_fields.cf_region'],
+		[{ custom_fields: { cf_region: null } }, 'custom_fields'],
 		[{ responder_id: null }, 'responder_id'],
 	])('refuses field clears in a multipart update (%j)', async (body, field) => {
 		const caught = await makeFreshdeskRequest(
@@ -214,6 +214,23 @@ describe('Freshdesk bot round fixes', () => {
 		).catch((error: unknown) => error);
 		expect(caught).toBeInstanceOf(Error);
 		expect((caught as Error).message).toContain(field);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('names only the top-level field when a nested key holds caller data', async () => {
+		const caught = await makeFreshdeskRequest(
+			buildContext(),
+			'test-api-key',
+			FRESHDESK_OPERATIONS.updateTicketPut,
+			{
+				pathParams: { id: '7' },
+				body: { custom_fields: { 'private-user@freshdesk.invalid': null } },
+				attachments: [attachment],
+			},
+			// unknown because Promise rejections do not have a guaranteed static type.
+		).catch((error: unknown) => error);
+		expect((caught as Error).message).toContain('custom_fields');
+		expect((caught as Error).message).not.toContain('private-user');
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
