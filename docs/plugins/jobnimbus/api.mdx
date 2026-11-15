@@ -1,0 +1,3570 @@
+---
+title: "JobNimbus API reference"
+sidebarTitle: "API"
+description: "API reference for the JobNimbus plugin in Corsair: every `jobnimbus.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### createActivityType
+
+`account.createActivityType`
+
+Create an activity type in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.account.createActivityType({ TypeName: 'Inspection Call' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TypeName` | `string` | Yes | — |
+| `IsActive` | `boolean` | No | — |
+| `HideFromCalendarView` | `boolean` | No | — |
+| `HideFromTaskList` | `boolean` | No | — |
+| `DefaultName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ActivityTypeId` | `string \| number` | No | — |
+| `TypeName` | `string` | No | — |
+| `IsActive` | `boolean` | No | — |
+
+
+
+---
+
+### createCustomField
+
+`account.createCustomField`
+
+Create a custom field in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.account.createCustomField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `object_type` | `contact \| job \| workorder` | Yes | — |
+| `type` | `date \| double \| long \| string \| boolean \| dropdown` | Yes | — |
+| `is_required` | `boolean` | No | — |
+| `is_currency` | `boolean` | No | — |
+| `options` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `title` | `string` | No | — |
+| `object_type` | `string` | No | — |
+
+
+
+---
+
+### createFileType
+
+`account.createFileType`
+
+Create a file attachment type in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.account.createFileType({ TypeName: 'Permit' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TypeName` | `string` | Yes | — |
+| `IsActive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileTypeId` | `string \| number` | No | — |
+| `TypeName` | `string` | No | — |
+| `IsActive` | `boolean` | No | — |
+
+
+
+---
+
+### createLeadSource
+
+`account.createLeadSource`
+
+Create a lead source in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.account.createLeadSource({ SourceName: 'Local Referral' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SourceName` | `string` | Yes | — |
+| `IsActive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `JobSourceId` | `string \| number` | No | — |
+| `SourceName` | `string` | No | — |
+| `IsActive` | `boolean` | No | — |
+
+
+
+---
+
+### createLocation
+
+`account.createLocation`
+
+Create a company location in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.account.createLocation({ name: 'Northwest Branch' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `address_line1` | `string` | No | — |
+| `address_line2` | `string` | No | — |
+| `code` | `string` | No | — |
+| `city` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+---
+
+### createTaskType
+
+`account.createTaskType`
+
+Create a task type in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.account.createTaskType({ TypeName: 'Site Survey' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TypeName` | `string` | Yes | — |
+| `IsActive` | `boolean` | No | — |
+| `HideFromCalendarView` | `boolean` | No | — |
+| `HideFromTaskList` | `boolean` | No | — |
+| `DefaultName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TaskTypeId` | `string \| number` | No | — |
+| `TypeName` | `string` | No | — |
+| `IsActive` | `boolean` | No | — |
+
+
+
+---
+
+### createWorkflow
+
+`account.createWorkflow`
+
+Create a workflow in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.account.createWorkflow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `object_type` | `contact \| job \| workorder` | Yes | — |
+| `is_sub_contractor` | `boolean` | No | — |
+| `can_access_by_all` | `boolean` | No | — |
+| `is_vendor` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_supplier` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `object_type` | `string` | No | — |
+
+
+
+---
+
+### createWorkflowStatus
+
+`account.createWorkflowStatus`
+
+Create a status within a workflow in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.account.createWorkflowStatus({ workflowid: 'wf_example', name: 'Under Review' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `is_lead` | `boolean` | No | — |
+| `is_closed` | `boolean` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `send_to_quickbooks` | `boolean` | No | — |
+| `force_mobile_sync` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### getGroups
+
+`account.getGroups`
+
+Retrieve group configuration in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.account.getGroups({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  managers?: string[],
+  members?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSettings
+
+`account.getSettings`
+
+Retrieve account settings configuration in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.account.getSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflows` | `any[]` | No | — |
+| `fileTypes` | `any[]` | No | — |
+| `taskTypes` | `any[]` | No | — |
+| `activityTypes` | `any[]` | No | — |
+| `sources` | `any[]` | No | — |
+
+
+
+---
+
+### getUoms
+
+`account.getUoms`
+
+Retrieve units of measurement in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.account.getUoms({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+### getUsers
+
+`account.getUsers`
+
+Retrieve users and team members in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.account.getUsers({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | No | — |
+| `date_updated` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  calendar_color?: string,
+  is_active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Activities
+
+### create
+
+`activities.create`
+
+Create a new activity note in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.activities.create({ note: 'Spoke with homeowner regarding quote' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `note` | `string` | Yes | — |
+| `date_created` | `number` | No | — |
+| `record_type_name` | `string` | No | — |
+| `primary` | `object` | No | — |
+| `related` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="primary full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string
+}
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `note` | `string` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+| `created_by` | `string` | No | — |
+| `created_by_name` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`activities.get`
+
+Retrieve an activity by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.activities.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `note` | `string` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+| `created_by` | `string` | No | — |
+| `created_by_name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`activities.list`
+
+Retrieve all activities in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.activities.list({ size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  jnid?: string,
+  note?: string,
+  record_type_name?: string | null,
+  date_created?: number,
+  date_updated?: number,
+  created_by?: string,
+  created_by_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Budgets
+
+### list
+
+`budgets.list`
+
+Retrieve all budgets in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.budgets.list({ size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  jnid?: string,
+  type?: string,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new contact in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.contacts.create({
+	first_name: 'John',
+	last_name: 'Doe',
+	record_type_name: 'Customer',
+	status_name: 'Lead',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `record_type_name` | `string` | No | — |
+| `status_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `home_phone` | `string` | No | — |
+| `mobile_phone` | `string` | No | — |
+| `work_phone` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `address_line1` | `string` | No | — |
+| `address_line2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state_text` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `sales_rep` | `string` | No | — |
+| `source_name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `geo` | `object` | No | — |
+| `owners` | `object[]` | No | — |
+| `related` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="geo full type">
+
+```ts
+{
+  lat?: number,
+  lon?: number
+}
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `status_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `home_phone` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `fax_number` | `string \| null` | No | — |
+| `address_line1` | `string \| null` | No | — |
+| `address_line2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state_text` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country_name` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete (deactivate) a contact in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.contacts.delete({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `status_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `home_phone` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `fax_number` | `string \| null` | No | — |
+| `address_line1` | `string \| null` | No | — |
+| `address_line2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state_text` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country_name` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Retrieve a contact by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.contacts.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `status_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `home_phone` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `fax_number` | `string \| null` | No | — |
+| `address_line1` | `string \| null` | No | — |
+| `address_line2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state_text` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country_name` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+Retrieve all contacts in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.contacts.list({ size: 50, from: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  jnid?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  display_name?: string | null,
+  company_name?: string | null,
+  record_type_name?: string | null,
+  status_name?: string | null,
+  email?: string | null,
+  home_phone?: string | null,
+  mobile_phone?: string | null,
+  work_phone?: string | null,
+  fax_number?: string | null,
+  address_line1?: string | null,
+  address_line2?: string | null,
+  city?: string | null,
+  state_text?: string | null,
+  zip?: string | null,
+  country_name?: string | null,
+  is_active?: boolean,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.contacts.update({ jnid: 'jnid_example', first_name: 'Johnny' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `record_type_name` | `string` | No | — |
+| `status_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `home_phone` | `string` | No | — |
+| `mobile_phone` | `string` | No | — |
+| `work_phone` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `address_line1` | `string` | No | — |
+| `address_line2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state_text` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `sales_rep` | `string` | No | — |
+| `source_name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `geo` | `object` | No | — |
+| `owners` | `object[]` | No | — |
+| `related` | `object[]` | No | — |
+| `jnid` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="geo full type">
+
+```ts
+{
+  lat?: number,
+  lon?: number
+}
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `status_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `home_phone` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `fax_number` | `string \| null` | No | — |
+| `address_line1` | `string \| null` | No | — |
+| `address_line2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state_text` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country_name` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+## Estimates
+
+### create
+
+`estimates.create`
+
+Create a new estimate in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.estimates.create({ number: 'EST-1001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `date_estimate` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `number` | `string` | No | — |
+| `status` | `number` | No | — |
+| `internal_note` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `related` | `object[]` | No | — |
+| `items` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `status` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_estimate` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`estimates.delete`
+
+Delete (deactivate) an estimate in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.estimates.delete({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `status` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_estimate` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`estimates.get`
+
+Retrieve an estimate by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.estimates.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `status` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_estimate` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`estimates.list`
+
+Retrieve all estimates in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.estimates.list({ size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  jnid?: string,
+  number?: string | null,
+  status?: number,
+  is_active?: boolean,
+  date_estimate?: number,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`estimates.update`
+
+Update an existing estimate in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.estimates.update({ jnid: 'jnid_example', number: 'EST-1001-REV1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `date_estimate` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `number` | `string` | No | — |
+| `status` | `number` | No | — |
+| `internal_note` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `related` | `object[]` | No | — |
+| `items` | `any[]` | No | — |
+| `jnid` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `status` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_estimate` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+## Files
+
+### abortMultipartUpload
+
+`files.abortMultipartUpload`
+
+Abort a multipart file upload in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.files.abortMultipartUpload({ key: 'key_example', uploadId: 'upload_id_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `uploadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### completeMultipartUpload
+
+`files.completeMultipartUpload`
+
+Complete a multipart file upload in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.files.completeMultipartUpload({
+	jnid: 'jnid_example',
+	uploadId: 'upload_id_example',
+	parts: [{ partNumber: 1, etag: 'etag_example' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+| `uploadId` | `string` | Yes | — |
+| `parts` | `object[]` | Yes | — |
+| `generateThumbnail` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="parts full type">
+
+```ts
+{
+  partNumber: number,
+  etag: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `jnid` | `string` | No | — |
+| `thumbnailUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  jnid?: string,
+  thumbnailUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### completeSinglePartUpload
+
+`files.completeSinglePartUpload`
+
+Complete a single part file upload in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.files.completeSinglePartUpload({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+| `generateThumbnail` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `jnid` | `string` | No | — |
+| `thumbnailUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  jnid?: string,
+  thumbnailUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`files.create`
+
+Create a file attachment with base64 data in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.files.create({ data: 'VGhpcyBpcyBhIHRlc3QgZG9jdW1lbnQ=', filename: 'contract.txt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `type` | `number` | No | — |
+| `subtype` | `string` | No | — |
+| `related` | `string[]` | No | — |
+| `is_private` | `boolean` | No | — |
+| `date` | `number` | No | — |
+| `persist` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  jnid?: string,
+  filename?: string,
+  content_type?: string | null,
+  size?: number,
+  type?: string | null,
+  record_type?: number,
+  record_type_name?: string | null,
+  description?: string | null,
+  is_private?: boolean,
+  is_active?: boolean,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromUrl
+
+`files.createFromUrl`
+
+Create a file attachment from a URL in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.files.createFromUrl({ url: 'https://example.com/inspection.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `name` | `string` | No | — |
+| `related` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Retrieve a file attachment by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.files.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `filename` | `string` | No | — |
+| `content_type` | `string \| null` | No | — |
+| `size` | `number` | No | — |
+| `type` | `string \| null` | No | — |
+| `record_type` | `number` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_private` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`files.list`
+
+Retrieve list of file attachments in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.files.list({ size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  jnid?: string,
+  filename?: string,
+  content_type?: string | null,
+  size?: number,
+  type?: string | null,
+  record_type?: number,
+  record_type_name?: string | null,
+  description?: string | null,
+  is_private?: boolean,
+  is_active?: boolean,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### requestMultipartUpload
+
+`files.requestMultipartUpload`
+
+Request presigned URLs for multipart file upload in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.files.requestMultipartUpload({
+	filename: 'site_video.mp4',
+	partCount: 2,
+	fileSize: 20000000,
+	isPrivate: false,
+	related: ['jnid_example'],
+	type: 1,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partCount` | `number` | Yes | — |
+| `fileSize` | `number` | Yes | — |
+| `isPrivate` | `boolean` | Yes | — |
+| `related` | `string[]` | Yes | — |
+| `type` | `number` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `presignedUrl` | `string` | No | — |
+| `jnid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  presignedUrl?: string,
+  jnid?: string,
+  presignedUrls?: string[],
+  uploadId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### requestSinglePartUpload
+
+`files.requestSinglePartUpload`
+
+Request a presigned URL for single part file upload in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.files.requestSinglePartUpload({
+	filename: 'estimate.pdf',
+	type: 1,
+	related: ['jnid_example'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `type` | `number` | Yes | — |
+| `related` | `string[]` | Yes | — |
+| `isPrivate` | `boolean` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `presignedUrl` | `string` | No | — |
+| `jnid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  presignedUrl?: string,
+  jnid?: string,
+  presignedUrls?: string[],
+  uploadId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Create a new invoice in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.invoices.create({ number: 'INV-1001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `date_invoice` | `number` | No | — |
+| `date_due` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `number` | `string` | No | — |
+| `status` | `number` | No | — |
+| `internal_note` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `related` | `object[]` | No | — |
+| `items` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `status` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_invoice` | `number` | No | — |
+| `date_due` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`invoices.delete`
+
+Delete (deactivate) an invoice in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.invoices.delete({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `status` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_invoice` | `number` | No | — |
+| `date_due` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Retrieve an invoice by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.invoices.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `status` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_invoice` | `number` | No | — |
+| `date_due` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+Retrieve all invoices in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.invoices.list({ size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  jnid?: string,
+  number?: string | null,
+  status?: number,
+  is_active?: boolean,
+  date_invoice?: number,
+  date_due?: number,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Update an existing invoice in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.invoices.update({ jnid: 'jnid_example', number: 'INV-1001-A' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `date_invoice` | `number` | No | — |
+| `date_due` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `number` | `string` | No | — |
+| `status` | `number` | No | — |
+| `internal_note` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `related` | `object[]` | No | — |
+| `items` | `any[]` | No | — |
+| `jnid` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `status` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_invoice` | `number` | No | — |
+| `date_due` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+## Jobs
+
+### create
+
+`jobs.create`
+
+Create a new job in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.jobs.create({ name: 'Roof Inspection', record_type_name: 'Job', status_name: 'Lead' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `record_type_name` | `string` | Yes | — |
+| `status_name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `address_line1` | `string` | No | — |
+| `address_line2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state_text` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country_name` | `string` | No | — |
+| `sales_rep` | `string` | No | — |
+| `source_name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `geo` | `object` | No | — |
+| `primary` | `object` | No | — |
+| `owners` | `object[]` | No | — |
+| `related` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="geo full type">
+
+```ts
+{
+  lat?: number,
+  lon?: number
+}
+```
+</Accordion>
+
+<Accordion title="primary full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string
+}
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `status_name` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`jobs.delete`
+
+Delete (deactivate) a job in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.jobs.delete({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `status_name` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`jobs.get`
+
+Retrieve a job by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.jobs.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `status_name` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+Retrieve all jobs in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.jobs.list({ size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  jnid?: string,
+  name?: string,
+  record_type_name?: string | null,
+  status_name?: string | null,
+  number?: string | null,
+  description?: string | null,
+  is_active?: boolean,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`jobs.update`
+
+Update an existing job in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.jobs.update({ jnid: 'jnid_example', name: 'Roof Repair Phase 1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `record_type_name` | `string` | No | — |
+| `status_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `address_line1` | `string` | No | — |
+| `address_line2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state_text` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country_name` | `string` | No | — |
+| `sales_rep` | `string` | No | — |
+| `source_name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `geo` | `object` | No | — |
+| `primary` | `object` | No | — |
+| `owners` | `object[]` | No | — |
+| `related` | `object[]` | No | — |
+| `jnid` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="geo full type">
+
+```ts
+{
+  lat?: number,
+  lon?: number
+}
+```
+</Accordion>
+
+<Accordion title="primary full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string
+}
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `status_name` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+## Material Orders
+
+### create
+
+`materialOrders.create`
+
+Create a new material order in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.materialOrders.create({ customer_note: 'Leave materials on driveway' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_note` | `string \| null` | No | — |
+| `internal_note` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `esigned` | `boolean` | No | — |
+| `items` | `object[]` | No | — |
+| `address` | `object` | No | — |
+| `related` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  category?: string,
+  color?: string | null,
+  cost?: number,
+  description?: string,
+  name?: string,
+  quantity?: number,
+  uom?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address_line1?: string,
+  address_line2?: string,
+  city?: string,
+  state_text?: string,
+  zip?: string,
+  geo?: {
+    lat?: number,
+    lon?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `customer_note` | `string \| null` | No | — |
+| `internal_note` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`materialOrders.delete`
+
+Delete (deactivate) a material order in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.materialOrders.delete({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `customer_note` | `string \| null` | No | — |
+| `internal_note` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`materialOrders.get`
+
+Retrieve a material order by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.materialOrders.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `customer_note` | `string \| null` | No | — |
+| `internal_note` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`materialOrders.list`
+
+Retrieve all material orders in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.materialOrders.list({ size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  jnid?: string,
+  customer_note?: string | null,
+  internal_note?: string | null,
+  is_active?: boolean,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`materialOrders.update`
+
+Update an existing material order in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.materialOrders.update({ jnid: 'jnid_example', customer_note: 'Deliver before noon' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_note` | `string \| null` | No | — |
+| `internal_note` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `esigned` | `boolean` | No | — |
+| `items` | `object[]` | No | — |
+| `address` | `object` | No | — |
+| `related` | `object[]` | No | — |
+| `jnid` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  category?: string,
+  color?: string | null,
+  cost?: number,
+  description?: string,
+  name?: string,
+  quantity?: number,
+  uom?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address_line1?: string,
+  address_line2?: string,
+  city?: string,
+  state_text?: string,
+  zip?: string,
+  geo?: {
+    lat?: number,
+    lon?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `customer_note` | `string \| null` | No | — |
+| `internal_note` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+## Payments
+
+### create
+
+`payments.create`
+
+Create a payment in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.payments.create({ customer: 'jnid_example', date_payment: 1700000000, total: 1500 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | Yes | — |
+| `date_payment` | `number` | Yes | — |
+| `total` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `invoices` | `object[]` | No | — |
+| `estimates` | `any[]` | No | — |
+| `primary` | `object` | No | — |
+| `owners` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  invoice_id: string,
+  amount: number,
+  invoice_no?: string,
+  date_created?: number,
+  created_by?: string,
+  is_active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="primary full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string
+}
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+| `isSuccess` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `Detail` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`payments.list`
+
+Retrieve all payments in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.payments.list({ size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  jnid?: string,
+  customer?: string,
+  total?: number,
+  date_payment?: number,
+  type?: string,
+  is_active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create a new product in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.products.create({ name: 'Asphalt Shingle Bundle' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `suppliers` | `any[]` | No | — |
+| `location_id` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `tax_exempt` | `boolean` | No | — |
+| `item_type` | `string` | No | — |
+| `uoms` | `object[]` | No | — |
+| `external_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="uoms full type">
+
+```ts
+{
+  uom?: string,
+  material?: Record<string, any>,
+  labor?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `tax_exempt` | `boolean` | No | — |
+| `item_type` | `string` | No | — |
+| `location_id` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete (deactivate) a product in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.products.delete({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `tax_exempt` | `boolean` | No | — |
+| `item_type` | `string` | No | — |
+| `location_id` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`products.get`
+
+Retrieve a product by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.products.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `tax_exempt` | `boolean` | No | — |
+| `item_type` | `string` | No | — |
+| `location_id` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`products.list`
+
+Retrieve all products in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.products.list({ size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  jnid?: string,
+  name?: string,
+  description?: string | null,
+  is_active?: boolean,
+  tax_exempt?: boolean,
+  item_type?: string,
+  location_id?: number,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update an existing product in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.products.update({ jnid: 'jnid_example', name: 'Premium Architectural Shingles' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `suppliers` | `any[]` | No | — |
+| `location_id` | `number` | No | — |
+| `is_active` | `boolean` | No | — |
+| `tax_exempt` | `boolean` | No | — |
+| `item_type` | `string` | No | — |
+| `uoms` | `object[]` | No | — |
+| `external_id` | `string` | No | — |
+| `jnid` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="uoms full type">
+
+```ts
+{
+  uom?: string,
+  material?: Record<string, any>,
+  labor?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_active` | `boolean` | No | — |
+| `tax_exempt` | `boolean` | No | — |
+| `item_type` | `string` | No | — |
+| `location_id` | `number` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a new task in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.tasks.create({ title: 'Initial client consultation', date_start: 1700000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `date_start` | `number` | Yes | — |
+| `date_end` | `number` | No | — |
+| `record_type` | `number` | No | — |
+| `record_type_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `primary` | `object` | No | — |
+| `related` | `object[]` | No | — |
+| `assigned_to` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="primary full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string
+}
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="assigned_to full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date_start` | `number` | No | — |
+| `date_end` | `number` | No | — |
+| `record_type` | `number` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete (deactivate) a task in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.tasks.delete({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date_start` | `number` | No | — |
+| `date_end` | `number` | No | — |
+| `record_type` | `number` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Retrieve a task by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.tasks.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date_start` | `number` | No | — |
+| `date_end` | `number` | No | — |
+| `record_type` | `number` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+Retrieve all tasks in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.tasks.list({ size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  jnid?: string,
+  title?: string,
+  date_start?: number,
+  date_end?: number,
+  record_type?: number,
+  record_type_name?: string | null,
+  description?: string | null,
+  is_completed?: boolean,
+  is_active?: boolean,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update an existing task in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.tasks.update({ jnid: 'jnid_example', is_completed: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `date_start` | `number` | No | — |
+| `date_end` | `number` | No | — |
+| `record_type` | `number` | No | — |
+| `record_type_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `primary` | `object` | No | — |
+| `related` | `object[]` | No | — |
+| `assigned_to` | `object[]` | No | — |
+| `jnid` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="primary full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string
+}
+```
+</Accordion>
+
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="assigned_to full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date_start` | `number` | No | — |
+| `date_end` | `number` | No | — |
+| `record_type` | `number` | No | — |
+| `record_type_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+## Work Orders
+
+### create
+
+`workOrders.create`
+
+Create a new work order in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.workOrders.create({ customer: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | No | — |
+| `class_id` | `string` | No | — |
+| `class_name` | `string` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `supplier` | `string \| null` | No | — |
+| `internal_note` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `related` | `object[]` | No | — |
+| `items` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `customer` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`workOrders.delete`
+
+Delete (deactivate) a work order in JobNimbus
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jobnimbus.api.workOrders.delete({ id: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `customer` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`workOrders.get`
+
+Retrieve a work order by ID in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.workOrders.get({ jnid: 'jnid_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jnid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `customer` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`workOrders.list`
+
+Retrieve all work orders in JobNimbus
+
+**Risk:** `read`
+
+```ts
+await corsair.jobnimbus.api.workOrders.list({ size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `from` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `actor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  jnid?: string,
+  customer?: string,
+  is_active?: boolean,
+  date_created?: number,
+  date_updated?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`workOrders.update`
+
+Update an existing work order in JobNimbus
+
+**Risk:** `write`
+
+```ts
+await corsair.jobnimbus.api.workOrders.update({ id: 'jnid_example', internal_note: 'Crews arriving at 8 AM' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | No | — |
+| `class_id` | `string` | No | — |
+| `class_name` | `string` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `supplier` | `string \| null` | No | — |
+| `internal_note` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `related` | `object[]` | No | — |
+| `items` | `any[]` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="related full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  number?: string,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `jnid` | `string` | No | — |
+| `customer` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `date_created` | `number` | No | — |
+| `date_updated` | `number` | No | — |
+
+
+
+---

@@ -1,9 +1,3 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const JobNimbusExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type JobNimbusExample = z.infer<typeof JobNimbusExample>;
+// JobNimbus provides CRM and field service management operations directly via
+// the provider REST API; no local database persistence is required.
+export const jobNimbusEntities = {} as const;

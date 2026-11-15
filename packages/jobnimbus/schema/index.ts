@@ -1,4 +1,6 @@
+import { jobNimbusEntities } from './database';
+
 export const JobNimbusSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: jobNimbusEntities,
 } as const;
