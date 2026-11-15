@@ -261,6 +261,15 @@ describe('LaunchDarkly endpoints', () => {
 			);
 		});
 
+		it('rejects an invalid DELETE response before logging completion', async () => {
+			mockedRequest.mockResolvedValueOnce({ unexpected: true });
+
+			await expect(
+				Projects.delete(dummyContext, { projectKey: 'old-proj' }),
+			).rejects.toThrow();
+			expect(mockedLogEvent).not.toHaveBeenCalled();
+		});
+
 		it('rejects invalid project input before making network request', async () => {
 			// Reflect.apply bypasses static input typing to exercise runtime Zod validation.
 			await expect(

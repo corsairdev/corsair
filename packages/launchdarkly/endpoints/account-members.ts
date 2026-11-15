@@ -114,9 +114,11 @@ export const deleteMember: LaunchDarklyEndpoints['accountMembersDelete'] =
 		const parsedInput =
 			LaunchDarklyEndpointInputSchemas.accountMembersDelete.parse(input);
 		const path = `/api/v2/members/${encodeURIComponent(parsedInput.id)}`;
-		await makeLaunchDarklyRequest<void>(path, ctx.key, {
+		// `unknown` because even an empty response is checked against the endpoint output schema.
+		const response: unknown = await makeLaunchDarklyRequest(path, ctx.key, {
 			method: 'DELETE',
 		});
+		LaunchDarklyEndpointOutputSchemas.accountMembersDelete.parse(response);
 		await logEventFromContext(
 			ctx,
 			'launchdarkly.accountMembers.delete',

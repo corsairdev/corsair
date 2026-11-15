@@ -62,6 +62,17 @@ describe('LaunchDarkly schemas', () => {
 		}
 	});
 
+	it('validates empty responses for every DELETE operation', () => {
+		const deleteSchemas = Object.entries(
+			LaunchDarklyEndpointOutputSchemas,
+		).filter(([operation]) => operation.endsWith('Delete'));
+		expect(deleteSchemas).toHaveLength(8);
+		for (const [, schema] of deleteSchemas) {
+			expect(schema.safeParse(undefined).success).toBe(true);
+			expect(schema.safeParse({}).success).toBe(false);
+		}
+	});
+
 	describe('JSONPatchOperationSchema', () => {
 		it('validates standard JSON Patch operations with arbitrary value types', () => {
 			const validOps = [
@@ -241,6 +252,16 @@ describe('LaunchDarkly schemas', () => {
 					description: null,
 				}).success,
 			).toBe(true);
+		});
+
+		it('rejects undocumented segment expansion parameters', () => {
+			expect(
+				LaunchDarklyEndpointInputSchemas.segmentsList.safeParse({
+					projectKey: 'core',
+					environmentKey: 'production',
+					expand: 'flags',
+				}).success,
+			).toBe(false);
 		});
 	});
 

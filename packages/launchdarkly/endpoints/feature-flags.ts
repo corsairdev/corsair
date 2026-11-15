@@ -126,9 +126,11 @@ export const deleteFeatureFlag: LaunchDarklyEndpoints['featureFlagsDelete'] =
 		const parsedInput =
 			LaunchDarklyEndpointInputSchemas.featureFlagsDelete.parse(input);
 		const path = `/api/v2/flags/${encodeURIComponent(parsedInput.projectKey)}/${encodeURIComponent(parsedInput.featureFlagKey)}`;
-		await makeLaunchDarklyRequest<void>(path, ctx.key, {
+		// `unknown` because even an empty response is checked against the endpoint output schema.
+		const response: unknown = await makeLaunchDarklyRequest(path, ctx.key, {
 			method: 'DELETE',
 		});
+		LaunchDarklyEndpointOutputSchemas.featureFlagsDelete.parse(response);
 		await logEventFromContext(
 			ctx,
 			'launchdarkly.featureFlags.delete',

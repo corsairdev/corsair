@@ -114,9 +114,11 @@ export const deleteCustomRole: LaunchDarklyEndpoints['customRolesDelete'] =
 		const parsedInput =
 			LaunchDarklyEndpointInputSchemas.customRolesDelete.parse(input);
 		const path = `/api/v2/roles/${encodeURIComponent(parsedInput.customRoleKey)}`;
-		await makeLaunchDarklyRequest<void>(path, ctx.key, {
+		// `unknown` because even an empty response is checked against the endpoint output schema.
+		const response: unknown = await makeLaunchDarklyRequest(path, ctx.key, {
 			method: 'DELETE',
 		});
+		LaunchDarklyEndpointOutputSchemas.customRolesDelete.parse(response);
 		await logEventFromContext(
 			ctx,
 			'launchdarkly.customRoles.delete',

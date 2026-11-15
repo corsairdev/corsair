@@ -107,9 +107,11 @@ export const deleteSegment: LaunchDarklyEndpoints['segmentsDelete'] = async (
 	const parsedInput =
 		LaunchDarklyEndpointInputSchemas.segmentsDelete.parse(input);
 	const path = `/api/v2/segments/${encodeURIComponent(parsedInput.projectKey)}/${encodeURIComponent(parsedInput.environmentKey)}/${encodeURIComponent(parsedInput.segmentKey)}`;
-	await makeLaunchDarklyRequest<void>(path, ctx.key, {
+	// `unknown` because even an empty response is checked against the endpoint output schema.
+	const response: unknown = await makeLaunchDarklyRequest(path, ctx.key, {
 		method: 'DELETE',
 	});
+	LaunchDarklyEndpointOutputSchemas.segmentsDelete.parse(response);
 	await logEventFromContext(
 		ctx,
 		'launchdarkly.segments.delete',

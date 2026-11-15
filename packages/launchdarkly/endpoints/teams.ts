@@ -113,9 +113,11 @@ export const deleteTeam: LaunchDarklyEndpoints['teamsDelete'] = async (
 ) => {
 	const parsedInput = LaunchDarklyEndpointInputSchemas.teamsDelete.parse(input);
 	const path = `/api/v2/teams/${encodeURIComponent(parsedInput.teamKey)}`;
-	await makeLaunchDarklyRequest<void>(path, ctx.key, {
+	// `unknown` because even an empty response is checked against the endpoint output schema.
+	const response: unknown = await makeLaunchDarklyRequest(path, ctx.key, {
 		method: 'DELETE',
 	});
+	LaunchDarklyEndpointOutputSchemas.teamsDelete.parse(response);
 	await logEventFromContext(
 		ctx,
 		'launchdarkly.teams.delete',

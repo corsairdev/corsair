@@ -520,7 +520,6 @@ export const SegmentsListInputSchema = z
 		offset: z.number().int().nonnegative().optional(),
 		sort: z.string().optional(),
 		filter: z.string().optional(),
-		expand: z.string().optional(),
 	})
 	.strict();
 
