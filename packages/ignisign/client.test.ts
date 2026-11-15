@@ -141,14 +141,78 @@ describe('makeIgnisignRequest', () => {
 		expect(error).toBeInstanceOf(ApiError);
 		const typedError = error as ApiError;
 		expect(typedError.status).toBe(400);
-		expect(typedError.body).toEqual({
-			message: 'Validation failed',
-			authSecret: '[REDACTED]',
-			nested: {
-				apiKey: '[REDACTED]',
-				token: '[REDACTED]',
+		expect(typedError.body).toEqual({ message: 'Validation failed' });
+	});
+
+	it('keeps only the error code and message from the body, dropping the echoed context', async () => {
+		// IgniSign errors are `{ errorCode, message?, context? }`; `context` can
+		// echo the signer that was sent.
+		const contextError = new ApiError(
+			{ method: 'POST', url: '/v4/signers' },
+			{
+				url: `${IGNISIGN_API_BASE}/v4/signers`,
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: {
+					errorCode: 'SIGNER_INPUT_INVALID',
+					message: 'Signer input is invalid',
+					context: {
+						firstName: 'Jane',
+						lastName: 'Doe',
+						phoneNumber: '+33612345678',
+					},
+					signer: { firstName: 'Jane' },
+				},
 			},
+			'Signer input is invalid',
+		);
+		mockRequest.mockRejectedValue(contextError);
+
+		// `unknown` because rejection value has no static type; assertions narrow it.
+		const error: unknown = await makeIgnisignRequest('/v4/signers', 'key', {
+			method: 'POST',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const typedError = error as ApiError;
+		expect(typedError.body).toEqual({
+			errorCode: 'SIGNER_INPUT_INVALID',
+			message: 'Signer input is invalid',
 		});
+		const serialized = `${typedError.message} ${JSON.stringify(typedError.body)}`;
+		expect(serialized).not.toContain('Jane');
+		expect(serialized).not.toContain('+33612345678');
+	});
+
+	it('leaves the echoed context out of the fallback message too', async () => {
+		const rawBody = {
+			errorCode: 'SIGNER_INPUT_INVALID',
+			context: { lastName: 'Doe', phoneNumber: '+33612345678' },
+		};
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'POST', url: '/v4/signers' },
+				{
+					url: `${IGNISIGN_API_BASE}/v4/signers`,
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: rawBody,
+				},
+				`Generic Error: status: 400; body: ${JSON.stringify(rawBody)}`,
+			),
+		);
+
+		// `unknown` because rejection value has no static type; assertions narrow it.
+		const error: unknown = await makeIgnisignRequest('/v4/signers', 'key', {
+			method: 'POST',
+		}).catch((caught: unknown) => caught);
+
+		const message = (error as ApiError).message;
+		expect(message).toContain('SIGNER_INPUT_INVALID');
+		expect(message).not.toContain('Doe');
+		expect(message).not.toContain('+33612345678');
 	});
 
 	it('builds the error message from the redacted body when it has no message field', async () => {

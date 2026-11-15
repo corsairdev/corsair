@@ -130,6 +130,36 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+// IgniSign errors are `{ errorCode, message?, context? }` (ignisign-public-models
+// `IgnisignError`). `context` is free-form and can echo the signer or document
+// that was sent, so only these scalar fields stay in the thrown error. The rest
+// covers gateway errors that don't use IgniSign's shape.
+const ERROR_BODY_FIELDS = [
+	'errorCode',
+	'code',
+	'statusCode',
+	'message',
+	'error',
+	'detail',
+] as const;
+
+/** The error body with only the allowlisted scalar fields, emails redacted. */
+// `unknown` because error bodies returned from the provider are untrusted JSON.
+export function safeErrorBody(rawBody: unknown): unknown {
+	if (typeof rawBody === 'string') return sanitizeData(rawBody);
+	if (!isRecord(rawBody)) return undefined;
+	const result: Record<string, string | number | boolean> = {};
+	for (const field of ERROR_BODY_FIELDS) {
+		const value = rawBody[field];
+		if (typeof value === 'string') {
+			result[field] = value.replace(EMAIL_PATTERN, '[REDACTED_EMAIL]');
+		} else if (typeof value === 'number' || typeof value === 'boolean') {
+			result[field] = value;
+		}
+	}
+	return result;
+}
+
 /**
  * Core builds ApiError.message from the raw body (`message`, `error`, `detail`,
  * or the whole body as JSON), so the message is rebuilt from the redacted body.
@@ -251,7 +281,7 @@ export async function makeIgnisignRequest<T>(
 		if (error instanceof ApiError) {
 			// `unknown` because error.body has no static type from corsair/http.
 			const rawBody: unknown = error.body;
-			const sanitizedBody = sanitizeData(rawBody);
+			const sanitizedBody = safeErrorBody(rawBody);
 			const errorMessage = buildErrorMessage(
 				sanitizedBody,
 				error.status,
