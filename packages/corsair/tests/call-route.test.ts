@@ -1,13 +1,27 @@
+import { z } from 'zod';
 import type { CorsairInternalConfig } from '../core';
 import { createCorsair } from '../core';
+import {
+	encryptConfig,
+	encryptDEK,
+	generateDEK,
+} from '../core/auth/encryption';
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
+import { createAccountKeyManager } from '../core/auth/key-manager';
 import { managementHandler } from '../core/management';
-import { listRegisteredOps, resolveCall } from '../core/management/call';
+import {
+	listRegisteredOps,
+	resolveCall,
+	resolveTenantClient,
+} from '../core/management/call';
 import type { ManagementApiError } from '../core/management/errors';
 import { errorResponse } from '../core/management/errors';
 import { ReadonlyForbiddenError } from '../core/permissions';
 import { PermissionRequiredError } from '../core/permissions/errors/permission-required';
 import type { CorsairPlugin } from '../core/plugins';
+import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { setupCorsair } from '../setup';
+import { createTestDatabase } from './setup-db';
 
 function internalWith(
 	plugins: Array<{ id: string; endpoints?: Record<string, unknown> }>,
@@ -444,5 +458,139 @@ describe('managementHandler — authenticate hook', () => {
 		);
 		expect(res.status).toBe(200);
 		expect(await readJson(res)).toEqual({ data: { echoed: { title: 'hi' } } });
+	});
+});
+
+describe('call and db routes with an account', () => {
+	const KEK = 'test-kek-with-at-least-32-characters!!';
+	const demo = {
+		id: 'demo',
+		options: { authType: 'oauth_2' as const },
+		authConfig: { oauth_2: { account: [] as const } },
+		schema: {
+			version: '1',
+			entities: { notes: z.object({ title: z.string() }) },
+		},
+		endpoints: {
+			token: async (ctx: any) => ctx.keys.get_access_token(),
+		},
+	} as unknown as CorsairPlugin;
+
+	let env: ReturnType<typeof createTestDatabase>;
+	let corsair: any;
+	let handler: (r: Request) => Promise<Response>;
+	beforeEach(async () => {
+		env = createTestDatabase();
+		corsair = createCorsair({
+			plugins: [demo],
+			database: env.db,
+			kek: KEK,
+			multiTenancy: true,
+		} as any);
+		getCorsairInternal(corsair).database!.isPg = false;
+		await setupCorsair(corsair, { tenantId: 't1' });
+		await env.db.deleteFrom('corsair_accounts').execute();
+		handler = managementHandler(corsair, { authenticate: () => true });
+	});
+	afterEach(() => env.cleanup());
+
+	async function addAccount(ref: string, label: string, token: string) {
+		const integ = await env.db
+			.selectFrom('corsair_integrations')
+			.select('id')
+			.where('name', '=', 'demo')
+			.executeTakeFirstOrThrow();
+		const dek = generateDEK();
+		const at = new Date(ref === 'a' ? '2026-01-01' : '2026-02-01');
+		await env.db
+			.insertInto('corsair_accounts')
+			.values({
+				id: `acct-${ref}`,
+				created_at: at,
+				updated_at: at,
+				tenant_id: 't1',
+				integration_id: integ.id,
+				config: encryptConfig({ account_ref: ref, account_label: label }, dek),
+				dek: await encryptDEK(dek, KEK),
+			})
+			.execute();
+		await createAccountKeyManager({
+			authType: 'oauth_2',
+			integrationName: 'demo',
+			tenantId: 't1',
+			kek: KEK,
+			database: getCorsairInternal(corsair).database!,
+			account: { ref },
+		}).set_access_token(token);
+	}
+
+	const post = (path: string, body: unknown) =>
+		handler(
+			new Request(`https://app.test${path}`, {
+				method: 'POST',
+				headers: {
+					authorization: 'Bearer k',
+					'content-type': 'application/json',
+				},
+				body: JSON.stringify(body),
+			}),
+		);
+
+	it("call with account binds that account's token", async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		await addAccount('b', 'b@x.com', 'tok-b');
+		const res = await post('/t1/demo/call/token', { account: 'b' });
+		expect(res.status).toBe(200);
+		await expect(res.json()).resolves.toEqual({ data: 'tok-b' });
+	});
+
+	it('call without account and two accounts returns the account_required error as a 4xx management error', async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		await addAccount('b', 'b@x.com', 'tok-b');
+		const res = await post('/t1/demo/call/token', {});
+		expect(res.status).toBe(400);
+		expect(await res.json()).toMatchObject({ error: 'account_required' });
+		const missing = await post('/t1/demo/call/token', { account: 'zed' });
+		expect(missing.status).toBe(404);
+		expect(await missing.json()).toMatchObject({ error: 'account_not_found' });
+		const blank = await post('/t1/demo/call/token', { account: ' ' });
+		expect(blank.status).toBe(400);
+		expect(await blank.json()).toMatchObject({ error: 'bad_request' });
+	});
+
+	it('cache returns the same client for the same (tenant, account)', () => {
+		const withTenant = jest.fn(() => ({}));
+		const c = { withTenant };
+		const internal = internalWith([{ id: 'demo' }], true);
+		const pick = (account?: string) =>
+			resolveTenantClient(c, internal, 't1', { plugin: 'demo', account })
+				.client;
+		expect(pick('a')).toBe(pick('a'));
+		expect(pick('a')).not.toBe(pick('b'));
+		expect(pick()).toBe(pick());
+		expect(withTenant).toHaveBeenCalledTimes(3);
+	});
+
+	it('db route read without account fans out and tags rows', async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		await addAccount('b', 'b@x.com', 'tok-b');
+		for (const ref of ['a', 'b']) {
+			const res = await post('/t1/demo/db/notes/upsertByEntityId', {
+				account: ref,
+				args: [`n-${ref}`, { title: ref }],
+			});
+			expect(res.status).toBe(200);
+		}
+		const all = await (
+			await post('/t1/demo/db/notes/list', { args: [] })
+		).json();
+		expect(all.data.map((r: any) => [r.data.title, r.account]).sort()).toEqual([
+			['a', 'a@x.com'],
+			['b', 'b@x.com'],
+		]);
+		const one = await (
+			await post('/t1/demo/db/notes/list', { account: 'a', args: [] })
+		).json();
+		expect(one.data.map((r: any) => r.data.title)).toEqual(['a']);
 	});
 });

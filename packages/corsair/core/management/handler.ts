@@ -17,6 +17,7 @@ import {
 import {
 	callDisabled,
 	listRegisteredOps,
+	parseAccount,
 	resolveCall,
 	withTenantClient,
 } from './call';
@@ -359,6 +360,7 @@ const ROUTES: Route[] = [
 			req,
 			params,
 			body,
+			query,
 			scopedTenant,
 			allowCall,
 		}) => {
@@ -367,18 +369,19 @@ const ROUTES: Route[] = [
 			// rows with no policy in front of it. Server mode only, like the other
 			// admin routes — an end-user handler must not expose it to a browser.
 			assertAdminRouteAllowed(scopedTenant);
-			const input = (body ?? {}) as { args?: unknown };
+			const input = (body ?? {}) as { args?: unknown; account?: unknown };
 			// apply() takes an object as an empty argument list, so an `args` of
 			// the wrong shape would call the method with nothing and report success.
 			if (input.args !== undefined && !Array.isArray(input.args)) {
 				throw badRequest('args must be an array');
 			}
 			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
+			const account = parseAccount(input.account ?? query.account);
 			const args = decodeDbArgs(input.args ?? []) as unknown[];
 			const data = await withTenantClient(
 				corsair,
 				internal,
-				{ plugin: params.plugin!, tenant },
+				{ plugin: params.plugin!, tenant, account },
 				(client) =>
 					withRequestMode(req, () =>
 						callPluginDb(
@@ -406,11 +409,12 @@ const ROUTES: Route[] = [
 			req,
 			params,
 			body,
+			query,
 			scopedTenant,
 			allowCall,
 		}) => {
 			if (!allowCall) throw callDisabled();
-			const input = (body ?? {}) as { args?: unknown };
+			const input = (body ?? {}) as { args?: unknown; account?: unknown };
 			// The URL tenant is client-controlled; when resolveTenant is configured
 			// the resolver's value is authoritative (and null → 401), same as every
 			// other tenant-taking route. No resolver → the URL value is trusted.
@@ -420,6 +424,7 @@ const ROUTES: Route[] = [
 					plugin: params.plugin!,
 					op: params.op!,
 					tenant,
+					account: parseAccount(input.account ?? query.account),
 					args: input.args,
 				}),
 			);
