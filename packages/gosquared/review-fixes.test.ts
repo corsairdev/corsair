@@ -57,13 +57,19 @@ function keyBuilderCtx(
 ): GosquaredKeyBuilderContext {
 	return {
 		authType: 'api_key',
+		options: {},
+		tenantId: 'default',
 		keys: {
+			get_dek: () => Promise.resolve('test-dek'),
+			issue_new_dek: () => Promise.resolve('test-dek'),
 			get_api_key: () => Promise.resolve(apiKey),
+			set_api_key: () => Promise.resolve(),
 			get_site_token: () => Promise.resolve(siteToken),
+			set_site_token: () => Promise.resolve(),
+			get_webhook_signature: () => Promise.resolve(null),
+			set_webhook_signature: () => Promise.resolve(),
 		},
-		// The keyBuilder reads only these two key getters; the full context also
-		// needs DEK and setter functions it never calls, so the partial stub is cast.
-	} as unknown as GosquaredKeyBuilderContext;
+	};
 }
 
 function keyBuilder() {
