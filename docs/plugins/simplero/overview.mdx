@@ -1,0 +1,142 @@
+---
+title: "Simplero plugin"
+sidebarTitle: "Overview"
+description: "Email marketing and online courses from Simplero - manage contacts, email lists, tags and products, read purchases and subscriptions, and tag contacts or unsubscribe them from a list."
+---
+
+Use **Simplero** through Corsair: one client, typed API calls.
+
+Create an API key in Simplero under Settings, then Integrations. Pass it as the plugin's `key` option or store it on the account; the plugin sends it as the `X-API-Key` header.
+
+Simplero documents 1134 routes across every part of the platform. This plugin wraps a working set around contacts and what they buy: contacts, email lists, tags, products, purchases and subscriptions. Pages, courses, funnels, automations and the rest are not wrapped.
+
+Things to know before you write:
+
+- **Contact creates need both required fields.** Simplero requires `email` and `lead_score` on a contact, so a create must send a score. Sending a score replaces it.
+- **`adjustLeadScore` is not `update`.** The action adds to the stored score and records the change in the contact's history; `customers.update` replaces the score outright.
+- **Tag actions take one or many.** `customers.addTag` and `customers.removeTag` accept `tag_id` or `tag_ids`, never both and never neither; the schema rejects either mistake. Tag changes can start or stop the automations attached to that tag.
+- **PATCH changes only what it sends.** An omitted field keeps its stored value, unlike a PUT. `purchases.update` and `subscriptions.update` are limited to buyer details and tracking data.
+- **Subscription state is an action, not a field.** `subscriptions.update` cannot subscribe or unsubscribe anyone; that is `subscriptions.unsubscribe` and `subscriptions.resubscribe`, and unsubscribing is reversible.
+- **Money movements are not wrapped.** Refunding, cancelling, capturing and changing a purchase price are separate Simplero actions that move funds, so they are deliberately left out.
+- **Paging.** `page` counts from 1 and `per_page` is 1 to 100, defaulting to 20. `after` is the cursor form: pass `pagination.next_after` and `total` and `total_pages` come back null, because counting is skipped.
+- **Errors.** A 401 is `{ "error": "Bad API key" }`; a 422 is `{ "errors": ["…"] }`, which the plugin joins into one message. A 503 can mean the idempotency store could not be checked, in which case nothing ran.
+
+**What you get:**
+
+- 27 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/simplero better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/simplero better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/simplero better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/simplero better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { simplero } from '@corsair-dev/simplero';
+
+export const corsair = createCorsair({
+	plugins: [
+		simplero(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Simplero API key before the first call: `pnpm corsair setup --plugin=simplero --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+simplero()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'simplero',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List contacts on a list**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.simplero.api.customers.list({ list_id: 7, per_page: 50 });
+```
+
+
+**Tag a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.simplero.api.customers.addTag({ id: 12, tag_id: 5 });
+```
+
+
+See the full list on the [API](/plugins/simplero/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/simplero/api">
+    Every `simplero.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

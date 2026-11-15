@@ -1,0 +1,1681 @@
+---
+title: "Simplero API reference"
+sidebarTitle: "API"
+description: "API reference for the Simplero plugin in Corsair: every `simplero.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Customers
+
+### addTag
+
+`customers.addTag`
+
+Add one tag or a list of tags to a contact, which can start the automations that tag is attached to
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.customers.addTag({ id: 12, tag_id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `tag_id` | `number` | No | One tag to add or remove. |
+| `tag_ids` | `number[]` | No | Several tags to add or remove. |
+
+Send exactly one of tag_id or tag_ids. A tag change can start or stop the automations attached to that tag.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adjustLeadScore
+
+`customers.adjustLeadScore`
+
+Add to a contact's lead score and record the change in their history; customers.update replaces the score instead
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.customers.adjustLeadScore({ id: 12, value: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `value` | `number` | Yes | Added to the stored score, unlike customers.update which replaces it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`customers.create`
+
+Create a contact. Email and lead score are the required pair; a score sent here replaces rather than adds
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.customers.create({ email: 'alex@example.com', lead_score: 0, first_names: 'Alex', last_name: 'Doe' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_names` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string` | Yes | The address Simplero matches the contact on. |
+| `alternative_emails` | `string[] \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `do_not_contact` | `boolean` | No | — |
+| `do_not_sms` | `boolean` | No | — |
+| `locale` | `string \| null` | No | — |
+| `gdpr_consent` | `boolean` | No | — |
+| `lead_score` | `number` | Yes | Setting it replaces the score. Use customers.adjustLeadScore to add to it instead. |
+| `field_value_ids` | `number[]` | No | — |
+
+Simplero requires both email and lead_score on a contact, so a create must send a score. Sending it replaces the stored score; use customers.adjustLeadScore to add to it instead.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  first_names?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  alternative_emails?: string[] | null,
+  phone_number?: string | null,
+  do_not_contact?: boolean | null,
+  do_not_sms?: boolean | null,
+  locale?: string | null,
+  gdpr_consent?: boolean | null,
+  lead_score?: number | null,
+  lifetime_value_cents_excl_tax?: number | null,
+  lead_acquisition_cost_cents_excl_tax?: number | null,
+  customer_acquisition_cost_cents_excl_tax?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one contact: their name, email, phone, locale, consent flags, lead score and lifetime value
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.customers.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  first_names?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  alternative_emails?: string[] | null,
+  phone_number?: string | null,
+  do_not_contact?: boolean | null,
+  do_not_sms?: boolean | null,
+  locale?: string | null,
+  gdpr_consent?: boolean | null,
+  lead_score?: number | null,
+  lifetime_value_cents_excl_tax?: number | null,
+  lead_acquisition_cost_cents_excl_tax?: number | null,
+  customer_acquisition_cost_cents_excl_tax?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List contacts with filters for name, email, tag, segment, list, product and stage; page by number or continue with `after`
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.customers.list({ list_id: 7, per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. Ignored when `after` is set. |
+| `per_page` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
+| `after` | `number` | No | Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used. |
+| `q` | `string` | No | Search, matching the fields the route documents. |
+| `created_at` | `string` | No | A date filter such as 2026-01-01..2026-01-31. |
+| `updated_at` | `string` | No | — |
+| `first_names` | `string` | No | Matches the first names. |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `tag_id` | `number` | No | — |
+| `segment_id` | `number` | No | — |
+| `status` | `customers \| leads \| clients` | No | Only contacts at this stage. |
+| `active` | `boolean` | No | — |
+| `list_id` | `number` | No | — |
+| `product_id` | `number` | No | — |
+
+Page by number with per_page up to 100, or pass pagination.next_after as after. With after, total and total_pages are null because counting is skipped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  first_names?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  alternative_emails?: string[] | null,
+  phone_number?: string | null,
+  do_not_contact?: boolean | null,
+  do_not_sms?: boolean | null,
+  locale?: string | null,
+  gdpr_consent?: boolean | null,
+  lead_score?: number | null,
+  lifetime_value_cents_excl_tax?: number | null,
+  lead_acquisition_cost_cents_excl_tax?: number | null,
+  customer_acquisition_cost_cents_excl_tax?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total?: number | null,
+  total_pages?: number | null,
+  next_after?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTag
+
+`customers.removeTag`
+
+Remove one tag or a list of tags from a contact, which can stop the automations that tag is attached to
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.customers.removeTag({ id: 12, tag_ids: [5, 6] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `tag_id` | `number` | No | One tag to add or remove. |
+| `tag_ids` | `number[]` | No | Several tags to add or remove. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Change part of a contact. Only the fields sent change, so an omitted field keeps its stored value
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.customers.update({ id: 12, first_names: 'Alexandra', phone_number: '+15551234567' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `first_names` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string` | No | The address Simplero matches the contact on. |
+| `alternative_emails` | `string[] \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `do_not_contact` | `boolean` | No | — |
+| `do_not_sms` | `boolean` | No | — |
+| `locale` | `string \| null` | No | — |
+| `gdpr_consent` | `boolean` | No | — |
+| `lead_score` | `number` | No | Setting it replaces the score. Use customers.adjustLeadScore to add to it instead. |
+| `field_value_ids` | `number[]` | No | — |
+
+PATCH changes only the fields sent. An omitted field keeps its stored value.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  first_names?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  alternative_emails?: string[] | null,
+  phone_number?: string | null,
+  do_not_contact?: boolean | null,
+  do_not_sms?: boolean | null,
+  locale?: string | null,
+  gdpr_consent?: boolean | null,
+  lead_score?: number | null,
+  lifetime_value_cents_excl_tax?: number | null,
+  lead_acquisition_cost_cents_excl_tax?: number | null,
+  customer_acquisition_cost_cents_excl_tax?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create an email list. Name and internal name are both required by Simplero
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.lists.create({ name: 'Newsletter', internal_name: 'newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `internal_name` | `string` | Yes | — |
+| `handle` | `string \| null` | No | — |
+| `show_in_admin` | `boolean` | No | — |
+| `require_confirmation` | `boolean` | No | — |
+| `sender_name` | `string \| null` | No | — |
+| `sender_email` | `string \| null` | No | — |
+| `label_ids` | `number[]` | No | — |
+
+Name and internal_name are both required by Simplero.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  internal_name?: string | null,
+  handle?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  require_confirmation?: boolean | null,
+  sender_name?: string | null,
+  sender_email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Read one list with its sender, confirmation settings and labels
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.lists.get({ id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  internal_name?: string | null,
+  handle?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  require_confirmation?: boolean | null,
+  sender_name?: string | null,
+  sender_email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List the email lists on the account with their names and handles
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.lists.list({ per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. Ignored when `after` is set. |
+| `per_page` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
+| `after` | `number` | No | Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used. |
+| `q` | `string` | No | Search, matching the fields the route documents. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  internal_name?: string | null,
+  handle?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  require_confirmation?: boolean | null,
+  sender_name?: string | null,
+  sender_email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total?: number | null,
+  total_pages?: number | null,
+  next_after?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Change part of a list, such as its name, sender or whether signups need confirmation
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.lists.update({ id: 7, name: 'Weekly newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `name` | `string \| null` | No | — |
+| `internal_name` | `string \| null` | No | — |
+| `handle` | `string \| null` | No | — |
+| `show_in_admin` | `boolean` | No | — |
+| `require_confirmation` | `boolean` | No | — |
+| `sender_name` | `string \| null` | No | — |
+| `sender_email` | `string \| null` | No | — |
+| `label_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  internal_name?: string | null,
+  handle?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  require_confirmation?: boolean | null,
+  sender_name?: string | null,
+  sender_email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create a product. Name and internal name are both required by Simplero
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.products.create({ name: 'Course', internal_name: 'course' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `internal_name` | `string` | Yes | — |
+| `subtitle` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `short_description` | `string \| null` | No | — |
+| `long_description` | `string \| null` | No | — |
+| `listing_type` | `string \| null` | No | — |
+| `product_type` | `string \| null` | No | — |
+| `show_in_admin` | `boolean` | No | — |
+| `label_ids` | `number[]` | No | — |
+
+Name and internal_name are both required by Simplero.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  internal_name?: string | null,
+  subtitle?: string | null,
+  summary?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  listing_type?: string | null,
+  product_type?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  recurring?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`products.get`
+
+Read one product with its descriptions, listing type and product type
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.products.get({ id: 34 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  internal_name?: string | null,
+  subtitle?: string | null,
+  summary?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  listing_type?: string | null,
+  product_type?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  recurring?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List the products on the account, filtered by name, listing type or whether they recur
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.products.list({ recurring: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. Ignored when `after` is set. |
+| `per_page` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
+| `after` | `number` | No | Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used. |
+| `q` | `string` | No | Search, matching the fields the route documents. |
+| `name` | `string` | No | — |
+| `listing_type` | `string` | No | — |
+| `recurring` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  internal_name?: string | null,
+  subtitle?: string | null,
+  summary?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  listing_type?: string | null,
+  product_type?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  recurring?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total?: number | null,
+  total_pages?: number | null,
+  next_after?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Change part of a product, such as its name, summary or listing type
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.products.update({ id: 34, summary: 'Updated summary' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `name` | `string \| null` | No | — |
+| `internal_name` | `string \| null` | No | — |
+| `subtitle` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `short_description` | `string \| null` | No | — |
+| `long_description` | `string \| null` | No | — |
+| `listing_type` | `string \| null` | No | — |
+| `product_type` | `string \| null` | No | — |
+| `show_in_admin` | `boolean` | No | — |
+| `label_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  internal_name?: string | null,
+  subtitle?: string | null,
+  summary?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  listing_type?: string | null,
+  product_type?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  recurring?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Purchases
+
+### get
+
+`purchases.get`
+
+Read one purchase with its state, amounts, buyer details and dates
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.purchases.get({ id: 99 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  customer_id?: number | null,
+  product_id?: number | null,
+  price_id?: number | null,
+  state?: string | null,
+  email?: string | null,
+  first_names?: string | null,
+  last_name?: string | null,
+  currency_code?: string | null,
+  country_code?: string | null,
+  received_price_cents?: number | null,
+  purchased_at?: string | null,
+  canceled_at?: string | null,
+  refunded_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`purchases.list`
+
+List purchases with filters for state, customer, product, price and the purchase, cancel and refund dates
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.purchases.list({ customer_id: 12, state: 'complete' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. Ignored when `after` is set. |
+| `per_page` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
+| `after` | `number` | No | Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used. |
+| `q` | `string` | No | Search, matching the fields the route documents. |
+| `state` | `string` | No | — |
+| `customer_id` | `number` | No | — |
+| `product_id` | `number` | No | — |
+| `price_id` | `number` | No | — |
+| `purchased_at` | `string` | No | — |
+| `canceled_at` | `string` | No | — |
+| `refunded_at` | `string` | No | — |
+| `subscription` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  customer_id?: number | null,
+  product_id?: number | null,
+  price_id?: number | null,
+  state?: string | null,
+  email?: string | null,
+  first_names?: string | null,
+  last_name?: string | null,
+  currency_code?: string | null,
+  country_code?: string | null,
+  received_price_cents?: number | null,
+  purchased_at?: string | null,
+  canceled_at?: string | null,
+  refunded_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total?: number | null,
+  total_pages?: number | null,
+  next_after?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`purchases.update`
+
+Change a purchase's buyer details and marketing preferences. Money movements (refund, cancel, capture, change price) are separate actions and are not wrapped
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.purchases.update({ id: 99, first_names: 'Alexandra', city: 'Berlin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `email` | `string \| null` | No | — |
+| `first_names` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `vat_no` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region_code` | `string \| null` | No | — |
+| `wants_marketing` | `boolean` | No | — |
+| `wants_notifications` | `boolean` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+
+Buyer details and marketing preferences only. Refunds, cancellations, captures and price changes are separate Simplero actions and are not wrapped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  customer_id?: number | null,
+  product_id?: number | null,
+  price_id?: number | null,
+  state?: string | null,
+  email?: string | null,
+  first_names?: string | null,
+  last_name?: string | null,
+  currency_code?: string | null,
+  country_code?: string | null,
+  received_price_cents?: number | null,
+  purchased_at?: string | null,
+  canceled_at?: string | null,
+  refunded_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### get
+
+`subscriptions.get`
+
+Read one subscription with whether it is active and confirmed, and when it was unsubscribed or suspended
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.subscriptions.get({ id: 55 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  list_id?: number | null,
+  customer_id?: number | null,
+  active?: boolean | null,
+  confirmed?: boolean | null,
+  first_activated_at?: string | null,
+  unsubscribed_at?: string | null,
+  suspended_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscriptions.list`
+
+List list subscriptions with filters for state, list, tag, email and the unsubscribe date
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.subscriptions.list({ list_id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. Ignored when `after` is set. |
+| `per_page` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
+| `after` | `number` | No | Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used. |
+| `q` | `string` | No | Search, matching the fields the route documents. |
+| `state` | `string` | No | — |
+| `list_id` | `number` | No | — |
+| `tag_id` | `number` | No | — |
+| `email` | `string` | No | — |
+| `first_names` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `unsubscribed_at` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  list_id?: number | null,
+  customer_id?: number | null,
+  active?: boolean | null,
+  confirmed?: boolean | null,
+  first_activated_at?: string | null,
+  unsubscribed_at?: string | null,
+  suspended_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total?: number | null,
+  total_pages?: number | null,
+  next_after?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resubscribe
+
+`subscriptions.resubscribe`
+
+Put an unsubscribed contact back on a list, so they receive its mailings again
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.subscriptions.resubscribe({ id: 55 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`subscriptions.unsubscribe`
+
+Unsubscribe a contact from a list; they stop receiving its mailings. Resubscribe puts them back
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.subscriptions.unsubscribe({ id: 55 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`subscriptions.update`
+
+Change a subscription's tracking data. Whether a contact is subscribed changes through unsubscribe or resubscribe, not this body
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.subscriptions.update({ id: 55, utm_source: 'newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `track` | `string \| null` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+
+Tracking data only. Whether a contact is subscribed changes through unsubscribe or resubscribe, not this body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  list_id?: number | null,
+  customer_id?: number | null,
+  active?: boolean | null,
+  confirmed?: boolean | null,
+  first_activated_at?: string | null,
+  unsubscribed_at?: string | null,
+  suspended_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag, which contacts can then be tagged with
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.tags.create({ name: 'VIP', color: '#ff0000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `show_in_admin` | `boolean` | No | — |
+| `label_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  description?: string | null,
+  color?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  undeleted_customers_count?: number | null,
+  last_tagging_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Read one tag with its colour, owner and how many contacts carry it
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.tags.get({ id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  description?: string | null,
+  color?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  undeleted_customers_count?: number | null,
+  last_tagging_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List the tags on the account, optionally only those one owner created
+
+**Risk:** `read`
+
+```ts
+await corsair.simplero.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. Ignored when `after` is set. |
+| `per_page` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
+| `after` | `number` | No | Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used. |
+| `q` | `string` | No | Search, matching the fields the route documents. |
+| `owner_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  description?: string | null,
+  color?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  undeleted_customers_count?: number | null,
+  last_tagging_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total?: number | null,
+  total_pages?: number | null,
+  next_after?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Change part of a tag, such as its name, description or colour
+
+**Risk:** `write`
+
+```ts
+await corsair.simplero.api.tags.update({ id: 5, name: 'Very VIP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | A Simplero integer id. |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `show_in_admin` | `boolean` | No | — |
+| `label_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token?: string | null,
+  name?: string | null,
+  description?: string | null,
+  color?: string | null,
+  labels?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  show_in_admin?: boolean | null,
+  undeleted_customers_count?: number | null,
+  last_tagging_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

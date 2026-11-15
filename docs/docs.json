@@ -4252,6 +4252,14 @@
                 ]
               },
               {
+                "group": "Simplero",
+                "pages": [
+                  "plugins/simplero/overview",
+                  "plugins/simplero/api",
+                  "plugins/simplero/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",
