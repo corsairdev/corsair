@@ -86,7 +86,8 @@ function sanitizeValue(value: unknown, secrets: string[]): unknown {
 	return value;
 }
 
-// List filters such as recipientEmail and purchaserEmail put emails in the query
+// List filters such as recipientEmail and purchaserEmail put emails in the query.
+// `unknown` because core types query values loosely (string, number, boolean, arrays).
 function isEmailQueryParam(key: string, value: unknown): boolean {
 	return (
 		/email/i.test(key) || (typeof value === 'string' && value.includes('@'))
@@ -130,6 +131,7 @@ export function redactApiErrorInPlace(
 			Reflect.set(error.request, 'body', REDACTED);
 		}
 		if (isRecord(error.request.query)) {
+			// `unknown` because the copied query keeps core's untyped values, only emails change
 			const query: Record<string, unknown> = { ...error.request.query };
 			for (const [key, value] of Object.entries(query)) {
 				if (isEmailQueryParam(key, value)) query[key] = REDACTED;
