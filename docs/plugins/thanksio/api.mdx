@@ -1274,7 +1274,13 @@ await corsair.thanksio.api.imageBuilder.create({ id: 8 });
 
 
 
-**Output:** `custom`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
 
 
 ---
@@ -1373,7 +1379,7 @@ await corsair.thanksio.api.imageTemplates.list({});
 
 Purchase radius-search records; charges may apply.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.mailingLists.buyRadiusSearch({
@@ -1847,9 +1853,9 @@ await corsair.thanksio.api.messageTemplates.create({
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `type` | `string` | No | — |
-| `giftcard_brand_code` | `string` | No | — |
+| `giftcard_brand_code` | `string \| null` | No | — |
 | `giftcard_brand_image` | `string \| null` | No | — |
-| `giftcard_amount` | `string \| number` | No | — |
+| `giftcard_amount` | `string \| number \| null` | No | — |
 | `landing_page_url` | `string \| null` | No | — |
 | `share_uuid` | `string` | No | — |
 
@@ -1928,9 +1934,9 @@ await corsair.thanksio.api.messageTemplates.get({ messageTemplateId: 1912 });
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `type` | `string` | No | — |
-| `giftcard_brand_code` | `string` | No | — |
+| `giftcard_brand_code` | `string \| null` | No | — |
 | `giftcard_brand_image` | `string \| null` | No | — |
-| `giftcard_amount` | `string \| number` | No | — |
+| `giftcard_amount` | `string \| number \| null` | No | — |
 | `landing_page_url` | `string \| null` | No | — |
 | `share_uuid` | `string` | No | — |
 
@@ -1991,9 +1997,9 @@ await corsair.thanksio.api.messageTemplates.list({});
   created_at?: string,
   updated_at?: string,
   type?: string,
-  giftcard_brand_code?: string,
+  giftcard_brand_code?: string | null,
   giftcard_brand_image?: string | null,
-  giftcard_amount?: string | number,
+  giftcard_amount?: string | number | null,
   landing_page_url?: string | null,
   share_uuid?: string
 }[]
@@ -2102,9 +2108,9 @@ await corsair.thanksio.api.messageTemplates.update({
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `type` | `string` | No | — |
-| `giftcard_brand_code` | `string` | No | — |
+| `giftcard_brand_code` | `string \| null` | No | — |
 | `giftcard_brand_image` | `string \| null` | No | — |
-| `giftcard_amount` | `string \| number` | No | — |
+| `giftcard_amount` | `string \| number \| null` | No | — |
 | `landing_page_url` | `string \| null` | No | — |
 | `share_uuid` | `string` | No | — |
 
@@ -2489,7 +2495,7 @@ await corsair.thanksio.api.orders.listItems({ orderId: 42708 });
 
 Place a new copy of a settled order; this charges and mails again.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.orders.replay({
@@ -2713,7 +2719,7 @@ await corsair.thanksio.api.orders.track({ orderId: 42708 });
 
 Create a recipient; email-only address lookup may incur a fee.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.recipients.create({
@@ -2809,7 +2815,7 @@ await corsair.thanksio.api.recipients.create({
 
 Create recipients; email-only address lookup may incur a fee.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.recipients.createMultiple({
@@ -3000,34 +3006,45 @@ await corsair.thanksio.api.recipients.get({ recipientId: 56 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `mailing_list_id` | `number` | No | — |
-| `name` | `string \| null` | No | — |
-| `company` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `address2` | `string \| null` | No | — |
-| `city` | `string \| null` | No | — |
-| `province` | `string \| null` | No | — |
-| `postal_code` | `string \| null` | No | — |
-| `country` | `string \| null` | No | — |
-| `dob` | `string \| null` | No | — |
-| `anniversary` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `phone` | `string \| null` | No | — |
-| `custom1` | `string \| null` | No | — |
-| `custom2` | `string \| null` | No | — |
-| `custom3` | `string \| null` | No | — |
-| `custom4` | `string \| null` | No | — |
-| `custom5` | `string \| null` | No | — |
-| `custom6` | `string \| null` | No | — |
-| `custom7` | `string \| null` | No | — |
-| `custom8` | `string \| null` | No | — |
-| `custom9` | `string \| null` | No | — |
-| `custom10` | `string \| null` | No | — |
-| `absentee_address` | `string \| null` | No | — |
-| `created_at` | `string \| null` | No | — |
-| `updated_at` | `string \| null` | No | — |
-| `error` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  mailing_list_id?: number,
+  name?: string | null,
+  company?: string | null,
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  dob?: string | null,
+  anniversary?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  custom1?: string | null,
+  custom2?: string | null,
+  custom3?: string | null,
+  custom4?: string | null,
+  custom5?: string | null,
+  custom6?: string | null,
+  custom7?: string | null,
+  custom8?: string | null,
+  custom9?: string | null,
+  custom10?: string | null,
+  absentee_address?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3139,7 +3156,7 @@ await corsair.thanksio.api.recipients.update({
 
 Send a gift card; charges may apply.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.send.giftcard({
@@ -3280,7 +3297,7 @@ await corsair.thanksio.api.send.giftcard({
 
 Send a magnacard; charges may apply.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.send.magnacard({
@@ -3421,7 +3438,7 @@ await corsair.thanksio.api.send.magnacard({
 
 Send a notecard; charges may apply.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.send.notecard({
@@ -3563,7 +3580,7 @@ await corsair.thanksio.api.send.notecard({
 
 Send a postcard; charges may apply.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.send.postcard({
@@ -3706,7 +3723,7 @@ await corsair.thanksio.api.send.postcard({
 
 Send a windowed letter; charges may apply.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.send.windowedLetter({
@@ -3848,7 +3865,7 @@ await corsair.thanksio.api.send.windowedLetter({
 
 Send a windowless letter; charges may apply.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thanksio.api.send.windowlessLetter({
@@ -4030,12 +4047,12 @@ await corsair.thanksio.api.subAccounts.create({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `title` | `string` | No | — |
-| `return_name` | `string` | No | — |
-| `return_address` | `string` | No | — |
-| `return_address2` | `string` | No | — |
-| `return_city` | `string` | No | — |
-| `return_state` | `string` | No | — |
-| `return_postal_code` | `string` | No | — |
+| `return_name` | `string \| null` | No | — |
+| `return_address` | `string \| null` | No | — |
+| `return_address2` | `string \| null` | No | — |
+| `return_city` | `string \| null` | No | — |
+| `return_state` | `string \| null` | No | — |
+| `return_postal_code` | `string \| null` | No | — |
 | `id` | `number` | No | — |
 | `user_id` | `number` | No | — |
 
@@ -4093,12 +4110,12 @@ await corsair.thanksio.api.subAccounts.get({ subAccountId: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `title` | `string` | No | — |
-| `return_name` | `string` | No | — |
-| `return_address` | `string` | No | — |
-| `return_address2` | `string` | No | — |
-| `return_city` | `string` | No | — |
-| `return_state` | `string` | No | — |
-| `return_postal_code` | `string` | No | — |
+| `return_name` | `string \| null` | No | — |
+| `return_address` | `string \| null` | No | — |
+| `return_address2` | `string \| null` | No | — |
+| `return_city` | `string \| null` | No | — |
+| `return_state` | `string \| null` | No | — |
+| `return_postal_code` | `string \| null` | No | — |
 | `id` | `number` | No | — |
 | `user_id` | `number` | No | — |
 
@@ -4133,12 +4150,12 @@ await corsair.thanksio.api.subAccounts.list({});
 ```ts
 {
   title?: string,
-  return_name?: string,
-  return_address?: string,
-  return_address2?: string,
-  return_city?: string,
-  return_state?: string,
-  return_postal_code?: string,
+  return_name?: string | null,
+  return_address?: string | null,
+  return_address2?: string | null,
+  return_city?: string | null,
+  return_state?: string | null,
+  return_postal_code?: string | null,
   id?: number,
   user_id?: number
 }[]
@@ -4196,12 +4213,12 @@ await corsair.thanksio.api.subAccounts.update({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `title` | `string` | No | — |
-| `return_name` | `string` | No | — |
-| `return_address` | `string` | No | — |
-| `return_address2` | `string` | No | — |
-| `return_city` | `string` | No | — |
-| `return_state` | `string` | No | — |
-| `return_postal_code` | `string` | No | — |
+| `return_name` | `string \| null` | No | — |
+| `return_address` | `string \| null` | No | — |
+| `return_address2` | `string \| null` | No | — |
+| `return_city` | `string \| null` | No | — |
+| `return_state` | `string \| null` | No | — |
+| `return_postal_code` | `string \| null` | No | — |
 | `id` | `number` | No | — |
 | `user_id` | `number` | No | — |
 
@@ -4269,6 +4286,7 @@ await corsair.thanksio.api.webhookDestinations.create({
 
 
 ---
+
 ### delete
 
 `webhookDestinations.delete`
@@ -4443,3 +4461,4 @@ await corsair.thanksio.api.webhookDestinations.update({
 
 
 ---
+
