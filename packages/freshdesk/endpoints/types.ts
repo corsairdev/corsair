@@ -95,6 +95,8 @@ export type FreshdeskBodyFieldDefinition = {
 		| 'jsonArray'
 		| 'object'
 		| 'json';
+	// Fields the reference marks Mandatory with no alternative field.
+	required?: true;
 };
 
 export function defineFreshdeskBodyFields(
@@ -149,17 +151,25 @@ export function createFreshdeskRouteInputSchema(
 					)
 					.catchall(QueryValueSchema)
 			: z.record(z.string(), QueryValueSchema).optional();
-	const body = z
+	const bodyObject = z
 		.object(
 			Object.fromEntries(
-				definition.bodyFields.map((field) => [
-					field.name,
-					bodyFieldSchema(field.type).optional(),
-				]),
+				definition.bodyFields.map((field) => {
+					const fieldSchema = bodyFieldSchema(field.type);
+					if (!field.required) return [field.name, fieldSchema.optional()];
+					return [
+						field.name,
+						fieldSchema instanceof z.ZodNullable
+							? fieldSchema.unwrap()
+							: fieldSchema,
+					];
+				}),
 			),
 		)
-		.strict()
-		.optional();
+		.strict();
+	const body = definition.bodyFields.some((field) => field.required)
+		? bodyObject
+		: bodyObject.optional();
 	const schema = z
 		.object({
 			pathParams,

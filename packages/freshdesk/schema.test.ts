@@ -33,7 +33,19 @@ describe('Freshdesk endpoint schemas', () => {
 				),
 			};
 			const inputSchema = createFreshdeskRouteInputSchema(operation);
-			expect(inputSchema.safeParse({ pathParams, query }).success).toBe(true);
+			const required = operation.bodyFields.filter((field) => field.required);
+			const body =
+				required.length > 0
+					? Object.fromEntries(
+							required.map((field) => [
+								field.name,
+								field.type === 'number' ? 1 : 'fixture-value',
+							]),
+						)
+					: undefined;
+			expect(inputSchema.safeParse({ pathParams, query, body }).success).toBe(
+				true,
+			);
 		}
 		for (const schema of Object.values(freshdeskEndpointSchemas)) {
 			expect(schema.input).toBeDefined();

@@ -65,9 +65,20 @@ describe('Freshdesk v2 route endpoints', () => {
 				/\[([^\]]+)\]/g,
 				'fixture-id',
 			);
+			const required = definition.bodyFields.filter((field) => field.required);
+			const body =
+				required.length > 0
+					? Object.fromEntries(
+							required.map((field) => [
+								field.name,
+								field.type === 'number' ? 1 : 'fixture-value',
+							]),
+						)
+					: undefined;
 			await makeFreshdeskRequest(ctx, 'test-key', definition, {
 				pathParams,
 				query,
+				body,
 			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(

@@ -1616,7 +1616,7 @@ export const freshdeskEndpointMeta = {
 			'Update a Ticket: PUT /api/v2/tickets/[id] (Freshdesk API v2).',
 	},
 	'routes.bulkUpdateTicketsPostBulkUpdate.run': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Update Multiple Tickets: POST /api/v2/tickets/bulk_update (Freshdesk API v2).',
 	},
@@ -1844,7 +1844,7 @@ export const freshdeskEndpointMeta = {
 			'Create a Reply: POST /api/v2/tickets/[id]/reply (Freshdesk API v2).',
 	},
 	'routes.addNoteToATicketPostNotes.run': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a Note: POST /api/v2/tickets/[ticket_id]/notes (Freshdesk API v2).',
 	},
