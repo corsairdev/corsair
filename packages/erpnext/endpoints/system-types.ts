@@ -45,6 +45,12 @@ const SystemAllLanguagesInputSchema = z
 			.describe(
 				'JSON array string of field names to return, for example ["language_code","language_name"], passed verbatim to Frappe',
 			),
+		limit_start: z
+			.number()
+			.int()
+			.min(0)
+			.optional()
+			.describe('Row offset for the next page'),
 		limit_page_length: z
 			.number()
 			.int()

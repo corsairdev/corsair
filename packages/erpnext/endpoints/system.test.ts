@@ -82,6 +82,7 @@ const INPUT_FIXTURES: Record<SystemOperationKey, unknown> = {
 	'system.getFrameworkVersion': {},
 	'system.getAllLanguages': {
 		fields: '["language_code","language_name"]',
+		limit_start: 20,
 		// 0 is Frappe's "no page limit" sentinel; the fixture pins the boundary.
 		limit_page_length: 0,
 	},
@@ -203,6 +204,7 @@ const EXPECTED_REQUESTS: Record<SystemOperationKey, ExpectedRequest> = {
 		url: 'https://test.example.com/api/resource/Language',
 		query: {
 			fields: '["language_code","language_name"]',
+			limit_start: '20',
 			limit_page_length: '0',
 		},
 		authHeader: AUTH_HEADER,

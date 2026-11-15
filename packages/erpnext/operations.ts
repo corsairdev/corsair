@@ -376,7 +376,7 @@ export const ERPNEXT_OPERATIONS = [
 		method: 'GET',
 		path: '/api/resource/Language',
 		pathParams: [],
-		queryParams: ['fields', 'limit_page_length'],
+		queryParams: ['fields', 'limit_start', 'limit_page_length'],
 		hasBody: false,
 		bodyRequired: false,
 		hasResponseBody: true,
