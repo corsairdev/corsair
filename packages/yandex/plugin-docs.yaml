@@ -1,0 +1,36 @@
+displayName: Yandex Translate
+description: Translation with Yandex Cloud - translate passages between languages, detect the language of text, and list the supported languages.
+domain: yandex.cloud
+recommendedAuth: api_key
+overviewNote: |
+  This plugin wraps **Yandex Translate**, part of Yandex Cloud. Create a service account with the `ai.translate.user` role, then make an API key for it; the key goes in `Authorization: Api-Key`.
+
+  - **"Yandex" is a family, and this is the Translate API.** Yandex publishes many unrelated APIs (Metrica, Search, Cloud); this plugin covers the translator, at `https://translate.api.cloud.yandex.net`. The other services have their own credentials and contracts and are not part of this package.
+  - **Two credential kinds are accepted.** A service-account **API key** is sent as `Authorization: Api-Key <key>` and is long-lived, which is what a server integration wants. An **IAM token** is sent as `Bearer` and expires, so the plugin passes through a key that already names its scheme — write `Bearer …` explicitly to use one.
+  - **A folder scopes a cloud resource.** A service account's API key or IAM token already implies its folder, so leave `folderId` out with one. A user account's IAM token needs `folderId` on every call, even when the account reaches only one folder; the plugin sends it as the `folderId` body field, as the API reference documents.
+  - **Every call is a POST, including the reads.** `translate`, `detect` and `languages` all take a JSON body, which is unusual but what the gRPC-to-JSON mapping produces.
+  - **Errors are gRPC statuses, not HTTP ones.** The body is `{ code, message, details }` where `code` is a gRPC status — 3 is an invalid argument, 5 not found, 7 permission denied, 8 resource exhausted, 16 unauthenticated. The HTTP status follows the gRPC code (3 answers 400, 7 answers 403, 8 answers 429, 16 answers 401), and the plugin reads `code` itself, since it names the cause more precisely than the status. A bad key answers HTTP 401 with `16` and `Unknown api key '****'`.
+  - **The `requestId` is kept.** It sits inside the `details` array, and it is what Yandex support asks for.
+  - **10,000 characters per call, across 1,000 passages.** The plugin checks the total before sending, because the API's own refusal is a `3` that does not say which limit was hit.
+  - **Omitting `sourceLanguageCode` asks for detection.** Sending it empty would be an unknown language code, so the plugin leaves it out entirely when it is not set.
+  - **`format: HTML` preserves markup.** The default is `PLAIN_TEXT`, which treats tags as text to translate.
+  - **Text never reaches the event log.** Only the character count and the language codes are logged, since the passage is the caller's own content. A failed call's `YandexAPIError` keeps the underlying HTTP error as its `cause`, which includes the request body, so do not log error causes in full if the text is sensitive.
+examples:
+  read:
+    path: listLanguages.run
+    title: List the supported languages
+    args: {}
+  write:
+    path: translate.text
+    title: Translate into Russian
+    args:
+      targetLanguageCode: ru
+      texts:
+        - Hello
+apiExamples:
+  translate.text:
+    call: "{ targetLanguageCode: 'ru', texts: ['Hello'] }"
+  detectLanguages.run:
+    call: "{ texts: ['Hello', 'Guten Tag'] }"
+  listLanguages.run:
+    call: "{}"

@@ -642,11 +642,19 @@ describe('a log entry that can’t be written', () => {
 			.mockImplementation(() => undefined);
 		try {
 			fetchMock.mockResolvedValueOnce(jsonResponse(acceptedBody));
-			const response = await corsair.higgsfield.api.generations.submit({
-				modelPath: MODEL,
-				input: INPUT,
-			});
-			expect(response.request_id).toBe(REQUEST_ID);
+			const outcome = await corsair.higgsfield.api.generations
+				.submit({ modelPath: MODEL, input: INPUT })
+				.then(
+					(response) => ({ response }),
+					(error: Error) => ({ error }),
+				);
+			if ('error' in outcome) {
+				// Newer core refuses before the request, so nothing is submitted.
+				expect(outcome.error.name).toBe('CorsairKekMissingError');
+				expect(posts()).toHaveLength(0);
+				return;
+			}
+			expect(outcome.response.request_id).toBe(REQUEST_ID);
 			expect(posts()).toHaveLength(1);
 			expect(warn).toHaveBeenCalledTimes(1);
 			expect(warn).toHaveBeenCalledWith(

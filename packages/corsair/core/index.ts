@@ -326,6 +326,7 @@ export {
 	getOAuthAccessToken,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
+	OAuthRefreshError,
 	ReconnectRequiredError,
 	reEncryptConfig,
 } from './auth';

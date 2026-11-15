@@ -1,0 +1,55 @@
+{
+  "name": "@corsair-dev/rollbar",
+  "version": "0.1.0",
+  "description": "Error monitoring with Rollbar - list and read error items and their occurrences, update an item's status, assignee or snooze, read an item's comments and events, comment on an item, and list and record deploys.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "corsair": "workspace:*",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "rollbar",
+    "plugin",
+    "error-monitoring",
+    "observability",
+    "crash-reporting",
+    "deploys"
+  ],
+  "author": "Corsair (https://corsair.dev)",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/rollbar"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/rollbar"
+}

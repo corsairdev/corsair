@@ -1,0 +1,602 @@
+{
+  "id": "vectorshift",
+  "displayName": "VectorShift",
+  "description": "AI pipelines and agents with VectorShift - run pipelines singly or in bulk, create them from a graph, create and query knowledge bases, run chatbots, and execute Python transformations in VectorShift's sandbox.",
+  "npmPackageName": "@corsair-dev/vectorshift",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "vectorshift.api.chatbots.create",
+      "shortPath": "chatbots.create",
+      "description": "Create a chatbot over a pipeline, naming the input and output nodes its messages use",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pipeline",
+            "optional": false,
+            "type": "{ id: string, version?: latest | { major: number, minor: number, patch: number } }"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deployment_options",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "access_config",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "twilio_config",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "slack_config",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "deployed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline input node the message is fed to."
+          },
+          {
+            "key": "output",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline output node the reply is read from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.chatbots.run",
+      "shortPath": "chatbots.run",
+      "description": "Send a text or audio message to a chatbot and read its reply, continuing a conversation by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "string",
+            "description": "Base64-encoded audio."
+          },
+          {
+            "key": "conversation_id",
+            "optional": true,
+            "type": "string",
+            "description": "Continue an existing conversation. Omit to start one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "conversation_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back to continue the conversation."
+          },
+          {
+            "key": "output_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_questions",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.knowledgeBases.create",
+      "shortPath": "knowledgeBases.create",
+      "description": "Create a knowledge base, choosing the file parser, chunk size and overlap",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_processing_implementation",
+            "optional": true,
+            "type": "Default | Textract | Unstructured | LlamaParse | Other",
+            "description": "Which parser reads uploaded files."
+          },
+          {
+            "key": "chunk_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "chunk_overlap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "analyze_documents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "apify_key",
+            "optional": true,
+            "type": "string",
+            "description": "Only for the Apify-backed implementation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The new knowledge base id."
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.knowledgeBases.get",
+      "shortPath": "knowledgeBases.get",
+      "description": "Read one knowledge base by id, or by name with an optional owner",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The knowledge base name, as an alternative to the id."
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Narrows a name lookup to a user. Only with `name`."
+          },
+          {
+            "key": "org_name",
+            "optional": true,
+            "type": "string",
+            "description": "Narrows a name lookup to an organization. Only with `name`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.knowledgeBases.query",
+      "shortPath": "knowledgeBases.query",
+      "description": "Ask one or more questions of a knowledge base, with retrieval, reranking and answering switches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The knowledge base id."
+          },
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "string[]",
+            "description": "One or more questions, answered against the same retrieval."
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "string",
+            "description": "Extra context for the answer."
+          },
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ filter?: string, opensearch_filter?: string, top_k?: number, group_by_key?: string }"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ rerank_documents?: boolean, generate_metadata_filters?: boolean, transform_query?: boolean, answer_multi_query?: boolean, expand_query?: boolean, do_advanced_qa?: boolean, format_context_for_llm?: boolean, generate_ai_doc_summaries?: boolean, retrieval_unit?: string, score_cutoff?: number, retrieval_config?: { max_documents?: number, data_fusion_method?: string }, reranking_config?: { reranking_model?: string, api_key?: string, num_chunks_to_rerank?: number }, question_answering_config?: { qa_model?: string, advanced_qa_mode?: string }, hybrid_search_config?: { alpha?: number, fusion_method?: string } }",
+            "description": "Retrieval and answering switches. Every field is optional."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.pipelines.bulkRun",
+      "shortPath": "pipelines.bulkRun",
+      "description": "Run one pipeline once per entry in parallel, with separate inputs and a run id each",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline id to run repeatedly."
+          },
+          {
+            "key": "runs",
+            "optional": false,
+            "type": "{ inputs?: Record<string, any> }[]",
+            "description": "One entry per run, each with its own inputs. Run in parallel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "run_outputs",
+            "optional": true,
+            "type": "{ run_id?: string | null, outputs?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.pipelines.create",
+      "shortPath": "pipelines.create",
+      "description": "Create a pipeline from a builder graph, passed through unchanged",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The pipeline graph. Required by the API but its shape is defined by the builder, so it is passed through unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.pipelines.list",
+      "shortPath": "pipelines.list",
+      "description": "List pipeline ids, optionally including shared pipelines and the full objects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_shared",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also list pipelines shared with you."
+          },
+          {
+            "key": "verbose",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the full pipeline objects, not only their ids."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "object_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.pipelines.run",
+      "shortPath": "pipelines.run",
+      "description": "Run a pipeline with the given inputs and read back every output node value",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline id."
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Input name to value, matching the pipeline input nodes."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.transformations.create",
+      "shortPath": "transformations.create",
+      "description": "Create a transformation from a Python function and its input and output schemas",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "function_name",
+            "optional": false,
+            "type": "string",
+            "description": "The Python function to call."
+          },
+          {
+            "key": "function",
+            "optional": false,
+            "type": "string",
+            "description": "The function source."
+          },
+          {
+            "key": "input_schema",
+            "optional": false,
+            "type": "Record<string, string>",
+            "description": "Argument name to type, for the generated signature."
+          },
+          {
+            "key": "output_schema",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vectorshift.api.transformations.run",
+      "shortPath": "transformations.run",
+      "description": "Run a transformation in VectorShift's sandbox with the given arguments",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inputs",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | any[] | Record<string, any>>",
+            "description": "Argument name to value, matching the transformation input schema."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | string",
+            "description": "Never `failed` on a returned result: a failed call is thrown as VectorshiftRunFailedError."
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

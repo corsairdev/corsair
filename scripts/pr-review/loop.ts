@@ -79,3 +79,43 @@ export function buildEscalationComment(findings: Finding[]): string {
 		...findingLines(findings.filter((f) => f.severity !== 'P2')),
 	].join('\n');
 }
+
+/** Replaces the escalation comment once no serious finding is left. */
+export function buildResolvedComment(): string {
+	return [
+		'<!-- corsair-review-bot round=3 -->',
+		'### Maintainer review no longer needed',
+		"Greptile's latest review raised no P0 or P1 finding, and the gate passes. A maintainer still reviews before merging.",
+	].join('\n');
+}
+
+/**
+ * Whether Greptile's latest review object is older than its summary, with
+ * the summary raising nothing serious. Greptile only creates a review object
+ * when it posts inline comments; a clean re-review just edits its summary
+ * comment. Reading the old review then lists findings the newer commit
+ * already fixed, and the loop keeps a stale "Maintainer review needed".
+ */
+export function reviewSupersededByCleanSummary(
+	summary: { body: string; updatedAt: string } | undefined,
+	review: { commitId: string; submittedAt: string } | undefined,
+): boolean {
+	if (!summary || !review?.commitId || !review.submittedAt) return false;
+	// The summary must have been written after the review: a review that lands
+	// while the summary still describes an older clean commit carries new
+	// findings, not stale ones.
+	const summaryTime = Date.parse(summary.updatedAt);
+	const reviewTime = Date.parse(review.submittedAt);
+	if (!(summaryTime > reviewTime)) return false;
+	const reviewed = summary.body.match(
+		/Last reviewed commit:[\s\S]*?\/commit\/([0-9a-f]{7,40})/,
+	)?.[1];
+	if (!reviewed) return false;
+	if (
+		review.commitId.startsWith(reviewed) ||
+		reviewed.startsWith(review.commitId)
+	) {
+		return false;
+	}
+	return !/alt="P[01]"/.test(summary.body);
+}

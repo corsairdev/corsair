@@ -1,0 +1,1512 @@
+---
+title: "Keyword API reference"
+sidebarTitle: "API"
+description: "API reference for the Keyword plugin in Corsair: every `keyword.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+The token’s own user, optionally with the subscription block
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.account.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include` | `subscriptions[]` | No | Also return the subscription block. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id: string,
+  attributes: {
+    user_id?: number | null,
+    name?: string | null,
+    email?: string | null,
+    verified?: number | null,
+    onboarding?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Keywords
+
+### add
+
+`keywords.add`
+
+Add keywords to a project, each with its domain, region and language. Adding a keyword already tracked returns the existing one
+
+**Risk:** `write`
+
+```ts
+await corsair.keyword.api.keywords.add({ projectName: 'Disney', keywords: [{ kw: 'Jungle Book', url: 'disney.com', region: 'google.com', language: 'en', url_tracking_method: 'broad' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `keywords` | `object[]` | Yes | — |
+
+Adding a keyword the project already tracks returns the existing one rather than an error.
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  kw: string,
+  url: string,
+  type?: se | local | gmb,
+  region?: string,
+  language?: string,
+  ignore_local?: boolean,
+  ignore_featured?: boolean,
+  url_tracking_method?: broad | exact,
+  notes?: string,
+  tags?: string[],
+  near?: string,
+  gmb?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id: string,
+  attributes: {
+    project_id?: number | null,
+    category?: string | null,
+    url?: string | null,
+    kw?: string | null,
+    source?: number | null,
+    start?: number | null,
+    notes?: string | Record<string, any> | null,
+    tags_count?: number | null,
+    tags?: {
+      id?: number | null,
+      project_id?: number | null,
+      name?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      keywords_count?: number | null
+    }[] | null,
+    tag?: string | null,
+    region?: string | null,
+    language?: string | null,
+    in_featured?: boolean | null,
+    has_featured?: boolean | null,
+    has_featured_url?: string | null,
+    ignore_local?: boolean | null,
+    ignore_featured?: boolean | null,
+    url_tracking_method?: string | null,
+    type?: string | null,
+    gmb?: string | null,
+    near?: string | null,
+    isfav?: boolean | null,
+    status?: string | null,
+    clicks?: number | null,
+    impressions?: number | null,
+    ctr?: number | null,
+    ms?: number | null,
+    competition?: number | string | null,
+    cpc?: number | null,
+    gpage?: number | null,
+    grank?: number | null,
+    grank_int?: number | null,
+    best?: number | null,
+    seocomp?: number | null,
+    in_local_pack?: boolean | null,
+    rankingurl?: string | null,
+    grankhistory?: (number | null)[] | null,
+    trends?: {
+      day?: number | string | null,
+      week?: number | string | null,
+      month?: number | string | null,
+      life?: number | string | null
+    } | null,
+    updated_at?: string | null,
+    crawled_at?: number | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDelete
+
+`keywords.bulkDelete`
+
+Delete many keywords from one project in a single call; their history is lost
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.keyword.api.keywords.bulkDelete({ projectId: 3057417, keywordIds: ['272678916', '272678917'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | The numeric project ID, from `projects.list`. |
+| `keywordIds` | `(string \| number)[]` | Yes | — |
+
+Scoped by numeric `projectId`, where the single-keyword routes take the project name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdate
+
+`keywords.bulkUpdate`
+
+Apply the same domain, region, tags or status to many keywords in one project
+
+**Risk:** `write`
+
+```ts
+await corsair.keyword.api.keywords.bulkUpdate({ projectId: 3057417, keywordIds: ['267540882'], changes: { url: 'dell.com', region: 'google.ca', language: 'en-ca' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | The numeric project ID, from `projects.list`. |
+| `keywordIds` | `(string \| number)[]` | Yes | — |
+| `changes` | `object` | Yes | Applied to every keyword in `keywordIds`. |
+
+<AccordionGroup>
+<Accordion title="changes full type">
+
+```ts
+{
+  url?: string,
+  region?: string,
+  language?: string,
+  type?: se | local | gmb,
+  status?: ACTIVE | INACTIVE | ARCHIVED,
+  tags?: string[],
+  ignore_local?: boolean,
+  ignore_featured?: boolean,
+  url_tracking_method?: broad | exact
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`keywords.delete`
+
+Delete one keyword and its ranking history; it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.keyword.api.keywords.delete({ projectName: 'Disney', keywordId: '272678916' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `keywordId` | `string \| number` | Yes | The keyword ID, as a string or a number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`keywords.get`
+
+One keyword with its rank, metrics and rank history
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.keywords.get({ projectName: 'Disney', keywordId: '272678916', date: '2026-11-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `keywordId` | `string \| number` | Yes | The keyword ID, as a string or a number. |
+| `date` | `string` | No | Read the keyword as it stood on this day. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id: string,
+  attributes: {
+    project_id?: number | null,
+    category?: string | null,
+    url?: string | null,
+    kw?: string | null,
+    source?: number | null,
+    start?: number | null,
+    notes?: string | Record<string, any> | null,
+    tags_count?: number | null,
+    tags?: {
+      id?: number | null,
+      project_id?: number | null,
+      name?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      keywords_count?: number | null
+    }[] | null,
+    tag?: string | null,
+    region?: string | null,
+    language?: string | null,
+    in_featured?: boolean | null,
+    has_featured?: boolean | null,
+    has_featured_url?: string | null,
+    ignore_local?: boolean | null,
+    ignore_featured?: boolean | null,
+    url_tracking_method?: string | null,
+    type?: string | null,
+    gmb?: string | null,
+    near?: string | null,
+    isfav?: boolean | null,
+    status?: string | null,
+    clicks?: number | null,
+    impressions?: number | null,
+    ctr?: number | null,
+    ms?: number | null,
+    competition?: number | string | null,
+    cpc?: number | null,
+    gpage?: number | null,
+    grank?: number | null,
+    grank_int?: number | null,
+    best?: number | null,
+    seocomp?: number | null,
+    in_local_pack?: boolean | null,
+    rankingurl?: string | null,
+    grankhistory?: (number | null)[] | null,
+    trends?: {
+      day?: number | string | null,
+      week?: number | string | null,
+      month?: number | string | null,
+      life?: number | string | null
+    } | null,
+    updated_at?: string | null,
+    crawled_at?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`keywords.list`
+
+Every keyword in a project or group with its rank, best rank, search volume and trend, read as of a given day
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.keywords.list({ projectName: 'Disney', page: 1, per_page: 250 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `date` | `string` | No | Read the keyword data as it stood on this day. Defaults to today. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id: string,
+  attributes: {
+    project_id?: number | null,
+    category?: string | null,
+    url?: string | null,
+    kw?: string | null,
+    source?: number | null,
+    start?: number | null,
+    notes?: string | Record<string, any> | null,
+    tags_count?: number | null,
+    tags?: {
+      id?: number | null,
+      project_id?: number | null,
+      name?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      keywords_count?: number | null
+    }[] | null,
+    tag?: string | null,
+    region?: string | null,
+    language?: string | null,
+    in_featured?: boolean | null,
+    has_featured?: boolean | null,
+    has_featured_url?: string | null,
+    ignore_local?: boolean | null,
+    ignore_featured?: boolean | null,
+    url_tracking_method?: string | null,
+    type?: string | null,
+    gmb?: string | null,
+    near?: string | null,
+    isfav?: boolean | null,
+    status?: string | null,
+    clicks?: number | null,
+    impressions?: number | null,
+    ctr?: number | null,
+    ms?: number | null,
+    competition?: number | string | null,
+    cpc?: number | null,
+    gpage?: number | null,
+    grank?: number | null,
+    grank_int?: number | null,
+    best?: number | null,
+    seocomp?: number | null,
+    in_local_pack?: boolean | null,
+    rankingurl?: string | null,
+    grankhistory?: (number | null)[] | null,
+    trends?: {
+      day?: number | string | null,
+      week?: number | string | null,
+      month?: number | string | null,
+      life?: number | string | null
+    } | null,
+    updated_at?: string | null,
+    crawled_at?: number | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refresh
+
+`keywords.refresh`
+
+Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded
+
+**Risk:** `destructive`
+
+```ts
+await corsair.keyword.api.keywords.refresh({ keywordIds: ['267540882', '267540883'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywordIds` | `(string \| number)[]` | Yes | Queued for an on-demand check. The whole request is refused if it would exceed the plan’s daily refresh quota. |
+
+Spends the plan’s daily on-demand refresh quota. The whole request is refused when it would be exceeded.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | How many refreshes the plan has left. |
+
+
+
+---
+
+### update
+
+`keywords.update`
+
+Change a keyword’s domain, region, tags, status, baseline or favourite flag
+
+**Risk:** `write`
+
+```ts
+await corsair.keyword.api.keywords.update({ projectName: 'Disney', keywordId: '272678916', url: 'disney.com', tags: ['Brand', 'Priority'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `keywordId` | `string \| number` | Yes | The keyword ID, as a string or a number. |
+| `url` | `string` | No | — |
+| `region` | `string` | No | — |
+| `language` | `string` | No | — |
+| `type` | `se \| local \| gmb` | No | — |
+| `status` | `ACTIVE \| INACTIVE \| ARCHIVED` | No | — |
+| `tags` | `string[]` | No | Replace every tag on the keyword with this list. |
+| `isfav` | `boolean` | No | — |
+| `ignore_local` | `boolean` | No | — |
+| `ignore_featured` | `boolean` | No | — |
+| `url_tracking_method` | `broad \| exact` | No | — |
+| `start` | `number` | No | The starting rank the keyword’s change is measured from (sent as Keyword’s `baseline`). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id: string,
+  attributes: {
+    project_id?: number | null,
+    category?: string | null,
+    url?: string | null,
+    kw?: string | null,
+    source?: number | null,
+    start?: number | null,
+    notes?: string | Record<string, any> | null,
+    tags_count?: number | null,
+    tags?: {
+      id?: number | null,
+      project_id?: number | null,
+      name?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      keywords_count?: number | null
+    }[] | null,
+    tag?: string | null,
+    region?: string | null,
+    language?: string | null,
+    in_featured?: boolean | null,
+    has_featured?: boolean | null,
+    has_featured_url?: string | null,
+    ignore_local?: boolean | null,
+    ignore_featured?: boolean | null,
+    url_tracking_method?: string | null,
+    type?: string | null,
+    gmb?: string | null,
+    near?: string | null,
+    isfav?: boolean | null,
+    status?: string | null,
+    clicks?: number | null,
+    impressions?: number | null,
+    ctr?: number | null,
+    ms?: number | null,
+    competition?: number | string | null,
+    cpc?: number | null,
+    gpage?: number | null,
+    grank?: number | null,
+    grank_int?: number | null,
+    best?: number | null,
+    seocomp?: number | null,
+    in_local_pack?: boolean | null,
+    rankingurl?: string | null,
+    grankhistory?: (number | null)[] | null,
+    trends?: {
+      day?: number | string | null,
+      week?: number | string | null,
+      month?: number | string | null,
+      life?: number | string | null
+    } | null,
+    updated_at?: string | null,
+    crawled_at?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Metrics
+
+### competitors
+
+`metrics.competitors`
+
+The top competing URLs for one keyword in a date window, with each result’s type and position
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.metrics.competitors({ projectName: 'Disney', keywordId: '272678916', dateRange: '2026-11-01.2026-11-12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `keywordId` | `string \| number` | Yes | The keyword ID, as a string or a number. |
+| `dateRange` | `string` | Yes | The window, such as `2026-11-01.2026-11-12`. Keyword requires it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  rank?: number | null,
+  results?: {
+    resultType?: string | null,
+    url?: string | null,
+    title?: string | null,
+    domain?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`metrics.get`
+
+Keyword movement for a project, group or tag: how many sit in each top-N bucket and how that changed day over day
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.metrics.get({ projectName: 'Disney', tagId: 27727, timeframe: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `tagId` | `number` | No | Only this tag’s keywords. |
+| `timeframe` | `number` | Yes | Days to compare over, such as 30. Keyword requires it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null,
+  attributes: {
+    ranges?: {
+      count?: number | null,
+      change?: number | null,
+      status?: string | null,
+      daily?: {
+        count?: number | null,
+        change?: number | null,
+        status?: string | null
+      } | null,
+      weekly?: {
+        count?: number | null,
+        change?: number | null,
+        status?: string | null
+      } | null,
+      monthly?: {
+        count?: number | null,
+        change?: number | null,
+        status?: string | null
+      } | null,
+      semester?: {
+        count?: number | null,
+        change?: number | null,
+        status?: string | null
+      } | null,
+      yearly?: {
+        count?: number | null,
+        change?: number | null,
+        status?: string | null
+      } | null,
+      life?: {
+        count?: number | null,
+        change?: number | null,
+        status?: string | null
+      } | null,
+      title?: string | null
+    }[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mindshare
+
+### history
+
+`mindshare.history`
+
+Share of Voice over a date window, read from Keyword’s cache
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.mindshare.history({ projectId: 3057417, start_date: '2026-11-01', end_date: '2026-11-12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | The numeric project ID, from `projects.list`. |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+
+Scoped by numeric `projectId`, and read from Keyword’s cache.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `unknown` | Yes | — |
+
+
+
+---
+
+## Projects
+
+### archive
+
+`projects.archive`
+
+Archive a project or subproject: it stops updating until `projects.restore` brings it back. Keyword refuses to archive the account’s only active top-level project
+
+**Risk:** `write`
+
+```ts
+await corsair.keyword.api.projects.archive({ projectName: 'Disney' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a project, or a subproject from a `Parent[sub]Child` name; the parent must exist first
+
+**Risk:** `write`
+
+```ts
+await corsair.keyword.api.projects.create({ category: 'Disney', currency_code: 'USD', url: 'disney.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `string` | Yes | The project name. A `Parent[sub]Child` name creates a subproject, which needs the parent to exist first. |
+| `currency_code` | `string` | No | Three-letter currency for cost figures, such as `USD`. |
+| `url` | `string` | No | The domain the project tracks, such as `disney.com`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id: string,
+  attributes: {
+    project_id?: number | null,
+    name?: string | null,
+    shortkey?: string | null,
+    keywords_count?: number | Record<string, number> | [] | null,
+    tags_count?: number | null,
+    tags?: {
+      id?: number | null,
+      project_id?: number | null,
+      name?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      keywords_count?: number | null
+    }[] | null,
+    keywords_last_updated_at?: string | null,
+    notes_count?: number | null,
+    updated_at?: string | null,
+    crawled_at?: number | string | null,
+    url?: string | null,
+    currency_code?: string | null,
+    company_name?: string | null,
+    company_desc?: string | null,
+    company_link?: string | null,
+    company_logo?: string | null,
+    sov_view_key?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project with every keyword and its ranking history; it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.keyword.api.projects.delete({ projectName: 'Disney' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+One project or subproject with its tags and counts
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.projects.get({ projectName: 'Disney' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id: string,
+  attributes: {
+    project_id?: number | null,
+    name?: string | null,
+    shortkey?: string | null,
+    keywords_count?: number | Record<string, number> | [] | null,
+    tags_count?: number | null,
+    tags?: {
+      id?: number | null,
+      project_id?: number | null,
+      name?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      keywords_count?: number | null
+    }[] | null,
+    keywords_last_updated_at?: string | null,
+    notes_count?: number | null,
+    updated_at?: string | null,
+    crawled_at?: number | string | null,
+    url?: string | null,
+    currency_code?: string | null,
+    company_name?: string | null,
+    company_desc?: string | null,
+    company_link?: string | null,
+    company_logo?: string | null,
+    sov_view_key?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+Every project and subproject with its tags and keyword counts; a subproject is named `Parent[sub]Child`
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+Returns projects and subprojects together; a subproject is written `Parent[sub]Child` in its id.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  id: string,
+  attributes: {
+    project_id?: number | null,
+    name?: string | null,
+    shortkey?: string | null,
+    keywords_count?: number | Record<string, number> | [] | null,
+    tags_count?: number | null,
+    tags?: {
+      id?: number | null,
+      project_id?: number | null,
+      name?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      keywords_count?: number | null
+    }[] | null,
+    keywords_last_updated_at?: string | null,
+    notes_count?: number | null,
+    updated_at?: string | null,
+    crawled_at?: number | string | null,
+    url?: string | null,
+    currency_code?: string | null,
+    company_name?: string | null,
+    company_desc?: string | null,
+    company_link?: string | null,
+    company_logo?: string | null,
+    sov_view_key?: boolean | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restore
+
+`projects.restore`
+
+Undo an archive, bringing the project and its keywords back
+
+**Risk:** `write`
+
+```ts
+await corsair.keyword.api.projects.restore({ projectName: 'Disney' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Rank Chart
+
+### get
+
+`rankChart.get`
+
+Daily rank history for a set of keywords over a number of days; Keyword refuses a call covering more than 400,000 keyword-days
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.rankChart.get({ keywordIds: ['272678916'], limit: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywordIds` | `(string \| number)[]` | Yes | Keyword refuses a call covering more than 400,000 keyword-days. |
+| `limit` | `number` | No | Days of history before today. Each keyword counts `limit + 1` days toward the 400,000 keyword-day cap. |
+
+Keyword refuses a call covering more than 400,000 keyword-days, so shorten `limit` or send fewer keywords.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  kwid: number | string,
+  data?: (
+    {
+      name?: string | null,
+      data: (string | number | null)[][]
+    }[] | string | Record<string, any>
+  )[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ranking Urls
+
+### list
+
+`rankingUrls.list`
+
+The pages that rank best for a project, with their average position and total search volume, 10 to a page
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.rankingUrls.list({ projectName: 'Disney', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `page` | `number` | No | 1-based page. Defaults to 1. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  current_ranking_url?: string | null,
+  current_rank?: number | null,
+  previous_rank?: number | null,
+  total_keyword_count?: number | null,
+  average_current_rank?: number | null,
+  average_previous_rank?: number | null,
+  total_search_volume?: number | null,
+  average_cost_per_click?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Regions
+
+### list
+
+`regions.list`
+
+The Google regions a project tracks, with each one’s language and keyword count
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.regions.list({ projectName: 'Disney' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  region: string,
+  lang?: string | null,
+  type?: string | null,
+  total?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sharing
+
+### get
+
+`sharing.get`
+
+A project’s shared-report settings: whether the share link is on, its hash, whether it needs a password, and what the report shows
+
+**Risk:** `read`
+
+```ts
+await corsair.keyword.api.sharing.get({ projectId: 3057417 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | The numeric project ID, from `projects.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| null` | No | — |
+| `share_hash` | `string \| null` | No | The share link’s hash; null while sharing is off. |
+| `is_active` | `boolean \| null` | No | — |
+| `is_password_protected` | `boolean \| null` | No | — |
+| `visibility` | `object \| null` | No | — |
+| `keyword_columns` | `object \| null` | No | — |
+| `keyword_charts` | `object \| null` | No | — |
+| `overview_charts` | `object \| null` | No | — |
+| `branding` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="visibility full type">
+
+```ts
+{
+  hide_overview?: boolean | null,
+  hide_top_pages?: boolean | null,
+  hide_share_options?: boolean | null,
+  hide_keyword_actions?: boolean | null,
+  show_rank_verification?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="keyword_columns full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="keyword_charts full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="overview_charts full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sharing.update`
+
+Turn a project’s share link on or off, set or clear its password, or toggle what the shared report shows. Everything except the on/off switch needs Keyword’s white-label permission
+
+**Risk:** `write`
+
+```ts
+await corsair.keyword.api.sharing.update({ projectId: 3057417, is_active: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | The numeric project ID, from `projects.list`. |
+| `is_active` | `boolean` | No | Turn the share link on or off. |
+| `password` | `string \| null` | No | Protect the share link with this password; null or an empty string removes it. Setting one needs the white-label plan. |
+| `visibility` | `object` | No | Toggles merged key by key; omitted ones keep their value. |
+
+<AccordionGroup>
+<Accordion title="visibility full type">
+
+```ts
+{
+  hide_overview?: boolean,
+  hide_top_pages?: boolean,
+  hide_share_options?: boolean,
+  hide_keyword_actions?: boolean,
+  show_rank_verification?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| null` | No | — |
+| `share_hash` | `string \| null` | No | The share link’s hash; null while sharing is off. |
+| `is_active` | `boolean \| null` | No | — |
+| `is_password_protected` | `boolean \| null` | No | — |
+| `visibility` | `object \| null` | No | — |
+| `keyword_columns` | `object \| null` | No | — |
+| `keyword_charts` | `object \| null` | No | — |
+| `overview_charts` | `object \| null` | No | — |
+| `branding` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="visibility full type">
+
+```ts
+{
+  hide_overview?: boolean | null,
+  hide_top_pages?: boolean | null,
+  hide_share_options?: boolean | null,
+  hide_keyword_actions?: boolean | null,
+  show_rank_verification?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="keyword_columns full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="keyword_charts full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="overview_charts full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

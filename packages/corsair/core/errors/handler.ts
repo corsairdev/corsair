@@ -37,9 +37,13 @@ export async function handleCorsairError(
 		originalError: error,
 	} satisfies ErrorContext;
 
-	// Find the first matching error handler
-	const matchingHandlerName = Object.keys(errorHandlers).find((errorName) =>
-		errorHandlers[errorName]?.match(error, context),
+	// Find the first matching named handler. DEFAULT is the fallback, never a
+	// candidate: most plugins' DEFAULT matches everything, so checking it in
+	// key order would hide every named handler that comes after it.
+	const matchingHandlerName = Object.keys(errorHandlers).find(
+		(errorName) =>
+			errorName !== 'DEFAULT' &&
+			errorHandlers[errorName]?.match(error, context),
 	);
 
 	const pluginSpecificErrorHandler =

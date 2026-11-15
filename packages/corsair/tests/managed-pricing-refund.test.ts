@@ -372,6 +372,9 @@ describe('a managed call that fails', () => {
 	});
 
 	it('signs the usage report the same way', async () => {
+		// The proof is stamped with the current second. Hold the clock still so
+		// the two signatures compared below can't land in different seconds.
+		jest.spyOn(Date, 'now').mockReturnValue(1_800_000_000_500);
 		const sent: Headers[] = [];
 		jest.spyOn(globalThis, 'fetch').mockImplementation(async (_input, init) => {
 			sent.push(new Headers(init?.headers));

@@ -1,0 +1,704 @@
+{
+  "id": "u301",
+  "displayName": "U301",
+  "description": "Create and manage branded short links, configure custom domains and their redirects, and read click analytics with U301.",
+  "npmPackageName": "@corsair-dev/u301",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "u301.api.analytics.audience",
+      "shortPath": "analytics.audience",
+      "description": "Read a top-N click breakdown by country, city, referrer, browser, OS or device",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dimension",
+            "optional": false,
+            "type": "countries | cities | referers | browsers | operating-systems | device-types",
+            "description": "Which breakdown to read: countries, cities, referers, browsers, operating-systems or device-types."
+          },
+          {
+            "key": "range",
+            "optional": false,
+            "type": "24h | 1d | 3d | 7d | 14d | 30d | 60d | 1m",
+            "description": "The window to aggregate over."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "An IANA timezone for the buckets. Defaults to UTC."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datetimeRange",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ label?: string | null, click?: number | null, meta?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.analytics.clicks",
+      "shortPath": "analytics.clicks",
+      "description": "Read click counts over a time range at a chosen granularity, in a chosen timezone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "range",
+            "optional": false,
+            "type": "24h | 1d | 3d | 7d | 14d | 30d | 60d | 1m",
+            "description": "The window to aggregate over."
+          },
+          {
+            "key": "granularity",
+            "optional": false,
+            "type": "day | hour",
+            "description": "The bucket size within that window."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "An IANA timezone for the buckets. Defaults to UTC."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 start of the window."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 end of the window."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ date?: string | null, click?: number | null }[] | null",
+            "description": "One entry per bucket."
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.domains.active",
+      "shortPath": "domains.active",
+      "description": "Check whether a domain's DNS verification has completed, which is the step to poll after adding the CNAME",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain for the link, such as u301.co or one of your own."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actived",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the domain is active."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.domains.create",
+      "shortPath": "domains.create",
+      "description": "Add a custom domain; the DNS CNAME still has to be created and verified before it serves links",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain for the link, such as u301.co or one of your own."
+          },
+          {
+            "key": "shortCodeLength",
+            "optional": true,
+            "type": "number",
+            "description": "Length of the random slug, 3 to 10. Defaults to 6."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "\"Domain created\" on success."
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "true | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.domains.delete",
+      "shortPath": "domains.delete",
+      "description": "Remove a custom domain from the workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain for the link, such as u301.co or one of your own."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "\"success\" on deletion."
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "true | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.domains.get",
+      "shortPath": "domains.get",
+      "description": "Read one domain's validity, archive state, slug length and redirect settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain for the link, such as u301.co or one of your own."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isValid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastCheckedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "randomCodeLength",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "homePageRedirectUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "notFoundPageRedirectUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPrimary",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isGlobal",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True for a U301-owned domain."
+          },
+          {
+            "key": "dnsSettings",
+            "optional": true,
+            "type": "{ cnameValue?: string | null, isHostedOnCloudflare?: boolean | null, baseDomain?: string | null, subdomain?: string | null, domainConnectUrl?: string | null, cloudflareAuthUrl?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.domains.homeRedirect",
+      "shortPath": "domains.homeRedirect",
+      "description": "Set where a domain's root redirects to; U301 allows it on the Pro plan only and answers 403 on the free plan",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain for the link, such as u301.co or one of your own."
+          },
+          {
+            "key": "homePageRedirectUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Where the domain root redirects to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List the workspace's domains, including the shared u301.co and any of your own",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ domain?: string | null, randomCodeLength?: number | null, isPrimary?: boolean | null, isGlobal?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "u301.api.domains.notFoundRedirect",
+      "shortPath": "domains.notFoundRedirect",
+      "description": "Set where an unknown slug on a domain redirects to; U301 allows it on the Pro plan only and answers 403 on the free plan",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain for the link, such as u301.co or one of your own."
+          },
+          {
+            "key": "notFoundPageRedirectUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Where an unknown slug on this domain redirects to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.domains.pathLength",
+      "shortPath": "domains.pathLength",
+      "description": "Set the random slug length a domain uses, 3 to 10",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain for the link, such as u301.co or one of your own."
+          },
+          {
+            "key": "randomCodeLength",
+            "optional": false,
+            "type": "number",
+            "description": "Length of the random slug, 3 to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.links.create",
+      "shortPath": "links.create",
+      "description": "Shorten a URL on u301.co or one of your domains, with an optional custom slug, password and comment; a new link spends one monthly allowance slot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The destination URL to shorten."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "The domain for the link, such as u301.co or one of your own."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string",
+            "description": "A custom path. A random one is generated when omitted."
+          },
+          {
+            "key": "reuseExisting",
+            "optional": true,
+            "type": "boolean",
+            "description": "Reuse an existing short link when the same URL is already shortened, instead of creating a second one."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Require this password before the short link resolves."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "A note to attach to the link."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "The destination URL."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isCustomSlug",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isReused",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when an existing link was returned and no new one was created."
+          },
+          {
+            "key": "shortLink",
+            "optional": true,
+            "type": "string | null",
+            "description": "The short link without a scheme, such as u301.co/jtyZ."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.links.delete",
+      "shortPath": "links.delete",
+      "description": "Delete a short link; the destination is no longer reachable through it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shortlink",
+            "optional": false,
+            "type": "string",
+            "description": "The short link as it appears, such as u301.co/abc123. It is sent as one path segment."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "\"success\" on deletion."
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.links.get",
+      "shortPath": "links.get",
+      "description": "Read one short link by its short form, such as u301.co/abc123",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shortlink",
+            "optional": false,
+            "type": "string",
+            "description": "The short link as it appears, such as u301.co/abc123. It is sent as one path segment."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domainName",
+            "optional": true,
+            "type": "string | null",
+            "description": "The domain, on a list row."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null",
+            "description": "The domain, on a single read."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isCustomSlug",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "shortUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "originalUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "The destination URL."
+          },
+          {
+            "key": "allowSearchEngineIndexing",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "statsClicks",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total clicks."
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Null when the link never expires."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "u301.api.links.list",
+      "shortPath": "links.list",
+      "description": "List the workspace's short links with their click counts, archive and suspend state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 10 to 200. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ id?: string | null, domainName?: string | null, domain?: string | null, slug?: string | null, isCustomSlug?: boolean | null, shortUrl?: string | null, originalUrl?: string | null, allowSearchEngineIndexing?: boolean | null, archived?: boolean | null, suspended?: boolean | null, statsClicks?: number | null, expiresAt?: string | null, userId?: string | null, workspaceId?: string | null, comment?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ total?: number | null, perPage?: number | null, page?: number | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

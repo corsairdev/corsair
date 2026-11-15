@@ -16,17 +16,23 @@ export async function handleWebhook(req: Request) {
     const result = await processWebhook(
         corsair, // corsair instance
         Object.fromEntries(req.headers), // headers
-        await req.json(), // body
+        await req.text(), // raw body: signatures are checked over the exact bytes
         {
             tenantId: url.searchParams.get('tenantId') // tenant id
         }
     );
 
-    if (result.plugin) {
-        console.log(`Handled by ${result.plugin}.${result.action}`);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
     }
+    console.log(`Handled by ${result.plugin}.${result.action}`);
 
-    return result.response;
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
