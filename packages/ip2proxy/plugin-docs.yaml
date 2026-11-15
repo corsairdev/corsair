@@ -1,0 +1,10 @@
+displayName: IP2Proxy
+description: Detect whether an IP address is a proxy, VPN, Tor exit, or data-center address, and return the location fields for the selected package.
+domain: ip2proxy.com
+examples:
+  read:
+    path: proxy.checkProxy
+    title: Check whether an IP is a proxy
+    args:
+      ip: 8.8.8.8
+      package: PX1

@@ -347,6 +347,7 @@ export const BaseProviders = [
 	'instagram',
 	'instantly',
 	'intercom',
+	'ip2proxy',
 	'jigsawstack',
 	'jira',
 	'kadoa',
@@ -960,6 +961,7 @@ export const ProviderDisplayNames = {
 	instagram: 'Instagram',
 	instantly: 'Instantly',
 	intercom: 'Intercom',
+	ip2proxy: 'IP2Proxy',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kadoa: 'Kadoa',
@@ -1580,6 +1582,7 @@ export type AllProviders =
 	| 'instagram'
 	| 'instantly'
 	| 'intercom'
+	| 'ip2proxy'
 	| 'jigsawstack'
 	| 'jira'
 	| 'kadoa'
