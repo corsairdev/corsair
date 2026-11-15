@@ -141,11 +141,12 @@ export class PointagramAPIError extends Error {
 export function errorFromEnvelope(
 	body: unknown, // unknown: raw provider JSON before the output schema parses it.
 	method: string,
+	mask: (text: string) => string = (text) => text,
 ): PointagramAPIError | undefined {
 	const status = readEnvelopeStatus(body);
 	if (status === undefined || !/^error$/i.test(status)) return undefined;
 	return new PointagramAPIError(
-		readEnvelopeMessage(body) ?? 'Pointagram reported an error',
+		mask(readEnvelopeMessage(body) ?? 'Pointagram reported an error'),
 		{ method },
 	);
 }
@@ -193,6 +194,98 @@ export async function resolvePointagramApiUser(ctx: {
 	return trimmed;
 }
 
+const REDACTED = '[redacted]';
+
+/**
+ * The caller's own values on a request: player names and emails in a filter
+ * or a body, comments, tags and external ids. Pointagram can echo them in an
+ * error message, and core's ApiError keeps the request, query and url they
+ * travelled in, so a failed call masks every one of them. Values under three
+ * characters are left alone: masking `1` would mangle every number in the text.
+ */
+export function requestValues(request: PointagramRequest): string[] {
+	const values = new Set<string>();
+	const add = (value: unknown) => {
+		// unknown: a query or body member, kept only when it is a usable string.
+		if (typeof value !== 'string' || value.length < 3) return;
+		values.add(value);
+		values.add(encodeURIComponent(value));
+		values.add(new URLSearchParams({ v: value }).toString().slice(2));
+	};
+	for (const value of Object.values(request.query ?? {})) add(value);
+	const body = request.body;
+	if (body !== null && typeof body === 'object' && !Array.isArray(body)) {
+		// unknown: an input-validated body, read here only for its string values.
+		for (const value of Object.values(body as Record<string, unknown>)) {
+			add(value);
+		}
+	}
+	return [...values].sort((a, b) => b.length - a.length);
+}
+
+/** Replaces each of `values` in `value`, walking arrays and objects. */
+export function maskValues(
+	value: unknown, // unknown: an error body is arbitrary JSON, walked without narrowing.
+	values: readonly string[],
+): unknown {
+	// unknown: returns the same arbitrary shape it was given.
+	if (typeof value === 'string') {
+		return values.reduce(
+			(text, secret) => text.split(secret).join(REDACTED),
+			value,
+		);
+	}
+	if (Array.isArray(value))
+		return value.map((item) => maskValues(item, values));
+	if (value !== null && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, item]) => [
+				key,
+				maskValues(item, values),
+			]),
+		);
+	}
+	return value;
+}
+
+/** A failed call's url without its query string, which can hold a player email. */
+function withoutQuery(url: string): string {
+	const index = url.indexOf('?');
+	return index === -1 ? url : url.slice(0, index);
+}
+
+/**
+ * Core's ApiError keeps the request it was built from, query and body
+ * included, and its url keeps the query string: `players.list` searched by
+ * email carries that email in both. The error is rebuilt as an ApiError with
+ * the same status, body shape and rate-limit fields, so the handlers and core
+ * read it as before, minus the caller's values.
+ */
+export function withoutRequestData(
+	error: ApiError,
+	request: PointagramRequest,
+): ApiError {
+	const values = requestValues(request);
+	const mask = (text: string) => maskValues(text, values) as string;
+	return new ApiError(
+		{ method: request.method, url: mask(request.path) },
+		{
+			url: mask(withoutQuery(error.url)),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: maskValues(error.body, values),
+		},
+		mask(error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
 // The body is returned untyped: callers parse it with the endpoint's zod
 // output schema, which is the only thing that knows its shape.
 export async function makePointagramRequest(
@@ -234,10 +327,13 @@ export async function makePointagramRequest(
 			rateLimitConfig: POINTAGRAM_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// A real HTTP failure keeps core's ApiError: its status and Retry-After are
-		// what the handlers match and what core reads. Only a failure core cannot
-		// express becomes a PointagramAPIError below.
-		if (error instanceof ApiError) throw error;
+		// A real HTTP failure stays a core ApiError: its status and Retry-After are
+		// what the handlers match and what core reads. It is rebuilt only to drop
+		// the caller's values. Only a failure core cannot express becomes a
+		// PointagramAPIError below.
+		if (error instanceof ApiError) {
+			throw withoutRequestData(error, { method, path, query, body });
+		}
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new PointagramAPIError(error.message, {

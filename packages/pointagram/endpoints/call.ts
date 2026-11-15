@@ -5,10 +5,12 @@ import type { PointagramCredentials, PointagramRequest } from '../client';
 import {
 	errorFromEnvelope,
 	makePointagramRequest,
+	maskValues,
 	PointagramAPIError,
 	readEnvelopeMessage,
 	readEnvelopeStatus,
 	reportsInvalidCredentials,
+	requestValues,
 	resolvePointagramApiUser,
 } from '../client';
 
@@ -65,14 +67,18 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	};
 	const envelope = await makePointagramRequest(credentials, request);
 
-	const envelopeError = errorFromEnvelope(envelope, request.method);
+	// Pointagram's error text can repeat what was sent (a player's name or email),
+	// so the caller's values are masked before the message becomes an error.
+	const values = requestValues(request);
+	const mask = (text: string) => maskValues(text, values) as string;
+	const envelopeError = errorFromEnvelope(envelope, request.method, mask);
 	if (envelopeError) throw envelopeError;
 
 	if (!isSuccessEnvelope(envelope)) {
 		// A 2xx body with neither `status: "Ok"` nor `status: "Error"` is not a
 		// success, and it must not reach the output schema as if it were.
 		throw new PointagramAPIError(
-			`Pointagram returned an unrecognised envelope: ${readEnvelopeMessage(envelope) ?? 'no message'}`,
+			`Pointagram returned an unrecognised envelope: ${mask(readEnvelopeMessage(envelope) ?? 'no message')}`,
 			{ method: request.method },
 		);
 	}
@@ -82,8 +88,10 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	// carrying the credential message is not a success either: reading it as one
 	// would hand back an empty organization for a key that does not work.
 	if (reportsInvalidCredentials(envelope)) {
+		// A fixed message: the provider's text is not guaranteed to be free of
+		// the login it rejected.
 		throw new PointagramAPIError(
-			`Pointagram rejected the key: ${readEnvelopeMessage(envelope)}`,
+			'Pointagram rejected the Api-Key and Api-User pair',
 			{ method: request.method, credentialsRejected: true },
 		);
 	}

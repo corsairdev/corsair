@@ -208,15 +208,37 @@ describe('envelope handling', () => {
 	it('rejects a 2xx envelope that reports bad credentials as a success', async () => {
 		mockedRequest.mockResolvedValue({
 			status: 'Ok',
-			message: 'Invalid Credentials',
+			message: 'Invalid Credentials for ops@example.com',
 			data: {},
 		});
 
 		// The success branch must not resolve an empty organization for a key
-		// Pointagram says does not work.
-		await expect(Test.credentials(ctx, {})).rejects.toThrow(
-			/rejected the key/i,
+		// Pointagram says does not work, and the error must not repeat the login.
+		const error = await Test.credentials(ctx, {}).then(
+			() => undefined,
+			(caught: Error) => caught,
 		);
+		expect(error?.message).toBe(
+			'Pointagram rejected the Api-Key and Api-User pair',
+		);
+	});
+
+	it("masks the caller's values in an error envelope's message", async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'Error',
+			message: 'Player corsair-tests@inkboxmail.com already exists.',
+			data: {},
+		});
+
+		const error = await Players.create(ctx, {
+			player_name: 'corsair-plugin-test',
+			player_email: 'corsair-tests@inkboxmail.com',
+			offline: 1,
+		}).then(
+			() => undefined,
+			(caught: Error) => caught,
+		);
+		expect(error?.message).toBe('Player [redacted] already exists.');
 	});
 });
 

@@ -118,12 +118,13 @@ describe('makePointagramRequest', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('lets core ApiError through unchanged, so status and Retry-After stay readable', async () => {
-		const core = apiError(404, 'Not Found', {
-			status: 'Error',
-			message: 'Invalid Credentials',
-			data: {},
-		});
+	it('keeps core ApiError with its status, body and Retry-After', async () => {
+		const core = apiError(
+			404,
+			'Not Found',
+			{ status: 'Error', message: 'Invalid Credentials', data: {} },
+			1500,
+		);
 		mockRequest.mockRejectedValue(core);
 
 		const error = await makePointagramRequest(CREDENTIALS, {
@@ -134,7 +135,82 @@ describe('makePointagramRequest', () => {
 			(caught) => caught,
 		);
 
-		expect(error).toBe(core);
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.status).toBe(404);
+		expect(error.retryAfter).toBe(1500);
+		expect(error.body).toEqual(core.body);
+		expect(error.message).toBe('Not Found');
+	});
+
+	it('drops a searched email from the failed call url, request and body', async () => {
+		const email = 'corsair-tests@inkboxmail.com';
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'GET',
+					url: '/players',
+					query: { search_by: 'Email', filter: email },
+				},
+				{
+					url: `${POINTAGRAM_API_BASE}/players?search_by=Email&filter=${encodeURIComponent(email)}`,
+					ok: false,
+					status: 409,
+					statusText: 'Conflict',
+					body: { status: 'Error', message: `No player ${email}`, data: {} },
+				},
+				`No player ${email}`,
+			),
+		);
+
+		const error = await makePointagramRequest(CREDENTIALS, {
+			method: 'GET',
+			path: '/players',
+			query: { search_by: 'Email', filter: email },
+		}).then(
+			() => undefined,
+			(caught) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.status).toBe(409);
+		expect(error.url).toBe(`${POINTAGRAM_API_BASE}/players`);
+		expect(error.message).toBe('No player [redacted]');
+		const serialized = JSON.stringify({
+			url: error.url,
+			request: error.request,
+			body: error.body,
+			message: error.message,
+		});
+		expect(serialized).not.toContain('inkboxmail');
+	});
+
+	it('drops the player fields of a failed write from the error', async () => {
+		mockRequest.mockRejectedValue(
+			apiError(
+				409,
+				'Conflict',
+				{ status: 'Error', message: 'Player already exists.' },
+				undefined,
+				'POST',
+			),
+		);
+
+		const error = await makePointagramRequest(CREDENTIALS, {
+			method: 'POST',
+			path: '/players',
+			body: { player_name: 'Axl Rose', player_email: 'axl@example.com' },
+		}).then(
+			() => undefined,
+			(caught) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error.request)).not.toContain('axl@example.com');
+		expect(error.message).toBe('Conflict');
 	});
 
 	it('keeps a plain 404 distinguishable from a rejected key', async () => {
@@ -152,7 +228,9 @@ describe('makePointagramRequest', () => {
 			(caught) => caught,
 		);
 
-		expect(error).toBe(core);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 404, body: core.body });
+		expect(isCredentialRejection(404, (error as ApiError).body)).toBe(false);
 	});
 
 	it('keeps a 429 with its Retry-After on the core error', async () => {
