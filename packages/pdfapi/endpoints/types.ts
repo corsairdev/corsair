@@ -16,7 +16,10 @@ const PdfApiTemplateSchema = z.object({
 // plus array-path entries like invoice_items[].description).
 const PdfApiVariablesSchema = z.array(z.record(z.string(), z.unknown()));
 
+// The list and get responses both carry meta and variables; get adds
+// team_name and team_id.
 const PdfApiTemplateDetailSchema = PdfApiTemplateSchema.extend({
+	// unknown: free-form template metadata (e.g. description), not documented field by field.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	variables: PdfApiVariablesSchema.optional(),
 });
@@ -30,7 +33,7 @@ const PdfApiRenderJsonOutputSchema = z.object({
 	url: z.string().optional(),
 });
 
-const ListTemplatesInputSchema = z.object({}).passthrough();
+const ListTemplatesInputSchema = z.object({});
 
 const GetTemplateInputSchema = z.object({
 	template: z.string().min(1),
@@ -68,7 +71,7 @@ export const PdfApiEndpointInputSchemas = {
 } as const;
 
 export const PdfApiEndpointOutputSchemas = {
-	listTemplates: z.array(PdfApiTemplateSchema),
+	listTemplates: z.array(PdfApiTemplateDetailSchema),
 	retrieveTemplate: PdfApiTemplateDetailSchema,
 	renderTemplate: PdfApiRenderJsonOutputSchema,
 	mergeTemplates: PdfApiRenderJsonOutputSchema,

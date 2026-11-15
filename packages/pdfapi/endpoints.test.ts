@@ -83,9 +83,21 @@ describe('PdfApi endpoint request seams', () => {
 
 	it('parses provider responses through the output schemas', async () => {
 		const parsedList = PdfApiEndpointOutputSchemas.listTemplates.parse([
-			{ id: 'tpl-1', name: 'Invoice Template' },
+			{
+				id: 'tpl-1',
+				name: 'Invoice Template',
+				meta: { description: 'A simple invoice template' },
+				variables: [{ name: 'customer_name', type: 'string' }],
+			},
 		]);
 		expect(parsedList[0]?.id).toBe('tpl-1');
+		// The documented list response carries meta and variables.
+		expect(parsedList[0]?.meta).toEqual({
+			description: 'A simple invoice template',
+		});
+		expect(parsedList[0]?.variables).toEqual([
+			{ name: 'customer_name', type: 'string' },
+		]);
 
 		const parsedRender = PdfApiEndpointOutputSchemas.renderTemplate.parse({
 			status: 200,
@@ -100,20 +112,21 @@ describe('PdfApi endpoint request seams', () => {
 		// unknown: the event-writer mock records the runtime context and
 		// provider payload, which the endpoint signature does not expose; only
 		// the logged payload is asserted.
+		logMock.mockClear();
+		await renderTemplate(ctx, {
+			templateId: 'tpl-2',
+			data: { name: 'Jane' },
+		} as never);
+		// Read the calls after mockClear: Jest replaces the array on clear.
 		const calls = logMock.mock.calls as Array<
 			[unknown, string, unknown, string]
 		>;
-		logMock.mockClear();
-		await renderTemplate(ctx, {
-			templateId: 'tpl-1',
-			data: { name: 'Jane' },
-		} as never);
 		const renderCalls = calls.filter(
 			(c) => c[1] === 'pdfapi.templates.renderTemplate',
 		);
 		const payload = renderCalls[renderCalls.length - 1]?.[2];
 		// R8: document placeholder values are customer data and never reach the
 		// event history — only the template id and output mode are logged.
-		expect(payload).toEqual({ templateId: 'tpl-1', output: 'pdf' });
+		expect(payload).toEqual({ templateId: 'tpl-2', output: 'pdf' });
 	});
 });

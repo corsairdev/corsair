@@ -91,7 +91,7 @@ describe('PdfApi client', () => {
 			{ retryAfter: 30000 },
 		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimit)).toBe(true);
-		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(rateLimit);
+		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler();
 		expect(strategy.maxRetries).toBe(0);
 	});
 });
