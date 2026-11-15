@@ -1,0 +1,3488 @@
+{
+  "id": "proabono",
+  "displayName": "ProAbono",
+  "description": "Subscription billing API for managing customers, offers, subscriptions, usages, balance lines and invoices.",
+  "npmPackageName": "@corsair-dev/proabono",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "agent_key", "account"]
+    }
+  ],
+  "api": [
+    {
+      "path": "proabono.api.balanceLines.create",
+      "shortPath": "balanceLines.create",
+      "description": "Add a balance line, such as a one-off charge or credit in cents, to a customer's next invoice",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "Label",
+            "optional": true,
+            "type": "string",
+            "description": "The line label, shown on the invoice."
+          },
+          {
+            "key": "Amount",
+            "optional": false,
+            "type": "number",
+            "description": "In cents, before taxes. A negative value is a credit."
+          },
+          {
+            "key": "Quantity",
+            "optional": true,
+            "type": "number",
+            "description": "Shown on the invoice only; it does not change the amount."
+          },
+          {
+            "key": "EnsureBillable",
+            "optional": true,
+            "type": "boolean",
+            "description": "True by default on ProAbono: a customer without valid payment information answers 403. False adds the line anyway."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LabelLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingLocalized",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTML."
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, before taxes."
+          },
+          {
+            "key": "AmountTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "DateMove",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the line is billed, for a line outside a period."
+          },
+          {
+            "key": "QuantityReported",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "QuantityBilled",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodTerm",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.balanceLines.list",
+      "shortPath": "balanceLines.list",
+      "description": "List balance lines by customer, segment, feature or subscription, with their totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceFeature",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page. 0 returns only the totals in `Computations`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balanceLines",
+            "optional": false,
+            "type": "{ IdSegment?: number | null, IdCustomer?: number | null, IdSubscription?: number | null, ReferenceSegment?: string | null, ReferenceCustomer?: string | null, LabelLocalized?: string | null, PricingLocalized?: string | null, Currency?: string | null, AmountSubtotal?: number | null, AmountTotal?: number | null, DateMove?: string | null, QuantityReported?: number | null, QuantityBilled?: number | null, DatePeriodStart?: string | null, DatePeriodTerm?: string | null }[]"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page this answer holds, from 1."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows per page."
+          },
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows on this page."
+          },
+          {
+            "key": "TotalItems",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in the whole collection, across pages."
+          },
+          {
+            "key": "Computations",
+            "optional": true,
+            "type": "{ AmountSubtotal?: number | null, AmountTotal?: number | null } | null",
+            "description": "Totals in cents over every matching line."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.customers.anonymize",
+      "shortPath": "customers.anonymize",
+      "description": "Erase a customer's personal data. This cannot be undone, and ProAbono keeps the billing record only as it must",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a customer with your own reference, which subscriptions and usages then identify it by",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string",
+            "description": "Full name of the customer."
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string",
+            "description": "An offer the customer wants; the answer then carries a subscribe link."
+          },
+          {
+            "key": "ReferenceAffiliation",
+            "optional": true,
+            "type": "string",
+            "description": "The affiliate who brought the customer."
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Your own key-value data, stored on the resource."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsBillable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "False until the customer has valid payment information."
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The customer status, such as `Enabled`."
+          },
+          {
+            "key": "ReferenceAffiliation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateAffiliation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateCreated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer by your reference, with whether it is billable",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsBillable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "False until the customer has valid payment information."
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The customer status, such as `Enabled`."
+          },
+          {
+            "key": "ReferenceAffiliation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateAffiliation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateCreated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.customers.invalidate",
+      "shortPath": "customers.invalidate",
+      "description": "Invalidate a customer: ProAbono replaces their reference so it can be reused and revokes their portal links. Subscriptions, invoices and payment methods stay",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List the customers in a segment, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "{ Id?: number | null, ReferenceCustomer?: string | null, IdSegment?: number | null, ReferenceSegment?: string | null, Name?: string | null, FirstName?: string | null, LastName?: string | null, Email?: string | null, Company?: string | null, Country?: string | null, Language?: string | null, Currency?: string | null, IsBillable?: boolean | null, IsActive?: boolean | null, Status?: string | null, ReferenceAffiliation?: string | null, DateAffiliation?: string | null, DateCreated?: string | null, Metadata?: JsonValue | null, Links?: { rel?: string | null, href?: string | null, query?: string | null }[] | null }[]"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page this answer holds, from 1."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows per page."
+          },
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows on this page."
+          },
+          {
+            "key": "TotalItems",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in the whole collection, across pages."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.customers.suspend",
+      "shortPath": "customers.suspend",
+      "description": "Suspend a customer without deleting anything, so they can be reactivated",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Change a customer's name, email, language, affiliation or metadata. ProAbono creates and updates on the same route, so an unknown reference creates a customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ReferenceAffiliation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Your own key-value data, stored on the resource."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsBillable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "False until the customer has valid payment information."
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The customer status, such as `Enabled`."
+          },
+          {
+            "key": "ReferenceAffiliation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateAffiliation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateCreated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.features.get",
+      "shortPath": "features.get",
+      "description": "Read one feature by its reference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceFeature",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceFeature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DescriptionLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TypeFeature",
+            "optional": true,
+            "type": "string | null",
+            "description": "`Limitation`, `OnOff` or `Quantifiable`."
+          },
+          {
+            "key": "IsVisible",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CodeFeature",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.features.list",
+      "shortPath": "features.list",
+      "description": "List the features your offers carry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsVisible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ Id?: number | null, ReferenceFeature?: string | null, IdSegment?: number | null, TitleLocalized?: string | null, DescriptionLocalized?: string | null, TypeFeature?: string | null, IsVisible?: boolean | null, CodeFeature?: string | null }[]"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page this answer holds, from 1."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows per page."
+          },
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows on this page."
+          },
+          {
+            "key": "TotalItems",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in the whole collection, across pages."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Read one invoice with its totals and links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdInvoice",
+            "optional": false,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FullNumber",
+            "optional": true,
+            "type": "string | null",
+            "description": "Such as `S-3.00000004`."
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Such as `Due` or `Paid`."
+          },
+          {
+            "key": "StateInvoice",
+            "optional": true,
+            "type": "string | null",
+            "description": "The detailed state, such as `DuePending`."
+          },
+          {
+            "key": "DateIssue",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePayment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePaymentLimit",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TypePayment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents."
+          },
+          {
+            "key": "AmountTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateUpdate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List invoices by customer or subscription, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ Id?: number | null, IdSegment?: number | null, IdCustomer?: number | null, ReferenceSegment?: string | null, ReferenceCustomer?: string | null, FullNumber?: string | null, Status?: string | null, StateInvoice?: string | null, DateIssue?: string | null, DatePayment?: string | null, DatePaymentLimit?: string | null, TypePayment?: string | null, AmountSubtotal?: number | null, AmountTotal?: number | null, Currency?: string | null, DateUpdate?: string | null, Links?: { rel?: string | null, href?: string | null, query?: string | null }[] | null }[]"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page this answer holds, from 1."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows per page."
+          },
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows on this page."
+          },
+          {
+            "key": "TotalItems",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in the whole collection, across pages."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.offers.get",
+      "shortPath": "offers.get",
+      "description": "Read one offer by its reference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceOffer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "Upgrade",
+            "optional": true,
+            "type": "boolean",
+            "description": "Make the link point at the upgrade workflow. Needs `ReferenceCustomer` or `IdSubscription`."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IgnoreFeatures",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DescriptionLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingLocalized",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTML by default."
+          },
+          {
+            "key": "IsVisible",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsFree",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountRecurrence",
+            "optional": true,
+            "type": "number | null",
+            "description": "The recurring amount in cents."
+          },
+          {
+            "key": "UnitRecurrence",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DurationTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitTrial",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Features",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.offers.list",
+      "shortPath": "offers.list",
+      "description": "List the offers in a segment, optionally in a customer language and with their upgrade links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string",
+            "description": "Read the offers in this customer's language, with links for that customer."
+          },
+          {
+            "key": "IsVisible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IgnoreFeatures",
+            "optional": true,
+            "type": "boolean",
+            "description": "Leave the feature list out of the answer."
+          },
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Html",
+            "optional": true,
+            "type": "boolean",
+            "description": "False returns the pricing as plain text."
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "boolean",
+            "description": "False leaves the links out."
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offers",
+            "optional": false,
+            "type": "{ Id?: number | null, ReferenceOffer?: string | null, IdSegment?: number | null, ReferenceSegment?: string | null, TitleLocalized?: string | null, DescriptionLocalized?: string | null, PricingLocalized?: string | null, IsVisible?: boolean | null, IsFree?: boolean | null, Currency?: string | null, AmountRecurrence?: number | null, UnitRecurrence?: string | null, DurationTrial?: number | null, UnitTrial?: string | null, Features?: JsonValue[] | null, Links?: { rel?: string | null, href?: string | null, query?: string | null }[] | null }[]"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page this answer holds, from 1."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows per page."
+          },
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows on this page."
+          },
+          {
+            "key": "TotalItems",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in the whole collection, across pages."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.subscriptions.create",
+      "shortPath": "subscriptions.create",
+      "description": "Subscribe a customer to an offer, which starts billing when the offer is paid and the customer is billable. `TryStart: false` creates it without starting so it can be customised first",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceOffer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "The customer, which must already exist in ProAbono."
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string",
+            "description": "When the buyer is not the recipient."
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Your own key-value data, stored on the resource."
+          },
+          {
+            "key": "EnsureBillable",
+            "optional": true,
+            "type": "boolean",
+            "description": "Check paying information even for a free offer; a customer without any answers 403."
+          },
+          {
+            "key": "TryStart",
+            "optional": true,
+            "type": "boolean",
+            "description": "False creates without starting, so the subscription can be customised first; true forces a start."
+          },
+          {
+            "key": "BillNow",
+            "optional": true,
+            "type": "boolean",
+            "description": "Bill the start immediately."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdOffer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomerBuyer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status, such as `Active`."
+          },
+          {
+            "key": "StateSubscription",
+            "optional": true,
+            "type": "string | null",
+            "description": "The detailed state, such as `ActiveRunning`."
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StateSubscriptionAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsTrial",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CountDaysTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsEngaged",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsCustomerBillable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsPaymentCappingReached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DateNextBilling",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents."
+          },
+          {
+            "key": "PricingTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "AmountUpFront",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitTrial",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitRecurrence",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CountRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CountMinRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Features",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "DateUpdate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.subscriptions.get",
+      "shortPath": "subscriptions.get",
+      "description": "Read one subscription with its state, period, next billing date and features. The docs warn against using this to check whether a user is a subscriber",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSubscription",
+            "optional": false,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdOffer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomerBuyer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status, such as `Active`."
+          },
+          {
+            "key": "StateSubscription",
+            "optional": true,
+            "type": "string | null",
+            "description": "The detailed state, such as `ActiveRunning`."
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StateSubscriptionAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsTrial",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CountDaysTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsEngaged",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsCustomerBillable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsPaymentCappingReached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DateNextBilling",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents."
+          },
+          {
+            "key": "PricingTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "AmountUpFront",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitTrial",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitRecurrence",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CountRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CountMinRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Features",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "DateUpdate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List subscriptions filtered by customer, offer or segment, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "IgnoreFeatures",
+            "optional": true,
+            "type": "boolean",
+            "description": "Leave the feature list out of the answer."
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "{ Id?: number | null, IdSegment?: number | null, IdOffer?: number | null, IdCustomer?: number | null, IdCustomerBuyer?: number | null, ReferenceSegment?: string | null, ReferenceOffer?: string | null, ReferenceCustomer?: string | null, ReferenceCustomerBuyer?: string | null, Status?: string | null, StateSubscription?: string | null, DateStart?: string | null, DatePeriodStart?: string | null, DatePeriodEnd?: string | null, DateTerm?: string | null, StatusAfterTerm?: string | null, StateSubscriptionAfterTerm?: string | null, IsTrial?: boolean | null, CountDaysTrial?: number | null, IsEngaged?: boolean | null, IsCustomerBillable?: boolean | null, IsPaymentCappingReached?: boolean | null, DateNextBilling?: string | null, TitleLocalized?: string | null, PricingSubtotal?: number | null, PricingTotal?: number | null, AmountUpFront?: number | null, DurationTrial?: number | null, UnitTrial?: string | null, AmountRecurrence?: number | null, DurationRecurrence?: number | null, UnitRecurrence?: string | null, CountRecurrences?: number | null, CountMinRecurrences?: number | null, Features?: JsonValue[] | null, Metadata?: JsonValue | null, DateUpdate?: string | null, Links?: { rel?: string | null, href?: string | null, query?: string | null }[] | null }[]"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page this answer holds, from 1."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows per page."
+          },
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows on this page."
+          },
+          {
+            "key": "TotalItems",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in the whole collection, across pages."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.subscriptions.start",
+      "shortPath": "subscriptions.start",
+      "description": "Start a subscription that was created without starting, which begins billing",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSubscription",
+            "optional": false,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdOffer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomerBuyer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status, such as `Active`."
+          },
+          {
+            "key": "StateSubscription",
+            "optional": true,
+            "type": "string | null",
+            "description": "The detailed state, such as `ActiveRunning`."
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StateSubscriptionAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsTrial",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CountDaysTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsEngaged",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsCustomerBillable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsPaymentCappingReached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DateNextBilling",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents."
+          },
+          {
+            "key": "PricingTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "AmountUpFront",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitTrial",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitRecurrence",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CountRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CountMinRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Features",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "DateUpdate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.subscriptions.suspend",
+      "shortPath": "subscriptions.suspend",
+      "description": "Suspend a subscription without terminating it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSubscription",
+            "optional": false,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdOffer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomerBuyer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status, such as `Active`."
+          },
+          {
+            "key": "StateSubscription",
+            "optional": true,
+            "type": "string | null",
+            "description": "The detailed state, such as `ActiveRunning`."
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StateSubscriptionAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsTrial",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CountDaysTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsEngaged",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsCustomerBillable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsPaymentCappingReached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DateNextBilling",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents."
+          },
+          {
+            "key": "PricingTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "AmountUpFront",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitTrial",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitRecurrence",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CountRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CountMinRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Features",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "DateUpdate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.subscriptions.terminate",
+      "shortPath": "subscriptions.terminate",
+      "description": "Terminate a subscription, ending it for good; by default at the end of the current period. A later start cannot revive it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSubscription",
+            "optional": false,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdOffer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomerBuyer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status, such as `Active`."
+          },
+          {
+            "key": "StateSubscription",
+            "optional": true,
+            "type": "string | null",
+            "description": "The detailed state, such as `ActiveRunning`."
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StateSubscriptionAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsTrial",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CountDaysTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsEngaged",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsCustomerBillable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsPaymentCappingReached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DateNextBilling",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents."
+          },
+          {
+            "key": "PricingTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "AmountUpFront",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitTrial",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitRecurrence",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CountRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CountMinRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Features",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "DateUpdate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.subscriptions.updateTerm",
+      "shortPath": "subscriptions.updateTerm",
+      "description": "Change a subscription's end date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSubscription",
+            "optional": false,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "DateTerm",
+            "optional": false,
+            "type": "string",
+            "description": "The new end date, as an ISO 8601 timestamp."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdOffer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomerBuyer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status, such as `Active`."
+          },
+          {
+            "key": "StateSubscription",
+            "optional": true,
+            "type": "string | null",
+            "description": "The detailed state, such as `ActiveRunning`."
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StateSubscriptionAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsTrial",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CountDaysTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsEngaged",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsCustomerBillable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsPaymentCappingReached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DateNextBilling",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents."
+          },
+          {
+            "key": "PricingTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "AmountUpFront",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitTrial",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitRecurrence",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CountRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CountMinRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Features",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "DateUpdate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.subscriptions.upgrade",
+      "shortPath": "subscriptions.upgrade",
+      "description": "Move a subscription to another offer, which changes what it bills from the next period",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSubscription",
+            "optional": false,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": false,
+            "type": "string",
+            "description": "The offer to move the subscription to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdOffer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomerBuyer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceOffer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomerBuyer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status, such as `Active`."
+          },
+          {
+            "key": "StateSubscription",
+            "optional": true,
+            "type": "string | null",
+            "description": "The detailed state, such as `ActiveRunning`."
+          },
+          {
+            "key": "DateStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DateTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StateSubscriptionAfterTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsTrial",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CountDaysTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsEngaged",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsCustomerBillable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsPaymentCappingReached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DateNextBilling",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TitleLocalized",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PricingSubtotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents."
+          },
+          {
+            "key": "PricingTotal",
+            "optional": true,
+            "type": "number | null",
+            "description": "In cents, with taxes."
+          },
+          {
+            "key": "AmountUpFront",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationTrial",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitTrial",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AmountRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "DurationRecurrence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnitRecurrence",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CountRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "CountMinRecurrences",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Features",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "DateUpdate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Links",
+            "optional": true,
+            "type": "{ rel?: string | null, href?: string | null, query?: string | null }[] | null",
+            "description": "Links for the resource, including the encrypted portal URL."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.usages.get",
+      "shortPath": "usages.get",
+      "description": "Read one customer's usage of one feature: on/off, or the included and current quantities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceFeature",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number",
+            "description": "Read the usage of this subscription when the customer has several."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdFeature",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number | null",
+            "description": "Absent when several subscriptions match the usage."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceFeature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TypeFeature",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OnOff`, `Limitation` or `Consumption`."
+          },
+          {
+            "key": "IsIncluded",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "OnOff features only."
+          },
+          {
+            "key": "IsEnabled",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "OnOff features only."
+          },
+          {
+            "key": "QuantityIncluded",
+            "optional": true,
+            "type": "number | null",
+            "description": "Included quantity; absent means unlimited."
+          },
+          {
+            "key": "QuantityCurrent",
+            "optional": true,
+            "type": "number | null",
+            "description": "Quantity used so far."
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.usages.increment",
+      "shortPath": "usages.increment",
+      "description": "Add to a feature’s usage for a customer, which ProAbono bills when it exceeds the included quantity. A negative increment subtracts, which is how a reversed action is recorded",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceFeature",
+            "optional": false,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "Increment",
+            "optional": false,
+            "type": "number",
+            "description": "How much to add. A negative value subtracts."
+          },
+          {
+            "key": "DateStamp",
+            "optional": false,
+            "type": "string",
+            "description": "When the change happened, as an ISO 8601 timestamp. ProAbono records two changes with the same timestamp once, so it doubles as an idempotency key."
+          },
+          {
+            "key": "EnsureBillable",
+            "optional": true,
+            "type": "boolean",
+            "description": "True by default on ProAbono: a customer without valid payment information answers 403. False skips that check."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IdSegment",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdFeature",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdCustomer",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number | null",
+            "description": "Absent when several subscriptions match the usage."
+          },
+          {
+            "key": "ReferenceSegment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceFeature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TypeFeature",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OnOff`, `Limitation` or `Consumption`."
+          },
+          {
+            "key": "IsIncluded",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "OnOff features only."
+          },
+          {
+            "key": "IsEnabled",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "OnOff features only."
+          },
+          {
+            "key": "QuantityIncluded",
+            "optional": true,
+            "type": "number | null",
+            "description": "Included quantity; absent means unlimited."
+          },
+          {
+            "key": "QuantityCurrent",
+            "optional": true,
+            "type": "number | null",
+            "description": "Quantity used so far."
+          },
+          {
+            "key": "DatePeriodStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DatePeriodEnd",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.usages.list",
+      "shortPath": "usages.list",
+      "description": "List feature usages by customer, feature or subscription, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ReferenceCustomer",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "ReferenceFeature",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for the resource, unique within its kind."
+          },
+          {
+            "key": "IdSubscription",
+            "optional": true,
+            "type": "number",
+            "description": "The ProAbono numeric id."
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usages",
+            "optional": false,
+            "type": "{ IdSegment?: number | null, IdFeature?: number | null, IdCustomer?: number | null, IdSubscription?: number | null, ReferenceSegment?: string | null, ReferenceFeature?: string | null, ReferenceCustomer?: string | null, TypeFeature?: string | null, IsIncluded?: boolean | null, IsEnabled?: boolean | null, QuantityIncluded?: number | null, QuantityCurrent?: number | null, DatePeriodStart?: string | null, DatePeriodEnd?: string | null }[]"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page this answer holds, from 1."
+          },
+          {
+            "key": "SizePage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows per page."
+          },
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows on this page."
+          },
+          {
+            "key": "TotalItems",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in the whole collection, across pages."
+          }
+        ]
+      }
+    },
+    {
+      "path": "proabono.api.usages.update",
+      "shortPath": "usages.update",
+      "description": "Update up to 50 usages in one call, each by increment, current quantity or on/off",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usages",
+            "optional": false,
+            "type": "{ ReferenceCustomer: string, ReferenceFeature: string, IdSubscription?: number, Increment?: number, QuantityCurrent?: number, IsEnabled?: boolean, DateStamp: string }[]",
+            "description": "ProAbono asks for at most 50 rows per call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usages",
+            "optional": false,
+            "type": "{ IdSegment?: number | null, IdFeature?: number | null, IdCustomer?: number | null, IdSubscription?: number | null, ReferenceSegment?: string | null, ReferenceFeature?: string | null, ReferenceCustomer?: string | null, TypeFeature?: string | null, IsIncluded?: boolean | null, IsEnabled?: boolean | null, QuantityIncluded?: number | null, QuantityCurrent?: number | null, DatePeriodStart?: string | null, DatePeriodEnd?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
