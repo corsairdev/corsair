@@ -3,16 +3,17 @@ import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
 import type { ForceManagerContext } from '..';
 import type { ForceManagerEnvironment } from '../client';
-import { makeForceManagerRequest } from '../client';
+import { makeForceManagerRequest, withRouteTemplate } from '../client';
 import { operationDefinitions } from './definitions';
 import { forceManagerRoutes } from './routes';
+import type { ForceManagerResponse } from './types';
 
 type OperationKey = keyof typeof operationDefinitions;
 type OperationInput<K extends OperationKey> = K extends OperationKey
 	? z.infer<(typeof operationDefinitions)[K]['input']>
 	: never;
 type OperationOutput<K extends OperationKey> = K extends OperationKey
-	? z.infer<(typeof operationDefinitions)[K]['output']>
+	? ForceManagerResponse<z.infer<(typeof operationDefinitions)[K]['output']>>
 	: never;
 
 // `unknown` because caller input and provider responses need runtime validation before use.
@@ -145,24 +146,38 @@ export async function executeForceManagerOperation<K extends OperationKey>(
 		headers.ExtraFieldDescription = parsedInput.headers.extraFieldDescription;
 	}
 	// The transport response is provider JSON and remains untrusted until the operation output schema parses it.
-	const response = await makeForceManagerRequest<unknown>(
-		path,
-		apiKey,
-		{
-			method: definition.method,
-			body: parsedInput.body,
-			query: requestQuery,
-			headers,
-		},
-		environment,
-	);
+	let response: unknown;
+	try {
+		response = await makeForceManagerRequest<unknown>(
+			path,
+			apiKey,
+			{
+				method: definition.method,
+				body: parsedInput.body,
+				query: requestQuery,
+				headers,
+			},
+			environment,
+		);
+	} catch (error: unknown) {
+		// Path values can be personal data (the phone-number lookup), so the error keeps the route template.
+		throw withRouteTemplate(error, definition.path, environment);
+	}
 	assertOperationOutput(key, response);
 	return response;
 }
 
+// A named alias, so declaration output can refer to each endpoint's type
+// instead of writing out every response shape.
+export type ForceManagerOperation<K extends OperationKey> = CorsairEndpoint<
+	ForceManagerContext,
+	OperationInput<K>,
+	OperationOutput<K>
+>;
+
 export function createOperation<K extends OperationKey>(
 	key: K,
-): CorsairEndpoint<ForceManagerContext, OperationInput<K>, OperationOutput<K>> {
+): ForceManagerOperation<K> {
 	return async (ctx, input) => {
 		assertForceManagerLoggingConfiguration(ctx);
 		const result = await executeForceManagerOperation(

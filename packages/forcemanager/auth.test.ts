@@ -8,7 +8,10 @@ import {
 } from './client';
 import { representativeResponseFixtures } from './endpoints/definitions';
 import { executeForceManagerOperation } from './endpoints/runtime';
-import type { ForceManagerKeyBuilderContext } from './index';
+import type {
+	ForceManagerEndpointOutputs,
+	ForceManagerKeyBuilderContext,
+} from './index';
 import { forcemanager } from './index';
 
 const PACKED = packForceManagerCredentials({
@@ -291,5 +294,44 @@ describe('ForceManager response parsing', () => {
 		await expect(
 			executeForceManagerOperation('listAccounts', {}, 'session-token'),
 		).rejects.toThrow();
+	});
+
+	it('types a response the way it is checked', async () => {
+		const account: ForceManagerEndpointOutputs['getAccount'] = {
+			address1: 5,
+			address2: null,
+			unknownNewField: 'kept',
+		};
+		jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce(json(account));
+
+		const result = await executeForceManagerOperation(
+			'getAccount',
+			{ path: { id: 1 } },
+			'session-token',
+		);
+		const address1: string | number | boolean | null | undefined =
+			result.address1;
+		expect(address1).toBe(5);
+	});
+
+	it('keeps path values such as a phone number out of errors', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(json({ error: 'not found' }, 404));
+
+		// `unknown` because a rejected promise has no reliable runtime error type until narrowed.
+		const error = await executeForceManagerOperation(
+			'getResourcesByPhoneNumber',
+			{ path: { value: '+15555550123' } },
+			'session-token',
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw new Error('Expected an ApiError');
+		expect(error.status).toBe(404);
+		expect(error.url).toBe(
+			'https://api.forcemanager.com/api/v4/calls/phone/VALUE',
+		);
+		expect(JSON.stringify(error)).not.toContain('5555550123');
 	});
 });

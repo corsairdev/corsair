@@ -774,779 +774,943 @@ export type ForceManagerEndpointInputs = {
 	>;
 };
 
+/**
+ * The type of a parsed response. It mirrors `toResponseSchema` in runtime.ts, which checks responses
+ * more loosely than the OpenAPI-derived schemas: every known field may be missing or null, a scalar
+ * field may hold any JSON scalar (ForceManager sends numbers and booleans where its examples show
+ * strings), and unknown fields pass through.
+ */
+export type ForceManagerResponse<T> = T extends string | number | boolean
+	? string | number | boolean
+	: T extends readonly (infer E)[]
+		? ForceManagerResponse<E>[]
+		: T extends object
+			? { [K in keyof T]?: ForceManagerResponse<T[K]> | null } & {
+					[key: string]: unknown;
+				}
+			: T;
+
 export type ForceManagerEndpointOutputs = {
-	accountAddressesSchema: z.infer<
-		(typeof operationDefinitions)['accountAddressesSchema']['output']
+	accountAddressesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['accountAddressesSchema']['output']>
 	>;
-	listAccountAddresses: z.infer<
-		(typeof operationDefinitions)['listAccountAddresses']['output']
+	listAccountAddresses: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listAccountAddresses']['output']>
 	>;
-	createAccountAddress: z.infer<
-		(typeof operationDefinitions)['createAccountAddress']['output']
+	createAccountAddress: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createAccountAddress']['output']>
 	>;
-	getAccountAddress: z.infer<
-		(typeof operationDefinitions)['getAccountAddress']['output']
+	getAccountAddress: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getAccountAddress']['output']>
 	>;
-	updateAccountAddress: z.infer<
-		(typeof operationDefinitions)['updateAccountAddress']['output']
+	updateAccountAddress: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateAccountAddress']['output']>
 	>;
-	deleteAccountAddress: z.infer<
-		(typeof operationDefinitions)['deleteAccountAddress']['output']
+	deleteAccountAddress: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteAccountAddress']['output']>
 	>;
-	accountsSchema: z.infer<
-		(typeof operationDefinitions)['accountsSchema']['output']
+	accountsSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['accountsSchema']['output']>
 	>;
-	listAccounts: z.infer<
-		(typeof operationDefinitions)['listAccounts']['output']
+	listAccounts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listAccounts']['output']>
 	>;
-	createAccount: z.infer<
-		(typeof operationDefinitions)['createAccount']['output']
+	createAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createAccount']['output']>
 	>;
-	getAccount: z.infer<(typeof operationDefinitions)['getAccount']['output']>;
-	updateAccount: z.infer<
-		(typeof operationDefinitions)['updateAccount']['output']
+	getAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getAccount']['output']>
 	>;
-	deleteAccount: z.infer<
-		(typeof operationDefinitions)['deleteAccount']['output']
+	updateAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateAccount']['output']>
 	>;
-	accountTypesSchema: z.infer<
-		(typeof operationDefinitions)['accountTypesSchema']['output']
+	deleteAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteAccount']['output']>
 	>;
-	listAccountTypes: z.infer<
-		(typeof operationDefinitions)['listAccountTypes']['output']
+	accountTypesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['accountTypesSchema']['output']>
 	>;
-	createAccountType: z.infer<
-		(typeof operationDefinitions)['createAccountType']['output']
+	listAccountTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listAccountTypes']['output']>
 	>;
-	getAccountType: z.infer<
-		(typeof operationDefinitions)['getAccountType']['output']
+	createAccountType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createAccountType']['output']>
 	>;
-	updateAccountType: z.infer<
-		(typeof operationDefinitions)['updateAccountType']['output']
+	getAccountType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getAccountType']['output']>
 	>;
-	deleteAccountType: z.infer<
-		(typeof operationDefinitions)['deleteAccountType']['output']
+	updateAccountType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateAccountType']['output']>
 	>;
-	accountSegmentsSchema: z.infer<
-		(typeof operationDefinitions)['accountSegmentsSchema']['output']
+	deleteAccountType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteAccountType']['output']>
 	>;
-	listAccountSegments: z.infer<
-		(typeof operationDefinitions)['listAccountSegments']['output']
+	accountSegmentsSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['accountSegmentsSchema']['output']>
 	>;
-	createAccountSegment: z.infer<
-		(typeof operationDefinitions)['createAccountSegment']['output']
+	listAccountSegments: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listAccountSegments']['output']>
 	>;
-	getAccountSegment: z.infer<
-		(typeof operationDefinitions)['getAccountSegment']['output']
+	createAccountSegment: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createAccountSegment']['output']>
 	>;
-	updateAccountSegment: z.infer<
-		(typeof operationDefinitions)['updateAccountSegment']['output']
+	getAccountSegment: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getAccountSegment']['output']>
 	>;
-	deleteAccountSegment: z.infer<
-		(typeof operationDefinitions)['deleteAccountSegment']['output']
+	updateAccountSegment: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateAccountSegment']['output']>
 	>;
-	accountStatusesSchema: z.infer<
-		(typeof operationDefinitions)['accountStatusesSchema']['output']
+	deleteAccountSegment: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteAccountSegment']['output']>
 	>;
-	listAccountStatuses: z.infer<
-		(typeof operationDefinitions)['listAccountStatuses']['output']
+	accountStatusesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['accountStatusesSchema']['output']>
 	>;
-	createAccountStatus: z.infer<
-		(typeof operationDefinitions)['createAccountStatus']['output']
+	listAccountStatuses: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listAccountStatuses']['output']>
 	>;
-	getAccountStatus: z.infer<
-		(typeof operationDefinitions)['getAccountStatus']['output']
+	createAccountStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createAccountStatus']['output']>
 	>;
-	updateAccountStatus: z.infer<
-		(typeof operationDefinitions)['updateAccountStatus']['output']
+	getAccountStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getAccountStatus']['output']>
 	>;
-	deleteAccountStatus: z.infer<
-		(typeof operationDefinitions)['deleteAccountStatus']['output']
+	updateAccountStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateAccountStatus']['output']>
 	>;
-	activitiesSchema: z.infer<
-		(typeof operationDefinitions)['activitiesSchema']['output']
+	deleteAccountStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteAccountStatus']['output']>
 	>;
-	listActivities: z.infer<
-		(typeof operationDefinitions)['listActivities']['output']
+	activitiesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['activitiesSchema']['output']>
 	>;
-	createActivity: z.infer<
-		(typeof operationDefinitions)['createActivity']['output']
+	listActivities: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listActivities']['output']>
 	>;
-	getActivity: z.infer<(typeof operationDefinitions)['getActivity']['output']>;
-	updateActivity: z.infer<
-		(typeof operationDefinitions)['updateActivity']['output']
+	createActivity: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createActivity']['output']>
 	>;
-	deleteActivity: z.infer<
-		(typeof operationDefinitions)['deleteActivity']['output']
+	getActivity: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getActivity']['output']>
 	>;
-	activityTypesSchema: z.infer<
-		(typeof operationDefinitions)['activityTypesSchema']['output']
+	updateActivity: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateActivity']['output']>
 	>;
-	listActivityTypes: z.infer<
-		(typeof operationDefinitions)['listActivityTypes']['output']
+	deleteActivity: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteActivity']['output']>
 	>;
-	createActivityType: z.infer<
-		(typeof operationDefinitions)['createActivityType']['output']
+	activityTypesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['activityTypesSchema']['output']>
 	>;
-	getActivityType: z.infer<
-		(typeof operationDefinitions)['getActivityType']['output']
+	listActivityTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listActivityTypes']['output']>
 	>;
-	updateActivityType: z.infer<
-		(typeof operationDefinitions)['updateActivityType']['output']
+	createActivityType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createActivityType']['output']>
 	>;
-	deleteActivityType: z.infer<
-		(typeof operationDefinitions)['deleteActivityType']['output']
+	getActivityType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getActivityType']['output']>
 	>;
-	listActivityPoints: z.infer<
-		(typeof operationDefinitions)['listActivityPoints']['output']
+	updateActivityType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateActivityType']['output']>
 	>;
-	updateActivityPoints: z.infer<
-		(typeof operationDefinitions)['updateActivityPoints']['output']
+	deleteActivityType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteActivityType']['output']>
 	>;
-	branchesSchema: z.infer<
-		(typeof operationDefinitions)['branchesSchema']['output']
+	listActivityPoints: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listActivityPoints']['output']>
 	>;
-	listBranches: z.infer<
-		(typeof operationDefinitions)['listBranches']['output']
+	updateActivityPoints: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateActivityPoints']['output']>
 	>;
-	getBranch: z.infer<(typeof operationDefinitions)['getBranch']['output']>;
-	deleteBranch: z.infer<
-		(typeof operationDefinitions)['deleteBranch']['output']
+	branchesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['branchesSchema']['output']>
 	>;
-	bulkCreateResources: z.infer<
-		(typeof operationDefinitions)['bulkCreateResources']['output']
+	listBranches: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listBranches']['output']>
 	>;
-	bulkUpdateResources: z.infer<
-		(typeof operationDefinitions)['bulkUpdateResources']['output']
+	getBranch: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getBranch']['output']>
 	>;
-	bulkDeleteResources: z.infer<
-		(typeof operationDefinitions)['bulkDeleteResources']['output']
+	deleteBranch: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteBranch']['output']>
 	>;
-	listCalls: z.infer<(typeof operationDefinitions)['listCalls']['output']>;
-	createCallByUserId: z.infer<
-		(typeof operationDefinitions)['createCallByUserId']['output']
+	bulkCreateResources: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['bulkCreateResources']['output']>
 	>;
-	createCallByUserPhoneNumber: z.infer<
-		(typeof operationDefinitions)['createCallByUserPhoneNumber']['output']
+	bulkUpdateResources: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['bulkUpdateResources']['output']>
 	>;
-	getCall: z.infer<(typeof operationDefinitions)['getCall']['output']>;
-	updateCall: z.infer<(typeof operationDefinitions)['updateCall']['output']>;
-	deleteCall: z.infer<(typeof operationDefinitions)['deleteCall']['output']>;
-	getResourcesByPhoneNumber: z.infer<
-		(typeof operationDefinitions)['getResourcesByPhoneNumber']['output']
+	bulkDeleteResources: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['bulkDeleteResources']['output']>
 	>;
-	listCampaigns: z.infer<
-		(typeof operationDefinitions)['listCampaigns']['output']
+	listCalls: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listCalls']['output']>
 	>;
-	createCampaign: z.infer<
-		(typeof operationDefinitions)['createCampaign']['output']
+	createCallByUserId: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createCallByUserId']['output']>
 	>;
-	getCampaign: z.infer<(typeof operationDefinitions)['getCampaign']['output']>;
-	updateCampaign: z.infer<
-		(typeof operationDefinitions)['updateCampaign']['output']
+	createCallByUserPhoneNumber: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['createCallByUserPhoneNumber']['output']
+		>
 	>;
-	deleteCampaign: z.infer<
-		(typeof operationDefinitions)['deleteCampaign']['output']
+	getCall: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getCall']['output']>
 	>;
-	listOpportunityTypes: z.infer<
-		(typeof operationDefinitions)['listOpportunityTypes']['output']
+	updateCall: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateCall']['output']>
 	>;
-	createOpportunityType: z.infer<
-		(typeof operationDefinitions)['createOpportunityType']['output']
+	deleteCall: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteCall']['output']>
 	>;
-	listCampaignStatuses: z.infer<
-		(typeof operationDefinitions)['listCampaignStatuses']['output']
+	getResourcesByPhoneNumber: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['getResourcesByPhoneNumber']['output']
+		>
 	>;
-	listCampaignAccounts: z.infer<
-		(typeof operationDefinitions)['listCampaignAccounts']['output']
+	listCampaigns: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listCampaigns']['output']>
 	>;
-	createCampaignAccount: z.infer<
-		(typeof operationDefinitions)['createCampaignAccount']['output']
+	createCampaign: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createCampaign']['output']>
 	>;
-	getCampaignAccount: z.infer<
-		(typeof operationDefinitions)['getCampaignAccount']['output']
+	getCampaign: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getCampaign']['output']>
 	>;
-	updateCampaignAccount: z.infer<
-		(typeof operationDefinitions)['updateCampaignAccount']['output']
+	updateCampaign: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateCampaign']['output']>
 	>;
-	deleteCampaignAccount: z.infer<
-		(typeof operationDefinitions)['deleteCampaignAccount']['output']
+	deleteCampaign: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteCampaign']['output']>
 	>;
-	listCampaignQuestions: z.infer<
-		(typeof operationDefinitions)['listCampaignQuestions']['output']
+	listOpportunityTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listOpportunityTypes']['output']>
 	>;
-	createCampaignQuestion: z.infer<
-		(typeof operationDefinitions)['createCampaignQuestion']['output']
+	createOpportunityType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createOpportunityType']['output']>
 	>;
-	getCampaignQuestion: z.infer<
-		(typeof operationDefinitions)['getCampaignQuestion']['output']
+	listCampaignStatuses: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listCampaignStatuses']['output']>
 	>;
-	updateCampaignQuestion: z.infer<
-		(typeof operationDefinitions)['updateCampaignQuestion']['output']
+	listCampaignAccounts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listCampaignAccounts']['output']>
 	>;
-	deleteCampaignQuestion: z.infer<
-		(typeof operationDefinitions)['deleteCampaignQuestion']['output']
+	createCampaignAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createCampaignAccount']['output']>
 	>;
-	listQuestionAnswers: z.infer<
-		(typeof operationDefinitions)['listQuestionAnswers']['output']
+	getCampaignAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getCampaignAccount']['output']>
 	>;
-	createQuestionAnswer: z.infer<
-		(typeof operationDefinitions)['createQuestionAnswer']['output']
+	updateCampaignAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateCampaignAccount']['output']>
 	>;
-	getQuestionAnswer: z.infer<
-		(typeof operationDefinitions)['getQuestionAnswer']['output']
+	deleteCampaignAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteCampaignAccount']['output']>
 	>;
-	updateQuestionAnswer: z.infer<
-		(typeof operationDefinitions)['updateQuestionAnswer']['output']
+	listCampaignQuestions: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listCampaignQuestions']['output']>
 	>;
-	deleteQuestionAnswer: z.infer<
-		(typeof operationDefinitions)['deleteQuestionAnswer']['output']
+	createCampaignQuestion: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createCampaignQuestion']['output']>
 	>;
-	listQuestionValues: z.infer<
-		(typeof operationDefinitions)['listQuestionValues']['output']
+	getCampaignQuestion: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getCampaignQuestion']['output']>
 	>;
-	createQuestionValue: z.infer<
-		(typeof operationDefinitions)['createQuestionValue']['output']
+	updateCampaignQuestion: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateCampaignQuestion']['output']>
 	>;
-	getQuestionValue: z.infer<
-		(typeof operationDefinitions)['getQuestionValue']['output']
+	deleteCampaignQuestion: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteCampaignQuestion']['output']>
 	>;
-	updateQuestionValue: z.infer<
-		(typeof operationDefinitions)['updateQuestionValue']['output']
+	listQuestionAnswers: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listQuestionAnswers']['output']>
 	>;
-	deleteQuestionValue: z.infer<
-		(typeof operationDefinitions)['deleteQuestionValue']['output']
+	createQuestionAnswer: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createQuestionAnswer']['output']>
 	>;
-	contactsSchema: z.infer<
-		(typeof operationDefinitions)['contactsSchema']['output']
+	getQuestionAnswer: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getQuestionAnswer']['output']>
 	>;
-	listContacts: z.infer<
-		(typeof operationDefinitions)['listContacts']['output']
+	updateQuestionAnswer: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateQuestionAnswer']['output']>
 	>;
-	createContact: z.infer<
-		(typeof operationDefinitions)['createContact']['output']
+	deleteQuestionAnswer: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteQuestionAnswer']['output']>
 	>;
-	getContact: z.infer<(typeof operationDefinitions)['getContact']['output']>;
-	updateContact: z.infer<
-		(typeof operationDefinitions)['updateContact']['output']
+	listQuestionValues: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listQuestionValues']['output']>
 	>;
-	deleteContact: z.infer<
-		(typeof operationDefinitions)['deleteContact']['output']
+	createQuestionValue: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createQuestionValue']['output']>
 	>;
-	contactTypesSchema: z.infer<
-		(typeof operationDefinitions)['contactTypesSchema']['output']
+	getQuestionValue: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getQuestionValue']['output']>
 	>;
-	listContactTypes: z.infer<
-		(typeof operationDefinitions)['listContactTypes']['output']
+	updateQuestionValue: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateQuestionValue']['output']>
 	>;
-	createContactType: z.infer<
-		(typeof operationDefinitions)['createContactType']['output']
+	deleteQuestionValue: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteQuestionValue']['output']>
 	>;
-	getContactType: z.infer<
-		(typeof operationDefinitions)['getContactType']['output']
+	contactsSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['contactsSchema']['output']>
 	>;
-	updateContactType: z.infer<
-		(typeof operationDefinitions)['updateContactType']['output']
+	listContacts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listContacts']['output']>
 	>;
-	deleteContactType: z.infer<
-		(typeof operationDefinitions)['deleteContactType']['output']
+	createContact: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createContact']['output']>
 	>;
-	countriesSchema: z.infer<
-		(typeof operationDefinitions)['countriesSchema']['output']
+	getContact: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getContact']['output']>
 	>;
-	listCountries: z.infer<
-		(typeof operationDefinitions)['listCountries']['output']
+	updateContact: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateContact']['output']>
 	>;
-	currenciesSchema: z.infer<
-		(typeof operationDefinitions)['currenciesSchema']['output']
+	deleteContact: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteContact']['output']>
 	>;
-	listCurrencies: z.infer<
-		(typeof operationDefinitions)['listCurrencies']['output']
+	contactTypesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['contactTypesSchema']['output']>
 	>;
-	listDocuments: z.infer<
-		(typeof operationDefinitions)['listDocuments']['output']
+	listContactTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listContactTypes']['output']>
 	>;
-	listDocumentsOfAResource: z.infer<
-		(typeof operationDefinitions)['listDocumentsOfAResource']['output']
+	createContactType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createContactType']['output']>
 	>;
-	deletePicture: z.infer<
-		(typeof operationDefinitions)['deletePicture']['output']
+	getContactType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getContactType']['output']>
 	>;
-	listFolders: z.infer<(typeof operationDefinitions)['listFolders']['output']>;
-	createFolder: z.infer<
-		(typeof operationDefinitions)['createFolder']['output']
+	updateContactType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateContactType']['output']>
 	>;
-	listFoldersOfAResource: z.infer<
-		(typeof operationDefinitions)['listFoldersOfAResource']['output']
+	deleteContactType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteContactType']['output']>
 	>;
-	createFolderForAResource: z.infer<
-		(typeof operationDefinitions)['createFolderForAResource']['output']
+	countriesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['countriesSchema']['output']>
 	>;
-	emailsSchema: z.infer<
-		(typeof operationDefinitions)['emailsSchema']['output']
+	listCountries: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listCountries']['output']>
 	>;
-	listEmails: z.infer<(typeof operationDefinitions)['listEmails']['output']>;
-	createEmail: z.infer<(typeof operationDefinitions)['createEmail']['output']>;
-	getEmail: z.infer<(typeof operationDefinitions)['getEmail']['output']>;
-	entityContactsSchema: z.infer<
-		(typeof operationDefinitions)['entityContactsSchema']['output']
+	currenciesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['currenciesSchema']['output']>
 	>;
-	listEntityContacts: z.infer<
-		(typeof operationDefinitions)['listEntityContacts']['output']
+	listCurrencies: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listCurrencies']['output']>
 	>;
-	entityOwnersSchema: z.infer<
-		(typeof operationDefinitions)['entityOwnersSchema']['output']
+	listDocuments: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listDocuments']['output']>
 	>;
-	listEntityOwners: z.infer<
-		(typeof operationDefinitions)['listEntityOwners']['output']
+	listDocumentsOfAResource: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listDocumentsOfAResource']['output']>
 	>;
-	calendarSchema: z.infer<
-		(typeof operationDefinitions)['calendarSchema']['output']
+	deletePicture: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deletePicture']['output']>
 	>;
-	listCalendar: z.infer<
-		(typeof operationDefinitions)['listCalendar']['output']
+	listFolders: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listFolders']['output']>
 	>;
-	createCalendar: z.infer<
-		(typeof operationDefinitions)['createCalendar']['output']
+	createFolder: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createFolder']['output']>
 	>;
-	getCalendar: z.infer<(typeof operationDefinitions)['getCalendar']['output']>;
-	updateCalendar: z.infer<
-		(typeof operationDefinitions)['updateCalendar']['output']
+	listFoldersOfAResource: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listFoldersOfAResource']['output']>
 	>;
-	deleteCalendar: z.infer<
-		(typeof operationDefinitions)['deleteCalendar']['output']
+	createFolderForAResource: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createFolderForAResource']['output']>
 	>;
-	extraFieldsSchemaByResource: z.infer<
-		(typeof operationDefinitions)['extraFieldsSchemaByResource']['output']
+	emailsSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['emailsSchema']['output']>
 	>;
-	listExtraFieldsByResource: z.infer<
-		(typeof operationDefinitions)['listExtraFieldsByResource']['output']
+	listEmails: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listEmails']['output']>
 	>;
-	createExtraFieldForResource: z.infer<
-		(typeof operationDefinitions)['createExtraFieldForResource']['output']
+	createEmail: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createEmail']['output']>
 	>;
-	listTabs: z.infer<(typeof operationDefinitions)['listTabs']['output']>;
-	createTabs: z.infer<(typeof operationDefinitions)['createTabs']['output']>;
-	getTabs: z.infer<(typeof operationDefinitions)['getTabs']['output']>;
-	updateTabs: z.infer<(typeof operationDefinitions)['updateTabs']['output']>;
-	deleteTabs: z.infer<(typeof operationDefinitions)['deleteTabs']['output']>;
-	getForm: z.infer<(typeof operationDefinitions)['getForm']['output']>;
-	getFormState: z.infer<
-		(typeof operationDefinitions)['getFormState']['output']
+	getEmail: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getEmail']['output']>
 	>;
-	getFormTemplate: z.infer<
-		(typeof operationDefinitions)['getFormTemplate']['output']
+	entityContactsSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['entityContactsSchema']['output']>
 	>;
-	listNews: z.infer<(typeof operationDefinitions)['listNews']['output']>;
-	opportunitiesSchema: z.infer<
-		(typeof operationDefinitions)['opportunitiesSchema']['output']
+	listEntityContacts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listEntityContacts']['output']>
 	>;
-	listOpportunities: z.infer<
-		(typeof operationDefinitions)['listOpportunities']['output']
+	entityOwnersSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['entityOwnersSchema']['output']>
 	>;
-	createOpportunity: z.infer<
-		(typeof operationDefinitions)['createOpportunity']['output']
+	listEntityOwners: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listEntityOwners']['output']>
 	>;
-	getOpportunity: z.infer<
-		(typeof operationDefinitions)['getOpportunity']['output']
+	calendarSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['calendarSchema']['output']>
 	>;
-	updateOpportunity: z.infer<
-		(typeof operationDefinitions)['updateOpportunity']['output']
+	listCalendar: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listCalendar']['output']>
 	>;
-	deleteOpportunity: z.infer<
-		(typeof operationDefinitions)['deleteOpportunity']['output']
+	createCalendar: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createCalendar']['output']>
 	>;
-	opportunityTypesSchema: z.infer<
-		(typeof operationDefinitions)['opportunityTypesSchema']['output']
+	getCalendar: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getCalendar']['output']>
 	>;
-	getOpportunityTypes: z.infer<
-		(typeof operationDefinitions)['getOpportunityTypes']['output']
+	updateCalendar: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateCalendar']['output']>
 	>;
-	updateOpportunityType: z.infer<
-		(typeof operationDefinitions)['updateOpportunityType']['output']
+	deleteCalendar: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteCalendar']['output']>
 	>;
-	deleteOpportunityType: z.infer<
-		(typeof operationDefinitions)['deleteOpportunityType']['output']
+	extraFieldsSchemaByResource: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['extraFieldsSchemaByResource']['output']
+		>
 	>;
-	opportunityStatusesSchema: z.infer<
-		(typeof operationDefinitions)['opportunityStatusesSchema']['output']
+	listExtraFieldsByResource: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['listExtraFieldsByResource']['output']
+		>
 	>;
-	listOpportunityStatuses: z.infer<
-		(typeof operationDefinitions)['listOpportunityStatuses']['output']
+	createExtraFieldForResource: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['createExtraFieldForResource']['output']
+		>
 	>;
-	createOpportunityStatus: z.infer<
-		(typeof operationDefinitions)['createOpportunityStatus']['output']
+	listTabs: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listTabs']['output']>
 	>;
-	getOpportunityStatus: z.infer<
-		(typeof operationDefinitions)['getOpportunityStatus']['output']
+	createTabs: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createTabs']['output']>
 	>;
-	updateOpportunityStatus: z.infer<
-		(typeof operationDefinitions)['updateOpportunityStatus']['output']
+	getTabs: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getTabs']['output']>
 	>;
-	deleteOpportunityStatus: z.infer<
-		(typeof operationDefinitions)['deleteOpportunityStatus']['output']
+	updateTabs: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateTabs']['output']>
 	>;
-	orderHeadersSchema: z.infer<
-		(typeof operationDefinitions)['orderHeadersSchema']['output']
+	deleteTabs: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteTabs']['output']>
 	>;
-	listOrderHeaders: z.infer<
-		(typeof operationDefinitions)['listOrderHeaders']['output']
+	getForm: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getForm']['output']>
 	>;
-	createOrderHeader: z.infer<
-		(typeof operationDefinitions)['createOrderHeader']['output']
+	getFormState: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getFormState']['output']>
 	>;
-	getOrderHeader: z.infer<
-		(typeof operationDefinitions)['getOrderHeader']['output']
+	getFormTemplate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getFormTemplate']['output']>
 	>;
-	updateOrderHeader: z.infer<
-		(typeof operationDefinitions)['updateOrderHeader']['output']
+	listNews: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listNews']['output']>
 	>;
-	deleteOrderHeader: z.infer<
-		(typeof operationDefinitions)['deleteOrderHeader']['output']
+	opportunitiesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['opportunitiesSchema']['output']>
 	>;
-	orderLinesSchema: z.infer<
-		(typeof operationDefinitions)['orderLinesSchema']['output']
+	listOpportunities: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listOpportunities']['output']>
 	>;
-	listOrderLines: z.infer<
-		(typeof operationDefinitions)['listOrderLines']['output']
+	createOpportunity: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createOpportunity']['output']>
 	>;
-	createOrderLine: z.infer<
-		(typeof operationDefinitions)['createOrderLine']['output']
+	getOpportunity: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getOpportunity']['output']>
 	>;
-	getOrderLine: z.infer<
-		(typeof operationDefinitions)['getOrderLine']['output']
+	updateOpportunity: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateOpportunity']['output']>
 	>;
-	updateOrderLine: z.infer<
-		(typeof operationDefinitions)['updateOrderLine']['output']
+	deleteOpportunity: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteOpportunity']['output']>
 	>;
-	deleteOrderLine: z.infer<
-		(typeof operationDefinitions)['deleteOrderLine']['output']
+	opportunityTypesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['opportunityTypesSchema']['output']>
 	>;
-	orderStatusesSchema: z.infer<
-		(typeof operationDefinitions)['orderStatusesSchema']['output']
+	getOpportunityTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getOpportunityTypes']['output']>
 	>;
-	listOrderStatuses: z.infer<
-		(typeof operationDefinitions)['listOrderStatuses']['output']
+	updateOpportunityType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateOpportunityType']['output']>
 	>;
-	createOrderStatus: z.infer<
-		(typeof operationDefinitions)['createOrderStatus']['output']
+	deleteOpportunityType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteOpportunityType']['output']>
 	>;
-	getOrderStatus: z.infer<
-		(typeof operationDefinitions)['getOrderStatus']['output']
+	opportunityStatusesSchema: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['opportunityStatusesSchema']['output']
+		>
 	>;
-	updateOrderStatus: z.infer<
-		(typeof operationDefinitions)['updateOrderStatus']['output']
+	listOpportunityStatuses: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listOpportunityStatuses']['output']>
 	>;
-	deleteOrderStatus: z.infer<
-		(typeof operationDefinitions)['deleteOrderStatus']['output']
+	createOpportunityStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createOpportunityStatus']['output']>
 	>;
-	orderTypesSchema: z.infer<
-		(typeof operationDefinitions)['orderTypesSchema']['output']
+	getOpportunityStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getOpportunityStatus']['output']>
 	>;
-	listOrderTypes: z.infer<
-		(typeof operationDefinitions)['listOrderTypes']['output']
+	updateOpportunityStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateOpportunityStatus']['output']>
 	>;
-	createOrderTypes: z.infer<
-		(typeof operationDefinitions)['createOrderTypes']['output']
+	deleteOpportunityStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteOpportunityStatus']['output']>
 	>;
-	getOrderTypes: z.infer<
-		(typeof operationDefinitions)['getOrderTypes']['output']
+	orderHeadersSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['orderHeadersSchema']['output']>
 	>;
-	updateOrderTypes: z.infer<
-		(typeof operationDefinitions)['updateOrderTypes']['output']
+	listOrderHeaders: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listOrderHeaders']['output']>
 	>;
-	deleteOrderTypes: z.infer<
-		(typeof operationDefinitions)['deleteOrderTypes']['output']
+	createOrderHeader: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createOrderHeader']['output']>
 	>;
-	productsSchema: z.infer<
-		(typeof operationDefinitions)['productsSchema']['output']
+	getOrderHeader: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getOrderHeader']['output']>
 	>;
-	listProducts: z.infer<
-		(typeof operationDefinitions)['listProducts']['output']
+	updateOrderHeader: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateOrderHeader']['output']>
 	>;
-	createProduct: z.infer<
-		(typeof operationDefinitions)['createProduct']['output']
+	deleteOrderHeader: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteOrderHeader']['output']>
 	>;
-	getProduct: z.infer<(typeof operationDefinitions)['getProduct']['output']>;
-	updateProduct: z.infer<
-		(typeof operationDefinitions)['updateProduct']['output']
+	orderLinesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['orderLinesSchema']['output']>
 	>;
-	deleteProduct: z.infer<
-		(typeof operationDefinitions)['deleteProduct']['output']
+	listOrderLines: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listOrderLines']['output']>
 	>;
-	bulkCreateProducts: z.infer<
-		(typeof operationDefinitions)['bulkCreateProducts']['output']
+	createOrderLine: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createOrderLine']['output']>
 	>;
-	bulkUpdateProducts: z.infer<
-		(typeof operationDefinitions)['bulkUpdateProducts']['output']
+	getOrderLine: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getOrderLine']['output']>
 	>;
-	bulkDeleteProducts: z.infer<
-		(typeof operationDefinitions)['bulkDeleteProducts']['output']
+	updateOrderLine: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateOrderLine']['output']>
 	>;
-	productFamiliesSchema: z.infer<
-		(typeof operationDefinitions)['productFamiliesSchema']['output']
+	deleteOrderLine: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteOrderLine']['output']>
 	>;
-	listProductFamilies: z.infer<
-		(typeof operationDefinitions)['listProductFamilies']['output']
+	orderStatusesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['orderStatusesSchema']['output']>
 	>;
-	createProductFamily: z.infer<
-		(typeof operationDefinitions)['createProductFamily']['output']
+	listOrderStatuses: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listOrderStatuses']['output']>
 	>;
-	getProductFamily: z.infer<
-		(typeof operationDefinitions)['getProductFamily']['output']
+	createOrderStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createOrderStatus']['output']>
 	>;
-	updateProductFamily: z.infer<
-		(typeof operationDefinitions)['updateProductFamily']['output']
+	getOrderStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getOrderStatus']['output']>
 	>;
-	productUnitsOfMeasureSchema: z.infer<
-		(typeof operationDefinitions)['productUnitsOfMeasureSchema']['output']
+	updateOrderStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateOrderStatus']['output']>
 	>;
-	listProductUnitsOfMeasure: z.infer<
-		(typeof operationDefinitions)['listProductUnitsOfMeasure']['output']
+	deleteOrderStatus: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteOrderStatus']['output']>
 	>;
-	createProductUnitOfMeasure: z.infer<
-		(typeof operationDefinitions)['createProductUnitOfMeasure']['output']
+	orderTypesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['orderTypesSchema']['output']>
 	>;
-	getProductUnitOfMeasure: z.infer<
-		(typeof operationDefinitions)['getProductUnitOfMeasure']['output']
+	listOrderTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listOrderTypes']['output']>
 	>;
-	updateProductUnitOfMeasure: z.infer<
-		(typeof operationDefinitions)['updateProductUnitOfMeasure']['output']
+	createOrderTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createOrderTypes']['output']>
 	>;
-	deleteProductUnitOfMeasure: z.infer<
-		(typeof operationDefinitions)['deleteProductUnitOfMeasure']['output']
+	getOrderTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getOrderTypes']['output']>
 	>;
-	unitsOfMeasureSchema: z.infer<
-		(typeof operationDefinitions)['unitsOfMeasureSchema']['output']
+	updateOrderTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateOrderTypes']['output']>
 	>;
-	listUnitsOfMeasure: z.infer<
-		(typeof operationDefinitions)['listUnitsOfMeasure']['output']
+	deleteOrderTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteOrderTypes']['output']>
 	>;
-	createUnitOfMeasure: z.infer<
-		(typeof operationDefinitions)['createUnitOfMeasure']['output']
+	productsSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['productsSchema']['output']>
 	>;
-	getUnitOfMeasure: z.infer<
-		(typeof operationDefinitions)['getUnitOfMeasure']['output']
+	listProducts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listProducts']['output']>
 	>;
-	updateUnitOfMeasure: z.infer<
-		(typeof operationDefinitions)['updateUnitOfMeasure']['output']
+	createProduct: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createProduct']['output']>
 	>;
-	deleteUnitOfMeasure: z.infer<
-		(typeof operationDefinitions)['deleteUnitOfMeasure']['output']
+	getProduct: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getProduct']['output']>
 	>;
-	taxRatesSchema: z.infer<
-		(typeof operationDefinitions)['taxRatesSchema']['output']
+	updateProduct: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateProduct']['output']>
 	>;
-	listTaxRates: z.infer<
-		(typeof operationDefinitions)['listTaxRates']['output']
+	deleteProduct: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteProduct']['output']>
 	>;
-	createTaxRate: z.infer<
-		(typeof operationDefinitions)['createTaxRate']['output']
+	bulkCreateProducts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['bulkCreateProducts']['output']>
 	>;
-	getTaxRate: z.infer<(typeof operationDefinitions)['getTaxRate']['output']>;
-	updateTaxRate: z.infer<
-		(typeof operationDefinitions)['updateTaxRate']['output']
+	bulkUpdateProducts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['bulkUpdateProducts']['output']>
 	>;
-	deleteTaxRate: z.infer<
-		(typeof operationDefinitions)['deleteTaxRate']['output']
+	bulkDeleteProducts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['bulkDeleteProducts']['output']>
 	>;
-	taxProfilesSchema: z.infer<
-		(typeof operationDefinitions)['taxProfilesSchema']['output']
+	productFamiliesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['productFamiliesSchema']['output']>
 	>;
-	listTaxProfiles: z.infer<
-		(typeof operationDefinitions)['listTaxProfiles']['output']
+	listProductFamilies: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listProductFamilies']['output']>
 	>;
-	getTaxProfile: z.infer<
-		(typeof operationDefinitions)['getTaxProfile']['output']
+	createProductFamily: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createProductFamily']['output']>
 	>;
-	productFamiliesBranchesSchema: z.infer<
-		(typeof operationDefinitions)['productFamiliesBranchesSchema']['output']
+	getProductFamily: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getProductFamily']['output']>
 	>;
-	listProductFamiliesBranches: z.infer<
-		(typeof operationDefinitions)['listProductFamiliesBranches']['output']
+	updateProductFamily: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateProductFamily']['output']>
 	>;
-	createProductFamiliesBranch: z.infer<
-		(typeof operationDefinitions)['createProductFamiliesBranch']['output']
+	productUnitsOfMeasureSchema: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['productUnitsOfMeasureSchema']['output']
+		>
 	>;
-	getProductFamiliesBranch: z.infer<
-		(typeof operationDefinitions)['getProductFamiliesBranch']['output']
+	listProductUnitsOfMeasure: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['listProductUnitsOfMeasure']['output']
+		>
 	>;
-	updateProductFamiliesBranch: z.infer<
-		(typeof operationDefinitions)['updateProductFamiliesBranch']['output']
+	createProductUnitOfMeasure: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['createProductUnitOfMeasure']['output']
+		>
 	>;
-	deleteProductFamiliesBranch: z.infer<
-		(typeof operationDefinitions)['deleteProductFamiliesBranch']['output']
+	getProductUnitOfMeasure: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getProductUnitOfMeasure']['output']>
 	>;
-	productEnvironmentsSchema: z.infer<
-		(typeof operationDefinitions)['productEnvironmentsSchema']['output']
+	updateProductUnitOfMeasure: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['updateProductUnitOfMeasure']['output']
+		>
 	>;
-	listProductEnvironments: z.infer<
-		(typeof operationDefinitions)['listProductEnvironments']['output']
+	deleteProductUnitOfMeasure: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['deleteProductUnitOfMeasure']['output']
+		>
 	>;
-	createProductEnvironment: z.infer<
-		(typeof operationDefinitions)['createProductEnvironment']['output']
+	unitsOfMeasureSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['unitsOfMeasureSchema']['output']>
 	>;
-	getProductEnvironment: z.infer<
-		(typeof operationDefinitions)['getProductEnvironment']['output']
+	listUnitsOfMeasure: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listUnitsOfMeasure']['output']>
 	>;
-	updateProductEnvironment: z.infer<
-		(typeof operationDefinitions)['updateProductEnvironment']['output']
+	createUnitOfMeasure: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createUnitOfMeasure']['output']>
 	>;
-	deleteProductEnvironment: z.infer<
-		(typeof operationDefinitions)['deleteProductEnvironment']['output']
+	getUnitOfMeasure: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getUnitOfMeasure']['output']>
 	>;
-	productCategoriesSchema: z.infer<
-		(typeof operationDefinitions)['productCategoriesSchema']['output']
+	updateUnitOfMeasure: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateUnitOfMeasure']['output']>
 	>;
-	listProductCategories: z.infer<
-		(typeof operationDefinitions)['listProductCategories']['output']
+	deleteUnitOfMeasure: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteUnitOfMeasure']['output']>
 	>;
-	createProductCategory: z.infer<
-		(typeof operationDefinitions)['createProductCategory']['output']
+	taxRatesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['taxRatesSchema']['output']>
 	>;
-	getProductCategory: z.infer<
-		(typeof operationDefinitions)['getProductCategory']['output']
+	listTaxRates: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listTaxRates']['output']>
 	>;
-	updateProductCategory: z.infer<
-		(typeof operationDefinitions)['updateProductCategory']['output']
+	createTaxRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createTaxRate']['output']>
 	>;
-	deleteProductCategory: z.infer<
-		(typeof operationDefinitions)['deleteProductCategory']['output']
+	getTaxRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getTaxRate']['output']>
 	>;
-	productRatesSchema: z.infer<
-		(typeof operationDefinitions)['productRatesSchema']['output']
+	updateTaxRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateTaxRate']['output']>
 	>;
-	listProductRates: z.infer<
-		(typeof operationDefinitions)['listProductRates']['output']
+	deleteTaxRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteTaxRate']['output']>
 	>;
-	createProductRate: z.infer<
-		(typeof operationDefinitions)['createProductRate']['output']
+	taxProfilesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['taxProfilesSchema']['output']>
 	>;
-	getProductRate: z.infer<
-		(typeof operationDefinitions)['getProductRate']['output']
+	listTaxProfiles: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listTaxProfiles']['output']>
 	>;
-	updateProductRate: z.infer<
-		(typeof operationDefinitions)['updateProductRate']['output']
+	getTaxProfile: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getTaxProfile']['output']>
 	>;
-	deleteProductRate: z.infer<
-		(typeof operationDefinitions)['deleteProductRate']['output']
+	productFamiliesBranchesSchema: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['productFamiliesBranchesSchema']['output']
+		>
 	>;
-	ratesSchema: z.infer<(typeof operationDefinitions)['ratesSchema']['output']>;
-	listRates: z.infer<(typeof operationDefinitions)['listRates']['output']>;
-	createRate: z.infer<(typeof operationDefinitions)['createRate']['output']>;
-	getRate: z.infer<(typeof operationDefinitions)['getRate']['output']>;
-	updateRate: z.infer<(typeof operationDefinitions)['updateRate']['output']>;
-	deleteRate: z.infer<(typeof operationDefinitions)['deleteRate']['output']>;
-	relatedAccountsSchema: z.infer<
-		(typeof operationDefinitions)['relatedAccountsSchema']['output']
+	listProductFamiliesBranches: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['listProductFamiliesBranches']['output']
+		>
 	>;
-	listRelatedAccounts: z.infer<
-		(typeof operationDefinitions)['listRelatedAccounts']['output']
+	createProductFamiliesBranch: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['createProductFamiliesBranch']['output']
+		>
 	>;
-	createRelatedAccount: z.infer<
-		(typeof operationDefinitions)['createRelatedAccount']['output']
+	getProductFamiliesBranch: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getProductFamiliesBranch']['output']>
 	>;
-	retrieveRelatedAccount: z.infer<
-		(typeof operationDefinitions)['retrieveRelatedAccount']['output']
+	updateProductFamiliesBranch: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['updateProductFamiliesBranch']['output']
+		>
 	>;
-	updateRelatedAccount: z.infer<
-		(typeof operationDefinitions)['updateRelatedAccount']['output']
+	deleteProductFamiliesBranch: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['deleteProductFamiliesBranch']['output']
+		>
 	>;
-	deleteRelatedAccount: z.infer<
-		(typeof operationDefinitions)['deleteRelatedAccount']['output']
+	productEnvironmentsSchema: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['productEnvironmentsSchema']['output']
+		>
 	>;
-	relatedAccountTypesSchema: z.infer<
-		(typeof operationDefinitions)['relatedAccountTypesSchema']['output']
+	listProductEnvironments: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listProductEnvironments']['output']>
 	>;
-	listRelatedAccountTypes: z.infer<
-		(typeof operationDefinitions)['listRelatedAccountTypes']['output']
+	createProductEnvironment: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createProductEnvironment']['output']>
 	>;
-	createRelatedAccountType: z.infer<
-		(typeof operationDefinitions)['createRelatedAccountType']['output']
+	getProductEnvironment: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getProductEnvironment']['output']>
 	>;
-	retrieveRelatedAccountType: z.infer<
-		(typeof operationDefinitions)['retrieveRelatedAccountType']['output']
+	updateProductEnvironment: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateProductEnvironment']['output']>
 	>;
-	updateRelatedAccountType: z.infer<
-		(typeof operationDefinitions)['updateRelatedAccountType']['output']
+	deleteProductEnvironment: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteProductEnvironment']['output']>
 	>;
-	deleteRelatedAccountType: z.infer<
-		(typeof operationDefinitions)['deleteRelatedAccountType']['output']
+	productCategoriesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['productCategoriesSchema']['output']>
 	>;
-	getResources: z.infer<
-		(typeof operationDefinitions)['getResources']['output']
+	listProductCategories: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listProductCategories']['output']>
 	>;
-	rolesSchema: z.infer<(typeof operationDefinitions)['rolesSchema']['output']>;
-	listRoles: z.infer<(typeof operationDefinitions)['listRoles']['output']>;
-	getRole: z.infer<(typeof operationDefinitions)['getRole']['output']>;
-	listRolesOfUser: z.infer<
-		(typeof operationDefinitions)['listRolesOfUser']['output']
+	createProductCategory: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createProductCategory']['output']>
 	>;
-	addRolesInUser: z.infer<
-		(typeof operationDefinitions)['addRolesInUser']['output']
+	getProductCategory: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getProductCategory']['output']>
 	>;
-	deleteRolesInUser: z.infer<
-		(typeof operationDefinitions)['deleteRolesInUser']['output']
+	updateProductCategory: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateProductCategory']['output']>
 	>;
-	listUsersInRole: z.infer<
-		(typeof operationDefinitions)['listUsersInRole']['output']
+	deleteProductCategory: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteProductCategory']['output']>
 	>;
-	salesSchema: z.infer<(typeof operationDefinitions)['salesSchema']['output']>;
-	listSales: z.infer<(typeof operationDefinitions)['listSales']['output']>;
-	createSale: z.infer<(typeof operationDefinitions)['createSale']['output']>;
-	getSale: z.infer<(typeof operationDefinitions)['getSale']['output']>;
-	updateSale: z.infer<(typeof operationDefinitions)['updateSale']['output']>;
-	deleteSale: z.infer<(typeof operationDefinitions)['deleteSale']['output']>;
-	listTimezones: z.infer<
-		(typeof operationDefinitions)['listTimezones']['output']
+	productRatesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['productRatesSchema']['output']>
 	>;
-	usersSchema: z.infer<(typeof operationDefinitions)['usersSchema']['output']>;
-	listUsers: z.infer<(typeof operationDefinitions)['listUsers']['output']>;
-	createUser: z.infer<(typeof operationDefinitions)['createUser']['output']>;
-	getUser: z.infer<(typeof operationDefinitions)['getUser']['output']>;
-	updateUser: z.infer<(typeof operationDefinitions)['updateUser']['output']>;
-	deleteUser: z.infer<(typeof operationDefinitions)['deleteUser']['output']>;
-	listUserHierarchy: z.infer<
-		(typeof operationDefinitions)['listUserHierarchy']['output']
+	listProductRates: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listProductRates']['output']>
 	>;
-	listUsersScores: z.infer<
-		(typeof operationDefinitions)['listUsersScores']['output']
+	createProductRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createProductRate']['output']>
 	>;
-	userTypesSchema: z.infer<
-		(typeof operationDefinitions)['userTypesSchema']['output']
+	getProductRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getProductRate']['output']>
 	>;
-	listUserTypes: z.infer<
-		(typeof operationDefinitions)['listUserTypes']['output']
+	updateProductRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateProductRate']['output']>
 	>;
-	createUserType: z.infer<
-		(typeof operationDefinitions)['createUserType']['output']
+	deleteProductRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteProductRate']['output']>
 	>;
-	getUserType: z.infer<(typeof operationDefinitions)['getUserType']['output']>;
-	updateUserType: z.infer<
-		(typeof operationDefinitions)['updateUserType']['output']
+	ratesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['ratesSchema']['output']>
 	>;
-	listLists: z.infer<(typeof operationDefinitions)['listLists']['output']>;
-	createList: z.infer<(typeof operationDefinitions)['createList']['output']>;
-	updateList: z.infer<(typeof operationDefinitions)['updateList']['output']>;
-	deleteList: z.infer<(typeof operationDefinitions)['deleteList']['output']>;
-	listValues: z.infer<(typeof operationDefinitions)['listValues']['output']>;
-	createValue: z.infer<(typeof operationDefinitions)['createValue']['output']>;
-	valuesListSchema: z.infer<
-		(typeof operationDefinitions)['valuesListSchema']['output']
+	listRates: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listRates']['output']>
 	>;
-	getValue: z.infer<(typeof operationDefinitions)['getValue']['output']>;
-	updateValue: z.infer<(typeof operationDefinitions)['updateValue']['output']>;
-	deleteValue: z.infer<(typeof operationDefinitions)['deleteValue']['output']>;
-	listWarningsOfAResource: z.infer<
-		(typeof operationDefinitions)['listWarningsOfAResource']['output']
+	createRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createRate']['output']>
 	>;
-	createWarningForAResourceCopy: z.infer<
-		(typeof operationDefinitions)['createWarningForAResourceCopy']['output']
+	getRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getRate']['output']>
 	>;
-	updateWarningOfAResource: z.infer<
-		(typeof operationDefinitions)['updateWarningOfAResource']['output']
+	updateRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateRate']['output']>
 	>;
-	deleteWarningOfAResource: z.infer<
-		(typeof operationDefinitions)['deleteWarningOfAResource']['output']
+	deleteRate: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteRate']['output']>
+	>;
+	relatedAccountsSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['relatedAccountsSchema']['output']>
+	>;
+	listRelatedAccounts: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listRelatedAccounts']['output']>
+	>;
+	createRelatedAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createRelatedAccount']['output']>
+	>;
+	retrieveRelatedAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['retrieveRelatedAccount']['output']>
+	>;
+	updateRelatedAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateRelatedAccount']['output']>
+	>;
+	deleteRelatedAccount: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteRelatedAccount']['output']>
+	>;
+	relatedAccountTypesSchema: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['relatedAccountTypesSchema']['output']
+		>
+	>;
+	listRelatedAccountTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listRelatedAccountTypes']['output']>
+	>;
+	createRelatedAccountType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createRelatedAccountType']['output']>
+	>;
+	retrieveRelatedAccountType: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['retrieveRelatedAccountType']['output']
+		>
+	>;
+	updateRelatedAccountType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateRelatedAccountType']['output']>
+	>;
+	deleteRelatedAccountType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteRelatedAccountType']['output']>
+	>;
+	getResources: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getResources']['output']>
+	>;
+	rolesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['rolesSchema']['output']>
+	>;
+	listRoles: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listRoles']['output']>
+	>;
+	getRole: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getRole']['output']>
+	>;
+	listRolesOfUser: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listRolesOfUser']['output']>
+	>;
+	addRolesInUser: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['addRolesInUser']['output']>
+	>;
+	deleteRolesInUser: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteRolesInUser']['output']>
+	>;
+	listUsersInRole: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listUsersInRole']['output']>
+	>;
+	salesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['salesSchema']['output']>
+	>;
+	listSales: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listSales']['output']>
+	>;
+	createSale: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createSale']['output']>
+	>;
+	getSale: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getSale']['output']>
+	>;
+	updateSale: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateSale']['output']>
+	>;
+	deleteSale: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteSale']['output']>
+	>;
+	listTimezones: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listTimezones']['output']>
+	>;
+	usersSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['usersSchema']['output']>
+	>;
+	listUsers: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listUsers']['output']>
+	>;
+	createUser: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createUser']['output']>
+	>;
+	getUser: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getUser']['output']>
+	>;
+	updateUser: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateUser']['output']>
+	>;
+	deleteUser: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteUser']['output']>
+	>;
+	listUserHierarchy: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listUserHierarchy']['output']>
+	>;
+	listUsersScores: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listUsersScores']['output']>
+	>;
+	userTypesSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['userTypesSchema']['output']>
+	>;
+	listUserTypes: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listUserTypes']['output']>
+	>;
+	createUserType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createUserType']['output']>
+	>;
+	getUserType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getUserType']['output']>
+	>;
+	updateUserType: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateUserType']['output']>
+	>;
+	listLists: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listLists']['output']>
+	>;
+	createList: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createList']['output']>
+	>;
+	updateList: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateList']['output']>
+	>;
+	deleteList: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteList']['output']>
+	>;
+	listValues: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listValues']['output']>
+	>;
+	createValue: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['createValue']['output']>
+	>;
+	valuesListSchema: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['valuesListSchema']['output']>
+	>;
+	getValue: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['getValue']['output']>
+	>;
+	updateValue: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateValue']['output']>
+	>;
+	deleteValue: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteValue']['output']>
+	>;
+	listWarningsOfAResource: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['listWarningsOfAResource']['output']>
+	>;
+	createWarningForAResourceCopy: ForceManagerResponse<
+		z.infer<
+			(typeof operationDefinitions)['createWarningForAResourceCopy']['output']
+		>
+	>;
+	updateWarningOfAResource: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['updateWarningOfAResource']['output']>
+	>;
+	deleteWarningOfAResource: ForceManagerResponse<
+		z.infer<(typeof operationDefinitions)['deleteWarningOfAResource']['output']>
 	>;
 };

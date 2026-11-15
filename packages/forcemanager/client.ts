@@ -117,6 +117,36 @@ function toForceManagerError(error: unknown, label: string): Error {
 	return new ForceManagerAPIError(`${label} failed`);
 }
 
+/**
+ * Puts the route template (`/calls/phone/VALUE`) in place of the request path on an ApiError, so path
+ * values such as a phone number never reach the error. Other errors pass through.
+ */
+// `unknown` because callers rethrow whatever the request rejected with.
+export function withRouteTemplate(
+	error: unknown,
+	templatePath: string,
+	environment: ForceManagerEnvironment,
+): unknown {
+	if (!(error instanceof ApiError)) return error;
+	return new ApiError(
+		{ method: error.request.method, url: templatePath },
+		{
+			url: `${FORCE_MANAGER_BASES[environment]}${templatePath}`,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: undefined,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
 function configFor(
 	environment: ForceManagerEnvironment,
 	headers: Record<string, string>,
