@@ -2773,6 +2773,14 @@
                 ]
               },
               {
+                "group": "Imgix",
+                "pages": [
+                  "plugins/imgix/overview",
+                  "plugins/imgix/api",
+                  "plugins/imgix/database"
+                ]
+              },
+              {
                 "group": "InboxKit",
                 "pages": [
                   "plugins/inboxkit/overview",
