@@ -325,10 +325,6 @@
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
   },
-  "livesession": {
-    "from": "https://media.brand.dev/47dbc903-58ce-4343-a2f7-f16034313891.svg",
-    "note": "found with the context.dev Brand API for livesession.io"
-  },
   "loyverse": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/loyverse.svg"
   },
