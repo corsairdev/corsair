@@ -3,6 +3,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { GetProspectContext } from '..';
 import { makeGetProspectRequest } from '../client';
+import type { GetProspectResponse } from './responses';
+import { toResponseSchema } from './responses';
 import type { GetProspectOperationDefinition } from './types';
 import {
 	GetProspectOperationInputSchemas,
@@ -30,8 +32,9 @@ function createEndpoint<
 ): CorsairEndpoint<
 	GetProspectContext,
 	z.input<InputSchema>,
-	z.output<OutputSchema>
+	GetProspectResponse<z.output<OutputSchema>>
 > {
+	const responseSchema = toResponseSchema(outputSchema);
 	return async (ctx, input) => {
 		const parsedInput = inputSchema.parse(input);
 		const inputPath = readPath(parsedInput);
@@ -68,7 +71,10 @@ function createEndpoint<
 				timeout: definition.timeout,
 			},
 		);
-		const parsed = outputSchema.parse(response);
+		// The lenient copy matches the generated type with every field optional; see responses.ts.
+		const parsed = responseSchema.parse(response) as GetProspectResponse<
+			z.output<OutputSchema>
+		>;
 		await logEventFromContext(
 			ctx,
 			`getprospect.${id}`,

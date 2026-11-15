@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import * as OpenApiSchemas from '../schema/api';
+import type { GetProspectResponse } from './responses';
 
 export const GetProspectOperationInputSchemas = {
 	people_get: z
@@ -837,8 +838,8 @@ export type GetProspectEndpointInputs = {
 	>;
 };
 export type GetProspectEndpointOutputs = {
-	[K in GetProspectOperationId]: z.output<
-		(typeof GetProspectOperationOutputSchemas)[K]
+	[K in GetProspectOperationId]: GetProspectResponse<
+		z.output<(typeof GetProspectOperationOutputSchemas)[K]>
 	>;
 };
 
