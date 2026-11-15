@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+// For values Doppler sends back: the documented ones today, and any value it
+// adds later still parses instead of failing the whole response. Inputs keep
+// plain z.enum.
+export const openEnum = <const T extends readonly [string, ...string[]]>(
+	values: T,
+) => z.union([z.enum(values), z.string()]);
+
 export const PathSegmentSchema = z
 	.string()
 	.min(1)
@@ -10,7 +17,9 @@ export const PathSegmentSchema = z
 
 const LinkSchema = z
 	.object({
-		href: z.string(),
+		// Doppler sends href: null for links it can't fill in, e.g. the
+		// permission-history link on GET /subscribers/{email} (live run, 11-16).
+		href: z.string().nullable(),
 		rel: z.string(),
 		description: z.string().optional(),
 	})
@@ -21,24 +30,22 @@ export const ListSchema = z
 	.object({
 		listId: z.number().int().optional(),
 		name: z.string().max(100),
-		currentStatus: z
-			.enum([
-				'ready',
-				'draft',
-				'readyToSent',
-				'sent',
-				'importingSubscribers',
-				'exportingSubscribers',
-				'mergingDestination',
-				'mergingSource',
-				'cancelingExportingSubscribers',
-				'inCreationProcess',
-				'sending',
-				'inDeletingProcess',
-				'deleted',
-				'blocked',
-			])
-			.optional(),
+		currentStatus: openEnum([
+			'ready',
+			'draft',
+			'readyToSent',
+			'sent',
+			'importingSubscribers',
+			'exportingSubscribers',
+			'mergingDestination',
+			'mergingSource',
+			'cancelingExportingSubscribers',
+			'inCreationProcess',
+			'sending',
+			'inDeletingProcess',
+			'deleted',
+			'blocked',
+		]).optional(),
 		subscribersCount: z.number().int().optional(),
 		creationDate: z.string().optional(),
 		deletedDate: z.string().optional(),
@@ -123,20 +130,18 @@ const FieldValueSchema = z
 		predefined: z.boolean().optional(),
 		private: z.boolean().optional(),
 		readonly: z.boolean().optional(),
-		type: z
-			.enum([
-				'boolean',
-				'number',
-				'string',
-				'date',
-				'email',
-				'gender',
-				'country',
-				'consent',
-				'phone',
-				'permission',
-			])
-			.optional(),
+		type: openEnum([
+			'boolean',
+			'number',
+			'string',
+			'date',
+			'email',
+			'gender',
+			'country',
+			'consent',
+			'phone',
+			'permission',
+		]).optional(),
 		permissionHTML: z.string().optional(),
 	})
 	.passthrough();
@@ -151,7 +156,7 @@ export const SubscriberSchema = z
 					.object({
 						date: z.string().optional(),
 						listId: z.number().int().optional(),
-						status: z.enum(['added', 'deleted']).optional(),
+						status: openEnum(['added', 'deleted']).optional(),
 						_links: LinksSchema,
 					})
 					.passthrough(),
@@ -159,16 +164,15 @@ export const SubscriberSchema = z
 			.optional(),
 		unsubscribedDate: z.string().nullable().optional(),
 		unsubscriptionDate: z.string().nullable().optional(),
-		unsubscriptionType: z
-			.enum([
-				'hardBounce',
-				'softBounce',
-				'neverOpen',
-				'abuseLink',
-				'feedbackLoop',
-				'internalPolicies',
-				'manual',
-			])
+		unsubscriptionType: openEnum([
+			'hardBounce',
+			'softBounce',
+			'neverOpen',
+			'abuseLink',
+			'feedbackLoop',
+			'internalPolicies',
+			'manual',
+		])
 			.nullable()
 			.optional(),
 		manualUnsubscriptionReason: z
@@ -183,8 +187,13 @@ export const SubscriberSchema = z
 			.nullable()
 			.optional(),
 		unsubscriptionComment: z.string().nullable().optional(),
-		status: z
-			.enum(['active', 'pending', 'unsubscribed', 'standBy', 'archived'])
+		status: openEnum([
+			'active',
+			'pending',
+			'unsubscribed',
+			'standBy',
+			'archived',
+		])
 			.nullable()
 			.optional(),
 		canBeReactivated: z.boolean().nullable().optional(),
@@ -211,8 +220,12 @@ export const CampaignDeliverySchema = z
 		campaignName: z.string().optional(),
 		campaignSubject: z.string().optional(),
 		subscriberEmail: z.string().optional(),
-		deliveryStatus: z
-			.enum(['opened', 'notOpened', 'hardBounced', 'softBounced'])
+		deliveryStatus: openEnum([
+			'opened',
+			'notOpened',
+			'hardBounced',
+			'softBounced',
+		])
 			.nullable()
 			.optional(),
 		lastOpenDate: z.string().optional(),
@@ -350,7 +363,8 @@ export const subscriberOutputSchemas = {
 	list: SubscriberCollectionSchema,
 	listForList: SubscriberCollectionSchema,
 	get: SubscriberSchema,
-	exists: z.void(),
+	// true when Doppler answers 2xx to the HEAD, false on 404.
+	exists: z.boolean(),
 	create: MessageResultSchema,
 	associate: MessageResultSchema,
 	removeFromList: MessageResultSchema,

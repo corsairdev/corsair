@@ -249,7 +249,9 @@ describe('Doppler subscriber endpoints', () => {
 				args: typeof input,
 			) => Promise<unknown>;
 			const result = await call(context, input);
-			if (response === undefined) expect(result).toBeUndefined();
+			// exists answers from the HEAD status: 200 here means true.
+			if (operation === 'exists') expect(result).toBe(true);
+			else if (response === undefined) expect(result).toBeUndefined();
 			else expect(result).toMatchObject(response);
 			const [url, init] = fetchMock.mock.calls[0]!;
 			expect(String(url)).toBe(`https://restapi.fromdoppler.com${path}`);

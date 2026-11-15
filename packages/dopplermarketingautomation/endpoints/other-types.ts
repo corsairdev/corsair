@@ -4,6 +4,7 @@ import {
 	LinksSchema,
 	ListCollectionSchema,
 	MessageResultSchema,
+	openEnum,
 	PathSegmentSchema,
 } from './types';
 
@@ -121,7 +122,7 @@ const field = z
 		predefined: z.boolean(),
 		private: z.boolean(),
 		readonly: z.boolean(),
-		type: z.enum([
+		type: openEnum([
 			'boolean',
 			'number',
 			'string',
@@ -148,8 +149,13 @@ const task = z
 		finishDate: optionalString,
 		taskType: optionalString,
 		itemsProcessed: optionalNumber,
-		status: z
-			.enum(['unknown', 'standBy', 'inProgress', 'completed', 'failed'])
+		status: openEnum([
+			'unknown',
+			'standBy',
+			'inProgress',
+			'completed',
+			'failed',
+		])
 			.nullable()
 			.optional(),
 		_links: LinksSchema,

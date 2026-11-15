@@ -5,6 +5,7 @@ import {
 	LinksSchema,
 	ListCollectionSchema,
 	MessageResultSchema,
+	openEnum,
 	PathSegmentSchema,
 	SubscriberCollectionSchema,
 } from './types';
@@ -28,7 +29,7 @@ const CampaignSchema = z
 		preheader: z.string().nullable().optional(),
 		replyTo: z.string().nullable().optional(),
 		textCampaign: z.boolean().nullable().optional(),
-		status: z.enum(['draft', 'scheduled', 'shipping', 'shipped']).optional(),
+		status: openEnum(['draft', 'scheduled', 'shipping', 'shipped']).optional(),
 		_links: LinksSchema,
 	})
 	.passthrough();
@@ -54,8 +55,7 @@ const ShippingSchema = z
 		shippingId: z.string().nullable().optional(),
 		type: z.enum(['immediate', 'scheduled']),
 		scheduledDate: z.string().nullable().optional(),
-		status: z
-			.enum(['waiting', 'processing', 'sending', 'sent', 'closed'])
+		status: openEnum(['waiting', 'processing', 'sending', 'sent', 'closed'])
 			.nullable()
 			.optional(),
 		_links: LinksSchema,
@@ -98,9 +98,12 @@ const SummarySchema = z
 		totalClicks: z.number().int().optional(),
 		lastClickDate: z.string().optional(),
 		totalUnsubscribers: z.number().int().optional(),
-		campaignStatus: z
-			.enum(['draft', 'scheduled', 'shipping', 'shipped'])
-			.optional(),
+		campaignStatus: openEnum([
+			'draft',
+			'scheduled',
+			'shipping',
+			'shipped',
+		]).optional(),
 		totalShipped: z.number().int().optional(),
 		_links: LinksSchema,
 	})
@@ -148,7 +151,24 @@ export const campaignInputSchemas = {
 	deleteTextAlternative: z.object(campaign),
 	getRecipients: z.object(campaign),
 	updateRecipients: z.object({ ...campaign, recipients: RecipientsSchema }),
-	createShipping: z.object({ ...campaign, shipping: ShippingSchema }),
+	createShipping: z.object({
+		...campaign,
+		shipping: ShippingSchema.superRefine((shipping, context) => {
+			// Doppler needs a date to schedule and refuses one for an immediate send.
+			if (shipping.type === 'scheduled' && !shipping.scheduledDate)
+				context.addIssue({
+					code: 'custom',
+					message: 'scheduledDate is required when type is scheduled',
+					path: ['scheduledDate'],
+				});
+			if (shipping.type === 'immediate' && shipping.scheduledDate)
+				context.addIssue({
+					code: 'custom',
+					message: 'scheduledDate must be empty when type is immediate',
+					path: ['scheduledDate'],
+				});
+		}),
+	}),
 	getShipping: z.object({ ...campaign, shippingId: PathSegmentSchema }),
 	deleteShipping: z.object({ ...campaign, shippingId: PathSegmentSchema }),
 	getSocial: z.object(campaign),

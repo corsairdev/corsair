@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import type { z } from 'zod';
 import { makeDopplerMarketingAutomationRequest } from '../client';
 import type { DopplerMarketingAutomationContext } from '../index';
@@ -134,13 +135,20 @@ export const subscribers = {
 		raw: z.input<typeof subscriberInputSchemas.exists>,
 	) => {
 		const { accountName, email } = subscriberInputSchemas.exists.parse(raw);
-		return subscriberOutputSchemas.exists.parse(
+		// HEAD answers 200 with no body for a known subscriber and 404 for an
+		// unknown one, so the answer is the status, not a body.
+		try {
 			await makeDopplerMarketingAutomationRequest(
 				subscriberPath(accountName, email),
 				ctx.key,
 				{ method: 'HEAD', responseType: 'void' },
-			),
-		);
+			);
+			return subscriberOutputSchemas.exists.parse(true);
+		} catch (error) {
+			if (error instanceof ApiError && error.status === 404)
+				return subscriberOutputSchemas.exists.parse(false);
+			throw error;
+		}
 	},
 	create: async (
 		ctx: DopplerMarketingAutomationContext,
