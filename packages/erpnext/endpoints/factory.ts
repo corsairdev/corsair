@@ -40,6 +40,9 @@ export type ErpnextHandlerContext = {
 	options: ErpnextCredentialOptions & { baseUrl?: string };
 	keys?: { get_base_url?: () => Promise<string | null> };
 	db?: { documents?: ErpnextDbDocumentsClient };
+	/** The shared database object; the same across `withTenant()` clients. */
+	database?: object;
+	tenantId?: string;
 };
 
 export type ErpnextEndpointHandler<K extends ErpnextOperationKey> = (

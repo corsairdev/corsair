@@ -20,31 +20,36 @@ type ErpnextAnyDoc = Record<string, unknown>;
 // `upsertByEntityId` replaces the whole stored payload. Keep each
 // read-merge-write sequence (and deletion) in order for one document, so two
 // overlapping list pages cannot both merge against the same older row and
-// discard the fields saved by the other. Entity clients are tenant-scoped;
-// separating queues by client also keeps equal document IDs in different
-// tenant stores independent.
-const documentMutationQueues = new WeakMap<
-	ErpnextDbDocumentsClient,
-	Map<string, Promise<void>>
->();
+// discard the fields saved by the other. Every `withTenant()` call builds new
+// entity clients over the same database, so the queues hang off the shared
+// database object and are keyed by tenant and document; equal document IDs in
+// different tenants stay independent. Without a database object (tests, bare
+// clients) the entity client itself is the key.
+const documentMutationQueues = new WeakMap<object, Map<string, Promise<void>>>();
+
+type ErpnextStoreScope = Pick<ErpnextHandlerContext, 'database' | 'tenantId'>;
 
 async function mutateStoredDocument(
+	ctx: ErpnextStoreScope,
 	db: ErpnextDbDocumentsClient,
 	entityId: string,
 	mutation: () => Promise<void>,
 ): Promise<void> {
-	let queues = documentMutationQueues.get(db);
+	const owner =
+		ctx.database && typeof ctx.database === 'object' ? ctx.database : db;
+	let queues = documentMutationQueues.get(owner);
 	if (!queues) {
 		queues = new Map();
-		documentMutationQueues.set(db, queues);
+		documentMutationQueues.set(owner, queues);
 	}
-	const previous = queues.get(entityId) ?? Promise.resolve();
+	const key = `${ctx.tenantId ?? ''}\u0000${entityId}`;
+	const previous = queues.get(key) ?? Promise.resolve();
 	const current = previous.catch(() => undefined).then(mutation);
-	queues.set(entityId, current);
+	queues.set(key, current);
 	try {
 		await current;
 	} finally {
-		if (queues.get(entityId) === current) queues.delete(entityId);
+		if (queues.get(key) === current) queues.delete(key);
 	}
 }
 
@@ -95,7 +100,7 @@ async function syncDocuments(
 			const name = doc.name;
 			if (typeof name === 'string' && name.length > 0) {
 				const entityId = `${doctype}:${name}`;
-				await mutateStoredDocument(db, entityId, async () => {
+				await mutateStoredDocument(ctx, db, entityId, async () => {
 					if (mode === 'replace') {
 						await db.upsertByEntityId(entityId, { doctype, ...doc });
 						return;
@@ -132,7 +137,7 @@ async function removeDocument(
 	if (!db) return;
 	try {
 		const entityId = `${doctype}:${name}`;
-		await mutateStoredDocument(db, entityId, async () => {
+		await mutateStoredDocument(ctx, db, entityId, async () => {
 			await db.deleteByEntityId(entityId);
 		});
 	} catch (error) {

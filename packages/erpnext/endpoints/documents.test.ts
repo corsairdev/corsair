@@ -962,6 +962,91 @@ describe('ERPNext tenant host and local document sync', () => {
 		}
 	});
 
+	it('serializes merges from separate withTenant clients over one database', async () => {
+		// Each withTenant() call builds new entity clients over the same
+		// database, so the merge order must not depend on the client object.
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async (url) => {
+				const fields = new URL(String(url)).searchParams.get('fields');
+				const data = fields?.includes('customer_name')
+					? { name: 'CUST-011', customer_name: 'Acme' }
+					: { name: 'CUST-011', customer_group: 'Commercial' };
+				return new Response(JSON.stringify({ data: [data] }), {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				});
+			});
+		let stored: Record<string, unknown> = {
+			doctype: 'Customer',
+			name: 'CUST-011',
+			phone_number: '+1 555 0101',
+		};
+		let firstRead!: () => void;
+		const firstReadStarted = new Promise<void>((resolve) => {
+			firstRead = resolve;
+		});
+		let releaseFirstRead!: () => void;
+		const firstReadReleased = new Promise<void>((resolve) => {
+			releaseFirstRead = resolve;
+		});
+		let reads = 0;
+		const makeClient = () => ({
+			findByEntityId: jest.fn(async () => {
+				reads += 1;
+				// Read the row now, answer later: a second merge that is not
+				// queued behind this one saves first and is then overwritten.
+				const row = stored;
+				if (reads === 1) {
+					firstRead();
+					await firstReadReleased;
+				}
+				return { data: row };
+			}),
+			upsertByEntityId: jest.fn(async (_entityId, data) => {
+				stored = data as Record<string, unknown>;
+			}),
+			deleteByEntityId: jest.fn(),
+		});
+		const database = {};
+		try {
+			const first = documentsEndpoints.list(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: { documents: makeClient() },
+					database,
+					tenantId: 'acme',
+				},
+				{ doctype: 'Customer', fields: '["name","customer_name"]' },
+			);
+			await firstReadStarted;
+			const second = documentsEndpoints.list(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: { documents: makeClient() },
+					database,
+					tenantId: 'acme',
+				},
+				{ doctype: 'Customer', fields: '["name","customer_group"]' },
+			);
+			// Let the second call reach its read if nothing holds it back.
+			await new Promise((resolve) => setTimeout(resolve, 10));
+			releaseFirstRead();
+			await Promise.all([first, second]);
+			expect(stored).toEqual({
+				doctype: 'Customer',
+				name: 'CUST-011',
+				phone_number: '+1 555 0101',
+				customer_name: 'Acme',
+				customer_group: 'Commercial',
+			});
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
 	it('serializes a deletion after an in-flight save for the same document', async () => {
 		let stored: Record<string, unknown> | undefined;
 		let saveStarted!: () => void;
