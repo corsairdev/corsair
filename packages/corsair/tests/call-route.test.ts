@@ -571,6 +571,30 @@ describe('call and db routes with an account', () => {
 		expect(withTenant).toHaveBeenCalledTimes(3);
 	});
 
+	it('a tenant id containing the old separator does not reuse a bound client', () => {
+		const withTenant = jest.fn(() => ({}));
+		const c = { withTenant };
+		const internal = internalWith([{ id: 'demo' }], true);
+		const bound = resolveTenantClient(c, internal, 't1', {
+			plugin: 'demo',
+			account: 'a',
+		}).client;
+		const other = resolveTenantClient(c, internal, 't1\0demo=a', {
+			plugin: 'demo',
+		}).client;
+		expect(other).not.toBe(bound);
+	});
+
+	it('account on a single-tenant instance is a 400', async () => {
+		await expect(
+			resolveCall(
+				{ demo: { api: { token: async () => 'x' } } },
+				internalWith([{ id: 'demo' }]),
+				{ plugin: 'demo', op: 'token', account: 'a' },
+			),
+		).rejects.toMatchObject({ status: 400, code: 'bad_request' });
+	});
+
 	it('db route read without account fans out and tags rows', async () => {
 		await addAccount('a', 'a@x.com', 'tok-a');
 		await addAccount('b', 'b@x.com', 'tok-b');

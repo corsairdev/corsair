@@ -164,7 +164,12 @@ export function resolveTenantClient(
 	tenant: string | undefined,
 	bind?: { plugin: string; account?: string },
 ): { client: unknown; tenantId?: string; cacheKey?: string } {
-	if (!internal.multiTenancy) return { client: corsair };
+	if (!internal.multiTenancy) {
+		if (bind?.account !== undefined) {
+			throw badRequest('account requires multiTenancy');
+		}
+		return { client: corsair };
+	}
 	const tenantId = typeof tenant === 'string' ? tenant.trim() : '';
 	if (!tenantId) {
 		throw badRequest('tenant is required for a multi-tenant runtime', {
@@ -172,9 +177,10 @@ export function resolveTenantClient(
 		});
 	}
 	const account = bind?.account;
+	// JSON-encoded so a tenant containing the separator cannot alias a bound key.
 	const cacheKey = account
-		? `${tenantId}\0${bind.plugin}=${account}`
-		: tenantId;
+		? JSON.stringify([tenantId, bind.plugin, account])
+		: JSON.stringify([tenantId]);
 	const cache = mapFor(clientCacheByCorsair, corsair as object);
 	const cached = cache.get(cacheKey);
 	if (cached) {
