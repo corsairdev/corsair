@@ -557,8 +557,8 @@ const givebutterEndpointMeta = {
 		description: 'Remove tags from a contact.',
 	},
 	'contactTags.sync': {
-		riskLevel: 'write',
-		description: 'Replace a contact’s tags.',
+		riskLevel: 'destructive',
+		description: 'Replace all of a contact’s tags; tags not listed are removed.',
 	},
 	'funds.list': { riskLevel: 'read', description: 'List funds.' },
 	'funds.create': { riskLevel: 'write', description: 'Create a fund.' },
@@ -605,8 +605,9 @@ const givebutterEndpointMeta = {
 	'plans.get': { riskLevel: 'read', description: 'Get a recurring plan.' },
 	'transactions.list': { riskLevel: 'read', description: 'List transactions.' },
 	'transactions.create': {
-		riskLevel: 'write',
-		description: 'Create an offline transaction.',
+		riskLevel: 'destructive',
+		description:
+			'Record an offline transaction (cash, check, etc.). The API has no delete for transactions.',
 	},
 	'transactions.get': { riskLevel: 'read', description: 'Get a transaction.' },
 	'transactions.update': {
