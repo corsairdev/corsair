@@ -19,15 +19,16 @@ Create and provision a new site for tracking in GoSquared
 **Risk:** `write`
 
 ```ts
-await corsair.gosquared.api.account.createSite({ domain_name: 'example.com', name: 'Example Site' });
+await corsair.gosquared.api.account.createSite({ url: 'https://example.com', name: 'Example Site' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain_name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
 | `name` | `string` | No | — |
+| `timezone` | `string` | No | — |
 
 
 
@@ -38,6 +39,9 @@ await corsair.gosquared.api.account.createSite({ domain_name: 'example.com', nam
 | `site_token` | `string` | Yes | — |
 | `name` | `string \| null` | No | — |
 | `domain_name` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `url` | `string` | No | — |
+| `id` | `number \| string` | No | — |
 | `timezone` | `string` | No | — |
 | `created` | `string` | No | — |
 | `user_id` | `number \| string` | No | — |
@@ -68,19 +72,36 @@ await corsair.gosquared.api.account.getBlocked({});
 
 
 
-**Output:** `string[] \| object[] \| Record<string, string>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `visitors` | `object \| Record<string, string>` | No | — |
+| `ips` | `object` | No | — |
+| `bots` | `boolean` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="visitors full type">
 
 ```ts
-string[] | {
-  id: string,
-  tag?: string
-}[] | Record<string, string>
+{
+  list: any[],
+  cardinality?: number
+} | Record<string, string>
+```
+</Accordion>
+
+<Accordion title="ips full type">
+
+```ts
+{
+  list: any[],
+  cardinality?: number
+}
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -105,21 +126,27 @@ await corsair.gosquared.api.account.getSharedUsers({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `object[]` | Yes | — |
+| `cardinality` | `number` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="list full type">
 
 ```ts
 {
+  id?: string | number,
   email?: string,
-  role?: string,
-  status?: string,
-  id?: string | number
+  state?: string,
+  role?: string
 }[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -151,6 +178,9 @@ await corsair.gosquared.api.account.getSite({ site_token: 'GSN-123456-X' });
 | `site_token` | `string` | Yes | — |
 | `name` | `string \| null` | No | — |
 | `domain_name` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `url` | `string` | No | — |
+| `id` | `number \| string` | No | — |
 | `timezone` | `string` | No | — |
 | `created` | `string` | No | — |
 | `user_id` | `number \| string` | No | — |
@@ -190,6 +220,9 @@ await corsair.gosquared.api.account.getSites({});
   site_token: string,
   name?: string | null,
   domain_name?: string,
+  domain?: string,
+  url?: string,
+  id?: number | string,
   timezone?: string,
   created?: string,
   user_id?: number | string,
@@ -198,6 +231,9 @@ await corsair.gosquared.api.account.getSites({});
   site_token: string,
   name?: string | null,
   domain_name?: string,
+  domain?: string,
+  url?: string,
+  id?: number | string,
   timezone?: string,
   created?: string,
   user_id?: number | string,
@@ -375,7 +411,7 @@ await corsair.gosquared.api.chat.sendMessage({ chat_id: 'chat_123', content: 'He
 | `chat_id` | `string` | Yes | — |
 | `site_token` | `string` | No | — |
 | `content` | `string` | Yes | — |
-| `from` | `agent \| client` | No | — |
+| `from` | `agent \| client \| bot` | No | — |
 | `auth` | `string` | No | — |
 
 
@@ -441,6 +477,7 @@ await corsair.gosquared.api.now.getBrowsers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
 
 
 
@@ -498,8 +535,11 @@ await corsair.gosquared.api.now.getConcurrents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `concurrents` | `number` | No | — |
-| `online` | `number` | No | — |
+| `visitors` | `number` | No | — |
+| `active` | `number` | No | — |
+| `pages` | `number` | No | — |
+| `returning` | `number` | No | — |
+| `tagged` | `number` | No | — |
 
 
 
@@ -522,6 +562,7 @@ await corsair.gosquared.api.now.getCountries({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
 
 
 
@@ -547,6 +588,7 @@ await corsair.gosquared.api.now.getGeo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
 
 
 
@@ -635,6 +677,7 @@ await corsair.gosquared.api.now.getPlatforms({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
 
 
 
@@ -721,6 +764,38 @@ await corsair.gosquared.api.now.getVisitors({});
 ---
 
 ## People
+
+### deletePerson
+
+`people.deletePerson`
+
+Permanently delete a person profile and all its data from People CRM
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gosquared.api.people.deletePerson({ person_id: 'person_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+| `blacklist` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
 
 ### getDevice
 
@@ -991,10 +1066,10 @@ await corsair.gosquared.api.tracking.identify({
 ```ts
 {
   email?: string,
-  name?: string,
-  first_name?: string,
-  last_name?: string,
-  phone?: string,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
   created_at?: string,
   company?: Record<string, any>,
   custom?: Record<string, any>
@@ -1073,6 +1148,7 @@ Track a pageview with URL and page title
 
 ```ts
 await corsair.gosquared.api.tracking.trackPageview({
+	visitor_id: 'visitor_123',
 	page: { url: 'https://example.com' },
 });
 ```
@@ -1084,7 +1160,7 @@ await corsair.gosquared.api.tracking.trackPageview({
 | `site_token` | `string` | No | — |
 | `page` | `object` | Yes | — |
 | `person_id` | `string` | No | — |
-| `visitor_id` | `string` | No | — |
+| `visitor_id` | `string` | Yes | — |
 | `timestamp` | `string` | No | — |
 
 <AccordionGroup>
