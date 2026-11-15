@@ -689,6 +689,20 @@ describe('DocsBot API boundary', () => {
 			}
 		});
 
+		it('destroys a stalled upload after the idle timeout', async () => {
+			await getUrl();
+			let req: PassThrough | undefined;
+			transport.mockImplementation((_url, options) => {
+				expect(options.timeout).toBe(60_000);
+				req = new PassThrough();
+				// Storage accepts the connection, then never answers.
+				req.on('finish', () => req?.emit('timeout'));
+				return req;
+			});
+			await expect(upload()).rejects.toThrow('Storage upload timed out');
+			expect(req?.destroyed).toBe(true);
+		});
+
 		it.each([302, 403])(
 			'rejects status %s without following redirects or exposing URL',
 			async (status) => {

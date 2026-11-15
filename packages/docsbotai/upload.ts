@@ -8,6 +8,9 @@ import { isIP } from 'node:net';
 const approved = new Map<string, number>();
 const maxEntries = 1024;
 const lifetimeMs = 15 * 60 * 1000;
+// Idle limit, not a total deadline: a large file keeps the socket busy, a
+// stalled storage connection does not.
+export const uploadIdleTimeoutMs = 60 * 1000;
 const fingerprint = (key: string, url: string) =>
 	createHash('sha256')
 		.update(JSON.stringify([key, url]))
@@ -95,6 +98,7 @@ export async function uploadToStorage(
 				method: 'PUT',
 				agent: false,
 				family: 4,
+				timeout: uploadIdleTimeoutMs,
 				headers: { 'Content-Type': 'application/octet-stream' },
 				lookup: (_hostname, _options, callback) =>
 					callback(null, selected.address, 4),
@@ -113,6 +117,10 @@ export async function uploadToStorage(
 				response.resume();
 			},
 		);
+		req.on('timeout', () => {
+			reject(new Error('Storage upload timed out'));
+			req.destroy();
+		});
 		req.on('error', () => reject(new Error('Storage upload failed')));
 		req.end(data);
 	});
