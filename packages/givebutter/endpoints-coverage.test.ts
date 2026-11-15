@@ -486,3 +486,15 @@ it('parses numeric ids, null fund ids and system activity types', async () => {
 		data: [],
 	});
 });
+
+it('accepts documented null contact filters and leaves them out of the query', async () => {
+	respond(page);
+	await Contacts.list(ctx as never, {
+		createdAfter: null,
+		sortBy: null,
+		totalContributionsMin: null,
+		page: 2,
+	});
+	const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+	expect(url).toBe('https://api.givebutter.com/v1/contacts?page=2');
+});

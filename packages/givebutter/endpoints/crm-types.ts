@@ -168,15 +168,15 @@ export const GivebutterCrmEndpointInputSchemas = {
 	listContacts: z
 		.object({
 			type: ContactType.optional(),
-			createdAfter: z.string().optional(),
-			createdBefore: z.string().optional(),
-			updatedAfter: z.string().optional(),
-			updatedBefore: z.string().optional(),
-			totalContributionsMin: z.number().optional(),
-			totalContributionsMax: z.number().optional(),
-			recurringContributionsMin: z.number().optional(),
-			recurringContributionsMax: z.number().optional(),
-			tags: z.string().optional(),
+			createdAfter: z.string().nullable().optional(),
+			createdBefore: z.string().nullable().optional(),
+			updatedAfter: z.string().nullable().optional(),
+			updatedBefore: z.string().nullable().optional(),
+			totalContributionsMin: z.number().nullable().optional(),
+			totalContributionsMax: z.number().nullable().optional(),
+			recurringContributionsMin: z.number().nullable().optional(),
+			recurringContributionsMax: z.number().nullable().optional(),
+			tags: z.string().nullable().optional(),
 			sortBy: z
 				.enum([
 					'name_or_company',
@@ -187,6 +187,7 @@ export const GivebutterCrmEndpointInputSchemas = {
 					'recurring_contributions',
 					'last_donation_amount',
 				])
+				.nullable()
 				.optional(),
 			sortByDesc: z
 				.enum([
@@ -198,11 +199,12 @@ export const GivebutterCrmEndpointInputSchemas = {
 					'recurring_contributions',
 					'last_donation_amount',
 				])
+				.nullable()
 				.optional(),
-			email: z.string().optional(),
-			primaryEmail: z.string().optional(),
-			firstName: z.string().max(1000).optional(),
-			lastName: z.string().max(1000).optional(),
+			email: z.string().nullable().optional(),
+			primaryEmail: z.string().nullable().optional(),
+			firstName: z.string().max(1000).nullable().optional(),
+			lastName: z.string().max(1000).nullable().optional(),
 		})
 		.extend(PageInput.shape),
 	createContact: ContactCreateInputSchema,

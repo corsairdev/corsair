@@ -24,6 +24,12 @@ type Operation<T extends EndpointName> = {
 };
 
 const pathValue = (value: string | number) => encodeURIComponent(String(value));
+// Givebutter documents its contact filters as nullable; a null filter is left out of the query.
+const toQuery = <T extends object>(input: T) =>
+	Object.fromEntries(
+		Object.entries(input).map(([key, value]) => [key, value ?? undefined]),
+		// Object.entries loses property value unions; the schema-limited inputs guarantee query scalars.
+	) as Record<string, string | number | boolean | undefined>;
 const omit = <T extends Record<string, unknown>>(
 	input: T,
 	keys: readonly string[],
@@ -70,7 +76,7 @@ export const Contacts = {
 	list: define('listContacts', {
 		method: 'GET',
 		path: () => '/v1/contacts',
-		query: (input) => input,
+		query: (input) => toQuery(input),
 	}),
 	create: define('createContact', {
 		method: 'POST',
