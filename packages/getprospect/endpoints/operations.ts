@@ -5,7 +5,12 @@ import type { GetProspectContext } from '..';
 import { makeGetProspectRequest } from '../client';
 import type { GetProspectResponse } from './responses';
 import { toResponseSchema } from './responses';
-import type { GetProspectOperationDefinition } from './types';
+import type {
+	GetProspectEndpointInputs,
+	GetProspectEndpointOutputs,
+	GetProspectOperationDefinition,
+	GetProspectOperationId,
+} from './types';
 import {
 	GetProspectOperationInputSchemas,
 	GetProspectOperationOutputSchemas,
@@ -85,7 +90,23 @@ function createEndpoint<
 	};
 }
 
-export const GetProspectOperations = {
+type OperationDefinitions = typeof getProspectOperationDefinitions;
+type OperationGroup = OperationDefinitions[GetProspectOperationId]['group'];
+
+// Named shape so declaration emit references it instead of expanding every response type (TS7056).
+export type GetProspectOperationsShape = {
+	[Group in OperationGroup]: {
+		[Id in GetProspectOperationId as OperationDefinitions[Id]['group'] extends Group
+			? OperationDefinitions[Id]['leaf']
+			: never]: CorsairEndpoint<
+			GetProspectContext,
+			GetProspectEndpointInputs[Id],
+			GetProspectEndpointOutputs[Id]
+		>;
+	};
+};
+
+export const GetProspectOperations: GetProspectOperationsShape = {
 	people: {
 		get: createEndpoint(
 			'people_get',
