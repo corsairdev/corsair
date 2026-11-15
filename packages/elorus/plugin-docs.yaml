@@ -1,0 +1,2140 @@
+displayName: Elorus
+description: Manage Elorus accounting, invoicing, expenses, contacts, inventory, projects, and time
+  tracking through both supported REST API versions.
+recommendedAuth: api_key
+overviewNote: Connect an Elorus API token and the organization ID used in the required
+  X-Elorus-Organization header. The API key is stored as the secret; the organization ID is a
+  separate account field. List endpoints support page and page_size pagination (maximum 250).
+  Tracking-category filters use dynamic keys such as tc_12345; unrelated query keys are rejected.
+  API v1.1 remains in maintenance until December 31, 2026; v1.2 is the current API.
+examples:
+  read:
+    path: v12.bills_email_read
+    title: Retrieve bill email settings
+    args:
+      path:
+        id: demo
+  write:
+    path: v12.bills_create
+    title: Create a bill
+    args:
+      body:
+        supplier: demo
+        items: []
+apiExamples:
+  v11.bills_create:
+    args:
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v11.bills_read:
+    args:
+      path:
+        id: demo
+  v11.bills_update:
+    args:
+      path:
+        id: demo
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v11.bills_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.bills_delete:
+    args:
+      path:
+        id: demo
+  v11.bills_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v11.bills_email_read:
+    args:
+      path:
+        id: demo
+  v11.bills_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v11.bills_pdf:
+    args:
+      path:
+        id: demo
+  v11.bills_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.cashpayments_create:
+    args:
+      body:
+        transaction_type: ip
+        amount: "100.00"
+        contact: "3300000040000100"
+  v11.cashpayments_read:
+    args:
+      path:
+        id: demo
+  v11.cashpayments_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.cashpayments_delete:
+    args:
+      path:
+        id: demo
+  v11.cashpayments_pdf:
+    args:
+      path:
+        id: demo
+  v11.cashreceipts_create:
+    args:
+      body:
+        transaction_type: ip
+        contact: "3300000040000100"
+        amount: "100.00"
+  v11.cashreceipts_read:
+    args:
+      path:
+        id: demo
+  v11.cashreceipts_update:
+    args:
+      path:
+        id: demo
+      body:
+        contact: "3300000040000100"
+  v11.cashreceipts_delete:
+    args:
+      path:
+        id: demo
+  v11.cashreceipts_pdf:
+    args:
+      path:
+        id: demo
+  v11.contacts_create:
+    args:
+      body: {}
+  v11.contacts_read:
+    args:
+      path:
+        id: demo
+  v11.contacts_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.contacts_delete:
+    args:
+      path:
+        id: demo
+  v11.creditnotes_create:
+    args:
+      body:
+        date: 2018-10-25
+        client: "3300000040000100"
+        items: []
+  v11.creditnotes_read:
+    args:
+      path:
+        id: demo
+  v11.creditnotes_update:
+    args:
+      path:
+        id: demo
+      body:
+        client: "3300000040000100"
+        items: []
+  v11.creditnotes_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.creditnotes_delete:
+    args:
+      path:
+        id: demo
+  v11.creditnotes_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v11.creditnotes_email_read:
+    args:
+      path:
+        id: demo
+  v11.creditnotes_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v11.creditnotes_pdf:
+    args:
+      path:
+        id: demo
+  v11.creditnotes_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.creditnotes_applied-credit_list:
+    args:
+      path:
+        parent_pk: demo
+  v11.creditnotes_applied-credit_create:
+    args:
+      path:
+        parent_pk: demo
+      body: []
+  v11.creditnotes_applied-credit_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v11.documenttypes_read:
+    args:
+      path:
+        id: demo
+  v11.emailtemplates_create:
+    args:
+      body:
+        email_type: invoice
+        subject: Invoice from %COMPANY% (%DOCUMENTNAME%)
+        message: '<div style="white-space: pre-wrap;"><p>Hello %CNAME%,<br><br>Please visit %PERMALINK% to
+          access the invoice.<br>You can also download a pdf version from that
+          link.<br><br>Thanks,<br>%SNAME%</p></div>'
+  v11.emailtemplates_read:
+    args:
+      path:
+        id: demo
+  v11.emailtemplates_update:
+    args:
+      path:
+        id: demo
+      body:
+        subject: Invoice from %COMPANY% (%DOCUMENTNAME%)
+        message: '<div style="white-space: pre-wrap;"><p>Hello %CNAME%,<br><br>Please visit %PERMALINK% to
+          access the invoice.<br>You can also download a pdf version from that
+          link.<br><br>Thanks,<br>%SNAME%</p></div>'
+  v11.emailtemplates_delete:
+    args:
+      path:
+        id: demo
+  v11.estimates_create:
+    args:
+      body:
+        client: "3300000040000100"
+        items: []
+  v11.estimates_read:
+    args:
+      path:
+        id: demo
+  v11.estimates_update:
+    args:
+      path:
+        id: demo
+      body:
+        client: "3300000040000100"
+        items: []
+  v11.estimates_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.estimates_delete:
+    args:
+      path:
+        id: demo
+  v11.estimates_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v11.estimates_email_read:
+    args:
+      path:
+        id: demo
+  v11.estimates_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v11.estimates_pdf:
+    args:
+      path:
+        id: demo
+  v11.expensecategories_read:
+    args:
+      path:
+        id: demo
+  v11.expenses_create:
+    args:
+      body:
+        items: []
+  v11.expenses_read:
+    args:
+      path:
+        id: demo
+  v11.expenses_update:
+    args:
+      path:
+        id: demo
+      body:
+        items: []
+  v11.expenses_delete:
+    args:
+      path:
+        id: demo
+  v11.invoices_create:
+    args:
+      body:
+        date: 2018-10-25
+        client: "3300000040000100"
+        items: []
+  v11.invoices_read:
+    args:
+      path:
+        id: demo
+  v11.invoices_update:
+    args:
+      path:
+        id: demo
+      body:
+        client: "3300000040000100"
+        items: []
+  v11.invoices_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.invoices_delete:
+    args:
+      path:
+        id: demo
+  v11.invoices_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v11.invoices_email_read:
+    args:
+      path:
+        id: demo
+  v11.invoices_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v11.invoices_pdf:
+    args:
+      path:
+        id: demo
+  v11.invoices_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.invoices_applied-credit_list:
+    args:
+      path:
+        parent_pk: demo
+  v11.invoices_applied-credit_create:
+    args:
+      path:
+        parent_pk: demo
+      body: []
+  v11.invoices_applied-credit_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v11.numberingsequence_create:
+    args:
+      body:
+        name: demo
+        documenttype: "4400000040000123"
+  v11.numberingsequence_read:
+    args:
+      path:
+        id: demo
+  v11.numberingsequence_update:
+    args:
+      path:
+        id: demo
+      body:
+        name: demo
+  v11.numberingsequence_delete:
+    args:
+      path:
+        id: demo
+  v11.products_create:
+    args:
+      body:
+        title: Pair of socks
+  v11.products_read:
+    args:
+      path:
+        id: demo
+  v11.products_update:
+    args:
+      path:
+        id: demo
+      body:
+        title: Pair of socks
+  v11.products_delete:
+    args:
+      path:
+        id: demo
+  v11.projects_read:
+    args:
+      path:
+        id: demo
+  v11.recurringinvoices_create:
+    args:
+      body:
+        end_datetime: 2020-01-01T06:00:00Z
+        client: "3300000040000100"
+        items: []
+  v11.recurringinvoices_read:
+    args:
+      path:
+        id: demo
+  v11.recurringinvoices_update:
+    args:
+      path:
+        id: demo
+      body:
+        end_datetime: 2020-01-01T06:00:00Z
+        client: "3300000040000100"
+        items: []
+  v11.recurringinvoices_delete:
+    args:
+      path:
+        id: demo
+  v11.suppliercredits_create:
+    args:
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v11.suppliercredits_read:
+    args:
+      path:
+        id: demo
+  v11.suppliercredits_update:
+    args:
+      path:
+        id: demo
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v11.suppliercredits_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.suppliercredits_delete:
+    args:
+      path:
+        id: demo
+  v11.suppliercredits_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v11.suppliercredits_email_read:
+    args:
+      path:
+        id: demo
+  v11.suppliercredits_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v11.suppliercredits_pdf:
+    args:
+      path:
+        id: demo
+  v11.suppliercredits_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.suppliercredits_applied-credit_list:
+    args:
+      path:
+        parent_pk: demo
+  v11.suppliercredits_applied-credit_create:
+    args:
+      path:
+        parent_pk: demo
+      body: []
+  v11.suppliercredits_applied-credit_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v11.taxes_read:
+    args:
+      path:
+        id: demo
+  v11.templates_read:
+    args:
+      path:
+        id: demo
+  v11.trackingcategories_read:
+    args:
+      path:
+        id: demo
+  v11.warehouse_create:
+    args:
+      body:
+        name: demo
+        warehouse_address:
+          address_line: 4 Catherine St.
+          city: Southaven
+          zip: "38671"
+          country: US
+  v11.warehouse_read:
+    args:
+      path:
+        id: demo
+  v11.warehouse_update:
+    args:
+      path:
+        id: demo
+      body:
+        name: demo
+        warehouse_address:
+          address_line: 4 Catherine St.
+          city: Southaven
+          zip: "38671"
+          country: US
+  v11.warehouse_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v11.warehouse_delete:
+    args:
+      path:
+        id: demo
+  v12.bills_create:
+    args:
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v12.bills_read:
+    args:
+      path:
+        id: demo
+  v12.bills_update:
+    args:
+      path:
+        id: demo
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v12.bills_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.bills_delete:
+    args:
+      path:
+        id: demo
+  v12.bills_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v12.bills_email_read:
+    args:
+      path:
+        id: demo
+  v12.bills_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v12.bills_pdf:
+    args:
+      path:
+        id: demo
+  v12.bills_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.bills_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.bills_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }), "primary": false } }'
+  v12.bills_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.bills_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.bills_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.bills_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.bills_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.bills_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.bills_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.bills_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.bills_sent-email-messages_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.cashpayments_create:
+    args:
+      body:
+        transaction_type: ip
+        amount: "100.00"
+        contact: "3300000040000100"
+  v12.cashpayments_read:
+    args:
+      path:
+        id: demo
+  v12.cashpayments_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.cashpayments_delete:
+    args:
+      path:
+        id: demo
+  v12.cashpayments_pdf:
+    args:
+      path:
+        id: demo
+  v12.cashpayments_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.cashpayments_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }) } }'
+  v12.cashpayments_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.cashpayments_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.cashpayments_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.cashpayments_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.cashpayments_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.cashpayments_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.cashpayments_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.cashpayments_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.cashreceipts_create:
+    args:
+      body:
+        transaction_type: ip
+        contact: "3300000040000100"
+        amount: "100.00"
+  v12.cashreceipts_read:
+    args:
+      path:
+        id: demo
+  v12.cashreceipts_update:
+    args:
+      path:
+        id: demo
+      body:
+        contact: "3300000040000100"
+  v12.cashreceipts_delete:
+    args:
+      path:
+        id: demo
+  v12.cashreceipts_pdf:
+    args:
+      path:
+        id: demo
+  v12.cashreceipts_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.cashreceipts_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }) } }'
+  v12.cashreceipts_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.cashreceipts_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.cashreceipts_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.cashreceipts_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.cashreceipts_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.cashreceipts_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.cashreceipts_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.cashreceipts_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.contacts_create:
+    args:
+      body: {}
+  v12.contacts_read:
+    args:
+      path:
+        id: demo
+  v12.contacts_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.contacts_delete:
+    args:
+      path:
+        id: demo
+  v12.contacts_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.contacts_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }) } }'
+  v12.contacts_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.contacts_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.contacts_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.contacts_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.contacts_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.contacts_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.contacts_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.contacts_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.creditnotes_create:
+    args:
+      body:
+        date: 2018-10-25
+        client: "3300000040000100"
+        items: []
+  v12.creditnotes_read:
+    args:
+      path:
+        id: demo
+  v12.creditnotes_update:
+    args:
+      path:
+        id: demo
+      body:
+        client: "3300000040000100"
+        items: []
+  v12.creditnotes_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.creditnotes_delete:
+    args:
+      path:
+        id: demo
+  v12.creditnotes_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v12.creditnotes_email_read:
+    args:
+      path:
+        id: demo
+  v12.creditnotes_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v12.creditnotes_pdf:
+    args:
+      path:
+        id: demo
+  v12.creditnotes_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.creditnotes_applied-credit_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.creditnotes_applied-credit_create:
+    args:
+      path:
+        parent_pk: demo
+      body: []
+  v12.creditnotes_applied-credit_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.creditnotes_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.creditnotes_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }) } }'
+  v12.creditnotes_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.creditnotes_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.creditnotes_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.creditnotes_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.creditnotes_discussions_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.creditnotes_discussions_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        message: demo
+  v12.creditnotes_discussions_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        message: demo
+  v12.creditnotes_discussions_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.creditnotes_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.creditnotes_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.creditnotes_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.creditnotes_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.creditnotes_sent-email-messages_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.deliverynotes_create:
+    args:
+      body:
+        move_purpose: 1
+        items: []
+  v12.deliverynotes_read:
+    args:
+      path:
+        id: demo
+  v12.deliverynotes_update:
+    args:
+      path:
+        id: demo
+      body:
+        move_purpose: 1
+        items: []
+  v12.deliverynotes_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.deliverynotes_delete:
+    args:
+      path:
+        id: demo
+  v12.deliverynotes_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v12.deliverynotes_email_read:
+    args:
+      path:
+        id: demo
+  v12.deliverynotes_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v12.deliverynotes_pdf:
+    args:
+      path:
+        id: demo
+  v12.deliverynotes_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.deliverynotes_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.deliverynotes_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }) } }'
+  v12.deliverynotes_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.deliverynotes_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.deliverynotes_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.deliverynotes_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.deliverynotes_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.deliverynotes_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.deliverynotes_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.deliverynotes_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.deliverynotes_sent-email-messages_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.documenttypes_read:
+    args:
+      path:
+        id: demo
+  v12.documenttypes_sequences_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.documenttypes_sequences_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        name: SQC-123
+  v12.documenttypes_sequences_delete_sequence:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        name: SQC-123
+  v12.documenttypes_sequences_rename_sequence:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        old_name: SQC-123
+        new_name: SQC-ABC
+  v12.emailtemplates_create:
+    args:
+      body:
+        email_type: invoice
+        subject: Invoice from %COMPANY% (%DOCUMENTNAME%)
+        message: '<div style="white-space: pre-wrap;"><p>Hello %CNAME%,<br><br>Please visit %PERMALINK% to
+          access the invoice.<br>You can also download a pdf version from that
+          link.<br><br>Thanks,<br>%SNAME%</p></div>'
+  v12.emailtemplates_read:
+    args:
+      path:
+        id: demo
+  v12.emailtemplates_update:
+    args:
+      path:
+        id: demo
+      body:
+        subject: Invoice from %COMPANY% (%DOCUMENTNAME%)
+        message: '<div style="white-space: pre-wrap;"><p>Hello %CNAME%,<br><br>Please visit %PERMALINK% to
+          access the invoice.<br>You can also download a pdf version from that
+          link.<br><br>Thanks,<br>%SNAME%</p></div>'
+  v12.emailtemplates_delete:
+    args:
+      path:
+        id: demo
+  v12.estimates_create:
+    args:
+      body:
+        client: "3300000040000100"
+        items: []
+  v12.estimates_read:
+    args:
+      path:
+        id: demo
+  v12.estimates_update:
+    args:
+      path:
+        id: demo
+      body:
+        client: "3300000040000100"
+        items: []
+  v12.estimates_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.estimates_delete:
+    args:
+      path:
+        id: demo
+  v12.estimates_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v12.estimates_email_read:
+    args:
+      path:
+        id: demo
+  v12.estimates_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v12.estimates_pdf:
+    args:
+      path:
+        id: demo
+  v12.estimates_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.estimates_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }) } }'
+  v12.estimates_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.estimates_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.estimates_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.estimates_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.estimates_discussions_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.estimates_discussions_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        message: demo
+  v12.estimates_discussions_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        message: demo
+  v12.estimates_discussions_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.estimates_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.estimates_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.estimates_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.estimates_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.estimates_sent-email-messages_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.expensecategories_read:
+    args:
+      path:
+        id: demo
+  v12.expenses_create:
+    args:
+      body:
+        items: []
+  v12.expenses_read:
+    args:
+      path:
+        id: demo
+  v12.expenses_update:
+    args:
+      path:
+        id: demo
+      body:
+        items: []
+  v12.expenses_delete:
+    args:
+      path:
+        id: demo
+  v12.expenses_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.expenses_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }), "primary": false } }'
+  v12.expenses_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.expenses_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.expenses_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.expenses_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.expenses_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.expenses_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.expenses_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.expenses_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.goodsreceipts_create:
+    args:
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v12.goodsreceipts_read:
+    args:
+      path:
+        id: demo
+  v12.goodsreceipts_update:
+    args:
+      path:
+        id: demo
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v12.goodsreceipts_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.goodsreceipts_delete:
+    args:
+      path:
+        id: demo
+  v12.goodsreceipts_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v12.goodsreceipts_email_read:
+    args:
+      path:
+        id: demo
+  v12.goodsreceipts_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v12.goodsreceipts_pdf:
+    args:
+      path:
+        id: demo
+  v12.goodsreceipts_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.goodsreceipts_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.goodsreceipts_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.goodsreceipts_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.goodsreceipts_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.goodsreceipts_sent-email-messages_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.goodsreceiptsequences_create:
+    args:
+      body:
+        name: SQC-123
+  v12.goodsreceiptsequences_delete_sequence:
+    args:
+      body:
+        name: SQC-123
+  v12.goodsreceiptsequences_rename_sequence:
+    args:
+      body:
+        old_name: SQC-123
+        new_name: SQC-ABC
+  v12.invoices_create:
+    args:
+      body:
+        date: 2018-10-25
+        client: "3300000040000100"
+        items: []
+  v12.invoices_read:
+    args:
+      path:
+        id: demo
+  v12.invoices_update:
+    args:
+      path:
+        id: demo
+      body:
+        client: "3300000040000100"
+        items: []
+  v12.invoices_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.invoices_delete:
+    args:
+      path:
+        id: demo
+  v12.invoices_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v12.invoices_email_read:
+    args:
+      path:
+        id: demo
+  v12.invoices_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v12.invoices_pdf:
+    args:
+      path:
+        id: demo
+  v12.invoices_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.invoices_applied-credit_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.invoices_applied-credit_create:
+    args:
+      path:
+        parent_pk: demo
+      body: []
+  v12.invoices_applied-credit_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.invoices_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.invoices_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }) } }'
+  v12.invoices_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.invoices_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.invoices_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.invoices_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.invoices_discussions_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.invoices_discussions_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        message: demo
+  v12.invoices_discussions_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        message: demo
+  v12.invoices_discussions_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.invoices_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.invoices_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.invoices_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.invoices_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.invoices_sent-email-messages_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.organizationbranch_create:
+    args:
+      body:
+        branch_name: demo
+        branch_code: -2147483648
+        branch_address:
+          address_line: 4 Catherine St.
+          city: Southaven
+          zip: "38671"
+          country: US
+  v12.organizationbranch_read:
+    args:
+      path:
+        id: demo
+  v12.organizationbranch_update:
+    args:
+      path:
+        id: demo
+      body:
+        branch_name: demo
+        branch_code: -2147483648
+        branch_address:
+          address_line: 4 Catherine St.
+          city: Southaven
+          zip: "38671"
+          country: US
+  v12.organizationbranch_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.organizationbranch_delete:
+    args:
+      path:
+        id: demo
+  v12.products_create:
+    args:
+      body:
+        title: Pair of socks
+  v12.products_read:
+    args:
+      path:
+        id: demo
+  v12.products_update:
+    args:
+      path:
+        id: demo
+      body:
+        title: Pair of socks
+  v12.products_delete:
+    args:
+      path:
+        id: demo
+  v12.products_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.products_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.products_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.products_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.products_stockadjustments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.products_stockadjustments_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        warehouse: demo
+  v12.products_stockadjustments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.products_stockadjustments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.projects_create:
+    args:
+      body:
+        name: Web development
+        client: "3300000040000100"
+        members: []
+        tasks: []
+  v12.projects_read:
+    args:
+      path:
+        id: demo
+  v12.projects_update:
+    args:
+      path:
+        id: demo
+      body:
+        name: Web development
+        client: "3300000040000100"
+        members: []
+        tasks: []
+  v12.projects_delete:
+    args:
+      path:
+        id: demo
+  v12.projects_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.projects_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }) } }'
+  v12.projects_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.projects_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.projects_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.projects_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.projects_discussions_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.projects_discussions_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        message: demo
+  v12.projects_discussions_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        message: demo
+  v12.projects_discussions_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.projects_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.projects_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.projects_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.projects_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.projects_projectextrafees_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.projects_projectextrafees_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        date: 2018-10-25
+        title: demo
+  v12.projects_projectextrafees_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.projects_projectextrafees_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        date: 2018-10-25
+        title: demo
+  v12.projects_projectextrafees_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.projects_projectextrafees_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.recurringinvoices_create:
+    args:
+      body:
+        end_datetime: 2020-01-01T06:00:00Z
+        client: "3300000040000100"
+        items: []
+  v12.recurringinvoices_read:
+    args:
+      path:
+        id: demo
+  v12.recurringinvoices_update:
+    args:
+      path:
+        id: demo
+      body:
+        end_datetime: 2020-01-01T06:00:00Z
+        client: "3300000040000100"
+        items: []
+  v12.recurringinvoices_delete:
+    args:
+      path:
+        id: demo
+  v12.recurringinvoices_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.recurringinvoices_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.recurringinvoices_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.recurringinvoices_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.suppliercredits_create:
+    args:
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v12.suppliercredits_read:
+    args:
+      path:
+        id: demo
+  v12.suppliercredits_update:
+    args:
+      path:
+        id: demo
+      body:
+        supplier: "3300000040000100"
+        items: []
+  v12.suppliercredits_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.suppliercredits_delete:
+    args:
+      path:
+        id: demo
+  v12.suppliercredits_email_from_template:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+  v12.suppliercredits_email_read:
+    args:
+      path:
+        id: demo
+  v12.suppliercredits_email_create:
+    args:
+      path:
+        id: demo
+      body:
+        to: someone@example.com
+        cc: []
+        bcc: []
+        subject: The email subject
+        message: Hello,<br/>please find the PDF attached.
+        attach_pdf: false
+  v12.suppliercredits_pdf:
+    args:
+      path:
+        id: demo
+  v12.suppliercredits_mark_void:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.suppliercredits_applied-credit_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.suppliercredits_applied-credit_create:
+    args:
+      path:
+        parent_pk: demo
+      body: []
+  v12.suppliercredits_applied-credit_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.suppliercredits_attachments_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.suppliercredits_attachments_create:
+    call: '{ path: {"parent_pk":"demo"}, form: { "title": "demo", "file": new Blob(["demo file"], {
+      type: "application/octet-stream" }), "primary": false } }'
+  v12.suppliercredits_attachments_read:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.suppliercredits_attachments_partial_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body: {}
+  v12.suppliercredits_attachments_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.suppliercredits_attachments_file:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.suppliercredits_notes_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.suppliercredits_notes_create:
+    args:
+      path:
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.suppliercredits_notes_update:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+      body:
+        notes: demo
+  v12.suppliercredits_notes_delete:
+    args:
+      path:
+        id: demo
+        parent_pk: demo
+  v12.suppliercredits_sent-email-messages_list:
+    args:
+      path:
+        parent_pk: demo
+  v12.tasks_create:
+    args:
+      body:
+        name: demo
+  v12.tasks_read:
+    args:
+      path:
+        id: demo
+  v12.tasks_update:
+    args:
+      path:
+        id: demo
+      body:
+        name: demo
+  v12.tasks_delete:
+    args:
+      path:
+        id: demo
+  v12.taxes_read:
+    args:
+      path:
+        id: demo
+  v12.templates_read:
+    args:
+      path:
+        id: demo
+  v12.timeentries_create:
+    args:
+      body:
+        start_datetime: 2026-01-01T00:00:00Z
+        end_datetime: 2026-01-01T00:00:00Z
+        assignee: 1
+  v12.timeentries_read:
+    args:
+      path:
+        id: demo
+  v12.timeentries_update:
+    args:
+      path:
+        id: demo
+      body:
+        start_datetime: 2026-01-01T00:00:00Z
+        end_datetime: 2026-01-01T00:00:00Z
+        assignee: 1
+  v12.timeentries_delete:
+    args:
+      path:
+        id: demo
+  v12.timeentries_mark_billed:
+    args:
+      path:
+        id: demo
+  v12.timeentries_mark_unbilled:
+    args:
+      path:
+        id: demo
+  v12.trackingcategories_read:
+    args:
+      path:
+        id: demo
+  v12.unitofmeasurement_create:
+    args:
+      body:
+        title: demo
+        symbol: demo
+        group_id: demo
+  v12.unitofmeasurement_read:
+    args:
+      path:
+        id: demo
+  v12.unitofmeasurement_update:
+    args:
+      path:
+        id: demo
+      body:
+        title: demo
+        symbol: demo
+        group_id: demo
+  v12.unitofmeasurement_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.unitofmeasurement_delete:
+    args:
+      path:
+        id: demo
+  v12.warehouse_create:
+    args:
+      body:
+        name: demo
+        warehouse_address:
+          address_line: 4 Catherine St.
+          city: Southaven
+          zip: "38671"
+          country: US
+  v12.warehouse_read:
+    args:
+      path:
+        id: demo
+  v12.warehouse_update:
+    args:
+      path:
+        id: demo
+      body:
+        name: demo
+        warehouse_address:
+          address_line: 4 Catherine St.
+          city: Southaven
+          zip: "38671"
+          country: US
+  v12.warehouse_partial_update:
+    args:
+      path:
+        id: demo
+      body: {}
+  v12.warehouse_delete:
+    args:
+      path:
+        id: demo
