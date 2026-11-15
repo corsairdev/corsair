@@ -19,14 +19,14 @@ Get application configuration, environments, and settings context
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.applications.getContext({ appId: 'appId_sample' });
+await corsair.ignisign.api.applications.getContext({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
+| `appId` | `string` | No | — |
 
 
 
@@ -34,13 +34,18 @@ await corsair.ignisign.api.applications.getContext({ appId: 'appId_sample' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_createdAt` | `Date` | No | — |
-| `appId` | `string` | No | — |
-| `orgId` | `string` | No | — |
-| `appName` | `string` | No | — |
-| `status` | `string` | No | — |
-| `appType` | `string` | No | — |
-| `ignisignApiVersion` | `string` | No | — |
+| `_createdAt` | `Date \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | — |
+| `appName` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `appType` | `string \| null` | No | — |
+| `ignisignApiVersion` | `string \| null` | No | — |
+| `envSettings` | `Record<string, any> \| null` | No | — |
+| `config` | `Record<string, any> \| null` | No | — |
+| `settings` | `Record<string, any> \| null` | No | — |
+| `signerProfiles` | `Record<string, any[]> \| null` | No | — |
+| `signatureProfiles` | `Record<string, any[]> \| null` | No | — |
 
 
 
@@ -57,15 +62,15 @@ Get bare signature application configuration and authorized origins
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.bareSignatures.getConfiguration({ appId: 'appId_sample' });
+await corsair.ignisign.api.bareSignatures.getConfiguration({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 
 
 
@@ -77,7 +82,7 @@ await corsair.ignisign.api.bareSignatures.getConfiguration({ appId: 'appId_sampl
 | `appEnv` | `string` | Yes | — |
 | `redirectUris` | `string[]` | Yes | — |
 | `authorizedOrigins` | `string[]` | Yes | — |
-| `eidasLevel` | `string` | No | — |
+| `eidasLevel` | `string \| null` | No | — |
 
 
 
@@ -99,7 +104,7 @@ await corsair.ignisign.api.bareSignatures.getProofs({ proofToken: 'token_sample'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `proofToken` | `string` | Yes | — |
 
 
@@ -108,12 +113,12 @@ await corsair.ignisign.api.bareSignatures.getProofs({ proofToken: 'token_sample'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `signatureRequestId` | `string` | No | — |
-| `signerId` | `string` | No | — |
-| `proofs` | `object[]` | No | — |
-| `signerInformation` | `object` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `signerId` | `string \| null` | No | — |
+| `proofs` | `object[] \| null` | No | — |
+| `signerInformation` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="proofs full type">
@@ -121,11 +126,11 @@ await corsair.ignisign.api.bareSignatures.getProofs({ proofToken: 'token_sample'
 ```ts
 {
   documentId: string,
-  type?: string,
-  documentHash?: string,
-  proofB64?: string,
-  signingTime?: Date
-}[]
+  type?: string | null,
+  documentHash?: string | null,
+  proofB64?: string | null,
+  signingTime?: Date | null
+}[] | null
 ```
 </Accordion>
 
@@ -133,10 +138,10 @@ await corsair.ignisign.api.bareSignatures.getProofs({ proofToken: 'token_sample'
 
 ```ts
 {
-  fullName?: string,
-  lastName?: string,
-  firstName?: string
-}
+  fullName?: string | null,
+  lastName?: string | null,
+  firstName?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -154,25 +159,17 @@ Exchange authorization code for proof access token in bare signature flow
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.bareSignatures.getProofToken({
-	client_id: 'client_sample',
-	client_secret: 'secret_sample',
-	code_verifier: 'verifier_sample',
-	redirect_uri: 'https://app.example.com/callback',
-	code: 'code_sample',
-});
+await corsair.ignisign.api.bareSignatures.getProofToken({ code_verifier: 'verifier_sample', redirect_uri: 'https://app.example.com/callback', code: 'code_sample' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
-| `client_id` | `string` | Yes | — |
-| `client_secret` | `string` | Yes | — |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `code_verifier` | `string` | Yes | — |
 | `redirect_uri` | `string` | Yes | — |
-| `grant_type` | `string` | No | Defaults to "authorization_code". |
 | `code` | `string` | Yes | — |
 
 
@@ -184,7 +181,7 @@ await corsair.ignisign.api.bareSignatures.getProofToken({
 | `access_token` | `string` | Yes | — |
 | `token_type` | `string` | Yes | — |
 | `expires_in` | `number` | Yes | — |
-| `scope` | `string` | No | — |
+| `scope` | `string \| null` | No | — |
 
 
 
@@ -196,12 +193,17 @@ await corsair.ignisign.api.bareSignatures.getProofToken({
 
 `documents.checkAuthenticity`
 
-Verify document authenticity and hash integrity
+Check that a file (base64) is the one that was signed for a document
 
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.documents.checkAuthenticity({ documentId: 'doc_sample', documentHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' });
+await corsair.ignisign.api.documents.checkAuthenticity({
+	documentId: 'doc_sample',
+	fileBase64: 'JVBERi0xLjQK...',
+	fileName: 'signed-contract.pdf',
+	mimeType: 'application/pdf',
+});
 ```
 
 **Input**
@@ -209,7 +211,9 @@ await corsair.ignisign.api.documents.checkAuthenticity({ documentId: 'doc_sample
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | Yes | — |
-| `documentHash` | `string` | Yes | — |
+| `fileBase64` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `mimeType` | `string` | No | Defaults to "application/pdf". |
 
 
 
@@ -217,8 +221,8 @@ await corsair.ignisign.api.documents.checkAuthenticity({ documentId: 'doc_sample
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `isValid` | `boolean` | Yes | — |
-| `message` | `string` | No | — |
+| `documentId` | `string` | Yes | — |
+| `authenticityValidated` | `boolean` | Yes | — |
 
 
 
@@ -253,7 +257,7 @@ Returns a binary response `{ kind: 'binary', contentType, base64, size }`.
 | `kind` | `binary` | Yes | — |
 | `contentType` | `string` | Yes | — |
 | `base64` | `string` | Yes | — |
-| `size` | `number` | No | — |
+| `size` | `number \| null` | No | — |
 
 
 
@@ -283,22 +287,22 @@ await corsair.ignisign.api.documents.get({ documentId: 'doc_sample' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `documentNature` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentHash` | `string` | No | — |
-| `signatureRequestId` | `string` | No | — |
-| `externalId` | `string` | No | — |
-| `label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `fileName` | `string` | No | — |
-| `fileSize` | `number` | No | — |
-| `mimeType` | `string` | No | — |
-| `dataJsonContent` | `string` | No | — |
-| `templateDisplayerId` | `string` | No | — |
-| `templateDisplayerVersion` | `number` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `documentNature` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentHash` | `string \| null` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `fileSize` | `number \| null` | No | — |
+| `mimeType` | `string \| null` | No | — |
+| `dataJsonContent` | `string \| null` | No | — |
+| `templateDisplayerId` | `string \| null` | No | — |
+| `templateDisplayerVersion` | `number \| null` | No | — |
 
 
 
@@ -328,33 +332,33 @@ await corsair.ignisign.api.documents.getContext({ documentId: 'doc_sample' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `documentNature` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentHash` | `string` | No | — |
-| `signatureRequestId` | `string` | No | — |
-| `externalId` | `string` | No | — |
-| `label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `fileName` | `string` | No | — |
-| `fileSize` | `number` | No | — |
-| `mimeType` | `string` | No | — |
-| `dataJsonContent` | `string` | No | — |
-| `templateDisplayerId` | `string` | No | — |
-| `templateDisplayerVersion` | `number` | No | — |
-| `statements` | `object[]` | No | — |
-| `signatureSummaries` | `object[]` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `documentNature` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentHash` | `string \| null` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `fileSize` | `number \| null` | No | — |
+| `mimeType` | `string \| null` | No | — |
+| `dataJsonContent` | `string \| null` | No | — |
+| `templateDisplayerId` | `string \| null` | No | — |
+| `templateDisplayerVersion` | `number \| null` | No | — |
+| `statements` | `object[] \| null` | No | — |
+| `signatureSummaries` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="statements full type">
 
 ```ts
 {
-  _id?: string,
-  labelMd?: string
-}[]
+  _id?: string | null,
+  labelMd?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -362,10 +366,10 @@ await corsair.ignisign.api.documents.getContext({ documentId: 'doc_sample' });
 
 ```ts
 {
-  signatureId?: string,
-  signerId?: string,
-  date?: Date
-}[]
+  signatureId?: string | null,
+  signerId?: string | null,
+  date?: Date | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -383,15 +387,15 @@ Initialize a document descriptor for a signature request
 **Risk:** `write`
 
 ```ts
-await corsair.ignisign.api.documents.initialize({ appId: 'appId_sample', signatureRequestId: 'sig_req_sample', label: 'Contract Document' });
+await corsair.ignisign.api.documents.initialize({ signatureRequestId: 'sig_req_sample', label: 'Contract Document' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signatureRequestId` | `string` | Yes | — |
 | `externalId` | `string` | No | — |
 | `label` | `string` | No | — |
@@ -406,6 +410,59 @@ await corsair.ignisign.api.documents.initialize({ appId: 'appId_sample', signatu
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | Yes | — |
+
+
+
+---
+
+### provideFileContent
+
+`documents.provideFileContent`
+
+Upload the file or PDF content of a document (base64, sent as multipart)
+
+**Risk:** `write`
+
+```ts
+await corsair.ignisign.api.documents.provideFileContent({
+	documentId: 'doc_sample',
+	fileBase64: 'JVBERi0xLjQK...',
+	fileName: 'contract.pdf',
+	mimeType: 'application/pdf',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `fileBase64` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `mimeType` | `string` | No | Defaults to "application/pdf". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `documentNature` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentHash` | `string \| null` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `fileSize` | `number \| null` | No | — |
+| `mimeType` | `string \| null` | No | — |
+| `dataJsonContent` | `string \| null` | No | — |
+| `templateDisplayerId` | `string \| null` | No | — |
+| `templateDisplayerVersion` | `number \| null` | No | — |
 
 
 
@@ -439,22 +496,22 @@ await corsair.ignisign.api.documents.provideJsonContent({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `documentNature` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentHash` | `string` | No | — |
-| `signatureRequestId` | `string` | No | — |
-| `externalId` | `string` | No | — |
-| `label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `fileName` | `string` | No | — |
-| `fileSize` | `number` | No | — |
-| `mimeType` | `string` | No | — |
-| `dataJsonContent` | `string` | No | — |
-| `templateDisplayerId` | `string` | No | — |
-| `templateDisplayerVersion` | `number` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `documentNature` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentHash` | `string \| null` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `fileSize` | `number \| null` | No | — |
+| `mimeType` | `string \| null` | No | — |
+| `dataJsonContent` | `string \| null` | No | — |
+| `templateDisplayerId` | `string \| null` | No | — |
+| `templateDisplayerVersion` | `number \| null` | No | — |
 
 
 
@@ -485,22 +542,22 @@ await corsair.ignisign.api.documents.providePrivateContent({ documentId: 'doc_sa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `documentNature` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentHash` | `string` | No | — |
-| `signatureRequestId` | `string` | No | — |
-| `externalId` | `string` | No | — |
-| `label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `fileName` | `string` | No | — |
-| `fileSize` | `number` | No | — |
-| `mimeType` | `string` | No | — |
-| `dataJsonContent` | `string` | No | — |
-| `templateDisplayerId` | `string` | No | — |
-| `templateDisplayerVersion` | `number` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `documentNature` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentHash` | `string \| null` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `fileSize` | `number \| null` | No | — |
+| `mimeType` | `string \| null` | No | — |
+| `dataJsonContent` | `string \| null` | No | — |
+| `templateDisplayerId` | `string \| null` | No | — |
+| `templateDisplayerVersion` | `number \| null` | No | — |
 
 
 
@@ -560,22 +617,22 @@ await corsair.ignisign.api.documents.removeContent({ documentId: 'doc_sample' })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `documentNature` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentHash` | `string` | No | — |
-| `signatureRequestId` | `string` | No | — |
-| `externalId` | `string` | No | — |
-| `label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `fileName` | `string` | No | — |
-| `fileSize` | `number` | No | — |
-| `mimeType` | `string` | No | — |
-| `dataJsonContent` | `string` | No | — |
-| `templateDisplayerId` | `string` | No | — |
-| `templateDisplayerVersion` | `number` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `documentNature` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentHash` | `string \| null` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `fileSize` | `number \| null` | No | — |
+| `mimeType` | `string \| null` | No | — |
+| `dataJsonContent` | `string \| null` | No | — |
+| `templateDisplayerId` | `string \| null` | No | — |
+| `templateDisplayerVersion` | `number \| null` | No | — |
 
 
 
@@ -610,22 +667,22 @@ await corsair.ignisign.api.documents.update({ documentId: 'doc_sample', label: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `documentNature` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentHash` | `string` | No | — |
-| `signatureRequestId` | `string` | No | — |
-| `externalId` | `string` | No | — |
-| `label` | `string` | No | — |
-| `description` | `string` | No | — |
-| `fileName` | `string` | No | — |
-| `fileSize` | `number` | No | — |
-| `mimeType` | `string` | No | — |
-| `dataJsonContent` | `string` | No | — |
-| `templateDisplayerId` | `string` | No | — |
-| `templateDisplayerVersion` | `number` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `documentNature` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentHash` | `string \| null` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `fileSize` | `number \| null` | No | — |
+| `mimeType` | `string \| null` | No | — |
+| `dataJsonContent` | `string \| null` | No | — |
+| `templateDisplayerId` | `string \| null` | No | — |
+| `templateDisplayerVersion` | `number \| null` | No | — |
 
 
 
@@ -642,15 +699,15 @@ Create a timestamped log capsule for tamper-proof data verification
 **Risk:** `write`
 
 ```ts
-await corsair.ignisign.api.logCapsules.create({ appId: 'appId_sample', hashSha256_b64: '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' });
+await corsair.ignisign.api.logCapsules.create({ hashSha256_b64: '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `hashSha256_b64` | `string` | Yes | — |
 
 
@@ -699,7 +756,7 @@ Returns a binary response `{ kind: 'binary', contentType, base64, size }`.
 | `kind` | `binary` | Yes | — |
 | `contentType` | `string` | Yes | — |
 | `base64` | `string` | Yes | — |
-| `size` | `number` | No | — |
+| `size` | `number \| null` | No | — |
 
 
 
@@ -735,7 +792,7 @@ Returns a binary response `{ kind: 'binary', contentType, base64, size }`.
 | `kind` | `binary` | Yes | — |
 | `contentType` | `string` | Yes | — |
 | `base64` | `string` | Yes | — |
-| `size` | `number` | No | — |
+| `size` | `number \| null` | No | — |
 
 
 
@@ -747,13 +804,12 @@ Returns a binary response `{ kind: 'binary', contentType, base64, size }`.
 
 `seal.signM2M`
 
-Perform automated machine-to-machine (M2M) document sealing
+Seal a document with an M2M signer (each seal is billed in production)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ignisign.api.seal.signM2M({
-	appId: 'appId_sample',
 	m2mId: 'm2m_sample',
 	documentHashSignedByM2MPrivateKey: 'hex_signature',
 	document: { documentType: 'PDF', documentHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' },
@@ -764,8 +820,8 @@ await corsair.ignisign.api.seal.signM2M({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `m2mId` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `externalId` | `string` | No | — |
@@ -798,8 +854,8 @@ await corsair.ignisign.api.seal.signM2M({
 | `signatureRequestId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
 | `documentHash` | `string` | Yes | — |
-| `proofBase64` | `string` | No | — |
-| `proofType` | `string` | No | — |
+| `proofBase64` | `string \| null` | No | — |
+| `proofType` | `string \| null` | No | — |
 
 
 
@@ -811,9 +867,9 @@ await corsair.ignisign.api.seal.signM2M({
 
 `signatureRequests.close`
 
-Close an active or expired signature request
+Close a signature request; signers can no longer sign it (cannot be undone)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ignisign.api.signatureRequests.close({ signatureRequestId: 'sig_req_sample' });
@@ -831,7 +887,7 @@ await corsair.ignisign.api.signatureRequests.close({ signatureRequestId: 'sig_re
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `signatureRequestId` | `string` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
 
 
 
@@ -841,9 +897,9 @@ await corsair.ignisign.api.signatureRequests.close({ signatureRequestId: 'sig_re
 
 `signatureRequests.createInOneCall`
 
-Create, configure and publish a signature request in a single call
+Create and publish a signature request in a single call; emails the signers
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ignisign.api.signatureRequests.createInOneCall({
@@ -895,38 +951,38 @@ await corsair.ignisign.api.signatureRequests.createInOneCall({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentIds` | `string[]` | No | — |
-| `signerIds` | `string[]` | No | — |
-| `signedBy` | `string[]` | No | — |
-| `externalId` | `string` | No | — |
-| `expirationDate` | `Date` | No | — |
-| `closedAt` | `Date` | No | — |
-| `signers` | `object[]` | No | — |
-| `documents` | `object[]` | No | — |
-| `statements` | `object[]` | No | — |
-| `signatureProofsUrl` | `string` | No | — |
-| `signatureProofStatus` | `string` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentIds` | `string[] \| null` | No | — |
+| `signerIds` | `string[] \| null` | No | — |
+| `signedBy` | `string[] \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `expirationDate` | `Date \| null` | No | — |
+| `closedAt` | `Date \| null` | No | — |
+| `signers` | `object[] \| null` | No | — |
+| `documents` | `object[] \| null` | No | — |
+| `statements` | `object[] \| null` | No | — |
+| `signatureProofsUrl` | `string \| null` | No | — |
+| `signatureProofStatus` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="signers full type">
 
 ```ts
 {
-  signerId?: string,
-  externalId?: string,
-  firstName?: string,
-  lastName?: string,
-  email?: string,
-  status?: string,
-  isRecurrent?: boolean,
-  signerProfileId?: string
-}[]
+  signerId?: string | null,
+  externalId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  status?: string | null,
+  isRecurrent?: boolean | null,
+  signerProfileId?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -934,32 +990,32 @@ await corsair.ignisign.api.signatureRequests.createInOneCall({
 
 ```ts
 {
-  _id?: string,
-  appId?: string,
-  appEnv?: string,
-  documentNature?: string,
-  status?: string,
-  documentHash?: string,
-  signatureRequestId?: string,
-  externalId?: string,
-  label?: string,
-  description?: string,
-  fileName?: string,
-  fileSize?: number,
-  mimeType?: string,
-  dataJsonContent?: string,
-  templateDisplayerId?: string,
-  templateDisplayerVersion?: number,
+  _id?: string | null,
+  appId?: string | null,
+  appEnv?: string | null,
+  documentNature?: string | null,
+  status?: string | null,
+  documentHash?: string | null,
+  signatureRequestId?: string | null,
+  externalId?: string | null,
+  label?: string | null,
+  description?: string | null,
+  fileName?: string | null,
+  fileSize?: number | null,
+  mimeType?: string | null,
+  dataJsonContent?: string | null,
+  templateDisplayerId?: string | null,
+  templateDisplayerVersion?: number | null,
   statements?: {
-    _id?: string,
-    labelMd?: string
-  }[],
+    _id?: string | null,
+    labelMd?: string | null
+  }[] | null,
   signatureSummaries?: {
-    signatureId?: string,
-    signerId?: string,
-    date?: Date
-  }[]
-}[]
+    signatureId?: string | null,
+    signerId?: string | null,
+    date?: Date | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 
@@ -967,9 +1023,9 @@ await corsair.ignisign.api.signatureRequests.createInOneCall({
 
 ```ts
 {
-  _id?: string,
-  labelMd?: string
-}[]
+  _id?: string | null,
+  labelMd?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1002,38 +1058,38 @@ await corsair.ignisign.api.signatureRequests.getContext({ signatureRequestId: 's
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentIds` | `string[]` | No | — |
-| `signerIds` | `string[]` | No | — |
-| `signedBy` | `string[]` | No | — |
-| `externalId` | `string` | No | — |
-| `expirationDate` | `Date` | No | — |
-| `closedAt` | `Date` | No | — |
-| `signers` | `object[]` | No | — |
-| `documents` | `object[]` | No | — |
-| `statements` | `object[]` | No | — |
-| `signatureProofsUrl` | `string` | No | — |
-| `signatureProofStatus` | `string` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentIds` | `string[] \| null` | No | — |
+| `signerIds` | `string[] \| null` | No | — |
+| `signedBy` | `string[] \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `expirationDate` | `Date \| null` | No | — |
+| `closedAt` | `Date \| null` | No | — |
+| `signers` | `object[] \| null` | No | — |
+| `documents` | `object[] \| null` | No | — |
+| `statements` | `object[] \| null` | No | — |
+| `signatureProofsUrl` | `string \| null` | No | — |
+| `signatureProofStatus` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="signers full type">
 
 ```ts
 {
-  signerId?: string,
-  externalId?: string,
-  firstName?: string,
-  lastName?: string,
-  email?: string,
-  status?: string,
-  isRecurrent?: boolean,
-  signerProfileId?: string
-}[]
+  signerId?: string | null,
+  externalId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  status?: string | null,
+  isRecurrent?: boolean | null,
+  signerProfileId?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -1041,32 +1097,32 @@ await corsair.ignisign.api.signatureRequests.getContext({ signatureRequestId: 's
 
 ```ts
 {
-  _id?: string,
-  appId?: string,
-  appEnv?: string,
-  documentNature?: string,
-  status?: string,
-  documentHash?: string,
-  signatureRequestId?: string,
-  externalId?: string,
-  label?: string,
-  description?: string,
-  fileName?: string,
-  fileSize?: number,
-  mimeType?: string,
-  dataJsonContent?: string,
-  templateDisplayerId?: string,
-  templateDisplayerVersion?: number,
+  _id?: string | null,
+  appId?: string | null,
+  appEnv?: string | null,
+  documentNature?: string | null,
+  status?: string | null,
+  documentHash?: string | null,
+  signatureRequestId?: string | null,
+  externalId?: string | null,
+  label?: string | null,
+  description?: string | null,
+  fileName?: string | null,
+  fileSize?: number | null,
+  mimeType?: string | null,
+  dataJsonContent?: string | null,
+  templateDisplayerId?: string | null,
+  templateDisplayerVersion?: number | null,
   statements?: {
-    _id?: string,
-    labelMd?: string
-  }[],
+    _id?: string | null,
+    labelMd?: string | null
+  }[] | null,
   signatureSummaries?: {
-    signatureId?: string,
-    signerId?: string,
-    date?: Date
-  }[]
-}[]
+    signatureId?: string | null,
+    signerId?: string | null,
+    date?: Date | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 
@@ -1074,9 +1130,9 @@ await corsair.ignisign.api.signatureRequests.getContext({ signatureRequestId: 's
 
 ```ts
 {
-  _id?: string,
-  labelMd?: string
-}[]
+  _id?: string | null,
+  labelMd?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1095,7 +1151,6 @@ Get current status for multiple signature requests
 
 ```ts
 await corsair.ignisign.api.signatureRequests.getStatus({
-	appId: 'appId_sample',
 	signatureRequestIds: ['sig_req_sample'],
 });
 ```
@@ -1104,8 +1159,8 @@ await corsair.ignisign.api.signatureRequests.getStatus({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signatureRequestIds` | `string[]` | Yes | — |
 
 
@@ -1141,15 +1196,15 @@ Initialize a new empty signature request draft
 **Risk:** `write`
 
 ```ts
-await corsair.ignisign.api.signatureRequests.init({ appId: 'appId_sample' });
+await corsair.ignisign.api.signatureRequests.init({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 
 
 
@@ -1157,7 +1212,7 @@ await corsair.ignisign.api.signatureRequests.init({ appId: 'appId_sample' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `signatureRequestId` | `string` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
 
 
 
@@ -1172,15 +1227,15 @@ Initialize a signer setup session
 **Risk:** `write`
 
 ```ts
-await corsair.ignisign.api.signatureRequests.initSignerSetup({ appId: 'appId_sample' });
+await corsair.ignisign.api.signatureRequests.initSignerSetup({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 
 
 
@@ -1188,7 +1243,7 @@ await corsair.ignisign.api.signatureRequests.initSignerSetup({ appId: 'appId_sam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `signatureRequestId` | `string` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
 
 
 
@@ -1203,15 +1258,15 @@ List signature requests for an application and environment
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.signatureRequests.list({ appId: 'appId_sample' });
+await corsair.ignisign.api.signatureRequests.list({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `page` | `number` | No | — |
 
 
@@ -1228,18 +1283,18 @@ await corsair.ignisign.api.signatureRequests.list({ appId: 'appId_sample' });
 
 ```ts
 {
-  _id?: string,
-  appId?: string,
-  appEnv?: string,
-  title?: string,
-  description?: string,
-  status?: string,
-  documentIds?: string[],
-  signerIds?: string[],
-  signedBy?: string[],
-  externalId?: string,
-  expirationDate?: Date,
-  closedAt?: Date
+  _id?: string | null,
+  appId?: string | null,
+  appEnv?: string | null,
+  title?: string | null,
+  description?: string | null,
+  status?: string | null,
+  documentIds?: string[] | null,
+  signerIds?: string[] | null,
+  signedBy?: string[] | null,
+  externalId?: string | null,
+  expirationDate?: Date | null,
+  closedAt?: Date | null
 }[]
 ```
 </Accordion>
@@ -1249,8 +1304,8 @@ await corsair.ignisign.api.signatureRequests.list({ appId: 'appId_sample' });
 ```ts
 {
   total: number,
-  page?: number,
-  nbEventsPerPage?: number
+  page?: number | null,
+  nbEventsPerPage?: number | null
 }
 ```
 </Accordion>
@@ -1264,9 +1319,9 @@ await corsair.ignisign.api.signatureRequests.list({ appId: 'appId_sample' });
 
 `signatureRequests.publish`
 
-Publish and launch a signature request to begin signing
+Publish and launch a signature request; emails the signers to start signing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ignisign.api.signatureRequests.publish({ signatureRequestId: 'sig_req_sample' });
@@ -1284,9 +1339,9 @@ await corsair.ignisign.api.signatureRequests.publish({ signatureRequestId: 'sig_
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `signatureRequestId` | `string` | No | — |
-| `signersBySide` | `object[]` | No | — |
-| `signersEmbedded` | `object[]` | No | — |
+| `signatureRequestId` | `string \| null` | No | — |
+| `signersBySide` | `object[] \| null` | No | — |
+| `signersEmbedded` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="signersBySide full type">
@@ -1294,8 +1349,8 @@ await corsair.ignisign.api.signatureRequests.publish({ signatureRequestId: 'sig_
 ```ts
 {
   signerId: string,
-  signerExternalId?: string
-}[]
+  signerExternalId?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -1304,9 +1359,9 @@ await corsair.ignisign.api.signatureRequests.publish({ signatureRequestId: 'sig_
 ```ts
 {
   signerId: string,
-  signerExternalId?: string,
-  token?: string
-}[]
+  signerExternalId?: string | null,
+  token?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1335,6 +1390,7 @@ await corsair.ignisign.api.signatureRequests.update({ signatureRequestId: 'sig_r
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
 | `expirationDate` | `string` | No | — |
+| `expirationDateIsActivated` | `boolean` | No | — |
 | `language` | `string` | No | — |
 | `documentIds` | `string[]` | No | — |
 | `signerIds` | `string[]` | No | — |
@@ -1346,38 +1402,38 @@ await corsair.ignisign.api.signatureRequests.update({ signatureRequestId: 'sig_r
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `status` | `string` | No | — |
-| `documentIds` | `string[]` | No | — |
-| `signerIds` | `string[]` | No | — |
-| `signedBy` | `string[]` | No | — |
-| `externalId` | `string` | No | — |
-| `expirationDate` | `Date` | No | — |
-| `closedAt` | `Date` | No | — |
-| `signers` | `object[]` | No | — |
-| `documents` | `object[]` | No | — |
-| `statements` | `object[]` | No | — |
-| `signatureProofsUrl` | `string` | No | — |
-| `signatureProofStatus` | `string` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documentIds` | `string[] \| null` | No | — |
+| `signerIds` | `string[] \| null` | No | — |
+| `signedBy` | `string[] \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `expirationDate` | `Date \| null` | No | — |
+| `closedAt` | `Date \| null` | No | — |
+| `signers` | `object[] \| null` | No | — |
+| `documents` | `object[] \| null` | No | — |
+| `statements` | `object[] \| null` | No | — |
+| `signatureProofsUrl` | `string \| null` | No | — |
+| `signatureProofStatus` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="signers full type">
 
 ```ts
 {
-  signerId?: string,
-  externalId?: string,
-  firstName?: string,
-  lastName?: string,
-  email?: string,
-  status?: string,
-  isRecurrent?: boolean,
-  signerProfileId?: string
-}[]
+  signerId?: string | null,
+  externalId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  status?: string | null,
+  isRecurrent?: boolean | null,
+  signerProfileId?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -1385,32 +1441,32 @@ await corsair.ignisign.api.signatureRequests.update({ signatureRequestId: 'sig_r
 
 ```ts
 {
-  _id?: string,
-  appId?: string,
-  appEnv?: string,
-  documentNature?: string,
-  status?: string,
-  documentHash?: string,
-  signatureRequestId?: string,
-  externalId?: string,
-  label?: string,
-  description?: string,
-  fileName?: string,
-  fileSize?: number,
-  mimeType?: string,
-  dataJsonContent?: string,
-  templateDisplayerId?: string,
-  templateDisplayerVersion?: number,
+  _id?: string | null,
+  appId?: string | null,
+  appEnv?: string | null,
+  documentNature?: string | null,
+  status?: string | null,
+  documentHash?: string | null,
+  signatureRequestId?: string | null,
+  externalId?: string | null,
+  label?: string | null,
+  description?: string | null,
+  fileName?: string | null,
+  fileSize?: number | null,
+  mimeType?: string | null,
+  dataJsonContent?: string | null,
+  templateDisplayerId?: string | null,
+  templateDisplayerVersion?: number | null,
   statements?: {
-    _id?: string,
-    labelMd?: string
-  }[],
+    _id?: string | null,
+    labelMd?: string | null
+  }[] | null,
   signatureSummaries?: {
-    signatureId?: string,
-    signerId?: string,
-    date?: Date
-  }[]
-}[]
+    signatureId?: string | null,
+    signerId?: string | null,
+    date?: Date | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 
@@ -1418,9 +1474,9 @@ await corsair.ignisign.api.signatureRequests.update({ signatureRequestId: 'sig_r
 
 ```ts
 {
-  _id?: string,
-  labelMd?: string
-}[]
+  _id?: string | null,
+  labelMd?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1456,18 +1512,18 @@ await corsair.ignisign.api.signatures.get({ documentId: 'doc_sample', signatureI
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `signerId` | `string` | No | — |
-| `signerKeyId` | `string` | No | — |
-| `sessionId` | `string` | No | — |
-| `documentId` | `string` | No | — |
-| `status` | `string` | No | — |
-| `mode` | `string` | No | — |
-| `signingIp` | `string` | No | — |
-| `eidasLevel` | `string` | No | — |
-| `signatures` | `object[]` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `signerId` | `string \| null` | No | — |
+| `signerKeyId` | `string \| null` | No | — |
+| `sessionId` | `string \| null` | No | — |
+| `documentId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `mode` | `string \| null` | No | — |
+| `signingIp` | `string \| null` | No | — |
+| `eidasLevel` | `string \| null` | No | — |
+| `signatures` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="signatures full type">
@@ -1475,9 +1531,9 @@ await corsair.ignisign.api.signatures.get({ documentId: 'doc_sample', signatureI
 ```ts
 {
   type: string,
-  signatureFilePath?: string,
-  signingTime?: Date
-}[]
+  signatureFilePath?: string | null,
+  signingTime?: Date | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1556,22 +1612,22 @@ await corsair.ignisign.api.signatures.list({ documentId: 'doc_sample' });
 
 ```ts
 {
-  _id?: string,
-  appId?: string,
-  appEnv?: string,
-  signerId?: string,
-  signerKeyId?: string,
-  sessionId?: string,
-  documentId?: string,
-  status?: string,
-  mode?: string,
-  signingIp?: string,
-  eidasLevel?: string,
+  _id?: string | null,
+  appId?: string | null,
+  appEnv?: string | null,
+  signerId?: string | null,
+  signerKeyId?: string | null,
+  sessionId?: string | null,
+  documentId?: string | null,
+  status?: string | null,
+  mode?: string | null,
+  signingIp?: string | null,
+  eidasLevel?: string | null,
   signatures?: {
     type: string,
-    signatureFilePath?: string,
-    signingTime?: Date
-  }[]
+    signatureFilePath?: string | null,
+    signingTime?: Date | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -1591,15 +1647,15 @@ Get signer profile configuration by ID
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.signerProfiles.get({ appId: 'appId_sample', signerProfileId: 'prof_sample' });
+await corsair.ignisign.api.signerProfiles.get({ signerProfileId: 'prof_sample' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signerProfileId` | `string` | Yes | — |
 
 
@@ -1608,15 +1664,15 @@ await corsair.ignisign.api.signerProfiles.get({ appId: 'appId_sample', signerPro
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `appEnv` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `status` | `string` | No | — |
-| `version` | `number` | No | — |
-| `isRecurrent` | `boolean` | No | — |
-| `integrationMode` | `string` | No | — |
+| `_id` | `string \| null` | No | — |
+| `appId` | `string \| null` | No | — |
+| `appEnv` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `version` | `number \| null` | No | — |
+| `isRecurrent` | `boolean \| null` | No | — |
+| `integrationMode` | `string \| null` | No | — |
 
 
 
@@ -1631,15 +1687,15 @@ Get required and optional input constraints for a signer profile
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.signerProfiles.getInputsNeeded({ appId: 'appId_sample', signerProfileId: 'prof_sample' });
+await corsair.ignisign.api.signerProfiles.getInputsNeeded({ signerProfileId: 'prof_sample' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signerProfileId` | `string` | Yes | — |
 
 
@@ -1665,15 +1721,15 @@ List signer profiles configured for an application environment
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.signerProfiles.list({ appId: 'appId_sample' });
+await corsair.ignisign.api.signerProfiles.list({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 
 
 
@@ -1684,15 +1740,15 @@ await corsair.ignisign.api.signerProfiles.list({ appId: 'appId_sample' });
 
 ```ts
 {
-  _id?: string,
-  appId?: string,
-  appEnv?: string,
-  name?: string,
-  description?: string,
-  status?: string,
-  version?: number,
-  isRecurrent?: boolean,
-  integrationMode?: string
+  _id?: string | null,
+  appId?: string | null,
+  appEnv?: string | null,
+  name?: string | null,
+  description?: string | null,
+  status?: string | null,
+  version?: number | null,
+  isRecurrent?: boolean | null,
+  integrationMode?: string | null
 }[]
 ```
 </Accordion>
@@ -1712,15 +1768,15 @@ Create a new signer in an application environment
 **Risk:** `write`
 
 ```ts
-await corsair.ignisign.api.signers.create({ appId: 'appId_sample', email: 'signer@example.com' });
+await corsair.ignisign.api.signers.create({ email: 'signer@example.com' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -1739,10 +1795,10 @@ await corsair.ignisign.api.signers.create({ appId: 'appId_sample', email: 'signe
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `signerId` | `string` | Yes | — |
-| `entityType` | `string` | No | — |
-| `success` | `boolean` | No | — |
-| `alreadyExists` | `boolean` | No | — |
-| `authSecret` | `string` | No | — |
+| `entityType` | `string \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `alreadyExists` | `boolean \| null` | No | — |
+| `authSecret` | `string \| null` | No | — |
 
 
 
@@ -1757,15 +1813,15 @@ Get detailed signer profile including verified claims and signature requests
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.signers.getDetails({ appId: 'appId_sample', signerId: 'signer_sample' });
+await corsair.ignisign.api.signers.getDetails({ signerId: 'signer_sample' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signerId` | `string` | Yes | — |
 
 
@@ -1774,16 +1830,16 @@ await corsair.ignisign.api.signers.getDetails({ appId: 'appId_sample', signerId:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `signerId` | `string` | No | — |
-| `externalId` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `email` | `string` | No | — |
-| `status` | `string` | No | — |
-| `isRecurrent` | `boolean` | No | — |
-| `signerProfileId` | `string` | No | — |
-| `claims` | `object[]` | No | — |
-| `latestSignatureRequests` | `object[]` | No | — |
+| `signerId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `isRecurrent` | `boolean \| null` | No | — |
+| `signerProfileId` | `string \| null` | No | — |
+| `claims` | `object[] \| null` | No | — |
+| `latestSignatureRequests` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="claims full type">
@@ -1792,7 +1848,7 @@ await corsair.ignisign.api.signers.getDetails({ appId: 'appId_sample', signerId:
 {
   claimRef: string,
   status: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1800,10 +1856,10 @@ await corsair.ignisign.api.signers.getDetails({ appId: 'appId_sample', signerId:
 
 ```ts
 {
-  _id?: string,
-  title?: string,
-  status?: string
-}[]
+  _id?: string | null,
+  title?: string | null,
+  status?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1821,15 +1877,15 @@ Get signer summary information
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.signers.getSummary({ appId: 'appId_sample', signerId: 'signer_sample' });
+await corsair.ignisign.api.signers.getSummary({ signerId: 'signer_sample' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signerId` | `string` | Yes | — |
 
 
@@ -1838,14 +1894,14 @@ await corsair.ignisign.api.signers.getSummary({ appId: 'appId_sample', signerId:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `signerId` | `string` | No | — |
-| `externalId` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `email` | `string` | No | — |
-| `status` | `string` | No | — |
-| `isRecurrent` | `boolean` | No | — |
-| `signerProfileId` | `string` | No | — |
+| `signerId` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `isRecurrent` | `boolean \| null` | No | — |
+| `signerProfileId` | `string \| null` | No | — |
 
 
 
@@ -1860,15 +1916,15 @@ List signers with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.signers.list({ appId: 'appId_sample' });
+await corsair.ignisign.api.signers.list({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `page` | `number` | No | — |
 
 
@@ -1879,20 +1935,22 @@ await corsair.ignisign.api.signers.list({ appId: 'appId_sample' });
 |------|------|----------|-------------|
 | `signers` | `object[]` | Yes | — |
 | `total` | `number` | Yes | — |
+| `currentPage` | `number \| null` | No | — |
+| `signerPerPage` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="signers full type">
 
 ```ts
 {
-  signerId?: string,
-  externalId?: string,
-  firstName?: string,
-  lastName?: string,
-  email?: string,
-  status?: string,
-  isRecurrent?: boolean,
-  signerProfileId?: string
+  signerId?: string | null,
+  externalId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  status?: string | null,
+  isRecurrent?: boolean | null,
+  signerProfileId?: string | null
 }[]
 ```
 </Accordion>
@@ -1906,20 +1964,20 @@ await corsair.ignisign.api.signers.list({ appId: 'appId_sample' });
 
 `signers.regenerateAuthSecret`
 
-Regenerate authentication secret for a signer
+Regenerate a signer authentication secret; the previous secret stops working
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.ignisign.api.signers.regenerateAuthSecret({ appId: 'appId_sample', signerId: 'signer_sample' });
+await corsair.ignisign.api.signers.regenerateAuthSecret({ signerId: 'signer_sample' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signerId` | `string` | Yes | — |
 
 
@@ -1943,15 +2001,15 @@ Revoke a signer and their active signature sessions
 **Risk:** `destructive`
 
 ```ts
-await corsair.ignisign.api.signers.revoke({ appId: 'appId_sample', signerId: 'signer_sample' });
+await corsair.ignisign.api.signers.revoke({ signerId: 'signer_sample' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signerId` | `string` | Yes | — |
 
 
@@ -1975,15 +2033,15 @@ Search signers by name, email or external ID
 **Risk:** `read`
 
 ```ts
-await corsair.ignisign.api.signers.search({ appId: 'appId_sample', filter: 'sample' });
+await corsair.ignisign.api.signers.search({ filter: 'sample' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `filter` | `string` | Yes | — |
 
 
@@ -1994,20 +2052,22 @@ await corsair.ignisign.api.signers.search({ appId: 'appId_sample', filter: 'samp
 |------|------|----------|-------------|
 | `signers` | `object[]` | Yes | — |
 | `total` | `number` | Yes | — |
+| `currentPage` | `number \| null` | No | — |
+| `signerPerPage` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="signers full type">
 
 ```ts
 {
-  signerId?: string,
-  externalId?: string,
-  firstName?: string,
-  lastName?: string,
-  email?: string,
-  status?: string,
-  isRecurrent?: boolean,
-  signerProfileId?: string
+  signerId?: string | null,
+  externalId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  status?: string | null,
+  isRecurrent?: boolean | null,
+  signerProfileId?: string | null
 }[]
 ```
 </Accordion>
@@ -2026,15 +2086,15 @@ Update signer profile inputs and attributes
 **Risk:** `write`
 
 ```ts
-await corsair.ignisign.api.signers.update({ appId: 'appId_sample', signerId: 'signer_sample', firstName: 'Jane' });
+await corsair.ignisign.api.signers.update({ signerId: 'signer_sample', firstName: 'Jane' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | Defaults to "DEVELOPMENT". |
+| `appId` | `string` | No | — |
+| `appEnv` | `DEVELOPMENT \| STAGING \| PRODUCTION` | No | — |
 | `signerId` | `string` | Yes | — |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
@@ -2054,255 +2114,12 @@ await corsair.ignisign.api.signers.update({ appId: 'appId_sample', signerId: 'si
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `signerId` | `string` | Yes | — |
-| `entityType` | `string` | No | — |
-| `success` | `boolean` | No | — |
-| `alreadyExists` | `boolean` | No | — |
-| `authSecret` | `string` | No | — |
+| `entityType` | `string \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `alreadyExists` | `boolean \| null` | No | — |
+| `authSecret` | `string \| null` | No | — |
 
 
 
 ---
 
-## User Invitations
-
-### cancel
-
-`userInvitations.cancel`
-
-Cancel an active user invitation
-
-**Risk:** `destructive`
-
-```ts
-await corsair.ignisign.api.userInvitations.cancel({ appId: 'appId_sample', userInvitationId: 'inv_sample' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `userInvitationId` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
-
-
-
----
-
-### edit
-
-`userInvitations.edit`
-
-Update environment roles for an invited application user
-
-**Risk:** `write`
-
-```ts
-await corsair.ignisign.api.userInvitations.edit({
-	appId: 'appId_sample',
-	userInvitationId: 'inv_sample',
-	roles: {
-		DEVELOPMENT: ['SIGNER'],
-	},
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `userInvitationId` | `string` | Yes | — |
-| `roles` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="roles full type">
-
-```ts
-{
-  DEVELOPMENT?: string[],
-  STAGING?: string[],
-  PRODUCTION?: string[]
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `email` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `status` | `string` | No | — |
-| `roles` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="roles full type">
-
-```ts
-{
-  DEVELOPMENT?: string[],
-  STAGING?: string[],
-  PRODUCTION?: string[]
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### invite
-
-`userInvitations.invite`
-
-Invite a new collaborator to an application with environment roles
-
-**Risk:** `write`
-
-```ts
-await corsair.ignisign.api.userInvitations.invite({
-	appId: 'appId_sample',
-	email: 'colleague@example.com',
-	roles: {
-		DEVELOPMENT: ['ADMIN'],
-	},
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `email` | `string` | Yes | — |
-| `roles` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="roles full type">
-
-```ts
-{
-  DEVELOPMENT?: string[],
-  STAGING?: string[],
-  PRODUCTION?: string[]
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `_id` | `string` | No | — |
-| `email` | `string` | No | — |
-| `appId` | `string` | No | — |
-| `status` | `string` | No | — |
-| `roles` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="roles full type">
-
-```ts
-{
-  DEVELOPMENT?: string[],
-  STAGING?: string[],
-  PRODUCTION?: string[]
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### list
-
-`userInvitations.list`
-
-List pending and accepted user invitations for an application
-
-**Risk:** `read`
-
-```ts
-await corsair.ignisign.api.userInvitations.list({ appId: 'appId_sample' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  _id?: string,
-  email?: string,
-  appId?: string,
-  status?: string,
-  roles?: {
-    DEVELOPMENT?: string[],
-    STAGING?: string[],
-    PRODUCTION?: string[]
-  }
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### resend
-
-`userInvitations.resend`
-
-Resend invitation email to an invited user
-
-**Risk:** `write`
-
-```ts
-await corsair.ignisign.api.userInvitations.resend({ appId: 'appId_sample', userInvitationId: 'inv_sample' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `appId` | `string` | Yes | — |
-| `userInvitationId` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
-
-
-
----
