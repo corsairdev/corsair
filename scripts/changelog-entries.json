@@ -5688,5 +5688,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.64",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/honeyhive",
+    "dir": "packages/honeyhive",
+    "name": "HoneyHive",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/textit",
+    "dir": "packages/textit",
+    "name": "TextIt",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
