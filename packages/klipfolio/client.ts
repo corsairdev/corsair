@@ -3,29 +3,16 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
-export class KlipfolioAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly status?: number,
-		public readonly code?: string,
-		public readonly retryAfter?: number,
-	) {
-		super(message);
-		this.name = 'KlipfolioAPIError';
-	}
-}
+import { request } from 'corsair/http';
 
 const KLIPFOLIO_API_BASE = 'https://app.klipfolio.com/api/1.0';
 
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
-	// Single retry owner: the plugin error handler owns the 429 retry policy,
-	// so the transport stays single-attempt (maxRetries 0). Keeping enabled
-	// true makes the shared transport read the Retry-After/reset headers and
-	// attach them to the thrown error without ever retrying on its own.
+	// Core's transport retries a 429 up to three times and honours
+	// Retry-After (Klipfolio allows five requests a second); the plugin's own
+	// 429 handler returns maxRetries 0 so the two never stack.
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'Retry-After' },
@@ -89,29 +76,10 @@ export async function makeKlipfolioRequest<T>(
 		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			// Klipfolio failures explain themselves in the body (error code and
-			// message); the shared transport message loses that provider text.
-			// unknown: the provider error body is documented only for known
-			// failure modes, so the shape is read structurally.
-			const provider = error.body as
-				| { error?: { code?: string; message?: string } }
-				| undefined;
-			throw new KlipfolioAPIError(
-				provider?.error?.message || error.message,
-				error.status,
-				provider?.error?.code,
-				error.retryAfter,
-			);
-		}
-		if (error instanceof Error) {
-			throw new KlipfolioAPIError(error.message);
-		}
-		throw new KlipfolioAPIError('Unknown Klipfolio API error');
-	}
+	// Core's ApiError goes through unchanged: its status and retryAfter are
+	// what the error handlers and core's retry logic read, and its body keeps
+	// Klipfolio's meta.error_code / meta.error_desc.
+	return request<T>(config, requestOptions, {
+		rateLimitConfig: RATE_LIMIT_CONFIG,
+	});
 }

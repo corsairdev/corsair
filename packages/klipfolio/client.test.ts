@@ -1,6 +1,6 @@
 import type { ApiRequestOptions, ApiResult } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-import { KlipfolioAPIError, makeKlipfolioRequest } from './client';
+import { makeKlipfolioRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/http', () => {
@@ -24,42 +24,26 @@ describe('Klipfolio client', () => {
 		requestMock.mockReset();
 	});
 
-	it('keeps the transport single-attempt so the error handler owns 429 retries', async () => {
-		// A rate-limited response must surface after exactly one transport
-		// attempt; the plugin error handler is the single retry owner.
-		requestMock.mockRejectedValue(
-			new ApiError(apiRequest, rateLimitResult, 'Too Many Requests', {
-				retryAfter: 30000,
-			}),
+	it('lets core retry 429s and passes its ApiError through unchanged', async () => {
+		const rateLimit = new ApiError(
+			apiRequest,
+			rateLimitResult,
+			'Too Many Requests',
+			{ retryAfter: 30000 },
 		);
-		await expect(
-			makeKlipfolioRequest({ key: 'secret' }, '/profile', { method: 'GET' }),
-		).rejects.toThrow(KlipfolioAPIError);
-		expect(requestMock).toHaveBeenCalledTimes(1);
-		// enabled stays true so the shared transport reads the Retry-After
-		// headers and attaches them to the thrown error; maxRetries 0 keeps
-		// the transport itself single-attempt.
-		expect(requestMock.mock.calls[0]?.[2]).toMatchObject({
-			rateLimitConfig: expect.objectContaining({
-				enabled: true,
-				maxRetries: 0,
-				headerNames: expect.objectContaining({ retryAfter: 'Retry-After' }),
-			}),
-		});
-	});
-
-	it('preserves status and Retry-After metadata on wrapped rate limits', async () => {
-		requestMock.mockRejectedValue(
-			new ApiError(apiRequest, rateLimitResult, 'Too Many Requests', {
-				retryAfter: 30000,
-			}),
-		);
+		requestMock.mockRejectedValue(rateLimit);
 		const error = await makeKlipfolioRequest({ key: 'secret' }, '/profile', {
 			method: 'GET',
 		}).catch((caught: unknown) => caught); // unknown: the rejection value is opaque; narrowed by the assertions below
-		expect(error).toBeInstanceOf(KlipfolioAPIError);
-		expect((error as KlipfolioAPIError).status).toBe(429);
-		expect((error as KlipfolioAPIError).retryAfter).toBe(30000);
+		// Same instance: status and retryAfter stay readable by core.
+		expect(error).toBe(rateLimit);
+		expect(requestMock.mock.calls[0]?.[2]).toMatchObject({
+			rateLimitConfig: expect.objectContaining({
+				enabled: true,
+				maxRetries: 3,
+				headerNames: expect.objectContaining({ retryAfter: 'Retry-After' }),
+			}),
+		});
 	});
 
 	it('sends the provider kf-api-key header without a Bearer rewrite', async () => {
@@ -76,27 +60,35 @@ describe('Klipfolio client', () => {
 		expect(config.TOKEN).toBeUndefined();
 	});
 
-	it('preserves the provider error code and message from the body', async () => {
-		const forbidden: ApiResult = {
+	it('keeps the provider error body (meta.error_code) on the ApiError', async () => {
+		// Shape of a real Klipfolio 401 (route probe, 11-16).
+		const unauthorized: ApiResult = {
 			url: 'https://app.klipfolio.com/api/1.0/users',
 			ok: false,
-			status: 403,
-			statusText: 'Forbidden',
-			body: { error: { code: 'user.manage', message: 'Not permitted' } },
+			status: 401,
+			statusText: 'Unauthorized',
+			body: {
+				meta: {
+					success: false,
+					status: 401,
+					error_code: 'auth_not_provided',
+					error_desc: 'This operation requires authentication',
+				},
+			},
 		};
 		requestMock.mockRejectedValue(
-			new ApiError(apiRequest, forbidden, 'Forbidden'),
+			new ApiError(apiRequest, unauthorized, 'Unauthorized'),
 		);
 		const error = await makeKlipfolioRequest({ key: 'secret' }, '/users', {
 			method: 'GET',
 		}).catch((caught: unknown) => caught); // unknown: the rejection value is opaque; narrowed by the assertions below
-		expect(error).toBeInstanceOf(KlipfolioAPIError);
-		expect((error as KlipfolioAPIError).status).toBe(403);
-		expect((error as KlipfolioAPIError).code).toBe('user.manage');
-		expect((error as KlipfolioAPIError).message).toBe('Not permitted');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect((error as ApiError).body.meta.error_code).toBe('auth_not_provided');
+		expect(errorHandlers.AUTH_ERROR.match(error as ApiError)).toBe(true);
 	});
 
-	it('routes 429 through the plugin error handler with its retry budget', async () => {
+	it('does not retry a 429 again in the plugin handler', async () => {
 		const rateLimit = new ApiError(
 			apiRequest,
 			rateLimitResult,
@@ -105,7 +97,7 @@ describe('Klipfolio client', () => {
 		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimit)).toBe(true);
 		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(rateLimit);
-		expect(strategy.maxRetries).toBe(5);
+		expect(strategy.maxRetries).toBe(0);
 		expect(strategy.headersRetryAfterMs).toBe(30000);
 	});
 });
