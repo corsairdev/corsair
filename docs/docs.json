@@ -4355,6 +4355,14 @@
                 ]
               },
               {
+                "group": "Superchat",
+                "pages": [
+                  "plugins/superchat/overview",
+                  "plugins/superchat/api",
+                  "plugins/superchat/database"
+                ]
+              },
+              {
                 "group": "Supabase",
                 "pages": [
                   "plugins/supabase/overview",
