@@ -2,7 +2,12 @@ import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { shopify, shopifyAuthConfig } from './index';
 import { shop } from './test-fixtures';
-import { TOKEN_RENEW_BEFORE_SECONDS } from './token';
+import {
+	requestShopifyClientCredentialsToken,
+	ShopifyTokenError,
+	shareMint,
+	TOKEN_RENEW_BEFORE_SECONDS,
+} from './token';
 
 /**
  * Token renewal for Dev Dashboard apps, through `createCorsair` so the real
@@ -571,5 +576,63 @@ describe('no secret or token in errors', () => {
 		} finally {
 			testDb.cleanup();
 		}
+	});
+});
+
+describe('a stalled token request times out', () => {
+	const input = {
+		shopDomain: SHOP,
+		clientId: CLIENT_ID,
+		clientSecret: CLIENT_SECRET,
+		timeoutMs: 50,
+	};
+
+	it('fails when Shopify never answers, and aborts the request', async () => {
+		let signal: AbortSignal | undefined;
+		fetchMock.mockImplementationOnce(
+			(_url: string, init: RequestInit) =>
+				new Promise<Response>(() => {
+					signal = init.signal ?? undefined;
+				}),
+		);
+
+		const error = await requestShopifyClientCredentialsToken(input).catch(
+			// unknown: a rejection reason has no static type.
+			(caught: unknown) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ShopifyTokenError);
+		expect((error as Error).message).toMatch(/did not answer/);
+		expect((error as Error).message).not.toContain(CLIENT_SECRET);
+		expect(signal?.aborted).toBe(true);
+	});
+
+	it('fails when the headers arrive but the body stalls', async () => {
+		// A body stream that never closes.
+		const stalled = new ReadableStream<Uint8Array>({ start() {} });
+		fetchMock.mockResolvedValueOnce(new Response(stalled, { status: 200 }));
+
+		await expect(requestShopifyClientCredentialsToken(input)).rejects.toThrow(
+			/did not answer/,
+		);
+	});
+
+	it('frees the shared mint so the next call can try again', async () => {
+		const store = {};
+		fetchMock.mockImplementationOnce(() => new Promise<Response>(() => {}));
+		await expect(
+			shareMint(store, 'routine', async () => {
+				const token = await requestShopifyClientCredentialsToken(input);
+				return token.accessToken;
+			}),
+		).rejects.toThrow(/did not answer/);
+
+		respondToken('minted-after-timeout');
+		const token = await shareMint(store, 'routine', async () => {
+			const minted = await requestShopifyClientCredentialsToken(input);
+			return minted.accessToken;
+		});
+
+		expect(token).toBe('minted-after-timeout');
 	});
 });

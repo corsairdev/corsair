@@ -10,6 +10,13 @@ import { normaliseShopDomain } from './client';
  */
 export const TOKEN_RENEW_BEFORE_SECONDS = 5 * 60;
 
+/**
+ * How long one token request may take, headers and body together. A stalled
+ * mint would otherwise hold every call for the account, since concurrent calls
+ * share it.
+ */
+export const TOKEN_REQUEST_TIMEOUT_MS = 15_000;
+
 /** Shopify documents `expires_in` as always 86399; used if it is missing. */
 const DEFAULT_EXPIRES_IN_SECONDS = 86_399;
 
@@ -69,34 +76,64 @@ export async function requestShopifyClientCredentialsToken(input: {
 	clientSecret: string;
 	/** Injected by tests; defaults to the wall clock. */
 	now?: () => number;
+	/** Defaults to TOKEN_REQUEST_TIMEOUT_MS. */
+	timeoutMs?: number;
 }): Promise<ShopifyMintedToken> {
 	const host = normaliseShopDomain(input.shopDomain);
 	const nowSeconds = () =>
 		Math.floor((input.now ? input.now() : Date.now()) / 1000);
 
-	let response: Response;
-	try {
-		response = await fetch(`https://${host}/admin/oauth/access_token`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				Accept: 'application/json',
-			},
-			body: new URLSearchParams({
-				grant_type: 'client_credentials',
-				client_id: input.clientId,
-				client_secret: input.clientSecret,
-			}).toString(),
-		});
-	} catch {
-		// The transport error is dropped on purpose: it is not needed to act
-		// on the failure, and nothing from the request should leak through it.
-		throw new ShopifyTokenError(
-			`Could not reach ${host} to get a Shopify access token`,
-		);
-	}
+	const timeoutMs = input.timeoutMs ?? TOKEN_REQUEST_TIMEOUT_MS;
+	const controller = new AbortController();
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	const timedOut = new Promise<never>((_, reject) => {
+		timer = setTimeout(() => {
+			controller.abort();
+			reject(
+				new ShopifyTokenError(
+					`Shopify did not answer the token request for ${host} within ${timeoutMs} ms`,
+				),
+			);
+		}, timeoutMs);
+	});
 
-	const text = await response.text();
+	let response: Response;
+	let text: string;
+	try {
+		// The race covers the body as well as the headers: a response that
+		// stalls mid-body would otherwise leave the mint pending forever.
+		[response, text] = await Promise.race([
+			(async () => {
+				let res: Response;
+				try {
+					res = await fetch(`https://${host}/admin/oauth/access_token`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+							Accept: 'application/json',
+						},
+						body: new URLSearchParams({
+							grant_type: 'client_credentials',
+							client_id: input.clientId,
+							client_secret: input.clientSecret,
+						}).toString(),
+						signal: controller.signal,
+					});
+				} catch {
+					// The transport error is dropped on purpose: it is not needed
+					// to act on the failure, and nothing from the request should
+					// leak through it.
+					throw new ShopifyTokenError(
+						`Could not reach ${host} to get a Shopify access token`,
+					);
+				}
+				return [res, await res.text()] as const;
+			})(),
+			timedOut,
+		]);
+	} finally {
+		clearTimeout(timer);
+	}
 	if (!response.ok) {
 		const code = tokenErrorCode(text);
 		const message = `Shopify refused the client credentials token request for ${host} (HTTP ${response.status}${code ? `, ${code}` : ''}). Check the app's client ID and secret, and that the app is installed on this store.`;
