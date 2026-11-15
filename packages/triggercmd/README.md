@@ -14,10 +14,10 @@ pnpm add @corsair-dev/triggercmd
 |-----------|--------------|------|-------------|
 | `commands.history` | `triggercmd.api.commands.history` | `read` | Read the run history of one command, newest first |
 | `commands.list` | `triggercmd.api.commands.list` | `read` | List the commands configured on every computer, with the computer each belongs to |
-| `commands.run` | `triggercmd.api.commands.run` | `write` | Run a configured command on one of the account's computers, with optional parameters |
+| `commands.run` | `triggercmd.api.commands.run` | `destructive` | Run a configured command on one of the account's computers, with optional parameters |
 | `computers.list` | `triggercmd.api.computers.list` | `read` | List the computers the agent has registered |
 | `panels.list` | `triggercmd.api.panels.list` | `read` | List the dashboard panel buttons and the parameters each carries |
-| `panels.trigger` | `triggercmd.api.panels.trigger` | `write` | Press a panel button, which runs the command it is configured for |
+| `panels.trigger` | `triggercmd.api.panels.trigger` | `destructive` | Press a panel button, which runs the command it is configured for |
 
 ## Auth
 

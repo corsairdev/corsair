@@ -115,8 +115,9 @@ const triggercmdEndpointMeta = {
 		description:
 			'List the commands configured on every computer, with the computer each belongs to',
 	},
+	// Runs a command line on a real computer, which can't be taken back.
 	'commands.run': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Run a configured command on one of the account's computers, with optional parameters",
 	},
@@ -133,8 +134,9 @@ const triggercmdEndpointMeta = {
 		description:
 			'List the dashboard panel buttons and the parameters each carries',
 	},
+	// Runs the button's command on a real computer, like commands.run.
 	'panels.trigger': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Press a panel button, which runs the command it is configured for',
 	},
@@ -192,7 +194,7 @@ export function triggercmd<const T extends TriggerCmdPluginOptions>(
 	} satisfies InternalTriggerCmdPlugin;
 }
 
-export { TriggerCmdAPIError } from './client';
+export { triggerCmdErrorMessage } from './client';
 
 export type {
 	CommandOutput,

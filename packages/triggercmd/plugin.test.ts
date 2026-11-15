@@ -61,10 +61,10 @@ describe('triggercmd plugin definition', () => {
 		).toEqual({
 			'commands.history': 'read',
 			'commands.list': 'read',
-			'commands.run': 'write',
+			'commands.run': 'destructive',
 			'computers.list': 'read',
 			'panels.list': 'read',
-			'panels.trigger': 'write',
+			'panels.trigger': 'destructive',
 		});
 	});
 
