@@ -1016,7 +1016,7 @@ export const SHIPENGINE_OPERATIONS = {
 		pagination: false,
 		binary: false,
 		tag: 'manifests',
-		risk: 'write',
+		risk: 'destructive',
 	},
 	'manifests.getManifestById': {
 		name: 'manifests.getManifestById',

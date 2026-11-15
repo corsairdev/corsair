@@ -234,6 +234,15 @@ describe('ShipEngine live response shapes', () => {
 		).rejects.not.toThrow('Private Road');
 	});
 
+	it('marks manifest creation destructive because manifested labels may not be voidable', () => {
+		expect(SHIPENGINE_OPERATIONS['manifests.createManifest'].risk).toBe(
+			'destructive',
+		);
+		expect(shipEngineEndpointMeta['manifests.createManifest'].riskLevel).toBe(
+			'destructive',
+		);
+	});
+
 	it('marks label voiding destructive because a voided label cannot be unvoided', () => {
 		expect(SHIPENGINE_OPERATIONS['labels.voidLabel'].risk).toBe('destructive');
 		expect(shipEngineEndpointMeta['labels.voidLabel'].riskLevel).toBe(
