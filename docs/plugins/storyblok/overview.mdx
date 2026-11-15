@@ -1,0 +1,152 @@
+---
+title: "Storyblok plugin"
+sidebarTitle: "Overview"
+description: "Headless CMS content from Storyblok - manage stories, components, datasources and their entries, tags, asset metadata, releases and webhook endpoints through the Management API."
+---
+
+Use **Storyblok** through Corsair: one client, typed API calls.
+
+Create a personal access token in Storyblok under Account Settings, then Personal access tokens. Pass it as the plugin's `key` option or store it on the account; Storyblok expects the raw token in the `Authorization` header, with no `Bearer` prefix.
+
+Two more settings are needed because every Management API route is scoped to one space on one regional host:
+
+- `spaceId`: the numeric space id. `spaces.list` is the way to find it.
+- `region`: `eu`, `us`, `ca`, `ap` or `cn`, matching where the space is hosted. It defaults to `eu`. A space only answers on its own host, and asking the wrong one looks like a missing space rather than a configuration mistake.
+
+Both can be set as plugin options or stored on the account as `space_id` and `region`.
+
+Things to know before you write:
+
+- **Publishing is a GET.** `stories.publish` and `stories.unpublish` are served as GETs but change published state, so both are writes here. A retry of either repeats the state change.
+- **`stories.list` omits content.** The list route returns stories without their `content` field. Pass `with_summary` for a summary, or read the story with `stories.get`.
+- **`content` is the schema's own JSON.** A story's content is one object per component field, with a `component` key naming the content type. The plugin passes it through untyped rather than guessing at a shape that depends on each project's components.
+- **Components are field schemas.** Editing a component changes the shape every story of that type is parsed against, and a removed field loses its stored data.
+- **Asset writes are metadata only.** `assets.update` changes alt text, title, copyright, focus point, privacy and the publish window. Uploading new bytes uses a separate signed-upload flow that this plugin does not wrap.
+- **Webhook actions come from the API.** `webhooks.listActions` reads the accepted action names rather than hardcoding them, because Storyblok adds events over time.
+- **Paging totals are in headers.** Storyblok reports `total` and `per_page` as response headers, which this client cannot return alongside the body, so page until an array comes back short or empty.
+- **Rate limits are plan-based**, 3 requests per second on Starter and 6 on paid plans, with a 429 to back off on.
+
+**What you get:**
+
+- 43 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/storyblok better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/storyblok better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/storyblok better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/storyblok better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { storyblok } from '@corsair-dev/storyblok';
+
+export const corsair = createCorsair({
+	plugins: [
+		storyblok(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Storyblok API key before the first call: `pnpm corsair setup --plugin=storyblok --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+storyblok()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'storyblok',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List published stories under a slug prefix**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.storyblok.api.stories.list({ by_slugs: 'posts/*', is_published: true, per_page: 50 });
+```
+
+
+**Create a page and publish it**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.storyblok.api.stories.create({
+	name: 'Home',
+	slug: 'home',
+	content: { component: 'page', title: 'Welcome' },
+	publish: true,
+});
+```
+
+
+See the full list on the [API](/plugins/storyblok/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/storyblok/api">
+    Every `storyblok.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

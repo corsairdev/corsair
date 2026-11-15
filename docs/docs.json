@@ -4355,6 +4355,14 @@
                 ]
               },
               {
+                "group": "Storyblok",
+                "pages": [
+                  "plugins/storyblok/overview",
+                  "plugins/storyblok/api",
+                  "plugins/storyblok/database"
+                ]
+              },
+              {
                 "group": "Supabase",
                 "pages": [
                   "plugins/supabase/overview",
