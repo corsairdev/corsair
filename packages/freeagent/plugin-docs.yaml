@@ -1,5 +1,5 @@
 displayName: FreeAgent
-description: Manage FreeAgent company contacts, projects, and sales invoices through its OAuth 2.0 REST API.
+description: Manage FreeAgent company records, verified sender addresses, contacts, projects, invoices, and tracking groups through its OAuth 2.0 REST API.
 domain: freeagent.com
 recommendedAuth: oauth_2
 examples:
@@ -16,6 +16,7 @@ apiExamples:
   company.get: {}
   company.businessCategories: {}
   company.taxTimeline: {}
+  emailAddresses.list: {}
   contacts.list: {}
   contacts.get:
     id: '1'
@@ -83,6 +84,12 @@ apiExamples:
   invoices.deleteDefaultAdditionalText: {}
   invoices.convertToCreditNote:
     id: '1'
+  recurringInvoices.list: {}
+  recurringInvoices.get:
+    id: '1'
+  trackingGroups.list: {}
+  trackingGroups.get:
+    id: '1'
 apiNotes:
   invoices.create: >-
     FreeAgent creates new invoices in Draft status. Use an explicit status-transition
@@ -101,9 +108,19 @@ apiNotes:
     FreeAgent paginates collections with a default of 25 records and a maximum
     per_page of 100. The result includes pagination.link and pagination.total_count,
     preserving the Link header and X-Total-Count header value respectively.
+  emailAddresses.list: >-
+    Returns the company's verified sender email addresses. The result includes
+    pagination.link and pagination.total_count from FreeAgent's collection headers.
+  recurringInvoices.list: >-
+    Supports the documented draft, active, or inactive view filter and a contact
+    URL filter. Collection pagination uses the standard page and per_page parameters.
+  trackingGroups.list: >-
+    Hidden groups and labels are omitted by default. Use include_hidden, order_by,
+    and reverse as documented; collection pagination uses page and per_page.
 overviewNote: >-
   Connect with a FreeAgent OAuth 2.0 access token. This plugin exposes company
-  profile, contacts, projects, and selected invoice operations only. Many other
+  profile, verified sender addresses, contacts, projects, selected invoice and
+  recurring invoice operations, and tracking groups. Many other
   official company API routes remain unimplemented; see the linked route inventory
   in the package README. The Accountancy Practice API requires practice-enabled
   OAuth and X-Subdomain client scoping and is excluded.

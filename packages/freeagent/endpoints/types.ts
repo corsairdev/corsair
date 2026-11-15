@@ -10,6 +10,82 @@ const PaginationSchema = z.object({
 	to_date: z.string().date().optional(),
 });
 
+const PageQuerySchema = z
+	.object({
+		page: z.number().int().positive().optional(),
+		per_page: z.number().int().min(1).max(100).optional(),
+	})
+	.strict();
+
+const TrackingGroupLabelSchema = z
+	.object({
+		url: z.string().url(),
+		name: z.string(),
+		status: z.enum(['active', 'hidden']),
+	})
+	.passthrough();
+
+// Passthrough matches FreeAgent's documented extensible tracking-group response objects.
+const TrackingGroupSchema = z
+	.object({
+		url: z.string().url(),
+		name: z.string().max(50),
+		status: z.enum(['active', 'hidden']),
+		labels: z.array(TrackingGroupLabelSchema),
+		created_at: z.string().datetime({ offset: true }),
+		updated_at: z.string().datetime({ offset: true }),
+	})
+	.passthrough();
+
+const RecurringInvoiceItemSchema = z
+	.object({
+		url: z.string().url().optional(),
+		position: z.number().optional(),
+		description: z.string().optional(),
+		item_type: z.string().optional(),
+		price: z.union([z.string(), z.number()]).optional(),
+		quantity: z.union([z.string(), z.number()]).optional(),
+		sales_tax_rate: z.union([z.string(), z.number()]).optional(),
+		sales_tax_status: z.enum(['TAXABLE', 'EXEMPT']).optional(),
+		category: z.string().url().optional(),
+	})
+	.passthrough();
+
+// Passthrough preserves documented invoice attributes that can vary by company setup.
+const RecurringInvoiceSchema = z
+	.object({
+		url: z.string().url(),
+		contact: z.string().url(),
+		contact_name: z.string().optional(),
+		reference: z.string().optional(),
+		dated_on: z.string().date(),
+		frequency: z.enum([
+			'Weekly',
+			'Two Weekly',
+			'Four Weekly',
+			'Monthly',
+			'Two Monthly',
+			'Quarterly',
+			'Biannually',
+			'Annually',
+			'2-Yearly',
+		]),
+		next_recurs_on: z.string().date(),
+		recurring_end_date: z.union([z.string().date(), z.literal('')]).optional(),
+		recurring_status: z.enum(['Draft', 'Active']),
+		currency: z.string().optional(),
+		exchange_rate: z.string().optional(),
+		net_value: z.string().optional(),
+		sales_tax_value: z.string().optional(),
+		total_value: z.string().optional(),
+		omit_header: z.boolean().optional(),
+		always_show_bic_and_iban: z.boolean().optional(),
+		payment_terms_in_days: z.number().int().optional(),
+		invoice_items: z.array(RecurringInvoiceItemSchema).optional(),
+		payment_methods: z.record(z.string(), z.boolean()).optional(),
+	})
+	.passthrough();
+
 const ContactFieldsSchema = z
 	.object({
 		first_name: z.string().optional(),
@@ -311,6 +387,7 @@ export const FreeAgentEndpointInputSchemas = {
 	companyGet: z.object({}).strict(),
 	companyBusinessCategories: z.object({}).strict(),
 	companyTaxTimeline: z.object({}).strict(),
+	emailAddressesList: z.object({ query: PageQuerySchema.optional() }).strict(),
 	contactsList: z.object({ query: PaginationSchema.optional() }).strict(),
 	contactsGet: z.object({ id: z.string().min(1) }).strict(),
 	contactsCreate: z.object({ contact: ContactCreateSchema }).strict(),
@@ -378,6 +455,29 @@ export const FreeAgentEndpointInputSchemas = {
 	invoicesDefaultAdditionalTextDelete: z.object({}).strict(),
 	invoicesPdf: z.object({ id: z.string().min(1) }).strict(),
 	invoicesConvertToCreditNote: z.object({ id: z.string().min(1) }).strict(),
+	recurringInvoicesList: z
+		.object({
+			query: PageQuerySchema.extend({
+				view: z.enum(['draft', 'active', 'inactive']).optional(),
+				contact: z.string().url().optional(),
+			})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+	recurringInvoicesGet: z.object({ id: z.string().min(1) }).strict(),
+	trackingGroupsList: z
+		.object({
+			query: PageQuerySchema.extend({
+				include_hidden: z.boolean().optional(),
+				order_by: z.enum(['name', 'status', 'labels_count']).optional(),
+				reverse: z.boolean().optional(),
+			})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+	trackingGroupsGet: z.object({ id: z.string().min(1) }).strict(),
 } as const;
 
 const TaxTimelineItemSchema = z
@@ -453,6 +553,24 @@ export const FreeAgentEndpointOutputSchemas = {
 		.passthrough(),
 	invoicesConvertToCreditNote: z
 		.object({ credit_note: CreditNoteSchema })
+		.passthrough(),
+	emailAddressesList: z
+		.object({ email_addresses: z.array(z.string()) })
+		.passthrough()
+		.extend({ pagination: PaginationHeadersSchema }),
+	recurringInvoicesList: z
+		.object({ recurring_invoices: z.array(RecurringInvoiceSchema) })
+		.passthrough()
+		.extend({ pagination: PaginationHeadersSchema }),
+	recurringInvoicesGet: z
+		.object({ recurring_invoice: RecurringInvoiceSchema })
+		.passthrough(),
+	trackingGroupsList: z
+		.object({ tracking_groups: z.array(TrackingGroupSchema) })
+		.passthrough()
+		.extend({ pagination: PaginationHeadersSchema }),
+	trackingGroupsGet: z
+		.object({ tracking_group: TrackingGroupSchema })
 		.passthrough(),
 } as const;
 

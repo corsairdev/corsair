@@ -93,6 +93,40 @@ describe('FreeAgent schemas', () => {
 			FreeAgentEndpointOutputSchemas.contactsDelete.safeParse(undefined)
 				.success,
 		).toBe(true);
+		expect(
+			FreeAgentEndpointOutputSchemas.emailAddressesList.safeParse({
+				email_addresses: ['Example Sender <sender@example.test>'],
+				pagination: { link: null, total_count: '1' },
+			}).success,
+		).toBe(true);
+		expect(
+			FreeAgentEndpointOutputSchemas.trackingGroupsGet.safeParse({
+				tracking_group: {
+					url: 'https://api.freeagent.com/v2/tracking_groups/1',
+					name: 'Region',
+					status: 'active',
+					labels: [],
+					created_at: '2026-10-01T09:15:00.000Z',
+					updated_at: '2026-10-14T11:42:03.000Z',
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			FreeAgentEndpointOutputSchemas.recurringInvoicesList.safeParse({
+				recurring_invoices: [
+					{
+						url: 'https://api.freeagent.com/v2/recurring_invoices/1',
+						contact: 'https://api.freeagent.com/v2/contacts/1',
+						dated_on: '2026-10-01',
+						frequency: 'Monthly',
+						next_recurs_on: '2026-11-01',
+						recurring_end_date: '',
+						recurring_status: 'Active',
+					},
+				],
+				pagination: { link: null, total_count: '1' },
+			}).success,
+		).toBe(true);
 	});
 
 	it('validates documented pagination bounds and dates', () => {
@@ -171,6 +205,30 @@ describe('FreeAgent schemas', () => {
 						},
 					],
 				},
+			}).success,
+		).toBe(false);
+		expect(
+			FreeAgentEndpointInputSchemas.recurringInvoicesList.safeParse({
+				query: { view: 'active', page: 2, per_page: 50 },
+			}).success,
+		).toBe(true);
+		expect(
+			FreeAgentEndpointInputSchemas.recurringInvoicesList.safeParse({
+				query: { view: 'pending' },
+			}).success,
+		).toBe(false);
+		expect(
+			FreeAgentEndpointInputSchemas.trackingGroupsList.safeParse({
+				query: {
+					include_hidden: true,
+					order_by: 'labels_count',
+					reverse: true,
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			FreeAgentEndpointInputSchemas.trackingGroupsList.safeParse({
+				query: { order_by: 'count' },
 			}).success,
 		).toBe(false);
 	});

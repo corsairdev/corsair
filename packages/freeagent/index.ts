@@ -13,7 +13,15 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Company, Contacts, Invoices, Projects } from './endpoints';
+import {
+	Company,
+	Contacts,
+	EmailAddresses,
+	Invoices,
+	Projects,
+	RecurringInvoices,
+	TrackingGroups,
+} from './endpoints';
 import type {
 	FreeAgentEndpointInputs,
 	FreeAgentEndpointOutputs,
@@ -52,6 +60,7 @@ export type FreeAgentEndpoints = {
 	companyGet: Endpoint<'companyGet'>;
 	companyBusinessCategories: Endpoint<'companyBusinessCategories'>;
 	companyTaxTimeline: Endpoint<'companyTaxTimeline'>;
+	emailAddressesList: Endpoint<'emailAddressesList'>;
 	contactsList: Endpoint<'contactsList'>;
 	contactsGet: Endpoint<'contactsGet'>;
 	contactsCreate: Endpoint<'contactsCreate'>;
@@ -80,6 +89,10 @@ export type FreeAgentEndpoints = {
 	invoicesDefaultAdditionalTextDelete: Endpoint<'invoicesDefaultAdditionalTextDelete'>;
 	invoicesPdf: Endpoint<'invoicesPdf'>;
 	invoicesConvertToCreditNote: Endpoint<'invoicesConvertToCreditNote'>;
+	recurringInvoicesList: Endpoint<'recurringInvoicesList'>;
+	recurringInvoicesGet: Endpoint<'recurringInvoicesGet'>;
+	trackingGroupsList: Endpoint<'trackingGroupsList'>;
+	trackingGroupsGet: Endpoint<'trackingGroupsGet'>;
 };
 
 const freeAgentEndpointsNested = {
@@ -87,6 +100,9 @@ const freeAgentEndpointsNested = {
 		get: Company.get,
 		businessCategories: Company.businessCategories,
 		taxTimeline: Company.taxTimeline,
+	},
+	emailAddresses: {
+		list: EmailAddresses.list,
 	},
 	contacts: {
 		list: Contacts.list,
@@ -122,6 +138,14 @@ const freeAgentEndpointsNested = {
 		pdf: Invoices.pdf,
 		convertToCreditNote: Invoices.convertToCreditNote,
 	},
+	recurringInvoices: {
+		list: RecurringInvoices.list,
+		get: RecurringInvoices.get,
+	},
+	trackingGroups: {
+		list: TrackingGroups.list,
+		get: TrackingGroups.get,
+	},
 } as const;
 
 export const freeAgentEndpointSchemas = {
@@ -136,6 +160,10 @@ export const freeAgentEndpointSchemas = {
 	'company.taxTimeline': {
 		input: FreeAgentEndpointInputSchemas.companyTaxTimeline,
 		output: FreeAgentEndpointOutputSchemas.companyTaxTimeline,
+	},
+	'emailAddresses.list': {
+		input: FreeAgentEndpointInputSchemas.emailAddressesList,
+		output: FreeAgentEndpointOutputSchemas.emailAddressesList,
 	},
 	'contacts.list': {
 		input: FreeAgentEndpointInputSchemas.contactsList,
@@ -249,6 +277,22 @@ export const freeAgentEndpointSchemas = {
 		input: FreeAgentEndpointInputSchemas.invoicesConvertToCreditNote,
 		output: FreeAgentEndpointOutputSchemas.invoicesConvertToCreditNote,
 	},
+	'recurringInvoices.list': {
+		input: FreeAgentEndpointInputSchemas.recurringInvoicesList,
+		output: FreeAgentEndpointOutputSchemas.recurringInvoicesList,
+	},
+	'recurringInvoices.get': {
+		input: FreeAgentEndpointInputSchemas.recurringInvoicesGet,
+		output: FreeAgentEndpointOutputSchemas.recurringInvoicesGet,
+	},
+	'trackingGroups.list': {
+		input: FreeAgentEndpointInputSchemas.trackingGroupsList,
+		output: FreeAgentEndpointOutputSchemas.trackingGroupsList,
+	},
+	'trackingGroups.get': {
+		input: FreeAgentEndpointInputSchemas.trackingGroupsGet,
+		output: FreeAgentEndpointOutputSchemas.trackingGroupsGet,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof freeAgentEndpointsNested
 >;
@@ -267,6 +311,10 @@ const freeAgentEndpointMeta = {
 	'company.taxTimeline': {
 		riskLevel: 'read',
 		description: 'List upcoming tax events and due dates for the company',
+	},
+	'emailAddresses.list': {
+		riskLevel: 'read',
+		description: 'List verified sender email addresses for the company',
 	},
 	'contacts.list': {
 		riskLevel: 'read',
@@ -379,6 +427,23 @@ const freeAgentEndpointMeta = {
 	'invoices.convertToCreditNote': {
 		riskLevel: 'destructive',
 		description: 'Convert a draft negative invoice into a credit note',
+	},
+	'recurringInvoices.list': {
+		riskLevel: 'read',
+		description:
+			'List recurring invoices with documented filters and pagination',
+	},
+	'recurringInvoices.get': {
+		riskLevel: 'read',
+		description: 'Get a recurring invoice by its FreeAgent ID',
+	},
+	'trackingGroups.list': {
+		riskLevel: 'read',
+		description: 'List tracking groups with documented filters and pagination',
+	},
+	'trackingGroups.get': {
+		riskLevel: 'read',
+		description: 'Get a tracking group and its labels by FreeAgent ID',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof freeAgentEndpointsNested

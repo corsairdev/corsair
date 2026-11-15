@@ -3,7 +3,6 @@ title: "FreeAgent API reference"
 sidebarTitle: "API"
 description: "API reference for the FreeAgent plugin in Corsair: every `freeagent.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -243,6 +242,7 @@ await corsair.freeagent.api.contacts.delete({ id: '1' });
 
 
 ---
+
 ### get
 
 `contacts.get`
@@ -483,6 +483,65 @@ await corsair.freeagent.api.contacts.update({
 ```
 </Accordion>
 </AccordionGroup>
+
+
+---
+
+## Email Addresses
+
+### list
+
+`emailAddresses.list`
+
+List verified sender email addresses for the company
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.emailAddresses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+Returns the company's verified sender email addresses. The result includes pagination.link and pagination.total_count from FreeAgent's collection headers.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_addresses` | `string[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  link: string | null,
+  total_count: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1905,6 +1964,303 @@ await corsair.freeagent.api.projects.update({
 ```
 </Accordion>
 </AccordionGroup>
+
+
+---
+
+## Recurring Invoices
+
+### get
+
+`recurringInvoices.get`
+
+Get a recurring invoice by its FreeAgent ID
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.recurringInvoices.get({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recurring_invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recurring_invoice full type">
+
+```ts
+{
+  url: string,
+  contact: string,
+  contact_name?: string,
+  reference?: string,
+  dated_on: string,
+  frequency: Weekly | Two Weekly | Four Weekly | Monthly | Two Monthly | Quarterly | Biannually | Annually | 2-Yearly,
+  next_recurs_on: string,
+  recurring_end_date?: string | "",
+  recurring_status: Draft | Active,
+  currency?: string,
+  exchange_rate?: string,
+  net_value?: string,
+  sales_tax_value?: string,
+  total_value?: string,
+  omit_header?: boolean,
+  always_show_bic_and_iban?: boolean,
+  payment_terms_in_days?: number,
+  invoice_items?: {
+    url?: string,
+    position?: number,
+    description?: string,
+    item_type?: string,
+    price?: string | number,
+    quantity?: string | number,
+    sales_tax_rate?: string | number,
+    sales_tax_status?: TAXABLE | EXEMPT,
+    category?: string
+  }[],
+  payment_methods?: Record<string, boolean>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`recurringInvoices.list`
+
+List recurring invoices with documented filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.recurringInvoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+Supports the documented draft, active, or inactive view filter and a contact URL filter. Collection pagination uses the standard page and per_page parameters.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  view?: draft | active | inactive,
+  contact?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recurring_invoices` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recurring_invoices full type">
+
+```ts
+{
+  url: string,
+  contact: string,
+  contact_name?: string,
+  reference?: string,
+  dated_on: string,
+  frequency: Weekly | Two Weekly | Four Weekly | Monthly | Two Monthly | Quarterly | Biannually | Annually | 2-Yearly,
+  next_recurs_on: string,
+  recurring_end_date?: string | "",
+  recurring_status: Draft | Active,
+  currency?: string,
+  exchange_rate?: string,
+  net_value?: string,
+  sales_tax_value?: string,
+  total_value?: string,
+  omit_header?: boolean,
+  always_show_bic_and_iban?: boolean,
+  payment_terms_in_days?: number,
+  invoice_items?: {
+    url?: string,
+    position?: number,
+    description?: string,
+    item_type?: string,
+    price?: string | number,
+    quantity?: string | number,
+    sales_tax_rate?: string | number,
+    sales_tax_status?: TAXABLE | EXEMPT,
+    category?: string
+  }[],
+  payment_methods?: Record<string, boolean>
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  link: string | null,
+  total_count: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tracking Groups
+
+### get
+
+`trackingGroups.get`
+
+Get a tracking group and its labels by FreeAgent ID
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.trackingGroups.get({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tracking_group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tracking_group full type">
+
+```ts
+{
+  url: string,
+  name: string,
+  status: active | hidden,
+  labels: {
+    url: string,
+    name: string,
+    status: active | hidden
+  }[],
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`trackingGroups.list`
+
+List tracking groups with documented filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.freeagent.api.trackingGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+Hidden groups and labels are omitted by default. Use include_hidden, order_by, and reverse as documented; collection pagination uses page and per_page.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  include_hidden?: boolean,
+  order_by?: name | status | labels_count,
+  reverse?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tracking_groups` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tracking_groups full type">
+
+```ts
+{
+  url: string,
+  name: string,
+  status: active | hidden,
+  labels: {
+    url: string,
+    name: string,
+    status: active | hidden
+  }[],
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  link: string | null,
+  total_count: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---

@@ -9,6 +9,7 @@ FreeAgent's company API integration for Corsair. The API uses OAuth 2.0 bearer a
 | `company.get` | `GET /v2/company` | [Company](https://dev.freeagent.com/docs/company) |
 | `company.businessCategories` | `GET /v2/company/business_categories` | [Company](https://dev.freeagent.com/docs/company) |
 | `company.taxTimeline` | `GET /v2/company/tax_timeline` | [Company](https://dev.freeagent.com/docs/company) |
+| `emailAddresses.list` | `GET /v2/email_addresses` | [Email Addresses](https://dev.freeagent.com/docs/email_addresses) |
 | `contacts.list` | `GET /v2/contacts` | [Contacts](https://dev.freeagent.com/docs/contacts) |
 | `contacts.get` | `GET /v2/contacts/:id` | [Contacts](https://dev.freeagent.com/docs/contacts) |
 | `contacts.create` | `POST /v2/contacts` | [Contacts](https://dev.freeagent.com/docs/contacts) |
@@ -37,14 +38,18 @@ FreeAgent's company API integration for Corsair. The API uses OAuth 2.0 bearer a
 | `invoices.updateDefaultAdditionalText` | `PUT /v2/invoices/default_additional_text` | [Invoices](https://dev.freeagent.com/docs/invoices) |
 | `invoices.deleteDefaultAdditionalText` | `DELETE /v2/invoices/default_additional_text` | [Invoices](https://dev.freeagent.com/docs/invoices) |
 | `invoices.convertToCreditNote` | `PUT /v2/invoices/:id/transitions/convert_to_credit_note` | [Invoices](https://dev.freeagent.com/docs/invoices) |
+| `recurringInvoices.list` | `GET /v2/recurring_invoices` | [Recurring Invoices](https://dev.freeagent.com/docs/recurring_invoices) |
+| `recurringInvoices.get` | `GET /v2/recurring_invoices/:id` | [Recurring Invoices](https://dev.freeagent.com/docs/recurring_invoices) |
+| `trackingGroups.list` | `GET /v2/tracking_groups` | [Tracking Groups](https://dev.freeagent.com/docs/tracking_groups) |
+| `trackingGroups.get` | `GET /v2/tracking_groups/:id` | [Tracking Groups](https://dev.freeagent.com/docs/tracking_groups) |
 
-Invoice creation and duplication produce Draft invoices. Emailing, payment, and invoice state transitions are separate destructive operations. Direct debit is only available for sent invoices with a GoCardless pre-authorised mandate and no previous payment. PDF content is returned by FreeAgent as base64 inside JSON. `invoices.sendEmail` supports the documented template flag, message fields, and base64 attachment records (maximum 5 MiB per attachment).
+Invoice creation and duplication produce Draft invoices. Emailing, payment, and invoice state transitions are separate destructive operations. Direct debit is only available for sent invoices with a GoCardless pre-authorised mandate and no previous payment. PDF content is returned by FreeAgent as base64 inside JSON. `invoices.sendEmail` supports the documented template flag, message fields, and base64 attachment records (maximum 5 MiB per attachment). The email-address, tracking-group, and recurring-invoice operations added here are read-only; they do not create or change financial records.
 
 For update/delete and invoice action routes whose official response documents only a status code, the output schema accepts either an empty JSON object or no response body; it does not fabricate a response payload.
 
 ## Pagination, limits, and errors
 
-Collection calls accept `page` and `per_page` (1–100). FreeAgent documents 25 items per page by default and returns pagination in the `Link` header plus a total in `X-Total-Count`. The three implemented collection operations return these values under `pagination.link` and `pagination.total_count` (the total remains the header's decimal string). A missing header is `null`. The company API limits are 120 requests per user per minute, 3,600 per hour, and 15 token refreshes per minute; HTTP 429 responses include `Retry-After`. The paginated GET client retries 429 responses up to three times, honoring `Retry-After`, with bounded exponential fallback when that header is absent. Other calls use Corsair's shared transport.
+Collection calls accept `page` and `per_page` (1–100). FreeAgent documents 25 items per page by default and returns pagination in the `Link` header plus a total in `X-Total-Count`. The six implemented collection operations return these values under `pagination.link` and `pagination.total_count` (the total remains the header's decimal string). A missing header is `null`. The company API limits are 120 requests per user per minute, 3,600 per hour, and 15 token refreshes per minute; HTTP 429 responses include `Retry-After`. The paginated GET client retries 429 responses up to three times, honoring `Retry-After`, with bounded exponential fallback when that header is absent. Other calls use Corsair's shared transport.
 
 All documented routes use HTTPS; JSON and XML are supported. OAuth access tokens are sent as `Authorization: Bearer …`; a `User-Agent` is sent as required by the API overview. This implementation uses JSON only and does not invent a global provider error envelope because the official docs do not specify one.
 
@@ -72,7 +77,7 @@ This inventory was checked against the official [API index](https://dev.freeagen
 | [Corporation Tax Returns](https://dev.freeagent.com/docs/corporation_tax_returns) | `GET /v2/corporation_tax_returns`; `GET /v2/corporation_tax_returns/:period_ends_on`; `PUT /v2/corporation_tax_returns/:period_ends_on/mark_as_filed`; `PUT /v2/corporation_tax_returns/:period_ends_on/mark_as_unfiled`; `PUT /v2/corporation_tax_returns/:period_ends_on/mark_as_paid`; `PUT /v2/corporation_tax_returns/:period_ends_on/mark_as_unpaid` |
 | [Credit Note Reconciliations](https://dev.freeagent.com/docs/credit_note_reconciliations) | `GET /v2/credit_note_reconciliations`; `GET /v2/credit_note_reconciliations/:id`; `POST /v2/credit_note_reconciliations`; `PUT /v2/credit_note_reconciliations/:id`; `DELETE /v2/credit_note_reconciliations/:id` |
 | [Credit Notes](https://dev.freeagent.com/docs/credit_notes) | `GET /v2/credit_notes`; `GET /v2/credit_notes/:id`; `GET /v2/credit_notes/:id/pdf`; `POST /v2/credit_notes`; `POST /v2/credit_notes/:id/send_email`; `PUT /v2/credit_notes/:id`; `PUT /v2/credit_notes/:id/transitions/mark_as_sent`; `PUT /v2/credit_notes/:id/transitions/mark_as_draft`; `DELETE /v2/credit_notes/:id` |
-| [Email Addresses](https://dev.freeagent.com/docs/email_addresses) | `GET /v2/email_addresses` |
+| [Email Addresses](https://dev.freeagent.com/docs/email_addresses) | Implemented: list verified sender email addresses. |
 | [Estimates](https://dev.freeagent.com/docs/estimates) | `GET /v2/estimates`; `GET /v2/estimates/:id`; `GET /v2/estimates/:id/pdf`; `POST /v2/estimates`; `PUT /v2/estimates/:id`; `POST /v2/estimate_items`; `PUT /v2/estimate_items/:id`; `POST /v2/estimates/:id/duplicate`; `DELETE /v2/estimate_items/:id`; `DELETE /v2/estimates/:id`; `POST /v2/estimates/:id/send_email`; `PUT /v2/estimates/:id/transitions/mark_as_sent`; `PUT /v2/estimates/:id/transitions/mark_as_draft`; `PUT /v2/estimates/:id/transitions/mark_as_approved`; `PUT /v2/estimates/:id/transitions/mark_as_rejected`; `PUT /v2/estimates/:id/transitions/convert_to_invoice`; `GET|PUT|DELETE /v2/estimates/default_additional_text` |
 | [Expenses](https://dev.freeagent.com/docs/expenses) | `GET /v2/expenses`; `GET /v2/expenses/:id`; `POST /v2/expenses` (including documented batch-create mode); `PUT /v2/expenses/:id`; `DELETE /v2/expenses/:id`; `GET /v2/expenses/mileage_settings` |
 | [Final Accounts Reports](https://dev.freeagent.com/docs/final_accounts_reports) | `GET /v2/final_accounts_reports`; `GET /v2/final_accounts_reports/:period_ends_on`; `PUT /v2/final_accounts_reports/:period_ends_on/mark_as_filed`; `PUT /v2/final_accounts_reports/:period_ends_on/mark_as_unfiled` |
@@ -87,12 +92,11 @@ This inventory was checked against the official [API index](https://dev.freeagen
 | [Profit & Loss](https://dev.freeagent.com/docs/profit_and_loss) | `GET /v2/accounting/profit_and_loss/summary` |
 | [Projects](https://dev.freeagent.com/docs/projects) | Implemented: list/get/create/update/delete. |
 | [Properties](https://dev.freeagent.com/docs/properties) | `GET /v2/properties`; `GET /v2/properties/:id`; `POST /v2/properties`; `PUT /v2/properties/:id`; `DELETE /v2/properties/:id` |
-| [Recurring Invoices](https://dev.freeagent.com/docs/recurring_invoices) | `GET /v2/recurring_invoices`; `GET /v2/recurring_invoices/:id` |
 | [Sales Tax Periods](https://dev.freeagent.com/docs/sales_tax_periods) | `GET /v2/sales_tax_periods`; `GET /v2/sales_tax_periods/:id`; `POST /v2/sales_tax_periods`; `PUT /v2/sales_tax_periods/:id`; `DELETE /v2/sales_tax_periods/:id` |
 | [Stock Items](https://dev.freeagent.com/docs/stock_items) | `GET /v2/stock_items`; `GET /v2/stock_items/:id` |
 | [Tasks](https://dev.freeagent.com/docs/tasks) | `GET /v2/tasks`; `GET /v2/tasks/:id`; `POST /v2/tasks?project=:project`; `PUT /v2/tasks/:id`; delete example is documented as `DELETE /v2/users/:id` and remains unimplemented pending evidence about the apparent route discrepancy. |
 | [Timeslips](https://dev.freeagent.com/docs/timeslips) | `GET /v2/timeslips`; `GET /v2/timeslips/:id`; `POST /v2/timeslips`; `PUT /v2/timeslips/:id`; `DELETE /v2/timeslips/:id`; `POST /v2/timeslips/:id/timer`; `DELETE /v2/timeslips/:id/timer` |
-| [Tracking Groups](https://dev.freeagent.com/docs/tracking_groups) | `GET /v2/tracking_groups`; `GET /v2/tracking_groups/:id` |
+| [Tracking Groups](https://dev.freeagent.com/docs/tracking_groups) | Implemented: list/get tracking groups and their labels. |
 | [Transactions](https://dev.freeagent.com/docs/transactions) | `GET /v2/accounting/transactions`; `GET /v2/accounting/transactions/:id` |
 | [Trial Balance](https://dev.freeagent.com/docs/trial_balance) | `GET /v2/accounting/trial_balance/summary`; `GET /v2/accounting/trial_balance/summary/opening_balances` |
 | [Users](https://dev.freeagent.com/docs/users) | `GET /v2/users`; `GET /v2/users/:id`; `GET /v2/users/me`; `POST /v2/users`; `PUT /v2/users/:id`; `PUT /v2/users/me`; `DELETE /v2/users/:id` |
@@ -108,12 +112,15 @@ This inventory was checked against the official [API index](https://dev.freeagen
 - The docs index provides resource documentation but no webhook delivery/receiver contract. Webhooks remain excluded and `webhooks` is empty.
 - The API versioning page says `X-Api-Version` is optional and omitting it selects the current behavior. No date-version header is sent, so the plugin uses FreeAgent's documented current default.
 
-**Test coverage remains partial too:** `endpoints.test.ts` checks registry/schema alignment, accepted input shapes, and risk metadata; it does not yet execute and assert the HTTP method, path, body, and parsed response for each of the 31 registered handlers. The client tests cover auth, pagination headers, and 429 retries. Add the per-operation wire-level test matrix before describing this plugin's endpoint coverage as complete.
+**Coverage is still partial:** the 36 implemented operations now each have a mocked-transport wire test asserting the HTTP method, exact path/query/body, bearer headers, and parsed response (with 204 tested for routes documented without a response body). Invalid input is checked before network access, and collection logs are checked for customer-data exclusion. The client tests cover pagination headers and 429 retries. Many documented company API resources remain unimplemented; the inventory above is a gap list, not a set of exclusions.
 
 ## Sources and evidence
 
 - [Official API index](https://dev.freeagent.com/docs)
 - [Introduction (formats, pagination, rate limits)](https://dev.freeagent.com/docs/introduction)
+- [Email Addresses](https://dev.freeagent.com/docs/email_addresses)
+- [Recurring Invoices](https://dev.freeagent.com/docs/recurring_invoices)
+- [Tracking Groups](https://dev.freeagent.com/docs/tracking_groups)
 - [OAuth 2.0](https://dev.freeagent.com/docs/oauth)
 - [Versioning](https://dev.freeagent.com/docs/versioning)
 - Each company resource page is linked in the route inventory above.
