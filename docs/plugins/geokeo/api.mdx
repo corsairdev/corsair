@@ -28,7 +28,7 @@ await corsair.geokeo.api.geocode.forward({ q: 'empire state building', country: 
 |------|------|----------|-------------|
 | `q` | `string` | Yes | What to look up, up to 50 characters, such as `empire state building` |
 | `country` | `string` | No | Restricts the search to one country, such as `us` or `de` |
-| `format` | `json \| xml` | No | Defaults to `json`; XML would not parse into these schemas |
+| `format` | `json` | No | Response format; only `json`, which is also the default |
 
 `q` is capped at 50 characters, and `country` is a two-letter ISO code.
 
@@ -79,6 +79,7 @@ await corsair.geokeo.api.geocode.forward({ q: 'empire state building', country: 
     }
   },
   osmurl?: string,
+  importance?: number | string,
   distance?: string,
   lat?: number | null,
   lng?: number | null,
@@ -110,9 +111,9 @@ await corsair.geokeo.api.geocode.reverse({ lat: 40.74842, lng: -73.9856 });
 |------|------|----------|-------------|
 | `lat` | `number` | Yes | Latitude of the point to reverse |
 | `lng` | `number` | Yes | Longitude of the point to reverse |
-| `format` | `json \| xml` | No | Defaults to `json`; XML would not parse into these schemas |
+| `format` | `json` | No | Response format; only `json`, which is also the default |
 
-A result carries `distance` as a string with the unit glued on, plus a parsed `distance_km`.
+A result carries `distance` as a string with the unit glued on, plus a parsed `distance_km`. Geokeo refuses a `lat` or `lng` of exactly `0` with `INVALID_REQUEST`.
 
 
 
@@ -161,6 +162,7 @@ A result carries `distance` as a string with the unit glued on, plus a parsed `d
     }
   },
   osmurl?: string,
+  importance?: number | string,
   distance?: string,
   lat?: number | null,
   lng?: number | null,
