@@ -30,7 +30,7 @@ pnpm add @corsair-dev/givebutter
 | `contacts.update` | `givebutter.api.contacts.update` | `write` | Update a contact. |
 | `contactTags.add` | `givebutter.api.contactTags.add` | `write` | Add tags to a contact. |
 | `contactTags.remove` | `givebutter.api.contactTags.remove` | `write` | Remove tags from a contact. |
-| `contactTags.sync` | `givebutter.api.contactTags.sync` | `write` | Replace a contact’s tags. |
+| `contactTags.sync` | `givebutter.api.contactTags.sync` | `destructive` | Replace all of a contact’s tags; tags not listed are removed. |
 | `discountCodes.create` | `givebutter.api.discountCodes.create` | `write` | Create a campaign discount code. |
 | `discountCodes.delete` | `givebutter.api.discountCodes.delete` | `destructive` | Delete a campaign discount code. |
 | `discountCodes.get` | `givebutter.api.discountCodes.get` | `read` | Get a campaign discount code. |
@@ -71,7 +71,7 @@ pnpm add @corsair-dev/givebutter
 | `ticketItems.list` | `givebutter.api.ticketItems.list` | `read` | List a campaign’s ticket items. |
 | `tickets.get` | `givebutter.api.tickets.get` | `read` | Get an issued ticket. |
 | `tickets.list` | `givebutter.api.tickets.list` | `read` | List issued tickets. |
-| `transactions.create` | `givebutter.api.transactions.create` | `write` | Create an offline transaction. |
+| `transactions.create` | `givebutter.api.transactions.create` | `destructive` | Record an offline transaction. The API has no delete for transactions. |
 | `transactions.get` | `givebutter.api.transactions.get` | `read` | Get a transaction. |
 | `transactions.list` | `givebutter.api.transactions.list` | `read` | List transactions. |
 | `transactions.update` | `givebutter.api.transactions.update` | `write` | Update a transaction. |
