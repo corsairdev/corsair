@@ -28,7 +28,7 @@ function operation<Input, ParsedInput, Output>(config: {
 	name: string;
 	method: Method;
 	path: (input: ParsedInput) => string;
-	input: z.ZodType<ParsedInput, z.ZodTypeDef, Input>;
+	input: z.ZodType<ParsedInput, Input>;
 	output: z.ZodType<Output>;
 	request: (input: ParsedInput) => RequestShape;
 }) {
