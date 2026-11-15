@@ -14,6 +14,8 @@ if (!key) {
 
 const endpoints = moonclerk().endpoints;
 if (!endpoints) throw new Error('MoonClerk endpoints are missing');
+// Endpoints read only ctx.key; the rest of MoonClerkContext (database, hooks)
+// comes from createCorsair and is unused by these direct endpoint calls.
 const ctx = { key } as MoonClerkContext;
 // An id no account has, to check the get routes answer 404 rather than 401.
 const MISSING_ID = 999999999;
@@ -42,11 +44,13 @@ live('MoonClerk live API', () => {
 		['customers.get', () => endpoints.customers.get(ctx, { id: MISSING_ID })],
 		['payments.get', () => endpoints.payments.get(ctx, { id: MISSING_ID })],
 	])('%s answers 404 for an unknown id', async (_name, call) => {
+		// `unknown` because a rejection can carry any value; the matchers below
+		// check that it is an ApiError before reading its status.
 		const error = await call().then(
 			() => undefined,
 			(e: unknown) => e,
 		);
 		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).status).toBe(404);
+		expect(error).toMatchObject({ status: 404 });
 	});
 });

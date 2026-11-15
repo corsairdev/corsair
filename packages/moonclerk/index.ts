@@ -104,6 +104,8 @@ export type BaseMoonClerkPlugin<T extends MoonClerkPluginOptions> =
 	>;
 export type InternalMoonClerkPlugin =
 	BaseMoonClerkPlugin<MoonClerkPluginOptions>;
+// The default `{}` is cast because TypeScript cannot infer T from a default
+// value; with no options T is MoonClerkPluginOptions, which `{}` satisfies.
 export function moonclerk<const T extends MoonClerkPluginOptions>(
 	incomingOptions: MoonClerkPluginOptions & T = {} as MoonClerkPluginOptions &
 		T,

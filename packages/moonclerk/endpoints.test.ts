@@ -6,6 +6,8 @@ import { moonClerkEndpointSchemas, moonclerk } from './index';
 const plugin = moonclerk({ key: 'test-key' });
 const endpoints = plugin.endpoints;
 if (!endpoints) throw new Error('MoonClerk endpoints are missing');
+// Endpoints read only ctx.key; the rest of MoonClerkContext (database, hooks)
+// comes from createCorsair and is unused by these direct endpoint calls.
 const ctx = { key: 'resolved-key' } as MoonClerkContext;
 const json = (body: object) =>
 	new Response(JSON.stringify(body), {
@@ -129,6 +131,8 @@ describe('MoonClerk public endpoints', () => {
 	);
 	it('rejects invalid input before making a request', async () => {
 		for (const id of ['', '.', '..', 'a/b', 'a\\b', '"', "'", 1.5]) {
+			// `never` lets the test pass ids the input type forbids, to check that
+			// the runtime schema rejects them before any request.
 			await expect(endpoints.forms.get(ctx, { id } as never)).rejects.toThrow();
 		}
 		await expect(
