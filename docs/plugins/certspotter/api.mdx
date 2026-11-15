@@ -29,7 +29,7 @@ await corsair.certspotter.api.firehose.list({ after: '17433446883' });
 | `after` | `string` | No | Return issuances discovered after this ID; omit to start from about an hour ago |
 | `expand` | `(dns_names \| issuer \| issuer.website \| issuer.caa_domains \| issuer.operator \| issuer.pubkey_der \| issuer.name_der \| pubkey \| pubkey_der \| revocation \| problem_reporting \| cert_der)[]` | No | — |
 
-Requires a Firehose subscription. Omit `after` to start from about the last hour; a `lagging_client` error means restart without it.
+Requires a Firehose subscription. An empty array means you have caught up; wait about 5 minutes before the next call. Omit `after` to start from about the last hour; a `lagging_client` error means restart without it.
 
 
 
@@ -106,7 +106,7 @@ await corsair.certspotter.api.issuances.list({ domain: 'example.com', include_su
 | `after` | `string` | No | Return issuances discovered after this ID; take `id` from the last result of the previous page |
 | `expand` | `(dns_names \| issuer \| issuer.website \| issuer.caa_domains \| issuer.operator \| issuer.pubkey_der \| issuer.name_der \| pubkey \| pubkey_der \| revocation \| problem_reporting \| cert_der)[]` | No | Extra fields to include; repeated as one `expand` per value |
 
-Take `id` from the last issuance and pass it as `after` to page. An empty array means the end, and its Retry-After header says when to ask again.
+Take `id` from the last issuance and pass it as `after` to page. An empty array means you have caught up; wait a few minutes before asking again with the same cursor.
 
 
 
