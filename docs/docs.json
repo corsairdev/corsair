@@ -4355,6 +4355,14 @@
                 ]
               },
               {
+                "group": "SuiteDash",
+                "pages": [
+                  "plugins/suitedash/overview",
+                  "plugins/suitedash/api",
+                  "plugins/suitedash/database"
+                ]
+              },
+              {
                 "group": "Supabase",
                 "pages": [
                   "plugins/supabase/overview",

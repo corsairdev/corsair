@@ -1,0 +1,146 @@
+---
+title: "SuiteDash plugin"
+sidebarTitle: "Overview"
+description: "Client portal CRM from SuiteDash - manage companies, contacts and projects, read the account's custom field definitions, list worlds, and subscribe contacts to marketing audiences."
+---
+
+Use **SuiteDash** through Corsair: one client, typed API calls.
+
+SuiteDash's Secure API is behind two credentials, not one. Open Flyout Menu, then Integrations, then Secure API, and copy the Public ID and a Secret Key.
+
+- The **Public ID** is the plugin's `key`.
+- The **Secret Key** is a second account field. Pass it as `secretKey` or store it as `secret_key` on the account.
+
+Every call sends both, each in its own header (`X-Public-ID` and `X-Secret-Key`). There is no single-token form.
+
+Things to know before you write:
+
+- **A 200 can still mean failure.** Every answer is an envelope, `{ success, message, data }`, and SuiteDash reports some business errors with `success: false` on a 200. The plugin turns that into an error rather than handing it back as data.
+- **The call limit is monthly, not per second.** 80 calls on trial, 400 on Start, 2000 on Thrive, 20000 on Pinnacle, counted per account. A 429 means the allowance is used up, so the plugin never retries it.
+- **A company is addressed by uid or name, a contact by uid or email.** SuiteDash decides which from the value, so no lookup step is needed. A project instead takes an explicit mode in the path: `uid`, `name`, `contains_the_following` or `most_recent`.
+- **Custom fields need the account's own keys.** Every write that touches `public_custom_fields`, `private_custom_fields` or `target_custom_fields` uses keys that are uuids unique to the account. Read them from `companies.meta`, `contacts.meta` or `projects.meta` first.
+- **Custom fields read as an array.** A response sends `public_custom_fields` as an array, usually empty, even though the spec types it as an object. The output accepts both.
+- **A company's `role` decides portal access.** `Lead`, `Client` or `Prospect`, and the same three values on a contact. The write example below omits it because the docs generator cannot render an enum in example arguments; see the API reference for the accepted values.
+- **A contact create needs four fields.** First name, last name, email and role are all required by the spec, and a company create can add its first contact via `primaryContact` with `create_primary`.
+- **Paging.** Lists report `meta.pagination` with `totalItems`, `totalPages` and a `nextPage` URL. Pass `page` to advance. The `meta` flag controls whether that block and the custom field definitions come back at all.
+- **Marketing subscribe is all-or-nothing at the top.** The answer carries one result per subscriber, and its top-level `success` is true only when every one worked.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/suitedash better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/suitedash better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/suitedash better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/suitedash better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { suitedash } from '@corsair-dev/suitedash';
+
+export const corsair = createCorsair({
+	plugins: [
+		suitedash(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the SuiteDash API key before the first call: `pnpm corsair setup --plugin=suitedash --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+suitedash()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'suitedash',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List contacts created this year**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.suitedash.api.contacts.list({ createdMin: '2026-01-01T00:00:00+00:00', orderBy: 'created:desc' });
+```
+
+
+**Create a contact from a name and email**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.suitedash.api.contacts.create({ first_name: 'Matilda', last_name: 'Walker', email: 'matilda@example.com' });
+```
+
+
+See the full list on the [API](/plugins/suitedash/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/suitedash/api">
+    Every `suitedash.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
