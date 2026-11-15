@@ -52,7 +52,6 @@ apiExamples:
     rating: 10
   feedback.rateMessage:
     messageId: "msg_123"
-    rating: "positive"
   feedback.surveysGet:
     surveyId: "survey_123"
   feedback.surveysResponses:
@@ -61,12 +60,10 @@ apiExamples:
     surveyId: "survey_123"
   teams.create:
     name: "Support Tier 1"
-    assignmentMethod: "balanced"
     members: ["user_123"]
   teams.update:
     teamId: "team_123"
     name: "Support Tier 2"
-    assignmentMethod: "manual"
     members: ["user_123"]
   teams.delete:
     teamId: "team_123"
