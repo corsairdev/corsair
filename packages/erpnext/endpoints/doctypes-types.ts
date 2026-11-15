@@ -2,14 +2,15 @@ import { z } from 'zod';
 
 // ── Schemas for the `doctypes` family ─────────────────────────────────────────
 // Wire mappings verified against the frappe@develop sources: the /api/resource
-// DocType list route and frappe/handler.py (every /api/method answer wraps its
-// result in a `message` key). DocType metadata is provider-defined — the
-// framework ships its own DocTypes and every deployment adds custom fields,
-// permissions, and naming rules on top — so payload shapes validate as open
-// records and only the wire envelope (data / message) is checked. Input
-// objects are .strict() so typos fail at the boundary, and query names stay
-// provider-verbatim (limit_page_length, with_parent), exactly as the Frappe
-// sources declare them.
+// DocType list route and frappe/handler.py (/api/method answers wrap their
+// result in a `message` key, except frappe.desk.form.load.getdoctype, which
+// returns nothing and answers with top-level `docs`). DocType metadata is
+// provider-defined — the framework ships its own DocTypes and every deployment
+// adds custom fields, permissions, and naming rules on top — so payload shapes
+// validate as open records and only the wire envelope (data / message / docs)
+// is checked. Input objects are .strict() so typos fail at the boundary, and
+// query names stay provider-verbatim (limit_page_length, with_parent), exactly
+// as the Frappe sources declare them.
 
 // unknown: a DocType resource row or metadata blob is a provider-defined
 // record — field definitions, permissions, and naming rules differ per

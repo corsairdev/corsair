@@ -25,7 +25,10 @@ type ErpnextAnyDoc = Record<string, unknown>;
 // database object and are keyed by tenant and document; equal document IDs in
 // different tenants stay independent. Without a database object (tests, bare
 // clients) the entity client itself is the key.
-const documentMutationQueues = new WeakMap<object, Map<string, Promise<void>>>();
+const documentMutationQueues = new WeakMap<
+	object,
+	Map<string, Promise<void>>
+>();
 
 type ErpnextStoreScope = Pick<ErpnextHandlerContext, 'database' | 'tenantId'>;
 

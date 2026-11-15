@@ -11,9 +11,8 @@ overviewNote: |
 
   This plugin implements the requested 51 operations over the generic Frappe REST surface. Inbound webhooks are not included.
 factory:
-  note: Use `baseUrl` only with explicitly configured credentials for that same site. Connected accounts require their own `base_url` alongside the stored API key and secret.
-  options:
-    baseUrl: https://yourcompany.frappe.cloud
+  note: |
+    A connected account needs three fields: `api_key`, `api_secret` and the site's `base_url`. Store them together, for example `pnpm corsair setup --plugin=erpnext --tenant=acme api_key=<your-key> api_secret=<your-secret> base_url=https://yourcompany.frappe.cloud`, and call `erpnext()` with no options. `baseUrl` applies only to credentials passed in code, for that same site: `erpnext({ apiKey: process.env.ERPNEXT_API_KEY, apiSecret: process.env.ERPNEXT_API_SECRET, baseUrl: 'https://yourcompany.frappe.cloud' })`.
 examples:
   read:
     path: desk.searchGlobal
