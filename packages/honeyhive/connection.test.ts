@@ -149,6 +149,7 @@ describe('HoneyHive plane-only connections and hook keys', () => {
 
 	it('takes a plane key from plugin options without stored credentials', async () => {
 		const keyBuilder = keyBuilderOf({ dataPlaneKey: 'hh_fgdp_opt' });
+		// `unknown` cast: an empty context stands in for a connection with no key store.
 		await expect(
 			keyBuilder({} as unknown as HoneyHiveKeyBuilderContext, 'endpoint'),
 		).resolves.toBe('hh_fgdp_opt');
@@ -184,6 +185,7 @@ describe('HoneyHive plane-only connections and hook keys', () => {
 describe('HoneyHive plane-only connections through bound endpoints', () => {
 	afterEach(() => jest.restoreAllMocks());
 
+	// `unknown` because these mock responses stand in for endpoints with different JSON shapes.
 	const respond = (body: Record<string, unknown>) =>
 		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(JSON.stringify(body), {
