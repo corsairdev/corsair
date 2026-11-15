@@ -1,6 +1,7 @@
 import { createHubConnectSession } from '../../hub/connect';
 import type { HubConnectSessionInput } from '../../hub/types';
 import type { CorsairInternalConfig } from '..';
+import { AccountSelectionError, resolveAccount } from '../account-lookup';
 import { createIntegrationKeyManager } from '../auth/key-manager';
 import {
 	getPluginAuthStatusForTenant,
@@ -333,11 +334,30 @@ export async function disconnectConnection(
 				.execute();
 		}
 
+		let accountId: string | undefined;
+		if (input.account !== undefined) {
+			try {
+				accountId = (
+					await resolveAccount({
+						db: trx,
+						kek: internal.kek,
+						integrationId: integration.id,
+						tenantId,
+						ref: input.account,
+					})
+				)?.id;
+			} catch (error) {
+				if (!(error instanceof AccountSelectionError)) throw error;
+			}
+			if (!accountId) return;
+		}
+
 		const accountsForPair = trx
 			.selectFrom('corsair_accounts')
 			.select('id')
 			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id);
+			.where('integration_id', '=', integration.id)
+			.$if(!!accountId, (q) => q.where('id', '=', accountId as string));
 		await trx
 			.deleteFrom('corsair_events')
 			.where('account_id', 'in', accountsForPair)
@@ -350,6 +370,7 @@ export async function disconnectConnection(
 			.deleteFrom('corsair_accounts')
 			.where('tenant_id', '=', tenantId)
 			.where('integration_id', '=', integration.id)
+			.$if(!!accountId, (q) => q.where('id', '=', accountId as string))
 			.executeTakeFirst();
 		disconnected = (deleted.numDeletedRows ?? 0n) > 0n;
 	});

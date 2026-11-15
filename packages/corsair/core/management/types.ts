@@ -109,6 +109,8 @@ export type DisconnectInput = {
 	/** Plugin whose connection to remove for the tenant. */
 	plugin: string;
 	tenantId?: string;
+	/** Remove only this account (row id, provider id or label); omit for all. */
+	account?: string;
 };
 
 export type DisconnectResult = {

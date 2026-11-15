@@ -287,7 +287,11 @@ export type CorsairCloudInstanceHandle<Registry = CorsairCloudRegistry> =
 		/** @deprecated Use `connections.list({ tenant })`. */
 		connectionStatus: { get(input: { tenantId: string }): Promise<unknown> };
 		/** @deprecated Use `connections.delete(integration, tenant)`. */
-		disconnect(input: { tenantId: string; plugin: string }): Promise<unknown>;
+		disconnect(input: {
+			tenantId: string;
+			plugin: string;
+			account?: string;
+		}): Promise<unknown>;
 		/** @deprecated Use `connect.createSession`. */
 		createConnectLink(input: CreateCloudConnectLinkInput): Promise<ConnectLink>;
 	};
