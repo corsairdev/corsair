@@ -13,7 +13,7 @@ pnpm add @corsair-dev/shopify
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `collections.addProducts` | `shopify.api.collections.addProducts` | `write` | Add products to a collection; the whole call fails if any is already present |
-| `collections.create` | `shopify.api.collections.create` | `write` | Create a manual or smart collection with a title and handle |
+| `collections.create` | `shopify.api.collections.create` | `write` | Create a manual collection with a title and handle |
 | `collections.get` | `shopify.api.collections.get` | `read` | Read one collection by GID |
 | `collections.list` | `shopify.api.collections.list` | `read` | List collections with their product counts, cursor-paged |
 | `customers.create` | `shopify.api.customers.create` | `write` | Create a customer with an email, name and tags |
@@ -24,9 +24,10 @@ pnpm add @corsair-dev/shopify
 | `inventory.list` | `shopify.api.inventory.list` | `read` | Read the available stock of one inventory item at every active location |
 | `orders.cancel` | `shopify.api.orders.cancel` | `destructive` | Cancel an order, optionally restocking and notifying the customer; does not refund |
 | `orders.close` | `shopify.api.orders.close` | `write` | Close a completed or cancelled order so it no longer counts as open |
-| `orders.get` | `shopify.api.orders.get` | `read` | Read one order by GID with its customer and line items |
+| `orders.get` | `shopify.api.orders.get` | `read` | Read one order by GID with its customer and a page of its line items |
 | `orders.list` | `shopify.api.orders.list` | `read` | List orders with totals and line items, filtered and sorted, cursor-paged |
-| `orders.markAsPaid` | `shopify.api.orders.markAsPaid` | `write` | Mark an order as paid without taking a payment; recorded against a manual gateway |
+| `orders.listLineItems` | `shopify.api.orders.listLineItems` | `read` | Read one page of an order line items, cursor-paged, for orders with more than one page |
+| `orders.markAsPaid` | `shopify.api.orders.markAsPaid` | `destructive` | Mark an order as paid: captures an existing payment authorization, or records a manual payment for the outstanding amount |
 | `products.create` | `shopify.api.products.create` | `write` | Create a product with its title and catalog fields; variants are added separately |
 | `products.delete` | `shopify.api.products.delete` | `destructive` | Permanently delete a product with its variants, media and inventory items |
 | `products.get` | `shopify.api.products.get` | `read` | Read one product by GID, including its first variants and inventory totals |
