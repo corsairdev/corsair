@@ -720,6 +720,46 @@ describe('signerProfiles, applications, seal, logCapsules, & bareSignatures', ()
 		});
 	});
 
+	it('signatureRequests.update: passes defaultSignatureMethod through', async () => {
+		mockedRequest.mockResolvedValue({ _id: 'sr_1' });
+		await SignatureRequestsEndpoints.update(ctx, {
+			signatureRequestId: 'sr_1',
+			defaultSignatureMethod: 'SIMPLE_STD',
+		});
+		expect(mockedRequest.mock.calls[0]?.[2]?.body).toEqual({
+			defaultSignatureMethod: 'SIMPLE_STD',
+		});
+	});
+
+	it('documents.provideJsonContent: sends a JSON array unchanged', async () => {
+		mockedRequest.mockResolvedValue({ _id: 'doc_1' });
+		const jsonContent = [{ amount: 10 }, { amount: 20 }];
+		await DocumentsEndpoints.provideJsonContent(ctx, {
+			documentId: 'doc_1',
+			jsonContent,
+		});
+		expect(mockedRequest.mock.calls[0]?.[2]?.body).toEqual({ jsonContent });
+	});
+
+	it('signerProfiles.get/list: keep signatureAuthMethodsConfiguration', async () => {
+		const profile = {
+			_id: 'prof_1',
+			name: 'Standard',
+			signatureAuthMethodsConfiguration: {
+				SIMPLE_STD: { authMethods: ['EMAIL_CODE'] },
+				ADVANCED_SMS: { idProofings: [], authMethods: ['SMS_CODE'] },
+			},
+		};
+		mockedRequest.mockResolvedValueOnce(profile);
+		const single = await SignerProfilesEndpoints.get(ctx, {
+			signerProfileId: 'prof_1',
+		});
+		mockedRequest.mockResolvedValueOnce([profile]);
+		const many = await SignerProfilesEndpoints.list(ctx, {});
+		expect(single).toEqual(profile);
+		expect(many).toEqual([profile]);
+	});
+
 	it('applications.getContext: gets application context', async () => {
 		const mockResponse = { appId: 'appId_1', appName: 'My App' };
 		mockedRequest.mockResolvedValue(mockResponse);

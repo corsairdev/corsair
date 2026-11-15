@@ -3,6 +3,23 @@ import { z } from 'zod';
 export const AppEnvSchema = z.enum(['DEVELOPMENT', 'STAGING', 'PRODUCTION']);
 export type AppEnv = z.infer<typeof AppEnvSchema>;
 
+export const SignatureMethodSchema = z.enum([
+	'SIMPLE_STD',
+	'ADVANCED_SMS',
+	'ADVANCED_STD',
+	'QUALIFIED_STD',
+]);
+
+// `unknown` because custom JSON documents may hold any JSON value (object, array or primitive).
+const JsonValueSchema = z.union([
+	z.string(),
+	z.number(),
+	z.boolean(),
+	z.null(),
+	z.array(z.unknown()),
+	z.record(z.string(), z.unknown()),
+]);
+
 export const BinaryDataSchema = z.object({
 	kind: z.literal('binary'),
 	contentType: z.string(),
@@ -261,6 +278,18 @@ export const SignerProfileSchema = z.object({
 	version: z.number().nullish(),
 	isRecurrent: z.boolean().nullish(),
 	integrationMode: z.string().nullish(),
+	// Keyed by signature method (SIMPLE_STD, ADVANCED_SMS, ...); kept open for new methods.
+	signatureAuthMethodsConfiguration: z
+		.record(
+			z.string(),
+			z
+				.object({
+					idProofings: z.array(z.string()).nullish(),
+					authMethods: z.array(z.string()).nullish(),
+				})
+				.passthrough(),
+		)
+		.nullish(),
 });
 export type SignerProfile = z.infer<typeof SignerProfileSchema>;
 
@@ -382,6 +411,7 @@ export const IgnisignEndpointInputSchemas = {
 			documentIds: z.array(z.string()).optional(),
 			signerIds: z.array(z.string()).optional(),
 			externalId: z.string().optional(),
+			defaultSignatureMethod: SignatureMethodSchema.optional(),
 		})
 		.strict(),
 
@@ -541,8 +571,7 @@ export const IgnisignEndpointInputSchemas = {
 	'documents.provideJsonContent': z
 		.object({
 			documentId: z.string(),
-			// `unknown` because custom JSON documents may contain arbitrary valid JSON keys/values.
-			jsonContent: z.record(z.string(), z.unknown()),
+			jsonContent: JsonValueSchema,
 		})
 		.strict(),
 
@@ -661,8 +690,7 @@ export const IgnisignEndpointInputSchemas = {
 					mimeType: z.string().optional(),
 					contentB64: z.string().optional(),
 					xmlContent: z.string().optional(),
-					// `unknown` because custom JSON documents may contain arbitrary valid JSON payload.
-					jsonContent: z.record(z.string(), z.unknown()).optional(),
+					jsonContent: JsonValueSchema.optional(),
 				})
 				.strict(),
 		})

@@ -30,6 +30,10 @@ describeLive('Ignisign live API (env-gated)', () => {
 		);
 
 		const parsed = ApplicationContextSchema.parse(res);
-		expect(typeof parsed.appName).toBe('string');
+		expect(parsed.appId ?? appId).toBe(appId);
+		// appName is nullable in the schema; check its type only when present.
+		if (parsed.appName != null) {
+			expect(typeof parsed.appName).toBe('string');
+		}
 	});
 });
