@@ -177,6 +177,7 @@ const v3TaskRequestOperationIds = new Set([
 
 function v3TaskRequestDefinitions(
 	definitions: Record<string, TeamworkOpenApiSchema>,
+	requireTaskName: boolean,
 ): Record<string, TeamworkOpenApiSchema> {
 	const userGroups = definitions['payload.UserGroups'];
 	const userGroupProperties = isRecord(userGroups?.properties)
@@ -235,7 +236,7 @@ function v3TaskRequestDefinitions(
 				...(isRecord(task?.properties) ? task.properties : {}),
 				description: { type: 'string' },
 			},
-			required: [],
+			required: requireTaskName ? ['name'] : [],
 		},
 		'task.Options': {
 			...taskOptions,
@@ -262,7 +263,7 @@ function createInputSchema(
 	const baseDefinitions = teamworkDefinitions[operation.version] ?? {};
 	const definitions =
 		operation.version === 'v3' && v3TaskRequestOperationIds.has(operation.id)
-			? v3TaskRequestDefinitions(baseDefinitions)
+			? v3TaskRequestDefinitions(baseDefinitions, operation.method === 'POST')
 			: baseDefinitions;
 	const pathShape: Record<string, z.ZodType> = {};
 	const queryShape: Record<string, z.ZodType> = {};

@@ -166,6 +166,12 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		expect(
 			createTaskSchema?.safeParse({
 				...input,
+				body: { ...input.body, task: { ...input.body.task, name: undefined } },
+			}).success,
+		).toBe(false);
+		expect(
+			createTaskSchema?.safeParse({
+				...input,
 				body: {
 					...input.body,
 					task: { ...input.body.task, undocumented: true },

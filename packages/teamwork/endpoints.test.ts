@@ -109,7 +109,16 @@ function makeInput(
 	// `unknown` is necessary because request bodies vary by provider operation.
 	const input: Record<string, unknown> = { path, query };
 	if (operation.bodyRequired && operation.body !== undefined) {
-		input.body = makeValue(operation.body, definitions);
+		const body = makeValue(operation.body, definitions);
+		if (
+			operation.version === 'v3' &&
+			operation.method === 'POST' &&
+			isRecord(body) &&
+			isRecord(body.task)
+		) {
+			body.task.name = 'Teamwork route test task';
+		}
+		input.body = body;
 	}
 	return input;
 }

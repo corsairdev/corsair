@@ -261,6 +261,10 @@ type TeamworkV3Input_task_Request = {
 	taskOptions: TeamworkV3Input_task_Options;
 	workflows?: TeamworkV3Input_task_Workflows;
 };
+type TeamworkV3Input_task_CreateRequest = Omit<
+	TeamworkV3Input_task_Request,
+	'task'
+> & { task: TeamworkV3Input_task_Task & { name: string } };
 type TeamworkV3Input_task_Task = {
 	allocationId?: number;
 	assignees?: TeamworkV3Input_payload_UserGroups;
@@ -5602,7 +5606,7 @@ export type TeamworkV3Inputs = {
 	v3_post_projects_api_v3_me_personaltasks_json: {
 		path?: Record<string, never>;
 		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_Request;
+		body: TeamworkV3Input_task_CreateRequest;
 	};
 	v3_get_projects_api_v3_me_personaltasks_id_json: {
 		path: { id: number };
@@ -13103,7 +13107,7 @@ export type TeamworkV3Inputs = {
 	v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json: {
 		path: { taskgroupId: number };
 		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_Request;
+		body: TeamworkV3Input_task_CreateRequest;
 	};
 	v3_get_projects_api_v3_tasklists_json: {
 		path?: Record<string, never>;
@@ -14383,7 +14387,7 @@ export type TeamworkV3Inputs = {
 	v3_post_projects_api_v3_tasklists_tasklistid_tasks_json: {
 		path: { tasklistId: number };
 		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_Request;
+		body: TeamworkV3Input_task_CreateRequest;
 	};
 	v3_get_projects_api_v3_tasklists_tasklistid_time_total_json: {
 		path: { tasklistId: number };
@@ -16194,7 +16198,7 @@ export type TeamworkV3Inputs = {
 	v3_post_projects_api_v3_tasks_taskid_subtasks_json: {
 		path: { taskId: number };
 		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_Request;
+		body: TeamworkV3Input_task_CreateRequest;
 	};
 	v3_get_projects_api_v3_tasks_taskid_time_json: {
 		path: { taskId: number };
