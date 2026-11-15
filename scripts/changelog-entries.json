@@ -5373,5 +5373,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/gorgias",
+    "dir": "packages/gorgias",
+    "name": "Gorgias",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/postmark",
+    "dir": "packages/postmark",
+    "name": "Postmark",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
