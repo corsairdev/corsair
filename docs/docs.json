@@ -2388,6 +2388,14 @@
                 ]
               },
               {
+                "group": "Geocodio",
+                "pages": [
+                  "plugins/geocodio/overview",
+                  "plugins/geocodio/api",
+                  "plugins/geocodio/database"
+                ]
+              },
+              {
                 "group": "GIPHY",
                 "pages": [
                   "plugins/giphy/overview",
