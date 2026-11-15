@@ -17,6 +17,8 @@ export type ErpnextOperationDefinition = {
 	responseEncoding: 'json' | 'bytes';
 	riskLevel: EndpointRiskLevel;
 	irreversible?: boolean;
+	// Query values the route always needs, sent before the caller's own.
+	fixedQuery?: Readonly<Record<string, string>>;
 	description: string;
 };
 
@@ -406,6 +408,9 @@ export const ERPNEXT_OPERATIONS = [
 		path: '/api/resource/Has Role',
 		pathParams: [],
 		queryParams: ['fields', 'filters', 'limit_start', 'limit_page_length'],
+		// Has Role is a child table: Frappe v15 raises PermissionError on a
+		// child-table list without its parent DocType (check_parent_permission).
+		fixedQuery: { parent: 'User' },
 		hasBody: false,
 		bodyRequired: false,
 		hasResponseBody: true,

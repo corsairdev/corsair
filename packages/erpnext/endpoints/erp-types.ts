@@ -107,15 +107,20 @@ const ErpGetStockBalanceInputSchema = z
 // POST /api/method/erpnext.selling.doctype.sales_order.sales_order.
 // make_sales_invoice — the mapper signature is make_sales_invoice(source_name,
 // target_doc=None, args=None, ignore_permissions=False) (sales_order.py on version-15 and version-16).
-// target_doc names an existing draft invoice to update instead of creating a
-// fresh one, and args stays a JSON string exactly as Frappe parses it
-// server-side.
+// target_doc is a JSON-serialized document the mapper fills in instead of a
+// fresh one (get_mapped_doc runs json.loads on a string target_doc), and args
+// stays a JSON string exactly as Frappe parses it server-side.
 const ErpMakeSalesInvoiceInputSchema = z
 	.object({
 		body: z
 			.object({
 				source_name: z.string().min(1),
-				target_doc: z.string().optional(),
+				target_doc: z
+					.string()
+					.optional()
+					.describe(
+						'JSON-serialized document to map into instead of a new draft, for example {"doctype":"<target DocType>",...}; Frappe parses it with json.loads, so a bare document name fails',
+					),
 				args: z
 					.string()
 					.optional()
@@ -135,7 +140,12 @@ const ErpMakeDeliveryNoteInputSchema = z
 		body: z
 			.object({
 				source_name: z.string().min(1),
-				target_doc: z.string().optional(),
+				target_doc: z
+					.string()
+					.optional()
+					.describe(
+						'JSON-serialized document to map into instead of a new draft, for example {"doctype":"<target DocType>",...}; Frappe parses it with json.loads, so a bare document name fails',
+					),
 			})
 			.strict(),
 	})
@@ -170,7 +180,12 @@ const ErpMakePurchaseOrderInputSchema = z
 					.describe(
 						'Rows to order, for example [{"name":"<Sales Order Item row name>","supplier":"<Supplier>"}]; one draft purchase order per supplier. Without rows ERPNext returns nothing',
 					),
-				target_doc: z.string().optional(),
+				target_doc: z
+					.string()
+					.optional()
+					.describe(
+						'JSON-serialized document to map into instead of a new draft, for example {"doctype":"<target DocType>",...}; Frappe parses it with json.loads, so a bare document name fails',
+					),
 			})
 			.strict(),
 	})
@@ -232,15 +247,19 @@ const ErpnextErpDocumentOutputSchema = z
 	})
 	.loose();
 
-// make_purchase_order returns purchase_orders, a list of mapped Purchase
-// Order drafts ("Creates Purchase Order for each Supplier. Returns a list of
-// doc objects." — sales_order.py), so the message is an array of open records.
+// make_purchase_order on version-16 returns purchase_orders, a list of mapped
+// Purchase Order drafts ("Creates Purchase Order for each Supplier. Returns a
+// list of doc objects." — sales_order.py); version-15 returns the one mapped
+// doc. The message is either shape.
 // The mapper returns early (None) when selected_items is empty; that branch
 // answers without a message key and fails this schema, which is the intended
 // boundary for a call that would create nothing.
 const ErpMakePurchaseOrderOutputSchema = z
 	.object({
-		message: z.array(ErpnextErpDocumentSchema),
+		message: z.union([
+			z.array(ErpnextErpDocumentSchema),
+			ErpnextErpDocumentSchema,
+		]),
 	})
 	.loose();
 

@@ -319,6 +319,23 @@ describe('ERPNext files endpoint contract', () => {
 		}
 	});
 
+	// An unread body holds the connection open in undici until it is consumed or cancelled.
+	it('cancels the body of a failed download before throwing', async () => {
+		const failed = new Response('Service Unavailable', { status: 503 });
+		const cancel = jest.spyOn(failed.body!, 'cancel');
+		const mockFetch = jest.spyOn(global, 'fetch').mockResolvedValue(failed);
+		try {
+			await fetchErpnextBinary(
+				'/api/method/frappe.utils.print_format.download_pdf?doctype=Sales%20Invoice&name=ACC-SINV-2026-00001',
+				BASE_URL,
+				'test-key:test-secret',
+			).catch(() => undefined);
+			expect(cancel).toHaveBeenCalledTimes(1);
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
 	// Downloads bypass core's request(), so they repeat its 429 retries.
 	it('retries a rate-limited download after Retry-After and returns the bytes', async () => {
 		const mockFetch = jest

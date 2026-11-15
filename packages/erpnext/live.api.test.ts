@@ -1,4 +1,4 @@
-import { makeErpnextRequest } from './client';
+import { makeErpnextRequest, normalizeErpnextBaseUrl } from './client';
 
 const baseUrl = process.env.ERPNEXT_BASE_URL;
 const apiKey = process.env.ERPNEXT_API_KEY;
@@ -29,7 +29,9 @@ describeLive('ERPNext live API', () => {
 		// envelope handling; the body is provider-defined.
 		const response = await makeErpnextRequest<unknown>(
 			'/api/method/frappe.auth.get_logged_user',
-			baseUrl!,
+			// Same https check production requests get, so an http:// value fails
+			// before the key and secret are sent.
+			normalizeErpnextBaseUrl(baseUrl!),
 			`${apiKey!}:${apiSecret!}`,
 			{ method: 'GET' },
 		);

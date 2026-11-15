@@ -842,6 +842,55 @@ describe('ERPNext tenant host and local document sync', () => {
 		}
 	});
 
+	it('stores the parent Frappe returns when setValue edits a child row', async () => {
+		const upsertByEntityId = jest.fn();
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async () => {
+				// frappe.client.set_value on a child DocType answers the parent document.
+				return new Response(
+					JSON.stringify({
+						message: {
+							doctype: 'Sales Order',
+							name: 'SO-0001',
+							items: [{ doctype: 'Sales Order Item', name: 'a1b2', qty: 3 }],
+						},
+					}),
+					{ status: 200, headers: { 'content-type': 'application/json' } },
+				);
+			});
+		try {
+			await documentsEndpoints.setValue(
+				{
+					key: 'test-key:test-secret',
+					options: { baseUrl: BASE_URL },
+					db: {
+						documents: {
+							findByEntityId: jest.fn().mockResolvedValue(null),
+							upsertByEntityId,
+							deleteByEntityId: jest.fn(),
+						},
+					},
+				},
+				{
+					body: {
+						doctype: 'Sales Order Item',
+						name: 'a1b2',
+						fieldname: 'qty',
+						value: 3,
+					},
+				},
+			);
+			expect(upsertByEntityId).toHaveBeenCalledTimes(1);
+			expect(upsertByEntityId.mock.calls[0]?.[0]).toBe('Sales Order:SO-0001');
+			expect(upsertByEntityId.mock.calls[0]?.[1]).toMatchObject({
+				doctype: 'Sales Order',
+			});
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
 	it('keeps full document fields when a later list selects only the name', async () => {
 		const upsertByEntityId = jest.fn();
 		const mockFetch = jest

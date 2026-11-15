@@ -97,13 +97,13 @@ const INPUT_FIXTURES: Record<ErpOperationKey, unknown> = {
 	'erp.makeSalesInvoice': {
 		body: {
 			source_name: 'SO-00001',
-			target_doc: 'ACC-SINV-2026-00042',
+			target_doc: '{"doctype":"Sales Invoice","name":"ACC-SINV-2026-00042"}',
 		},
 	},
 	'erp.makeDeliveryNote': {
 		body: {
 			source_name: 'SO-00001',
-			target_doc: 'MAT-DN-2026-00042',
+			target_doc: '{"doctype":"Delivery Note","name":"MAT-DN-2026-00042"}',
 		},
 	},
 	'erp.makePurchaseOrder': {
@@ -271,7 +271,7 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.sales_order.make_sales_invoice',
 		body: {
 			source_name: 'SO-00001',
-			target_doc: 'ACC-SINV-2026-00042',
+			target_doc: '{"doctype":"Sales Invoice","name":"ACC-SINV-2026-00042"}',
 		},
 		authHeader: AUTH_HEADER,
 	},
@@ -280,7 +280,7 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.sales_order.make_delivery_note',
 		body: {
 			source_name: 'SO-00001',
-			target_doc: 'MAT-DN-2026-00042',
+			target_doc: '{"doctype":"Delivery Note","name":"MAT-DN-2026-00042"}',
 		},
 		authHeader: AUTH_HEADER,
 	},
@@ -325,6 +325,20 @@ describe('ERPNext erp endpoint contract', () => {
 		expect([...endpointHandlers(erpApi as object).keys()].sort()).toEqual(
 			[...ERP_ACTIONS].sort(),
 		);
+	});
+
+	it('accepts the single Purchase Order that ERPNext v15 make_purchase_order returns', () => {
+		// v15 returns one mapped doc; v16 returns a list (sales_order.py on each branch).
+		const output = erpnextEndpointSchemas['erp.makePurchaseOrder'].output;
+		expect(
+			output.safeParse({
+				message: {
+					doctype: 'Purchase Order',
+					name: 'new-purchase-order-abc123',
+					supplier: 'SUP-00001',
+				},
+			}).success,
+		).toBe(true);
 	});
 
 	it.each(Object.entries(INPUT_FIXTURES))(
@@ -443,7 +457,12 @@ describe('ERPNext erp endpoint contract', () => {
 		{
 			key: 'erp.makeSalesInvoice' as ErpOperationKey,
 			name: 'a body without source_name',
-			input: { body: { target_doc: 'ACC-SINV-2026-00042' } },
+			input: {
+				body: {
+					target_doc:
+						'{"doctype":"Sales Invoice","name":"ACC-SINV-2026-00042"}',
+				},
+			},
 		},
 		{
 			key: 'erp.makeSalesInvoice' as ErpOperationKey,
@@ -453,7 +472,11 @@ describe('ERPNext erp endpoint contract', () => {
 		{
 			key: 'erp.makeDeliveryNote' as ErpOperationKey,
 			name: 'a body without source_name',
-			input: { body: { target_doc: 'MAT-DN-2026-00042' } },
+			input: {
+				body: {
+					target_doc: '{"doctype":"Delivery Note","name":"MAT-DN-2026-00042"}',
+				},
+			},
 		},
 		{
 			key: 'erp.makeDeliveryNote' as ErpOperationKey,

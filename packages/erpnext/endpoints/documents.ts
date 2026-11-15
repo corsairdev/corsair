@@ -102,10 +102,19 @@ async function syncDocuments(
 		for (const doc of docsFromEnvelope(result)) {
 			const name = doc.name;
 			if (typeof name === 'string' && name.length > 0) {
-				const entityId = `${doctype}:${name}`;
+				// set_value on a child row answers the parent document, so the
+				// returned doctype names the row; list rows omit it.
+				const rowDoctype =
+					typeof doc.doctype === 'string' && doc.doctype.length > 0
+						? doc.doctype
+						: doctype;
+				const entityId = `${rowDoctype}:${name}`;
 				await mutateStoredDocument(ctx, db, entityId, async () => {
 					if (mode === 'replace') {
-						await db.upsertByEntityId(entityId, { doctype, ...doc });
+						await db.upsertByEntityId(entityId, {
+							doctype: rowDoctype,
+							...doc,
+						});
 						return;
 					}
 					// Upsert replaces the stored row, and list results carry only the
@@ -119,7 +128,7 @@ async function syncDocuments(
 							? (existing.data as ErpnextAnyDoc)
 							: {};
 					await db.upsertByEntityId(entityId, {
-						doctype,
+						doctype: rowDoctype,
 						...prior,
 						...doc,
 					});

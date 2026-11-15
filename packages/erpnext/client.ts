@@ -183,6 +183,8 @@ export async function fetchErpnextBinary(
 			const bytes = new Uint8Array(await response.arrayBuffer());
 			return Buffer.from(bytes).toString('base64');
 		}
+		// The failed body is never read; cancel it so undici can free the connection.
+		await response.body?.cancel().catch(() => undefined);
 		const statusText = response.statusText || 'Request failed';
 		// Mirror the shared transport's Retry-After handling: the header is
 		// in seconds on the wire and milliseconds once wrapped, so the

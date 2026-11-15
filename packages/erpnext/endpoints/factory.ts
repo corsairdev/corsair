@@ -155,6 +155,14 @@ function pickQuery(
 	return Object.keys(query).length > 0 ? query : undefined;
 }
 
+function withFixedQuery(
+	fixed: Readonly<Record<string, string>> | undefined,
+	// Record<string, unknown>: the provider-defined query values from pickQuery.
+	query: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+	return fixed ? { ...fixed, ...query } : query;
+}
+
 /**
  * Builds a typed endpoint from the single operation catalog. Path, query and
  * body handling live here so every family file stays a one-line declaration,
@@ -179,7 +187,10 @@ export function defineEndpoint<K extends ErpnextOperationKey>(
 			ctx.key,
 			{
 				method: operation.method,
-				query: pickQuery(operation.queryParams, record),
+				query: withFixedQuery(
+					operation.fixedQuery,
+					pickQuery(operation.queryParams, record),
+				),
 				body: operation.hasBody ? record.body : undefined,
 			},
 		);

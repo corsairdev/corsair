@@ -226,6 +226,9 @@ const EXPECTED_REQUESTS: Record<SystemOperationKey, ExpectedRequest> = {
 		// path and the URL parser normalizes it to %20 on the wire.
 		url: 'https://test.example.com/api/resource/Has Role',
 		query: {
+			// Has Role is a child table: Frappe v15 raises PermissionError on a
+			// child-table list without the parent DocType (check_parent_permission).
+			parent: 'User',
 			fields: '["parent","role"]',
 			filters: '[["parenttype","=","User"]]',
 			limit_start: '0',
