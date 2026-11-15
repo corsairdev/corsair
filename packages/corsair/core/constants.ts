@@ -375,6 +375,7 @@ export const BaseProviders = [
 	'missive',
 	'mixmax',
 	'monday',
+	'mondaymcp',
 	'mrscraper',
 	'nanonets',
 	'neon',
@@ -399,6 +400,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'parallel',
 	'parseur',
 	'pdfco',
 	'pdfmonkey',
@@ -410,6 +412,7 @@ export const BaseProviders = [
 	'plain',
 	'ploid',
 	'postmark',
+	'prismic',
 	'posthog',
 	'postman',
 	'prisma',
@@ -477,6 +480,7 @@ export const BaseProviders = [
 	'servicenow',
 	'sharepoint',
 	'shippo',
+	'shortcut',
 	'slack',
 	'slackbot',
 	'snapchat',
@@ -950,6 +954,7 @@ export const ProviderDisplayNames = {
 	missive: 'Missive',
 	mixmax: 'Mixmax',
 	monday: 'Monday',
+	mondaymcp: 'Monday MCP',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
 	neon: 'Neon',
@@ -974,6 +979,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	parallel: 'Parallel',
 	parseur: 'Parseur',
 	pdfco: 'PDF.co',
 	pdfmonkey: 'PDFMonkey',
@@ -985,6 +991,7 @@ export const ProviderDisplayNames = {
 	plain: 'Plain',
 	ploid: 'Ploid',
 	postmark: 'Postmark',
+	prismic: 'Prismic',
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
@@ -1052,6 +1059,7 @@ export const ProviderDisplayNames = {
 	servicenow: 'ServiceNow',
 	sharepoint: 'SharePoint',
 	shippo: 'Shippo',
+	shortcut: 'Shortcut',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
@@ -1532,6 +1540,7 @@ export type AllProviders =
 	| 'missive'
 	| 'mixmax'
 	| 'monday'
+	| 'mondaymcp'
 	| 'mrscraper'
 	| 'nanonets'
 	| 'neon'
@@ -1556,6 +1565,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'parallel'
 	| 'parseur'
 	| 'pdfco'
 	| 'pdfmonkey'
@@ -1567,6 +1577,7 @@ export type AllProviders =
 	| 'plain'
 	| 'ploid'
 	| 'postmark'
+	| 'prismic'
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
@@ -1634,6 +1645,7 @@ export type AllProviders =
 	| 'servicenow'
 	| 'sharepoint'
 	| 'shippo'
+	| 'shortcut'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'

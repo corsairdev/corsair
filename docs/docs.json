@@ -3342,6 +3342,14 @@
                 ]
               },
               {
+                "group": "Parallel",
+                "pages": [
+                  "plugins/parallel/overview",
+                  "plugins/parallel/api",
+                  "plugins/parallel/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
@@ -3428,6 +3436,14 @@
                   "plugins/postmark/overview",
                   "plugins/postmark/api",
                   "plugins/postmark/database"
+                ]
+              },
+              {
+                "group": "Prismic",
+                "pages": [
+                  "plugins/prismic/overview",
+                  "plugins/prismic/api",
+                  "plugins/prismic/database"
                 ]
               },
               {
@@ -3977,6 +3993,14 @@
                   "plugins/shippo/api",
                   "plugins/shippo/database",
                   "plugins/shippo/webhooks"
+                ]
+              },
+              {
+                "group": "Shortcut",
+                "pages": [
+                  "plugins/shortcut/overview",
+                  "plugins/shortcut/api",
+                  "plugins/shortcut/database"
                 ]
               },
               {
