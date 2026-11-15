@@ -428,6 +428,7 @@ export const BaseProviders = [
 	'placid',
 	'plain',
 	'ploid',
+	'pointagram',
 	'polygonio',
 	'postmark',
 	'prerender',
@@ -1032,6 +1033,7 @@ export const ProviderDisplayNames = {
 	placid: 'Placid',
 	plain: 'Plain',
 	ploid: 'Ploid',
+	pointagram: 'Pointagram',
 	polygonio: 'Polygon.io',
 	postmark: 'Postmark',
 	prerender: 'Prerender',
@@ -1643,6 +1645,7 @@ export type AllProviders =
 	| 'placid'
 	| 'plain'
 	| 'ploid'
+	| 'pointagram'
 	| 'polygonio'
 	| 'postmark'
 	| 'prerender'

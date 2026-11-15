@@ -3567,6 +3567,14 @@
                 ]
               },
               {
+                "group": "Pointagram",
+                "pages": [
+                  "plugins/pointagram/overview",
+                  "plugins/pointagram/api",
+                  "plugins/pointagram/database"
+                ]
+              },
+              {
                 "group": "Polygon.io",
                 "pages": [
                   "plugins/polygonio/overview",
