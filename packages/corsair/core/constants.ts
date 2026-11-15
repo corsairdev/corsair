@@ -557,6 +557,7 @@ export const BaseProviders = [
 	'tpscheck',
 	'trello',
 	'tripadvisor',
+	'trustpilot',
 	'turbotpipes',
 	'turso',
 	'twentyonerisk',
@@ -1170,6 +1171,7 @@ export const ProviderDisplayNames = {
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
+	trustpilot: 'Trustpilot',
 	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
@@ -1790,6 +1792,7 @@ export type AllProviders =
 	| 'tpscheck'
 	| 'trello'
 	| 'tripadvisor'
+	| 'trustpilot'
 	| 'turbotpipes'
 	| 'turso'
 	| 'twentyonerisk'

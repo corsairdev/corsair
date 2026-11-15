@@ -4615,6 +4615,14 @@
                 ]
               },
               {
+                "group": "Trustpilot",
+                "pages": [
+                  "plugins/trustpilot/overview",
+                  "plugins/trustpilot/api",
+                  "plugins/trustpilot/database"
+                ]
+              },
+              {
                 "group": "Turbot Pipes",
                 "pages": [
                   "plugins/turbotpipes/overview",
