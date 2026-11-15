@@ -6039,5 +6039,14 @@
     "version": "0.1.67",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/livesession",
+    "dir": "packages/livesession",
+    "name": "LiveSession",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
