@@ -1,0 +1,1439 @@
+---
+title: "Imgix API reference"
+sidebarTitle: "API"
+description: "API reference for the Imgix plugin in Corsair: every `imgix.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assets
+
+### addFromOrigin
+
+`assets.addFromOrigin`
+
+Queue an existing origin asset to be indexed into the Imgix Asset Manager (imgix answers 202 with no body, returned as &#123;&#125;)
+
+**Risk:** `write`
+
+```ts
+await corsair.imgix.api.assets.addFromOrigin({ source_id: 'src_1234567890abcdef', origin_path: 'products/hero.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `origin_path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`assets.get`
+
+Retrieve details, technical metadata, and custom fields for an asset
+
+**Risk:** `read`
+
+```ts
+await corsair.imgix.api.assets.get({ source_id: 'src_1234567890abcdef', origin_path: 'products/hero.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `origin_path` | `string` | Yes | — |
+| `fields` | `string` | No | Comma-separated asset fields to return, sent as fields[assets] |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: assets | string,
+  attributes: {
+    origin_path?: string | null,
+    source_id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    content_type?: string | null,
+    media_kind?: string | null,
+    file_size?: number | null,
+    media_width?: number | null,
+    media_height?: number | null,
+    dpi_width?: number | null,
+    dpi_height?: number | null,
+    color_model?: string | null,
+    color_profile?: string | null,
+    has_frames?: boolean | null,
+    categories?: string[] | null,
+    custom_fields?: Record<string, any> | null,
+    date_created?: number | null,
+    date_modified?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`assets.list`
+
+List indexed assets for a specific Imgix source
+
+**Risk:** `read`
+
+```ts
+await corsair.imgix.api.assets.list({ source_id: 'src_1234567890abcdef', page_size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `filter` | `Record<string, string \| number \| boolean>` | No | Asset field filters, sent as filter[&lt;field&gt;]=&lt;value&gt; and ANDed, e.g. &#123; origin_path: "photos/", media_kind: "IMAGE" &#125; |
+| `sort` | `string` | No | — |
+| `fields` | `string` | No | Comma-separated asset fields to return, sent as fields[assets] |
+| `page_cursor` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: assets | string,
+  attributes: {
+    origin_path?: string | null,
+    source_id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    content_type?: string | null,
+    media_kind?: string | null,
+    file_size?: number | null,
+    media_width?: number | null,
+    media_height?: number | null,
+    dpi_width?: number | null,
+    dpi_height?: number | null,
+    color_model?: string | null,
+    color_profile?: string | null,
+    has_frames?: boolean | null,
+    categories?: string[] | null,
+    custom_fields?: Record<string, any> | null,
+    date_created?: number | null,
+    date_modified?: number | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  cursor?: {
+    current?: string | null,
+    next?: string | null,
+    hasMore?: boolean | null,
+    totalRecords?: string | number | null
+  },
+  pagination?: {
+    currentPage?: number | null,
+    hasNextPage?: boolean | null,
+    nextPage?: number | null,
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalRecords?: number | null
+  },
+  page?: {
+    current?: number,
+    size?: number,
+    total?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`assets.update`
+
+Update custom fields or metadata for an asset in the Asset Manager
+
+**Risk:** `write`
+
+```ts
+await corsair.imgix.api.assets.update({
+	source_id: 'src_1234567890abcdef',
+	origin_path: 'products/hero.jpg',
+	custom_fields: { category: 'apparel' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `origin_path` | `string` | Yes | — |
+| `custom_fields` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: assets | string,
+  attributes: {
+    origin_path?: string | null,
+    source_id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    content_type?: string | null,
+    media_kind?: string | null,
+    file_size?: number | null,
+    media_width?: number | null,
+    media_height?: number | null,
+    dpi_width?: number | null,
+    dpi_height?: number | null,
+    color_model?: string | null,
+    color_profile?: string | null,
+    has_frames?: boolean | null,
+    categories?: string[] | null,
+    custom_fields?: Record<string, any> | null,
+    date_created?: number | null,
+    date_modified?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`assets.upload`
+
+Upload a file directly to the origin via Imgix Asset Manager; with overwrite: true it replaces the existing file at that path
+
+**Risk:** `destructive`
+
+```ts
+await corsair.imgix.api.assets.upload({ source_id: 'src_1234567890abcdef', origin_path: 'uploads/banner.png', content_base64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `origin_path` | `string` | Yes | — |
+| `content_base64` | `string` | Yes | — |
+| `content_type` | `string` | No | — |
+| `overwrite` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: assets | string,
+  attributes: {
+    origin_path?: string | null,
+    source_id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    content_type?: string | null,
+    media_kind?: string | null,
+    file_size?: number | null,
+    media_width?: number | null,
+    media_height?: number | null,
+    dpi_width?: number | null,
+    dpi_height?: number | null,
+    color_model?: string | null,
+    color_profile?: string | null,
+    has_frames?: boolean | null,
+    categories?: string[] | null,
+    custom_fields?: Record<string, any> | null,
+    date_created?: number | null,
+    date_modified?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Generations
+
+### createVideo
+
+`generations.createVideo`
+
+Transform a static image into a video using AI motion generation (consumes AI credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.imgix.api.generations.createVideo({ url: 'https://your-subdomain.imgix.net/mountain.jpg', prompt: 'Slow cinematic pan across a mountain vista' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `model` | `auto \| klingai \| veo3.1 \| veo3.1-fast` | No | — |
+| `prompt` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `aspect_ratio` | `16:9 \| 9:16` | No | — |
+
+Asynchronously transforms an image into a video using AI motion generation. The image must be on an imgix Source with Image to Video enabled. Poll generations.getVideoJob with the returned data.id every 5 to 10 seconds until data.attributes.status is ready (video at data.attributes.result.url) or errored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes: {
+    status: string,
+    created_at?: number | null,
+    updated_at?: number | null,
+    result?: {
+      url?: string | null
+    } | null,
+    error?: {
+      code?: number | null,
+      message?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAltText
+
+`generations.getAltText`
+
+Generate or retrieve AI alt text for an image (new languages consume AI credits; regenerate replaces stored text and overrides)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.imgix.api.generations.getAltText({ url: 'https://images.example.com/mountain.jpg', language: 'en' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `url64` | `string` | No | — |
+| `language` | `string` | No | — |
+| `regenerate` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alt_text` | `Record<string, string>` | Yes | — |
+| `failed_languages` | `string[] \| null` | No | — |
+| `overridden_languages` | `string[] \| null` | No | — |
+
+
+
+---
+
+### getVideoJob
+
+`generations.getVideoJob`
+
+Poll the status and retrieve result URL of an asynchronous video generation job
+
+**Risk:** `read`
+
+```ts
+await corsair.imgix.api.generations.getVideoJob({ job_id: 'job_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes: {
+    status: string,
+    created_at?: number | null,
+    updated_at?: number | null,
+    result?: {
+      url?: string | null
+    } | null,
+    error?: {
+      code?: number | null,
+      message?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### overrideAltText
+
+`generations.overrideAltText`
+
+Set or remove manual alt-text overrides per language for an image
+
+**Risk:** `write`
+
+```ts
+await corsair.imgix.api.generations.overrideAltText({
+	url: 'https://images.example.com/mountain.jpg',
+	alt_text: { en: 'Snow-covered peaks at sunrise' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `url64` | `string` | No | — |
+| `alt_text` | `Record<string, string \| null>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alt_text` | `Record<string, string>` | Yes | — |
+| `removed_languages` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Purges
+
+### create
+
+`purges.create`
+
+Purge an asset and its derived variants from the Imgix CDN edge cache
+
+**Risk:** `destructive`
+
+```ts
+await corsair.imgix.api.purges.create({ url: 'https://images.example.com/products/hero.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `source_id` | `string` | No | — |
+| `sub_image` | `boolean` | No | — |
+
+Purges an asset URL and all its derived variants globally from the Imgix CDN edge cache.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: purges | string,
+  attributes?: {
+    url?: string,
+    status?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### get
+
+`reports.get`
+
+Retrieve details, metadata, and downloadable segment URLs for a report
+
+**Risk:** `read`
+
+```ts
+await corsair.imgix.api.reports.get({ report_id: 'rep_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: reports | string,
+  attributes: {
+    completed?: boolean | null,
+    files?: string[] | null,
+    period_start?: number | null,
+    period_end?: number | null,
+    report_key?: string | null,
+    report_type?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`reports.list`
+
+List available daily CDN logs and credit analytics reports
+
+**Risk:** `read`
+
+```ts
+await corsair.imgix.api.reports.list({ page_size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `completed` | `boolean` | No | — |
+| `report_type` | `cdn_logs \| credit_analytics_daily \| string` | No | — |
+| `sort` | `string` | No | — |
+| `page_number` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: reports | string,
+  attributes: {
+    completed?: boolean | null,
+    files?: string[] | null,
+    period_start?: number | null,
+    period_end?: number | null,
+    report_key?: string | null,
+    report_type?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  cursor?: {
+    current?: string | null,
+    next?: string | null,
+    hasMore?: boolean | null,
+    totalRecords?: string | number | null
+  },
+  pagination?: {
+    currentPage?: number | null,
+    hasNextPage?: boolean | null,
+    nextPage?: number | null,
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalRecords?: number | null
+  },
+  page?: {
+    current?: number,
+    size?: number,
+    total?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sources
+
+### create
+
+`sources.create`
+
+Create and deploy a new Imgix storage or web folder source
+
+**Risk:** `destructive`
+
+```ts
+await corsair.imgix.api.sources.create({ name: "Production Image Store", deployment_type: "webfolder", webfolder_base_url: "https://images.example.com/", imgix_subdomains: ["production-images"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `deployment_type` | `s3 \| webfolder \| gcs \| azure \| webproxy \| s3_compatible` | Yes | — |
+| `imgix_subdomains` | `string[]` | Yes | — |
+| `s3_bucket` | `string` | No | — |
+| `s3_prefix` | `string` | No | — |
+| `s3_access_key` | `string` | No | — |
+| `s3_secret_key` | `string` | No | — |
+| `webfolder_base_url` | `string` | No | — |
+| `gcs_bucket` | `string` | No | — |
+| `gcs_prefix` | `string` | No | — |
+| `gcs_access_key` | `string` | No | — |
+| `gcs_secret_key` | `string` | No | — |
+| `azure_account` | `string` | No | — |
+| `azure_bucket` | `string` | No | — |
+| `azure_prefix` | `string` | No | — |
+| `azure_sas_string` | `string` | No | — |
+| `azure_service_type` | `blob \| file` | No | — |
+| `access_key_id` | `string` | No | — |
+| `bucket_name` | `string` | No | — |
+| `endpoint_url` | `string` | No | S3-compatible endpoint host, e.g. sfo3.digitaloceanspaces.com (imgix documents it without a scheme) |
+| `region` | `string` | No | — |
+| `secret_key` | `string` | No | — |
+| `storage_provider` | `DigitalOcean \| Linode \| Wasabi \| R2` | No | — |
+| `custom_domains` | `string[]` | No | — |
+| `default_params` | `Record<string, string \| number \| boolean>` | No | — |
+| `secure_url_enabled` | `boolean` | No | — |
+| `cache_ttl_value` | `number` | No | — |
+| `cache_ttl_error` | `number` | No | — |
+
+Creates and deploys a new Imgix source for cloud storage (S3, GCS, Azure, S3-compatible) or a web folder origin. imgix_subdomains needs at least one *.imgix.net subdomain, given without the domain. The API cannot delete a source: disable it with sources.update (enabled false) or delete it in the dashboard.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: sources,
+  attributes: {
+    name?: string | null,
+    deployment_status?: string | null,
+    enabled?: boolean | null,
+    deployment?: {
+      type?: string | null,
+      s3_bucket?: string | null,
+      s3_prefix?: string | null,
+      s3_access_key?: string | null,
+      webfolder_base_url?: string | null,
+      gcs_bucket?: string | null,
+      gcs_prefix?: string | null,
+      gcs_access_key?: string | null,
+      azure_account?: string | null,
+      azure_bucket?: string | null,
+      azure_prefix?: string | null,
+      azure_service_type?: string | null,
+      access_key_id?: string | null,
+      bucket_name?: string | null,
+      endpoint_url?: string | null,
+      region?: string | null,
+      storage_provider?: string | null,
+      imgix_subdomains?: string[] | null,
+      custom_domains?: string[] | null,
+      default_params?: Record<string, any> | null,
+      secure_url_enabled?: boolean | null,
+      cache_ttl_behavior?: string | null,
+      cache_ttl_value?: number | null,
+      cache_ttl_error?: number | null
+    } | null,
+    date_deployed?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sources.get`
+
+Retrieve configuration details and deployment status for a source
+
+**Risk:** `read`
+
+```ts
+await corsair.imgix.api.sources.get({ source_id: 'src_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: sources,
+  attributes: {
+    name?: string | null,
+    deployment_status?: string | null,
+    enabled?: boolean | null,
+    deployment?: {
+      type?: string | null,
+      s3_bucket?: string | null,
+      s3_prefix?: string | null,
+      s3_access_key?: string | null,
+      webfolder_base_url?: string | null,
+      gcs_bucket?: string | null,
+      gcs_prefix?: string | null,
+      gcs_access_key?: string | null,
+      azure_account?: string | null,
+      azure_bucket?: string | null,
+      azure_prefix?: string | null,
+      azure_service_type?: string | null,
+      access_key_id?: string | null,
+      bucket_name?: string | null,
+      endpoint_url?: string | null,
+      region?: string | null,
+      storage_provider?: string | null,
+      imgix_subdomains?: string[] | null,
+      custom_domains?: string[] | null,
+      default_params?: Record<string, any> | null,
+      secure_url_enabled?: boolean | null,
+      cache_ttl_behavior?: string | null,
+      cache_ttl_value?: number | null,
+      cache_ttl_error?: number | null
+    } | null,
+    date_deployed?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sources.list`
+
+List all Imgix sources configured for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.imgix.api.sources.list({ page_size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter_name` | `string` | No | — |
+| `filter_deployment_type` | `s3 \| webfolder \| gcs \| azure \| webproxy \| s3_compatible \| imgix_storage` | No | — |
+| `filter_enabled` | `boolean` | No | — |
+| `sort` | `string` | No | — |
+| `fields` | `string` | No | — |
+| `page_number` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: sources,
+  attributes: {
+    name?: string | null,
+    deployment_status?: string | null,
+    enabled?: boolean | null,
+    deployment?: {
+      type?: string | null,
+      s3_bucket?: string | null,
+      s3_prefix?: string | null,
+      s3_access_key?: string | null,
+      webfolder_base_url?: string | null,
+      gcs_bucket?: string | null,
+      gcs_prefix?: string | null,
+      gcs_access_key?: string | null,
+      azure_account?: string | null,
+      azure_bucket?: string | null,
+      azure_prefix?: string | null,
+      azure_service_type?: string | null,
+      access_key_id?: string | null,
+      bucket_name?: string | null,
+      endpoint_url?: string | null,
+      region?: string | null,
+      storage_provider?: string | null,
+      imgix_subdomains?: string[] | null,
+      custom_domains?: string[] | null,
+      default_params?: Record<string, any> | null,
+      secure_url_enabled?: boolean | null,
+      cache_ttl_behavior?: string | null,
+      cache_ttl_value?: number | null,
+      cache_ttl_error?: number | null
+    } | null,
+    date_deployed?: number | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  cursor?: {
+    current?: string | null,
+    next?: string | null,
+    hasMore?: boolean | null,
+    totalRecords?: string | number | null
+  },
+  pagination?: {
+    currentPage?: number | null,
+    hasNextPage?: boolean | null,
+    nextPage?: number | null,
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalRecords?: number | null
+  },
+  page?: {
+    current?: number,
+    size?: number,
+    total?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sources.update`
+
+Update an existing Imgix source configuration or deployment settings
+
+**Risk:** `write`
+
+```ts
+await corsair.imgix.api.sources.update({ source_id: 'src_1234567890abcdef', name: 'Updated Image Store' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `default_params` | `Record<string, string \| number \| boolean>` | No | — |
+| `custom_domains` | `string[]` | No | — |
+| `cache_ttl_value` | `number` | No | — |
+| `cache_ttl_error` | `number` | No | — |
+| `secure_url_enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: sources,
+  attributes: {
+    name?: string | null,
+    deployment_status?: string | null,
+    enabled?: boolean | null,
+    deployment?: {
+      type?: string | null,
+      s3_bucket?: string | null,
+      s3_prefix?: string | null,
+      s3_access_key?: string | null,
+      webfolder_base_url?: string | null,
+      gcs_bucket?: string | null,
+      gcs_prefix?: string | null,
+      gcs_access_key?: string | null,
+      azure_account?: string | null,
+      azure_bucket?: string | null,
+      azure_prefix?: string | null,
+      azure_service_type?: string | null,
+      access_key_id?: string | null,
+      bucket_name?: string | null,
+      endpoint_url?: string | null,
+      region?: string | null,
+      storage_provider?: string | null,
+      imgix_subdomains?: string[] | null,
+      custom_domains?: string[] | null,
+      default_params?: Record<string, any> | null,
+      secure_url_enabled?: boolean | null,
+      cache_ttl_behavior?: string | null,
+      cache_ttl_value?: number | null,
+      cache_ttl_error?: number | null
+    } | null,
+    date_deployed?: number | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Upload Sessions
+
+### cancel
+
+`uploadSessions.cancel`
+
+Cancel an active upload session
+
+**Risk:** `destructive`
+
+```ts
+await corsair.imgix.api.uploadSessions.cancel({ source_id: 'src_1234567890abcdef', session_id: 'sess_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### close
+
+`uploadSessions.close`
+
+Close an upload session to trigger immediate asset processing
+
+**Risk:** `write`
+
+```ts
+await corsair.imgix.api.uploadSessions.close({ source_id: 'src_1234567890abcdef', session_id: 'sess_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`uploadSessions.create`
+
+Initialize an upload session and receive a presigned URL for large asset upload
+
+**Risk:** `write`
+
+```ts
+await corsair.imgix.api.uploadSessions.create({ source_id: 'src_1234567890abcdef', origin_path: 'videos/presentation.mp4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `origin_path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes: {
+    url: string,
+    session_id?: string,
+    expires_at?: number | string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`uploadSessions.getStatus`
+
+Retrieve the status of an ongoing or finalized asset upload session
+
+**Risk:** `read`
+
+```ts
+await corsair.imgix.api.uploadSessions.getStatus({ source_id: 'src_1234567890abcdef', session_id: 'sess_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_id` | `string` | Yes | — |
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `jsonapi` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes: {
+    status: PENDING | CLOSED | COMPLETE | CANCELED | string,
+    origin_path?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="jsonapi full type">
+
+```ts
+{
+  version?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

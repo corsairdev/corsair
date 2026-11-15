@@ -1,0 +1,529 @@
+---
+title: "LiveSession API reference"
+sidebarTitle: "API"
+description: "API reference for the LiveSession plugin in Corsair: every `livesession.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Alerts
+
+### create
+
+`alerts.create`
+
+Create an alert delivered to Slack or a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.livesession.api.alerts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `events` | `object[]` | Yes | — |
+| `provider` | `slack \| webhooks` | Yes | — |
+| `slack_channel_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  kind: 5 | 6 | 20 | 21 | 24 | 25 | 26 | 29 | 30,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alert_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `events` | `object[] \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `slack_channel_id` | `string \| null` | No | — |
+| `webhook_id` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `creation_date` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  kind: number,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`alerts.delete`
+
+Permanently delete an alert by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.livesession.api.alerts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alert_id` | `string` | Yes | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`alerts.list`
+
+List all alerts configured for the token scope
+
+**Risk:** `read`
+
+```ts
+await corsair.livesession.api.alerts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  alert_id: string,
+  name?: string | null,
+  events?: {
+    kind: number,
+    value?: string | null
+  }[] | null,
+  provider?: string | null,
+  slack_channel_id?: string | null,
+  webhook_id?: string | null,
+  enabled?: boolean | null,
+  creation_date?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`alerts.update`
+
+Update an existing alert by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.livesession.api.alerts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `events` | `object[]` | No | — |
+| `provider` | `slack \| webhooks` | No | — |
+| `slack_channel_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  kind: 5 | 6 | 20 | 21 | 24 | 25 | 26 | 29 | 30,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alert_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `events` | `object[] \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `slack_channel_id` | `string \| null` | No | — |
+| `webhook_id` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `creation_date` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  kind: number,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sessions
+
+### list
+
+`sessions.list`
+
+List recorded sessions with page, size, visitor, email, timezone, and date filters
+
+**Risk:** `read`
+
+```ts
+await corsair.livesession.api.sessions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `email` | `string` | No | — |
+| `visitor_id` | `string` | No | — |
+| `tz` | `string` | No | — |
+| `date_from` | `TODAY \| YESTERDAY \| BEGINNING_OF_WEEK \| BEGINNING_OF_MONTH \| BEGINNING_OF_PREV_MONTH \| TODAY-7DAYS \| TODAY-30DAYS \| string` | No | — |
+| `date_to` | `TODAY \| YESTERDAY \| BEGINNING_OF_WEEK \| BEGINNING_OF_MONTH \| BEGINNING_OF_PREV_MONTH \| TODAY-7DAYS \| TODAY-30DAYS \| string` | No | — |
+
+`date_from` and `date_to` take a relative value such as `TODAY-7DAYS` or an ISO 8601 datetime with a time part (`2026-01-31T00:00:00Z`); LiveSession ignores a date without a time. `tz` only applies together with a date filter. An empty result can come back as `sessions: null`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `page` | `object` | Yes | — |
+| `sessions` | `object[] \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  num: number,
+  size: number
+}
+```
+</Accordion>
+
+<Accordion title="sessions full type">
+
+```ts
+{
+  id: string,
+  website_id?: string | null,
+  session_url?: string | null,
+  creation_timestamp?: number | null,
+  duration?: number | null,
+  end_timestamp?: number | null,
+  active_time?: number | null,
+  end_url?: string | null,
+  expiration_timestamp?: number | null,
+  last_event_timestamp?: number | null,
+  product?: string | null,
+  device?: string | null,
+  tags?: string[] | null,
+  last_seen_page_view_id?: string | null,
+  seen?: boolean | null,
+  referrer?: string | null,
+  start_url?: string | null,
+  visitor_first_session?: boolean | null,
+  engagment_score?: number | null,
+  visitor?: {
+    id?: string | null,
+    ip?: string | null,
+    geolocation?: {
+      country_code?: string | null,
+      city?: string | null,
+      region?: string | null
+    } | null,
+    name?: string | null,
+    email?: string | null,
+    email_hash?: string | null,
+    params?: {
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    last_session_timestamp?: number | null,
+    first_session_timestamp?: number | null
+  } | null,
+  resolution?: {
+    height?: number | null,
+    width?: number | null,
+    resolution?: string | null
+  } | null,
+  os?: {
+    name?: string | null,
+    version?: string | null
+  } | null,
+  browser?: {
+    description?: string | null,
+    name?: string | null,
+    version?: string | null
+  } | null,
+  utm?: {
+    source?: string | null,
+    medium?: string | null,
+    campaign?: string | null,
+    term?: string | null,
+    content?: string | null
+  } | null,
+  page_views_statistics?: {
+    count?: number | null
+  } | null,
+  events_statistics?: {
+    clicks?: number | null,
+    error_clicks?: number | null,
+    rage_clicks?: number | null,
+    error_logs?: number | null,
+    net_errors?: number | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create an outbound webhook for a website
+
+**Risk:** `write`
+
+```ts
+await corsair.livesession.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `website_id` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `website_id` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `created_date` | `number \| null` | No | — |
+| `created_by` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Permanently delete an outbound webhook by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.livesession.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List all outbound webhooks for the token scope
+
+**Risk:** `read`
+
+```ts
+await corsair.livesession.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  webhook_id: string,
+  url?: string | null,
+  website?: string | null,
+  website_id?: string | null,
+  version?: string | null,
+  enabled?: boolean | null,
+  created_date?: number | null,
+  created_by?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update an outbound webhook by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.livesession.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `website_id` | `string` | Yes | — |
+| `version` | `v1.0` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `website_id` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `created_date` | `number \| null` | No | — |
+| `created_by` | `string \| null` | No | — |
+
+
+
+---
+
+## Websites
+
+### list
+
+`websites.list`
+
+List all websites available to the token
+
+**Risk:** `read`
+
+```ts
+await corsair.livesession.api.websites.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  website_id: string,
+  host?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

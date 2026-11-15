@@ -1,0 +1,1958 @@
+{
+  "id": "servicem8",
+  "displayName": "ServiceM8",
+  "description": "Manage ServiceM8 jobs, clients, notes, payments, and field-service resources.",
+  "npmPackageName": "@corsair-dev/servicem8",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "servicem8.api.assets.list",
+      "shortPath": "assets.list",
+      "description": "List assets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, company_uuid?: string | number | null, asset_code?: string | number | null, asset_type_uuid?: string | number | null, name?: string | number | null, lat?: number | string | null, lng?: number | string | null, geo_timestamp?: string | number | null, altitude?: number | string | null, field_data?: { uuid?: string | number | null, fieldType?: string | number | null, fieldName?: string | number | null, fieldValue?: string | number | null, sortOrder?: number | string | null }[] | false | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.clients.list",
+      "shortPath": "clients.list",
+      "description": "List clients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, name: string, abn_number?: string | number | null, address?: string | number | null, billing_address?: string | number | null, is_individual?: number | string | boolean | null, parent_company_uuid?: string | number | null, website?: string | number | null, address_street?: string | number | null, address_city?: string | number | null, address_state?: string | number | null, address_postcode?: string | number | null, address_country?: string | number | null, fax_number?: string | number | null, badges?: string | number | null, tax_rate_uuid?: string | number | null, billing_attention?: string | number | null, payment_terms?: string | number | null, deposit_percent?: number | string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.clients.retrieve",
+      "shortPath": "clients.retrieve",
+      "description": "Retrieve a client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "abn_number",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "billing_address",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "is_individual",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "parent_company_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address_street",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address_city",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address_state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address_postcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address_country",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "badges",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "tax_rate_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "billing_attention",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "payment_terms",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "deposit_percent",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.customFields.delete",
+      "shortPath": "customFields.delete",
+      "description": "Delete a custom field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "UUID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UUID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.documentTemplates.list",
+      "shortPath": "documentTemplates.list",
+      "description": "List document templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, template_type?: string | number | null, related_object?: string | number | null, name?: string | number | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List forms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, name?: string | number | null, document_template_uuid?: string | number | null, can_be_used_independently?: string | number | null, badge_mandatory_state?: string | number | null, badge_name?: string | number | null, template_fields?: { name?: string | number | null, fieldType?: string | number | null, value?: string | number | null, sortOrder?: number | string | null }[] | false | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.forms.retrieve",
+      "shortPath": "forms.retrieve",
+      "description": "Retrieve a form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "document_template_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "can_be_used_independently",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "badge_mandatory_state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "badge_name",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "template_fields",
+            "optional": true,
+            "type": "{ name?: string | number | null, fieldType?: string | number | null, value?: string | number | null, sortOrder?: number | string | null }[] | false | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.jobActivities.retrieve",
+      "shortPath": "jobActivities.retrieve",
+      "description": "Retrieve a job activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "job_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "staff_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "activity_was_scheduled",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "activity_was_recorded",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "activity_was_automated",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "has_been_opened",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "has_been_opened_timestamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "travel_time_in_seconds",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "travel_distance_in_meters",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "material_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "edit_by_staff_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.jobPayments.create",
+      "shortPath": "jobPayments.create",
+      "description": "Create a job payment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actioned_by_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachment_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ errorCode?: number, message?: string, UUID?: string }"
+          },
+          {
+            "key": "recordUuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.jobPayments.delete",
+      "shortPath": "jobPayments.delete",
+      "description": "Delete a job payment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UUID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.jobPayments.retrieve",
+      "shortPath": "jobPayments.retrieve",
+      "description": "Retrieve a job payment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "job_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "actioned_by_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "attachment_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "is_deposit",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.jobPayments.update",
+      "shortPath": "jobPayments.update",
+      "description": "Update a job payment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ job_uuid?: string, actioned_by_uuid?: string, timestamp?: string, amount?: string, method?: string, note?: string, attachment_uuid?: string, uuid?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UUID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.jobs.create",
+      "shortPath": "jobs.create",
+      "description": "Create a job (may incur ServiceM8 account charges)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Quote | Work Order | Unsuccessful | Completed"
+          },
+          {
+            "key": "created_by_staff_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_actioned_by_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_amount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_sent",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "invoice_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_done_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queue_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queue_expiry_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queue_assigned_staff_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "badges",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quote_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quote_sent",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "work_order_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_processed",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "payment_received",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "completion_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsuccessful_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ errorCode?: number, message?: string, UUID?: string }"
+          },
+          {
+            "key": "recordUuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, created_by_staff_uuid?: string | number | null, date?: string | number | null, company_uuid?: string | number | null, billing_address?: string | number | null, status: string, lng?: number | string | null, lat?: number | string | null, payment_date?: string | number | null, payment_actioned_by_uuid?: string | number | null, payment_method?: string | number | null, payment_amount?: string | number | null, category_uuid?: string | number | null, payment_note?: string | number | null, geo_is_valid?: number | string | boolean | null, purchase_order_number?: string | number | null, invoice_sent?: number | string | boolean | null, invoice_sent_stamp?: string | number | null, invoice_date?: string | number | null, geo_country?: string | number | null, geo_postcode?: string | number | null, geo_state?: string | number | null, geo_city?: string | number | null, geo_street?: string | number | null, geo_number?: string | number | null, queue_uuid?: string | number | null, queue_expiry_date?: string | number | null, queue_assigned_staff_uuid?: string | number | null, badges?: string | number | null, quote_date?: string | number | null, quote_sent?: number | string | boolean | null, quote_sent_stamp?: string | number | null, work_order_date?: string | number | null, job_address?: string | number | null, job_description?: string | number | null, work_done_description?: string | number | null, generated_job_id?: string | number | null, total_invoice_amount?: string | number | null, payment_processed?: number | string | boolean | null, payment_processed_stamp?: string | number | null, payment_received?: number | string | boolean | null, payment_received_stamp?: string | number | null, completion_date?: string | number | null, completion_actioned_by_uuid?: string | number | null, unsuccessful_date?: string | number | null, job_is_scheduled_until_stamp?: string | number | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.jobs.retrieve",
+      "shortPath": "jobs.retrieve",
+      "description": "Retrieve a job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "created_by_staff_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "company_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "billing_address",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "payment_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "payment_actioned_by_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "payment_amount",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "category_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "payment_note",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "geo_is_valid",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "purchase_order_number",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "invoice_sent",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "invoice_sent_stamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "invoice_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "geo_country",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "geo_postcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "geo_state",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "geo_city",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "geo_street",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "geo_number",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "queue_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "queue_expiry_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "queue_assigned_staff_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "badges",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "quote_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "quote_sent",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "quote_sent_stamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "work_order_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "job_address",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "job_description",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "work_done_description",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "generated_job_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "total_invoice_amount",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "payment_processed",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "payment_processed_stamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "payment_received",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "payment_received_stamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "completion_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "completion_actioned_by_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "unsuccessful_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "job_is_scheduled_until_stamp",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, name: string, state: string, line1?: string | number | null, line2?: string | number | null, line3?: string | number | null, city?: string | number | null, country?: string | number | null, post_code?: string | number | null, phone_1?: string | number | null, lng?: number | string | null, lat?: number | string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.locations.retrieve",
+      "shortPath": "locations.retrieve",
+      "description": "Retrieve a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "line1",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "line2",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "line3",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "post_code",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "phone_1",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.materials.list",
+      "shortPath": "materials.list",
+      "description": "List materials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, name: string, item_number?: string | number | null, price?: string | number | null, cost?: string | number | null, quantity_in_stock?: number | string | null, price_includes_taxes?: number | string | boolean | null, barcode?: string | number | null, item_is_inventoried?: number | string | boolean | null, item_description?: string | number | null, use_description_for_invoicing?: string | number | null, tax_rate_uuid?: string | number | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.materials.retrieve",
+      "shortPath": "materials.retrieve",
+      "description": "Retrieve a material",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_number",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "quantity_in_stock",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "price_includes_taxes",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "barcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "item_is_inventoried",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "item_description",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "use_description_for_invoicing",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "tax_rate_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create a job note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "related_object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "related_object_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action_required",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action_completed_by_staff_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "edit_by_staff_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "create_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ errorCode?: number, message?: string, UUID?: string }"
+          },
+          {
+            "key": "recordUuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Delete a job note",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UUID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List job notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, related_object?: string | number | null, related_object_uuid?: string | number | null, note?: string | number | null, action_required?: string | number | null, action_completed_by_staff_uuid?: string | number | null, edit_by_staff_uuid?: string | number | null, create_date?: string | number | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.notes.retrieve",
+      "shortPath": "notes.retrieve",
+      "description": "Retrieve a job note",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "related_object",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "related_object_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "action_required",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "action_completed_by_staff_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "edit_by_staff_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "create_date",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Update a job note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ uuid?: string, related_object?: string, related_object_uuid?: string, note?: string, action_required?: string, action_completed_by_staff_uuid?: string, edit_by_staff_uuid?: string, create_date?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UUID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.queues.list",
+      "shortPath": "queues.list",
+      "description": "List job queues",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, name?: string | number | null, default_timeframe?: number | string | null, subscribed_staff?: string | number | null, requires_assignment?: number | string | boolean | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.queues.retrieve",
+      "shortPath": "queues.retrieve",
+      "description": "Retrieve a job queue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "default_timeframe",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "subscribed_staff",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "requires_assignment",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.staff.retrieve",
+      "shortPath": "staff.retrieve",
+      "description": "Retrieve a staff member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "edit_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "geo_timestamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "navigating_to_job_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "navigating_timestamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "navigating_expiry_timestamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "custom_icon_url",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status_message",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status_message_timestamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "hide_from_schedule",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "can_receive_push_notification",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "security_role_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "labour_material_uuid",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "servicem8.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | number | null, active?: number | string | boolean | null, edit_date?: string | number | null, name: string, due_date?: string | number | null, task_details?: string | number | null, related_object?: string | number | null, related_object_uuid?: string | number | null, task_complete?: string | number | null, completed_timestamp?: string | number | null, completed_by_staff_uuid?: string | number | null, assigned_to_staff_uuid?: string | number | null, created_by_staff_uuid?: string | number | null, create_date?: string | number | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
