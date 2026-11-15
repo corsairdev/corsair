@@ -43,8 +43,23 @@ const HOSTED_SAMPLE = {
 	domains: [{ domain: 'dns.google' }],
 };
 
-function context(key: string): Ip2whoisContext {
-	return { key } as Ip2whoisContext;
+function context(
+	key: string,
+	upserts?: { domains?: jest.Mock; hostedDomains?: jest.Mock },
+): Ip2whoisContext {
+	return {
+		key,
+		db: upserts
+			? {
+					domains: upserts.domains
+						? { upsertByEntityId: upserts.domains }
+						: undefined,
+					hostedDomains: upserts.hostedDomains
+						? { upsertByEntityId: upserts.hostedDomains }
+						: undefined,
+				}
+			: undefined,
+	} as unknown as Ip2whoisContext;
 }
 
 describe('domain.lookup', () => {
@@ -112,6 +127,34 @@ describe('domain.lookup', () => {
 		await expect(
 			lookupDomain(context('test-key'), { domain: 'example.com' }),
 		).rejects.toBe(error);
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects an empty domain before calling the API', async () => {
+		await expect(
+			lookupDomain(context('test-key'), { domain: '' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that has no domain', async () => {
+		mockRequest.mockResolvedValue({ status: 'ok' });
+		await expect(
+			lookupDomain(context('test-key'), { domain: 'example.com' }),
+		).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('stores the domain record and does not log the name', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue(DOMAIN_SAMPLE);
+		await lookupDomain(context('test-key', { domains: upsert }), {
+			domain: 'example.com',
+		});
+		expect(upsert).toHaveBeenCalledWith('example.com', DOMAIN_SAMPLE);
+		const payload = mockLog.mock.calls[0]?.[2] as Record<string, unknown>;
+		expect(payload.domain).toBeUndefined();
+		expect(JSON.stringify(upsert.mock.calls)).not.toContain('test-key');
 	});
 });
 
@@ -142,5 +185,52 @@ describe('hosted.lookup', () => {
 		);
 		const payload = mockLog.mock.calls[0]?.[2] as Record<string, unknown>;
 		expect(payload.ip).toBeUndefined();
+	});
+
+	it('rejects an empty address before calling the API', async () => {
+		await expect(
+			lookupHosted(context('test-key'), { ip: '' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that has no domain list', async () => {
+		mockRequest.mockResolvedValue({ ip: '8.8.8.8' });
+		await expect(
+			lookupHosted(context('test-key'), { ip: '8.8.8.8' }),
+		).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('stores each hosted domain and skips a row with no name', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({
+			...HOSTED_SAMPLE,
+			domains: [{ domain: 'dns.google' }, {}],
+		});
+		await lookupHosted(context('test-key', { hostedDomains: upsert }), {
+			ip: '8.8.8.8',
+		});
+		expect(upsert).toHaveBeenCalledTimes(1);
+		expect(upsert).toHaveBeenCalledWith('8.8.8.8:dns.google', {
+			domain: 'dns.google',
+			hostIp: '8.8.8.8',
+		});
+		const payload = mockLog.mock.calls[0]?.[2] as Record<string, unknown>;
+		expect(payload.ip).toBeUndefined();
+	});
+
+	it('returns the page when the database write fails', async () => {
+		const upsert = jest.fn().mockRejectedValue(new Error('disk full'));
+		mockRequest.mockResolvedValue(HOSTED_SAMPLE);
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		await expect(
+			lookupHosted(context('test-key', { hostedDomains: upsert }), {
+				ip: '8.8.8.8',
+			}),
+		).resolves.toEqual(HOSTED_SAMPLE);
+		warn.mockRestore();
 	});
 });

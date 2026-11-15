@@ -4,13 +4,14 @@ sidebarTitle: "Overview"
 description: "Look up WHOIS registration for a domain, and list the domains hosted on an IP address."
 ---
 
-Use **IP2WHOIS** through Corsair: one client, typed API calls.
+Use **IP2WHOIS** through Corsair: one client, typed API calls, local DB sync.
 
 Each lookup spends credits. The client always sends format=json. An empty key comes back as HTTP 401 with error code 10001.
 
 **What you get:**
 
 - 2 typed API operations
+- 2 synced entities (`domains`, `hostedDomains`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -111,11 +112,20 @@ await tenant.ip2whois.api.domain.lookup({ domain: 'example.com' });
 
 See the full list on the [API](/plugins/ip2whois/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.ip2whois.db.<entity>.search()` and `.list()`: `domains`, `hostedDomains`.
+
+See [Database](/plugins/ip2whois/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/ip2whois/api">
     Every `ip2whois.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/ip2whois/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

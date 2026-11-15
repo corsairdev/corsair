@@ -1,7 +1,11 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import type { Ip2whoisContext } from '..';
 import { makeIp2whoisRequest } from '../client';
+import type { Ip2whoisContext } from '../context';
+import {
+	Ip2whoisDomainEntity,
+	Ip2whoisHostedDomainEntity,
+} from '../schema/database';
 import type {
 	DomainLookupInput,
 	DomainLookupResponse,
@@ -43,6 +47,7 @@ export const lookupDomain: CorsairEndpoint<
 		throw new Error(`IP2WHOIS lookup failed: ${failure}`);
 	}
 	const result = DomainLookupResponseSchema.parse(body);
+	await storeDomain(ctx, result);
 	await logEventFromContext(ctx, 'ip2whois.domain.lookup', {}, 'completed');
 	return result;
 };
@@ -66,6 +71,7 @@ export const lookupHosted: CorsairEndpoint<
 		throw new Error(`IP2WHOIS lookup failed: ${failure}`);
 	}
 	const result = HostedLookupResponseSchema.parse(body);
+	await storeHostedDomains(ctx, result.ip, result.domains);
 	await logEventFromContext(
 		ctx,
 		'ip2whois.hosted.lookup',
@@ -74,6 +80,43 @@ export const lookupHosted: CorsairEndpoint<
 	);
 	return result;
 };
+
+async function storeDomain(
+	ctx: Ip2whoisContext,
+	result: DomainLookupResponse,
+): Promise<void> {
+	if (!ctx.db?.domains) return;
+	const row = Ip2whoisDomainEntity.safeParse(result);
+	if (!row.success) return;
+	try {
+		await ctx.db.domains.upsertByEntityId(row.data.domain, row.data);
+	} catch {
+		console.warn('Failed to save IP2WHOIS domain');
+	}
+}
+
+async function storeHostedDomains(
+	ctx: Ip2whoisContext,
+	hostIp: string,
+	domains: HostedLookupResponse['domains'],
+): Promise<void> {
+	if (!ctx.db?.hostedDomains) return;
+	for (const item of domains) {
+		const row = Ip2whoisHostedDomainEntity.safeParse({
+			domain: item.domain,
+			hostIp,
+		});
+		if (!row.success) continue;
+		try {
+			await ctx.db.hostedDomains.upsertByEntityId(
+				`${row.data.hostIp}:${row.data.domain}`,
+				row.data,
+			);
+		} catch {
+			console.warn('Failed to save IP2WHOIS hosted domain');
+		}
+	}
+}
 
 export const Domain = { lookup: lookupDomain };
 export const Hosted = { lookup: lookupHosted };

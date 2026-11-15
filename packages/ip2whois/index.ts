@@ -3,7 +3,6 @@ import type {
 	BindEndpoints,
 	CorsairErrorHandler,
 	CorsairPlugin,
-	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -11,6 +10,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import type { Ip2whoisContext } from './context';
 import { Domain, Hosted } from './endpoints';
 import {
 	DomainLookupInputSchema,
@@ -21,6 +21,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { Ip2whoisSchema } from './schema';
 
+export type { Ip2whoisContext };
+
 export type Ip2whoisPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
@@ -28,11 +30,6 @@ export type Ip2whoisPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof ip2whoisEndpointsNested>;
 };
-
-export type Ip2whoisContext = CorsairPluginContext<
-	typeof Ip2whoisSchema,
-	Ip2whoisPluginOptions
->;
 
 export type Ip2whoisKeyBuilderContext =
 	KeyBuilderContext<Ip2whoisPluginOptions>;

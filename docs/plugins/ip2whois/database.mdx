@@ -1,11 +1,66 @@
 ---
 title: "IP2WHOIS database"
 sidebarTitle: "Database"
-description: "The IP2WHOIS plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally."
+description: "IP2WHOIS local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
-No local `.search()` operations are available for IP2WHOIS. To read its data, call the [API operations](/plugins/ip2whois/api), which return what IP2WHOIS has at that moment.
+The IP2WHOIS plugin syncs data locally. Use `corsair.ip2whois.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
+
+## Domains
+
+Path: `ip2whois.db.domains.search`
+
+```ts
+const rows = await corsair.ip2whois.db.domains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `create_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `update_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `expire_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain_age` | `number` | equals, gt, gte, lt, lte, in |
+| `whois_server` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Hosted Domains
+
+Path: `ip2whois.db.hostedDomains.search`
+
+```ts
+const rows = await corsair.ip2whois.db.hostedDomains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `hostIp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
