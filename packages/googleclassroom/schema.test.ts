@@ -3012,17 +3012,23 @@ describe('Google Classroom provider contract details', () => {
 	});
 
 	it('accepts every apiExamples call in plugin-docs.yaml', () => {
-		const yaml = readFileSync(join(__dirname, 'plugin-docs.yaml'), 'utf8');
+		const yaml = readFileSync(
+			join(__dirname, 'plugin-docs.yaml'),
+			'utf8',
+		).replace(/\r\n/g, '\n');
 		const examples = [
 			...yaml.matchAll(/^ {2}"([A-Za-z.]+)":\n {4}call: (".*")$/gm),
 		];
 		expect(examples).toHaveLength(Object.keys(GOOGLE_CLASSROOM_ROUTES).length);
 		const failing = examples
 			.filter(([, operation, quoted]) => {
-				// `unknown` because the example is a JS object literal read from YAML; the schema checks it.
-				const call: unknown = new Function(
-					`return (${JSON.parse(quoted ?? '""')});`,
-				)();
+				// Each call is `{ pathParams: {...}, query: {...}, body: {...} }` with JSON
+				// values. Quoting the three top-level keys makes it JSON, so nothing runs.
+				const literal: string = JSON.parse(quoted ?? '""');
+				// `unknown` because the parsed example is checked by the schema below.
+				const call: unknown = JSON.parse(
+					literal.replace(/(^\{ |, )(pathParams|query|body): /g, '$1"$2": '),
+				);
 				return !GoogleClassroomEndpointInputSchemas[
 					operation as keyof typeof GoogleClassroomEndpointInputSchemas
 				].safeParse(call).success;
