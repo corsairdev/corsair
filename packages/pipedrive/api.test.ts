@@ -24,4 +24,19 @@ describe('Pipedrive live API smoke', () => {
 			).toBe(true);
 		},
 	);
+
+	liveTest(
+		'reads the first products page without exposing the API token',
+		async () => {
+			const response = await makePipedriveRequest(
+				'/products',
+				apiKey ?? '',
+				'api_key',
+				{ method: 'GET', query: { limit: 1 } },
+			);
+			expect(
+				PipedriveEndpointOutputSchemas.productList.parse(response).success,
+			).toBe(true);
+		},
+	);
 });

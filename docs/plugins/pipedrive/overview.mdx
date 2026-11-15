@@ -1,16 +1,16 @@
 ---
 title: "Pipedrive plugin"
 sidebarTitle: "Overview"
-description: "Manage selected Pipedrive v2 deal, person, organization, activity, and task operations with validated requests, responses, and cursor pagination."
+description: "Manage selected Pipedrive v2 deals, contacts, activities, tasks, and product catalog operations with validated requests, responses, and cursor pagination."
 ---
 
 Use **Pipedrive** through Corsair: one client, typed API calls.
 
-This deliberately partial implementation covers list, get, create, update, and delete operations for deals, persons, organizations, activities, and tasks. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Reads require the resource's documented :read or :full OAuth scope; writes and deletes require its :full scope. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled.
+This deliberately partial implementation covers selected list, get, create, update, delete, search, product-variation, image, and follower operations for deals, persons, organizations, activities, tasks, and products. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Reads require the resource's documented :read or :full OAuth scope; writes and deletes require its :full scope. Product image upload/update accept an actual Blob and send the documented multipart field data. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled.
 
 **What you get:**
 
-- 25 typed API operations
+- 44 typed API operations
 
 ## Setup
 

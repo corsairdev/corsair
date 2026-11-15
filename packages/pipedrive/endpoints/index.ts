@@ -27,6 +27,27 @@ import {
 	updatePerson,
 } from './persons';
 import {
+	addProductFollower,
+	createProduct,
+	createProductVariation,
+	deleteProduct,
+	deleteProductFollower,
+	deleteProductImage,
+	deleteProductVariation,
+	duplicateProduct,
+	getProduct,
+	getProductImage,
+	listProductFollowerChangelog,
+	listProductFollowers,
+	listProducts,
+	listProductVariations,
+	searchProducts,
+	updateProduct,
+	updateProductImage,
+	updateProductVariation,
+	uploadProductImage,
+} from './products';
+import {
 	createTask,
 	deleteTask,
 	getTask,
@@ -72,6 +93,34 @@ export const Tasks = {
 	create: createTask,
 	update: updateTask,
 	delete: deleteTask,
+};
+
+export const Products = {
+	list: listProducts,
+	create: createProduct,
+	search: searchProducts,
+	get: getProduct,
+	update: updateProduct,
+	delete: deleteProduct,
+	duplicate: duplicateProduct,
+	variations: {
+		list: listProductVariations,
+		create: createProductVariation,
+		update: updateProductVariation,
+		delete: deleteProductVariation,
+	},
+	images: {
+		get: getProductImage,
+		upload: uploadProductImage,
+		update: updateProductImage,
+		delete: deleteProductImage,
+	},
+	followers: {
+		list: listProductFollowers,
+		create: addProductFollower,
+		changelog: listProductFollowerChangelog,
+		delete: deleteProductFollower,
+	},
 };
 
 export * from './types';

@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import type {
+	ProductEndpointInputs,
+	ProductEndpointOutputs,
+} from './products-types';
+import {
+	ProductEndpointInputSchemas,
+	ProductEndpointOutputSchemas,
+} from './products-types';
 
 const uniqueValues = <T>(values: T[]) => new Set(values).size === values.length;
 
@@ -855,7 +863,7 @@ export type PipedriveEndpointInputs = {
 	taskCreate: TaskCreateInput;
 	taskUpdate: TaskUpdateInput & TaskIdInput;
 	taskDelete: TaskIdInput;
-};
+} & ProductEndpointInputs;
 
 export type PipedriveEndpointOutputs = {
 	dealList: DealListResponse;
@@ -883,7 +891,7 @@ export type PipedriveEndpointOutputs = {
 	taskCreate: TaskResponse;
 	taskUpdate: TaskResponse;
 	taskDelete: TaskDeleteResponse;
-};
+} & ProductEndpointOutputs;
 
 export const PipedriveEndpointInputSchemas = {
 	dealList: DealListInputSchema,
@@ -911,6 +919,7 @@ export const PipedriveEndpointInputSchemas = {
 	taskCreate: TaskCreateInputSchema,
 	taskUpdate: TaskUpdateInputSchema,
 	taskDelete: TaskIdInputSchema,
+	...ProductEndpointInputSchemas,
 } as const;
 
 export const PipedriveEndpointOutputSchemas = {
@@ -939,4 +948,5 @@ export const PipedriveEndpointOutputSchemas = {
 	taskCreate: TaskResponseEnvelopeSchema,
 	taskUpdate: TaskResponseEnvelopeSchema,
 	taskDelete: TaskDeleteResponseSchema,
+	...ProductEndpointOutputSchemas,
 } as const;

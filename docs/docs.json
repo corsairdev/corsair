@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -2436,19 +2443,19 @@
                 ]
               },
               {
-                "group": "Gigasheet",
-                "pages": [
-                  "plugins/gigasheet/overview",
-                  "plugins/gigasheet/api",
-                  "plugins/gigasheet/database"
-                ]
-              },
-              {
                 "group": "Gift Up!",
                 "pages": [
                   "plugins/giftup/overview",
                   "plugins/giftup/api",
                   "plugins/giftup/database"
+                ]
+              },
+              {
+                "group": "Gigasheet",
+                "pages": [
+                  "plugins/gigasheet/overview",
+                  "plugins/gigasheet/api",
+                  "plugins/gigasheet/database"
                 ]
               },
               {
@@ -3687,27 +3694,19 @@
                 ]
               },
               {
+                "group": "Polygon OMS",
+                "pages": [
+                  "plugins/polygon/overview",
+                  "plugins/polygon/api",
+                  "plugins/polygon/database"
+                ]
+              },
+              {
                 "group": "Polygon.io",
                 "pages": [
                   "plugins/polygonio/overview",
                   "plugins/polygonio/api",
                   "plugins/polygonio/database"
-                ]
-              },
-              {
-                "group": "Postmark",
-                "pages": [
-                  "plugins/postmark/overview",
-                  "plugins/postmark/api",
-                  "plugins/postmark/database"
-                ]
-              },
-              {
-                "group": "Prismic",
-                "pages": [
-                  "plugins/prismic/overview",
-                  "plugins/prismic/api",
-                  "plugins/prismic/database"
                 ]
               },
               {
@@ -3724,14 +3723,6 @@
                   "plugins/postgrid/overview",
                   "plugins/postgrid/api",
                   "plugins/postgrid/database"
-                ]
-              },
-              {
-                "group": "Polygon OMS",
-                "pages": [
-                  "plugins/polygon/overview",
-                  "plugins/polygon/api",
-                  "plugins/polygon/database"
                 ]
               },
               {
@@ -3761,6 +3752,14 @@
                 ]
               },
               {
+                "group": "Postmark",
+                "pages": [
+                  "plugins/postmark/overview",
+                  "plugins/postmark/api",
+                  "plugins/postmark/database"
+                ]
+              },
+              {
                 "group": "Prerender",
                 "pages": [
                   "plugins/prerender/overview",
@@ -3774,6 +3773,14 @@
                   "plugins/prisma/overview",
                   "plugins/prisma/api",
                   "plugins/prisma/database"
+                ]
+              },
+              {
+                "group": "Prismic",
+                "pages": [
+                  "plugins/prismic/overview",
+                  "plugins/prismic/api",
+                  "plugins/prismic/database"
                 ]
               },
               {
@@ -5307,7 +5314,9 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": ["changelog"]
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       }

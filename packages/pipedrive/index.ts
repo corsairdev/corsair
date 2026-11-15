@@ -13,7 +13,14 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Activities, Deals, Organizations, Persons, Tasks } from './endpoints';
+import {
+	Activities,
+	Deals,
+	Organizations,
+	Persons,
+	Products,
+	Tasks,
+} from './endpoints';
 import type {
 	PipedriveEndpointInputs,
 	PipedriveEndpointOutputs,
@@ -76,6 +83,25 @@ export type PipedriveEndpoints = {
 	taskCreate: PipedriveEndpoint<'taskCreate'>;
 	taskUpdate: PipedriveEndpoint<'taskUpdate'>;
 	taskDelete: PipedriveEndpoint<'taskDelete'>;
+	productList: PipedriveEndpoint<'productList'>;
+	productCreate: PipedriveEndpoint<'productCreate'>;
+	productSearch: PipedriveEndpoint<'productSearch'>;
+	productGet: PipedriveEndpoint<'productGet'>;
+	productUpdate: PipedriveEndpoint<'productUpdate'>;
+	productDelete: PipedriveEndpoint<'productDelete'>;
+	productDuplicate: PipedriveEndpoint<'productDuplicate'>;
+	productVariationList: PipedriveEndpoint<'productVariationList'>;
+	productVariationCreate: PipedriveEndpoint<'productVariationCreate'>;
+	productVariationUpdate: PipedriveEndpoint<'productVariationUpdate'>;
+	productVariationDelete: PipedriveEndpoint<'productVariationDelete'>;
+	productImageGet: PipedriveEndpoint<'productImageGet'>;
+	productImageUpload: PipedriveEndpoint<'productImageUpload'>;
+	productImageUpdate: PipedriveEndpoint<'productImageUpdate'>;
+	productImageDelete: PipedriveEndpoint<'productImageDelete'>;
+	productFollowerList: PipedriveEndpoint<'productFollowerList'>;
+	productFollowerCreate: PipedriveEndpoint<'productFollowerCreate'>;
+	productFollowerChangelog: PipedriveEndpoint<'productFollowerChangelog'>;
+	productFollowerDelete: PipedriveEndpoint<'productFollowerDelete'>;
 };
 
 const pipedriveEndpointsNested = {
@@ -113,6 +139,33 @@ const pipedriveEndpointsNested = {
 		create: Tasks.create,
 		update: Tasks.update,
 		delete: Tasks.delete,
+	},
+	products: {
+		list: Products.list,
+		create: Products.create,
+		search: Products.search,
+		get: Products.get,
+		update: Products.update,
+		delete: Products.delete,
+		duplicate: Products.duplicate,
+		variations: {
+			list: Products.variations.list,
+			create: Products.variations.create,
+			update: Products.variations.update,
+			delete: Products.variations.delete,
+		},
+		images: {
+			get: Products.images.get,
+			upload: Products.images.upload,
+			update: Products.images.update,
+			delete: Products.images.delete,
+		},
+		followers: {
+			list: Products.followers.list,
+			create: Products.followers.create,
+			changelog: Products.followers.changelog,
+			delete: Products.followers.delete,
+		},
 	},
 } as const;
 
@@ -217,6 +270,82 @@ export const pipedriveEndpointSchemas = {
 		input: PipedriveEndpointInputSchemas.taskDelete,
 		output: PipedriveEndpointOutputSchemas.taskDelete,
 	},
+	'products.list': {
+		input: PipedriveEndpointInputSchemas.productList,
+		output: PipedriveEndpointOutputSchemas.productList,
+	},
+	'products.create': {
+		input: PipedriveEndpointInputSchemas.productCreate,
+		output: PipedriveEndpointOutputSchemas.productCreate,
+	},
+	'products.search': {
+		input: PipedriveEndpointInputSchemas.productSearch,
+		output: PipedriveEndpointOutputSchemas.productSearch,
+	},
+	'products.get': {
+		input: PipedriveEndpointInputSchemas.productGet,
+		output: PipedriveEndpointOutputSchemas.productGet,
+	},
+	'products.update': {
+		input: PipedriveEndpointInputSchemas.productUpdate,
+		output: PipedriveEndpointOutputSchemas.productUpdate,
+	},
+	'products.delete': {
+		input: PipedriveEndpointInputSchemas.productDelete,
+		output: PipedriveEndpointOutputSchemas.productDelete,
+	},
+	'products.duplicate': {
+		input: PipedriveEndpointInputSchemas.productDuplicate,
+		output: PipedriveEndpointOutputSchemas.productDuplicate,
+	},
+	'products.variations.list': {
+		input: PipedriveEndpointInputSchemas.productVariationList,
+		output: PipedriveEndpointOutputSchemas.productVariationList,
+	},
+	'products.variations.create': {
+		input: PipedriveEndpointInputSchemas.productVariationCreate,
+		output: PipedriveEndpointOutputSchemas.productVariationCreate,
+	},
+	'products.variations.update': {
+		input: PipedriveEndpointInputSchemas.productVariationUpdate,
+		output: PipedriveEndpointOutputSchemas.productVariationUpdate,
+	},
+	'products.variations.delete': {
+		input: PipedriveEndpointInputSchemas.productVariationDelete,
+		output: PipedriveEndpointOutputSchemas.productVariationDelete,
+	},
+	'products.images.get': {
+		input: PipedriveEndpointInputSchemas.productImageGet,
+		output: PipedriveEndpointOutputSchemas.productImageGet,
+	},
+	'products.images.upload': {
+		input: PipedriveEndpointInputSchemas.productImageUpload,
+		output: PipedriveEndpointOutputSchemas.productImageUpload,
+	},
+	'products.images.update': {
+		input: PipedriveEndpointInputSchemas.productImageUpdate,
+		output: PipedriveEndpointOutputSchemas.productImageUpdate,
+	},
+	'products.images.delete': {
+		input: PipedriveEndpointInputSchemas.productImageDelete,
+		output: PipedriveEndpointOutputSchemas.productImageDelete,
+	},
+	'products.followers.list': {
+		input: PipedriveEndpointInputSchemas.productFollowerList,
+		output: PipedriveEndpointOutputSchemas.productFollowerList,
+	},
+	'products.followers.create': {
+		input: PipedriveEndpointInputSchemas.productFollowerCreate,
+		output: PipedriveEndpointOutputSchemas.productFollowerCreate,
+	},
+	'products.followers.changelog': {
+		input: PipedriveEndpointInputSchemas.productFollowerChangelog,
+		output: PipedriveEndpointOutputSchemas.productFollowerChangelog,
+	},
+	'products.followers.delete': {
+		input: PipedriveEndpointInputSchemas.productFollowerDelete,
+		output: PipedriveEndpointOutputSchemas.productFollowerDelete,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof pipedriveEndpointsNested
 >;
@@ -306,6 +435,73 @@ const pipedriveEndpointMeta = {
 	'tasks.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a project task and its subtasks',
+	},
+	'products.list': {
+		riskLevel: 'read',
+		description: 'List products with filters and cursor pagination',
+	},
+	'products.create': { riskLevel: 'write', description: 'Create a product' },
+	'products.search': {
+		riskLevel: 'read',
+		description: 'Search products by term',
+	},
+	'products.get': { riskLevel: 'read', description: 'Get a product by ID' },
+	'products.update': { riskLevel: 'write', description: 'Update a product' },
+	'products.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a product',
+	},
+	'products.duplicate': {
+		riskLevel: 'write',
+		description: 'Duplicate a product and its documented fields',
+	},
+	'products.variations.list': {
+		riskLevel: 'read',
+		description: 'List product variations with cursor pagination',
+	},
+	'products.variations.create': {
+		riskLevel: 'write',
+		description: 'Create a product variation',
+	},
+	'products.variations.update': {
+		riskLevel: 'write',
+		description: 'Update a product variation',
+	},
+	'products.variations.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a product variation',
+	},
+	'products.images.get': {
+		riskLevel: 'read',
+		description: 'Get product image metadata and public URL',
+	},
+	'products.images.upload': {
+		riskLevel: 'write',
+		description: 'Upload a binary image for a product',
+	},
+	'products.images.update': {
+		riskLevel: 'write',
+		description: 'Replace a product image with binary data',
+	},
+	'products.images.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a product image',
+	},
+	'products.followers.list': {
+		riskLevel: 'read',
+		description: 'List product followers with cursor pagination',
+	},
+	'products.followers.create': {
+		riskLevel: 'write',
+		description: 'Add a user as a product follower',
+	},
+	'products.followers.changelog': {
+		riskLevel: 'read',
+		description: 'List product follower changes with cursor pagination',
+	},
+	'products.followers.delete': {
+		riskLevel: 'destructive',
+		description: 'Remove a product follower',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof pipedriveEndpointsNested

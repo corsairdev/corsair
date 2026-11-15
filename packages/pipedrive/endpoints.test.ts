@@ -1,6 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
-import { Activities, Deals, Organizations, Persons, Tasks } from './endpoints';
+import {
+	Activities,
+	Deals,
+	Organizations,
+	Persons,
+	Products,
+	Tasks,
+} from './endpoints';
 import type { PipedriveContext } from './index';
 
 jest.mock('corsair/core', () => {
@@ -81,6 +88,31 @@ const task = {
 	add_time: '2025-01-01T10:00:00Z',
 	update_time: '2025-01-01T10:00:00Z',
 	marked_as_done_time: null,
+};
+const product = {
+	id: 52,
+	name: 'Synthetic product',
+	code: 'SYN-52',
+	unit: 'unit',
+	tax: 0,
+	is_deleted: false,
+	is_linkable: true,
+	visible_to: 3,
+	owner_id: 7,
+	add_time: '2025-01-01T10:00:00Z',
+	update_time: '2025-01-01T10:00:00Z',
+	description: 'Synthetic product description',
+	category: null,
+	custom_fields: { tag: 'synthetic' },
+	billing_frequency: 'one-time',
+	billing_frequency_cycles: null,
+	prices: [{ price: 20, currency: 'USD', product_id: 52 }],
+};
+const productVariation = {
+	id: 53,
+	name: 'Small',
+	product_id: 52,
+	prices: [{ price: 20, currency: 'USD', product_variation_id: 53 }],
 };
 
 beforeEach(() => {
@@ -671,6 +703,364 @@ describe('Pipedrive task endpoints', () => {
 		});
 		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
 			'Private task title',
+		);
+	});
+});
+
+describe('Pipedrive product endpoints', () => {
+	it('lists products with documented filters, comma-separated arrays, and cursor', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: [product],
+			additional_data: { next_cursor: 'product-next' },
+		});
+		const result = await Products.list(ctx, {
+			owner_id: 7,
+			ids: [52, 53],
+			custom_fields: ['field-a', 'field-b'],
+			filter_id: 6,
+			limit: 100,
+			sort_by: 'name',
+			sort_direction: 'desc',
+			updated_since: '2025-01-01T00:00:00Z',
+			cursor: 'product-cursor',
+		});
+		expect(result.data).toHaveLength(1);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'GET',
+				query: {
+					owner_id: 7,
+					ids: '52,53',
+					custom_fields: 'field-a,field-b',
+					filter_id: 6,
+					limit: 100,
+					sort_by: 'name',
+					sort_direction: 'desc',
+					updated_since: '2025-01-01T00:00:00Z',
+					cursor: 'product-cursor',
+				},
+			},
+		);
+	});
+
+	it('creates a product with documented fields and currency prices', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: product });
+		await Products.create(ctx, {
+			name: 'Synthetic product',
+			code: 'SYN-52',
+			category: 2,
+			visible_to: 3,
+			prices: [{ price: 20, currency: 'USD', cost: 8 }],
+			billing_frequency: 'monthly',
+			billing_frequency_cycles: null,
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'POST',
+				body: {
+					name: 'Synthetic product',
+					code: 'SYN-52',
+					category: 2,
+					visible_to: 3,
+					prices: [{ price: 20, currency: 'USD', cost: 8 }],
+					billing_frequency: 'monthly',
+					billing_frequency_cycles: null,
+				},
+			},
+		);
+	});
+
+	it('searches products and forwards documented fields and pagination', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: {
+				items: [
+					{ result_score: 0.9, item: { id: 52, name: 'Synthetic product' } },
+				],
+			},
+			additional_data: { next_cursor: null },
+		});
+		const result = await Products.search(ctx, {
+			term: 'product',
+			fields: ['name', 'code'],
+			exact_match: false,
+			include_fields: ['product.price'],
+			limit: 25,
+			cursor: 'search-cursor',
+		});
+		expect(result.data?.items).toHaveLength(1);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/search',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'GET',
+				query: {
+					term: 'product',
+					fields: 'name,code',
+					exact_match: false,
+					include_fields: 'product.price',
+					limit: 25,
+					cursor: 'search-cursor',
+				},
+			},
+		);
+	});
+
+	it('gets a product by ID', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: product });
+		await Products.get(ctx, { id: 52 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52',
+			'test-api-token',
+			'api_key',
+			{ method: 'GET' },
+		);
+	});
+
+	it('updates a product with PATCH and excludes the ID from its body', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: product });
+		await Products.update(ctx, { id: 52, name: 'Updated product', tax: 5 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52',
+			'test-api-token',
+			'api_key',
+			{ method: 'PATCH', body: { name: 'Updated product', tax: 5 } },
+		);
+	});
+
+	it('deletes a product and validates its response', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: { id: 52 } });
+		await Products.delete(ctx, { id: 52 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52',
+			'test-api-token',
+			'api_key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('duplicates a product with the documented POST path and no body', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: product });
+		await Products.duplicate(ctx, { id: 52 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/duplicate',
+			'test-api-token',
+			'api_key',
+			{ method: 'POST' },
+		);
+	});
+
+	it('lists product variations with cursor pagination', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: [productVariation],
+			additional_data: { next_cursor: null },
+		});
+		const result = await Products.variations.list(ctx, {
+			id: 52,
+			limit: 500,
+			cursor: 'variation-cursor',
+		});
+		expect(result.data).toHaveLength(1);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/variations',
+			'test-api-token',
+			'api_key',
+			{ method: 'GET', query: { limit: 500, cursor: 'variation-cursor' } },
+		);
+	});
+
+	it('creates a product variation with its required name and prices', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: productVariation });
+		await Products.variations.create(ctx, {
+			id: 52,
+			name: 'Small',
+			prices: [{ price: 20, currency: 'USD' }],
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/variations',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'POST',
+				body: { name: 'Small', prices: [{ price: 20, currency: 'USD' }] },
+			},
+		);
+	});
+
+	it('updates a product variation with both IDs in the route', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: productVariation });
+		await Products.variations.update(ctx, {
+			id: 52,
+			product_variation_id: 53,
+			name: 'Medium',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/variations/53',
+			'test-api-token',
+			'api_key',
+			{ method: 'PATCH', body: { name: 'Medium' } },
+		);
+	});
+
+	it('deletes a product variation', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: { id: 53 } });
+		await Products.variations.delete(ctx, { id: 52, product_variation_id: 53 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/variations/53',
+			'test-api-token',
+			'api_key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('gets product image metadata', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: {
+				id: 54,
+				product_id: 52,
+				public_url: 'https://images.synthetic.invalid/product.png',
+			},
+		});
+		await Products.images.get(ctx, { id: 52 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/images',
+			'test-api-token',
+			'api_key',
+			{ method: 'GET' },
+		);
+	});
+
+	it.each(['upload', 'update'] as const)(
+		'sends product image %s as multipart binary',
+		async (action) => {
+			mockedRequest.mockResolvedValue({
+				success: true,
+				data: { id: 54, product_id: 52 },
+			});
+			const image = new Blob(['synthetic image bytes'], { type: 'image/png' });
+			await Products.images[action](ctx, { id: 52, data: image });
+			const request = mockedRequest.mock.calls[0];
+			expect(request?.[0]).toBe('/products/52/images');
+			expect(request?.[2]).toBe('api_key');
+			expect(request?.[3]?.method).toBe(action === 'upload' ? 'POST' : 'PUT');
+			const body = request?.[3]?.body;
+			expect(body).toBeInstanceOf(FormData);
+			if (!(body instanceof FormData))
+				throw new Error('Expected multipart body');
+			const uploaded = body.get('data');
+			expect(uploaded).toMatchObject({
+				type: 'image/png',
+				name: 'blob',
+			});
+			if (!(uploaded instanceof File))
+				throw new Error('Expected uploaded image');
+			expect(await uploaded.text()).toBe('synthetic image bytes');
+		},
+	);
+
+	it('deletes a product image', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: { id: 54 } });
+		await Products.images.delete(ctx, { id: 52 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/images',
+			'test-api-token',
+			'api_key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('lists product followers with cursor pagination', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: [{ user_id: 7, add_time: '2025-01-01T00:00:00Z' }],
+			additional_data: { next_cursor: null },
+		});
+		await Products.followers.list(ctx, {
+			id: 52,
+			limit: 100,
+			cursor: 'follower-cursor',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/followers',
+			'test-api-token',
+			'api_key',
+			{ method: 'GET', query: { limit: 100, cursor: 'follower-cursor' } },
+		);
+	});
+
+	it('adds a product follower with documented user_id body', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: { user_id: 7, add_time: '2025-01-01T00:00:00Z' },
+		});
+		await Products.followers.create(ctx, { id: 52, user_id: 7 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/followers',
+			'test-api-token',
+			'api_key',
+			{ method: 'POST', body: { user_id: 7 } },
+		);
+	});
+
+	it('lists product follower changes with cursor pagination', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: [
+				{
+					action: 'added',
+					actor_user_id: 7,
+					follower_user_id: 8,
+					time: '2025-01-01T00:00:00Z',
+				},
+			],
+			additional_data: { next_cursor: null },
+		});
+		await Products.followers.changelog(ctx, {
+			id: 52,
+			limit: 50,
+			cursor: 'change-cursor',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/followers/changelog',
+			'test-api-token',
+			'api_key',
+			{ method: 'GET', query: { limit: 50, cursor: 'change-cursor' } },
+		);
+	});
+
+	it('deletes a product follower by follower ID', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: { user_id: 7 } });
+		await Products.followers.delete(ctx, { id: 52, follower_id: 7 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/products/52/followers/7',
+			'test-api-token',
+			'api_key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('rejects undocumented product fields before network I/O and excludes private values from logs', async () => {
+		await expect(
+			Reflect.apply(Products.create, undefined, [
+				ctx,
+				{ name: 'Invalid', callback: 'https://synthetic.invalid' },
+			]),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+		mockedRequest.mockResolvedValue({ success: true, data: product });
+		await Products.create(ctx, { name: 'Confidential product title' });
+		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
+			'Confidential product title',
 		);
 	});
 });

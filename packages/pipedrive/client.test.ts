@@ -64,6 +64,57 @@ describe('Pipedrive HTTP client', () => {
 		expect(mockedRequest.mock.calls[0]?.[1]?.query).toBeUndefined();
 	});
 
+	it('lets multipart image requests set their own boundary and omits binary data from errors', async () => {
+		const formData = new FormData();
+		formData.append(
+			'data',
+			new Blob(['private image bytes'], { type: 'image/png' }),
+		);
+		mockedRequest.mockResolvedValueOnce({ success: true });
+		await makePipedriveRequest('/products/52/images', 'test-token', 'api_key', {
+			method: 'POST',
+			body: formData,
+		});
+		const config = mockedRequest.mock.calls[0]?.[0];
+		const requestOptions = mockedRequest.mock.calls[0]?.[1];
+		expect(config?.HEADERS).toEqual({ 'x-api-token': 'test-token' });
+		expect(requestOptions?.mediaType).toBeUndefined();
+		expect(requestOptions?.body).toBe(formData);
+
+		const unsafeRequest = {
+			method: 'POST' as const,
+			url: '/products/52/images',
+			body: formData,
+		};
+		const apiError = new ApiError(
+			unsafeRequest,
+			{
+				url: `${PIPEDRIVE_API_BASE}/products/52/images`,
+				ok: false,
+				status: 429,
+				statusText: 'Rate limited',
+				body: { error: 'Rate limited' },
+			},
+			'Pipedrive request failed',
+			{ retryAfter: 4000 },
+		);
+		mockedRequest.mockRejectedValueOnce(apiError);
+		const rejection = await makePipedriveRequest(
+			'/products/52/images',
+			'test-token',
+			'api_key',
+			{ method: 'POST', body: formData },
+		).catch(
+			// `unknown` because a Promise rejection may contain any JavaScript value.
+			(error: unknown) => error,
+		);
+		expect(rejection).toBeInstanceOf(ApiError);
+		if (!(rejection instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(rejection.status).toBe(429);
+		expect(rejection.retryAfter).toBe(4000);
+		expect(rejection.request).not.toHaveProperty('body');
+	});
+
 	it('fails fast for a missing credential', async () => {
 		await expect(makePipedriveRequest('/deals', '', 'api_key')).rejects.toThrow(
 			AuthMissingError,

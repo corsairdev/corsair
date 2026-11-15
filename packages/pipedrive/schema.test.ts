@@ -199,6 +199,25 @@ describe('Pipedrive endpoint schemas', () => {
 				'persons.get',
 				'persons.list',
 				'persons.update',
+				'products.create',
+				'products.delete',
+				'products.duplicate',
+				'products.followers.changelog',
+				'products.followers.create',
+				'products.followers.delete',
+				'products.followers.list',
+				'products.get',
+				'products.images.delete',
+				'products.images.get',
+				'products.images.update',
+				'products.images.upload',
+				'products.list',
+				'products.search',
+				'products.update',
+				'products.variations.create',
+				'products.variations.delete',
+				'products.variations.list',
+				'products.variations.update',
 				'activities.create',
 				'activities.delete',
 				'activities.get',
@@ -233,6 +252,13 @@ describe('Pipedrive endpoint schemas', () => {
 		);
 		expect(plugin.endpoints?.tasks.list).toBeDefined();
 		expect(plugin.endpointMeta?.['tasks.delete']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpoints?.products.list).toBeDefined();
+		expect(plugin.endpoints?.products.variations.list).toBeDefined();
+		expect(plugin.endpoints?.products.images.upload).toBeDefined();
+		expect(plugin.endpoints?.products.followers.changelog).toBeDefined();
+		expect(plugin.endpointMeta?.['products.delete']?.riskLevel).toBe(
 			'destructive',
 		);
 	});
@@ -491,6 +517,205 @@ describe('Pipedrive endpoint schemas', () => {
 			PipedriveEndpointOutputSchemas.organizationDelete.parse({
 				success: true,
 				data: { id: '23' },
+			}),
+		).toThrow(z.ZodError);
+	});
+
+	it('validates product filters, writes, search rules, and binary image input', () => {
+		expect(
+			PipedriveEndpointInputSchemas.productList.parse({
+				ids: [52, 53],
+				custom_fields: ['field-a'],
+				limit: 500,
+				sort_by: 'name',
+				cursor: 'opaque',
+			}),
+		).toMatchObject({ limit: 500, cursor: 'opaque' });
+		expect(() =>
+			PipedriveEndpointInputSchemas.productList.parse({ limit: 501 }),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.productCreate.parse({ name: '' }),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.productCreate.parse({
+				name: 'Product',
+				visible_to: 2,
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.productUpdate.parse({
+				id: 52,
+				billing_frequency_cycles: 209,
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.productSearch.parse({ term: 'a' }),
+		).toThrow(z.ZodError);
+		expect(
+			PipedriveEndpointInputSchemas.productSearch.parse({
+				term: 'a',
+				exact_match: true,
+				fields: ['name', 'code'],
+				limit: 100,
+			}),
+		).toMatchObject({ exact_match: true, limit: 100 });
+		expect(() =>
+			PipedriveEndpointInputSchemas.productVariationCreate.parse({ id: 52 }),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.productVariationUpdate.parse({
+				id: 52,
+				product_variation_id: 53,
+				callback: 'url',
+			}),
+		).toThrow(z.ZodError);
+		const image = new Blob(['image bytes'], { type: 'image/png' });
+		expect(
+			PipedriveEndpointInputSchemas.productImageUpload.parse({
+				id: 52,
+				data: image,
+			}),
+		).toMatchObject({ id: 52, data: image });
+		expect(() =>
+			PipedriveEndpointInputSchemas.productImageUpload.parse({
+				id: 52,
+				data: 'base64',
+			}),
+		).toThrow(z.ZodError);
+	});
+
+	it('validates each product response envelope and documented pagination shape', () => {
+		const product = {
+			id: 52,
+			name: 'Synthetic product',
+			category: null,
+			billing_frequency_cycles: null,
+			prices: [{ price: 20, currency: 'USD', product_id: 52 }],
+			custom_fields: { tag: ['synthetic'] },
+		};
+		expect(
+			PipedriveEndpointOutputSchemas.productList.parse({
+				success: true,
+				data: [product],
+				additional_data: { next_cursor: null },
+			}),
+		).toMatchObject({
+			data: [{ category: null }],
+			additional_data: { next_cursor: null },
+		});
+		for (const schema of [
+			PipedriveEndpointOutputSchemas.productCreate,
+			PipedriveEndpointOutputSchemas.productGet,
+			PipedriveEndpointOutputSchemas.productUpdate,
+			PipedriveEndpointOutputSchemas.productDuplicate,
+		]) {
+			expect(schema.parse({ success: true, data: product })).toMatchObject({
+				data: { id: 52, billing_frequency_cycles: null },
+			});
+		}
+		expect(
+			PipedriveEndpointOutputSchemas.productSearch.parse({
+				success: true,
+				data: { items: [{ result_score: 0.9, item: { id: 52, code: null } }] },
+				additional_data: { next_cursor: null },
+			}),
+		).toMatchObject({ data: { items: [{ item: { code: null } }] } });
+		expect(
+			PipedriveEndpointOutputSchemas.productDelete.parse({
+				success: true,
+				data: { id: 52 },
+			}),
+		).toMatchObject({ data: { id: 52 } });
+		const variation = {
+			id: 53,
+			name: 'Small',
+			product_id: 52,
+			prices: [{ price: 20, currency: 'USD', product_variation_id: 53 }],
+		};
+		expect(
+			PipedriveEndpointOutputSchemas.productVariationList.parse({
+				success: true,
+				data: [variation],
+				additional_data: { next_cursor: null },
+			}),
+		).toMatchObject({ data: [{ id: 53 }] });
+		for (const schema of [
+			PipedriveEndpointOutputSchemas.productVariationCreate,
+			PipedriveEndpointOutputSchemas.productVariationUpdate,
+		]) {
+			expect(schema.parse({ success: true, data: variation })).toMatchObject({
+				data: { id: 53 },
+			});
+		}
+		expect(
+			PipedriveEndpointOutputSchemas.productVariationDelete.parse({
+				success: true,
+				data: { id: 53 },
+			}),
+		).toMatchObject({ data: { id: 53 } });
+		const image = {
+			id: 54,
+			product_id: 52,
+			company_id: 'company',
+			public_url: 'https://images.example.test/product.png',
+			add_time: '2025-01-01T00:00:00Z',
+			mime_type: 'image/png',
+			name: 'product.png',
+		};
+		for (const schema of [
+			PipedriveEndpointOutputSchemas.productImageGet,
+			PipedriveEndpointOutputSchemas.productImageUpload,
+			PipedriveEndpointOutputSchemas.productImageUpdate,
+		]) {
+			expect(schema.parse({ success: true, data: image })).toMatchObject({
+				data: { id: 54, product_id: 52 },
+			});
+		}
+		expect(
+			PipedriveEndpointOutputSchemas.productImageDelete.parse({
+				success: true,
+				data: { id: 54 },
+			}),
+		).toMatchObject({ data: { id: 54 } });
+		const follower = { user_id: 7, add_time: '2025-01-01T00:00:00Z' };
+		expect(
+			PipedriveEndpointOutputSchemas.productFollowerList.parse({
+				success: true,
+				data: [follower],
+				additional_data: { next_cursor: null },
+			}),
+		).toMatchObject({ data: [follower] });
+		expect(
+			PipedriveEndpointOutputSchemas.productFollowerCreate.parse({
+				success: true,
+				data: follower,
+			}),
+		).toMatchObject({ data: follower });
+		expect(
+			PipedriveEndpointOutputSchemas.productFollowerChangelog.parse({
+				success: true,
+				data: [
+					{
+						action: 'added',
+						actor_user_id: 7,
+						follower_user_id: 8,
+						time: 'now',
+					},
+				],
+				additional_data: { next_cursor: null },
+			}),
+		).toMatchObject({ data: [{ action: 'added' }] });
+		expect(
+			PipedriveEndpointOutputSchemas.productFollowerDelete.parse({
+				success: true,
+				data: { user_id: 7 },
+			}),
+		).toMatchObject({ data: { user_id: 7 } });
+		expect(() =>
+			PipedriveEndpointOutputSchemas.productGet.parse({
+				success: 'yes',
+				data: product,
 			}),
 		).toThrow(z.ZodError);
 	});

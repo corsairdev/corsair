@@ -1961,6 +1961,1197 @@ OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_t
 
 ---
 
+## Products
+
+### create
+
+`products.create`
+
+Create a product
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.products.create({ name: 'Sample product', prices: [{ price: 20, currency: 'USD' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `code` | `string` | No | — |
+| `description` | `string` | No | — |
+| `unit` | `string` | No | — |
+| `tax` | `number` | No | — |
+| `category` | `number` | No | — |
+| `owner_id` | `number` | No | — |
+| `is_linkable` | `boolean` | No | — |
+| `visible_to` | `1 \| 3 \| 5 \| 7` | No | — |
+| `prices` | `object[]` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+| `billing_frequency` | `one-time \| annually \| semi-annually \| quarterly \| monthly \| weekly` | No | — |
+| `billing_frequency_cycles` | `number \| null` | No | — |
+
+OAuth requires products:full. name is required and cannot be empty; prices require both price and currency. billing_frequency and billing_frequency_cycles are available on Growth and above, and cycles are limited to 1–208 when non-null. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="prices full type">
+
+```ts
+{
+  price: number,
+  currency: string,
+  cost?: number,
+  direct_cost?: number,
+  notes?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  code?: string,
+  unit?: string,
+  tax?: number,
+  is_deleted?: boolean,
+  is_linkable?: boolean,
+  visible_to?: 1 | 3 | 5 | 7,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string,
+  description?: string,
+  category?: string | null,
+  custom_fields?: Record<string, any>,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
+  billing_frequency_cycles?: number | null,
+  prices?: {
+    price?: number,
+    cost?: number,
+    product_id?: number | null,
+    product_variation_id?: number,
+    currency?: string | null,
+    direct_cost?: number | null,
+    notes?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete a product
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.products.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires products:full. Deletion marks the product deleted; Pipedrive permanently removes it after 30 days. The documented API token cost is 3 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duplicate
+
+`products.duplicate`
+
+Duplicate a product and its documented fields
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.products.duplicate({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires products:full. This creates a duplicate including all variations, prices, and custom fields using POST /products/{id}/duplicate, with no request body. The documented API token cost is 5 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  code?: string,
+  unit?: string,
+  tax?: number,
+  is_deleted?: boolean,
+  is_linkable?: boolean,
+  visible_to?: 1 | 3 | 5 | 7,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string,
+  description?: string,
+  category?: string | null,
+  custom_fields?: Record<string, any>,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
+  billing_frequency_cycles?: number | null,
+  prices?: {
+    price?: number,
+    cost?: number,
+    product_id?: number | null,
+    product_variation_id?: number,
+    currency?: string | null,
+    direct_cost?: number | null,
+    notes?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### followers.changelog
+
+`products.followers.changelog`
+
+List product follower changes with cursor pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.products.followers.changelog({ id: 1, limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  action?: string,
+  actor_user_id?: number,
+  follower_user_id?: number,
+  time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### followers.create
+
+`products.followers.create`
+
+Add a user as a product follower
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.products.followers.create({ id: 1, user_id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `user_id` | `number` | Yes | — |
+
+OAuth requires products:full. The request body requires the user_id of the user to add as a follower. The documented API token cost is 5 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  user_id?: number,
+  add_time?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### followers.delete
+
+`products.followers.delete`
+
+Remove a product follower
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.products.followers.delete({ id: 1, follower_id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `follower_id` | `number` | Yes | — |
+
+OAuth requires products:full. follower_id identifies the following user in the path. The documented API token cost is 3 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  user_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### followers.list
+
+`products.followers.list`
+
+List product followers with cursor pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.products.followers.list({ id: 1, limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  user_id?: number,
+  add_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`products.get`
+
+Get a product by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.products.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires products:read or products:full. The documented API token cost is 1 token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  code?: string,
+  unit?: string,
+  tax?: number,
+  is_deleted?: boolean,
+  is_linkable?: boolean,
+  visible_to?: 1 | 3 | 5 | 7,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string,
+  description?: string,
+  category?: string | null,
+  custom_fields?: Record<string, any>,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
+  billing_frequency_cycles?: number | null,
+  prices?: {
+    price?: number,
+    cost?: number,
+    product_id?: number | null,
+    product_variation_id?: number,
+    currency?: string | null,
+    direct_cost?: number | null,
+    notes?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### images.delete
+
+`products.images.delete`
+
+Delete a product image
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.products.images.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires products:full. This deletes the product's image. The documented API token cost is 6 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### images.get
+
+`products.images.get`
+
+Get product image metadata and public URL
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.products.images.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires products:read or products:full. The response is image metadata and a public URL, not image bytes; Pipedrive says the public URL is valid for 7 days. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  product_id?: number,
+  company_id?: string,
+  public_url?: string,
+  add_time?: string,
+  mime_type?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### images.update
+
+`products.images.update`
+
+Replace a product image with binary data
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.products.images.update({ id: 1, data: Blob });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `data` | `custom` | Yes | — |
+
+OAuth requires products:full. Supply an actual Blob as data; the request sends the documented multipart/form-data binary field named data. The documented API token cost is 20 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  product_id?: number,
+  company_id?: string,
+  public_url?: string,
+  add_time?: string,
+  mime_type?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### images.upload
+
+`products.images.upload`
+
+Upload a binary image for a product
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.products.images.upload({ id: 1, data: Blob });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `data` | `custom` | Yes | — |
+
+OAuth requires products:full. Supply an actual Blob as data; the request sends the documented multipart/form-data binary field named data. The documented API token cost is 20 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  product_id?: number,
+  company_id?: string,
+  public_url?: string,
+  add_time?: string,
+  mime_type?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List products with filters and cursor pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.products.list({ limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner_id` | `number` | No | — |
+| `ids` | `number[]` | No | — |
+| `custom_fields` | `string[]` | No | — |
+| `filter_id` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `sort_by` | `id \| name \| add_time \| update_time` | No | — |
+| `sort_direction` | `asc \| desc` | No | — |
+| `updated_since` | `string` | No | — |
+
+OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. ids accepts up to 100 IDs and custom_fields up to 15 unique keys. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  code?: string,
+  unit?: string,
+  tax?: number,
+  is_deleted?: boolean,
+  is_linkable?: boolean,
+  visible_to?: 1 | 3 | 5 | 7,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string,
+  description?: string,
+  category?: string | null,
+  custom_fields?: Record<string, any>,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
+  billing_frequency_cycles?: number | null,
+  prices?: {
+    price?: number,
+    cost?: number,
+    product_id?: number | null,
+    product_variation_id?: number,
+    currency?: string | null,
+    direct_cost?: number | null,
+    notes?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`products.search`
+
+Search products by term
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.products.search({ term: 'sample' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `term` | `string` | Yes | — |
+| `fields` | `(code \| custom_fields \| name)[]` | No | — |
+| `exact_match` | `boolean` | No | — |
+| `include_fields` | `product.price[]` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+OAuth accepts products:read, products:full, or search:read. term is 2–100 characters, or one character with exact_match: true; the limit is at most 100 and pagination uses next_cursor. Search has a separate burst limit of 10 requests per 2-second window across plans and authentication types. The documented API token cost is 20 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items?: {
+    result_score?: number,
+    item?: {
+      id?: number,
+      type?: string,
+      name?: string,
+      code?: string | null,
+      visible_to?: number,
+      owner?: {
+        id?: number
+      },
+      custom_fields?: string[]
+    }
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update a product
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.products.update({ id: 1, name: 'Updated product' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `code` | `string` | No | — |
+| `description` | `string` | No | — |
+| `unit` | `string` | No | — |
+| `tax` | `number` | No | — |
+| `category` | `number` | No | — |
+| `owner_id` | `number` | No | — |
+| `is_linkable` | `boolean` | No | — |
+| `visible_to` | `1 \| 3 \| 5 \| 7` | No | — |
+| `prices` | `object[]` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+| `billing_frequency` | `one-time \| annually \| semi-annually \| quarterly \| monthly \| weekly` | No | — |
+| `billing_frequency_cycles` | `number \| null` | No | — |
+
+OAuth requires products:full. This is a partial PATCH; prices require price and currency when supplied. Billing frequency fields are available on Growth and above. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="prices full type">
+
+```ts
+{
+  price: number,
+  currency: string,
+  cost?: number,
+  direct_cost?: number,
+  notes?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  code?: string,
+  unit?: string,
+  tax?: number,
+  is_deleted?: boolean,
+  is_linkable?: boolean,
+  visible_to?: 1 | 3 | 5 | 7,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string,
+  description?: string,
+  category?: string | null,
+  custom_fields?: Record<string, any>,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
+  billing_frequency_cycles?: number | null,
+  prices?: {
+    price?: number,
+    cost?: number,
+    product_id?: number | null,
+    product_variation_id?: number,
+    currency?: string | null,
+    direct_cost?: number | null,
+    notes?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variations.create
+
+`products.variations.create`
+
+Create a product variation
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.products.variations.create({ id: 1, name: 'Small' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `prices` | `object[]` | No | — |
+
+OAuth requires products:full. name is required and limited to 255 characters; each supplied price requires price and currency. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="prices full type">
+
+```ts
+{
+  price: number,
+  currency: string,
+  cost?: number,
+  direct_cost?: number,
+  notes?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  product_id?: number,
+  prices?: {
+    price?: number,
+    cost?: number,
+    product_id?: number | null,
+    product_variation_id?: number,
+    currency?: string | null,
+    direct_cost?: number | null,
+    notes?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variations.delete
+
+`products.variations.delete`
+
+Delete a product variation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.products.variations.delete({ id: 1, product_variation_id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `product_variation_id` | `number` | Yes | — |
+
+OAuth requires products:full. This removes the specified product variation. The documented API token cost is 3 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variations.list
+
+`products.variations.list`
+
+List product variations with cursor pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.products.variations.list({ id: 1, limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  product_id?: number,
+  prices?: {
+    price?: number,
+    cost?: number,
+    product_id?: number | null,
+    product_variation_id?: number,
+    currency?: string | null,
+    direct_cost?: number | null,
+    notes?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variations.update
+
+`products.variations.update`
+
+Update a product variation
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.products.variations.update({ id: 1, product_variation_id: 2, name: 'Medium' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `product_variation_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `prices` | `object[]` | No | — |
+
+OAuth requires products:full. The parent product ID and product_variation_id are both required; supplied prices require price and currency. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="prices full type">
+
+```ts
+{
+  price: number,
+  currency: string,
+  cost?: number,
+  direct_cost?: number,
+  notes?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  product_id?: number,
+  prices?: {
+    price?: number,
+    cost?: number,
+    product_id?: number | null,
+    product_variation_id?: number,
+    currency?: string | null,
+    direct_cost?: number | null,
+    notes?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Tasks
 
 ### create
