@@ -1,0 +1,145 @@
+---
+title: "Prismic plugin"
+sidebarTitle: "Overview"
+description: "Headless CMS API for querying published documents and migrating content into a repository."
+---
+
+Use **Prismic** through Corsair: one client, typed API calls.
+
+Prismic is a headless CMS built on custom types. This plugin reads published content through the Content API and writes drafts through the Migration API, which are two different hosts with two different credentials.
+
+What to know before you call:
+
+- **What an account stores.** Every call needs the repository id (`repository`, such as `my-repo` from `my-repo.prismic.io`), stored on the account or passed as `prismic({ repository })`. The account's key is a write token (Settings, API & Security, Write APIs), which only the `migration.*` operations need. A private repository also needs its Content API access token (`access_token`, or `prismic({ accessToken })`); a public one needs nothing for reads.
+- **A query is pinned to a ref.** Prismic refuses a document query without one. When `ref` is omitted, the plugin reads the repository's master ref first, which is the published content. Pass a release's `ref` from `repository.info` to read that release instead.
+- **Paging.** A search returns `next_page` while another page exists. It already carries the ref and every filter, so pass it as `nextPage` and the other fields are ignored. For a changing dataset the `after` cursor is steadier than `page`.
+- **Predicates.** `q` takes a Prismic predicate expression such as `[[at(document.type, "page")]]`, and `orderings` takes a sort such as `[my.page.date desc]`. The plugin passes both through rather than parsing them.
+- **Document bodies are yours.** Which fields a document has depends on the repository's custom types, so `data` is read and written as it is sent and Prismic validates it.
+- **Migration writes are drafts.** `migration.create` and `migration.update` save into a migration release, which you publish from the Prismic UI or the client library afterwards. Prismic accepts one page per request at one request per second per repository.
+- **An update replaces the content.** `migration.update` needs the full `data`, which replaces what is stored, and omitting `tags` deletes every tag. `type`, `lang` and the translation link cannot be changed.
+- **Webhooks.** Prismic can call a URL when content changes, but this plugin does not handle inbound deliveries.
+
+**What you get:**
+
+- 5 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/prismic better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/prismic better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/prismic better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/prismic better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { prismic } from '@corsair-dev/prismic';
+
+export const corsair = createCorsair({
+	plugins: [
+		prismic(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Prismic API key before the first call: `pnpm corsair setup --plugin=prismic --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+prismic()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'prismic',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the first page of documents**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.prismic.api.documents.search({ pageSize: 20 });
+```
+
+
+**Create a page as a draft**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.prismic.api.migration.create({
+	title: 'Example page',
+	type: 'page',
+	lang: 'en-us',
+	data: { title: 'Hello' },
+});
+```
+
+
+See the full list on the [API](/plugins/prismic/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/prismic/api">
+    Every `prismic.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
