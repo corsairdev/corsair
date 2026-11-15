@@ -1,0 +1,3402 @@
+---
+title: "LaunchDarkly API reference"
+sidebarTitle: "API"
+description: "API reference for the LaunchDarkly plugin in Corsair: every `launchdarkly.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Access Tokens
+
+### create
+
+`accessTokens.create`
+
+Create a new personal or service access token
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.accessTokens.create({ name: 'CI Deployment Token' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `role` | `reader \| writer \| admin` | No | — |
+| `customRoleIds` | `string[]` | No | — |
+| `serviceToken` | `boolean` | No | — |
+| `defaultApiVersion` | `number` | No | — |
+| `expiry` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `role` | `string` | No | — |
+| `customRoleIds` | `string[]` | No | — |
+| `token` | `string` | No | — |
+| `serviceToken` | `boolean` | No | — |
+| `defaultApiVersion` | `number` | No | — |
+| `creationDate` | `number` | No | — |
+| `lastModified` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`accessTokens.delete`
+
+Revoke and delete an access token
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.accessTokens.delete({ id: '5a5c0b000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`accessTokens.get`
+
+Get details of an access token by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.accessTokens.get({ id: '5a5c0b000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `role` | `string` | No | — |
+| `customRoleIds` | `string[]` | No | — |
+| `token` | `string` | No | — |
+| `serviceToken` | `boolean` | No | — |
+| `defaultApiVersion` | `number` | No | — |
+| `creationDate` | `number` | No | — |
+| `lastModified` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accessTokens.list`
+
+List access tokens in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.accessTokens.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `showAll` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  description?: string,
+  role?: string,
+  customRoleIds?: string[],
+  token?: string,
+  serviceToken?: boolean,
+  defaultApiVersion?: number,
+  creationDate?: number,
+  lastModified?: number,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Account Members
+
+### delete
+
+`accountMembers.delete`
+
+Remove an account member from the account
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.accountMembers.delete({ id: '5a5c0b000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`accountMembers.get`
+
+Get details of an account member by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.accountMembers.get({ id: '5a5c0b000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `role` | `string` | Yes | — |
+| `customRoles` | `string[]` | No | — |
+| `_pendingInvite` | `boolean` | No | — |
+| `_verified` | `boolean` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`accountMembers.invite`
+
+Invite new members to the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.launchdarkly.api.accountMembers.invite({
+	members: [{ email: 'dev@example.com', role: 'writer' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  email: string,
+  role?: reader | writer | admin | owner/admin | no_access,
+  customRoles?: string[],
+  roleAttributes?: Record<string, string[]>,
+  teamKeys?: string[],
+  password?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  _id: string,
+  email: string,
+  firstName?: string,
+  lastName?: string,
+  role: string,
+  customRoles?: string[],
+  _pendingInvite?: boolean,
+  _verified?: boolean,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accountMembers.list`
+
+List all account members
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.accountMembers.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  _id: string,
+  email: string,
+  firstName?: string,
+  lastName?: string,
+  role: string,
+  customRoles?: string[],
+  _pendingInvite?: boolean,
+  _verified?: boolean,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`accountMembers.update`
+
+Update an account member role or permissions via JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.accountMembers.update({
+	id: '5a5c0b000000000000000001',
+	patch: [{ op: 'replace', path: '/role', value: 'writer' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+(
+  {
+    op: add | replace | test,
+    path: string,
+    value: any
+  } | {
+    op: remove,
+    path: string
+  } | {
+    op: move | copy,
+    from: string,
+    path: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `role` | `string` | Yes | — |
+| `customRoles` | `string[]` | No | — |
+| `_pendingInvite` | `boolean` | No | — |
+| `_verified` | `boolean` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audit Log
+
+### get
+
+`auditLog.get`
+
+Get a specific audit log entry by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.auditLog.get({ id: '5a5c0b000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `date` | `number` | Yes | — |
+| `kind` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `shortDescription` | `string` | No | — |
+| `comment` | `string` | No | — |
+| `member` | `object` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  _id?: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`auditLog.list`
+
+List recent audit log entries in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.auditLog.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before` | `number` | No | — |
+| `after` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `q` | `string` | No | — |
+| `spec` | `string` | No | — |
+| `member` | `string` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  _id: string,
+  date: number,
+  kind: string,
+  name?: string,
+  description?: string,
+  shortDescription?: string,
+  comment?: string,
+  member?: {
+    _id?: string,
+    email?: string,
+    firstName?: string,
+    lastName?: string
+  },
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contexts
+
+### get
+
+`contexts.get`
+
+Get evaluation context by kind and key
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.contexts.get({
+	projectKey: 'default',
+	environmentKey: 'production',
+	kind: 'user',
+	key: 'user-123',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `kind` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `continuationToken` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `includeTotalCount` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `continuationToken` | `string` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  key: string,
+  kind?: string,
+  name?: string,
+  attributes?: Record<string, any>,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listKinds
+
+`contexts.listKinds`
+
+List context kinds defined in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.contexts.listKinds({ projectKey: 'default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  key: string,
+  name?: string,
+  description?: string,
+  archived?: boolean,
+  _version?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`contexts.search`
+
+Search for evaluation contexts in an environment
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.contexts.search({ projectKey: 'default', environmentKey: 'production', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `continuationToken` | `string` | No | — |
+| `includeTotalCount` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `continuationToken` | `string` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  key: string,
+  kind?: string,
+  name?: string,
+  attributes?: Record<string, any>,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Roles
+
+### create
+
+`customRoles.create`
+
+Create a new custom role
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.customRoles.create({
+	key: 'flag-admin',
+	name: 'Flag Administrator',
+	policy: [{
+		effect: 'allow',
+		actions: ['*'],
+		resources: ['proj/*:env/*:flag/*'],
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `policy` | `object[]` | Yes | — |
+| `basePermissions` | `reader \| no_access` | No | — |
+| `resourceCategory` | `organization \| project \| any` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  effect: allow | deny,
+  resources?: string[],
+  notResources?: string[],
+  actions?: string[],
+  notActions?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `policy` | `object[]` | No | — |
+| `basePermissions` | `string` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  effect: allow | deny,
+  resources?: string[],
+  notResources?: string[],
+  actions?: string[],
+  notActions?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customRoles.delete`
+
+Permanently delete a custom role
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.customRoles.delete({ customRoleKey: 'deprecated-role' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customRoleKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`customRoles.get`
+
+Get a custom role by key
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.customRoles.get({ customRoleKey: 'flag-admin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customRoleKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `policy` | `object[]` | No | — |
+| `basePermissions` | `string` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  effect: allow | deny,
+  resources?: string[],
+  notResources?: string[],
+  actions?: string[],
+  notActions?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customRoles.list`
+
+List custom roles in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.customRoles.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  _id: string,
+  key: string,
+  name: string,
+  description?: string,
+  policy?: {
+    effect: allow | deny,
+    resources?: string[],
+    notResources?: string[],
+    actions?: string[],
+    notActions?: string[]
+  }[],
+  basePermissions?: string,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customRoles.update`
+
+Update a custom role policy via JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.customRoles.update({
+	customRoleKey: 'flag-admin',
+	patch: [{ op: 'replace', path: '/name', value: 'Lead Flag Administrator' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customRoleKey` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+| `comment` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+(
+  {
+    op: add | replace | test,
+    path: string,
+    value: any
+  } | {
+    op: remove,
+    path: string
+  } | {
+    op: move | copy,
+    from: string,
+    path: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `policy` | `object[]` | No | — |
+| `basePermissions` | `string` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  effect: allow | deny,
+  resources?: string[],
+  notResources?: string[],
+  actions?: string[],
+  notActions?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Environments
+
+### create
+
+`environments.create`
+
+Create a new environment in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.environments.create({
+	projectKey: 'default',
+	key: 'staging',
+	name: 'Staging',
+	color: 'FF9900',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | Yes | — |
+| `defaultTtl` | `number` | No | — |
+| `secureMode` | `boolean` | No | — |
+| `defaultTrackEvents` | `boolean` | No | — |
+| `confirmChanges` | `boolean` | No | — |
+| `requireComments` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `critical` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `apiKey` | `string` | No | — |
+| `mobileKey` | `string` | No | — |
+| `color` | `string` | Yes | — |
+| `defaultTtl` | `number` | No | — |
+| `secureMode` | `boolean` | No | — |
+| `defaultTrackEvents` | `boolean` | No | — |
+| `requireComments` | `boolean` | No | — |
+| `confirmChanges` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `critical` | `boolean` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`environments.delete`
+
+Permanently delete an environment
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.environments.delete({ projectKey: 'default', environmentKey: 'qa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`environments.get`
+
+Get details of a specific environment
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.environments.get({ projectKey: 'default', environmentKey: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `apiKey` | `string` | No | — |
+| `mobileKey` | `string` | No | — |
+| `color` | `string` | Yes | — |
+| `defaultTtl` | `number` | No | — |
+| `secureMode` | `boolean` | No | — |
+| `defaultTrackEvents` | `boolean` | No | — |
+| `requireComments` | `boolean` | No | — |
+| `confirmChanges` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `critical` | `boolean` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`environments.list`
+
+List all environments in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.environments.list({ projectKey: 'default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  _id: string,
+  key: string,
+  name: string,
+  apiKey?: string,
+  mobileKey?: string,
+  color: string,
+  defaultTtl?: number,
+  secureMode?: boolean,
+  defaultTrackEvents?: boolean,
+  requireComments?: boolean,
+  confirmChanges?: boolean,
+  tags?: string[],
+  critical?: boolean,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resetMobileKey
+
+`environments.resetMobileKey`
+
+Reset the mobile key for an environment
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.environments.resetMobileKey({ projectKey: 'default', environmentKey: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `apiKey` | `string` | No | — |
+| `mobileKey` | `string` | No | — |
+| `color` | `string` | Yes | — |
+| `defaultTtl` | `number` | No | — |
+| `secureMode` | `boolean` | No | — |
+| `defaultTrackEvents` | `boolean` | No | — |
+| `requireComments` | `boolean` | No | — |
+| `confirmChanges` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `critical` | `boolean` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resetSdkKey
+
+`environments.resetSdkKey`
+
+Reset the SDK key for an environment
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.environments.resetSdkKey({ projectKey: 'default', environmentKey: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `expiry` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `apiKey` | `string` | No | — |
+| `mobileKey` | `string` | No | — |
+| `color` | `string` | Yes | — |
+| `defaultTtl` | `number` | No | — |
+| `secureMode` | `boolean` | No | — |
+| `defaultTrackEvents` | `boolean` | No | — |
+| `requireComments` | `boolean` | No | — |
+| `confirmChanges` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `critical` | `boolean` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`environments.update`
+
+Update environment configuration via JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.environments.update({
+	projectKey: 'default',
+	environmentKey: 'staging',
+	patch: [{ op: 'replace', path: '/name', value: 'Staging V2' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+(
+  {
+    op: add | replace | test,
+    path: string,
+    value: any
+  } | {
+    op: remove,
+    path: string
+  } | {
+    op: move | copy,
+    from: string,
+    path: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `apiKey` | `string` | No | — |
+| `mobileKey` | `string` | No | — |
+| `color` | `string` | Yes | — |
+| `defaultTtl` | `number` | No | — |
+| `secureMode` | `boolean` | No | — |
+| `defaultTrackEvents` | `boolean` | No | — |
+| `requireComments` | `boolean` | No | — |
+| `confirmChanges` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `critical` | `boolean` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Feature Flags
+
+### create
+
+`featureFlags.create`
+
+Create a new feature flag in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.featureFlags.create({ projectKey: 'default', key: 'new-feature', name: 'New Feature' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `clone` | `string` | No | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `variations` | `object[]` | No | — |
+| `temporary` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `includeInSnippet` | `boolean` | No | — |
+| `clientSideAvailability` | `object` | No | — |
+| `defaults` | `object` | No | — |
+| `customProperties` | `object` | No | — |
+| `purpose` | `migration \| holdout` | No | — |
+| `migrationSettings` | `object` | No | — |
+| `maintainerId` | `string` | No | — |
+| `maintainerTeamKey` | `string` | No | — |
+| `initialPrerequisites` | `object[]` | No | — |
+| `isFlagOn` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="variations full type">
+
+```ts
+{
+  value: any,
+  name?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="clientSideAvailability full type">
+
+```ts
+{
+  usingMobileKey?: boolean,
+  usingEnvironmentId?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="defaults full type">
+
+```ts
+{
+  onVariation?: number,
+  offVariation?: number
+}
+```
+</Accordion>
+
+<Accordion title="customProperties full type">
+
+```ts
+Record<string, {
+  name: string,
+  value: string[]
+}>
+```
+</Accordion>
+
+<Accordion title="migrationSettings full type">
+
+```ts
+{
+  contextKind?: string,
+  stageCount: 2 | 4 | 6
+}
+```
+</Accordion>
+
+<Accordion title="initialPrerequisites full type">
+
+```ts
+{
+  key: string,
+  variationId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `kind` | `string` | No | — |
+| `description` | `string` | No | — |
+| `creationDate` | `number` | No | — |
+| `archived` | `boolean` | No | — |
+| `temporary` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `variations` | `object[]` | No | — |
+| `_version` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="variations full type">
+
+```ts
+{
+  _id?: string,
+  value: any,
+  name?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`featureFlags.delete`
+
+Permanently delete a feature flag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.featureFlags.delete({ projectKey: 'default', featureFlagKey: 'temp-feature' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `featureFlagKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`featureFlags.get`
+
+Get details of a feature flag
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.featureFlags.get({ projectKey: 'default', featureFlagKey: 'enable-feature' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `featureFlagKey` | `string` | Yes | — |
+| `env` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `kind` | `string` | No | — |
+| `description` | `string` | No | — |
+| `creationDate` | `number` | No | — |
+| `archived` | `boolean` | No | — |
+| `temporary` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `variations` | `object[]` | No | — |
+| `_version` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="variations full type">
+
+```ts
+{
+  _id?: string,
+  value: any,
+  name?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`featureFlags.getStatus`
+
+Get the status of a feature flag in an environment
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.featureFlags.getStatus({ projectKey: 'default', environmentKey: 'production', featureFlagKey: 'enable-feature' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `featureFlagKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `lastRequested` | `string \| null` | No | — |
+| `default` | `any` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`featureFlags.list`
+
+List feature flags in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.featureFlags.list({ projectKey: 'default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `env` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `archived` | `boolean` | No | — |
+| `summary` | `boolean` | No | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `filterEnv` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  key: string,
+  name: string,
+  kind?: string,
+  description?: string,
+  creationDate?: number,
+  archived?: boolean,
+  temporary?: boolean,
+  tags?: string[],
+  variations?: {
+    _id?: string,
+    value: any,
+    name?: string,
+    description?: string
+  }[],
+  _version?: number,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listStatuses
+
+`featureFlags.listStatuses`
+
+List statuses for all feature flags in an environment
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.featureFlags.listStatuses({ projectKey: 'default', environmentKey: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  name?: string,
+  lastRequested?: string | null,
+  default?: any,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`featureFlags.update`
+
+Update feature flag rules and variations via JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.featureFlags.update({
+	projectKey: 'default',
+	featureFlagKey: 'new-feature',
+	patch: [{ op: 'replace', path: '/description', value: 'Updated description' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `featureFlagKey` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+| `comment` | `string` | No | — |
+| `ignoreConflicts` | `boolean` | No | — |
+| `dryRun` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+(
+  {
+    op: add | replace | test,
+    path: string,
+    value: any
+  } | {
+    op: remove,
+    path: string
+  } | {
+    op: move | copy,
+    from: string,
+    path: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `kind` | `string` | No | — |
+| `description` | `string` | No | — |
+| `creationDate` | `number` | No | — |
+| `archived` | `boolean` | No | — |
+| `temporary` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `variations` | `object[]` | No | — |
+| `_version` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="variations full type">
+
+```ts
+{
+  _id?: string,
+  value: any,
+  name?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.projects.create({
+	key: 'mobile-app',
+	name: 'Mobile App',
+	tags: ['mobile'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `includeInSnippetByDefault` | `boolean` | No | — |
+| `defaultClientSideAvailability` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `environments` | `object[]` | No | — |
+| `namingConvention` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="defaultClientSideAvailability full type">
+
+```ts
+{
+  usingMobileKey: boolean,
+  usingEnvironmentId: boolean
+}
+```
+</Accordion>
+
+<Accordion title="environments full type">
+
+```ts
+{
+  key: string,
+  name: string,
+  color: string,
+  defaultTtl?: number,
+  secureMode?: boolean,
+  defaultTrackEvents?: boolean,
+  confirmChanges?: boolean,
+  requireComments?: boolean,
+  tags?: string[],
+  critical?: boolean,
+  source?: {
+    key?: string,
+    version?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="namingConvention full type">
+
+```ts
+{
+  case?: camelCase | upperCamelCase | snakeCase | kebabCase | constantCase,
+  prefix?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `includeInSnippetByDefault` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `environments` | `object[]` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environments full type">
+
+```ts
+{
+  _id?: string,
+  key: string,
+  name: string,
+  color?: string,
+  apiKey?: string,
+  mobileKey?: string,
+  critical?: boolean,
+  tags?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently delete a project
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.projects.delete({ projectKey: 'old-project' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`projects.get`
+
+Get details of a specific project by project key
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.projects.get({ projectKey: 'default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `includeInSnippetByDefault` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `environments` | `object[]` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environments full type">
+
+```ts
+{
+  _id?: string,
+  key: string,
+  name: string,
+  color?: string,
+  apiKey?: string,
+  mobileKey?: string,
+  critical?: boolean,
+  tags?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List all projects in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.projects.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  _id: string,
+  key: string,
+  name: string,
+  includeInSnippetByDefault?: boolean,
+  tags?: string[],
+  environments?: {
+    _id?: string,
+    key: string,
+    name: string,
+    color?: string,
+    apiKey?: string,
+    mobileKey?: string,
+    critical?: boolean,
+    tags?: string[]
+  }[],
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update project configuration via JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.projects.update({
+	projectKey: 'default',
+	patch: [{ op: 'replace', path: '/name', value: 'Default Project' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+(
+  {
+    op: add | replace | test,
+    path: string,
+    value: any
+  } | {
+    op: remove,
+    path: string
+  } | {
+    op: move | copy,
+    from: string,
+    path: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `includeInSnippetByDefault` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `environments` | `object[]` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="environments full type">
+
+```ts
+{
+  _id?: string,
+  key: string,
+  name: string,
+  color?: string,
+  apiKey?: string,
+  mobileKey?: string,
+  critical?: boolean,
+  tags?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Root
+
+### get
+
+`root.get`
+
+Get LaunchDarkly root API metadata and resource links
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.root.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segments
+
+### create
+
+`segments.create`
+
+Create a new user segment
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.segments.create({
+	projectKey: 'default',
+	environmentKey: 'production',
+	key: 'beta-testers',
+	name: 'Beta Testers',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `unbounded` | `boolean` | No | — |
+| `unboundedContextKind` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `tags` | `string[]` | No | — |
+| `creationDate` | `number` | No | — |
+| `version` | `number` | No | — |
+| `included` | `string[]` | No | — |
+| `excluded` | `string[]` | No | — |
+| `rules` | `any[]` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`segments.delete`
+
+Permanently delete a user segment
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.segments.delete({ projectKey: 'default', environmentKey: 'production', segmentKey: 'old-testers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `segmentKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`segments.get`
+
+Get details of a user segment
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.segments.get({ projectKey: 'default', environmentKey: 'production', segmentKey: 'beta-testers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `segmentKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `tags` | `string[]` | No | — |
+| `creationDate` | `number` | No | — |
+| `version` | `number` | No | — |
+| `included` | `string[]` | No | — |
+| `excluded` | `string[]` | No | — |
+| `rules` | `any[]` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List user segments in an environment
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.segments.list({ projectKey: 'default', environmentKey: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  key: string,
+  name: string,
+  description?: string | null,
+  tags?: string[],
+  creationDate?: number,
+  version?: number,
+  included?: string[],
+  excluded?: string[],
+  rules?: any[],
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`segments.update`
+
+Update user segment rules via JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.segments.update({
+	projectKey: 'default',
+	environmentKey: 'production',
+	segmentKey: 'beta-testers',
+	patch: [{ op: 'replace', path: '/description', value: 'Early adopters' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `segmentKey` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+| `comment` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+(
+  {
+    op: add | replace | test,
+    path: string,
+    value: any
+  } | {
+    op: remove,
+    path: string
+  } | {
+    op: move | copy,
+    from: string,
+    path: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `tags` | `string[]` | No | — |
+| `creationDate` | `number` | No | — |
+| `version` | `number` | No | — |
+| `included` | `string[]` | No | — |
+| `excluded` | `string[]` | No | — |
+| `rules` | `any[]` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### list
+
+`tags.list`
+
+List tags across resources in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.tags.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string[]` | No | — |
+| `pre` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `asOf` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `string[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a new team
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.teams.create({ key: 'frontend-team', name: 'Frontend Team' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `memberIDs` | `string[]` | No | — |
+| `customRoleKeys` | `string[]` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `memberIDs` | `string[]` | No | — |
+| `customRoleKeys` | `string[]` | No | — |
+| `_creationDate` | `string` | No | — |
+| `_version` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Permanently delete a team
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.launchdarkly.api.teams.delete({ teamKey: 'legacy-team' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamKey` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`teams.get`
+
+Get details of a team by key
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.teams.get({ teamKey: 'frontend-team' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamKey` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `memberIDs` | `string[]` | No | — |
+| `customRoleKeys` | `string[]` | No | — |
+| `_creationDate` | `string` | No | — |
+| `_version` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.teams.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  key: string,
+  name: string,
+  description?: string,
+  memberIDs?: string[],
+  customRoleKeys?: string[],
+  _creationDate?: string,
+  _version?: number,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Update a team via semantic instructions
+
+**Risk:** `write`
+
+```ts
+await corsair.launchdarkly.api.teams.update({
+	teamKey: 'frontend-team',
+	instructions: [{ kind: 'updateName', value: 'Frontend Core Team' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamKey` | `string` | Yes | — |
+| `instructions` | `object[]` | Yes | — |
+| `comment` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="instructions full type">
+
+```ts
+(
+  {
+    kind: addCustomRoles | removeCustomRoles | addMembers | removeMembers | replaceMembers,
+    values: string[]
+  } | {
+    kind: updateDescription,
+    value: string
+  } | {
+    kind: updateName,
+    value: string
+  } | {
+    kind: addRoleAttribute,
+    key: string,
+    values: string[]
+  } | {
+    kind: removeRoleAttribute,
+    key: string
+  } | {
+    kind: updateRoleAttribute,
+    key: string,
+    values: string[]
+  } | {
+    kind: replaceRoleAttributes,
+    value: Record<string, string[]>
+  } | {
+    kind: addPermissionGrants | removePermissionGrants,
+    memberIDs: string[],
+    actionSet?: string,
+    actions?: string[]
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `memberIDs` | `string[]` | No | — |
+| `customRoleKeys` | `string[]` | No | — |
+| `_creationDate` | `string` | No | — |
+| `_version` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get user record in an environment by user key
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.users.get({ projectKey: 'default', environmentKey: 'production', userKey: 'user-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `userKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+| `environmentId` | `string` | No | — |
+| `lastPing` | `string` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  key: string,
+  ip?: string,
+  country?: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  avatar?: string,
+  name?: string,
+  anonymous?: boolean,
+  custom?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users in an environment
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.users.list({ projectKey: 'default', environmentKey: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `searchAfter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  user?: {
+    key: string,
+    ip?: string,
+    country?: string,
+    email?: string,
+    firstName?: string,
+    lastName?: string,
+    avatar?: string,
+    name?: string,
+    anonymous?: boolean,
+    custom?: Record<string, any>
+  },
+  environmentId?: string,
+  lastPing?: string,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`users.search`
+
+Search users in an environment by query string
+
+**Risk:** `read`
+
+```ts
+await corsair.launchdarkly.api.users.search({ projectKey: 'default', environmentKey: 'production', q: 'test@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | — |
+| `environmentKey` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `searchAfter` | `string` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  user?: {
+    key: string,
+    ip?: string,
+    country?: string,
+    email?: string,
+    firstName?: string,
+    lastName?: string,
+    avatar?: string,
+    name?: string,
+    anonymous?: boolean,
+    custom?: Record<string, any>
+  },
+  environmentId?: string,
+  lastPing?: string,
+  _links?: Record<string, {
+    href?: string,
+    type?: string
+  }>
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+Record<string, {
+  href?: string,
+  type?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
