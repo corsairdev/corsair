@@ -224,7 +224,7 @@ export const thanksIoEndpointSchemas = {
 	typeof thanksIoEndpointsNested
 >;
 
-const thanksIoEndpointMeta = {
+export const thanksIoEndpointMeta = {
 	'recipients.get': {
 		riskLevel: 'read',
 		description: 'Get a recipient by ID.',
@@ -238,12 +238,12 @@ const thanksIoEndpointMeta = {
 		description: 'Delete a recipient by ID.',
 	},
 	'recipients.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a recipient; email-only address lookup may incur a fee.',
 	},
 	'recipients.createMultiple': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create recipients; email-only address lookup may incur a fee.',
 	},
@@ -269,7 +269,7 @@ const thanksIoEndpointMeta = {
 		description: 'List recipients in a mailing list.',
 	},
 	'mailingLists.buyRadiusSearch': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Purchase radius-search records; charges may apply.',
 	},
 	'mailingLists.countRadiusSearch': {
@@ -360,7 +360,7 @@ const thanksIoEndpointMeta = {
 		description: 'Cancel a reviewing order.',
 	},
 	'orders.replay': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Place a new copy of a settled order; this charges and mails again.',
 	},
@@ -370,27 +370,27 @@ const thanksIoEndpointMeta = {
 		description: 'Permanently invalidate an unredeemed gift card.',
 	},
 	'send.postcard': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send a postcard; charges may apply.',
 	},
 	'send.magnacard': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send a magnacard; charges may apply.',
 	},
 	'send.windowedLetter': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send a windowed letter; charges may apply.',
 	},
 	'send.windowlessLetter': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send a windowless letter; charges may apply.',
 	},
 	'send.notecard': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send a notecard; charges may apply.',
 	},
 	'send.giftcard': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send a gift card; charges may apply.',
 	},
 	'estimate.postcard': {
@@ -467,7 +467,6 @@ export function thanksio<const T extends ThanksIoPluginOptions>(
 	} satisfies InternalThanksIoPlugin;
 }
 
-export { ThanksIoAPIError } from './client';
 export type {
 	ThanksIoEndpointInputs,
 	ThanksIoEndpointOutputs,

@@ -25,7 +25,7 @@ pnpm add @corsair-dev/thanksio
 | `handwritingStyles.list` | `thanksio.api.handwritingStyles.list` | `read` | List handwriting styles. |
 | `imageBuilder.create` | `thanksio.api.imageBuilder.create` | `read` | Build and return a PNG image without placing an order. |
 | `imageTemplates.list` | `thanksio.api.imageTemplates.list` | `read` | List image templates. |
-| `mailingLists.buyRadiusSearch` | `thanksio.api.mailingLists.buyRadiusSearch` | `write` | Purchase radius-search records; charges may apply. |
+| `mailingLists.buyRadiusSearch` | `thanksio.api.mailingLists.buyRadiusSearch` | `destructive` | Purchase radius-search records; charges may apply. |
 | `mailingLists.countRadiusSearch` | `thanksio.api.mailingLists.countRadiusSearch` | `read` | Count available radius-search records. |
 | `mailingLists.create` | `thanksio.api.mailingLists.create` | `write` | Create a mailing list. |
 | `mailingLists.delete` | `thanksio.api.mailingLists.delete` | `destructive` | Delete a mailing list. |
@@ -41,20 +41,20 @@ pnpm add @corsair-dev/thanksio
 | `orders.cancel` | `thanksio.api.orders.cancel` | `destructive` | Cancel a reviewing order. |
 | `orders.list` | `thanksio.api.orders.list` | `read` | List recent orders. |
 | `orders.listItems` | `thanksio.api.orders.listItems` | `read` | List individual order items. |
-| `orders.replay` | `thanksio.api.orders.replay` | `write` | Place a new copy of a settled order; this charges and mails again. |
+| `orders.replay` | `thanksio.api.orders.replay` | `destructive` | Place a new copy of a settled order; this charges and mails again. |
 | `orders.track` | `thanksio.api.orders.track` | `read` | Track an order and its delivery statistics. |
-| `recipients.create` | `thanksio.api.recipients.create` | `write` | Create a recipient; email-only address lookup may incur a fee. |
-| `recipients.createMultiple` | `thanksio.api.recipients.createMultiple` | `write` | Create recipients; email-only address lookup may incur a fee. |
+| `recipients.create` | `thanksio.api.recipients.create` | `destructive` | Create a recipient; email-only address lookup may incur a fee. |
+| `recipients.createMultiple` | `thanksio.api.recipients.createMultiple` | `destructive` | Create recipients; email-only address lookup may incur a fee. |
 | `recipients.delete` | `thanksio.api.recipients.delete` | `destructive` | Delete a recipient by ID. |
 | `recipients.deleteByAddress` | `thanksio.api.recipients.deleteByAddress` | `destructive` | Delete a recipient by address or email. |
 | `recipients.get` | `thanksio.api.recipients.get` | `read` | Get a recipient by ID. |
 | `recipients.update` | `thanksio.api.recipients.update` | `write` | Update a recipient by ID. |
-| `send.giftcard` | `thanksio.api.send.giftcard` | `write` | Send a gift card; charges may apply. |
-| `send.magnacard` | `thanksio.api.send.magnacard` | `write` | Send a magnacard; charges may apply. |
-| `send.notecard` | `thanksio.api.send.notecard` | `write` | Send a notecard; charges may apply. |
-| `send.postcard` | `thanksio.api.send.postcard` | `write` | Send a postcard; charges may apply. |
-| `send.windowedLetter` | `thanksio.api.send.windowedLetter` | `write` | Send a windowed letter; charges may apply. |
-| `send.windowlessLetter` | `thanksio.api.send.windowlessLetter` | `write` | Send a windowless letter; charges may apply. |
+| `send.giftcard` | `thanksio.api.send.giftcard` | `destructive` | Send a gift card; charges may apply. |
+| `send.magnacard` | `thanksio.api.send.magnacard` | `destructive` | Send a magnacard; charges may apply. |
+| `send.notecard` | `thanksio.api.send.notecard` | `destructive` | Send a notecard; charges may apply. |
+| `send.postcard` | `thanksio.api.send.postcard` | `destructive` | Send a postcard; charges may apply. |
+| `send.windowedLetter` | `thanksio.api.send.windowedLetter` | `destructive` | Send a windowed letter; charges may apply. |
+| `send.windowlessLetter` | `thanksio.api.send.windowlessLetter` | `destructive` | Send a windowless letter; charges may apply. |
 | `subAccounts.create` | `thanksio.api.subAccounts.create` | `write` | Create a sub-account. |
 | `subAccounts.delete` | `thanksio.api.subAccounts.delete` | `destructive` | Delete a sub-account and its image templates, message templates, and campaigns; orders and lists move to the main account. |
 | `subAccounts.get` | `thanksio.api.subAccounts.get` | `read` | Get a sub-account. |
