@@ -1,0 +1,2480 @@
+{
+  "account.getAccount": {
+    "created_datetime": "2017-11-23T15:59:41.966927",
+    "deactivated_datetime": null,
+    "domain": "company_name",
+    "settings": [
+      {
+        "id": 987,
+        "type": "business-hours",
+        "data": {
+          "timezone": "UTC",
+          "business_hours": {
+            "days": "1,2,3,4,5",
+            "from_time": "09:00",
+            "to_time": "22:00"
+          }
+        }
+      }
+    ],
+    "status": {
+      "status": "active"
+    }
+  },
+  "customers.createCustomer": {
+    "id": 3924,
+    "created_datetime": "2019-04-13T03:27:56.973873",
+    "email": "john@example.com",
+    "external_id": "customer-84203241",
+    "firstname": "John",
+    "integrations": {
+      "6": {
+        "orders": [
+          {
+            "id": 772803526679,
+            "total_tax": "0.02",
+            "created_at": "2018-12-04T03:29:37-08:00",
+            "line_items": [
+              {
+                "id": 1760305053719,
+                "sku": "0987654321",
+                "name": "Acidulous candy",
+                "grams": 10,
+                "price": "0.10",
+                "title": "acidulous candy",
+                "taxable": true,
+                "quantity": 1,
+                "price_set": {
+                  "shop_money": {
+                    "amount": "0.10",
+                    "currency_code": "USD"
+                  },
+                  "presentment_money": {
+                    "amount": "0.10",
+                    "currency_code": "USD"
+                  }
+                },
+                "tax_lines": [
+                  {
+                    "rate": 0.2,
+                    "price": "0.02",
+                    "title": "tva",
+                    "price_set": {
+                      "shop_money": {
+                        "amount": "0.02",
+                        "currency_code": "USD"
+                      },
+                      "presentment_money": {
+                        "amount": "0.02",
+                        "currency_code": "USD"
+                      }
+                    }
+                  }
+                ],
+                "product_id": 8345093387,
+                "variant_id": 28442938955,
+                "total_discount": "0.00",
+                "requires_shipping": true,
+                "fulfillment_status": null,
+                "total_discount_set": {
+                  "shop_money": {
+                    "amount": "0.00",
+                    "currency_code": "USD"
+                  },
+                  "presentment_money": {
+                    "amount": "0.00",
+                    "currency_code": "USD"
+                  }
+                },
+                "fulfillment_service": "manual",
+                "fulfillable_quantity": 1
+              }
+            ],
+            "contact_email": "marie@example.com",
+            "billing_address": {
+              "zip": "94103",
+              "city": "SAN FRANCISCO",
+              "name": "Marie Curie",
+              "country": "United States",
+              "address1": "52 Washburn Street",
+              "address2": "",
+              "province": "California",
+              "last_name": "Curie",
+              "first_name": "Marie",
+              "country_code": "US",
+              "province_code": "CA"
+            }
+          }
+        ],
+        "customer": {
+          "id": 667928133655,
+          "note": "",
+          "tags": "",
+          "email": "marie@example.com",
+          "first_name": "Marie",
+          "last_name": "Curie",
+          "orders_count": 1,
+          "default_address": {
+            "id": 707106144279,
+            "zip": "94103",
+            "city": "SAN FRANCISCO",
+            "name": "Marie Curie",
+            "country": "United States",
+            "default": true,
+            "address1": "52 Washburn Street",
+            "address2": "",
+            "province": "California",
+            "last_name": "Curie",
+            "first_name": "Marie",
+            "customer_id": 667928133655,
+            "country_code": "US",
+            "country_name": "United States",
+            "province_code": "CA"
+          }
+        },
+        "__integration_type__": "shopify"
+      }
+    },
+    "language": "fr",
+    "lastname": "Smith",
+    "name": "John Smith",
+    "note": "Our best customer.",
+    "timezone": "UTC",
+    "updated_datetime": "2019-09-25T06:18:22.839271"
+  },
+  "events.getEvent": {
+    "id": 1234,
+    "context": "dd4ff312-69df-494a-be96-1a58b3d8b8e0",
+    "created_datetime": "2019-11-16T15:59:41.966927",
+    "data": null,
+    "object_id": 123,
+    "object_type": "Ticket",
+    "type": "ticket-closed",
+    "user_id": 123,
+    "uri": "/api/events/1234/"
+  },
+  "events.listEvents": [
+    {
+      "id": 1234,
+      "context": "dd4ff312-69df-494a-be96-1a58b3d8b8e0",
+      "created_datetime": "2019-11-16T15:59:41.966927",
+      "data": null,
+      "object_id": 123,
+      "object_type": "Ticket",
+      "type": "ticket-closed",
+      "user_id": 123,
+      "uri": "/api/events/1234/"
+    }
+  ],
+  "files.uploadFiles": [
+    {
+      "content_type": "image/png",
+      "name": "package-damaged.png",
+      "size": "784554",
+      "url": "https://gorgias.io/attachments/package-damaged.png"
+    }
+  ],
+  "integrations.createIntegration": {
+    "id": 123,
+    "created_datetime": "2021-01-07T13:00:00.123456",
+    "http": {
+      "id": 987,
+      "url": "https://company.com/api/customers?email={{ticket.customer.email}}",
+      "method": "GET",
+      "form": {
+        "hello": "world",
+        "ticket_id": "{{ticket.id}}"
+      },
+      "triggers": {
+        "ticket_created": true,
+        "ticket_updated": true,
+        "ticket_message_created": true,
+        "ticket_self_unsnoozed": true,
+        "ticket_message_failed": true,
+        "ticket_assignee_updated": true,
+        "ticket_status_updated": true,
+        "ticket_handed_over": true
+      },
+      "request_content_type": "application/json",
+      "response_content_type": "application/json"
+    },
+    "name": "My HTTP integration",
+    "type": "http",
+    "updated_datetime": "2021-01-07T13:00:00.123456",
+    "uri": "/api/integrations/123/"
+  },
+  "jobs.createJob": {
+    "id": 1234,
+    "cancel_requested_datetime": "2019-11-23T16:31:00.966927",
+    "cancelled_datetime": "2019-11-23T16:32:00.966927",
+    "created_datetime": "2019-11-23T16:00:00.966927",
+    "ended_datetime": "2019-11-23T16:32:00.966927",
+    "failed_datetime": "2019-11-23T15:59:41.966927",
+    "info": {
+      "progress_count": 123
+    },
+    "locked_datetime": "2019-11-23T16:30:01.966927",
+    "meta": {
+      "description": "This job closes all tickets created in 2018"
+    },
+    "params": {
+      "ticket_ids": [1, 2, 3],
+      "updates": {
+        "status": "open"
+      }
+    },
+    "scheduled_datetime": "2019-11-23T16:30:00.966927",
+    "started_datetime": "2019-11-23T16:30:01.966927",
+    "status": "canceled",
+    "type": "updateTicket",
+    "user_id": 42,
+    "uri": "/api/jobs/1234/"
+  },
+  "macros.createMacro": {
+    "id": 23453,
+    "external_id": "CUS-324512",
+    "name": "Order status inquiry",
+    "intent": "discount/request",
+    "language": "en",
+    "usage": 58392,
+    "actions": [
+      {
+        "arguments": {
+          "tags": "question, order-status"
+        },
+        "name": "addTags",
+        "title": "add tags",
+        "type": "user"
+      },
+      {
+        "arguments": {
+          "body_html": "<div>Hi {{ticket.customer.firstname}},</div><br><div>Your order has been delivered.</div>",
+          "body_text": "Hi {{ticket.customer.firstname}},\n\nYour order has been delivered."
+        },
+        "name": "setResponseText",
+        "title": "add tags",
+        "type": "user"
+      }
+    ],
+    "created_datetime": "2019-11-23T15:59:41.966927",
+    "updated_datetime": "2020-01-30T11:04:34.345123",
+    "archived_datetime": "2019-11-23T15:59:41.966927",
+    "uri": "/api/macros/23453/"
+  },
+  "macros.listMacros": [
+    {
+      "id": 23453,
+      "external_id": "CUS-324512",
+      "name": "Order status inquiry",
+      "intent": "discount/request",
+      "language": "en",
+      "usage": 58392,
+      "actions": [
+        {
+          "arguments": {
+            "tags": "question, order-status"
+          },
+          "name": "addTags",
+          "title": "add tags",
+          "type": "user"
+        },
+        {
+          "arguments": {
+            "body_html": "<div>Hi {{ticket.customer.firstname}},</div><br><div>Your order has been delivered.</div>",
+            "body_text": "Hi {{ticket.customer.firstname}},\n\nYour order has been delivered."
+          },
+          "name": "setResponseText",
+          "title": "add tags",
+          "type": "user"
+        }
+      ],
+      "created_datetime": "2019-11-23T15:59:41.966927",
+      "updated_datetime": "2020-01-30T11:04:34.345123",
+      "archived_datetime": "2019-11-23T15:59:41.966927",
+      "uri": "/api/macros/23453/"
+    }
+  ],
+  "rules.createRule": {
+    "id": 1234,
+    "code": "\nif (eq(ticket.from_agent, false) && eq(ticket.status, 'open')) {\n    if (containsAny(message.intents.name, ['other/no_reply']) || containsAny(ticket.customer.email, [\n            'noreply@',\n            '@noreply'\n        ])) {\n        Action('addTags', { tags: 'auto-close' });\n        Action('setStatus', { status: 'closed' })\n    }\n}\n",
+    "code_ast": {
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 0
+        },
+        "end": {
+          "line": 10,
+          "column": 1
+        }
+      },
+      "type": "Program",
+      "body": [
+        {
+          "loc": {
+            "start": {
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "line": 10,
+              "column": 1
+            }
+          },
+          "type": "IfStatement",
+          "test": {
+            "loc": {
+              "start": {
+                "line": 2,
+                "column": 4
+              },
+              "end": {
+                "line": 2,
+                "column": 61
+              }
+            },
+            "type": "LogicalExpression",
+            "operator": "&&",
+            "left": {
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 4
+                },
+                "end": {
+                  "line": 2,
+                  "column": 32
+                }
+              },
+              "type": "CallExpression",
+              "callee": {
+                "loc": {
+                  "start": {
+                    "line": 2,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 6
+                  }
+                },
+                "type": "Identifier",
+                "name": "eq"
+              },
+              "arguments": [
+                {
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 24
+                    }
+                  },
+                  "type": "MemberExpression",
+                  "computed": false,
+                  "object": {
+                    "loc": {
+                      "start": {
+                        "line": 2,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 13
+                      }
+                    },
+                    "type": "Identifier",
+                    "name": "ticket"
+                  },
+                  "property": {
+                    "loc": {
+                      "start": {
+                        "line": 2,
+                        "column": 14
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 24
+                      }
+                    },
+                    "type": "Identifier",
+                    "name": "from_agent"
+                  }
+                },
+                {
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 31
+                    }
+                  },
+                  "type": "Literal",
+                  "value": false,
+                  "raw": "false"
+                }
+              ]
+            },
+            "right": {
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 36
+                },
+                "end": {
+                  "line": 2,
+                  "column": 61
+                }
+              },
+              "type": "CallExpression",
+              "callee": {
+                "loc": {
+                  "start": {
+                    "line": 2,
+                    "column": 36
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 38
+                  }
+                },
+                "type": "Identifier",
+                "name": "eq"
+              },
+              "arguments": [
+                {
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 52
+                    }
+                  },
+                  "type": "MemberExpression",
+                  "computed": false,
+                  "object": {
+                    "loc": {
+                      "start": {
+                        "line": 2,
+                        "column": 39
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 45
+                      }
+                    },
+                    "type": "Identifier",
+                    "name": "ticket"
+                  },
+                  "property": {
+                    "loc": {
+                      "start": {
+                        "line": 2,
+                        "column": 46
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 52
+                      }
+                    },
+                    "type": "Identifier",
+                    "name": "status"
+                  }
+                },
+                {
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 60
+                    }
+                  },
+                  "type": "Literal",
+                  "value": "open",
+                  "raw": "'open'"
+                }
+              ]
+            }
+          },
+          "consequent": {
+            "loc": {
+              "start": {
+                "line": 2,
+                "column": 63
+              },
+              "end": {
+                "line": 10,
+                "column": 1
+              }
+            },
+            "type": "BlockStatement",
+            "body": [
+              {
+                "loc": {
+                  "start": {
+                    "line": 3,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 9,
+                    "column": 5
+                  }
+                },
+                "type": "IfStatement",
+                "test": {
+                  "loc": {
+                    "start": {
+                      "line": 3,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 10
+                    }
+                  },
+                  "type": "LogicalExpression",
+                  "operator": "||",
+                  "left": {
+                    "loc": {
+                      "start": {
+                        "line": 3,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 3,
+                        "column": 61
+                      }
+                    },
+                    "type": "CallExpression",
+                    "callee": {
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 3,
+                          "column": 19
+                        }
+                      },
+                      "type": "Identifier",
+                      "name": "containsAny"
+                    },
+                    "arguments": [
+                      {
+                        "loc": {
+                          "start": {
+                            "line": 3,
+                            "column": 20
+                          },
+                          "end": {
+                            "line": 3,
+                            "column": 40
+                          }
+                        },
+                        "type": "MemberExpression",
+                        "computed": false,
+                        "object": {
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 20
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 35
+                            }
+                          },
+                          "type": "MemberExpression",
+                          "computed": false,
+                          "object": {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 20
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 27
+                              }
+                            },
+                            "type": "Identifier",
+                            "name": "message"
+                          },
+                          "property": {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 28
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 35
+                              }
+                            },
+                            "type": "Identifier",
+                            "name": "intents"
+                          }
+                        },
+                        "property": {
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 36
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 40
+                            }
+                          },
+                          "type": "Identifier",
+                          "name": "name"
+                        }
+                      },
+                      {
+                        "loc": {
+                          "start": {
+                            "line": 3,
+                            "column": 42
+                          },
+                          "end": {
+                            "line": 3,
+                            "column": 60
+                          }
+                        },
+                        "type": "ArrayExpression",
+                        "elements": [
+                          {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 43
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 59
+                              }
+                            },
+                            "type": "Literal",
+                            "value": "other/no_reply",
+                            "raw": "'other/no_reply'"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "right": {
+                    "loc": {
+                      "start": {
+                        "line": 3,
+                        "column": 65
+                      },
+                      "end": {
+                        "line": 6,
+                        "column": 10
+                      }
+                    },
+                    "type": "CallExpression",
+                    "callee": {
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 65
+                        },
+                        "end": {
+                          "line": 3,
+                          "column": 76
+                        }
+                      },
+                      "type": "Identifier",
+                      "name": "containsAny"
+                    },
+                    "arguments": [
+                      {
+                        "loc": {
+                          "start": {
+                            "line": 3,
+                            "column": 77
+                          },
+                          "end": {
+                            "line": 3,
+                            "column": 98
+                          }
+                        },
+                        "type": "MemberExpression",
+                        "computed": false,
+                        "object": {
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 77
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 92
+                            }
+                          },
+                          "type": "MemberExpression",
+                          "computed": false,
+                          "object": {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 77
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 83
+                              }
+                            },
+                            "type": "Identifier",
+                            "name": "ticket"
+                          },
+                          "property": {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 84
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 92
+                              }
+                            },
+                            "type": "Identifier",
+                            "name": "customer"
+                          }
+                        },
+                        "property": {
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 93
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 98
+                            }
+                          },
+                          "type": "Identifier",
+                          "name": "email"
+                        }
+                      },
+                      {
+                        "loc": {
+                          "start": {
+                            "line": 3,
+                            "column": 100
+                          },
+                          "end": {
+                            "line": 6,
+                            "column": 9
+                          }
+                        },
+                        "type": "ArrayExpression",
+                        "elements": [
+                          {
+                            "loc": {
+                              "start": {
+                                "line": 4,
+                                "column": 12
+                              },
+                              "end": {
+                                "line": 4,
+                                "column": 22
+                              }
+                            },
+                            "type": "Literal",
+                            "value": "noreply@",
+                            "raw": "'noreply@'"
+                          },
+                          {
+                            "loc": {
+                              "start": {
+                                "line": 5,
+                                "column": 12
+                              },
+                              "end": {
+                                "line": 5,
+                                "column": 22
+                              }
+                            },
+                            "type": "Literal",
+                            "value": "@noreply",
+                            "raw": "'@noreply'"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "consequent": {
+                  "loc": {
+                    "start": {
+                      "line": 6,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 5
+                    }
+                  },
+                  "type": "BlockStatement",
+                  "body": [
+                    {
+                      "loc": {
+                        "start": {
+                          "line": 7,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 50
+                        }
+                      },
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "loc": {
+                          "start": {
+                            "line": 7,
+                            "column": 8
+                          },
+                          "end": {
+                            "line": 7,
+                            "column": 49
+                          }
+                        },
+                        "type": "CallExpression",
+                        "callee": {
+                          "loc": {
+                            "start": {
+                              "line": 7,
+                              "column": 8
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 14
+                            }
+                          },
+                          "type": "Identifier",
+                          "name": "Action"
+                        },
+                        "arguments": [
+                          {
+                            "loc": {
+                              "start": {
+                                "line": 7,
+                                "column": 15
+                              },
+                              "end": {
+                                "line": 7,
+                                "column": 24
+                              }
+                            },
+                            "type": "Literal",
+                            "value": "addTags",
+                            "raw": "'addTags'"
+                          },
+                          {
+                            "loc": {
+                              "start": {
+                                "line": 7,
+                                "column": 26
+                              },
+                              "end": {
+                                "line": 7,
+                                "column": 48
+                              }
+                            },
+                            "type": "ObjectExpression",
+                            "properties": [
+                              {
+                                "loc": {
+                                  "start": {
+                                    "line": 7,
+                                    "column": 28
+                                  },
+                                  "end": {
+                                    "line": 7,
+                                    "column": 46
+                                  }
+                                },
+                                "type": "Property",
+                                "key": {
+                                  "loc": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 28
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 32
+                                    }
+                                  },
+                                  "type": "Identifier",
+                                  "name": "tags"
+                                },
+                                "computed": false,
+                                "value": {
+                                  "loc": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 34
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 46
+                                    }
+                                  },
+                                  "type": "Literal",
+                                  "value": "auto-close",
+                                  "raw": "'auto-close'"
+                                },
+                                "kind": "init",
+                                "method": false,
+                                "shorthand": false
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "loc": {
+                        "start": {
+                          "line": 8,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 8,
+                          "column": 49
+                        }
+                      },
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "loc": {
+                          "start": {
+                            "line": 8,
+                            "column": 8
+                          },
+                          "end": {
+                            "line": 8,
+                            "column": 49
+                          }
+                        },
+                        "type": "CallExpression",
+                        "callee": {
+                          "loc": {
+                            "start": {
+                              "line": 8,
+                              "column": 8
+                            },
+                            "end": {
+                              "line": 8,
+                              "column": 14
+                            }
+                          },
+                          "type": "Identifier",
+                          "name": "Action"
+                        },
+                        "arguments": [
+                          {
+                            "loc": {
+                              "start": {
+                                "line": 8,
+                                "column": 15
+                              },
+                              "end": {
+                                "line": 8,
+                                "column": 26
+                              }
+                            },
+                            "type": "Literal",
+                            "value": "setStatus",
+                            "raw": "'setStatus'"
+                          },
+                          {
+                            "loc": {
+                              "start": {
+                                "line": 8,
+                                "column": 28
+                              },
+                              "end": {
+                                "line": 8,
+                                "column": 48
+                              }
+                            },
+                            "type": "ObjectExpression",
+                            "properties": [
+                              {
+                                "loc": {
+                                  "start": {
+                                    "line": 8,
+                                    "column": 30
+                                  },
+                                  "end": {
+                                    "line": 8,
+                                    "column": 46
+                                  }
+                                },
+                                "type": "Property",
+                                "key": {
+                                  "loc": {
+                                    "start": {
+                                      "line": 8,
+                                      "column": 30
+                                    },
+                                    "end": {
+                                      "line": 8,
+                                      "column": 36
+                                    }
+                                  },
+                                  "type": "Identifier",
+                                  "name": "status"
+                                },
+                                "computed": false,
+                                "value": {
+                                  "loc": {
+                                    "start": {
+                                      "line": 8,
+                                      "column": 38
+                                    },
+                                    "end": {
+                                      "line": 8,
+                                      "column": 46
+                                    }
+                                  },
+                                  "type": "Literal",
+                                  "value": "closed",
+                                  "raw": "'closed'"
+                                },
+                                "kind": "init",
+                                "method": false,
+                                "shorthand": false
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "alternate": null
+              }
+            ]
+          },
+          "alternate": null
+        }
+      ],
+      "sourceType": "script"
+    },
+    "created_datetime": "2019-11-16T15:59:41.966927",
+    "deactivated_datetime": "2019-11-28T15:59:41.966927",
+    "description": "Automatically close all tickets from Amazon because there is nothing to do for them. We still want to keep them to be able to search.",
+    "event_types": "ticket-created,ticket-updated",
+    "name": "Auto-close all tickets from Amazon",
+    "priority": "100",
+    "updated_datetime": "2019-11-25T15:59:41.966927",
+    "uri": "/api/rules/1234/"
+  },
+  "rules.listRules": [
+    {
+      "id": 1234,
+      "code": "\nif (eq(ticket.from_agent, false) && eq(ticket.status, 'open')) {\n    if (containsAny(message.intents.name, ['other/no_reply']) || containsAny(ticket.customer.email, [\n            'noreply@',\n            '@noreply'\n        ])) {\n        Action('addTags', { tags: 'auto-close' });\n        Action('setStatus', { status: 'closed' })\n    }\n}\n",
+      "code_ast": {
+        "loc": {
+          "start": {
+            "line": 2,
+            "column": 0
+          },
+          "end": {
+            "line": 10,
+            "column": 1
+          }
+        },
+        "type": "Program",
+        "body": [
+          {
+            "loc": {
+              "start": {
+                "line": 2,
+                "column": 0
+              },
+              "end": {
+                "line": 10,
+                "column": 1
+              }
+            },
+            "type": "IfStatement",
+            "test": {
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 4
+                },
+                "end": {
+                  "line": 2,
+                  "column": 61
+                }
+              },
+              "type": "LogicalExpression",
+              "operator": "&&",
+              "left": {
+                "loc": {
+                  "start": {
+                    "line": 2,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 32
+                  }
+                },
+                "type": "CallExpression",
+                "callee": {
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 6
+                    }
+                  },
+                  "type": "Identifier",
+                  "name": "eq"
+                },
+                "arguments": [
+                  {
+                    "loc": {
+                      "start": {
+                        "line": 2,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 24
+                      }
+                    },
+                    "type": "MemberExpression",
+                    "computed": false,
+                    "object": {
+                      "loc": {
+                        "start": {
+                          "line": 2,
+                          "column": 7
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 13
+                        }
+                      },
+                      "type": "Identifier",
+                      "name": "ticket"
+                    },
+                    "property": {
+                      "loc": {
+                        "start": {
+                          "line": 2,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 24
+                        }
+                      },
+                      "type": "Identifier",
+                      "name": "from_agent"
+                    }
+                  },
+                  {
+                    "loc": {
+                      "start": {
+                        "line": 2,
+                        "column": 26
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 31
+                      }
+                    },
+                    "type": "Literal",
+                    "value": false,
+                    "raw": "false"
+                  }
+                ]
+              },
+              "right": {
+                "loc": {
+                  "start": {
+                    "line": 2,
+                    "column": 36
+                  },
+                  "end": {
+                    "line": 2,
+                    "column": 61
+                  }
+                },
+                "type": "CallExpression",
+                "callee": {
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 38
+                    }
+                  },
+                  "type": "Identifier",
+                  "name": "eq"
+                },
+                "arguments": [
+                  {
+                    "loc": {
+                      "start": {
+                        "line": 2,
+                        "column": 39
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 52
+                      }
+                    },
+                    "type": "MemberExpression",
+                    "computed": false,
+                    "object": {
+                      "loc": {
+                        "start": {
+                          "line": 2,
+                          "column": 39
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 45
+                        }
+                      },
+                      "type": "Identifier",
+                      "name": "ticket"
+                    },
+                    "property": {
+                      "loc": {
+                        "start": {
+                          "line": 2,
+                          "column": 46
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 52
+                        }
+                      },
+                      "type": "Identifier",
+                      "name": "status"
+                    }
+                  },
+                  {
+                    "loc": {
+                      "start": {
+                        "line": 2,
+                        "column": 54
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 60
+                      }
+                    },
+                    "type": "Literal",
+                    "value": "open",
+                    "raw": "'open'"
+                  }
+                ]
+              }
+            },
+            "consequent": {
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 63
+                },
+                "end": {
+                  "line": 10,
+                  "column": 1
+                }
+              },
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "loc": {
+                    "start": {
+                      "line": 3,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 5
+                    }
+                  },
+                  "type": "IfStatement",
+                  "test": {
+                    "loc": {
+                      "start": {
+                        "line": 3,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 6,
+                        "column": 10
+                      }
+                    },
+                    "type": "LogicalExpression",
+                    "operator": "||",
+                    "left": {
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 3,
+                          "column": 61
+                        }
+                      },
+                      "type": "CallExpression",
+                      "callee": {
+                        "loc": {
+                          "start": {
+                            "line": 3,
+                            "column": 8
+                          },
+                          "end": {
+                            "line": 3,
+                            "column": 19
+                          }
+                        },
+                        "type": "Identifier",
+                        "name": "containsAny"
+                      },
+                      "arguments": [
+                        {
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 20
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 40
+                            }
+                          },
+                          "type": "MemberExpression",
+                          "computed": false,
+                          "object": {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 20
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 35
+                              }
+                            },
+                            "type": "MemberExpression",
+                            "computed": false,
+                            "object": {
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 20
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 27
+                                }
+                              },
+                              "type": "Identifier",
+                              "name": "message"
+                            },
+                            "property": {
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 28
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 35
+                                }
+                              },
+                              "type": "Identifier",
+                              "name": "intents"
+                            }
+                          },
+                          "property": {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 36
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 40
+                              }
+                            },
+                            "type": "Identifier",
+                            "name": "name"
+                          }
+                        },
+                        {
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 42
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 60
+                            }
+                          },
+                          "type": "ArrayExpression",
+                          "elements": [
+                            {
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 43
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 59
+                                }
+                              },
+                              "type": "Literal",
+                              "value": "other/no_reply",
+                              "raw": "'other/no_reply'"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "right": {
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 65
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 10
+                        }
+                      },
+                      "type": "CallExpression",
+                      "callee": {
+                        "loc": {
+                          "start": {
+                            "line": 3,
+                            "column": 65
+                          },
+                          "end": {
+                            "line": 3,
+                            "column": 76
+                          }
+                        },
+                        "type": "Identifier",
+                        "name": "containsAny"
+                      },
+                      "arguments": [
+                        {
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 77
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 98
+                            }
+                          },
+                          "type": "MemberExpression",
+                          "computed": false,
+                          "object": {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 77
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 92
+                              }
+                            },
+                            "type": "MemberExpression",
+                            "computed": false,
+                            "object": {
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 77
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 83
+                                }
+                              },
+                              "type": "Identifier",
+                              "name": "ticket"
+                            },
+                            "property": {
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 84
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 92
+                                }
+                              },
+                              "type": "Identifier",
+                              "name": "customer"
+                            }
+                          },
+                          "property": {
+                            "loc": {
+                              "start": {
+                                "line": 3,
+                                "column": 93
+                              },
+                              "end": {
+                                "line": 3,
+                                "column": 98
+                              }
+                            },
+                            "type": "Identifier",
+                            "name": "email"
+                          }
+                        },
+                        {
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 100
+                            },
+                            "end": {
+                              "line": 6,
+                              "column": 9
+                            }
+                          },
+                          "type": "ArrayExpression",
+                          "elements": [
+                            {
+                              "loc": {
+                                "start": {
+                                  "line": 4,
+                                  "column": 12
+                                },
+                                "end": {
+                                  "line": 4,
+                                  "column": 22
+                                }
+                              },
+                              "type": "Literal",
+                              "value": "noreply@",
+                              "raw": "'noreply@'"
+                            },
+                            {
+                              "loc": {
+                                "start": {
+                                  "line": 5,
+                                  "column": 12
+                                },
+                                "end": {
+                                  "line": 5,
+                                  "column": 22
+                                }
+                              },
+                              "type": "Literal",
+                              "value": "@noreply",
+                              "raw": "'@noreply'"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "consequent": {
+                    "loc": {
+                      "start": {
+                        "line": 6,
+                        "column": 12
+                      },
+                      "end": {
+                        "line": 9,
+                        "column": 5
+                      }
+                    },
+                    "type": "BlockStatement",
+                    "body": [
+                      {
+                        "loc": {
+                          "start": {
+                            "line": 7,
+                            "column": 8
+                          },
+                          "end": {
+                            "line": 7,
+                            "column": 50
+                          }
+                        },
+                        "type": "ExpressionStatement",
+                        "expression": {
+                          "loc": {
+                            "start": {
+                              "line": 7,
+                              "column": 8
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 49
+                            }
+                          },
+                          "type": "CallExpression",
+                          "callee": {
+                            "loc": {
+                              "start": {
+                                "line": 7,
+                                "column": 8
+                              },
+                              "end": {
+                                "line": 7,
+                                "column": 14
+                              }
+                            },
+                            "type": "Identifier",
+                            "name": "Action"
+                          },
+                          "arguments": [
+                            {
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 15
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 24
+                                }
+                              },
+                              "type": "Literal",
+                              "value": "addTags",
+                              "raw": "'addTags'"
+                            },
+                            {
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 26
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 48
+                                }
+                              },
+                              "type": "ObjectExpression",
+                              "properties": [
+                                {
+                                  "loc": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 28
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 46
+                                    }
+                                  },
+                                  "type": "Property",
+                                  "key": {
+                                    "loc": {
+                                      "start": {
+                                        "line": 7,
+                                        "column": 28
+                                      },
+                                      "end": {
+                                        "line": 7,
+                                        "column": 32
+                                      }
+                                    },
+                                    "type": "Identifier",
+                                    "name": "tags"
+                                  },
+                                  "computed": false,
+                                  "value": {
+                                    "loc": {
+                                      "start": {
+                                        "line": 7,
+                                        "column": 34
+                                      },
+                                      "end": {
+                                        "line": 7,
+                                        "column": 46
+                                      }
+                                    },
+                                    "type": "Literal",
+                                    "value": "auto-close",
+                                    "raw": "'auto-close'"
+                                  },
+                                  "kind": "init",
+                                  "method": false,
+                                  "shorthand": false
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "loc": {
+                          "start": {
+                            "line": 8,
+                            "column": 8
+                          },
+                          "end": {
+                            "line": 8,
+                            "column": 49
+                          }
+                        },
+                        "type": "ExpressionStatement",
+                        "expression": {
+                          "loc": {
+                            "start": {
+                              "line": 8,
+                              "column": 8
+                            },
+                            "end": {
+                              "line": 8,
+                              "column": 49
+                            }
+                          },
+                          "type": "CallExpression",
+                          "callee": {
+                            "loc": {
+                              "start": {
+                                "line": 8,
+                                "column": 8
+                              },
+                              "end": {
+                                "line": 8,
+                                "column": 14
+                              }
+                            },
+                            "type": "Identifier",
+                            "name": "Action"
+                          },
+                          "arguments": [
+                            {
+                              "loc": {
+                                "start": {
+                                  "line": 8,
+                                  "column": 15
+                                },
+                                "end": {
+                                  "line": 8,
+                                  "column": 26
+                                }
+                              },
+                              "type": "Literal",
+                              "value": "setStatus",
+                              "raw": "'setStatus'"
+                            },
+                            {
+                              "loc": {
+                                "start": {
+                                  "line": 8,
+                                  "column": 28
+                                },
+                                "end": {
+                                  "line": 8,
+                                  "column": 48
+                                }
+                              },
+                              "type": "ObjectExpression",
+                              "properties": [
+                                {
+                                  "loc": {
+                                    "start": {
+                                      "line": 8,
+                                      "column": 30
+                                    },
+                                    "end": {
+                                      "line": 8,
+                                      "column": 46
+                                    }
+                                  },
+                                  "type": "Property",
+                                  "key": {
+                                    "loc": {
+                                      "start": {
+                                        "line": 8,
+                                        "column": 30
+                                      },
+                                      "end": {
+                                        "line": 8,
+                                        "column": 36
+                                      }
+                                    },
+                                    "type": "Identifier",
+                                    "name": "status"
+                                  },
+                                  "computed": false,
+                                  "value": {
+                                    "loc": {
+                                      "start": {
+                                        "line": 8,
+                                        "column": 38
+                                      },
+                                      "end": {
+                                        "line": 8,
+                                        "column": 46
+                                      }
+                                    },
+                                    "type": "Literal",
+                                    "value": "closed",
+                                    "raw": "'closed'"
+                                  },
+                                  "kind": "init",
+                                  "method": false,
+                                  "shorthand": false
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "alternate": null
+                }
+              ]
+            },
+            "alternate": null
+          }
+        ],
+        "sourceType": "script"
+      },
+      "created_datetime": "2019-11-16T15:59:41.966927",
+      "deactivated_datetime": "2019-11-28T15:59:41.966927",
+      "description": "Automatically close all tickets from Amazon because there is nothing to do for them. We still want to keep them to be able to search.",
+      "event_types": "ticket-created,ticket-updated",
+      "name": "Auto-close all tickets from Amazon",
+      "priority": "100",
+      "updated_datetime": "2019-11-25T15:59:41.966927",
+      "uri": "/api/rules/1234/"
+    }
+  ],
+  "satisfactionSurveys.createSatisfactionSurvey": {
+    "id": 1234,
+    "body_text": "Such speed, much pertinent.",
+    "created_datetime": "2019-11-16T15:59:41.966927",
+    "customer_id": 120,
+    "meta": {
+      "externalData": {
+        "id": 1234
+      }
+    },
+    "score": 2,
+    "scored_datetime": "2019-11-25T15:59:41.966927",
+    "sent_datetime": "2019-11-23T15:59:41.966927",
+    "should_send_datetime": "2019-11-23T15:59:41.966927",
+    "ticket_id": 12,
+    "uri": "/api/satisfaction-surveys/1234/"
+  },
+  "satisfactionSurveys.listSatisfactionSurveys": [
+    {
+      "id": 1234,
+      "body_text": "Such speed, much pertinent.",
+      "created_datetime": "2019-11-16T15:59:41.966927",
+      "customer_id": 120,
+      "meta": {
+        "externalData": {
+          "id": 1234
+        }
+      },
+      "score": 2,
+      "scored_datetime": "2019-11-25T15:59:41.966927",
+      "sent_datetime": "2019-11-23T15:59:41.966927",
+      "should_send_datetime": "2019-11-23T15:59:41.966927",
+      "ticket_id": 12,
+      "uri": "/api/satisfaction-surveys/1234/"
+    }
+  ],
+  "statistics.getLegacyStatistic": {
+    "data": {
+      "data": {
+        "axes": {
+          "x": [1591765200],
+          "y": []
+        },
+        "lines": [
+          {
+            "data": [1829, 1498, 1611],
+            "name": "created"
+          }
+        ]
+      },
+      "label": "Support volume",
+      "legend": {
+        "axes": {
+          "x": "Creation date",
+          "y": "Number of tickets"
+        }
+      }
+    },
+    "meta": {
+      "start_datetime": "2020-06-10T00:00:00-05:00",
+      "end_datetime": "2020-06-16T23:59:59-05:00",
+      "previous_start_datetime": "2020-06-03T00:00:01-05:00",
+      "previous_end_datetime": "2020-06-10T00:00:00-05:00",
+      "next_cursor": "WyJuZXh0IiwgZmFsc2UsICJBbGV4IFBsdWdhcnUiLCAyXQ==",
+      "prev_cursor": "WyJwcmV2IiwgZmFsc2UsICJCb2IgU21pdGgiLCAzXQ=="
+    }
+  },
+  "tags.createTag": {
+    "created_datetime": "2020-07-1300:00:00-05:00",
+    "decoration": {
+      "color": "#F58D86"
+    },
+    "deleted_datetime": "2020-07-1500:00:00-05:00",
+    "description": "Mark a ticket as urgent",
+    "name": "urgent",
+    "usage": 123
+  },
+  "teams.createTeam": {
+    "id": 123,
+    "name": "Warehouse team"
+  },
+  "teams.listTeams": [
+    {
+      "id": 123,
+      "name": "Warehouse team"
+    }
+  ],
+  "ticketMessages.createTicketMessage": {
+    "id": 924712,
+    "attachments": [],
+    "body_html": "Hello,<br><br>\n\n        I can't place an order on your site, it says: I don't have enough credit.<br>\n        How can I add some credits?<br><br>\n\n        Cheers,<br>\n        John Doe\n        ",
+    "body_text": "Hello,\n\n        I can't place an order on your site, it says: I don't have enough credit.\n        How can I add some credits?\n\n        Cheers,\n        John Doe\n        ",
+    "channel": "email",
+    "created_datetime": "2020-01-27T10:42:21.468912",
+    "external_id": "MSG-78545",
+    "failed_datetime": null,
+    "from_agent": true,
+    "integration_id": 28643,
+    "last_sending_error": null,
+    "message_id": "<123345676453.2445.234@web>",
+    "processed_datetime": "2020-01-27T10:42:21.468912",
+    "receiver": {
+      "id": 8
+    },
+    "rule_id": 89465,
+    "sender": {
+      "id": 7
+    },
+    "source": {
+      "type": "email",
+      "from": {
+        "id": 7,
+        "name": "Sender Doe",
+        "address": "sender@gorgias.io"
+      },
+      "to": [
+        {
+          "id": 8,
+          "name": "Receiver Doe",
+          "address": "receiver@gorgias.io"
+        }
+      ]
+    },
+    "stripped_html": null,
+    "stripped_text": null,
+    "subject": "Re:Refund request",
+    "ticket_id": 12,
+    "via": "api",
+    "uri": "/api/tickets/12/messages/924712/"
+  },
+  "tickets.createTicket": {
+    "id": 123,
+    "assignee_user": null,
+    "channel": "email",
+    "closed_datetime": null,
+    "created_datetime": "2019-07-05T14:42:00.384938",
+    "customer": {
+      "id": 3924,
+      "active": true,
+      "created_datetime": "2019-04-13T03:27:56.973873",
+      "customer": {},
+      "data": {
+        "city": "San Francisco"
+      },
+      "email": "john@example.com",
+      "external_id": "customer-84203241",
+      "firstname": "John",
+      "integrations": {
+        "6": {
+          "orders": [
+            {
+              "id": 772803526679,
+              "total_tax": "0.02",
+              "created_at": "2018-12-04T03:29:37-08:00",
+              "line_items": [
+                {
+                  "id": 1760305053719,
+                  "sku": "0987654321",
+                  "name": "Acidulous candy",
+                  "grams": 10,
+                  "price": "0.10",
+                  "title": "acidulous candy",
+                  "taxable": true,
+                  "quantity": 1,
+                  "price_set": {
+                    "shop_money": {
+                      "amount": "0.10",
+                      "currency_code": "USD"
+                    },
+                    "presentment_money": {
+                      "amount": "0.10",
+                      "currency_code": "USD"
+                    }
+                  },
+                  "tax_lines": [
+                    {
+                      "rate": 0.2,
+                      "price": "0.02",
+                      "title": "tva",
+                      "price_set": {
+                        "shop_money": {
+                          "amount": "0.02",
+                          "currency_code": "USD"
+                        },
+                        "presentment_money": {
+                          "amount": "0.02",
+                          "currency_code": "USD"
+                        }
+                      }
+                    }
+                  ],
+                  "product_id": 8345093387,
+                  "variant_id": 28442938955,
+                  "total_discount": "0.00",
+                  "requires_shipping": true,
+                  "fulfillment_status": null,
+                  "total_discount_set": {
+                    "shop_money": {
+                      "amount": "0.00",
+                      "currency_code": "USD"
+                    },
+                    "presentment_money": {
+                      "amount": "0.00",
+                      "currency_code": "USD"
+                    }
+                  },
+                  "fulfillment_service": "manual",
+                  "fulfillable_quantity": 1
+                }
+              ],
+              "contact_email": "marie@example.com",
+              "billing_address": {
+                "zip": "94103",
+                "city": "SAN FRANCISCO",
+                "name": "Marie Curie",
+                "country": "United States",
+                "address1": "52 Washburn Street",
+                "address2": "",
+                "province": "California",
+                "last_name": "Curie",
+                "first_name": "Marie",
+                "country_code": "US",
+                "province_code": "CA"
+              }
+            }
+          ],
+          "customer": {
+            "id": 667928133655,
+            "note": "",
+            "tags": "",
+            "email": "marie@example.com",
+            "first_name": "Marie",
+            "last_name": "Curie",
+            "orders_count": 1,
+            "default_address": {
+              "id": 707106144279,
+              "zip": "94103",
+              "city": "SAN FRANCISCO",
+              "name": "Marie Curie",
+              "country": "United States",
+              "default": true,
+              "address1": "52 Washburn Street",
+              "address2": "",
+              "province": "California",
+              "last_name": "Curie",
+              "first_name": "Marie",
+              "customer_id": 667928133655,
+              "country_code": "US",
+              "country_name": "United States",
+              "province_code": "CA"
+            }
+          },
+          "__integration_type__": "shopify"
+        }
+      },
+      "language": "fr",
+      "lastname": "Smith",
+      "meta": {
+        "position": "engineer"
+      },
+      "name": "John Smith",
+      "note": "Our best customer.",
+      "timezone": "UTC",
+      "updated_datetime": "2019-09-25T06:18:22.839271"
+    },
+    "events": [
+      {
+        "id": 1234,
+        "uri": "/api/events/1234/",
+        "context": "dd4ff312-69df-494a-be96-1a58b3d8b8e0",
+        "created_datetime": "2019-11-16T15:59:41.966927",
+        "data": null,
+        "object_id": 123,
+        "object_type": "Ticket",
+        "type": "ticket-closed",
+        "user_id": 123,
+        "user": {
+          "id": 3924,
+          "firstname": "Steve",
+          "lastname": "Frazeli",
+          "name": "Steve Frazelli",
+          "email": "steve@company.com"
+        }
+      }
+    ],
+    "external_id": "RETURN#4213",
+    "is_unread": true,
+    "language": "fr",
+    "last_message_datetime": "2020-02-01T19:12:32.432197",
+    "last_received_message_datetime": "2020-01-27T10:42:21.468912",
+    "messages": [
+      {
+        "id": 924712,
+        "uri": "/api/tickets/12/messages/924712/",
+        "message_id": "<123345676453.2445.234@web>",
+        "integration_id": 28643,
+        "rule_id": 89465,
+        "external_id": "MSG-78545",
+        "ticket_id": 12,
+        "channel": "email",
+        "via": "api",
+        "source": {
+          "type": "email",
+          "from": {
+            "id": 7,
+            "name": "Sender Doe",
+            "address": "sender@gorgias.io"
+          },
+          "to": [
+            {
+              "id": 8,
+              "name": "Receiver Doe",
+              "address": "receiver@gorgias.io"
+            }
+          ]
+        },
+        "subject": "Re:Refund request",
+        "body_text": "Hello,\n\n        I can't place an order on your site, it says: I don't have enough credit.\n        How can I add some credits?\n\n        Cheers,\n        John Doe\n        ",
+        "body_html": "Hello,<br><br>\n\n        I can't place an order on your site, it says: I don't have enough credit.<br>\n        How can I add some credits?<br><br>\n\n        Cheers,<br>\n        John Doe\n        ",
+        "stripped_text": null,
+        "stripped_html": null,
+        "stripped_signature": null,
+        "public": true,
+        "from_agent": true,
+        "sender": {
+          "id": 7
+        },
+        "receiver": {
+          "id": 8
+        },
+        "attachments": [],
+        "meta": {},
+        "headers": {},
+        "actions": [],
+        "macros": [
+          {
+            "id": 5132
+          }
+        ],
+        "created_datetime": "2020-01-27T10:42:21.468912",
+        "processed_datetime": "2020-01-27T10:42:21.468912",
+        "opened_datetime": "2019-07-05T15:22:46.472436",
+        "failed_datetime": null,
+        "last_sending_error": null,
+        "deleted_datetime": null,
+        "replied_by": null,
+        "replied_to": null
+      }
+    ],
+    "meta": {},
+    "opened_datetime": "2019-07-05T15:22:46.472436",
+    "satisfaction_survey": {
+      "id": 1234,
+      "uri": "/api/satisfaction-surveys/1234/",
+      "body_text": "Such speed, much pertinent.",
+      "created_datetime": "2019-11-16T15:59:41.966927",
+      "customer_id": 120,
+      "meta": {
+        "externalData": {
+          "id": 1234
+        }
+      },
+      "score": 2,
+      "scored_datetime": "2019-11-25T15:59:41.966927",
+      "sent_datetime": "2019-11-23T15:59:41.966927",
+      "should_send_datetime": "2019-11-23T15:59:41.966927",
+      "ticket_id": 12
+    },
+    "snooze_datetime": null,
+    "spam": false,
+    "status": "open",
+    "subject": "Can I get a refund?",
+    "tags": [
+      {
+        "name": "urgent",
+        "description": "Mark a ticket as urgent",
+        "usage": 123,
+        "decoration": {
+          "color": "#F58D86"
+        },
+        "created_datetime": "2020-07-1300:00:00-05:00",
+        "deleted_datetime": "2020-07-1500:00:00-05:00"
+      }
+    ],
+    "trashed_datetime": null,
+    "updated_datetime": "2020-01-27T10:42:21.932637",
+    "via": "email",
+    "uri": "/api/tickets/123/"
+  },
+  "users.createUser": {
+    "id": 3924,
+    "active": true,
+    "bio": "Full stack developer at Gorgias",
+    "created_datetime": "2019-04-13T03:27:56.973873",
+    "country": "FR",
+    "email": "steve@company.com",
+    "external_id": "user-84203241",
+    "firstname": "Steve",
+    "lastname": "Frazeli",
+    "language": "fr",
+    "meta": {
+      "avatar_url": "https://avatars.example.com/steve-profile.jpeg",
+      "position": "engineer"
+    },
+    "name": "Steve Frazelli",
+    "role": {
+      "name": "admin"
+    },
+    "timezone": "US/Pacific",
+    "updated_datetime": "2019-09-25T06:18:22.839271",
+    "client_id": "74ef4b177"
+  },
+  "users.listUsers": [
+    {
+      "id": 3924,
+      "active": true,
+      "bio": "Full stack developer at Gorgias",
+      "created_datetime": "2019-04-13T03:27:56.973873",
+      "country": "FR",
+      "email": "steve@company.com",
+      "external_id": "user-84203241",
+      "firstname": "Steve",
+      "lastname": "Frazeli",
+      "language": "fr",
+      "meta": {
+        "avatar_url": "https://avatars.example.com/steve-profile.jpeg",
+        "position": "engineer"
+      },
+      "name": "Steve Frazelli",
+      "role": {
+        "name": "admin"
+      },
+      "timezone": "US/Pacific",
+      "updated_datetime": "2019-09-25T06:18:22.839271",
+      "client_id": "74ef4b177"
+    }
+  ],
+  "views.createView": {
+    "id": 123,
+    "category": "user",
+    "created_datetime": "2019-11-23T15:59:41.966927",
+    "deactivated_datetime": "2020-01-30T11:04:34.345123",
+    "decoration": {
+      "emoji": "🙏"
+    },
+    "fields": ["id", "details", "tags"],
+    "filters": "eq(ticket.assignee_user.id, '{{current_user.id}}') && eq(ticket.status, 'open')",
+    "name": "My view",
+    "order_by": "updated_datetime",
+    "order_dir": "desc",
+    "search": "where is my order?",
+    "slug": "my-tickets",
+    "type": "ticket-list"
+  },
+  "voiceCallEvents.getVoiceCallEvent": {
+    "id": 123,
+    "type": "completed-phone-call",
+    "account_id": 234,
+    "call_id": 345,
+    "user_id": 456,
+    "customer_id": 567,
+    "created_datetime": "2023-08-31T00:00:00.000000+00:00",
+    "meta": "{}"
+  },
+  "voiceCallEvents.listVoiceCallEvents": [
+    {
+      "id": 123,
+      "type": "completed-phone-call",
+      "account_id": 234,
+      "call_id": 345,
+      "user_id": 456,
+      "customer_id": 567,
+      "created_datetime": "2023-08-31T00:00:00.000000+00:00",
+      "meta": "{}"
+    }
+  ],
+  "voiceCallRecordings.getVoiceCallRecording": {
+    "id": 123,
+    "call_id": 234,
+    "external_id": "REe51e36db1c44458d8a173959d4affc71",
+    "url": "https://uploads.gorgias.io/GRO7iuEcV1WHfQvm/phone-REe51e36db1c44458d8a173959d4affc71-2fee010d-489b-473f-851c-b50eb3182b2e.mp3",
+    "duration": 20,
+    "type": "voicemail",
+    "created_datetime": "2023-08-31T00:00:00.000000+00:00",
+    "deleted_datetime": "2023-08-31T00:00:00.000000+00:00",
+    "error_code": "RECORDING_IS_PRIVATE",
+    "transcription_status": "completed"
+  },
+  "voiceCallRecordings.listVoiceCallRecordings": [
+    {
+      "id": 123,
+      "call_id": 234,
+      "external_id": "REe51e36db1c44458d8a173959d4affc71",
+      "url": "https://uploads.gorgias.io/GRO7iuEcV1WHfQvm/phone-REe51e36db1c44458d8a173959d4affc71-2fee010d-489b-473f-851c-b50eb3182b2e.mp3",
+      "duration": 20,
+      "type": "voicemail",
+      "created_datetime": "2023-08-31T00:00:00.000000+00:00",
+      "deleted_datetime": "2023-08-31T00:00:00.000000+00:00",
+      "error_code": "RECORDING_IS_PRIVATE",
+      "transcription_status": "completed"
+    }
+  ],
+  "voiceCalls.getVoiceCall": {
+    "id": 123,
+    "integration_id": 234,
+    "ticket_id": 345,
+    "phone_number_id": 456,
+    "external_id": "CA777a8b2bfef8cdf709896080fe94cd10",
+    "provider": "twilio",
+    "status": "completed",
+    "direction": "inbound",
+    "phone_number_source": "+14791234567",
+    "country_source": "US",
+    "phone_number_destination": "+17201234567",
+    "country_destination": "US",
+    "duration": 60,
+    "started_datetime": "2023-08-31T00:00:00.000000+00:00",
+    "created_datetime": "2023-08-31T00:00:00.000000+00:00",
+    "updated_datetime": "2023-08-31T00:00:00.000000+00:00",
+    "initiated_by_agent_id": 567,
+    "last_answered_by_agent_id": 678,
+    "customer_id": 789,
+    "last_rang_agent_id": 235,
+    "has_voicemail": true,
+    "has_call_recording": false,
+    "termination_status": "abandoned",
+    "queue_id": 142,
+    "status_in_queue": "waiting",
+    "answered_by_external_number": "+14791234567",
+    "answered_by_external_customer_id": 250,
+    "monitoring_status": "listening",
+    "last_monitoring_agent_id": 123
+  },
+  "widgets.createWidget": {
+    "id": 123,
+    "context": "ticket",
+    "created_datetime": "2020-12-01T13:00:00.123456",
+    "deactivated_datetime": "2020-12-03T13:00:00.123456",
+    "app_id": "60b9f144096cf92533e0a14d",
+    "order": 3,
+    "template": {
+      "type": "wrapper",
+      "widgets": [
+        {
+          "path": "account_info",
+          "type": "card",
+          "title": "account  info",
+          "widgets": [
+            {
+              "path": "account_id",
+              "type": "text",
+              "title": "account id"
+            }
+          ]
+        }
+      ]
+    },
+    "type": "http",
+    "updated_datetime": "2020-12-02T13:00:00.123456",
+    "uri": "/api/widgets/123/"
+  },
+  "widgets.listWidgets": [
+    {
+      "id": 123,
+      "context": "ticket",
+      "created_datetime": "2020-12-01T13:00:00.123456",
+      "deactivated_datetime": "2020-12-03T13:00:00.123456",
+      "app_id": "60b9f144096cf92533e0a14d",
+      "order": 3,
+      "template": {
+        "type": "wrapper",
+        "widgets": [
+          {
+            "path": "account_info",
+            "type": "card",
+            "title": "account  info",
+            "widgets": [
+              {
+                "path": "account_id",
+                "type": "text",
+                "title": "account id"
+              }
+            ]
+          }
+        ]
+      },
+      "type": "http",
+      "updated_datetime": "2020-12-02T13:00:00.123456",
+      "uri": "/api/widgets/123/"
+    }
+  ]
+}

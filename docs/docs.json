@@ -2544,6 +2544,14 @@
                 ]
               },
               {
+                "group": "Gorgias",
+                "pages": [
+                  "plugins/gorgias/overview",
+                  "plugins/gorgias/api",
+                  "plugins/gorgias/database"
+                ]
+              },
+              {
                 "group": "Grafana",
                 "pages": [
                   "plugins/grafana/overview",
