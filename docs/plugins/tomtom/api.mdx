@@ -1,0 +1,482 @@
+---
+title: "TomTom API reference"
+sidebarTitle: "API"
+description: "API reference for the TomTom plugin in Corsair: every `tomtom.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Routing
+
+### calculate
+
+`routing.calculate`
+
+Calculate a route between waypoints with travel mode, traffic and avoidance options; makes no booking
+
+**Risk:** `read`
+
+```ts
+await corsair.tomtom.api.routing.calculate({ origins: [{ latitude: 52.37, longitude: 4.89 }], destinations: [{ latitude: 52.09, longitude: 5.12 }], travel_mode: 'car', traffic: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origins` | `object[]` | Yes | Where the route starts |
+| `destinations` | `object[]` | Yes | Where the route ends |
+| `travel_mode` | `car \| truck \| taxi \| bus \| van \| motorcycle \| bicycle \| pedestrian` | No | Default car |
+| `route_type` | `fastest \| shortest \| eco \| thrilling` | No | Default fastest |
+| `traffic` | `boolean` | No | Use live traffic in the calculation |
+| `depart_at` | `string` | No | Departure time as an ISO 8601 instant, for future-traffic routing |
+| `vehicle_max_speed` | `number` | No | Kilometres per hour for the travel mode |
+| `avoid` | `(tollRoads \| motorways \| ferries \| unpavedRoads \| carpools \| alreadyUsedRoads)[]` | No | Features to route around |
+| `language` | `string` | No | — |
+
+Waypoints are joined in the path, origins then destinations. `depart_at` uses future traffic when `traffic` is on.
+
+<AccordionGroup>
+<Accordion title="origins full type">
+
+```ts
+{
+  latitude: number,
+  longitude: number
+}[]
+```
+</Accordion>
+
+<Accordion title="destinations full type">
+
+```ts
+{
+  latitude: number,
+  longitude: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formatVersion` | `string \| null` | No | — |
+| `routes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+  summary?: {
+    lengthInMeters?: number | null,
+    travelTimeInSeconds?: number | null,
+    trafficDelayInSeconds?: number | null,
+    departureTime?: string | null,
+    arrivalTime?: string | null,
+    hasTollRoad?: boolean | null,
+    hasHighway?: boolean | null,
+    hasFerry?: boolean | null
+  } | null,
+  legs?: {
+  }[] | null,
+  guidance?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### fuzzy
+
+`search.fuzzy`
+
+Search for places, addresses, streets and geography, with optional geo bias and country filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tomtom.api.search.fuzzy({ query: 'pizza', lat: 52.37, lon: 4.89, radius: 5000, limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | What to search for, e.g. "pizza" |
+| `typeahead` | `boolean` | No | Treat the query as partial input for predictive search |
+| `radius` | `number` | No | Metres from the bias point; requires lat and lon |
+| `limit` | `number` | No | Results per page; default 10, maximum 100 |
+| `offset` | `number` | No | Default 0 |
+| `country_set` | `string` | No | Comma-separated ISO country codes, e.g. "US,MX" |
+| `language` | `string` | No | BCP-47 language tag, e.g. "en-GB" |
+| `lat` | `number` | No | Latitude for the geo bias |
+| `lon` | `number` | No | Longitude for the geo bias |
+
+`radius` needs both `lat` and `lon`. `limit` caps at 100, and `summary.numResults` is the total, not the page size.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+  query?: string | null,
+  queryType?: string | null,
+  queryTime?: number | null,
+  numResults?: number | null,
+  offset?: number | null,
+  totalResults?: number | null,
+  fuzzyLevel?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null,
+  score?: number | null,
+  dist?: number | null,
+  name?: string | null,
+  address?: {
+    streetName?: string | null,
+    municipality?: string | null,
+    countrySubdivision?: string | null,
+    postalCode?: string | null,
+    countryCode?: string | null,
+    country?: string | null,
+    freeformAddress?: string | null
+  } | null,
+  position?: {
+    lat: number,
+    lon: number
+  } | null,
+  viewport?: {
+    topLeftPoint?: {
+      lat: number,
+      lon: number
+    } | null,
+    btmRightPoint?: {
+      lat: number,
+      lon: number
+    } | null
+  } | null,
+  poi?: {
+    name?: string | null,
+    categories?: string[] | null,
+    classifications?: {
+    }[] | null,
+    phone?: string | null,
+    url?: string | null
+  } | null,
+  entryPoints?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### geocode
+
+`search.geocode`
+
+Turn an address into coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.tomtom.api.search.geocode({ query: 'Damrak 1 Amsterdam', country_set: 'NL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | An address to turn into coordinates |
+| `limit` | `number` | No | Results per page; default 10, maximum 100 |
+| `offset` | `number` | No | Default 0 |
+| `country_set` | `string` | No | Comma-separated ISO country codes, e.g. "US,MX" |
+| `language` | `string` | No | BCP-47 language tag, e.g. "en-GB" |
+| `lat` | `number` | No | Latitude for the geo bias |
+| `lon` | `number` | No | Longitude for the geo bias |
+
+The query goes in the path, so a full address works but should be URL-encoded by the caller if it contains reserved characters.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null,
+  address?: {
+  } | null,
+  position?: {
+    lat: number,
+    lon: number
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverseGeocode
+
+`search.reverseGeocode`
+
+Turn coordinates into the nearest address
+
+**Risk:** `read`
+
+```ts
+await corsair.tomtom.api.search.reverseGeocode({ latitude: 52.378, longitude: 4.9, radius: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `radius` | `number` | No | Metres to search around the point, up to 1000 |
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object \| null` | No | — |
+| `addresses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  address?: {
+    streetName?: string | null,
+    municipality?: string | null,
+    countrySubdivision?: string | null,
+    postalCode?: string | null,
+    countryCode?: string | null,
+    country?: string | null,
+    freeformAddress?: string | null
+  } | null,
+  position?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Traffic
+
+### flow
+
+`traffic.flow`
+
+Read the current speed and free-flow speed on the road at a point
+
+**Risk:** `read`
+
+```ts
+await corsair.tomtom.api.traffic.flow({ latitude: 52.37, longitude: 4.89, zoom: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `zoom` | `number` | No | Detail level; higher is more precise |
+| `unit` | `kmph \| mph` | No | Speed unit, default kmph |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flowSegmentData` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="flowSegmentData full type">
+
+```ts
+{
+  frc?: string | null,
+  currentSpeed?: number | null,
+  freeFlowSpeed?: number | null,
+  currentTravelTime?: number | null,
+  freeFlowTravelTime?: number | null,
+  confidence?: number | null,
+  roadClosure?: boolean | null,
+  coordinates?: {
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### incidents
+
+`traffic.incidents`
+
+List live traffic incidents in a bounding box, with their delay and road numbers
+
+**Risk:** `read`
+
+```ts
+await corsair.tomtom.api.traffic.incidents({ bbox: '4.88,52.36,4.92,52.39' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bbox` | `string` | Yes | Bounding box as "minLon,minLat,maxLon,maxLat"; the whole world is -180,-90,180,90 |
+| `language` | `string` | No | Default en-GB |
+| `category_filter` | `number` | No | Sum of the incident category numbers to include |
+| `time_validity_filter` | `present \| all` | No | Default present |
+
+The bounding box is minLon,minLat,maxLon,maxLat. `category_filter` is the sum of the category numbers you want.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incidents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="incidents full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  geometry?: {
+  } | null,
+  properties?: {
+    id?: string | null,
+    iconCategory?: number | null,
+    magnitudeOfDelay?: number | null,
+    events?: {
+    }[] | null,
+    startTime?: string | null,
+    endTime?: string | null,
+    from?: string | null,
+    to?: string | null,
+    length?: number | null,
+    delay?: number | null,
+    roadNumbers?: string[] | null,
+    aci?: {
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tile
+
+`traffic.tile`
+
+Fetch one traffic flow or incident map tile
+
+**Risk:** `read`
+
+```ts
+await corsair.tomtom.api.traffic.tile({ layer: 'flow', style: 'relative-delay', zoom: 12, x: 2100, y: 1350 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `layer` | `flow \| incidents` | No | Default flow |
+| `style` | `absolute \| relative \| relative-delay \| reduced-sensitivity` | No | Only applies to the flow layer |
+| `zoom` | `number` | Yes | — |
+| `x` | `number` | Yes | — |
+| `y` | `number` | Yes | — |
+
+The flow layer names a style in the path; the incidents layer has no style segment.
+
+
+
+**Output:** `string`
+
+
+---
+

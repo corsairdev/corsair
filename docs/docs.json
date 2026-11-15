@@ -4701,6 +4701,14 @@
                 ]
               },
               {
+                "group": "TomTom",
+                "pages": [
+                  "plugins/tomtom/overview",
+                  "plugins/tomtom/api",
+                  "plugins/tomtom/database"
+                ]
+              },
+              {
                 "group": "Trello",
                 "pages": [
                   "plugins/trello/overview",
