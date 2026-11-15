@@ -4421,6 +4421,14 @@
                 ]
               },
               {
+                "group": "Templated",
+                "pages": [
+                  "plugins/templated/overview",
+                  "plugins/templated/api",
+                  "plugins/templated/database"
+                ]
+              },
+              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
