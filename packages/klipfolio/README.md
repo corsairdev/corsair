@@ -17,7 +17,7 @@ pnpm add @corsair-dev/klipfolio
 | `clients.deleteClient` | `klipfolio.api.clients.deleteClient` | `destructive` | Delete Client on Klipfolio |
 | `clients.deleteClientProperties` | `klipfolio.api.clients.deleteClientProperties` | `destructive` | Delete Client Property on Klipfolio |
 | `clients.deleteClientShareRight` | `klipfolio.api.clients.deleteClientShareRight` | `destructive` | Revoke Group Access to Client on Klipfolio |
-| `clients.enableDirectBillingClient` | `klipfolio.api.clients.enableDirectBillingClient` | `write` | Enable Direct Billing on Klipfolio |
+| `clients.enableDirectBillingClient` | `klipfolio.api.clients.enableDirectBillingClient` | `destructive` | Switch a client to direct billing on Klipfolio (cannot be undone) |
 | `clients.extendTrialClient` | `klipfolio.api.clients.extendTrialClient` | `write` | Extend Trial on Klipfolio |
 | `clients.listClients` | `klipfolio.api.clients.listClients` | `read` | List Clients on Klipfolio |
 | `clients.retrieveClient` | `klipfolio.api.clients.retrieveClient` | `read` | Get Client on Klipfolio |
@@ -38,7 +38,7 @@ pnpm add @corsair-dev/klipfolio
 | `datasources.deleteDatasourceInstancesProperties` | `klipfolio.api.datasources.deleteDatasourceInstancesProperties` | `destructive` | Delete Data Source Instance Property on Klipfolio |
 | `datasources.deleteDatasourceProperties` | `klipfolio.api.datasources.deleteDatasourceProperties` | `destructive` | Delete a Data Source Property on Klipfolio |
 | `datasources.deleteDatasourceShareRight` | `klipfolio.api.datasources.deleteDatasourceShareRight` | `destructive` | Delete Data Source Share Right on Klipfolio |
-| `datasources.deleteInstancesDatasource` | `klipfolio.api.datasources.deleteInstancesDatasource` | `write` | Delete Instances on Klipfolio |
+| `datasources.deleteInstancesDatasource` | `klipfolio.api.datasources.deleteInstancesDatasource` | `destructive` | Delete Instances on Klipfolio |
 | `datasources.disableDatasource` | `klipfolio.api.datasources.disableDatasource` | `write` | Disable a Data Source on Klipfolio |
 | `datasources.enableDatasource` | `klipfolio.api.datasources.enableDatasource` | `write` | Enable a Data Source on Klipfolio |
 | `datasources.importDatasource` | `klipfolio.api.datasources.importDatasource` | `write` | Import a Data Source on Klipfolio |
@@ -54,7 +54,7 @@ pnpm add @corsair-dev/klipfolio
 | `datasources.retrieveDatasourceShareRights` | `klipfolio.api.datasources.retrieveDatasourceShareRights` | `read` | Get Data Source Share Rights on Klipfolio |
 | `datasources.setDatasourceShareRights` | `klipfolio.api.datasources.setDatasourceShareRights` | `write` | Update Data Source Share Rights on Klipfolio |
 | `datasources.updateDatasource` | `klipfolio.api.datasources.updateDatasource` | `write` | Update Data Source on Klipfolio |
-| `datasources.updateDatasourceInstancesData` | `klipfolio.api.datasources.updateDatasourceInstancesData` | `write` | Update Data Source Instance Data on Klipfolio |
+| `datasources.updateDatasourceInstancesData` | `klipfolio.api.datasources.updateDatasourceInstancesData` | `destructive` | Replace a data source instance's data on Klipfolio |
 | `datasources.updateDatasourceInstancesProperties` | `klipfolio.api.datasources.updateDatasourceInstancesProperties` | `write` | Create or Update Data Source Instance Properties on Klipfolio |
 | `datasources.updateDatasourceProperties` | `klipfolio.api.datasources.updateDatasourceProperties` | `write` | Create or Update Data Source Properties on Klipfolio |
 | `groups.addGroupDefaultTabs` | `klipfolio.api.groups.addGroupDefaultTabs` | `write` | Add Dashboard to Group on Klipfolio |
@@ -117,7 +117,7 @@ pnpm add @corsair-dev/klipfolio
 | `tabs.setTabShareRights` | `klipfolio.api.tabs.setTabShareRights` | `write` | Update tab share rights on Klipfolio |
 | `tabs.updateTab` | `klipfolio.api.tabs.updateTab` | `write` | Update tab on Klipfolio |
 | `tabs.updateTabKlipInstances` | `klipfolio.api.tabs.updateTabKlipInstances` | `write` | Add Klip to tab on Klipfolio |
-| `tabs.updateTabLayout` | `klipfolio.api.tabs.updateTabLayout` | `write` | Update tab layout on Klipfolio |
+| `tabs.updateTabLayout` | `klipfolio.api.tabs.updateTabLayout` | `destructive` | Replace a tab layout on Klipfolio (Klips left out are removed) |
 | `users.createUser` | `klipfolio.api.users.createUser` | `write` | Create User on Klipfolio |
 | `users.deleteUser` | `klipfolio.api.users.deleteUser` | `destructive` | Delete User on Klipfolio |
 | `users.deleteUserGroup` | `klipfolio.api.users.deleteUserGroup` | `destructive` | Delete user from group on Klipfolio |
@@ -125,8 +125,8 @@ pnpm add @corsair-dev/klipfolio
 | `users.deleteUserRole` | `klipfolio.api.users.deleteUserRole` | `destructive` | Delete user from role on Klipfolio |
 | `users.deleteUserTabInstance` | `klipfolio.api.users.deleteUserTabInstance` | `destructive` | Delete user tab instance on Klipfolio |
 | `users.listUsers` | `klipfolio.api.users.listUsers` | `read` | Get Users on Klipfolio |
-| `users.resendInviteUser` | `klipfolio.api.users.resendInviteUser` | `write` | Resend Invitation on Klipfolio |
-| `users.resetPasswordUser` | `klipfolio.api.users.resetPasswordUser` | `write` | Reset Password on Klipfolio |
+| `users.resendInviteUser` | `klipfolio.api.users.resendInviteUser` | `destructive` | Resend the invitation email to a user on Klipfolio |
+| `users.resetPasswordUser` | `klipfolio.api.users.resetPasswordUser` | `destructive` | Reset a user's password on Klipfolio |
 | `users.retrieveUser` | `klipfolio.api.users.retrieveUser` | `read` | Get User by ID on Klipfolio |
 | `users.retrieveUserGroups` | `klipfolio.api.users.retrieveUserGroups` | `read` | Get user groups on Klipfolio |
 | `users.retrieveUserProperties` | `klipfolio.api.users.retrieveUserProperties` | `read` | Get user properties on Klipfolio |

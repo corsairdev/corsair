@@ -431,8 +431,9 @@ export const klipfolioEndpointMeta = {
 		description: 'Delete Client on Klipfolio',
 	},
 	'clients.enableDirectBillingClient': {
-		riskLevel: 'write',
-		description: 'Enable Direct Billing on Klipfolio',
+		riskLevel: 'destructive',
+		description:
+			'Switch a client to direct billing on Klipfolio (cannot be undone)',
 	},
 	'clients.extendTrialClient': {
 		riskLevel: 'write',
@@ -567,8 +568,8 @@ export const klipfolioEndpointMeta = {
 		description: 'Get Data Source Instance Data on Klipfolio',
 	},
 	'datasources.updateDatasourceInstancesData': {
-		riskLevel: 'write',
-		description: 'Update Data Source Instance Data on Klipfolio',
+		riskLevel: 'destructive',
+		description: "Replace a data source instance's data on Klipfolio",
 	},
 	'datasources.refreshDatasourceInstances': {
 		riskLevel: 'write',
@@ -817,8 +818,9 @@ export const klipfolioEndpointMeta = {
 		description: 'Get tab layout on Klipfolio',
 	},
 	'tabs.updateTabLayout': {
-		riskLevel: 'write',
-		description: 'Update tab layout on Klipfolio',
+		riskLevel: 'destructive',
+		description:
+			'Replace a tab layout on Klipfolio (Klips left out are removed)',
 	},
 	'tabs.retrieveTabShareRights': {
 		riskLevel: 'read',
@@ -869,12 +871,12 @@ export const klipfolioEndpointMeta = {
 		description: 'Delete user from group on Klipfolio',
 	},
 	'users.resendInviteUser': {
-		riskLevel: 'write',
-		description: 'Resend Invitation on Klipfolio',
+		riskLevel: 'destructive',
+		description: 'Resend the invitation email to a user on Klipfolio',
 	},
 	'users.resetPasswordUser': {
-		riskLevel: 'write',
-		description: 'Reset Password on Klipfolio',
+		riskLevel: 'destructive',
+		description: "Reset a user's password on Klipfolio",
 	},
 	'users.retrieveUserProperties': {
 		riskLevel: 'read',

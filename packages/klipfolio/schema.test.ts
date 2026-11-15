@@ -2,7 +2,11 @@ import {
 	KlipfolioEndpointInputSchemas,
 	KlipfolioEndpointOutputSchemas,
 } from './endpoints/types';
-import { klipfolio, klipfolioEndpointSchemas } from './index';
+import {
+	klipfolio,
+	klipfolioEndpointMeta,
+	klipfolioEndpointSchemas,
+} from './index';
 import { KlipfolioSchema } from './schema';
 
 jest.mock('./client', () => ({
@@ -244,6 +248,19 @@ describe('Klipfolio schema', () => {
 				KlipfolioEndpointInputSchemas[operation].safeParse({ limit: 0 })
 					.success,
 			).toBe(false);
+		}
+	});
+
+	it('marks sends, the billing switch and replace-all writes destructive', () => {
+		for (const operation of [
+			'users.resendInviteUser',
+			'users.resetPasswordUser',
+			'clients.enableDirectBillingClient',
+			'tabs.updateTabLayout',
+			'datasources.updateDatasourceInstancesData',
+			'datasources.deleteInstancesDatasource',
+		] as const) {
+			expect(klipfolioEndpointMeta[operation].riskLevel).toBe('destructive');
 		}
 	});
 
