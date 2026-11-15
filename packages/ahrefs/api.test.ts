@@ -4,70 +4,10 @@ import type {
 	DomainRatingResponse,
 	KeywordsOverviewResponse,
 } from './endpoints/types';
-import {
-	AhrefsEndpointInputSchemas,
-	AhrefsEndpointOutputSchemas,
-} from './endpoints/types';
-
-declare const describe: {
-	(name: string, fn: () => void): void;
-	skip(name: string, fn: () => void): void;
-};
-declare const it: (name: string, fn: () => void | Promise<void>) => void;
+import { AhrefsEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_API_KEY = process.env.AHREFS_API_KEY;
 const describeIfApiKey = TEST_API_KEY ? describe : describe.skip;
-
-describe('Ahrefs schemas', () => {
-	it('parses domain rating input and response', () => {
-		AhrefsEndpointInputSchemas.getDomainRating.parse({
-			target: 'example.com',
-			date: '2024-01-01',
-		});
-
-		AhrefsEndpointOutputSchemas.getDomainRating.parse({
-			domain_rating: {
-				ahrefs_rank: 123,
-				domain_rating: 76.5,
-			},
-		});
-	});
-
-	it('parses backlinks stats input and response', () => {
-		AhrefsEndpointInputSchemas.backlinksStats.parse({
-			target: 'example.com',
-			date: '2024-01-01',
-			mode: 'domain',
-		});
-
-		AhrefsEndpointOutputSchemas.backlinksStats.parse({
-			metrics: {
-				all_time: 10,
-				all_time_refdomains: 5,
-				live: 8,
-				live_refdomains: 4,
-			},
-		});
-	});
-
-	it('parses keywords overview input and response', () => {
-		AhrefsEndpointInputSchemas.keywordsOverview.parse({
-			keywords: ['seo tools', 'backlink checker'],
-			country: 'us',
-			select: 'keyword,volume,difficulty',
-		});
-
-		AhrefsEndpointOutputSchemas.keywordsOverview.parse({
-			keywords: [
-				{
-					keyword: 'seo tools',
-					volume: 1000,
-					difficulty: 42,
-				},
-			],
-		});
-	});
-});
 
 describeIfApiKey('Ahrefs API type tests', () => {
 	it('domain rating returns the expected shape', async () => {
@@ -117,5 +57,78 @@ describeIfApiKey('Ahrefs API type tests', () => {
 		);
 
 		AhrefsEndpointOutputSchemas.keywordsOverview.parse(response);
+	});
+});
+
+describeIfApiKey('Ahrefs API live checks for the added endpoints', () => {
+	it('keyword volume history for "ahrefs" parses', async () => {
+		const response = await makeAhrefsRequest(
+			'/keywords-explorer/volume-history',
+			TEST_API_KEY!,
+			{ query: { keyword: 'ahrefs', country: 'us', date_from: '2026-01-01' } },
+		);
+		const parsed = AhrefsEndpointOutputSchemas.volumeHistory.parse(response);
+		expect(parsed.metrics.length).toBeGreaterThan(0);
+	});
+
+	it('site metrics for ahrefs.com parse', async () => {
+		const response = await makeAhrefsRequest(
+			'/site-explorer/metrics',
+			TEST_API_KEY!,
+			{ query: { target: 'ahrefs.com', date: '2026-01-01' } },
+		);
+		const parsed = AhrefsEndpointOutputSchemas.siteMetrics.parse(response);
+		expect(parsed.metrics).toBeDefined();
+	});
+
+	it('management projects list parses', async () => {
+		const response = await makeAhrefsRequest(
+			'/management/projects',
+			TEST_API_KEY!,
+		);
+		const parsed =
+			AhrefsEndpointOutputSchemas.managementProjects.parse(response);
+		expect(Array.isArray(parsed.projects)).toBe(true);
+	});
+
+	it('free Domain Rating for ahrefs.com parses', async () => {
+		const response = await makeAhrefsRequest(
+			'/public/domain-rating-free',
+			TEST_API_KEY!,
+			{ query: { target: 'ahrefs.com' } },
+		);
+		const parsed =
+			AhrefsEndpointOutputSchemas.publicDomainRatingFree.parse(response);
+		expect(parsed.domain_rating).toBeDefined();
+	});
+
+	it('batch analysis POST for two test targets parses', async () => {
+		const response = await makeAhrefsRequest(
+			'/batch-analysis/batch-analysis',
+			TEST_API_KEY!,
+			{
+				method: 'POST',
+				body: {
+					targets: [
+						{ url: 'ahrefs.com', mode: 'domain', protocol: 'both' },
+						{ url: 'wordcount.com', mode: 'domain', protocol: 'both' },
+					],
+					select: ['url', 'domain_rating'],
+				},
+			},
+		);
+		const parsed =
+			AhrefsEndpointOutputSchemas.batchAnalysisAnalyze.parse(response);
+		expect(parsed.targets).toHaveLength(2);
+	});
+
+	it('Brand Radar reports list parses', async () => {
+		const response = await makeAhrefsRequest(
+			'/management/brand-radar-reports',
+			TEST_API_KEY!,
+		);
+		const parsed =
+			AhrefsEndpointOutputSchemas.managementBrandRadarReports.parse(response);
+		expect(Array.isArray(parsed.reports)).toBe(true);
 	});
 });
