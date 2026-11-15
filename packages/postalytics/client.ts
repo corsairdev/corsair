@@ -91,11 +91,36 @@ export async function makePostalyticsRequest(
 		throw new PostalyticsRateLimitError(body, retryAfterMs);
 	}
 	if (!response.ok) {
-		const message =
-			typeof body === 'string'
-				? body
-				: `Postalytics request failed (${response.status})`;
-		throw new PostalyticsAPIError(message, response.status, body);
+		throw new PostalyticsAPIError(
+			errorMessage(body, response.status),
+			response.status,
+			body,
+		);
 	}
 	return body;
+}
+
+// Postalytics answers errors as plain text ("Campaign not found") or as an
+// ASP.NET problem+json body ({ title, errors: { field: [msg] } }). Keep the
+// provider's words, which name the field but not the submitted value.
+// unknown: the error body is untyped until narrowed here.
+function errorMessage(body: unknown, status: number): string {
+	const fallback = `Postalytics request failed (${status})`;
+	if (typeof body === 'string') return body.slice(0, 300) || fallback;
+	if (!body || typeof body !== 'object') return fallback;
+	const record = body as Record<string, unknown>;
+	const title = [record.title, record.message, record.Message].find(
+		(value): value is string => typeof value === 'string' && value.length > 0,
+	);
+	const fieldErrors =
+		record.errors && typeof record.errors === 'object'
+			? Object.entries(record.errors as Record<string, unknown>)
+					.map(
+						([field, messages]) =>
+							`${field}: ${Array.isArray(messages) ? messages.join(' ') : String(messages)}`,
+					)
+					.join('; ')
+			: '';
+	const message = [title, fieldErrors].filter(Boolean).join(' ');
+	return message ? message.slice(0, 300) : fallback;
 }

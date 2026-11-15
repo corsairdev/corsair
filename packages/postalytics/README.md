@@ -1,6 +1,6 @@
 # @corsair-dev/postalytics
 
-Manage direct mail with the [Postalytics REST API](https://docs.postalytics.com/references/postalytics-rest-api/get-my-account). This plugin exposes 45 documented operations.
+Manage direct mail with the [Postalytics REST API](https://docs.postalytics.com/references/postalytics-rest-api/get-my-account). This plugin exposes 44 of the 45 documented operations. Get Integrations (`/api/v1/account/integrations`) is left out: the production API routes it to Get Account and answers 400 for every key.
 
 ## Install
 
@@ -15,7 +15,6 @@ pnpm add @corsair-dev/postalytics
 | `account.createNewAccount` | `postalytics.api.account.createNewAccount` | `write` | create new account |
 | `account.deleteAccount` | `postalytics.api.account.deleteAccount` | `destructive` | delete account |
 | `account.getAccount` | `postalytics.api.account.getAccount` | `read` | get account |
-| `account.getIntegrations` | `postalytics.api.account.getIntegrations` | `read` | get integrations |
 | `account.getMyAccount` | `postalytics.api.account.getMyAccount` | `read` | get my account |
 | `account.updateAccount` | `postalytics.api.account.updateAccount` | `write` | update account |
 | `campaigns.createNewCampaign` | `postalytics.api.campaigns.createNewCampaign` | `write` | create new campaign |

@@ -1,6 +1,7 @@
 import type { PostalyticsEndpoints } from '..';
-import { makePostalyticsRequest } from '../client';
+import { makePostalyticsRequest, PostalyticsAPIError } from '../client';
 import {
+	getAllDripCampaignsResponseSchema,
 	PostalyticsEndpointInputSchemas as inputs,
 	PostalyticsEndpointOutputSchemas as outputs,
 } from './types';
@@ -12,18 +13,26 @@ function withoutCredentials<T extends Record<string, unknown>>(row: T): T {
 	return rest as T;
 }
 
-export const getIntegrations: PostalyticsEndpoints['getIntegrations'] = async (
-	ctx,
-	input,
-) => {
-	inputs.getIntegrations.parse(input);
-	const response = await makePostalyticsRequest(
-		`/api/v1/account/integrations`,
-		ctx.key,
-		{ method: 'GET', sandbox: ctx.options.sandbox },
-	);
-	return outputs.getIntegrations.parse(response);
-};
+// The campaign and template list routes answer an empty account with a 400 and
+// the text "Campaign not found" / "Template not found" instead of []. Only that
+// exact reply on these id-less routes is read as an empty list.
+async function listOrEmpty(
+	request: Promise<unknown>,
+	emptyMessage: string,
+	// The response stays untrusted until the caller parses it.
+): Promise<unknown> {
+	try {
+		return await request;
+	} catch (error) {
+		if (
+			error instanceof PostalyticsAPIError &&
+			error.status === 400 &&
+			error.body === emptyMessage
+		)
+			return [];
+		throw error;
+	}
+}
 
 export const getMyAccount: PostalyticsEndpoints['getMyAccount'] = async (
 	ctx,
@@ -92,10 +101,13 @@ export const getAllCampaigns: PostalyticsEndpoints['getAllCampaigns'] = async (
 	input,
 ) => {
 	inputs.getAllCampaigns.parse(input);
-	const response = await makePostalyticsRequest(`/api/v1/campaigns`, ctx.key, {
-		method: 'GET',
-		sandbox: ctx.options.sandbox,
-	});
+	const response = await listOrEmpty(
+		makePostalyticsRequest(`/api/v1/campaigns`, ctx.key, {
+			method: 'GET',
+			sandbox: ctx.options.sandbox,
+		}),
+		'Campaign not found',
+	);
 	return outputs.getAllCampaigns.parse(response);
 };
 
@@ -107,7 +119,8 @@ export const getAllDripCampaigns: PostalyticsEndpoints['getAllDripCampaigns'] =
 			ctx.key,
 			{ method: 'GET', sandbox: ctx.options.sandbox },
 		);
-		return outputs.getAllDripCampaigns.parse(response);
+		const parsed = getAllDripCampaignsResponseSchema.parse(response);
+		return Array.isArray(parsed) ? parsed : parsed.drips;
 	};
 
 export const getCampaignStats: PostalyticsEndpoints['getCampaignStats'] =
@@ -460,10 +473,13 @@ export const getAllTemplates: PostalyticsEndpoints['getAllTemplates'] = async (
 	input,
 ) => {
 	inputs.getAllTemplates.parse(input);
-	const response = await makePostalyticsRequest(`/api/v1/templates`, ctx.key, {
-		method: 'GET',
-		sandbox: ctx.options.sandbox,
-	});
+	const response = await listOrEmpty(
+		makePostalyticsRequest(`/api/v1/templates`, ctx.key, {
+			method: 'GET',
+			sandbox: ctx.options.sandbox,
+		}),
+		'Template not found',
+	);
 	return outputs.getAllTemplates.parse(response);
 };
 

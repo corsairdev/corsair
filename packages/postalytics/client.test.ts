@@ -219,6 +219,23 @@ describe('Postalytics request seam', () => {
 		] as const)
 			expect(meta[op]?.riskLevel).toBe('destructive');
 	});
+	it('reads the empty-account 400 on the campaign and template lists as []', async () => {
+		const endpoints = postalytics().endpoints!;
+		mockFetch.mockImplementation(
+			async () => new Response('Campaign not found', { status: 400 }),
+		);
+		expect(await endpoints.campaigns.getAllCampaigns(ctx, {})).toEqual([]);
+		mockFetch.mockImplementation(
+			async () => new Response('Template not found', { status: 400 }),
+		);
+		expect(await endpoints.templates.getAllTemplates(ctx, {})).toEqual([]);
+		mockFetch.mockImplementation(
+			async () => new Response('Validation error', { status: 400 }),
+		);
+		await expect(
+			endpoints.campaigns.getAllCampaigns(ctx, {}),
+		).rejects.toMatchObject({ status: 400 });
+	});
 	it('rejects unsafe string route parameters', () => {
 		const input = postalyticsEndpointSchemas['flows.getFlow'].input;
 		for (const endpointId of [
@@ -297,6 +314,28 @@ describe('Postalytics request seam', () => {
 			makePostalyticsRequest('/api/v1/account/me', '', { method: 'GET' }),
 		).rejects.toThrow('API key is required');
 		expect(mockFetch).not.toHaveBeenCalled();
+	});
+	it('puts the problem+json title and field errors in the message', async () => {
+		mockFetch.mockImplementation(
+			async () =>
+				new Response(
+					JSON.stringify({
+						type: 'https://tools.ietf.org/html/rfc9110#section-15.5.1',
+						title: 'One or more validation errors occurred.',
+						status: 400,
+						errors: { id: ["The value 'x' is not valid."] },
+					}),
+					{
+						status: 400,
+						headers: { 'Content-Type': 'application/problem+json' },
+					},
+				),
+		);
+		await expect(
+			postalytics().endpoints!.account.getAccount(ctx, { id: 1 }),
+		).rejects.toThrow(
+			"One or more validation errors occurred. id: The value 'x' is not valid.",
+		);
 	});
 	it('retains provider error details on non-rate-limit failures', async () => {
 		mockFetch.mockResolvedValue(

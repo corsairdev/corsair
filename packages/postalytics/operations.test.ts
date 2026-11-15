@@ -21,11 +21,6 @@ beforeEach(() => fetchMock.mockReset());
 
 const endpoints = postalytics().endpoints!;
 const operations = {
-	'account.getIntegrations': (input: object) =>
-		endpoints.account.getIntegrations(
-			context,
-			postalyticsEndpointSchemas['account.getIntegrations'].input.parse(input),
-		),
 	'account.getMyAccount': (input: object) =>
 		endpoints.account.getMyAccount(
 			context,
@@ -294,18 +289,19 @@ const operations = {
 		),
 } satisfies Record<
 	keyof typeof postalyticsEndpointSchemas,
-	(input: object) => Promise<object>
+	// Results differ per operation (arrays, objects, delete sentences); each is checked against its fixture.
+	(input: object) => Promise<unknown>
 >;
 
 describe('all documented Postalytics operations', () => {
 	// Response fixtures use documented field examples; is_proofed has no provider
 	// example, so the two template reads use a representative valid boolean.
-	it('covers the complete 45-operation registry', () => {
-		expect(fixtures).toHaveLength(45);
-		expect(Object.keys(operations)).toHaveLength(45);
+	it('covers the complete 44-operation registry', () => {
+		expect(fixtures).toHaveLength(44);
+		expect(Object.keys(operations)).toHaveLength(44);
 		expect(
 			new Set(fixtures.map(({ group, name }) => `${group}.${name}`)).size,
-		).toBe(45);
+		).toBe(44);
 	});
 	for (const fixture of fixtures) {
 		it(`${fixture.method} ${fixture.path}`, async () => {

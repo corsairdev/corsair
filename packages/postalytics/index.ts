@@ -53,7 +53,6 @@ type PostalyticsEndpoint<K extends keyof PostalyticsEndpointOutputs> =
 		PostalyticsEndpointOutputs[K]
 	>;
 export type PostalyticsEndpoints = {
-	getIntegrations: PostalyticsEndpoint<'getIntegrations'>;
 	getMyAccount: PostalyticsEndpoint<'getMyAccount'>;
 	getAccount: PostalyticsEndpoint<'getAccount'>;
 	createNewAccount: PostalyticsEndpoint<'createNewAccount'>;
@@ -101,7 +100,6 @@ export type PostalyticsEndpoints = {
 };
 const postalyticsEndpointsNested = {
 	account: {
-		getIntegrations: Operations.getIntegrations,
 		getMyAccount: Operations.getMyAccount,
 		getAccount: Operations.getAccount,
 		createNewAccount: Operations.createNewAccount,
@@ -163,10 +161,6 @@ const postalyticsEndpointsNested = {
 	},
 } as const;
 export const postalyticsEndpointSchemas = {
-	'account.getIntegrations': {
-		input: PostalyticsEndpointInputSchemas.getIntegrations,
-		output: PostalyticsEndpointOutputSchemas.getIntegrations,
-	},
 	'account.getMyAccount': {
 		input: PostalyticsEndpointInputSchemas.getMyAccount,
 		output: PostalyticsEndpointOutputSchemas.getMyAccount,
@@ -347,10 +341,6 @@ export const postalyticsEndpointSchemas = {
 	typeof postalyticsEndpointsNested
 >;
 const postalyticsEndpointMeta = {
-	'account.getIntegrations': {
-		riskLevel: 'read',
-		description: 'get integrations',
-	},
 	'account.getMyAccount': {
 		riskLevel: 'read',
 		description: 'Get the connected account profile (credentials are left out)',
@@ -371,7 +361,8 @@ const postalyticsEndpointMeta = {
 	},
 	'campaigns.getAllCampaigns': {
 		riskLevel: 'read',
-		description: 'get all campaigns',
+		description:
+			'List campaigns with delivery stats; each has campaign_id and the drop_id the other campaign operations take',
 	},
 	'campaigns.getAllDripCampaigns': {
 		riskLevel: 'read',
@@ -476,7 +467,8 @@ const postalyticsEndpointMeta = {
 	},
 	'suppressionContacts.updateSuppressionListContact': {
 		riskLevel: 'write',
-		description: 'update suppression list contact',
+		description:
+			'Update a suppression list contact. Address fields cannot be changed; Postalytics rejects them',
 	},
 	'suppressionContacts.deleteSuppressionListContact': {
 		riskLevel: 'destructive',
@@ -510,7 +502,8 @@ const postalyticsEndpointMeta = {
 	},
 	'webhooks.deleteWebhook': {
 		riskLevel: 'destructive',
-		description: 'delete webhook',
+		description:
+			"Unsubscribe a campaign's webhook; Postalytics keeps the record with is_subscribed 0",
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof postalyticsEndpointsNested

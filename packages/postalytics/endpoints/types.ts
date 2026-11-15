@@ -28,24 +28,17 @@ function endpointIdFromUrl(value: string): string {
 		return value;
 	}
 }
+const campaignDropId = z
+	.number()
+	.int()
+	.describe(
+		"The campaign's drop_id from getAllCampaigns. The /campaigns/{id} routes take drop_id, not campaign_id.",
+	);
 const endpointRef = z
 	.string()
 	.min(1)
 	.transform(endpointIdFromUrl)
 	.pipe(safePath);
-
-export const getIntegrationsInputSchema = z.object({});
-export const getIntegrationsOutputSchema = z.array(
-	z
-		.object({
-			displayName: z.string().nullable().optional(),
-			intergrationName: z.string().nullable().optional(),
-			isConnect: z.number().int().optional(),
-			pluginId: z.number().int().optional(),
-			userPluginId: z.number().int().optional(),
-		})
-		.passthrough(),
-);
 
 export const getMyAccountInputSchema = z.object({});
 // api_key and password are left out: the read would hand the connection's own
@@ -187,8 +180,12 @@ export const getAllDripCampaignsOutputSchema = z.array(
 		})
 		.passthrough(),
 );
-
-export const getCampaignStatsInputSchema = z.object({ id: z.number().int() });
+// The live API wraps the list as { drips: [...] }; operations.ts unwraps it.
+export const getAllDripCampaignsResponseSchema = z.union([
+	getAllDripCampaignsOutputSchema,
+	z.object({ drips: getAllDripCampaignsOutputSchema }).passthrough(),
+]);
+export const getCampaignStatsInputSchema = z.object({ id: campaignDropId });
 export const getCampaignStatsOutputSchema = z.array(
 	z
 		.object({
@@ -218,19 +215,21 @@ export const getCampaignStatsOutputSchema = z.array(
 		.passthrough(),
 );
 
-export const getCampaignInputSchema = z.object({ id: z.number().int() });
-export const getCampaignOutputSchema = z
-	.object({
-		ContactListId: z.number().int().optional(),
-		DirectMailDropId: z.number().int().optional(),
-		DirectMailName: z.string().nullable().optional(),
-		EndPointId: z.string().nullable().optional(),
-		Status: z.number().int().optional(),
-	})
-	.passthrough();
-
+export const getCampaignInputSchema = z.object({ id: campaignDropId });
+// The live API returns the campaign as a one-item array.
+export const getCampaignOutputSchema = z.array(
+	z
+		.object({
+			ContactListId: z.number().int().optional(),
+			DirectMailDropId: z.number().int().optional(),
+			DirectMailName: z.string().nullable().optional(),
+			EndPointId: z.string().nullable().optional(),
+			Status: z.number().int().optional(),
+		})
+		.passthrough(),
+);
 export const getCampaignEventsInputSchema = z.object({
-	id: z.number().int(),
+	id: campaignDropId,
 	PageNumber: z.number().int().optional(),
 	PageSize: z.number().int().optional(),
 });
@@ -253,7 +252,7 @@ export const getCampaignEventsOutputSchema = z.array(
 );
 
 export const getContactEventInputSchema = z.object({
-	dataid: z.number().int(),
+	dataid: campaignDropId,
 	id: z.number().int(),
 	PageNumber: z.number().int().optional(),
 	PageSize: z.number().int().optional(),
@@ -302,13 +301,13 @@ export const createNewCampaignOutputSchema = z
 	.passthrough();
 
 export const updateCampaignStatusInputSchema = z.object({
-	id: z.number().int(),
+	id: campaignDropId,
 });
 export const updateCampaignStatusOutputSchema = z
 	.object({ updated_date: z.string().optional() })
 	.passthrough();
 
-export const deleteCampaignInputSchema = z.object({ id: z.number().int() });
+export const deleteCampaignInputSchema = z.object({ id: campaignDropId });
 export const deleteCampaignOutputSchema = z
 	.object({ deleted_date: z.string().optional() })
 	.passthrough();
@@ -691,13 +690,13 @@ export const createLoginLinkInputSchema = z.object({
 		})
 		.passthrough(),
 });
+// Live: { login_link, created_date }, not the reference's LoginLink/CreatedDate.
 export const createLoginLinkOutputSchema = z
 	.object({
-		CreatedDate: z.string().optional(),
-		LoginLink: z.string().nullable().optional(),
+		created_date: z.string().nullable().optional(),
+		login_link: z.string().nullable().optional(),
 	})
 	.passthrough();
-
 export const sendMailInputSchema = z.object({
 	endPoint: endpointRef,
 	body: z
@@ -757,36 +756,61 @@ export const sendMailOutputSchema = z
 	.object({ send_date: z.string().optional() })
 	.passthrough();
 
+// Live responses (11-15) use camelCase for suppression lists and their
+// contacts, not the PascalCase in the reference, so these follow the API.
+const suppressionListSchema = z
+	.object({
+		country: z.string().nullable().optional(),
+		creationDate: z.string().nullable().optional(),
+		id: z.number().int().optional(),
+		name: z.string().nullable().optional(),
+		total: z.number().int().nullable().optional(),
+		type: z.string().nullable().optional(),
+	})
+	.passthrough();
+// varField1 to varField35 pass through untyped.
+const suppressionContactSchema = z
+	.object({
+		address: z.string().nullable().optional(),
+		address2: z.string().nullable().optional(),
+		city: z.string().nullable().optional(),
+		company: z.string().nullable().optional(),
+		country: z.string().nullable().optional(),
+		createdDate: z.string().nullable().optional(),
+		dataId: z.number().int().optional(),
+		email: z.string().nullable().optional(),
+		firstName: z.string().nullable().optional(),
+		hasValidAddress: z.boolean().nullable().optional(),
+		lastName: z.string().nullable().optional(),
+		lastUpdateDate: z.string().nullable().optional(),
+		listId: z.number().int().optional(),
+		mobile: z.string().nullable().optional(),
+		occupation: z.string().nullable().optional(),
+		phone: z.string().nullable().optional(),
+		state: z.string().nullable().optional(),
+		website: z.string().nullable().optional(),
+		zip: z.string().nullable().optional(),
+	})
+	.passthrough();
+const suppressionContactsResponseSchema = z
+	.object({
+		contactDetails: z.array(suppressionContactSchema).optional(),
+		listDetails: suppressionListSchema.optional(),
+	})
+	.passthrough();
+// Deletes answer with a plain sentence such as "List Id: 1 Name: x
+// successfully deleted." The object form is the reference's.
+const deleteMessageSchema = z.union([
+	z.string(),
+	z.object({ Message: z.string().nullable().optional() }).passthrough(),
+]);
+
 export const getSuppressionListsInputSchema = z.object({
 	id: z.number().int().optional(),
 });
-export const getSuppressionListsOutputSchema = z.array(
-	z
-		.object({
-			Country: z.string().nullable().optional(),
-			CreationDate: z.string().optional(),
-			Id: z.number().int().optional(),
-			Name: z.string().nullable().optional(),
-			Total: z.number().int().optional(),
-			Type: z.string().nullable().optional(),
-		})
-		.passthrough(),
-);
-
+export const getSuppressionListsOutputSchema = z.array(suppressionListSchema);
 export const getSuppressionListInputSchema = z.object({ id: z.number().int() });
-export const getSuppressionListOutputSchema = z.array(
-	z
-		.object({
-			Country: z.string().nullable().optional(),
-			CreationDate: z.string().optional(),
-			Id: z.number().int().optional(),
-			Name: z.string().nullable().optional(),
-			Total: z.number().int().optional(),
-			Type: z.string().nullable().optional(),
-		})
-		.passthrough(),
-);
-
+export const getSuppressionListOutputSchema = z.array(suppressionListSchema);
 export const createSuppressionListInputSchema = z.object({
 	body: z
 		.object({
@@ -795,185 +819,24 @@ export const createSuppressionListInputSchema = z.object({
 		})
 		.passthrough(),
 });
-export const createSuppressionListOutputSchema = z.array(
-	z
-		.object({
-			Country: z.string().nullable().optional(),
-			CreationDate: z.string().optional(),
-			Id: z.number().int().optional(),
-			Name: z.string().nullable().optional(),
-			Total: z.number().int().optional(),
-			Type: z.string().nullable().optional(),
-		})
-		.passthrough(),
-);
-
+export const createSuppressionListOutputSchema = z.array(suppressionListSchema);
 export const deleteSuppressionListInputSchema = z.object({
 	id: z.number().int(),
 });
-export const deleteSuppressionListOutputSchema = z
-	.object({ Message: z.string().nullable().optional() })
-	.passthrough();
-
+export const deleteSuppressionListOutputSchema = deleteMessageSchema;
 export const getSuppressionListContactsInputSchema = z.object({
 	listId: z.number().int(),
 	offset: z.number().int().optional(),
 });
-export const getSuppressionListContactsOutputSchema = z
-	.object({
-		ContactDetails: z.array(
-			z
-				.object({
-					Address: z.string().nullable().optional(),
-					Address2: z.string().nullable().optional(),
-					City: z.string().nullable().optional(),
-					Company: z.string().nullable().optional(),
-					Country: z.string().nullable().optional(),
-					CreatedDate: z.string().nullable().optional(),
-					DataId: z.number().int().optional(),
-					Email: z.string().nullable().optional(),
-					FirstName: z.string().nullable().optional(),
-					HasValidAddress: z.boolean().optional(),
-					LastName: z.string().nullable().optional(),
-					LastUpdateDate: z.string().nullable().optional(),
-					ListId: z.number().int().optional(),
-					Mobile: z.string().nullable().optional(),
-					Occupation: z.string().nullable().optional(),
-					Phone: z.string().nullable().optional(),
-					State: z.string().nullable().optional(),
-					VarField1: z.string().nullable().optional(),
-					VarField10: z.string().nullable().optional(),
-					VarField11: z.string().nullable().optional(),
-					VarField12: z.string().nullable().optional(),
-					VarField13: z.string().nullable().optional(),
-					VarField14: z.string().nullable().optional(),
-					VarField15: z.string().nullable().optional(),
-					VarField16: z.string().nullable().optional(),
-					VarField17: z.string().nullable().optional(),
-					VarField18: z.string().nullable().optional(),
-					VarField19: z.string().nullable().optional(),
-					VarField2: z.string().nullable().optional(),
-					VarField20: z.string().nullable().optional(),
-					VarField21: z.string().nullable().optional(),
-					VarField22: z.string().nullable().optional(),
-					VarField23: z.string().nullable().optional(),
-					VarField24: z.string().nullable().optional(),
-					VarField25: z.string().nullable().optional(),
-					VarField26: z.string().nullable().optional(),
-					VarField27: z.string().nullable().optional(),
-					VarField28: z.string().nullable().optional(),
-					VarField29: z.string().nullable().optional(),
-					VarField3: z.string().nullable().optional(),
-					VarField30: z.string().nullable().optional(),
-					VarField31: z.string().nullable().optional(),
-					VarField32: z.string().nullable().optional(),
-					VarField33: z.string().nullable().optional(),
-					VarField34: z.string().nullable().optional(),
-					VarField35: z.string().nullable().optional(),
-					VarField4: z.string().nullable().optional(),
-					VarField5: z.string().nullable().optional(),
-					VarField6: z.string().nullable().optional(),
-					VarField7: z.string().nullable().optional(),
-					VarField8: z.string().nullable().optional(),
-					VarField9: z.string().nullable().optional(),
-					Website: z.string().nullable().optional(),
-					Zip: z.string().nullable().optional(),
-				})
-				.passthrough(),
-		),
-		ListDetails: z
-			.object({
-				Country: z.string().nullable().optional(),
-				CreationDate: z.string().optional(),
-				Id: z.number().int().optional(),
-				Name: z.string().nullable().optional(),
-				Total: z.number().int().optional(),
-				Type: z.string().nullable().optional(),
-			})
-			.passthrough(),
-	})
-	.passthrough();
-
+export const getSuppressionListContactsOutputSchema =
+	suppressionContactsResponseSchema;
 export const getSuppressionListContactInputSchema = z.object({
 	contactId: z.number().int(),
 	listId: z.number().int(),
 	offset: z.number().int().optional(),
 });
-export const getSuppressionListContactOutputSchema = z
-	.object({
-		ContactDetails: z.array(
-			z
-				.object({
-					Address: z.string().nullable().optional(),
-					Address2: z.string().nullable().optional(),
-					City: z.string().nullable().optional(),
-					Company: z.string().nullable().optional(),
-					Country: z.string().nullable().optional(),
-					CreatedDate: z.string().nullable().optional(),
-					DataId: z.number().int().optional(),
-					Email: z.string().nullable().optional(),
-					FirstName: z.string().nullable().optional(),
-					HasValidAddress: z.boolean().optional(),
-					LastName: z.string().nullable().optional(),
-					LastUpdateDate: z.string().nullable().optional(),
-					ListId: z.number().int().optional(),
-					Mobile: z.string().nullable().optional(),
-					Occupation: z.string().nullable().optional(),
-					Phone: z.string().nullable().optional(),
-					State: z.string().nullable().optional(),
-					VarField1: z.string().nullable().optional(),
-					VarField10: z.string().nullable().optional(),
-					VarField11: z.string().nullable().optional(),
-					VarField12: z.string().nullable().optional(),
-					VarField13: z.string().nullable().optional(),
-					VarField14: z.string().nullable().optional(),
-					VarField15: z.string().nullable().optional(),
-					VarField16: z.string().nullable().optional(),
-					VarField17: z.string().nullable().optional(),
-					VarField18: z.string().nullable().optional(),
-					VarField19: z.string().nullable().optional(),
-					VarField2: z.string().nullable().optional(),
-					VarField20: z.string().nullable().optional(),
-					VarField21: z.string().nullable().optional(),
-					VarField22: z.string().nullable().optional(),
-					VarField23: z.string().nullable().optional(),
-					VarField24: z.string().nullable().optional(),
-					VarField25: z.string().nullable().optional(),
-					VarField26: z.string().nullable().optional(),
-					VarField27: z.string().nullable().optional(),
-					VarField28: z.string().nullable().optional(),
-					VarField29: z.string().nullable().optional(),
-					VarField3: z.string().nullable().optional(),
-					VarField30: z.string().nullable().optional(),
-					VarField31: z.string().nullable().optional(),
-					VarField32: z.string().nullable().optional(),
-					VarField33: z.string().nullable().optional(),
-					VarField34: z.string().nullable().optional(),
-					VarField35: z.string().nullable().optional(),
-					VarField4: z.string().nullable().optional(),
-					VarField5: z.string().nullable().optional(),
-					VarField6: z.string().nullable().optional(),
-					VarField7: z.string().nullable().optional(),
-					VarField8: z.string().nullable().optional(),
-					VarField9: z.string().nullable().optional(),
-					Website: z.string().nullable().optional(),
-					Zip: z.string().nullable().optional(),
-				})
-				.passthrough(),
-		),
-		ListDetails: z
-			.object({
-				Country: z.string().nullable().optional(),
-				CreationDate: z.string().optional(),
-				Id: z.number().int().optional(),
-				Name: z.string().nullable().optional(),
-				Total: z.number().int().optional(),
-				Type: z.string().nullable().optional(),
-			})
-			.passthrough(),
-	})
-	.passthrough();
-
+export const getSuppressionListContactOutputSchema =
+	suppressionContactsResponseSchema;
 export const createSuppressionListContactInputSchema = z.object({
 	listId: z.number().int(),
 	body: z
@@ -1030,81 +893,8 @@ export const createSuppressionListContactInputSchema = z.object({
 		})
 		.passthrough(),
 });
-export const createSuppressionListContactOutputSchema = z
-	.object({
-		ContactDetails: z.array(
-			z
-				.object({
-					Address: z.string().nullable().optional(),
-					Address2: z.string().nullable().optional(),
-					City: z.string().nullable().optional(),
-					Company: z.string().nullable().optional(),
-					Country: z.string().nullable().optional(),
-					CreatedDate: z.string().nullable().optional(),
-					DataId: z.number().int().optional(),
-					Email: z.string().nullable().optional(),
-					FirstName: z.string().nullable().optional(),
-					HasValidAddress: z.boolean().optional(),
-					LastName: z.string().nullable().optional(),
-					LastUpdateDate: z.string().nullable().optional(),
-					ListId: z.number().int().optional(),
-					Mobile: z.string().nullable().optional(),
-					Occupation: z.string().nullable().optional(),
-					Phone: z.string().nullable().optional(),
-					State: z.string().nullable().optional(),
-					VarField1: z.string().nullable().optional(),
-					VarField10: z.string().nullable().optional(),
-					VarField11: z.string().nullable().optional(),
-					VarField12: z.string().nullable().optional(),
-					VarField13: z.string().nullable().optional(),
-					VarField14: z.string().nullable().optional(),
-					VarField15: z.string().nullable().optional(),
-					VarField16: z.string().nullable().optional(),
-					VarField17: z.string().nullable().optional(),
-					VarField18: z.string().nullable().optional(),
-					VarField19: z.string().nullable().optional(),
-					VarField2: z.string().nullable().optional(),
-					VarField20: z.string().nullable().optional(),
-					VarField21: z.string().nullable().optional(),
-					VarField22: z.string().nullable().optional(),
-					VarField23: z.string().nullable().optional(),
-					VarField24: z.string().nullable().optional(),
-					VarField25: z.string().nullable().optional(),
-					VarField26: z.string().nullable().optional(),
-					VarField27: z.string().nullable().optional(),
-					VarField28: z.string().nullable().optional(),
-					VarField29: z.string().nullable().optional(),
-					VarField3: z.string().nullable().optional(),
-					VarField30: z.string().nullable().optional(),
-					VarField31: z.string().nullable().optional(),
-					VarField32: z.string().nullable().optional(),
-					VarField33: z.string().nullable().optional(),
-					VarField34: z.string().nullable().optional(),
-					VarField35: z.string().nullable().optional(),
-					VarField4: z.string().nullable().optional(),
-					VarField5: z.string().nullable().optional(),
-					VarField6: z.string().nullable().optional(),
-					VarField7: z.string().nullable().optional(),
-					VarField8: z.string().nullable().optional(),
-					VarField9: z.string().nullable().optional(),
-					Website: z.string().nullable().optional(),
-					Zip: z.string().nullable().optional(),
-				})
-				.passthrough(),
-		),
-		ListDetails: z
-			.object({
-				Country: z.string().nullable().optional(),
-				CreationDate: z.string().optional(),
-				Id: z.number().int().optional(),
-				Name: z.string().nullable().optional(),
-				Total: z.number().int().optional(),
-				Type: z.string().nullable().optional(),
-			})
-			.passthrough(),
-	})
-	.passthrough();
-
+export const createSuppressionListContactOutputSchema =
+	suppressionContactsResponseSchema;
 export const updateSuppressionListContactInputSchema = z.object({
 	contactId: z.number().int(),
 	listId: z.number().int(),
@@ -1162,89 +952,13 @@ export const updateSuppressionListContactInputSchema = z.object({
 		})
 		.passthrough(),
 });
-export const updateSuppressionListContactOutputSchema = z
-	.object({
-		ContactDetails: z.array(
-			z
-				.object({
-					Address: z.string().nullable().optional(),
-					Address2: z.string().nullable().optional(),
-					City: z.string().nullable().optional(),
-					Company: z.string().nullable().optional(),
-					Country: z.string().nullable().optional(),
-					CreatedDate: z.string().nullable().optional(),
-					DataId: z.number().int().optional(),
-					Email: z.string().nullable().optional(),
-					FirstName: z.string().nullable().optional(),
-					HasValidAddress: z.boolean().optional(),
-					LastName: z.string().nullable().optional(),
-					LastUpdateDate: z.string().nullable().optional(),
-					ListId: z.number().int().optional(),
-					Mobile: z.string().nullable().optional(),
-					Occupation: z.string().nullable().optional(),
-					Phone: z.string().nullable().optional(),
-					State: z.string().nullable().optional(),
-					VarField1: z.string().nullable().optional(),
-					VarField10: z.string().nullable().optional(),
-					VarField11: z.string().nullable().optional(),
-					VarField12: z.string().nullable().optional(),
-					VarField13: z.string().nullable().optional(),
-					VarField14: z.string().nullable().optional(),
-					VarField15: z.string().nullable().optional(),
-					VarField16: z.string().nullable().optional(),
-					VarField17: z.string().nullable().optional(),
-					VarField18: z.string().nullable().optional(),
-					VarField19: z.string().nullable().optional(),
-					VarField2: z.string().nullable().optional(),
-					VarField20: z.string().nullable().optional(),
-					VarField21: z.string().nullable().optional(),
-					VarField22: z.string().nullable().optional(),
-					VarField23: z.string().nullable().optional(),
-					VarField24: z.string().nullable().optional(),
-					VarField25: z.string().nullable().optional(),
-					VarField26: z.string().nullable().optional(),
-					VarField27: z.string().nullable().optional(),
-					VarField28: z.string().nullable().optional(),
-					VarField29: z.string().nullable().optional(),
-					VarField3: z.string().nullable().optional(),
-					VarField30: z.string().nullable().optional(),
-					VarField31: z.string().nullable().optional(),
-					VarField32: z.string().nullable().optional(),
-					VarField33: z.string().nullable().optional(),
-					VarField34: z.string().nullable().optional(),
-					VarField35: z.string().nullable().optional(),
-					VarField4: z.string().nullable().optional(),
-					VarField5: z.string().nullable().optional(),
-					VarField6: z.string().nullable().optional(),
-					VarField7: z.string().nullable().optional(),
-					VarField8: z.string().nullable().optional(),
-					VarField9: z.string().nullable().optional(),
-					Website: z.string().nullable().optional(),
-					Zip: z.string().nullable().optional(),
-				})
-				.passthrough(),
-		),
-		ListDetails: z
-			.object({
-				Country: z.string().nullable().optional(),
-				CreationDate: z.string().optional(),
-				Id: z.number().int().optional(),
-				Name: z.string().nullable().optional(),
-				Total: z.number().int().optional(),
-				Type: z.string().nullable().optional(),
-			})
-			.passthrough(),
-	})
-	.passthrough();
-
+export const updateSuppressionListContactOutputSchema =
+	suppressionContactsResponseSchema;
 export const deleteSuppressionListContactInputSchema = z.object({
 	contactId: z.number().int(),
 	listId: z.number().int(),
 });
-export const deleteSuppressionListContactOutputSchema = z
-	.object({ Message: z.string().nullable().optional() })
-	.passthrough();
-
+export const deleteSuppressionListContactOutputSchema = deleteMessageSchema;
 export const getAllTemplatesInputSchema = z.object({});
 export const getAllTemplatesOutputSchema = z.array(
 	z
@@ -1309,16 +1023,17 @@ export const createTemplateInputSchema = z.object({
 		})
 		.passthrough(),
 });
+// Live: { template_id, created_date }, not the reference's TemplateId/CreatedDate.
 export const createTemplateOutputSchema = z
 	.object({
-		CreatedDate: z.string().optional(),
-		TemplateId: z.number().int().optional(),
+		created_date: z.string().nullable().optional(),
+		template_id: z.number().int().optional(),
 	})
 	.passthrough();
-
 export const deleteTemplateInputSchema = z.object({ id: z.number().int() });
 export const deleteTemplateOutputSchema = z
-	.object({ DeletedDate: z.string().optional() })
+	// Live: { deleted_date }, not the reference's DeletedDate.
+	.object({ deleted_date: z.string().nullable().optional() })
 	.passthrough();
 
 export const getAllWebhooksInputSchema = z.object({});
@@ -1335,7 +1050,12 @@ export const getAllWebhooksOutputSchema = z.array(
 		.passthrough(),
 );
 
-export const getWebhookInputSchema = z.object({ id: z.number().int() });
+export const getWebhookInputSchema = z.object({
+	id: z
+		.number()
+		.int()
+		.describe("The campaign's drop_id. Postalytics keys webhooks by campaign."),
+});
 export const getWebhookOutputSchema = z.array(
 	z
 		.object({
@@ -1352,7 +1072,11 @@ export const getWebhookOutputSchema = z.array(
 export const createWebhookInputSchema = z.object({
 	body: z
 		.object({
-			campaign_id: z.number().int().optional(),
+			campaign_id: z
+				.number()
+				.int()
+				.optional()
+				.describe("The campaign's drop_id from getAllCampaigns."),
 			campaign_name: z.string().nullable().optional(),
 			created_date: z.string().nullable().optional(),
 			endpoint_id: z.string().nullable().optional(),
@@ -1368,7 +1092,11 @@ export const createWebhookOutputSchema = z
 export const updateWebhookInputSchema = z.object({
 	body: z
 		.object({
-			campaign_id: z.number().int().optional(),
+			campaign_id: z
+				.number()
+				.int()
+				.optional()
+				.describe("The campaign's drop_id from getAllCampaigns."),
 			campaign_name: z.string().nullable().optional(),
 			created_date: z.string().nullable().optional(),
 			endpoint_id: z.string().nullable().optional(),
@@ -1381,13 +1109,17 @@ export const updateWebhookOutputSchema = z
 	.object({ updated_date: z.string().optional() })
 	.passthrough();
 
-export const deleteWebhookInputSchema = z.object({ id: z.number().int() });
+export const deleteWebhookInputSchema = z.object({
+	id: z
+		.number()
+		.int()
+		.describe("The campaign's drop_id. Postalytics keys webhooks by campaign."),
+});
 export const deleteWebhookOutputSchema = z
 	.object({ deleted_date: z.string().optional() })
 	.passthrough();
 
 export const PostalyticsEndpointInputSchemas = {
-	getIntegrations: getIntegrationsInputSchema,
 	getMyAccount: getMyAccountInputSchema,
 	getAccount: getAccountInputSchema,
 	createNewAccount: createNewAccountInputSchema,
@@ -1434,7 +1166,6 @@ export const PostalyticsEndpointInputSchemas = {
 	deleteWebhook: deleteWebhookInputSchema,
 } as const;
 export const PostalyticsEndpointOutputSchemas = {
-	getIntegrations: getIntegrationsOutputSchema,
 	getMyAccount: getMyAccountOutputSchema,
 	getAccount: getAccountOutputSchema,
 	createNewAccount: createNewAccountOutputSchema,

@@ -1,21 +1,6 @@
 [
   {
     "group": "account",
-    "name": "getIntegrations",
-    "method": "GET",
-    "path": "/api/v1/account/integrations",
-    "input": {},
-    "output": [
-      {
-        "displayName": "My Integration to Keymaker",
-        "intergrationName": "Keymaker",
-        "pluginId": 10142067,
-        "userPluginId": 24680
-      }
-    ]
-  },
-  {
-    "group": "account",
     "name": "getMyAccount",
     "method": "GET",
     "path": "/api/v1/account/me",
@@ -187,10 +172,18 @@
     "method": "GET",
     "path": "/api/v1/campaigns/drips",
     "input": {},
-    "output": [
+    "output": {
+      "drips": [
+        {
+          "name": "corsair-plugin-test",
+          "endpoint_id": "abcdefghijklmnopqrstuvwxyzabcd"
+        }
+      ]
+    },
+    "expected": [
       {
-        "endpoint_id": "10142067",
-        "name": "Keymaker"
+        "name": "corsair-plugin-test",
+        "endpoint_id": "abcdefghijklmnopqrstuvwxyzabcd"
       }
     ]
   },
@@ -237,13 +230,15 @@
     "input": {
       "id": 42
     },
-    "output": {
-      "ContactListId": 10142067,
-      "DirectMailDropId": 10142067,
-      "DirectMailName": "Keymaker",
-      "EndPointId": "https://app.postalytics.com/1234567890",
-      "Status": 1
-    }
+    "output": [
+      {
+        "DirectMailDropId": 63188,
+        "DirectMailName": "corsair-plugin-test",
+        "EndPointId": "abcdefghijklmnopqrstuvwxyzabcd",
+        "Status": 3,
+        "ContactListId": 93811
+      }
+    ]
   },
   {
     "group": "campaigns",
@@ -614,8 +609,8 @@
       }
     },
     "output": {
-      "CreatedDate": "https://www.metacortex.net/al.aspx?m=oKRD1iQHmXUEQkxihVS9DTvIRKAPM6ZoqrdY+lgRg1F",
-      "LoginLink": ""
+      "login_link": "https://app.postalytics.com/al.aspx?m=fixture",
+      "created_date": "11/15/2026 09:12:44"
     },
     "sentBody": {
       "url": "dashboard",
@@ -652,12 +647,12 @@
     },
     "output": [
       {
-        "Country": "US",
-        "CreationDate": "1999-02-19T12:00:00.00:00",
-        "Id": 10142067,
-        "Name": "Metacortex Employees",
-        "Total": 101,
-        "Type": "Suppression"
+        "id": 10469,
+        "name": "corsair-plugin-test",
+        "type": "Suppression",
+        "total": 1,
+        "country": "US",
+        "creationDate": "11/15/2026 09:12:44"
       }
     ]
   },
@@ -671,12 +666,12 @@
     },
     "output": [
       {
-        "Country": "US",
-        "CreationDate": "1999-02-19T12:00:00.00:00",
-        "Id": 10142067,
-        "Name": "Metacortex Employees",
-        "Total": 101,
-        "Type": "Suppression"
+        "id": 10469,
+        "name": "corsair-plugin-test",
+        "type": "Suppression",
+        "total": 1,
+        "country": "US",
+        "creationDate": "11/15/2026 09:12:44"
       }
     ]
   },
@@ -690,12 +685,12 @@
     },
     "output": [
       {
-        "Country": "US",
-        "CreationDate": "1999-02-19T12:00:00.00:00",
-        "Id": 10142067,
-        "Name": "Metacortex Employees",
-        "Total": 101,
-        "Type": "Suppression"
+        "id": 10469,
+        "name": "corsair-plugin-test",
+        "type": "Suppression",
+        "total": 1,
+        "country": "US",
+        "creationDate": "11/15/2026 09:12:44"
       }
     ]
   },
@@ -707,9 +702,7 @@
     "input": {
       "id": 42
     },
-    "output": {
-      "Message": "List Id: 123 Name: Metacortex Employees successfully deleted."
-    }
+    "output": "List Id: 10469 Name: corsair-plugin-test successfully deleted."
   },
   {
     "group": "suppressionContacts",
@@ -721,72 +714,38 @@
       "offset": 2
     },
     "output": {
-      "ContactDetails": [
+      "listDetails": {
+        "id": 10469,
+        "name": "corsair-plugin-test",
+        "type": "Suppression",
+        "total": 1,
+        "country": "US",
+        "creationDate": "11/15/2026 09:12:44"
+      },
+      "contactDetails": [
         {
-          "Address": "36 Pipers Row",
-          "Address2": "Room 101",
-          "City": "New York",
-          "Company": "Metacortex",
-          "Country": "US",
-          "CreatedDate": "1999-02-19T12:00:00.00:00",
-          "DataId": 10142067,
-          "Email": "tanderson@metacortex.net",
-          "FirstName": "Thomas",
-          "HasValidAddress": true,
-          "LastName": "Anderson",
-          "LastUpdateDate": "1999-02-19T12:00:00.00:00",
-          "ListId": 10142067,
-          "Mobile": "888-574-7346",
-          "Occupation": "programmer",
-          "Phone": "888-574-7346",
-          "State": "NY",
-          "VarField1": "",
-          "VarField10": "",
-          "VarField11": "",
-          "VarField12": "",
-          "VarField13": "",
-          "VarField14": "",
-          "VarField15": "",
-          "VarField16": "",
-          "VarField17": "",
-          "VarField18": "",
-          "VarField19": "",
-          "VarField2": "",
-          "VarField20": "",
-          "VarField21": "",
-          "VarField22": "",
-          "VarField23": "",
-          "VarField24": "",
-          "VarField25": "",
-          "VarField26": "",
-          "VarField27": "",
-          "VarField28": "",
-          "VarField29": "",
-          "VarField3": "",
-          "VarField30": "",
-          "VarField31": "",
-          "VarField32": "",
-          "VarField33": "",
-          "VarField34": "",
-          "VarField35": "",
-          "VarField4": "",
-          "VarField5": "",
-          "VarField6": "",
-          "VarField7": "",
-          "VarField8": "",
-          "VarField9": "",
-          "Website": "metacortex.net",
-          "Zip": "10001"
+          "dataId": 5512,
+          "listId": 10469,
+          "firstName": "Corsair",
+          "lastName": "PluginTest",
+          "company": "",
+          "address": "350 5th Ave",
+          "address2": "",
+          "city": "New York",
+          "state": "NY",
+          "zip": "10118",
+          "country": "US",
+          "phone": "",
+          "mobile": "",
+          "email": "",
+          "occupation": "",
+          "website": "",
+          "hasValidAddress": true,
+          "createdDate": "11/15/2026 09:12:44",
+          "lastUpdateDate": "11/15/2026 09:12:44",
+          "varField1": ""
         }
-      ],
-      "ListDetails": {
-        "Country": "US",
-        "CreationDate": "1999-02-19T12:00:00.00:00",
-        "Id": 10142067,
-        "Name": "Metacortex Employees",
-        "Total": 101,
-        "Type": "Suppression"
-      }
+      ]
     }
   },
   {
@@ -800,72 +759,38 @@
       "offset": 2
     },
     "output": {
-      "ContactDetails": [
+      "listDetails": {
+        "id": 10469,
+        "name": "corsair-plugin-test",
+        "type": "Suppression",
+        "total": 1,
+        "country": "US",
+        "creationDate": "11/15/2026 09:12:44"
+      },
+      "contactDetails": [
         {
-          "Address": "36 Pipers Row",
-          "Address2": "Room 101",
-          "City": "New York",
-          "Company": "Metacortex",
-          "Country": "US",
-          "CreatedDate": "1999-02-19T12:00:00.00:00",
-          "DataId": 10142067,
-          "Email": "tanderson@metacortex.net",
-          "FirstName": "Thomas",
-          "HasValidAddress": true,
-          "LastName": "Anderson",
-          "LastUpdateDate": "1999-02-19T12:00:00.00:00",
-          "ListId": 10142067,
-          "Mobile": "888-574-7346",
-          "Occupation": "programmer",
-          "Phone": "888-574-7346",
-          "State": "NY",
-          "VarField1": "",
-          "VarField10": "",
-          "VarField11": "",
-          "VarField12": "",
-          "VarField13": "",
-          "VarField14": "",
-          "VarField15": "",
-          "VarField16": "",
-          "VarField17": "",
-          "VarField18": "",
-          "VarField19": "",
-          "VarField2": "",
-          "VarField20": "",
-          "VarField21": "",
-          "VarField22": "",
-          "VarField23": "",
-          "VarField24": "",
-          "VarField25": "",
-          "VarField26": "",
-          "VarField27": "",
-          "VarField28": "",
-          "VarField29": "",
-          "VarField3": "",
-          "VarField30": "",
-          "VarField31": "",
-          "VarField32": "",
-          "VarField33": "",
-          "VarField34": "",
-          "VarField35": "",
-          "VarField4": "",
-          "VarField5": "",
-          "VarField6": "",
-          "VarField7": "",
-          "VarField8": "",
-          "VarField9": "",
-          "Website": "metacortex.net",
-          "Zip": "10001"
+          "dataId": 5512,
+          "listId": 10469,
+          "firstName": "Corsair",
+          "lastName": "PluginTest",
+          "company": "",
+          "address": "350 5th Ave",
+          "address2": "",
+          "city": "New York",
+          "state": "NY",
+          "zip": "10118",
+          "country": "US",
+          "phone": "",
+          "mobile": "",
+          "email": "",
+          "occupation": "",
+          "website": "",
+          "hasValidAddress": true,
+          "createdDate": "11/15/2026 09:12:44",
+          "lastUpdateDate": "11/15/2026 09:12:44",
+          "varField1": ""
         }
-      ],
-      "ListDetails": {
-        "Country": "US",
-        "CreationDate": "1999-02-19T12:00:00.00:00",
-        "Id": 10142067,
-        "Name": "Metacortex Employees",
-        "Total": 101,
-        "Type": "Suppression"
-      }
+      ]
     }
   },
   {
@@ -878,72 +803,38 @@
       "body": {}
     },
     "output": {
-      "ContactDetails": [
+      "listDetails": {
+        "id": 10469,
+        "name": "corsair-plugin-test",
+        "type": "Suppression",
+        "total": 1,
+        "country": "US",
+        "creationDate": "11/15/2026 09:12:44"
+      },
+      "contactDetails": [
         {
-          "Address": "36 Pipers Row",
-          "Address2": "Room 101",
-          "City": "New York",
-          "Company": "Metacortex",
-          "Country": "US",
-          "CreatedDate": "1999-02-19T12:00:00.00:00",
-          "DataId": 10142067,
-          "Email": "tanderson@metacortex.net",
-          "FirstName": "Thomas",
-          "HasValidAddress": true,
-          "LastName": "Anderson",
-          "LastUpdateDate": "1999-02-19T12:00:00.00:00",
-          "ListId": 10142067,
-          "Mobile": "888-574-7346",
-          "Occupation": "programmer",
-          "Phone": "888-574-7346",
-          "State": "NY",
-          "VarField1": "",
-          "VarField10": "",
-          "VarField11": "",
-          "VarField12": "",
-          "VarField13": "",
-          "VarField14": "",
-          "VarField15": "",
-          "VarField16": "",
-          "VarField17": "",
-          "VarField18": "",
-          "VarField19": "",
-          "VarField2": "",
-          "VarField20": "",
-          "VarField21": "",
-          "VarField22": "",
-          "VarField23": "",
-          "VarField24": "",
-          "VarField25": "",
-          "VarField26": "",
-          "VarField27": "",
-          "VarField28": "",
-          "VarField29": "",
-          "VarField3": "",
-          "VarField30": "",
-          "VarField31": "",
-          "VarField32": "",
-          "VarField33": "",
-          "VarField34": "",
-          "VarField35": "",
-          "VarField4": "",
-          "VarField5": "",
-          "VarField6": "",
-          "VarField7": "",
-          "VarField8": "",
-          "VarField9": "",
-          "Website": "metacortex.net",
-          "Zip": "10001"
+          "dataId": 5512,
+          "listId": 10469,
+          "firstName": "Corsair",
+          "lastName": "PluginTest",
+          "company": "",
+          "address": "350 5th Ave",
+          "address2": "",
+          "city": "New York",
+          "state": "NY",
+          "zip": "10118",
+          "country": "US",
+          "phone": "",
+          "mobile": "",
+          "email": "",
+          "occupation": "",
+          "website": "",
+          "hasValidAddress": true,
+          "createdDate": "11/15/2026 09:12:44",
+          "lastUpdateDate": "11/15/2026 09:12:44",
+          "varField1": ""
         }
-      ],
-      "ListDetails": {
-        "Country": "US",
-        "CreationDate": "1999-02-19T12:00:00.00:00",
-        "Id": 10142067,
-        "Name": "Metacortex Employees",
-        "Total": 101,
-        "Type": "Suppression"
-      }
+      ]
     }
   },
   {
@@ -957,72 +848,38 @@
       "body": {}
     },
     "output": {
-      "ContactDetails": [
+      "listDetails": {
+        "id": 10469,
+        "name": "corsair-plugin-test",
+        "type": "Suppression",
+        "total": 1,
+        "country": "US",
+        "creationDate": "11/15/2026 09:12:44"
+      },
+      "contactDetails": [
         {
-          "Address": "36 Pipers Row",
-          "Address2": "Room 101",
-          "City": "New York",
-          "Company": "Metacortex",
-          "Country": "US",
-          "CreatedDate": "1999-02-19T12:00:00.00:00",
-          "DataId": 10142067,
-          "Email": "tanderson@metacortex.net",
-          "FirstName": "Thomas",
-          "HasValidAddress": true,
-          "LastName": "Anderson",
-          "LastUpdateDate": "1999-02-19T12:00:00.00:00",
-          "ListId": 10142067,
-          "Mobile": "888-574-7346",
-          "Occupation": "programmer",
-          "Phone": "888-574-7346",
-          "State": "NY",
-          "VarField1": "",
-          "VarField10": "",
-          "VarField11": "",
-          "VarField12": "",
-          "VarField13": "",
-          "VarField14": "",
-          "VarField15": "",
-          "VarField16": "",
-          "VarField17": "",
-          "VarField18": "",
-          "VarField19": "",
-          "VarField2": "",
-          "VarField20": "",
-          "VarField21": "",
-          "VarField22": "",
-          "VarField23": "",
-          "VarField24": "",
-          "VarField25": "",
-          "VarField26": "",
-          "VarField27": "",
-          "VarField28": "",
-          "VarField29": "",
-          "VarField3": "",
-          "VarField30": "",
-          "VarField31": "",
-          "VarField32": "",
-          "VarField33": "",
-          "VarField34": "",
-          "VarField35": "",
-          "VarField4": "",
-          "VarField5": "",
-          "VarField6": "",
-          "VarField7": "",
-          "VarField8": "",
-          "VarField9": "",
-          "Website": "metacortex.net",
-          "Zip": "10001"
+          "dataId": 5512,
+          "listId": 10469,
+          "firstName": "Corsair",
+          "lastName": "PluginTest",
+          "company": "",
+          "address": "350 5th Ave",
+          "address2": "",
+          "city": "New York",
+          "state": "NY",
+          "zip": "10118",
+          "country": "US",
+          "phone": "",
+          "mobile": "",
+          "email": "",
+          "occupation": "",
+          "website": "",
+          "hasValidAddress": true,
+          "createdDate": "11/15/2026 09:12:44",
+          "lastUpdateDate": "11/15/2026 09:12:44",
+          "varField1": ""
         }
-      ],
-      "ListDetails": {
-        "Country": "US",
-        "CreationDate": "1999-02-19T12:00:00.00:00",
-        "Id": 10142067,
-        "Name": "Metacortex Employees",
-        "Total": 101,
-        "Type": "Suppression"
-      }
+      ]
     }
   },
   {
@@ -1034,9 +891,7 @@
       "contactId": 42,
       "listId": 42
     },
-    "output": {
-      "Message": "Contact Id: 123 succesfully removed from List Id: 123 Name: Metacortex Employees"
-    }
+    "output": "Contact Id: 5512 succesfully removed from List Id: 10469 Name: corsair-plugin-test"
   },
   {
     "group": "templates",
@@ -1104,8 +959,8 @@
       }
     },
     "output": {
-      "CreatedDate": "1999-02-19T12:00:00.00:00",
-      "TemplateId": 10142067
+      "template_id": 74120,
+      "created_date": "11/15/2026 09:12:44"
     }
   },
   {
@@ -1117,7 +972,7 @@
       "id": 42
     },
     "output": {
-      "DeletedDate": "1999-02-19T12:00:00.00:00"
+      "deleted_date": "11/15/2026 09:14:02"
     }
   },
   {
