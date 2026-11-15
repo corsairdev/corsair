@@ -377,6 +377,7 @@ export const BaseProviders = [
 	'marketstack',
 	'melo',
 	'mem0',
+	'memberstack',
 	'memberspot',
 	'merriamwebsterdict',
 	'minimax',
@@ -971,6 +972,7 @@ export const ProviderDisplayNames = {
 	marketstack: 'Marketstack',
 	melo: 'Melo',
 	mem0: 'Mem0',
+	memberstack: 'Memberstack',
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
@@ -1572,6 +1574,7 @@ export type AllProviders =
 	| 'marketstack'
 	| 'melo'
 	| 'mem0'
+	| 'memberstack'
 	| 'memberspot'
 	| 'merriamwebsterdict'
 	| 'minimax'
