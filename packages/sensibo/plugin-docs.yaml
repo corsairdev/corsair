@@ -1,0 +1,18 @@
+displayName: Sensibo
+description: List the Sensibo pods on an account. The key is sent as the apiKey query parameter.
+domain: sensibo.com
+recommendedAuth: api_key
+overviewNote: |
+  An empty key comes back as HTTP 403. The client does not send a bearer token.
+examples:
+  read:
+    path: devices.list
+    title: List Sensibo pods
+    args:
+      fields: id,room
+apiNotes:
+  devices.list: |
+    Pass a comma-separated field list when you want a smaller pod object. Omit it to take the service default.
+apiExamples:
+  devices.list:
+    fields: id,room

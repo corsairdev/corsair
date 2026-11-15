@@ -504,6 +504,7 @@ export const BaseProviders = [
 	'semanticscholar',
 	'sendbird',
 	'sendgrid',
+	'sensibo',
 	'sentry',
 	'serpapi',
 	'servicem8',
@@ -1117,6 +1118,7 @@ export const ProviderDisplayNames = {
 	semanticscholar: 'Semantic Scholar',
 	sendbird: 'Sendbird',
 	sendgrid: 'SendGrid',
+	sensibo: 'Sensibo',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	servicem8: 'ServiceM8',
@@ -1737,6 +1739,7 @@ export type AllProviders =
 	| 'semanticscholar'
 	| 'sendbird'
 	| 'sendgrid'
+	| 'sensibo'
 	| 'sentry'
 	| 'serpapi'
 	| 'servicem8'
