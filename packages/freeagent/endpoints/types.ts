@@ -42,6 +42,17 @@ const ContactFieldsSchema = z
 	})
 	.strict();
 
+const ContactCreateSchema = ContactFieldsSchema.superRefine(
+	(contact, context) => {
+		if (contact.organisation_name || (contact.first_name && contact.last_name))
+			return;
+		context.addIssue({
+			code: 'custom',
+			message: 'Provide organisation_name or both first_name and last_name',
+		});
+	},
+);
+
 const ContactSchema = ContactFieldsSchema.extend({
 	url: z.string().url().optional(),
 	active_projects_count: z.number().optional(),
@@ -69,6 +80,14 @@ const ProjectFieldsSchema = z
 		include_unbilled_time_in_profitability: z.boolean().optional(),
 	})
 	.strict();
+
+const ProjectCreateSchema = ProjectFieldsSchema.extend({
+	contact: z.string().url(),
+	name: z.string().min(1),
+	status: z.enum(['Active', 'Completed', 'Cancelled', 'Hidden']),
+	currency: z.string().min(1),
+	budget_units: z.enum(['Hours', 'Days', 'Monetary']),
+});
 
 const ProjectSchema = ProjectFieldsSchema.extend({
 	url: z.string().url().optional(),
@@ -154,6 +173,12 @@ const InvoiceFieldsSchema = z
 	})
 	.strict();
 
+const InvoiceCreateSchema = InvoiceFieldsSchema.extend({
+	contact: z.string().url(),
+	dated_on: z.string().date(),
+	payment_terms_in_days: z.number().int(),
+});
+
 const InvoiceSchema = InvoiceFieldsSchema.extend({
 	url: z.string().url().optional(),
 	status: z.string().optional(),
@@ -171,7 +196,7 @@ export const FreeAgentEndpointInputSchemas = {
 	companyGet: z.object({}).strict(),
 	contactsList: z.object({ query: PaginationSchema.optional() }).strict(),
 	contactsGet: z.object({ id: z.string().min(1) }).strict(),
-	contactsCreate: z.object({ contact: ContactFieldsSchema }).strict(),
+	contactsCreate: z.object({ contact: ContactCreateSchema }).strict(),
 	contactsUpdate: z
 		.object({ id: z.string().min(1), contact: ContactFieldsSchema })
 		.strict(),
@@ -185,7 +210,7 @@ export const FreeAgentEndpointInputSchemas = {
 		})
 		.strict(),
 	projectsGet: z.object({ id: z.string().min(1) }).strict(),
-	projectsCreate: z.object({ project: ProjectFieldsSchema }).strict(),
+	projectsCreate: z.object({ project: ProjectCreateSchema }).strict(),
 	projectsUpdate: z
 		.object({ id: z.string().min(1), project: ProjectFieldsSchema })
 		.strict(),
@@ -200,7 +225,7 @@ export const FreeAgentEndpointInputSchemas = {
 		})
 		.strict(),
 	invoicesGet: z.object({ id: z.string().min(1) }).strict(),
-	invoicesCreate: z.object({ invoice: InvoiceFieldsSchema }).strict(),
+	invoicesCreate: z.object({ invoice: InvoiceCreateSchema }).strict(),
 	invoicesUpdate: z
 		.object({ id: z.string().min(1), invoice: InvoiceFieldsSchema })
 		.strict(),

@@ -65,6 +65,24 @@ describe('FreeAgent schemas', () => {
 			}).success,
 		).toBe(true);
 		expect(
+			FreeAgentEndpointInputSchemas.contactsCreate.safeParse({
+				contact: { first_name: 'A' },
+			}).success,
+		).toBe(false);
+		expect(
+			FreeAgentEndpointInputSchemas.projectsCreate.safeParse({
+				project: { name: 'Missing required data' },
+			}).success,
+		).toBe(false);
+		expect(
+			FreeAgentEndpointInputSchemas.invoicesCreate.safeParse({
+				invoice: {
+					contact: 'https://api.freeagent.com/v2/contacts/1',
+					dated_on: '2025-01-15',
+				},
+			}).success,
+		).toBe(false);
+		expect(
 			FreeAgentEndpointInputSchemas.invoicesCreate.safeParse({
 				invoice: { undocumented: true },
 			}).success,
