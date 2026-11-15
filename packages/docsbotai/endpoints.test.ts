@@ -471,7 +471,7 @@ describe('DocsBot API boundary', () => {
 		});
 	});
 
-	it('surfaces rate limits without replaying a write', async () => {
+	it('leaves 429 retries to core and surfaces the provider message', async () => {
 		mockRequest.mockRejectedValue(
 			new ApiError(
 				{ method: 'POST', url: '/teams/team/bots' },

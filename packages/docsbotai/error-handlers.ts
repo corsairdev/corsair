@@ -1,7 +1,9 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { DocsbotaiAPIError } from './client';
 
-// Writes and chat credit consumption must never be replayed automatically.
+// Core's request() already retries a 429 three times (see client.ts), so the
+// handlers add no retries of their own. A 5xx or network error is not
+// replayed: a write or a credit-spending call may already have landed.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>

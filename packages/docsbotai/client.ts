@@ -17,9 +17,11 @@ export class DocsbotaiAPIError extends Error {
 	}
 }
 
+// Core retries a 429 (the provider refused the request before running it,
+// so replaying a write is safe) and honours Retry-After.
 const rateLimitConfig: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'Retry-After' },
