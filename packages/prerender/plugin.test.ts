@@ -78,14 +78,18 @@ describe('prerender plugin', () => {
 		expect(Object.keys(meta).sort()).toEqual([...OPERATIONS].sort());
 	});
 
-	it('marks only the cache clear destructive, since it deletes cached pages', () => {
+	it('marks the cache clear destructive, since it deletes cached pages', () => {
 		expect(meta['cache.clear']?.riskLevel).toBe('destructive');
 	});
 
-	it('treats a recache, a sitemap submit and a speed change as writes', () => {
-		// Each changes provider state but can be repeated or reversed.
-		expect(meta['cache.recache']?.riskLevel).toBe('write');
-		expect(meta['cache.sitemap']?.riskLevel).toBe('write');
+	it('marks a recache and a sitemap submit destructive, since each render is billed', () => {
+		// R8: paid jobs that bill per run are destructive. Prerender counts every
+		// render against the plan and bills renders past the included amount.
+		expect(meta['cache.recache']?.riskLevel).toBe('destructive');
+		expect(meta['cache.sitemap']?.riskLevel).toBe('destructive');
+	});
+
+	it('treats a speed change as a write, which can be set back', () => {
 		expect(meta['queue.changeSpeed']?.riskLevel).toBe('write');
 	});
 

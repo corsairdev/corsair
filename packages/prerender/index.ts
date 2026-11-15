@@ -115,19 +115,19 @@ const defaultAuthType = 'api_key' as const;
 
 const prerenderEndpointMeta = {
 	'cache.recache': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Cache one URL, or up to 1000 in one call, so crawlers see current content. Recaching an already cached page is idempotent',
+			'Render and cache one URL, or up to 1000 in one call, so crawlers see current content. Each URL spends one render from the plan, billed past the included amount',
 	},
 	'cache.search': {
 		riskLevel: 'read',
 		description:
-			'Search the cache by substring or exact URL, 200 results per page, optionally filtered by device',
+			'Search the cache by substring or exact URL, or list all of it, 200 results per page, optionally filtered by device',
 	},
 	'cache.sitemap': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Add every URL in a sitemap that is not cached yet. URLs already cached are left as they are',
+			'Render and cache every URL in a sitemap that is not cached yet, spending one render per new URL. URLs already cached are left as they are',
 	},
 	'cache.clear': {
 		riskLevel: 'destructive',
@@ -137,7 +137,7 @@ const prerenderEndpointMeta = {
 	'cache.clearStatus': {
 		riskLevel: 'read',
 		description:
-			'Read whether a cache clear job is still running. A 403 means one is in progress',
+			'Read whether a cache clear job is still running: inProgress is true while one runs',
 	},
 	'queue.changeSpeed': {
 		riskLevel: 'write',
