@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformRequest } from '../client';
+import { makeJotformEndpointRequest } from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -12,7 +12,8 @@ export const getPlan: JotformEndpoints['system.getPlan'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['system.getPlan'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/system/plan/${encodeURIComponent(parsedInput.planName)}`,
 		undefined, // keyless public route per Jotform documentation
 		{ method: 'GET' },

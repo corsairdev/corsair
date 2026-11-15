@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformRequest } from '../client';
+import { makeJotformEndpointRequest } from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -8,7 +8,7 @@ import {
 
 export const get: JotformEndpoints['user.get'] = async (ctx, input) => {
 	JotformEndpointInputSchemas['user.get'].parse(input);
-	const response = await makeJotformRequest('/user', ctx.key, {
+	const response = await makeJotformEndpointRequest(ctx, '/user', ctx.key, {
 		method: 'GET',
 	});
 	const parsed = JotformEndpointOutputSchemas['user.get'].parse(response);
@@ -32,10 +32,15 @@ export const getForms: JotformEndpoints['user.getForms'] = async (
 	if (parsedInput.filter !== undefined) query.filter = parsedInput.filter;
 	if (parsedInput.orderby !== undefined) query.orderby = parsedInput.orderby;
 
-	const response = await makeJotformRequest('/user/forms', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/forms',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 	const parsed = JotformEndpointOutputSchemas['user.getForms'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -58,10 +63,15 @@ export const getSubmissions: JotformEndpoints['user.getSubmissions'] = async (
 	if (parsedInput.filter !== undefined) query.filter = parsedInput.filter;
 	if (parsedInput.orderby !== undefined) query.orderby = parsedInput.orderby;
 
-	const response = await makeJotformRequest('/user/submissions', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/submissions',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 	const parsed =
 		JotformEndpointOutputSchemas['user.getSubmissions'].parse(response);
 	await logEventFromContext(
@@ -78,9 +88,14 @@ export const getFolders: JotformEndpoints['user.getFolders'] = async (
 	input,
 ) => {
 	JotformEndpointInputSchemas['user.getFolders'].parse(input);
-	const response = await makeJotformRequest('/user/folders', ctx.key, {
-		method: 'GET',
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/folders',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	const parsed =
 		JotformEndpointOutputSchemas['user.getFolders'].parse(response);
 	await logEventFromContext(
@@ -106,10 +121,15 @@ export const getHistory: JotformEndpoints['user.getHistory'] = async (
 		query.startDate = parsedInput.startDate;
 	if (parsedInput.endDate !== undefined) query.endDate = parsedInput.endDate;
 
-	const response = await makeJotformRequest('/user/history', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/history',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 	const parsed =
 		JotformEndpointOutputSchemas['user.getHistory'].parse(response);
 	await logEventFromContext(
@@ -126,9 +146,14 @@ export const getSettings: JotformEndpoints['user.getSettings'] = async (
 	input,
 ) => {
 	JotformEndpointInputSchemas['user.getSettings'].parse(input);
-	const response = await makeJotformRequest('/user/settings', ctx.key, {
-		method: 'GET',
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/settings',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	const parsed =
 		JotformEndpointOutputSchemas['user.getSettings'].parse(response);
 	await logEventFromContext(
@@ -146,10 +171,15 @@ export const updateSettings: JotformEndpoints['user.updateSettings'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['user.updateSettings'].parse(input);
-	const response = await makeJotformRequest('/user/settings', ctx.key, {
-		method: 'POST',
-		body: parsedInput,
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/settings',
+		ctx.key,
+		{
+			method: 'POST',
+			body: parsedInput,
+		},
+	);
 	const parsed =
 		JotformEndpointOutputSchemas['user.updateSettings'].parse(response);
 	await logEventFromContext(
@@ -167,7 +197,8 @@ export const getSettingByKey: JotformEndpoints['user.getSettingByKey'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['user.getSettingByKey'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/user/settings/${encodeURIComponent(parsedInput.key)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -188,9 +219,14 @@ export const getSubusers: JotformEndpoints['user.getSubusers'] = async (
 	input,
 ) => {
 	JotformEndpointInputSchemas['user.getSubusers'].parse(input);
-	const response = await makeJotformRequest('/user/subusers', ctx.key, {
-		method: 'GET',
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/subusers',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	const parsed =
 		JotformEndpointOutputSchemas['user.getSubusers'].parse(response);
 	await logEventFromContext(
@@ -207,9 +243,14 @@ export const getUsage: JotformEndpoints['user.getUsage'] = async (
 	input,
 ) => {
 	JotformEndpointInputSchemas['user.getUsage'].parse(input);
-	const response = await makeJotformRequest('/user/usage', ctx.key, {
-		method: 'GET',
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/usage',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	const parsed = JotformEndpointOutputSchemas['user.getUsage'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -225,9 +266,14 @@ export const getReports: JotformEndpoints['user.getReports'] = async (
 	input,
 ) => {
 	JotformEndpointInputSchemas['user.getReports'].parse(input);
-	const response = await makeJotformRequest('/user/reports', ctx.key, {
-		method: 'GET',
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/reports',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	const parsed =
 		JotformEndpointOutputSchemas['user.getReports'].parse(response);
 	await logEventFromContext(
@@ -244,9 +290,14 @@ export const getInvoices: JotformEndpoints['user.getInvoices'] = async (
 	input,
 ) => {
 	JotformEndpointInputSchemas['user.getInvoices'].parse(input);
-	const response = await makeJotformRequest('/user/invoices', ctx.key, {
-		method: 'GET',
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/invoices',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	const parsed =
 		JotformEndpointOutputSchemas['user.getInvoices'].parse(response);
 	await logEventFromContext(
@@ -269,10 +320,15 @@ export const getLabels: JotformEndpoints['user.getLabels'] = async (
 		query.addResources = String(parsedInput.addResources);
 	}
 
-	const response = await makeJotformRequest('/user/labels', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response = await makeJotformEndpointRequest(
+		ctx,
+		'/user/labels',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 	const parsed = JotformEndpointOutputSchemas['user.getLabels'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -293,7 +349,8 @@ export const login: JotformEndpoints['user.login'] = async (ctx, input) => {
 		...(parsedInput.access ? { access: parsedInput.access } : {}),
 	}).toString();
 
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		'/user/login',
 		undefined, // keyless public route
 		{
@@ -314,9 +371,10 @@ export const login: JotformEndpoints['user.login'] = async (ctx, input) => {
 
 export const logout: JotformEndpoints['user.logout'] = async (ctx, input) => {
 	JotformEndpointInputSchemas['user.logout'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		'/user/logout',
-		undefined, // keyless public route
+		ctx.key,
 		{ method: 'GET' },
 	);
 	const parsed = JotformEndpointOutputSchemas['user.logout'].parse(response);
@@ -340,7 +398,8 @@ export const register: JotformEndpoints['user.register'] = async (
 		email: parsedInput.email,
 	}).toString();
 
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		'/user/register',
 		undefined, // keyless public route
 		{

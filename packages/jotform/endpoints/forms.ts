@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformRequest } from '../client';
+import { makeJotformEndpointRequest } from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -8,7 +8,8 @@ import {
 
 export const get: JotformEndpoints['forms.get'] = async (ctx, input) => {
 	const parsedInput = JotformEndpointInputSchemas['forms.get'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -25,7 +26,7 @@ export const get: JotformEndpoints['forms.get'] = async (ctx, input) => {
 
 export const create: JotformEndpoints['forms.create'] = async (ctx, input) => {
 	const parsedInput = JotformEndpointInputSchemas['forms.create'].parse(input);
-	const response = await makeJotformRequest('/form', ctx.key, {
+	const response = await makeJotformEndpointRequest(ctx, '/form', ctx.key, {
 		method: 'POST',
 		body: parsedInput,
 	});
@@ -45,7 +46,7 @@ export const createForms: JotformEndpoints['forms.createForms'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.createForms'].parse(input);
-	const response = await makeJotformRequest('/form', ctx.key, {
+	const response = await makeJotformEndpointRequest(ctx, '/form', ctx.key, {
 		method: 'PUT',
 		body: parsedInput.formContent,
 	});
@@ -65,7 +66,8 @@ export const deleteForm: JotformEndpoints['forms.delete'] = async (
 	input,
 ) => {
 	const parsedInput = JotformEndpointInputSchemas['forms.delete'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'DELETE' },
@@ -82,7 +84,8 @@ export const deleteForm: JotformEndpoints['forms.delete'] = async (
 
 export const clone: JotformEndpoints['forms.clone'] = async (ctx, input) => {
 	const parsedInput = JotformEndpointInputSchemas['forms.clone'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/clone`,
 		ctx.key,
 		{ method: 'POST' },
@@ -103,7 +106,8 @@ export const getFiles: JotformEndpoints['forms.getFiles'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.getFiles'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/files`,
 		ctx.key,
 		{ method: 'GET' },
@@ -127,7 +131,8 @@ export const getQuestions: JotformEndpoints['forms.getQuestions'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.getQuestions'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/questions`,
 		ctx.key,
 		{ method: 'GET' },
@@ -149,7 +154,8 @@ export const getQuestion: JotformEndpoints['forms.getQuestion'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.getQuestion'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/question/${encodeURIComponent(parsedInput.qid)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -171,7 +177,8 @@ export const createQuestion: JotformEndpoints['forms.createQuestion'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.createQuestion'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/questions`,
 		ctx.key,
 		{ method: 'POST', body: parsedInput.question },
@@ -191,7 +198,8 @@ export const createQuestions: JotformEndpoints['forms.createQuestions'] =
 	async (ctx, input) => {
 		const parsedInput =
 			JotformEndpointInputSchemas['forms.createQuestions'].parse(input);
-		const response = await makeJotformRequest(
+		const response = await makeJotformEndpointRequest(
+			ctx,
 			`/form/${encodeURIComponent(parsedInput.id)}/questions`,
 			ctx.key,
 			{ method: 'PUT', body: parsedInput.questions },
@@ -213,7 +221,8 @@ export const updateQuestion: JotformEndpoints['forms.updateQuestion'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.updateQuestion'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/question/${encodeURIComponent(parsedInput.qid)}`,
 		ctx.key,
 		{ method: 'POST', body: parsedInput.question },
@@ -235,7 +244,8 @@ export const deleteQuestion: JotformEndpoints['forms.deleteQuestion'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.deleteQuestion'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/question/${encodeURIComponent(parsedInput.qid)}`,
 		ctx.key,
 		{ method: 'DELETE' },
@@ -257,7 +267,8 @@ export const getProperties: JotformEndpoints['forms.getProperties'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.getProperties'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/properties`,
 		ctx.key,
 		{ method: 'GET' },
@@ -279,7 +290,8 @@ export const getProperty: JotformEndpoints['forms.getProperty'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.getProperty'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/properties/${encodeURIComponent(parsedInput.key)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -301,7 +313,8 @@ export const setProperties: JotformEndpoints['forms.setProperties'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.setProperties'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/properties`,
 		ctx.key,
 		{ method: 'POST', body: parsedInput.properties },
@@ -323,7 +336,8 @@ export const getReports: JotformEndpoints['forms.getReports'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['forms.getReports'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/reports`,
 		ctx.key,
 		{ method: 'GET' },
@@ -353,7 +367,8 @@ export const createReport: JotformEndpoints['forms.createReport'] = async (
 		list_type: parsedInput.list_type,
 		...(parsedInput.fields ? { fields: parsedInput.fields } : {}),
 	};
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/reports`,
 		ctx.key,
 		{ method: 'POST', body },
@@ -381,7 +396,8 @@ export const getSubmissions: JotformEndpoints['forms.getSubmissions'] = async (
 	if (parsedInput.filter !== undefined) query.filter = parsedInput.filter;
 	if (parsedInput.orderby !== undefined) query.orderby = parsedInput.orderby;
 
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/submissions`,
 		ctx.key,
 		{ method: 'GET', query },
@@ -404,7 +420,8 @@ export const createSubmission: JotformEndpoints['forms.createSubmission'] =
 	async (ctx, input) => {
 		const parsedInput =
 			JotformEndpointInputSchemas['forms.createSubmission'].parse(input);
-		const response = await makeJotformRequest(
+		const response = await makeJotformEndpointRequest(
+			ctx,
 			`/form/${encodeURIComponent(parsedInput.id)}/submissions`,
 			ctx.key,
 			{ method: 'POST', body: parsedInput.submission },
@@ -424,7 +441,8 @@ export const createSubmissions: JotformEndpoints['forms.createSubmissions'] =
 	async (ctx, input) => {
 		const parsedInput =
 			JotformEndpointInputSchemas['forms.createSubmissions'].parse(input);
-		const response = await makeJotformRequest(
+		const response = await makeJotformEndpointRequest(
+			ctx,
 			`/form/${encodeURIComponent(parsedInput.id)}/submissions`,
 			ctx.key,
 			{ method: 'PUT', body: parsedInput.submissions },

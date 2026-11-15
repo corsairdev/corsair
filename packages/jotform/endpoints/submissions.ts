@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformRequest } from '../client';
+import { makeJotformEndpointRequest } from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -9,7 +9,8 @@ import {
 export const get: JotformEndpoints['submissions.get'] = async (ctx, input) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['submissions.get'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/submission/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -31,7 +32,8 @@ export const update: JotformEndpoints['submissions.update'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['submissions.update'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/submission/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'POST', body: parsedInput.submission },
@@ -53,7 +55,8 @@ export const deleteSubmission: JotformEndpoints['submissions.delete'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['submissions.delete'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/submission/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'DELETE' },

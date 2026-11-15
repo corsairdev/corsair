@@ -1,6 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { ZodError } from 'zod';
+import type { JotformRequestOptions } from './client';
 import * as client from './client';
+import { JOTFORM_EU_API_BASE, JOTFORM_HIPAA_API_BASE } from './client';
 import {
 	Folders,
 	Forms,
@@ -11,6 +13,7 @@ import {
 	User,
 } from './endpoints';
 import type { JotformContext } from './index';
+import { PUBLIC_ENDPOINTS } from './index';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -19,7 +22,23 @@ jest.mock('corsair/core', () => {
 
 jest.mock('./client', () => {
 	const actual = jest.requireActual('./client');
-	return { ...actual, makeJotformRequest: jest.fn() };
+	const makeJotformRequest = jest.fn();
+	const makeJotformEndpointRequest = jest.fn(
+		(
+			context: { options: { baseUrl?: string } },
+			endpoint: string,
+			apiKey: string | undefined,
+			options: JotformRequestOptions,
+		) =>
+			makeJotformRequest(
+				endpoint,
+				apiKey,
+				context.options.baseUrl === undefined
+					? options
+					: { ...options, baseUrl: context.options.baseUrl },
+			),
+	);
+	return { ...actual, makeJotformRequest, makeJotformEndpointRequest };
 });
 
 const mockedRequest = jest.mocked(client.makeJotformRequest);
@@ -70,6 +89,29 @@ describe('User Endpoints', () => {
 			{ status: 'success' },
 			'completed',
 		);
+	});
+
+	it('routes endpoint calls through configured regional and HIPAA base URLs', async () => {
+		mockedRequest.mockResolvedValue({
+			responseCode: 200,
+			message: 'success',
+			content: { username: 'testuser' },
+		});
+
+		await User.get({ ...ctx, options: { baseUrl: JOTFORM_EU_API_BASE } }, {});
+		await User.get(
+			{ ...ctx, options: { baseUrl: JOTFORM_HIPAA_API_BASE } },
+			{},
+		);
+
+		expect(mockedRequest).toHaveBeenNthCalledWith(1, '/user', ctx.key, {
+			method: 'GET',
+			baseUrl: JOTFORM_EU_API_BASE,
+		});
+		expect(mockedRequest).toHaveBeenNthCalledWith(2, '/user', ctx.key, {
+			method: 'GET',
+			baseUrl: JOTFORM_HIPAA_API_BASE,
+		});
 	});
 
 	it('user.getForms', async () => {
@@ -269,9 +311,10 @@ describe('User Endpoints', () => {
 		});
 
 		await User.logout(ctx, {});
-		expect(mockedRequest).toHaveBeenCalledWith('/user/logout', undefined, {
+		expect(mockedRequest).toHaveBeenCalledWith('/user/logout', ctx.key, {
 			method: 'GET',
 		});
+		expect(PUBLIC_ENDPOINTS.has('user.logout')).toBe(false);
 
 		mockedRequest.mockResolvedValueOnce({
 			responseCode: 200,
@@ -691,10 +734,14 @@ describe('Submissions, Reports, Folders, Labels, and System Endpoints', () => {
 			}),
 		);
 
-		await Labels.update(ctx, { id: 'lbl-1', name: 'Updated Label' });
+		await Labels.update(ctx, {
+			id: 'lbl-1',
+			name: 'Updated Label',
+			parent: 'lbl-parent',
+		});
 		expect(mockedRequest).toHaveBeenCalledWith('/label/lbl-1', ctx.key, {
 			method: 'PUT',
-			body: { name: 'Updated Label' },
+			body: { name: 'Updated Label', parent: 'lbl-parent' },
 		});
 
 		mockedRequest.mockResolvedValueOnce({

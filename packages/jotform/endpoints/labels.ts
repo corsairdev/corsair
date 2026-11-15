@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformRequest } from '../client';
+import { makeJotformEndpointRequest } from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -8,7 +8,8 @@ import {
 
 export const get: JotformEndpoints['labels.get'] = async (ctx, input) => {
 	const parsedInput = JotformEndpointInputSchemas['labels.get'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/label/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -31,7 +32,7 @@ export const create: JotformEndpoints['labels.create'] = async (ctx, input) => {
 		...(parsedInput.parent ? { parent: parsedInput.parent } : {}),
 	}).toString();
 
-	const response = await makeJotformRequest('/label', ctx.key, {
+	const response = await makeJotformEndpointRequest(ctx, '/label', ctx.key, {
 		method: 'POST',
 		body,
 		contentType: 'application/x-www-form-urlencoded',
@@ -49,7 +50,8 @@ export const create: JotformEndpoints['labels.create'] = async (ctx, input) => {
 export const update: JotformEndpoints['labels.update'] = async (ctx, input) => {
 	const parsedInput = JotformEndpointInputSchemas['labels.update'].parse(input);
 	const { id, ...updateData } = parsedInput;
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/label/${encodeURIComponent(id)}`,
 		ctx.key,
 		{ method: 'PUT', body: updateData },
@@ -69,7 +71,8 @@ export const deleteLabel: JotformEndpoints['labels.delete'] = async (
 	input,
 ) => {
 	const parsedInput = JotformEndpointInputSchemas['labels.delete'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/label/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'DELETE' },
@@ -96,7 +99,8 @@ export const getResources: JotformEndpoints['labels.getResources'] = async (
 	if (parsedInput.orderby !== undefined) query.orderby = parsedInput.orderby;
 	if (parsedInput.status !== undefined) query.status = parsedInput.status;
 
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/label/${encodeURIComponent(parsedInput.id)}/resources`,
 		ctx.key,
 		{ method: 'GET', query },
@@ -121,7 +125,8 @@ export const addResources: JotformEndpoints['labels.addResources'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['labels.addResources'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/label/${encodeURIComponent(parsedInput.id)}/add-resources`,
 		ctx.key,
 		{ method: 'PUT', body: { resources: parsedInput.resources } },
@@ -141,7 +146,8 @@ export const removeResources: JotformEndpoints['labels.removeResources'] =
 	async (ctx, input) => {
 		const parsedInput =
 			JotformEndpointInputSchemas['labels.removeResources'].parse(input);
-		const response = await makeJotformRequest(
+		const response = await makeJotformEndpointRequest(
+			ctx,
 			`/label/${encodeURIComponent(parsedInput.id)}/remove-resources`,
 			ctx.key,
 			{ method: 'PUT', body: { resources: parsedInput.resources } },

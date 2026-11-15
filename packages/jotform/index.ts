@@ -593,7 +593,6 @@ export const jotformAuthConfig = {
 export const PUBLIC_ENDPOINTS = new Set<string>([
 	'system.getPlan',
 	'user.login',
-	'user.logout',
 	'user.register',
 ]);
 

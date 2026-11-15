@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformRequest } from '../client';
+import { makeJotformEndpointRequest } from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -8,7 +8,8 @@ import {
 
 export const get: JotformEndpoints['folders.get'] = async (ctx, input) => {
 	const parsedInput = JotformEndpointInputSchemas['folders.get'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/folder/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -35,7 +36,7 @@ export const create: JotformEndpoints['folders.create'] = async (
 		...(parsedInput.parent ? { parent: parsedInput.parent } : {}),
 	}).toString();
 
-	const response = await makeJotformRequest('/folder', ctx.key, {
+	const response = await makeJotformEndpointRequest(ctx, '/folder', ctx.key, {
 		method: 'POST',
 		body,
 		contentType: 'application/x-www-form-urlencoded',
@@ -57,7 +58,8 @@ export const update: JotformEndpoints['folders.update'] = async (
 	const parsedInput =
 		JotformEndpointInputSchemas['folders.update'].parse(input);
 	const { id, ...updateData } = parsedInput;
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/folder/${encodeURIComponent(id)}`,
 		ctx.key,
 		{ method: 'PUT', body: updateData },
@@ -78,7 +80,8 @@ export const deleteFolder: JotformEndpoints['folders.delete'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['folders.delete'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/folder/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'DELETE' },

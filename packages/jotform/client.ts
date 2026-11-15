@@ -37,6 +37,30 @@ export const JOTFORM_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+export type JotformRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	baseUrl?: string;
+	// unknown because request body payloads vary by endpoint (JSON or urlencoded form)
+	body?: unknown;
+	formData?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+	contentType?: string;
+};
+
+export function makeJotformEndpointRequest(
+	context: { options: { baseUrl?: string } },
+	endpoint: string,
+	apiKey: string | undefined,
+	options: JotformRequestOptions,
+): Promise<unknown> {
+	const baseUrl = context.options.baseUrl;
+	return makeJotformRequest(
+		endpoint,
+		apiKey,
+		baseUrl === undefined ? options : { ...options, baseUrl },
+	);
+}
+
 const SENSITIVE_KEY_PATTERNS = [
 	'apikey',
 	'api_key',
@@ -114,15 +138,7 @@ export function sanitizeApiError(error: ApiError): ApiError {
 export async function makeJotformRequest<T>(
 	endpoint: string,
 	apiKey?: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		baseUrl?: string;
-		// unknown because request body payloads vary by endpoint (JSON or urlencoded form)
-		body?: unknown;
-		formData?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-		contentType?: string;
-	} = {},
+	options: JotformRequestOptions = {},
 ): Promise<T> {
 	const {
 		method = 'GET',

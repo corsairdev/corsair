@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformRequest } from '../client';
+import { makeJotformEndpointRequest } from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -8,7 +8,8 @@ import {
 
 export const get: JotformEndpoints['reports.get'] = async (ctx, input) => {
 	const parsedInput = JotformEndpointInputSchemas['reports.get'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/report/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -29,7 +30,8 @@ export const deleteReport: JotformEndpoints['reports.delete'] = async (
 ) => {
 	const parsedInput =
 		JotformEndpointInputSchemas['reports.delete'].parse(input);
-	const response = await makeJotformRequest(
+	const response = await makeJotformEndpointRequest(
+		ctx,
 		`/report/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'DELETE' },

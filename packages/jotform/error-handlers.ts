@@ -1,17 +1,30 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
+function isQuotaExhaustion(value: unknown): boolean {
+	if (typeof value === 'string') {
+		return /daily.{0,40}api.{0,40}limit|monthly.{0,40}api.{0,40}limit|quota.{0,40}(exceed|exhaust|reach)|quota_exhausted/i.test(
+			value,
+		);
+	}
+	if (Array.isArray(value)) return value.some(isQuotaExhaustion);
+	if (typeof value !== 'object' || value === null) return false;
+
+	return Object.entries(value).some(([key, entry]) => {
+		const normalizedKey = key.toLowerCase().replace(/[_-]/g, '');
+		if (normalizedKey === 'limitleft' && String(entry) === '0') return true;
+		return isQuotaExhaustion(entry);
+	});
+}
+
 export const errorHandlers = {
 	// First match wins: daily quota exhaustion cannot succeed on retry,
 	// so it is handled before generic rate-limit handling.
 	QUOTA_EXHAUSTED_ERROR: {
 		match: (error: Error) => {
-			const msg = error.message.toLowerCase();
 			return (
-				msg.includes('daily api call limit') ||
-				msg.includes('limit-left: 0') ||
-				msg.includes('quota exceeded') ||
-				msg.includes('quota_exhausted')
+				isQuotaExhaustion(error.message) ||
+				(error instanceof ApiError && isQuotaExhaustion(error.body))
 			);
 		},
 		handler: async (_error: Error) => ({ maxRetries: 0 }),

@@ -499,6 +499,7 @@ export const JotformEndpointInputSchemas = {
 			id: z.string().min(1),
 			name: z.string().optional(),
 			color: z.string().optional(),
+			parent: z.string().optional(),
 		})
 		.strict(),
 	'labels.delete': z

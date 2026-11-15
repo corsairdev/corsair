@@ -5,9 +5,11 @@ import {
 	JOTFORM_EU_API_BASE,
 	JOTFORM_HIPAA_API_BASE,
 	JOTFORM_RATE_LIMIT_CONFIG,
+	makeJotformEndpointRequest,
 	makeJotformRequest,
 } from './client';
 import { errorHandlers } from './error-handlers';
+import { jotform } from './index';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -97,6 +99,23 @@ describe('makeJotformRequest', () => {
 		});
 
 		expect(mockedRequest.mock.calls[1]?.[0]?.BASE).toBe(JOTFORM_HIPAA_API_BASE);
+	});
+
+	it('applies the plugin base URL when preparing endpoint requests', async () => {
+		mockedRequest.mockResolvedValue({
+			responseCode: 200,
+			message: 'success',
+			content: {},
+		});
+
+		await makeJotformEndpointRequest(
+			{ options: { baseUrl: JOTFORM_EU_API_BASE } },
+			'/user',
+			'test-api-key',
+			{ method: 'GET' },
+		);
+
+		expect(mockedRequest.mock.calls[0]?.[0]?.BASE).toBe(JOTFORM_EU_API_BASE);
 	});
 
 	it('makes unauthenticated requests without APIKEY header', async () => {
@@ -204,5 +223,49 @@ describe('makeJotformRequest', () => {
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
 		).resolves.toEqual({ maxRetries: 3, headersRetryAfterMs: 4000 });
+	});
+
+	it('does not retry exhausted quotas reported in the real 429 response body', async () => {
+		const actualRequest =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http').request;
+		mockedRequest.mockImplementation((config, options, requestOptions) =>
+			actualRequest(config, options, requestOptions),
+		);
+
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					responseCode: 429,
+					message: 'Daily API call limit reached',
+					'limit-left': 0,
+				}),
+				{
+					status: 429,
+					statusText: 'Too Many Requests',
+					headers: { 'Content-Type': 'application/json' },
+				},
+			),
+		);
+
+		// unknown because a rejection value has no static type; assertions below narrow it.
+		const error = await makeJotformRequest('/user', 'test-key').catch(
+			(caught: unknown) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) {
+			throw new Error('Expected ApiError from real transport');
+		}
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(errorHandlers.QUOTA_EXHAUSTED_ERROR.match(error)).toBe(true);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		const orderedHandlers = Object.keys(jotform().errorHandlers ?? {});
+		expect(orderedHandlers.indexOf('QUOTA_EXHAUSTED_ERROR')).toBeLessThan(
+			orderedHandlers.indexOf('RATE_LIMIT_ERROR'),
+		);
+		await expect(
+			errorHandlers.QUOTA_EXHAUSTED_ERROR.handler(error),
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 });
