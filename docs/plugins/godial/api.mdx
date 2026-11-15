@@ -3,6 +3,7 @@ title: "GoDial API reference"
 sidebarTitle: "API"
 description: "API reference for the GoDial plugin in Corsair: every `godial.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -13,7 +14,7 @@ description: "API reference for the GoDial plugin in Corsair: every `godial.api.
 
 `contacts.add`
 
-Add a contact to a GoDial list
+Add a contact (lead) to a GoDial list; assignmentMode or accountsId assigns it to an agent for calling
 
 **Risk:** `write`
 
@@ -27,20 +28,73 @@ await corsair.godial.api.contacts.add({ listId: 'list-123', name: 'Ada Lovelace'
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
-| `phone` | `string` | No | — |
+| `phone` | `string` | Yes | — |
 | `secondPhone` | `string` | No | — |
 | `companyName` | `string` | No | — |
 | `note` | `string` | No | — |
 | `remarks` | `string` | No | — |
 | `extra` | `string` | No | — |
-| `assignmentMode` | `string` | No | — |
+| `assignmentMode` | `default \| roundrobin` | No | — |
+| `customFields` | `object[]` | No | — |
 | `listId` | `string` | Yes | — |
+| `accountsId` | `string` | No | — |
+| `source` | `string` | No | — |
+| `address` | `string` | No | — |
+| `source_marketing` | `object` | No | — |
 
-The official overview documents this route but does not publish its response envelope or fields. Only this route and lists.list are verified; other GoDial operations are excluded until their API contract is available.
+phone and listId are required. With assignmentMode 'roundrobin' or an accountsId the contact is assigned to an agent and joins that agent's calling queue. The reference shows only an empty example response.
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="source_marketing full type">
+
+```ts
+{
+  source?: string,
+  medium?: string,
+  campaign?: string,
+  term?: string,
+  content?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
-**Output:** `custom`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `secondPhone` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `remarks` | `string \| null` | No | — |
+| `extra` | `string \| null` | No | — |
+| `listId` | `string \| number \| null` | No | — |
+| `companyId` | `string \| number \| null` | No | — |
+| `stageId` | `string \| number \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `createdOn` | `string \| null` | No | — |
+| `called` | `boolean \| null` | No | — |
+| `dnc` | `boolean \| null` | No | — |
+| `leadScore` | `number \| null` | No | — |
+| `customFields` | `any` | No | — |
+| `source_marketing` | `any` | No | — |
+
 
 
 ---
@@ -61,10 +115,30 @@ await corsair.godial.api.lists.list({});
 
 **Input:** _empty object_
 
-The official overview documents this route but does not publish its response envelope or fields. Only this route and contacts.add are verified; other GoDial operations are excluded until their API contract is available.
+GoDial's reference (godial.stoplight.io) documents the route but shows only an empty example response, so the result is returned as the provider's JSON without a fixed shape.
 
 
-**Output:** `custom`
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name?: string | null,
+  system?: boolean | null,
+  callScript?: string | null,
+  companyId?: string | number | null,
+  teamsId?: string | number | null,
+  indiamart?: {
+    enabled?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
+
