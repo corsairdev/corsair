@@ -2415,6 +2415,14 @@
                 ]
               },
               {
+                "group": "Givebutter",
+                "pages": [
+                  "plugins/givebutter/overview",
+                  "plugins/givebutter/api",
+                  "plugins/givebutter/database"
+                ]
+              },
+              {
                 "group": "Gladia",
                 "pages": [
                   "plugins/gladia/overview",
