@@ -741,3 +741,95 @@ test('quiz and category operations preserve the documented request and response 
 	expect(http.mock.calls[5]?.[1].query).toEqual({ roleId: '2' });
 	expect(http.mock.calls[6]?.[1].query).toEqual({ userId: '1' });
 });
+
+describe('review fixes (Corsair Ops)', () => {
+	test('a matching question with null QuestionInfo (LE before 1.100) still parses', async () => {
+		const matching = {
+			QuestionId: 9,
+			QuestionTypeId: 5,
+			Name: 'Match',
+			QuestionText: { Text: 'Match these' },
+			Points: 1,
+			Difficulty: 1,
+			Bonus: false,
+			Mandatory: false,
+			Hint: { Text: '' },
+			Feedback: { Text: '' },
+			LastModified: '2026-01-01T00:00:00Z',
+			LastModifiedBy: 3,
+			SectionId: 1,
+			QuestionTemplateId: 1,
+			QuestionTemplateVersionId: 1,
+			QuestionInfo: null,
+		};
+		http.mockResolvedValueOnce({ Next: null, Objects: [matching] });
+		await expect(
+			endpoints.quizzes.listQuestions(ctx, { orgUnitId: '10', quizId: '7' }),
+		).resolves.toEqual({ Next: null, Objects: [matching] });
+	});
+
+	test('grade writes keep AssociatedTool, since PUT replaces the whole grade object', async () => {
+		const body = {
+			GradeType: 'Text' as const,
+			Name: 'Feedback',
+			ShortName: 'F',
+			CategoryId: null,
+			Description: { Type: 'Text' as const, Content: '' },
+			AssociatedTool: { ToolId: 2000, ToolItemId: 15 },
+		};
+		http.mockResolvedValueOnce({
+			Id: 7,
+			GradeType: 'Text',
+			Name: 'Feedback',
+			ShortName: 'F',
+			CategoryId: null,
+			Description: { Text: '' },
+			AssociatedTool: { ToolId: 2000, ToolItemId: 15 },
+		});
+		await endpoints.grades.update(ctx, {
+			orgUnitId: '10',
+			gradeObjectId: '7',
+			body,
+		});
+		expect(http.mock.calls[0]?.[1].body).toEqual(body);
+	});
+
+	test('grade setup reads accept a grading system added after this plugin', async () => {
+		const setup = {
+			GradingSystem: 'Rubric',
+			IsNullGradeZero: true,
+			DefaultGradeSchemeId: 1,
+		};
+		http.mockResolvedValueOnce(setup);
+		await expect(
+			endpoints.grades.setup(ctx, { orgUnitId: '10' }),
+		).resolves.toEqual(setup);
+	});
+
+	test('an empty non-JSON 200 body from PUT or DELETE resolves to undefined', async () => {
+		http.mockResolvedValueOnce('').mockResolvedValueOnce('');
+		await expect(
+			endpoints.courses.delete(ctx, { orgUnitId: '10' }),
+		).resolves.toBeUndefined();
+		await expect(
+			endpoints.templates.update(ctx, {
+				orgUnitId: '20',
+				body: { Name: 'T', Code: 'T1' },
+			}),
+		).resolves.toBeUndefined();
+	});
+
+	test('user reads accept null Pronouns', async () => {
+		const user = { OrgId: 1, UserId: 42, FirstName: 'A', Pronouns: null };
+		http.mockResolvedValueOnce(user);
+		await expect(endpoints.users.get(ctx, { userId: '42' })).resolves.toEqual(
+			user,
+		);
+	});
+
+	test('user creation is destructive because it can email the new user', () => {
+		expect(plugin.endpointMeta?.['users.create']?.riskLevel).toBe(
+			'destructive',
+		);
+	});
+});

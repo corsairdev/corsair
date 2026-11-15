@@ -55,7 +55,7 @@ const user = z
 		Activation: activation.optional(),
 		DisplayName: z.string().optional(),
 		LastAccessedDate: z.string().nullable().optional(),
-		Pronouns: z.string().optional(),
+		Pronouns: z.string().nullable().optional(),
 		FirstLoginDate: z.string().nullable().optional(),
 	})
 	.passthrough();
@@ -156,12 +156,15 @@ const demographicUser = z.object({
 	UserId: z.number(),
 	EntryValues: z.array(demographicEntry),
 });
+const associatedTool = z.object({ ToolId: z.number(), ToolItemId: z.number() });
 const gradeFields = {
 	Name: z.string().max(128),
 	ShortName: z.string().max(128),
 	CategoryId: z.number().nullable(),
 	Description: richTextInput,
 	IsHidden: z.boolean().optional(),
+	// PUT replaces the whole grade object, so an omitted association is dropped.
+	AssociatedTool: associatedTool.nullable().optional(),
 };
 const gradedFields = {
 	MaxPoints: z.number().min(0.01).max(9999999999),
@@ -206,10 +209,7 @@ const grade = z
 		Weight: z.number().nullable().optional(),
 		GradeSchemeUrl: z.string().optional(),
 		IsHidden: z.boolean().optional(),
-		AssociatedTool: z
-			.object({ ToolId: z.number(), ToolItemId: z.number() })
-			.nullable()
-			.optional(),
+		AssociatedTool: associatedTool.nullable().optional(),
 	})
 	.passthrough();
 const gradeSetup = z.object({
@@ -217,6 +217,8 @@ const gradeSetup = z.object({
 	IsNullGradeZero: z.boolean(),
 	DefaultGradeSchemeId: z.number(),
 });
+// Output keeps reads working if Brightspace adds a grading system later.
+const gradeSetupOutput = gradeSetup.extend({ GradingSystem: z.string() });
 const accessPage = z.object({
 	Next: z.string().nullable(),
 	Objects: z.array(z.object({ UserId: z.number(), HasAccess: z.boolean() })),
@@ -381,8 +383,9 @@ const question = z.object({
 	SectionId: z.number(),
 	QuestionTemplateId: z.number(),
 	QuestionTemplateVersionId: z.number(),
-	// QuestionInfo is a provider-defined union varying by question type.
-	QuestionInfo: z.record(z.string(), z.unknown()),
+	// QuestionInfo is a provider-defined union varying by question type. Before
+	// LE 1.100 it is null for Matching, Ordering, Arithmetic and SignificantFigures.
+	QuestionInfo: z.record(z.string(), z.unknown()).nullable(),
 });
 const page = <T extends z.ZodType>(item: T) =>
 	z.object({ Next: z.string().nullable(), Objects: z.array(item) });
@@ -571,8 +574,8 @@ export const D2LBrightspaceEndpointOutputSchemas = {
 		Median: z.number().nullable(),
 		StandardDeviation: z.number().nullable(),
 	}),
-	getGradeSetup: gradeSetup,
-	updateGradeSetup: gradeSetup,
+	getGradeSetup: gradeSetupOutput,
+	updateGradeSetup: gradeSetupOutput,
 	listQuizzes: page(quiz),
 	getQuiz: quiz,
 	createQuiz: quiz,
