@@ -1,0 +1,122 @@
+{
+  "id": "geokeo",
+  "displayName": "Geokeo",
+  "description": "Geocode both ways with Geokeo - turn an address or place name into coordinates and components, and turn coordinates back into the places nearest them, from OpenStreetMap data.",
+  "npmPackageName": "@corsair-dev/geokeo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "geokeo.api.geocode.forward",
+      "shortPath": "geocode.forward",
+      "description": "Turn an address or place name into coordinates, a formatted address and its components, with the OpenStreetMap class and type of the match",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "What to look up, up to 50 characters, such as `empire state building`"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Restricts the search to one country, such as `us` or `de`"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json",
+            "description": "Response format; only `json`, which is also the default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ class?: string, type?: string, address_components: { name?: string, island?: string, neighbourhood?: string, street?: string, subdistrict?: string, district?: string, city?: string, state?: string, postcode?: string, country?: string }, formatted_address: string, geometry: { location: { lat: string, lng: string }, viewport?: { northeast: { lat: string, lng: string }, southwest: { lat: string, lng: string } } }, osmurl?: string, importance?: number | string, distance?: string, lat?: number | null, lng?: number | null, distance_km?: number | null }[]"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geokeo.api.geocode.reverse",
+      "shortPath": "geocode.reverse",
+      "description": "Turn a latitude and longitude into the places nearest it, each with its address, its components and how far away it is",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude of the point to reverse"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude of the point to reverse"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json",
+            "description": "Response format; only `json`, which is also the default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ class?: string, type?: string, address_components: { name?: string, island?: string, neighbourhood?: string, street?: string, subdistrict?: string, district?: string, city?: string, state?: string, postcode?: string, country?: string }, formatted_address: string, geometry: { location: { lat: string, lng: string }, viewport?: { northeast: { lat: string, lng: string }, southwest: { lat: string, lng: string } } }, osmurl?: string, importance?: number | string, distance?: string, lat?: number | null, lng?: number | null, distance_km?: number | null }[]"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
