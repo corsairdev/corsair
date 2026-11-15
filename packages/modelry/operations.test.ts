@@ -456,3 +456,17 @@ describe('tenant credentials', () => {
 		expect(mock).not.toHaveBeenCalled();
 	});
 });
+
+it('asks for approval before ordering a model or deciding a QA round', () => {
+	const meta = modelry().endpointMeta;
+	for (const name of [
+		'modelingRequests.create',
+		'modelingRequests.approve',
+		'modelingRequests.reject',
+		'products.delete',
+		'productAssets.delete',
+		'embeds.delete',
+	] as const) {
+		expect(meta[name].riskLevel).toBe('destructive');
+	}
+});

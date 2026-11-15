@@ -107,57 +107,104 @@ export const modelryEndpointSchemas = {
 	'workspaces.list': { input: s.workspaces_listInput, output: s.list },
 } as const satisfies RequiredPluginEndpointSchemas<typeof nested>;
 const endpointMeta = {
-	'products.list': { riskLevel: 'read', description: 'List products' },
-	'products.get': { riskLevel: 'read', description: 'Get products' },
-	'products.create': { riskLevel: 'write', description: 'Create products' },
-	'products.update': { riskLevel: 'write', description: 'Update products' },
+	'products.list': {
+		riskLevel: 'read',
+		description:
+			'List products in the workspace, with keyword, SKU, batch, tag and label filters. An empty result is returned as an empty list.',
+	},
+	'products.get': {
+		riskLevel: 'read',
+		description:
+			'Get one product, with its assets and modeling requests under `included`.',
+	},
+	'products.create': {
+		riskLevel: 'write',
+		description: 'Create a product (title, SKU, tags, dimensions, links).',
+	},
+	'products.update': {
+		riskLevel: 'write',
+		description: 'Update the fields of an existing product.',
+	},
 	'products.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete products',
+		description: 'Delete a product. This cannot be undone.',
 	},
 	'modelingRequests.list': {
 		riskLevel: 'read',
-		description: 'List modeling requests',
+		description:
+			'List modeling requests (3D modelling orders), with workspace, SKU, batch and title filters.',
 	},
 	'modelingRequests.get': {
 		riskLevel: 'read',
-		description: 'Get modeling requests',
+		description:
+			'Get one modeling request by id or SKU: status, price, QA round and review categories.',
 	},
 	'modelingRequests.create': {
-		riskLevel: 'write',
-		description: 'Create modeling requests',
+		riskLevel: 'destructive',
+		description:
+			'Order a custom 3D model from Modelry. Modelry quotes and bills per model, and the API has no cancel.',
 	},
 	'modelingRequests.approve': {
-		riskLevel: 'write',
-		description: 'Approve modeling requests',
+		riskLevel: 'destructive',
+		description:
+			'Accept a delivered model and finish customer QA. The API cannot undo an approval.',
 	},
 	'modelingRequests.reject': {
-		riskLevel: 'write',
-		description: 'Reject modeling requests',
+		riskLevel: 'destructive',
+		description:
+			'Reject a delivered model in customer QA and send it back to Modelry for adjustments. The API cannot undo a rejection.',
 	},
 	'modelingRequests.assets': {
 		riskLevel: 'read',
-		description: 'List modeling request assets',
+		description:
+			'List the files delivered for a modeling request (models, renders, textures) with download URLs.',
 	},
 	'productAssets.create': {
 		riskLevel: 'write',
-		description: 'Create product assets',
+		description:
+			'Attach an uploaded file to a product, using the signed blob id from `uploads.file` or `uploads.blob`.',
 	},
 	'productAssets.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete product assets',
+		description: 'Delete a product asset. This cannot be undone.',
 	},
-	'embeds.list': { riskLevel: 'read', description: 'List embeds' },
-	'embeds.get': { riskLevel: 'read', description: 'Get embeds' },
-	'embeds.publish': { riskLevel: 'write', description: 'Publish embeds' },
-	'embeds.delete': { riskLevel: 'destructive', description: 'Delete embeds' },
-	'reviews.create': { riskLevel: 'write', description: 'Create reviews' },
+	'embeds.list': {
+		riskLevel: 'read',
+		description:
+			"List a product's 3D/AR web viewers (embeds). An empty result is returned as an empty list.",
+	},
+	'embeds.get': {
+		riskLevel: 'read',
+		description:
+			'Get one embed, with its public viewer URL and loader script configuration.',
+	},
+	'embeds.publish': {
+		riskLevel: 'write',
+		description: 'Publish an embed so its viewer URL is publicly reachable.',
+	},
+	'embeds.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an embed. This cannot be undone.',
+	},
+	'reviews.create': {
+		riskLevel: 'write',
+		description:
+			"Add review issues (comments for Modelry's artists) to a modeling request's current QA round.",
+	},
 	'uploads.blob': {
 		riskLevel: 'write',
-		description: 'Create a direct upload blob',
+		description:
+			'Start a direct upload: returns a signed blob id and a presigned URL to PUT the file to.',
 	},
-	'uploads.file': { riskLevel: 'write', description: 'Upload a base64 file' },
-	'workspaces.list': { riskLevel: 'read', description: 'List workspaces' },
+	'uploads.file': {
+		riskLevel: 'write',
+		description:
+			'Upload a small file as base64 and get back its signed blob id.',
+	},
+	'workspaces.list': {
+		riskLevel: 'read',
+		description: 'List the workspaces the API token can access.',
+	},
 } as const satisfies RequiredPluginEndpointMeta<typeof nested>;
 export const modelryAuthConfig = {
 	api_key: { account: ['tenant_external_id'] as const },
