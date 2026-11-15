@@ -1,3 +1,4 @@
+import type { BoundEndpointTree } from 'corsair/core';
 import * as corsairCore from 'corsair/core';
 import {
 	Company,
@@ -550,10 +551,15 @@ const wireCases: readonly WireCase[] = [
 	},
 ];
 
+const endpoints = {
+	test: async (_args: unknown) => undefined,
+} satisfies BoundEndpointTree;
+
 const ctx = {
 	key: 'access-token',
 	database: undefined,
 	$getAccountId: async () => 'account-test',
+	endpoints,
 };
 
 describe('FreeAgent endpoint registry and wire contracts', () => {
