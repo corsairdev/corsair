@@ -27,8 +27,11 @@ const SAMPLE = {
 	result: [{ id: 'pod-1', room: { name: 'Kitchen' } }],
 };
 
-function context(key: string): SensiboContext {
-	return { key } as SensiboContext;
+function context(key: string, upsert?: jest.Mock): SensiboContext {
+	return {
+		key,
+		db: upsert ? { pods: { upsertByEntityId: upsert } } : undefined,
+	} as unknown as SensiboContext;
 }
 
 describe('devices.list', () => {
@@ -95,5 +98,47 @@ describe('devices.list', () => {
 		await expect(
 			listDevices(context('test-key'), { fields: 'id' }),
 		).rejects.toBe(error);
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects an empty fields list before calling the API', async () => {
+		await expect(
+			listDevices(context('test-key'), { fields: '' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that has no result array', async () => {
+		mockRequest.mockResolvedValue({ status: 'success' });
+		await expect(listDevices(context('test-key'), {})).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('stores each pod that has an id', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({
+			status: 'success',
+			result: [{ id: 'pod-1', room: { name: 'Kitchen' } }, { room: {} }],
+		});
+		const result = await listDevices(context('test-key', upsert), {});
+		expect(result.result).toHaveLength(2);
+		expect(upsert).toHaveBeenCalledTimes(1);
+		expect(upsert).toHaveBeenCalledWith('pod-1', {
+			id: 'pod-1',
+			roomName: 'Kitchen',
+		});
+		expect(JSON.stringify(upsert.mock.calls)).not.toContain('test-key');
+	});
+
+	it('returns the list when the database write fails', async () => {
+		const upsert = jest.fn().mockRejectedValue(new Error('disk full'));
+		mockRequest.mockResolvedValue(SAMPLE);
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		await expect(listDevices(context('test-key', upsert), {})).resolves.toEqual(
+			SAMPLE,
+		);
+		warn.mockRestore();
 	});
 });

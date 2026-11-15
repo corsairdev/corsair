@@ -3,7 +3,6 @@ import type {
 	BindEndpoints,
 	CorsairErrorHandler,
 	CorsairPlugin,
-	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -11,6 +10,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import type { SensiboContext } from './context';
 import { Devices } from './endpoints';
 import {
 	ListDevicesInputSchema,
@@ -19,6 +19,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { SensiboSchema } from './schema';
 
+export type { SensiboContext };
+
 export type SensiboPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
@@ -26,11 +28,6 @@ export type SensiboPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof sensiboEndpointsNested>;
 };
-
-export type SensiboContext = CorsairPluginContext<
-	typeof SensiboSchema,
-	SensiboPluginOptions
->;
 
 export type SensiboKeyBuilderContext = KeyBuilderContext<SensiboPluginOptions>;
 

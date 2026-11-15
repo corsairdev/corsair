@@ -4,13 +4,14 @@ sidebarTitle: "Overview"
 description: "List the Sensibo pods on an account. The key is sent as the apiKey query parameter."
 ---
 
-Use **Sensibo** through Corsair: one client, typed API calls.
+Use **Sensibo** through Corsair: one client, typed API calls, local DB sync.
 
 An empty key comes back as HTTP 403. The client does not send a bearer token.
 
 **What you get:**
 
 - 1 typed API operations
+- 1 synced entity (`pods`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -111,11 +112,20 @@ _No write-style endpoint inferred; pick any operation from the [API](/plugins/se
 
 See the full list on the [API](/plugins/sensibo/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.sensibo.db.<entity>.search()` and `.list()`: `pods`.
+
+See [Database](/plugins/sensibo/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/sensibo/api">
     Every `sensibo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/sensibo/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.
