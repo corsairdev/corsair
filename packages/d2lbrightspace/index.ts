@@ -237,7 +237,11 @@ const endpointMeta = {
 	'users.current': { riskLevel: 'read', description: 'Get the current user' },
 	'users.list': { riskLevel: 'read', description: 'List or search users' },
 	'users.get': { riskLevel: 'read', description: 'Get a user by ID' },
-	'users.create': { riskLevel: 'write', description: 'Create a user' },
+	'users.create': {
+		riskLevel: 'destructive',
+		description:
+			'Create a user (SendCreationEmail emails the new user their account details)',
+	},
 	'users.update': { riskLevel: 'write', description: 'Update a user' },
 	'users.delete': { riskLevel: 'destructive', description: 'Delete a user' },
 	'roles.list': { riskLevel: 'read', description: 'List roles' },
