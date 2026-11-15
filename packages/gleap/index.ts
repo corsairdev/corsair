@@ -36,7 +36,9 @@ import { GleapSchema } from './schema';
 
 export const gleapAuthConfig = {
 	api_key: {
-		account: [] as const,
+		// API keys belong to one project in one data region: the project ID goes
+		// in the `project` header, the region ("eu" or "us", empty = eu) picks the host.
+		account: ['project_id', 'region'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -236,7 +238,8 @@ export const gleapEndpointMeta = {
 	},
 	'messages.update': {
 		riskLevel: 'write',
-		description: 'Update an existing message',
+		description:
+			"Replace a message's text (Gleap overwrites the whole message body)",
 	},
 	'messages.delete': {
 		riskLevel: 'destructive',
@@ -248,7 +251,8 @@ export const gleapEndpointMeta = {
 	},
 	'messages.createThread': {
 		riskLevel: 'destructive',
-		description: 'Create a thread reply for a specific message',
+		description:
+			'Reply inside a message thread (internal: visible to teammates, never to the customer)',
 	},
 
 	'sessions.list': {
@@ -273,7 +277,8 @@ export const gleapEndpointMeta = {
 	},
 	'sessions.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a contact session and associated history',
+		description:
+			'Delete a contact session and permanently delete every ticket attached to it',
 	},
 	'sessions.search': {
 		riskLevel: 'read',
@@ -294,16 +299,19 @@ export const gleapEndpointMeta = {
 	},
 	'users.update': {
 		riskLevel: 'write',
-		description: 'Update an existing team member profile',
+		description:
+			"Update the API key owner's own profile (name, job title, availability); Gleap ignores the user id",
 	},
 
 	'feedback.rateConversation': {
 		riskLevel: 'write',
-		description: 'Rate a support conversation with CSAT score 0 to 10',
+		description:
+			'Rate a Conversations API conversation as the customer (CSAT, integer 0 to 10)',
 	},
 	'feedback.rateMessage': {
 		riskLevel: 'write',
-		description: 'Rate an AI or agent message thumbs up or thumbs down',
+		description:
+			'Rate a message as the customer: positive or negative (thumbs up or down)',
 	},
 	'feedback.surveysList': {
 		riskLevel: 'read',
@@ -331,8 +339,9 @@ export const gleapEndpointMeta = {
 		description: 'Create a new team in a project',
 	},
 	'teams.update': {
-		riskLevel: 'write',
-		description: 'Update team configuration and assignment method',
+		riskLevel: 'destructive',
+		description:
+			"Replace a team's name, assignment method and full member list",
 	},
 	'teams.delete': {
 		riskLevel: 'destructive',
@@ -380,7 +389,8 @@ export type BaseGleapPlugin<T extends GleapPluginOptions> = CorsairPlugin<
 	typeof gleapEndpointsNested,
 	Record<string, never>,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof gleapAuthConfig
 >;
 
 export type InternalGleapPlugin = BaseGleapPlugin<GleapPluginOptions>;
@@ -425,6 +435,15 @@ export function gleap<const T extends GleapPluginOptions>(
 			if (!ctx.keys) throw new AuthMissingError('gleap', 'api_key');
 			const apiKey = await ctx.keys.get_api_key();
 			if (!apiKey) throw new AuthMissingError('gleap', 'api_key');
+			// Every project-scoped route needs the project header; without a stored
+			// project ID the call would 401, so ask for it through the connect flow.
+			if (!options.projectId && !(await ctx.keys.get_project_id())) {
+				throw new AuthMissingError(
+					'gleap',
+					'api_key',
+					'Gleap project ID is missing: add it to the connection (Settings → Project → General in Gleap).',
+				);
+			}
 			return apiKey;
 		},
 	} satisfies InternalGleapPlugin;

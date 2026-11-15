@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GleapEndpoints } from '..';
-import { makeGleapRequest } from '../client';
+import {
+	makeGleapRequest,
+	resolveGleapTarget,
+	successOnEmptyBody,
+} from '../client';
 import type {
 	FeedbackRateConversationOutput,
 	FeedbackRateMessageOutput,
@@ -21,12 +25,12 @@ export const rateConversation: GleapEndpoints['feedbackRateConversation'] =
 			{
 				method: 'POST',
 				body: { rating: parsed.rating },
-				projectId: ctx.options?.projectId,
-				baseUrl: ctx.options?.baseUrl,
+				...(await resolveGleapTarget(ctx)),
 			},
 		);
-		const output =
-			GleapEndpointOutputSchemas.feedbackRateConversation.parse(response);
+		const output = GleapEndpointOutputSchemas.feedbackRateConversation.parse(
+			successOnEmptyBody(response),
+		);
 		await logEventFromContext(
 			ctx,
 			'gleap.feedback.rateConversation',
@@ -47,11 +51,12 @@ export const rateMessage: GleapEndpoints['feedbackRateMessage'] = async (
 		{
 			method: 'POST',
 			body: { rating: parsed.rating },
-			projectId: ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx)),
 		},
 	);
-	const output = GleapEndpointOutputSchemas.feedbackRateMessage.parse(response);
+	const output = GleapEndpointOutputSchemas.feedbackRateMessage.parse(
+		successOnEmptyBody(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'gleap.feedback.rateMessage',
@@ -77,8 +82,7 @@ export const surveysList: GleapEndpoints['feedbackSurveysList'] = async (
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.feedbackSurveysList.parse(response);
@@ -102,8 +106,7 @@ export const surveysGet: GleapEndpoints['feedbackSurveysGet'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.feedbackSurveysGet.parse(response);
@@ -130,8 +133,7 @@ export const surveysResponses: GleapEndpoints['feedbackSurveysResponses'] =
 			{
 				method: 'GET',
 				query,
-				projectId: parsed.project ?? ctx.options?.projectId,
-				baseUrl: ctx.options?.baseUrl,
+				...(await resolveGleapTarget(ctx, parsed.project)),
 			},
 		);
 		const output =
@@ -162,8 +164,7 @@ export const surveysStats: GleapEndpoints['feedbackSurveysStats'] = async (
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output =

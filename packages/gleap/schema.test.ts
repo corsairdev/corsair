@@ -167,7 +167,7 @@ describe('Message schemas', () => {
 		expect(
 			MessagesCreateInputSchema.safeParse({
 				ticket: 'ticket_1',
-				content: 'Support response',
+				comment: 'Support response',
 			}).success,
 		).toBe(true);
 
@@ -178,9 +178,14 @@ describe('Message schemas', () => {
 		expect(
 			MessagesUpdateInputSchema.safeParse({
 				messageId: 'msg_1',
-				content: 'Updated comment',
+				comment: 'Updated comment',
 			}).success,
 		).toBe(true);
+
+		// Gleap replaces the whole message body on update: no text would erase it
+		expect(
+			MessagesUpdateInputSchema.safeParse({ messageId: 'msg_1' }).success,
+		).toBe(false);
 
 		expect(
 			MessagesDeleteInputSchema.safeParse({ messageId: 'msg_1' }).success,
@@ -193,7 +198,7 @@ describe('Message schemas', () => {
 		expect(
 			MessagesCreateThreadInputSchema.safeParse({
 				messageId: 'msg_1',
-				content: 'Thread reply',
+				comment: 'Thread reply',
 			}).success,
 		).toBe(true);
 
@@ -243,9 +248,11 @@ describe('Session schemas', () => {
 		).toBe(true);
 
 		expect(
-			SessionsSearchInputSchema.safeParse({ query: 'john@example.com' })
+			SessionsSearchInputSchema.safeParse({ searchTerm: 'john@example.com' })
 				.success,
 		).toBe(true);
+
+		expect(SessionsSearchInputSchema.safeParse({}).success).toBe(false);
 
 		expect(
 			SessionsActivitiesInputSchema.safeParse({ sessionId: 'sess_1' }).success,
@@ -272,7 +279,8 @@ describe('User schemas', () => {
 		expect(
 			UsersUpdateInputSchema.safeParse({
 				userId: 'user_1',
-				name: 'Updated Name',
+				firstName: 'Updated',
+				jobTitle: 'Support lead',
 			}).success,
 		).toBe(true);
 	});
@@ -313,9 +321,16 @@ describe('Feedback & Surveys schemas', () => {
 		expect(
 			FeedbackRateMessageInputSchema.safeParse({
 				messageId: 'msg_1',
-				rating: 'up',
+				rating: 'positive',
 			}).success,
 		).toBe(true);
+
+		expect(
+			FeedbackRateMessageInputSchema.safeParse({
+				messageId: 'msg_1',
+				rating: 'up',
+			}).success,
+		).toBe(false);
 	});
 
 	it('validates survey schemas', () => {
@@ -361,8 +376,15 @@ describe('Teams schemas', () => {
 		expect(
 			TeamsCreateInputSchema.safeParse({
 				name: 'Support Team',
+				assignmentMethod: 'balanced',
+				members: [],
 			}).success,
 		).toBe(true);
+
+		// Gleap rejects a team without an assignment method and member list
+		expect(
+			TeamsCreateInputSchema.safeParse({ name: 'Support Team' }).success,
+		).toBe(false);
 
 		expect(TeamsCreateInputSchema.safeParse({ name: '' }).success).toBe(false);
 
@@ -370,6 +392,8 @@ describe('Teams schemas', () => {
 			TeamsUpdateInputSchema.safeParse({
 				teamId: 'team_1',
 				name: 'New Name',
+				assignmentMethod: 'manual',
+				members: ['user_1'],
 			}).success,
 		).toBe(true);
 

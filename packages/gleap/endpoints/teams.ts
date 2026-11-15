@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GleapEndpoints } from '..';
-import { makeGleapRequest } from '../client';
+import {
+	makeGleapRequest,
+	resolveGleapTarget,
+	successOnEmptyBody,
+} from '../client';
 import type {
 	TeamsCreateOutput,
 	TeamsDeleteOutput,
@@ -13,8 +17,7 @@ export const list: GleapEndpoints['teamsList'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.teamsList.parse(input);
 	const response = await makeGleapRequest<TeamsListOutput>('/teams', ctx.key, {
 		method: 'GET',
-		projectId: parsed.project ?? ctx.options?.projectId,
-		baseUrl: ctx.options?.baseUrl,
+		...(await resolveGleapTarget(ctx, parsed.project)),
 	});
 	const output = GleapEndpointOutputSchemas.teamsList.parse(response);
 	await logEventFromContext(
@@ -35,8 +38,7 @@ export const create: GleapEndpoints['teamsCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.teamsCreate.parse(response);
@@ -58,8 +60,7 @@ export const update: GleapEndpoints['teamsUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.teamsUpdate.parse(response);
@@ -74,11 +75,12 @@ export const del: GleapEndpoints['teamsDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
-	const output = GleapEndpointOutputSchemas.teamsDelete.parse(response);
+	const output = GleapEndpointOutputSchemas.teamsDelete.parse(
+		successOnEmptyBody(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'gleap.teams.delete',

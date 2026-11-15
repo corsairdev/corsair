@@ -16,6 +16,68 @@ export const GLEAP_API_BASE_EU = 'https://api.gleap.io/v3';
 export const GLEAP_API_BASE_US = 'https://api.us.gleap.ai/v3';
 export const GLEAP_API_BASE = GLEAP_API_BASE_EU;
 
+/**
+ * Several Gleap deletes and the rating routes answer 204 No Content, which core
+ * returns as `undefined`. A 2xx without a body means the call succeeded.
+ */
+// unknown because this receives whatever body core parsed for the 2xx response
+export function successOnEmptyBody(response: unknown): unknown {
+	return response === undefined || response === null || response === ''
+		? { success: true }
+		: response;
+}
+
+/**
+ * Turns plain text into the TipTap document Gleap stores in a message's
+ * `data.content`; each line becomes a paragraph.
+ */
+export function textToTipTapDoc(text: string) {
+	return {
+		type: 'doc',
+		content: text
+			.split('\n')
+			.map((line) =>
+				line.length > 0
+					? { type: 'paragraph', content: [{ type: 'text', text: line }] }
+					: { type: 'paragraph' },
+			),
+	};
+}
+
+// Minimal shape of the endpoint context the target resolver reads, so client.ts
+// does not import the plugin's context type (index.ts imports the endpoints).
+type GleapTargetContext = {
+	options?: { projectId?: string; baseUrl?: string };
+	keys?: {
+		get_project_id?: () => Promise<string | null | undefined>;
+		get_region?: () => Promise<string | null | undefined>;
+	};
+};
+
+/**
+ * Picks the project header and API host for a request. Gleap API keys belong to
+ * one project in one data region, so both come from the connected account
+ * (`project_id`, `region`), with the plugin options as overrides for code setups.
+ */
+export async function resolveGleapTarget(
+	ctx: GleapTargetContext,
+	project?: string,
+): Promise<{ projectId?: string; baseUrl?: string }> {
+	const projectId =
+		project ??
+		ctx.options?.projectId ??
+		(await ctx.keys?.get_project_id?.()) ??
+		undefined;
+	if (ctx.options?.baseUrl) return { projectId, baseUrl: ctx.options.baseUrl };
+	const region = ((await ctx.keys?.get_region?.()) ?? '').trim().toLowerCase();
+	if (region === '' || region === 'eu') return { projectId };
+	if (region === 'us') return { projectId, baseUrl: GLEAP_API_BASE_US };
+	throw new GleapAPIError(
+		'Gleap region must be "eu" or "us" (Settings → Developer → API keys shows it)',
+		'INVALID_REGION',
+	);
+}
+
 const SENSITIVE_KEY_PATTERN =
 	/(?:api[_-]?key|token|secret|password|authorization|private_key|session_token)/i;
 const REDACTED = '[REDACTED]';

@@ -32,6 +32,10 @@ function buildCtx(): GleapContext {
 		key: 'test-api-key',
 		options: {},
 		keys: {
+			get_project_id: () => Promise.resolve(null),
+			set_project_id: () => Promise.resolve(),
+			get_region: () => Promise.resolve(null),
+			set_region: () => Promise.resolve(),
 			get_dek: () => Promise.resolve('test-dek'),
 			issue_new_dek: () => Promise.resolve('test-dek'),
 			get_api_key: () => Promise.resolve('test-api-key'),
@@ -221,14 +225,14 @@ describe('Messages endpoints', () => {
 
 		const result = await Messages.create(ctx, {
 			ticket: 't_1',
-			content: 'Hello',
+			comment: 'Hello',
 			isNote: true,
 		});
 
 		expect(result).toEqual(mockMsg);
 		expect(mockedRequest).toHaveBeenCalledWith('/messages', 'test-api-key', {
 			method: 'POST',
-			body: { ticket: 't_1', content: 'Hello', isNote: true },
+			body: { ticket: 't_1', comment: 'Hello', isNote: true },
 			projectId: undefined,
 		});
 	});
@@ -239,7 +243,7 @@ describe('Messages endpoints', () => {
 
 		const result = await Messages.update(ctx, {
 			messageId: 'm_1',
-			content: 'Edited',
+			comment: 'Edited',
 		});
 
 		expect(result).toEqual(mockUpdated);
@@ -248,7 +252,19 @@ describe('Messages endpoints', () => {
 			'test-api-key',
 			{
 				method: 'PUT',
-				body: { content: 'Edited' },
+				body: {
+					data: {
+						content: {
+							type: 'doc',
+							content: [
+								{
+									type: 'paragraph',
+									content: [{ type: 'text', text: 'Edited' }],
+								},
+							],
+						},
+					},
+				},
 				projectId: undefined,
 			},
 		);
@@ -281,6 +297,7 @@ describe('Messages endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
+				query: { before: undefined, limit: undefined },
 				projectId: undefined,
 			},
 		);
@@ -290,7 +307,7 @@ describe('Messages endpoints', () => {
 
 		const createRes = await Messages.createThread(ctx, {
 			messageId: 'm_1',
-			content: 'Another reply',
+			comment: 'Another reply',
 		});
 		expect(createRes).toEqual(mockReply);
 		expect(mockedRequest).toHaveBeenCalledWith(
@@ -298,7 +315,19 @@ describe('Messages endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				body: { content: 'Another reply' },
+				body: {
+					data: {
+						content: {
+							type: 'doc',
+							content: [
+								{
+									type: 'paragraph',
+									content: [{ type: 'text', text: 'Another reply' }],
+								},
+							],
+						},
+					},
+				},
 				projectId: undefined,
 			},
 		);
@@ -407,14 +436,14 @@ describe('Sessions endpoints', () => {
 		const mockResults = [{ id: 's_1', name: 'Bob' }];
 		mockedRequest.mockResolvedValue(mockResults);
 
-		const result = await Sessions.search(ctx, { query: 'Bob' });
+		const result = await Sessions.search(ctx, { searchTerm: 'Bob' });
 		expect(result).toEqual(mockResults);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/sessions/search',
 			'test-api-key',
 			{
 				method: 'GET',
-				query: expect.objectContaining({ query: 'Bob' }),
+				query: { searchTerm: 'Bob' },
 				projectId: undefined,
 			},
 		);
@@ -471,12 +500,13 @@ describe('Users endpoints', () => {
 
 		const result = await Users.update(ctx, {
 			userId: 'u_1',
-			name: 'New Name',
+			firstName: 'New',
+			lastName: 'Name',
 		});
 		expect(result).toEqual(mockUpdated);
 		expect(mockedRequest).toHaveBeenCalledWith('/users/u_1', 'test-api-key', {
 			method: 'PUT',
-			body: { name: 'New Name' },
+			body: { firstName: 'New', lastName: 'Name' },
 		});
 	});
 });
@@ -505,7 +535,7 @@ describe('Feedback & Surveys endpoints', () => {
 
 		const result = await Feedback.rateMessage(ctx, {
 			messageId: 'msg_1',
-			rating: 'up',
+			rating: 'positive',
 		});
 		expect(result).toEqual({ success: true });
 		expect(mockedRequest).toHaveBeenCalledWith(
@@ -513,7 +543,7 @@ describe('Feedback & Surveys endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				body: { rating: 'up' },
+				body: { rating: 'positive' },
 			},
 		);
 	});
@@ -602,11 +632,15 @@ describe('Teams endpoints', () => {
 
 		const mockCreated = { id: 'tm_2', name: 'Success' };
 		mockedRequest.mockResolvedValue(mockCreated);
-		const createRes = await Teams.create(ctx, { name: 'Success' });
+		const createRes = await Teams.create(ctx, {
+			name: 'Success',
+			assignmentMethod: 'manual',
+			members: [],
+		});
 		expect(createRes).toEqual(mockCreated);
 		expect(mockedRequest).toHaveBeenCalledWith('/teams', 'test-api-key', {
 			method: 'POST',
-			body: { name: 'Success' },
+			body: { name: 'Success', assignmentMethod: 'manual', members: [] },
 			projectId: undefined,
 		});
 
@@ -615,11 +649,17 @@ describe('Teams endpoints', () => {
 		const updateRes = await Teams.update(ctx, {
 			teamId: 'tm_2',
 			name: 'Customer Success',
+			assignmentMethod: 'balanced',
+			members: ['u_1'],
 		});
 		expect(updateRes).toEqual(mockUpdated);
 		expect(mockedRequest).toHaveBeenCalledWith('/teams/tm_2', 'test-api-key', {
 			method: 'PUT',
-			body: { name: 'Customer Success' },
+			body: {
+				name: 'Customer Success',
+				assignmentMethod: 'balanced',
+				members: ['u_1'],
+			},
 			projectId: undefined,
 		});
 
@@ -748,5 +788,151 @@ describe('Companies endpoints', () => {
 				projectId: undefined,
 			},
 		);
+	});
+});
+
+// Shapes from Gleap's API reference (docs.gleap.ai/en/reference/rest-api)
+describe('Documented Gleap response shapes', () => {
+	it('tickets.list parses { tickets, count } with expanded assignee objects', async () => {
+		const body = {
+			tickets: [
+				{
+					_id: '507f1f77bcf86cd799439011',
+					id: '507f1f77bcf86cd799439011',
+					title: null,
+					type: 'BUG',
+					status: 'OPEN',
+					processingUser: { _id: 'u_1', firstName: 'John' },
+					session: { _id: 's_1' },
+				},
+			],
+			count: 1,
+		};
+		mockedRequest.mockResolvedValue(body);
+		const result = await Tickets.list(ctx, {});
+		expect(result).toEqual(body);
+		expect(mockedLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'gleap.tickets.list',
+			{ count: 1 },
+			'completed',
+		);
+	});
+
+	it('tickets.counts parses the [{ _id, count }] array', async () => {
+		const body = [
+			{ _id: 'OPEN', count: 12 },
+			{ _id: 'DONE', count: 3 },
+		];
+		mockedRequest.mockResolvedValue(body);
+		await expect(Tickets.counts(ctx, {})).resolves.toEqual(body);
+	});
+
+	it('messages.list parses messages whose author is an expanded user', async () => {
+		const body = [
+			{
+				id: 'm_1',
+				ticket: 't_1',
+				type: 'TEXT',
+				comment: 'Hi',
+				bot: false,
+				user: { id: 'u_1', firstName: 'John' },
+			},
+		];
+		mockedRequest.mockResolvedValue(body);
+		await expect(Messages.list(ctx, { ticket: 't_1' })).resolves.toEqual(body);
+	});
+
+	it('messages.getThread parses the { items, hasMore, nextBefore } envelope', async () => {
+		const body = {
+			items: [{ id: 'm_2', type: 'TEXT' }],
+			hasMore: false,
+			nextBefore: null,
+		};
+		mockedRequest.mockResolvedValue(body);
+		await expect(
+			Messages.getThread(ctx, { messageId: 'm_1', limit: 20 }),
+		).resolves.toEqual(body);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/messages/m_1/thread',
+			'test-api-key',
+			expect.objectContaining({ query: { before: undefined, limit: 20 } }),
+		);
+	});
+
+	it('204 No Content deletes and ratings resolve as success', async () => {
+		mockedRequest.mockResolvedValue(undefined);
+		await expect(Sessions.del(ctx, { sessionId: 's_1' })).resolves.toEqual({
+			success: true,
+		});
+		await expect(Messages.del(ctx, { messageId: 'm_1' })).resolves.toEqual({
+			success: true,
+		});
+		await expect(
+			Feedback.rateConversation(ctx, { conversationId: 'c_1', rating: 8 }),
+		).resolves.toEqual({ success: true });
+		await expect(
+			Feedback.rateMessage(ctx, { messageId: 'm_1', rating: 'negative' }),
+		).resolves.toEqual({ success: true });
+	});
+
+	it('companies.list parses companies without a name', async () => {
+		const body = [{ _id: 'x', companyId: 'acme', plan: 'pro' }];
+		mockedRequest.mockResolvedValue(body);
+		await expect(Companies.list(ctx, {})).resolves.toEqual(body);
+	});
+});
+
+describe('Project and region from the stored account', () => {
+	function accountCtx(projectId: string | null, region: string | null) {
+		const base = buildCtx();
+		return {
+			...base,
+			keys: {
+				...base.keys,
+				get_project_id: () => Promise.resolve(projectId),
+				get_region: () => Promise.resolve(region),
+			},
+		} as GleapContext;
+	}
+
+	it('sends the stored project id and keeps the EU host by default', async () => {
+		mockedRequest.mockResolvedValue([]);
+		await Teams.list(accountCtx('proj_1', null), {});
+		expect(mockedRequest).toHaveBeenCalledWith('/teams', 'test-api-key', {
+			method: 'GET',
+			projectId: 'proj_1',
+		});
+	});
+
+	it('uses the US host when the stored region is us', async () => {
+		mockedRequest.mockResolvedValue([]);
+		await Teams.list(accountCtx('proj_1', 'US'), {});
+		expect(mockedRequest).toHaveBeenCalledWith('/teams', 'test-api-key', {
+			method: 'GET',
+			projectId: 'proj_1',
+			baseUrl: client.GLEAP_API_BASE_US,
+		});
+	});
+
+	it('rejects an unknown region before any request', async () => {
+		await expect(Teams.list(accountCtx('proj_1', 'asia'), {})).rejects.toThrow(
+			'Gleap region must be "eu" or "us"',
+		);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('lets the per-call project and plugin options override the account', async () => {
+		mockedRequest.mockResolvedValue([]);
+		const c = accountCtx('proj_1', 'us');
+		await Teams.list(
+			{ ...c, options: { baseUrl: 'https://api.gleap.io/v3' } },
+			{ project: 'proj_2' },
+		);
+		expect(mockedRequest).toHaveBeenCalledWith('/teams', 'test-api-key', {
+			method: 'GET',
+			projectId: 'proj_2',
+			baseUrl: 'https://api.gleap.io/v3',
+		});
 	});
 });

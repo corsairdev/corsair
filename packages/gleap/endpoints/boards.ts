@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GleapEndpoints } from '..';
-import { makeGleapRequest } from '../client';
+import {
+	makeGleapRequest,
+	resolveGleapTarget,
+	successOnEmptyBody,
+} from '../client';
 import type {
 	BoardsCreateOutput,
 	BoardsDeleteOutput,
@@ -16,8 +20,7 @@ export const list: GleapEndpoints['boardsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.boardsList.parse(response);
@@ -39,8 +42,7 @@ export const create: GleapEndpoints['boardsCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.boardsCreate.parse(response);
@@ -62,8 +64,7 @@ export const update: GleapEndpoints['boardsUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.boardsUpdate.parse(response);
@@ -78,11 +79,12 @@ export const del: GleapEndpoints['boardsDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
-	const output = GleapEndpointOutputSchemas.boardsDelete.parse(response);
+	const output = GleapEndpointOutputSchemas.boardsDelete.parse(
+		successOnEmptyBody(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'gleap.boards.delete',

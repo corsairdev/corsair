@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GleapEndpoints } from '..';
-import { makeGleapRequest } from '../client';
+import {
+	makeGleapRequest,
+	resolveGleapTarget,
+	successOnEmptyBody,
+	textToTipTapDoc,
+} from '../client';
 import type {
 	MessagesCreateOutput,
 	MessagesCreateThreadOutput,
@@ -26,8 +31,7 @@ export const list: GleapEndpoints['messagesList'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.messagesList.parse(response);
@@ -45,8 +49,7 @@ export const create: GleapEndpoints['messagesCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.messagesCreate.parse(response);
@@ -61,15 +64,16 @@ export const create: GleapEndpoints['messagesCreate'] = async (ctx, input) => {
 
 export const update: GleapEndpoints['messagesUpdate'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.messagesUpdate.parse(input);
-	const { messageId, project, ...body } = parsed;
+	const { messageId, project, comment } = parsed;
+	// Gleap persists only `data` (and attachments) on update and replaces it wholesale.
+	const body = { data: { content: textToTipTapDoc(comment) } };
 	const response = await makeGleapRequest<MessagesUpdateOutput>(
 		`/messages/${encodeURIComponent(messageId)}`,
 		ctx.key,
 		{
 			method: 'PUT',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.messagesUpdate.parse(response);
@@ -89,11 +93,12 @@ export const del: GleapEndpoints['messagesDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
-	const output = GleapEndpointOutputSchemas.messagesDelete.parse(response);
+	const output = GleapEndpointOutputSchemas.messagesDelete.parse(
+		successOnEmptyBody(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'gleap.messages.delete',
@@ -113,14 +118,19 @@ export const getThread: GleapEndpoints['messagesGetThread'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			query: { before: parsed.before, limit: parsed.limit },
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.messagesGetThread.parse(response);
-	const count = Array.isArray(output)
-		? output.length
-		: (output.messages?.length ?? 0);
+	const items = Array.isArray(output)
+		? output
+		: 'items' in output && Array.isArray(output.items)
+			? output.items
+			: 'messages' in output && Array.isArray(output.messages)
+				? output.messages
+				: [];
+	const count = items.length;
 	await logEventFromContext(
 		ctx,
 		'gleap.messages.getThread',
@@ -135,15 +145,16 @@ export const createThread: GleapEndpoints['messagesCreateThread'] = async (
 	input,
 ) => {
 	const parsed = GleapEndpointInputSchemas.messagesCreateThread.parse(input);
-	const { messageId, project, ...body } = parsed;
+	const { messageId, project, comment } = parsed;
+	// Thread replies take their text as `data.content` (TipTap JSON), not `comment`.
+	const body = { data: { content: textToTipTapDoc(comment) } };
 	const response = await makeGleapRequest<MessagesCreateThreadOutput>(
 		`/messages/${encodeURIComponent(messageId)}/thread`,
 		ctx.key,
 		{
 			method: 'POST',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output =

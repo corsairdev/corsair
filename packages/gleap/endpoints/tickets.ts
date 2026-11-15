@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GleapEndpoints } from '..';
-import { makeGleapRequest } from '../client';
+import {
+	makeGleapRequest,
+	resolveGleapTarget,
+	successOnEmptyBody,
+} from '../client';
 import type {
 	TicketsCountsOutput,
 	TicketsCreateOutput,
@@ -36,12 +40,18 @@ export const list: GleapEndpoints['ticketsList'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsList.parse(response);
-	const count = Array.isArray(output) ? output.length : output.items.length;
+	const items = Array.isArray(output)
+		? output
+		: 'tickets' in output && Array.isArray(output.tickets)
+			? output.tickets
+			: 'items' in output && Array.isArray(output.items)
+				? output.items
+				: [];
+	const count = items.length;
 	await logEventFromContext(ctx, 'gleap.tickets.list', { count }, 'completed');
 	return output;
 };
@@ -53,8 +63,7 @@ export const get: GleapEndpoints['ticketsGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsGet.parse(response);
@@ -76,8 +85,7 @@ export const create: GleapEndpoints['ticketsCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsCreate.parse(response);
@@ -99,8 +107,7 @@ export const update: GleapEndpoints['ticketsUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsUpdate.parse(response);
@@ -120,11 +127,12 @@ export const del: GleapEndpoints['ticketsDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
-	const output = GleapEndpointOutputSchemas.ticketsDelete.parse(response);
+	const output = GleapEndpointOutputSchemas.ticketsDelete.parse(
+		successOnEmptyBody(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'gleap.tickets.delete',
@@ -149,8 +157,7 @@ export const search: GleapEndpoints['ticketsSearch'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsSearch.parse(response);
@@ -171,8 +178,7 @@ export const counts: GleapEndpoints['ticketsCounts'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsCounts.parse(response);

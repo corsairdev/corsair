@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GleapEndpoints } from '..';
-import { makeGleapRequest } from '../client';
+import {
+	makeGleapRequest,
+	resolveGleapTarget,
+	successOnEmptyBody,
+} from '../client';
 import type {
 	SessionsActivitiesOutput,
 	SessionsCreateOutput,
@@ -26,8 +30,7 @@ export const list: GleapEndpoints['sessionsList'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsList.parse(response);
@@ -43,8 +46,7 @@ export const get: GleapEndpoints['sessionsGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsGet.parse(response);
@@ -67,8 +69,7 @@ export const getByUserId: GleapEndpoints['sessionsGetByUserId'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsGetByUserId.parse(response);
@@ -90,8 +91,7 @@ export const create: GleapEndpoints['sessionsCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsCreate.parse(response);
@@ -113,8 +113,7 @@ export const update: GleapEndpoints['sessionsUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			projectId: project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsUpdate.parse(response);
@@ -134,11 +133,12 @@ export const del: GleapEndpoints['sessionsDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
-	const output = GleapEndpointOutputSchemas.sessionsDelete.parse(response);
+	const output = GleapEndpointOutputSchemas.sessionsDelete.parse(
+		successOnEmptyBody(response),
+	);
 	await logEventFromContext(
 		ctx,
 		'gleap.sessions.delete',
@@ -151,10 +151,7 @@ export const del: GleapEndpoints['sessionsDelete'] = async (ctx, input) => {
 export const search: GleapEndpoints['sessionsSearch'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.sessionsSearch.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {
-		query: parsed.query,
 		searchTerm: parsed.searchTerm,
-		skip: parsed.skip,
-		limit: parsed.limit,
 	};
 	const response = await makeGleapRequest<SessionsSearchOutput>(
 		'/sessions/search',
@@ -162,8 +159,7 @@ export const search: GleapEndpoints['sessionsSearch'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsSearch.parse(response);
@@ -189,8 +185,7 @@ export const activities: GleapEndpoints['sessionsActivities'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsActivities.parse(response);

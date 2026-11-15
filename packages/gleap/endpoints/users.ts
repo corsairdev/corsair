@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GleapEndpoints } from '..';
-import { makeGleapRequest } from '../client';
+import { makeGleapRequest, resolveGleapTarget } from '../client';
 import type {
 	UsersGetMeOutput,
 	UsersListOutput,
@@ -15,7 +15,7 @@ export const getMe: GleapEndpoints['usersGetMe'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.usersGetMe.parse(response);
@@ -35,8 +35,7 @@ export const list: GleapEndpoints['usersList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.usersList.parse(response);
@@ -58,7 +57,7 @@ export const update: GleapEndpoints['usersUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			baseUrl: ctx.options?.baseUrl,
+			...(await resolveGleapTarget(ctx)),
 		},
 	);
 	const output = GleapEndpointOutputSchemas.usersUpdate.parse(response);

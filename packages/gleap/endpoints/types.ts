@@ -5,32 +5,36 @@ import { z } from 'zod';
 // passthrough because Gleap tickets contain dynamic customData, attributes and formData
 export const TicketSchema = z
 	.object({
-		id: z.string().optional(),
-		_id: z.string().optional(),
-		ticketNumber: z.union([z.number(), z.string()]).optional(),
-		title: z.string().optional(),
-		description: z.string().optional(),
-		type: z.string().optional(),
-		status: z.string().optional(),
-		priority: z.string().optional(),
+		id: z.string().nullish(),
+		_id: z.string().nullish(),
+		ticketNumber: z.union([z.number(), z.string()]).nullish(),
+		title: z.string().nullish(),
+		description: z.string().nullish(),
+		type: z.string().nullish(),
+		status: z.string().nullish(),
+		priority: z.string().nullish(),
 		// unknown because session can be a string session ID or an expanded session object
 		session: z.unknown().optional(),
-		project: z.string().optional(),
-		createdAt: z.string().optional(),
-		updatedAt: z.string().optional(),
+		project: z.string().nullish(),
+		createdAt: z.string().nullish(),
+		updatedAt: z.string().nullish(),
 		// unknown because customData contains dynamic customer-defined fields
 		customData: z.record(z.string(), z.unknown()).optional(),
 		// unknown because formData contains dynamic form submissions
 		formData: z.record(z.string(), z.unknown()).optional(),
 		// unknown because attributes contains dynamic ticket attributes
 		attributes: z.record(z.string(), z.unknown()).optional(),
-		processingUser: z.string().nullable().optional(),
-		processingTeam: z.string().nullable().optional(),
-		slaBreached: z.boolean().optional(),
-		snoozed: z.boolean().optional(),
-		snoozedUntil: z.string().nullable().optional(),
-		mentions: z.array(z.string()).optional(),
-		linkedTickets: z.array(z.string()).optional(),
+		// unknown because list responses expand the assignee to a user object, other routes send its id
+		processingUser: z.unknown().optional(),
+		// unknown because the team is an id or an expanded team object depending on the route
+		processingTeam: z.unknown().optional(),
+		slaBreached: z.boolean().nullish(),
+		snoozed: z.boolean().nullish(),
+		snoozedUntil: z.string().nullish(),
+		// unknown because mentions and linked tickets are ids or expanded documents
+		mentions: z.array(z.unknown()).nullish(),
+		// unknown because mentions and linked tickets are ids or expanded documents
+		linkedTickets: z.array(z.unknown()).nullish(),
 	})
 	.passthrough();
 
@@ -39,26 +43,29 @@ export type Ticket = z.infer<typeof TicketSchema>;
 // passthrough because Gleap message attachments and actions have extensible properties
 export const MessageSchema = z
 	.object({
-		id: z.string().optional(),
-		_id: z.string().optional(),
-		ticket: z.string().optional(),
-		user: z.string().optional(),
-		session: z.string().optional(),
+		id: z.string().nullish(),
+		_id: z.string().nullish(),
+		// unknown because the ticket is an id or an expanded ticket object
+		ticket: z.unknown().optional(),
+		// unknown because list responses expand the author to a user object
+		user: z.unknown().optional(),
+		// unknown because the contact is an id or an expanded session object
+		session: z.unknown().optional(),
 		// unknown because comment can be a string or a TipTap JSON node object
 		comment: z.unknown().optional(),
-		markdownComment: z.string().optional(),
-		type: z.string().optional(),
-		isNote: z.boolean().optional(),
-		bot: z.boolean().optional(),
-		createdAt: z.string().optional(),
-		updatedAt: z.string().optional(),
+		markdownComment: z.string().nullish(),
+		type: z.string().nullish(),
+		isNote: z.boolean().nullish(),
+		bot: z.boolean().nullish(),
+		createdAt: z.string().nullish(),
+		updatedAt: z.string().nullish(),
 		attachments: z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						url: z.string().optional(),
-						type: z.string().optional(),
+						name: z.string().nullish(),
+						url: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.passthrough(),
 			)
@@ -71,18 +78,18 @@ export type Message = z.infer<typeof MessageSchema>;
 // passthrough because Gleap session contacts contain arbitrary custom customer data
 export const SessionSchema = z
 	.object({
-		id: z.string().optional(),
-		_id: z.string().optional(),
-		userId: z.string().optional(),
-		name: z.string().optional(),
-		email: z.string().optional(),
-		phone: z.string().optional(),
-		value: z.number().optional(),
-		plan: z.string().optional(),
+		id: z.string().nullish(),
+		_id: z.string().nullish(),
+		userId: z.string().nullish(),
+		name: z.string().nullish(),
+		email: z.string().nullish(),
+		phone: z.string().nullish(),
+		value: z.number().nullish(),
+		plan: z.string().nullish(),
 		// unknown because customData holds user-defined key-value attributes
 		customData: z.record(z.string(), z.unknown()).optional(),
-		createdAt: z.string().optional(),
-		updatedAt: z.string().optional(),
+		createdAt: z.string().nullish(),
+		updatedAt: z.string().nullish(),
 	})
 	.passthrough();
 
@@ -91,13 +98,13 @@ export type Session = z.infer<typeof SessionSchema>;
 // passthrough because user profiles include project-specific roles and avatar URLs
 export const UserSchema = z
 	.object({
-		id: z.string().optional(),
-		_id: z.string().optional(),
-		name: z.string().optional(),
-		email: z.string().optional(),
-		role: z.string().optional(),
-		imageUrl: z.string().optional(),
-		createdAt: z.string().optional(),
+		id: z.string().nullish(),
+		_id: z.string().nullish(),
+		name: z.string().nullish(),
+		email: z.string().nullish(),
+		role: z.string().nullish(),
+		imageUrl: z.string().nullish(),
+		createdAt: z.string().nullish(),
 	})
 	.passthrough();
 
@@ -106,12 +113,12 @@ export type User = z.infer<typeof UserSchema>;
 // passthrough because survey definitions have extensible blocks and rules
 export const SurveySchema = z
 	.object({
-		id: z.string().optional(),
-		_id: z.string().optional(),
-		name: z.string().optional(),
-		title: z.string().optional(),
-		status: z.string().optional(),
-		createdAt: z.string().optional(),
+		id: z.string().nullish(),
+		_id: z.string().nullish(),
+		name: z.string().nullish(),
+		title: z.string().nullish(),
+		status: z.string().nullish(),
+		createdAt: z.string().nullish(),
 	})
 	.passthrough();
 
@@ -120,11 +127,12 @@ export type Survey = z.infer<typeof SurveySchema>;
 // passthrough because team configurations have extensible SLA options and working hours
 export const TeamSchema = z
 	.object({
-		id: z.string().optional(),
-		_id: z.string().optional(),
-		name: z.string(),
-		assignmentMethod: z.string().optional(),
-		members: z.array(z.string()).optional(),
+		id: z.string().nullish(),
+		_id: z.string().nullish(),
+		name: z.string().nullish(),
+		assignmentMethod: z.string().nullish(),
+		// unknown because members are user ids or expanded user objects
+		members: z.array(z.unknown()).nullish(),
 	})
 	.passthrough();
 
@@ -133,12 +141,12 @@ export type Team = z.infer<typeof TeamSchema>;
 // passthrough because boards contain column lanes and rendering rules
 export const BoardSchema = z
 	.object({
-		id: z.string().optional(),
-		_id: z.string().optional(),
-		type: z.string(),
-		name: z.string(),
-		path: z.string().optional(),
-		restrictedToUsers: z.array(z.string()).optional(),
+		id: z.string().nullish(),
+		_id: z.string().nullish(),
+		type: z.string().nullish(),
+		name: z.string().nullish(),
+		path: z.string().nullish(),
+		restrictedToUsers: z.array(z.string()).nullish(),
 	})
 	.passthrough();
 
@@ -147,13 +155,13 @@ export type Board = z.infer<typeof BoardSchema>;
 // passthrough because company objects can store custom billing and tracking data
 export const CompanySchema = z
 	.object({
-		id: z.string().optional(),
-		_id: z.string().optional(),
-		companyId: z.string().optional(),
-		name: z.string(),
-		domain: z.string().optional(),
-		plan: z.string().optional(),
-		value: z.number().optional(),
+		id: z.string().nullish(),
+		_id: z.string().nullish(),
+		companyId: z.string().nullish(),
+		name: z.string().nullish(),
+		domain: z.string().nullish(),
+		plan: z.string().nullish(),
+		value: z.number().nullish(),
 	})
 	.passthrough();
 
@@ -180,10 +188,17 @@ export const TicketsListInputSchema = z.object({
 export type TicketsListInput = z.infer<typeof TicketsListInputSchema>;
 export const TicketsListOutputSchema = z.union([
 	z.array(TicketSchema),
+	// the documented shape: { tickets: [...], count }
+	z
+		.object({
+			tickets: z.array(TicketSchema),
+			count: z.number().nullish(),
+		})
+		.passthrough(),
 	z
 		.object({
 			items: z.array(TicketSchema),
-			total: z.number().optional(),
+			total: z.number().nullish(),
 		})
 		.passthrough(),
 ]);
@@ -284,6 +299,15 @@ export const TicketsCountsInputSchema = z.object({
 export type TicketsCountsInput = z.infer<typeof TicketsCountsInputSchema>;
 // passthrough because count metrics group by board and lane identifiers
 export const TicketsCountsOutputSchema = z.union([
+	// the documented shape: [{ _id: 'OPEN', count: 12 }, ...]
+	z.array(
+		z
+			.object({
+				_id: z.string().nullish(),
+				count: z.number(),
+			})
+			.passthrough(),
+	),
 	z.record(z.string(), z.number()),
 	z
 		.object({
@@ -309,8 +333,8 @@ export const MessagesListOutputSchema = z.union([
 	z
 		.object({
 			items: z.array(MessageSchema),
-			hasMore: z.boolean().optional(),
-			nextBefore: z.string().optional(),
+			hasMore: z.boolean().nullish(),
+			nextBefore: z.string().nullish(),
 		})
 		.passthrough(),
 ]);
@@ -318,7 +342,6 @@ export type MessagesListOutput = z.infer<typeof MessagesListOutputSchema>;
 
 export const MessagesCreateInputSchema = z.object({
 	ticket: z.string().min(1, 'ticket is required'),
-	content: z.string().optional(),
 	comment: z.string().optional(),
 	markdownComment: z.string().optional(),
 	type: z.string().optional(),
@@ -330,11 +353,11 @@ export type MessagesCreateInput = z.infer<typeof MessagesCreateInputSchema>;
 export const MessagesCreateOutputSchema = MessageSchema;
 export type MessagesCreateOutput = z.infer<typeof MessagesCreateOutputSchema>;
 
+// Gleap keeps only `data` on update and replaces it wholesale, so the new text is required:
+// sending no content would erase the message.
 export const MessagesUpdateInputSchema = z.object({
 	messageId: z.string().min(1, 'messageId is required'),
-	content: z.string().optional(),
-	comment: z.string().optional(),
-	markdownComment: z.string().optional(),
+	comment: z.string().min(1, 'comment (the new message text) is required'),
 	project: z.string().optional(),
 });
 export type MessagesUpdateInput = z.infer<typeof MessagesUpdateInputSchema>;
@@ -356,12 +379,22 @@ export type MessagesDeleteOutput = z.infer<typeof MessagesDeleteOutputSchema>;
 
 export const MessagesGetThreadInputSchema = z.object({
 	messageId: z.string().min(1, 'messageId is required'),
+	before: z.string().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
 	project: z.string().optional(),
 });
 export type MessagesGetThreadInput = z.infer<
 	typeof MessagesGetThreadInputSchema
 >;
 export const MessagesGetThreadOutputSchema = z.union([
+	// the documented shape: { items, hasMore, nextBefore }
+	z
+		.object({
+			items: z.array(MessageSchema),
+			hasMore: z.boolean().nullish(),
+			nextBefore: z.string().nullish(),
+		})
+		.passthrough(),
 	z.array(MessageSchema),
 	z
 		.object({
@@ -375,9 +408,7 @@ export type MessagesGetThreadOutput = z.infer<
 
 export const MessagesCreateThreadInputSchema = z.object({
 	messageId: z.string().min(1, 'messageId is required'),
-	content: z.string().optional(),
-	comment: z.string().optional(),
-	markdownComment: z.string().optional(),
+	comment: z.string().min(1, 'comment (the reply text) is required'),
 	project: z.string().optional(),
 });
 export type MessagesCreateThreadInput = z.infer<
@@ -472,10 +503,8 @@ export const SessionsDeleteOutputSchema = z
 export type SessionsDeleteOutput = z.infer<typeof SessionsDeleteOutputSchema>;
 
 export const SessionsSearchInputSchema = z.object({
-	query: z.string().optional(),
-	searchTerm: z.string().optional(),
-	skip: z.number().optional(),
-	limit: z.number().optional(),
+	// Gleap returns an empty list for terms shorter than 3 characters
+	searchTerm: z.string().min(1, 'searchTerm is required'),
 	project: z.string().optional(),
 });
 export type SessionsSearchInput = z.infer<typeof SessionsSearchInputSchema>;
@@ -531,10 +560,16 @@ export type UsersListInput = z.infer<typeof UsersListInputSchema>;
 export const UsersListOutputSchema = z.array(UserSchema);
 export type UsersListOutput = z.infer<typeof UsersListOutputSchema>;
 
+// Gleap ignores the path id and only updates the API key's own user profile.
 export const UsersUpdateInputSchema = z.object({
 	userId: z.string().min(1, 'userId is required'),
-	name: z.string().optional(),
-	email: z.string().optional(),
+	firstName: z.string().optional(),
+	lastName: z.string().optional(),
+	jobTitle: z.string().optional(),
+	department: z.string().optional(),
+	phone: z.string().optional(),
+	available: z.boolean().optional(),
+	awayUntil: z.string().optional(),
 });
 export type UsersUpdateInput = z.infer<typeof UsersUpdateInputSchema>;
 export const UsersUpdateOutputSchema = UserSchema;
@@ -544,7 +579,7 @@ export type UsersUpdateOutput = z.infer<typeof UsersUpdateOutputSchema>;
 
 export const FeedbackRateConversationInputSchema = z.object({
 	conversationId: z.string().min(1, 'conversationId is required'),
-	rating: z.number().min(0).max(10),
+	rating: z.number().int().min(0).max(10),
 });
 export type FeedbackRateConversationInput = z.infer<
 	typeof FeedbackRateConversationInputSchema
@@ -561,7 +596,7 @@ export type FeedbackRateConversationOutput = z.infer<
 
 export const FeedbackRateMessageInputSchema = z.object({
 	messageId: z.string().min(1, 'messageId is required'),
-	rating: z.string(),
+	rating: z.enum(['positive', 'negative']),
 });
 export type FeedbackRateMessageInput = z.infer<
 	typeof FeedbackRateMessageInputSchema
@@ -677,10 +712,18 @@ export type TeamsListInput = z.infer<typeof TeamsListInputSchema>;
 export const TeamsListOutputSchema = z.array(TeamSchema);
 export type TeamsListOutput = z.infer<typeof TeamsListOutputSchema>;
 
+const TeamAssignmentMethodSchema = z.enum([
+	'random',
+	'balanced',
+	'manual',
+	'circular',
+]);
+
+// Gleap requires name, assignmentMethod and members (user ids, may be empty) on create and update.
 export const TeamsCreateInputSchema = z.object({
 	name: z.string().min(1, 'name is required'),
-	assignmentMethod: z.string().optional(),
-	members: z.array(z.string()).optional(),
+	assignmentMethod: TeamAssignmentMethodSchema,
+	members: z.array(z.string()),
 	project: z.string().optional(),
 });
 export type TeamsCreateInput = z.infer<typeof TeamsCreateInputSchema>;
@@ -689,9 +732,9 @@ export type TeamsCreateOutput = z.infer<typeof TeamsCreateOutputSchema>;
 
 export const TeamsUpdateInputSchema = z.object({
 	teamId: z.string().min(1, 'teamId is required'),
-	name: z.string().optional(),
-	assignmentMethod: z.string().optional(),
-	members: z.array(z.string()).optional(),
+	name: z.string().min(1, 'name is required'),
+	assignmentMethod: TeamAssignmentMethodSchema,
+	members: z.array(z.string()),
 	project: z.string().optional(),
 });
 export type TeamsUpdateInput = z.infer<typeof TeamsUpdateInputSchema>;

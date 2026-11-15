@@ -8,6 +8,7 @@ import {
 	sanitizeApiError,
 } from './client';
 import { errorHandlers } from './error-handlers';
+import { gleap } from './index';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -240,5 +241,41 @@ describe('real-transport rate-limit Retry-After integration', () => {
 		} finally {
 			global.fetch = originalFetch;
 		}
+	});
+});
+
+describe('gleap keyBuilder', () => {
+	function keyCtx(apiKey: string | null, projectId: string | null) {
+		return {
+			authType: 'api_key',
+			keys: {
+				get_api_key: () => Promise.resolve(apiKey),
+				get_project_id: () => Promise.resolve(projectId),
+				get_region: () => Promise.resolve(null),
+			},
+		} as unknown as Parameters<
+			NonNullable<ReturnType<typeof gleap>['keyBuilder']>
+		>[0];
+	}
+
+	it('returns the stored key when the account has a project id', async () => {
+		const plugin = gleap();
+		await expect(
+			plugin.keyBuilder?.(keyCtx('k_1', 'proj_1') as never, 'endpoint'),
+		).resolves.toBe('k_1');
+	});
+
+	it('asks for a connection when the project id is missing', async () => {
+		const plugin = gleap();
+		await expect(
+			plugin.keyBuilder?.(keyCtx('k_1', null) as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('accepts a project id set in code instead of the account', async () => {
+		const plugin = gleap({ projectId: 'proj_1' });
+		await expect(
+			plugin.keyBuilder?.(keyCtx('k_1', null) as never, 'endpoint'),
+		).resolves.toBe('k_1');
 	});
 });
