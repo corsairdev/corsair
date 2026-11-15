@@ -202,6 +202,46 @@ describe('makePrerenderRequest', () => {
 		expect(JSON.stringify(error)).not.toContain('secret-token');
 	});
 
+	it('drops the sent body, which can hold customer URLs, from an ApiError', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/search',
+					body: { exactMatch: 'https://example.com/u/jane@example.com' },
+				},
+				{
+					url: `${PRERENDER_API_BASE}/search`,
+					ok: false,
+					status: 503,
+					statusText: 'Service Unavailable',
+					body: 'Service Unavailable',
+				},
+				'Service Unavailable',
+				{ retryAfter: 30 },
+			),
+		);
+
+		const error = await captureError(
+			makePrerenderRequest('token', {
+				method: 'POST',
+				path: '/search',
+				body: { exactMatch: 'https://example.com/u/jane@example.com' },
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 503, retryAfter: 30 });
+		expect(JSON.stringify(error)).not.toContain('jane@example.com');
+	});
+
+	it('only strips the exact API origin when matching replayable paths', () => {
+		expect(isReplayablePath(`${PRERENDER_API_BASE}/search`)).toBe(true);
+		expect(isReplayablePath(`${PRERENDER_API_BASE}.evil.example/search`)).toBe(
+			false,
+		);
+	});
+
 	it('flags a dropped connection as transport, replayable only on a read', async () => {
 		mockRequest.mockRejectedValue(new Error('fetch failed'));
 

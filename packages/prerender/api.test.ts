@@ -133,9 +133,10 @@ describeWrites('Prerender live API: writes', () => {
 				'/corsair-plugin-test-sitemap.xml',
 				LIVE_URL,
 			).toString();
-			const result = await captureError(api.cache.sitemap({ url: sitemapUrl }));
-			// Either a confirmation or Prerender's own refusal of an empty sitemap.
-			expect(result).toBeDefined();
+			// Live 11-15: Prerender confirms with an empty body even for a sitemap
+			// that lists nothing, so any rejection fails this test.
+			const result = await api.cache.sitemap({ url: sitemapUrl });
+			expect(result).toEqual({});
 		} finally {
 			cleanup();
 		}
@@ -157,10 +158,16 @@ describeWrites('Prerender live API: writes', () => {
 	it('sets a manual speed, then restores the automatic delay', async () => {
 		const { api, cleanup } = await client(LIVE_TOKEN);
 		try {
-			const manual = await api.queue.changeSpeed({ urlsPerHour: 3600 });
-			const automatic = await api.queue.changeSpeed({ urlsPerHour: 0 });
-			expect(manual.isAutomaticDelay).toBe(false);
-			expect(automatic.isAutomaticDelay).toBe(true);
+			let restored = false;
+			try {
+				const manual = await api.queue.changeSpeed({ urlsPerHour: 3600 });
+				expect(manual.isAutomaticDelay).toBe(false);
+			} finally {
+				// Put the account back on the automatic delay even if the first call failed.
+				const automatic = await api.queue.changeSpeed({ urlsPerHour: 0 });
+				restored = automatic.isAutomaticDelay;
+			}
+			expect(restored).toBe(true);
 		} finally {
 			cleanup();
 		}

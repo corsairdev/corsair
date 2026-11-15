@@ -95,10 +95,10 @@ export const cacheClearStatus: PrerenderEndpoints['cacheClearStatus'] = (
 		input,
 		() => ({ method: 'GET', path: `/cache-clear-status/${segment(ctx.key)}` }),
 		{
-			shape: (raw) => ({
-				...(asConfirmation(raw) as object),
-				inProgress: false,
-			}),
+			// A 200 is documented as the text `not queued`. Anything else is passed
+			// on unchanged so the output schema rejects it instead of reporting no job.
+			shape: (raw) =>
+				typeof raw === 'string' ? { message: raw, inProgress: false } : raw,
 			recover: (error) =>
 				error instanceof ApiError && error.status === 403
 					? {

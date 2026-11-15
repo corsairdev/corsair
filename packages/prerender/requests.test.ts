@@ -208,6 +208,13 @@ describe('cacheClearStatus', () => {
 		expect(result).toEqual({ message: 'in progress', inProgress: true });
 	});
 
+	it('rejects a 200 that is not the documented text instead of reporting no job', async () => {
+		for (const malformed of [[], null, { unexpected: true }]) {
+			mockedRequest.mockResolvedValueOnce(malformed);
+			await expect(Cache.cacheClearStatus(ctx, {})).rejects.toThrow();
+		}
+	});
+
 	it('lets any other status-route error through', async () => {
 		const failure = new Error('boom');
 		mockedRequest.mockRejectedValue(failure);

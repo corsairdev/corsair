@@ -68,7 +68,7 @@ const REPLAYABLE_PATHS = [
 
 export function isReplayablePath(path: string | undefined): boolean {
 	if (!path) return false;
-	const pathname = path.startsWith(PRERENDER_API_BASE)
+	const pathname = path.startsWith(`${PRERENDER_API_BASE}/`)
 		? path.slice(PRERENDER_API_BASE.length)
 		: path;
 	return REPLAYABLE_PATHS.some((prefix) =>
@@ -121,18 +121,23 @@ export function segment(value: string | number): string {
 
 /**
  * The status route carries the token in its path, so an `ApiError` from it would
- * repeat the token in `url` and `request.url`. This rebuilds the same error with
- * the token masked; every other field is kept.
+ * repeat the token in `url` and `request.url`. Every other route sends customer
+ * URLs and cache patterns in the body, which core keeps on `request.body`. This
+ * rebuilds the same error with the token masked and the sent body dropped; status,
+ * response body, message and retry metadata are kept.
  */
-function withoutToken(error: ApiError, token: string): ApiError {
+function withoutRequestData(error: ApiError, token: string): ApiError {
 	const encoded = segment(token);
 	const mask = (value: string) =>
 		value.split(encoded).join('[REDACTED]').split(token).join('[REDACTED]');
-	if (!error.url.includes(encoded) && !error.request.url.includes(encoded)) {
+	const hasToken =
+		error.url.includes(encoded) || error.request.url.includes(encoded);
+	if (!hasToken && error.request.body === undefined) {
 		return error;
 	}
-	return new ApiError(
-		{ ...error.request, url: mask(error.request.url) },
+	const { body: _sentBody, ...request } = error.request;
+	const rebuilt = new ApiError(
+		{ ...request, url: mask(error.request.url) },
 		{
 			url: mask(error.url),
 			ok: false,
@@ -148,6 +153,7 @@ function withoutToken(error: ApiError, token: string): ApiError {
 			rateLimitLimit: error.rateLimitLimit,
 		},
 	);
+	return rebuilt;
 }
 
 // unknown: callers parse the body with the endpoint's zod output schema.
@@ -191,7 +197,7 @@ export async function makePrerenderRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw withoutToken(error, token);
+			throw withoutRequestData(error, token);
 		}
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
