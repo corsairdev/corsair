@@ -183,7 +183,7 @@ describe('makeGleapRequest', () => {
 		expect(redacted.user.secret).toBe('[REDACTED]');
 	});
 
-	it('drops the request body and query, which hold customer content', async () => {
+	it('drops the request body, query and URL query string, which hold customer content', async () => {
 		const coreError = new ApiError(
 			{
 				method: 'POST',
@@ -192,7 +192,7 @@ describe('makeGleapRequest', () => {
 				query: { email: 'alice@example.com' },
 			},
 			{
-				url: 'https://api.gleap.io/v3/messages',
+				url: 'https://api.gleap.io/v3/messages?email=alice%40example.com',
 				ok: false,
 				status: 400,
 				statusText: 'Bad Request',
@@ -209,6 +209,8 @@ describe('makeGleapRequest', () => {
 		expect(caught).toBe(coreError);
 		expect(JSON.stringify(caught)).not.toContain('refund');
 		expect(JSON.stringify(caught)).not.toContain('alice@example.com');
+		expect(JSON.stringify(caught)).not.toContain('alice%40example.com');
+		expect((caught as ApiError).url).toBe('https://api.gleap.io/v3/messages');
 		expect((caught as ApiError).status).toBe(400);
 	});
 

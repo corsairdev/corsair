@@ -121,6 +121,12 @@ export function sanitizeApiError(error: unknown): unknown {
 		});
 	}
 
+	// Core keeps the full response URL and only redacts key-like query
+	// parameters, so the query string goes as well.
+	if (typeof error.url === 'string' && error.url.includes('?')) {
+		Object.defineProperty(error, 'url', { value: error.url.split('?')[0] });
+	}
+
 	if (error.body !== undefined) {
 		// unknown because API error responses can be structured JSON or error text
 		(error as { body?: unknown }).body = redactSensitiveData(error.body);
