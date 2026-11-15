@@ -3687,6 +3687,14 @@
                 ]
               },
               {
+                "group": "Polygon OMS",
+                "pages": [
+                  "plugins/polygon/overview",
+                  "plugins/polygon/api",
+                  "plugins/polygon/database"
+                ]
+              },
+              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",

@@ -438,6 +438,7 @@ export const BaseProviders = [
 	'plain',
 	'ploid',
 	'pointagram',
+	'polygon',
 	'polygonio',
 	'postalytics',
 	'postgrid',
@@ -1057,6 +1058,7 @@ export const ProviderDisplayNames = {
 	plain: 'Plain',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
+	polygon: 'Polygon OMS',
 	polygonio: 'Polygon.io',
 	postalytics: 'Postalytics',
 	postgrid: 'PostGrid',
@@ -1683,6 +1685,7 @@ export type AllProviders =
 	| 'plain'
 	| 'ploid'
 	| 'pointagram'
+	| 'polygon'
 	| 'polygonio'
 	| 'postalytics'
 	| 'postgrid'
