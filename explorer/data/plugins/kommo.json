@@ -1,0 +1,824 @@
+{
+  "id": "kommo",
+  "displayName": "Kommo",
+  "description": "CRM with Kommo - manage leads, contacts, companies and tasks, and read the pipelines with their stages, the account users and the account itself.",
+  "npmPackageName": "@corsair-dev/kommo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "subdomain"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kommo.api.account.get",
+      "shortPath": "account.get",
+      "description": "The account itself: its name, subdomain, currency and country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "Companies by owner or update date, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Entities per page. Defaults to 250, which is the maximum."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A search across the entity’s filled fields."
+          },
+          {
+            "key": "responsible_user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_from",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          },
+          {
+            "key": "updated_to",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null } | null, next?: { href?: string | null } | null } | null"
+          },
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ companies: { id: number, name?: string | null, responsible_user_id?: number | null, group_id?: number | null, created_by?: number | null, updated_by?: number | null, created_at?: number | null, updated_at?: number | null, is_deleted?: boolean | null, account_id?: number | null, custom_fields_values?: { field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null, _embedded?: { tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null }[] }"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create contacts, each with a name or a first and last name, and custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ name?: string, first_name?: string, last_name?: string, responsible_user_id?: number, custom_fields_values?: { values?: Record<string, any>[], field_id?: number, field_code?: string }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ contacts: { id: number, name?: string | null, first_name?: string | null, last_name?: string | null, responsible_user_id?: number | null, group_id?: number | null, created_by?: number | null, updated_by?: number | null, created_at?: number | null, updated_at?: number | null, is_deleted?: boolean | null, account_id?: number | null, custom_fields_values?: { field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null, _embedded?: { tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null }[] } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "One contact with its custom field values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number",
+            "description": "The Kommo entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "responsible_user_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_by",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "custom_fields_values",
+            "optional": true,
+            "type": "{ field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null"
+          },
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "Contacts by owner or update date, paged, optionally with their leads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Entities per page. Defaults to 250, which is the maximum."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A search across the entity’s filled fields."
+          },
+          {
+            "key": "with",
+            "optional": true,
+            "type": "leads[]",
+            "description": "Embed the leads each contact is linked to."
+          },
+          {
+            "key": "responsible_user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_from",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          },
+          {
+            "key": "updated_to",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null } | null, next?: { href?: string | null } | null } | null"
+          },
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ contacts: { id: number, name?: string | null, first_name?: string | null, last_name?: string | null, responsible_user_id?: number | null, group_id?: number | null, created_by?: number | null, updated_by?: number | null, created_at?: number | null, updated_at?: number | null, is_deleted?: boolean | null, account_id?: number | null, custom_fields_values?: { field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null, _embedded?: { tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null }[] }"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Change fields on one or more contacts, each named by its `id`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ name?: string, first_name?: string, last_name?: string, responsible_user_id?: number, custom_fields_values?: { values?: Record<string, any>[], field_id?: number, field_code?: string }[], id: number }[]",
+            "description": "Each contact carries its `id` and the fields to change."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ contacts: { id: number, name?: string | null, first_name?: string | null, last_name?: string | null, responsible_user_id?: number | null, group_id?: number | null, created_by?: number | null, updated_by?: number | null, created_at?: number | null, updated_at?: number | null, is_deleted?: boolean | null, account_id?: number | null, custom_fields_values?: { field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null, _embedded?: { tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null }[] } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.leads.create",
+      "shortPath": "leads.create",
+      "description": "Create up to 250 leads in one request, each with its price, stage, pipeline and custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ name: nonoptional, price?: number, status_id?: number, pipeline_id?: number, responsible_user_id?: number, loss_reason_id?: number, custom_fields_values?: { values?: Record<string, any>[], field_id?: number, field_code?: string }[] }[]",
+            "description": "At most 250 in one request. A lead without `status_id` or `pipeline_id` lands in the first stage of the main pipeline."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ leads: { id: number, name?: string | null, price?: number | null, responsible_user_id?: number | null, group_id?: number | null, status_id?: number | null, pipeline_id?: number | null, loss_reason_id?: number | null, created_by?: number | null, updated_by?: number | null, created_at?: number | null, updated_at?: number | null, closed_at?: number | null, closest_task_at?: number | null, is_deleted?: boolean | null, score?: number | null, account_id?: number | null, labor_cost?: number | null, is_price_computed?: boolean | null, custom_fields_values?: { field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null, _embedded?: { tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null }[] } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.leads.get",
+      "shortPath": "leads.get",
+      "description": "One lead with its custom field values and, on request, its contacts, loss reason and source",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number",
+            "description": "The Kommo entity ID."
+          },
+          {
+            "key": "with",
+            "optional": true,
+            "type": "(contacts | loss_reason | catalog_elements | source)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "responsible_user_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "loss_reason_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_by",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "closest_task_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "labor_cost",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_price_computed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "custom_fields_values",
+            "optional": true,
+            "type": "{ field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null"
+          },
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.leads.list",
+      "shortPath": "leads.list",
+      "description": "Leads by pipeline, stage, owner or date, paged 250 at a time; `next_page` says whether another exists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Entities per page. Defaults to 250, which is the maximum."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A search across the entity’s filled fields."
+          },
+          {
+            "key": "with",
+            "optional": true,
+            "type": "(contacts | loss_reason | catalog_elements | source)[]",
+            "description": "Embed these extra details on each lead."
+          },
+          {
+            "key": "pipeline_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "number",
+            "description": "A stage. Needs `pipeline_id`, the pipeline the stage is in."
+          },
+          {
+            "key": "responsible_user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_from",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          },
+          {
+            "key": "created_to",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          },
+          {
+            "key": "updated_from",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          },
+          {
+            "key": "updated_to",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | updated_at | id",
+            "description": "Sort field. Needs `order_direction`."
+          },
+          {
+            "key": "order_direction",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction. Needs `order_by`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null } | null, next?: { href?: string | null } | null } | null"
+          },
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ leads: { id: number, name?: string | null, price?: number | null, responsible_user_id?: number | null, group_id?: number | null, status_id?: number | null, pipeline_id?: number | null, loss_reason_id?: number | null, created_by?: number | null, updated_by?: number | null, created_at?: number | null, updated_at?: number | null, closed_at?: number | null, closest_task_at?: number | null, is_deleted?: boolean | null, score?: number | null, account_id?: number | null, labor_cost?: number | null, is_price_computed?: boolean | null, custom_fields_values?: { field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null, _embedded?: { tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null }[] }"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page after this one while Kommo says another exists; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.leads.update",
+      "shortPath": "leads.update",
+      "description": "Change fields on one or more leads, each named by its `id`; a field left out is untouched",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ name?: string, price?: number, status_id?: number, pipeline_id?: number, responsible_user_id?: number, loss_reason_id?: number, custom_fields_values?: { values?: Record<string, any>[], field_id?: number, field_code?: string }[], id: number }[]",
+            "description": "Each lead carries its `id` and the fields to change."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ leads: { id: number, name?: string | null, price?: number | null, responsible_user_id?: number | null, group_id?: number | null, status_id?: number | null, pipeline_id?: number | null, loss_reason_id?: number | null, created_by?: number | null, updated_by?: number | null, created_at?: number | null, updated_at?: number | null, closed_at?: number | null, closest_task_at?: number | null, is_deleted?: boolean | null, score?: number | null, account_id?: number | null, labor_cost?: number | null, is_price_computed?: boolean | null, custom_fields_values?: { field_id?: number | null, field_name?: string | null, field_code?: string | null, field_type?: string | null, values?: { value: any, enum_id?: number | null, enum_code?: string | null }[] | null, is_computed?: boolean | null }[] | null, _embedded?: { tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, contacts?: { id: number }[] | null, companies?: { id: number }[] | null } | null }[] } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.pipelines.list",
+      "shortPath": "pipelines.list",
+      "description": "The lead pipelines with their stages, which is where a lead’s `pipeline_id` and `status_id` come from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ pipelines: { id: number, name?: string | null, sort?: number | null, is_main?: boolean | null, is_unsorted_on?: boolean | null, is_archive?: boolean | null, account_id?: number | null, _embedded?: { statuses?: { id: number, name?: string | null, sort?: number | null, color?: string | null, is_editable?: boolean | null, pipeline_id?: number | null }[] | null } | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create tasks against a lead, contact or company; every task needs a `complete_till` deadline",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ entity_id: number, entity_type: leads | contacts | companies, text: string, complete_till: number, task_type_id?: number, responsible_user_id?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": true,
+            "type": "{ tasks: { id: number, entity_id?: number | null, entity_type?: string | null, is_completed?: boolean | null, task_type_id?: number | null, text?: string | null, result?: { text?: string | null, id?: number | null } | any[] | null, responsible_user_id?: number | null, created_by?: number | null, updated_by?: number | null, complete_till?: number | null, created_at?: number | null, updated_at?: number | null, account_id?: number | null }[] } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "Tasks by entity, owner or completion, paged; the deadline is a Unix timestamp",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Entities per page. Defaults to 250, which is the maximum."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A search across the entity’s filled fields."
+          },
+          {
+            "key": "entity_type",
+            "optional": true,
+            "type": "leads | contacts | companies",
+            "description": "Only tasks on this kind of entity."
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "responsible_user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean",
+            "description": "True for completed tasks, false for open ones."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null } | null, next?: { href?: string | null } | null } | null"
+          },
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ tasks: { id: number, entity_id?: number | null, entity_type?: string | null, is_completed?: boolean | null, task_type_id?: number | null, text?: string | null, result?: { text?: string | null, id?: number | null } | any[] | null, responsible_user_id?: number | null, created_by?: number | null, updated_by?: number | null, complete_till?: number | null, created_at?: number | null, updated_at?: number | null, account_id?: number | null }[] }"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kommo.api.users.list",
+      "shortPath": "users.list",
+      "description": "The account’s users, for looking up a responsible user ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_embedded",
+            "optional": false,
+            "type": "{ users: { id: number, name?: string | null, email?: string | null, lang?: string | null, rights?: Record<string, any> | null }[] }"
+          },
+          {
+            "key": "_page",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

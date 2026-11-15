@@ -241,8 +241,8 @@ export const BaseProviders = [
 	'enginemailer',
 	'enigma',
 	'epicgames',
-	'erpnext',
 	'esignatures',
+	'erpnext',
 	'esputnik',
 	'eventbrite',
 	'eventee',
@@ -263,6 +263,7 @@ export const BaseProviders = [
 	'filevine',
 	'filloutforms',
 	'finage',
+	'findymail',
 	'finerworks',
 	'finmei',
 	'fireberry',
@@ -279,10 +280,10 @@ export const BaseProviders = [
 	'formdesk',
 	'foursquare',
 	'fundable',
+	'gemini',
 	'gagelist',
 	'gamma',
 	'gatherup',
-	'gemini',
 	'genderapi',
 	'genderapiio',
 	'genderize',
@@ -290,10 +291,14 @@ export const BaseProviders = [
 	'geocodio',
 	'geokeo',
 	'getprospect',
+	'giftup',
+	'gigasheet',
 	'giphy',
 	'github',
 	'gitlab',
+	'givebutter',
 	'gladia',
+	'gleap',
 	'gmail',
 	'gmicloud',
 	'gong',
@@ -387,8 +392,8 @@ export const BaseProviders = [
 	'marketstack',
 	'melo',
 	'mem0',
-	'memberspot',
 	'memberstack',
+	'memberspot',
 	'merriamwebsterdict',
 	'minerstat',
 	'minimax',
@@ -398,6 +403,7 @@ export const BaseProviders = [
 	'monday',
 	'mondaymcp',
 	'moonclerk',
+	'motion',
 	'mrscraper',
 	'nanonets',
 	'neon',
@@ -436,15 +442,20 @@ export const BaseProviders = [
 	'plain',
 	'ploid',
 	'pointagram',
+	'polygon',
 	'polygonio',
 	'postalytics',
-	'posthog',
-	'postman',
+	'postgrid',
+	'postiz',
 	'postmark',
 	'prerender',
-	'prisma',
 	'prismic',
+	'proabono',
+	'posthog',
+	'postman',
+	'prisma',
 	'pushbullet',
+	'pushover',
 	'qdrant',
 	'quaderno',
 	'quickbooks',
@@ -513,6 +524,7 @@ export const BaseProviders = [
 	'sharepoint',
 	'shippo',
 	'shortcut',
+	'shortio',
 	'slack',
 	'slackbot',
 	'snapchat',
@@ -520,6 +532,7 @@ export const BaseProviders = [
 	'sourcegraph',
 	'spoki',
 	'spotify',
+	'stackai',
 	'stackexchange',
 	'starton',
 	'strava',
@@ -558,6 +571,7 @@ export const BaseProviders = [
 	'tpscheck',
 	'trello',
 	'tripadvisor',
+	'trustpilot',
 	'turbotpipes',
 	'turso',
 	'twentyonerisk',
@@ -855,8 +869,8 @@ export const ProviderDisplayNames = {
 	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
-	erpnext: 'ERPNext',
 	esignatures: 'eSignatures',
+	erpnext: 'ERPNext',
 	esputnik: 'eSputnik',
 	eventbrite: 'Eventbrite',
 	eventee: 'Eventee',
@@ -877,6 +891,7 @@ export const ProviderDisplayNames = {
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
 	finage: 'Finage',
+	findymail: 'Findymail',
 	finerworks: 'FinerWorks',
 	finmei: 'Finmei',
 	fireberry: 'Fireberry',
@@ -893,10 +908,10 @@ export const ProviderDisplayNames = {
 	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
+	gemini: 'Gemini',
 	gagelist: 'Gagelist',
 	gamma: 'Gamma',
 	gatherup: 'GatherUp',
-	gemini: 'Gemini',
 	genderapi: 'Gender API',
 	genderapiio: 'GenderAPI.io',
 	genderize: 'Genderize',
@@ -904,10 +919,14 @@ export const ProviderDisplayNames = {
 	geocodio: 'Geocodio',
 	geokeo: 'Geokeo',
 	getprospect: 'GetProspect',
+	giftup: 'Gift Up!',
+	gigasheet: 'Gigasheet',
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
+	givebutter: 'Givebutter',
 	gladia: 'Gladia',
+	gleap: 'Gleap',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
 	gong: 'Gong',
@@ -1001,8 +1020,8 @@ export const ProviderDisplayNames = {
 	marketstack: 'Marketstack',
 	melo: 'Melo',
 	mem0: 'Mem0',
-	memberspot: 'MemberSpot',
 	memberstack: 'Memberstack',
+	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minerstat: 'Minerstat',
 	minimax: 'MiniMax',
@@ -1012,6 +1031,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
 	moonclerk: 'MoonClerk',
+	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
 	neon: 'Neon',
@@ -1050,15 +1070,20 @@ export const ProviderDisplayNames = {
 	plain: 'Plain',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
+	polygon: 'Polygon OMS',
 	polygonio: 'Polygon.io',
 	postalytics: 'Postalytics',
-	posthog: 'PostHog',
-	postman: 'Postman',
+	postgrid: 'PostGrid',
+	postiz: 'Postiz',
 	postmark: 'Postmark',
 	prerender: 'Prerender',
-	prisma: 'Prisma',
 	prismic: 'Prismic',
+	proabono: 'ProAbono',
+	posthog: 'PostHog',
+	postman: 'Postman',
+	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
+	pushover: 'Pushover',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
 	quickbooks: 'QuickBooks',
@@ -1127,6 +1152,7 @@ export const ProviderDisplayNames = {
 	sharepoint: 'SharePoint',
 	shippo: 'Shippo',
 	shortcut: 'Shortcut',
+	shortio: 'Short.io',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
@@ -1134,6 +1160,7 @@ export const ProviderDisplayNames = {
 	sourcegraph: 'Sourcegraph',
 	spoki: 'Spoki',
 	spotify: 'Spotify',
+	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
 	starton: 'Starton',
 	strava: 'Strava',
@@ -1172,6 +1199,7 @@ export const ProviderDisplayNames = {
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
+	trustpilot: 'Trustpilot',
 	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
@@ -1476,8 +1504,8 @@ export type AllProviders =
 	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
-	| 'erpnext'
 	| 'esignatures'
+	| 'erpnext'
 	| 'esputnik'
 	| 'eventbrite'
 	| 'eventee'
@@ -1498,6 +1526,7 @@ export type AllProviders =
 	| 'filevine'
 	| 'filloutforms'
 	| 'finage'
+	| 'findymail'
 	| 'finerworks'
 	| 'finmei'
 	| 'fireberry'
@@ -1514,10 +1543,10 @@ export type AllProviders =
 	| 'formdesk'
 	| 'foursquare'
 	| 'fundable'
+	| 'gemini'
 	| 'gagelist'
 	| 'gamma'
 	| 'gatherup'
-	| 'gemini'
 	| 'genderapi'
 	| 'genderapiio'
 	| 'genderize'
@@ -1525,10 +1554,14 @@ export type AllProviders =
 	| 'geocodio'
 	| 'geokeo'
 	| 'getprospect'
+	| 'giftup'
+	| 'gigasheet'
 	| 'giphy'
 	| 'github'
 	| 'gitlab'
+	| 'givebutter'
 	| 'gladia'
+	| 'gleap'
 	| 'gmail'
 	| 'gmicloud'
 	| 'gong'
@@ -1622,8 +1655,8 @@ export type AllProviders =
 	| 'marketstack'
 	| 'melo'
 	| 'mem0'
-	| 'memberspot'
 	| 'memberstack'
+	| 'memberspot'
 	| 'merriamwebsterdict'
 	| 'minerstat'
 	| 'minimax'
@@ -1633,6 +1666,7 @@ export type AllProviders =
 	| 'monday'
 	| 'mondaymcp'
 	| 'moonclerk'
+	| 'motion'
 	| 'mrscraper'
 	| 'nanonets'
 	| 'neon'
@@ -1671,15 +1705,20 @@ export type AllProviders =
 	| 'plain'
 	| 'ploid'
 	| 'pointagram'
+	| 'polygon'
 	| 'polygonio'
 	| 'postalytics'
-	| 'posthog'
-	| 'postman'
+	| 'postgrid'
+	| 'postiz'
 	| 'postmark'
 	| 'prerender'
-	| 'prisma'
 	| 'prismic'
+	| 'proabono'
+	| 'posthog'
+	| 'postman'
+	| 'prisma'
 	| 'pushbullet'
+	| 'pushover'
 	| 'qdrant'
 	| 'quaderno'
 	| 'quickbooks'
@@ -1748,6 +1787,7 @@ export type AllProviders =
 	| 'sharepoint'
 	| 'shippo'
 	| 'shortcut'
+	| 'shortio'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
@@ -1755,6 +1795,7 @@ export type AllProviders =
 	| 'sourcegraph'
 	| 'spoki'
 	| 'spotify'
+	| 'stackai'
 	| 'stackexchange'
 	| 'starton'
 	| 'strava'
@@ -1793,6 +1834,7 @@ export type AllProviders =
 	| 'tpscheck'
 	| 'trello'
 	| 'tripadvisor'
+	| 'trustpilot'
 	| 'turbotpipes'
 	| 'turso'
 	| 'twentyonerisk'
