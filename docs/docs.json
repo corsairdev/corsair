@@ -4421,6 +4421,14 @@
                 ]
               },
               {
+                "group": "TextCortex",
+                "pages": [
+                  "plugins/textcortex/overview",
+                  "plugins/textcortex/api",
+                  "plugins/textcortex/database"
+                ]
+              },
+              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
