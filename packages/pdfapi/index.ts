@@ -144,12 +144,14 @@ export const pdfApiEndpointMeta = {
 		description: 'Returns one template with its variables by its template id',
 	},
 	'templates.renderTemplate': {
-		riskLevel: 'write',
+		// R8: each render spends one PDF from the plan's monthly quota.
+		riskLevel: 'destructive',
 		description:
 			'Renders a template into a PDF document from placeholder values',
 	},
 	'templates.mergeTemplates': {
-		riskLevel: 'write',
+		// R8: each merge spends PDF generations from the plan's monthly quota.
+		riskLevel: 'destructive',
 		description: 'Renders and merges multiple templates into one PDF document',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof pdfApiEndpointsNested>;
