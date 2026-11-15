@@ -137,21 +137,233 @@ const DealResponseSchema = z
 	})
 	.passthrough();
 
-const DealResponseEnvelopeSchema = z.object({
-	success: z.boolean().optional(),
-	data: DealResponseSchema.optional(),
-});
-const DealListResponseSchema = z.object({
-	success: z.boolean().optional(),
-	data: z.array(DealResponseSchema).optional(),
-	additional_data: z
-		.object({ next_cursor: z.string().nullable().optional() })
+const DealResponseEnvelopeSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: DealResponseSchema.optional(),
+	})
+	.passthrough();
+const DealListResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z.array(DealResponseSchema).optional(),
+		additional_data: z
+			.object({ next_cursor: z.string().nullable().optional() })
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+const DealDeleteResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z
+			.object({ id: z.number().int().optional() })
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+
+const PersonIncludeFieldSchema = z.enum([
+	'next_activity_id',
+	'last_activity_id',
+	'open_deals_count',
+	'related_open_deals_count',
+	'closed_deals_count',
+	'related_closed_deals_count',
+	'participant_open_deals_count',
+	'participant_closed_deals_count',
+	'email_messages_count',
+	'activities_count',
+	'done_activities_count',
+	'undone_activities_count',
+	'files_count',
+	'notes_count',
+	'followers_count',
+	'won_deals_count',
+	'related_won_deals_count',
+	'lost_deals_count',
+	'related_lost_deals_count',
+	'last_incoming_mail_time',
+	'last_outgoing_mail_time',
+	'marketing_status',
+	'doi_status',
+	'smart_bcc_email',
+]);
+
+const PersonContactItemInputSchema = z
+	.object({
+		value: z.string().optional(),
+		primary: z.boolean().optional(),
+		label: z.string().optional(),
+	})
+	.strict();
+
+// Response contact objects remain extensible because OpenAPI does not close their properties.
+const PersonContactItemResponseSchema = z
+	.object({
+		value: z.string().optional(),
+		primary: z.boolean().optional(),
+		label: z.string().optional(),
+	})
+	.passthrough();
+
+const PersonAddressInputSchema = z
+	.object({
+		value: z.string().optional(),
+		country: z.string().nullable().optional(),
+		admin_area_level_1: z.string().nullable().optional(),
+		admin_area_level_2: z.string().nullable().optional(),
+		locality: z.string().nullable().optional(),
+		sublocality: z.string().nullable().optional(),
+		route: z.string().nullable().optional(),
+		street_number: z.string().nullable().optional(),
+		subpremise: z.string().nullable().optional(),
+		postal_code: z.string().nullable().optional(),
+	})
+	.strict();
+
+// Response addresses remain extensible because OpenAPI does not close their properties.
+const PersonAddressResponseSchema = z
+	.object({
+		value: z.string().optional(),
+		country: z.string().nullable().optional(),
+		admin_area_level_1: z.string().nullable().optional(),
+		admin_area_level_2: z.string().nullable().optional(),
+		locality: z.string().nullable().optional(),
+		sublocality: z.string().nullable().optional(),
+		route: z.string().nullable().optional(),
+		street_number: z.string().nullable().optional(),
+		subpremise: z.string().nullable().optional(),
+		postal_code: z.string().nullable().optional(),
+	})
+	.passthrough();
+
+const PersonMarketingStatusSchema = z.enum([
+	'no_consent',
+	'unsubscribed',
+	'subscribed',
+	'archived',
+]);
+
+// `unknown` is necessary because Pipedrive custom-field values are provider-defined JSON.
+const PersonCustomFieldsSchema = z.record(z.string(), z.unknown());
+
+const PersonListInputSchema = z
+	.object({
+		filter_id: z.number().int().optional(),
+		ids: z.array(z.number().int()).max(100).refine(uniqueValues).optional(),
+		owner_id: z.number().int().optional(),
+		org_id: z.number().int().optional(),
+		deal_id: z.number().int().optional(),
+		updated_since: z.string().optional(),
+		updated_until: z.string().optional(),
+		sort_by: z.enum(['id', 'update_time', 'add_time']).optional(),
+		sort_direction: z.enum(['asc', 'desc']).optional(),
+		include_fields: z
+			.array(PersonIncludeFieldSchema)
+			.refine(uniqueValues)
+			.optional(),
+		custom_fields: z.array(z.string()).max(15).refine(uniqueValues).optional(),
+		include_option_labels: z.boolean().optional(),
+		include_labels: z.boolean().optional(),
+		limit: z.number().int().min(1).max(500).optional(),
+		cursor: z.string().optional(),
+	})
+	.strict();
+
+const PersonIdInputSchema = z.object({ id: z.number().int() }).strict();
+const PersonGetInputSchema = PersonIdInputSchema.extend({
+	include_fields: z
+		.array(PersonIncludeFieldSchema)
+		.refine(uniqueValues)
 		.optional(),
-});
-const DealDeleteResponseSchema = z.object({
-	success: z.boolean().optional(),
-	data: z.object({ id: z.number().int().optional() }).optional(),
-});
+	custom_fields: z.array(z.string()).max(15).refine(uniqueValues).optional(),
+	include_option_labels: z.boolean().optional(),
+	include_labels: z.boolean().optional(),
+}).strict();
+
+const PersonWriteFields = {
+	owner_id: z.number().int().optional(),
+	org_id: z.number().int().optional(),
+	emails: z.array(PersonContactItemInputSchema).optional(),
+	phones: z.array(PersonContactItemInputSchema).optional(),
+	visible_to: z.number().int().optional(),
+	label_ids: z.array(z.number().int()).optional(),
+	postal_address: PersonAddressInputSchema.nullable().optional(),
+	notes: z.string().max(10_000).optional(),
+	im: z.array(PersonContactItemInputSchema).optional(),
+	birthday: z.string().optional(),
+	job_title: z.string().optional(),
+	marketing_status: PersonMarketingStatusSchema.optional(),
+	custom_fields: PersonCustomFieldsSchema.optional(),
+} as const;
+
+const PersonCreateInputSchema = z
+	.object({
+		name: z.string(),
+		add_time: z.string().optional(),
+		...PersonWriteFields,
+	})
+	.strict();
+const PersonUpdateInputSchema = z
+	.object({
+		id: z.number().int(),
+		name: z.string().optional(),
+		...PersonWriteFields,
+	})
+	.strict();
+
+// Response objects are extensible in OpenAPI; contact fields are optional and several are nullable.
+const PersonResponseSchema = z
+	.object({
+		id: z.number().int().optional(),
+		name: z.string().optional(),
+		first_name: z.string().optional(),
+		last_name: z.string().optional(),
+		owner_id: z.number().int().optional(),
+		org_id: z.number().int().optional(),
+		add_time: z.string().optional(),
+		update_time: z.string().nullable().optional(),
+		emails: z.array(PersonContactItemResponseSchema).optional(),
+		phones: z.array(PersonContactItemResponseSchema).optional(),
+		is_deleted: z.boolean().optional(),
+		visible_to: z.number().int().optional(),
+		label_ids: z.array(z.number().int()).optional(),
+		picture_id: z.number().int().nullable().optional(),
+		postal_address: PersonAddressResponseSchema.nullable().optional(),
+		notes: z.string().optional(),
+		im: z.array(PersonContactItemResponseSchema).optional(),
+		birthday: z.string().optional(),
+		job_title: z.string().optional(),
+		custom_fields: PersonCustomFieldsSchema.optional(),
+	})
+	.passthrough();
+
+const PersonResponseEnvelopeSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: PersonResponseSchema.optional(),
+	})
+	.passthrough();
+const PersonListResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z.array(PersonResponseSchema).optional(),
+		additional_data: z
+			.object({ next_cursor: z.string().nullable().optional() })
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+const PersonDeleteResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z
+			.object({ id: z.number().int().optional() })
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
 
 export type DealListInput = z.infer<typeof DealListInputSchema>;
 export type DealGetInput = z.infer<typeof DealGetInputSchema>;
@@ -161,6 +373,14 @@ export type DealUpdateInput = z.infer<typeof DealUpdateInputSchema>;
 export type DealListResponse = z.infer<typeof DealListResponseSchema>;
 export type DealResponse = z.infer<typeof DealResponseEnvelopeSchema>;
 export type DealDeleteResponse = z.infer<typeof DealDeleteResponseSchema>;
+export type PersonListInput = z.infer<typeof PersonListInputSchema>;
+export type PersonGetInput = z.infer<typeof PersonGetInputSchema>;
+export type PersonIdInput = z.infer<typeof PersonIdInputSchema>;
+export type PersonCreateInput = z.infer<typeof PersonCreateInputSchema>;
+export type PersonUpdateInput = z.infer<typeof PersonUpdateInputSchema>;
+export type PersonListResponse = z.infer<typeof PersonListResponseSchema>;
+export type PersonResponse = z.infer<typeof PersonResponseEnvelopeSchema>;
+export type PersonDeleteResponse = z.infer<typeof PersonDeleteResponseSchema>;
 
 export type PipedriveEndpointInputs = {
 	dealList: DealListInput;
@@ -168,6 +388,11 @@ export type PipedriveEndpointInputs = {
 	dealCreate: DealCreateInput;
 	dealUpdate: DealUpdateInput;
 	dealDelete: DealIdInput;
+	personList: PersonListInput;
+	personGet: PersonGetInput;
+	personCreate: PersonCreateInput;
+	personUpdate: PersonUpdateInput;
+	personDelete: PersonIdInput;
 };
 
 export type PipedriveEndpointOutputs = {
@@ -176,6 +401,11 @@ export type PipedriveEndpointOutputs = {
 	dealCreate: DealResponse;
 	dealUpdate: DealResponse;
 	dealDelete: DealDeleteResponse;
+	personList: PersonListResponse;
+	personGet: PersonResponse;
+	personCreate: PersonResponse;
+	personUpdate: PersonResponse;
+	personDelete: PersonDeleteResponse;
 };
 
 export const PipedriveEndpointInputSchemas = {
@@ -184,6 +414,11 @@ export const PipedriveEndpointInputSchemas = {
 	dealCreate: DealCreateInputSchema,
 	dealUpdate: DealUpdateInputSchema,
 	dealDelete: DealIdInputSchema,
+	personList: PersonListInputSchema,
+	personGet: PersonGetInputSchema,
+	personCreate: PersonCreateInputSchema,
+	personUpdate: PersonUpdateInputSchema,
+	personDelete: PersonIdInputSchema,
 } as const;
 
 export const PipedriveEndpointOutputSchemas = {
@@ -192,4 +427,9 @@ export const PipedriveEndpointOutputSchemas = {
 	dealCreate: DealResponseEnvelopeSchema,
 	dealUpdate: DealResponseEnvelopeSchema,
 	dealDelete: DealDeleteResponseSchema,
+	personList: PersonListResponseSchema,
+	personGet: PersonResponseEnvelopeSchema,
+	personCreate: PersonResponseEnvelopeSchema,
+	personUpdate: PersonResponseEnvelopeSchema,
+	personDelete: PersonDeleteResponseSchema,
 } as const;

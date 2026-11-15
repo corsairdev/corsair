@@ -122,11 +122,77 @@ describe('Pipedrive endpoint schemas', () => {
 			'deals.get',
 			'deals.list',
 			'deals.update',
+			'persons.create',
+			'persons.delete',
+			'persons.get',
+			'persons.list',
+			'persons.update',
 		]);
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.endpoints?.deals.list).toBeDefined();
 		expect(plugin.endpointMeta?.['deals.delete']?.riskLevel).toBe(
 			'destructive',
 		);
+		expect(plugin.endpointMeta?.['persons.delete']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpoints?.persons.list).toBeDefined();
+	});
+
+	it('validates person pagination, enum constraints, strict writes, and nullable response fields', () => {
+		expect(
+			PipedriveEndpointInputSchemas.personList.parse({
+				ids: [1, 2],
+				include_fields: ['open_deals_count'],
+				limit: 500,
+				cursor: 'opaque',
+			}),
+		).toMatchObject({ limit: 500, cursor: 'opaque' });
+		expect(() =>
+			PipedriveEndpointInputSchemas.personList.parse({ limit: 501 }),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.personGet.parse({
+				id: 1,
+				include_fields: ['not_a_person_field'],
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.personCreate.parse({
+				name: 'Synthetic person',
+				callback: 'url',
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.personCreate.parse({
+				name: 'Synthetic person',
+				marketing_status: 'pending',
+			}),
+		).toThrow(z.ZodError);
+		expect(
+			PipedriveEndpointOutputSchemas.personGet.parse({
+				success: true,
+				data: {
+					id: 1,
+					name: 'Synthetic person',
+					update_time: null,
+					picture_id: null,
+					postal_address: null,
+					provider_added_field: 'retained',
+				},
+			}),
+		).toMatchObject({
+			data: {
+				update_time: null,
+				postal_address: null,
+				provider_added_field: 'retained',
+			},
+		});
+		expect(() =>
+			PipedriveEndpointOutputSchemas.personGet.parse({
+				success: 'yes',
+				data: { id: 1 },
+			}),
+		).toThrow(z.ZodError);
 	});
 });

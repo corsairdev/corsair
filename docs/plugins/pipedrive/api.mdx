@@ -3,6 +3,7 @@ title: "Pipedrive API reference"
 sidebarTitle: "API"
 description: "API reference for the Pipedrive plugin in Corsair: every `pipedrive.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -429,3 +430,555 @@ OAuth requires the deals:full scope. The documented API token cost is 5 tokens.
 
 
 ---
+
+## Persons
+
+### create
+
+`persons.create`
+
+Create a person
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.persons.create({ name: 'Sample contact' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `add_time` | `string` | No | — |
+| `owner_id` | `number` | No | — |
+| `org_id` | `number` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `visible_to` | `number` | No | — |
+| `label_ids` | `number[]` | No | — |
+| `postal_address` | `object \| null` | No | — |
+| `notes` | `string` | No | — |
+| `im` | `object[]` | No | — |
+| `birthday` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `marketing_status` | `no_consent \| unsubscribed \| subscribed \| archived` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+
+OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_title fields require company contact sync; marketing_status requires the Campaigns product. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  value?: string,
+  primary?: boolean,
+  label?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string,
+  primary?: boolean,
+  label?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="postal_address full type">
+
+```ts
+{
+  value?: string,
+  country?: string | null,
+  admin_area_level_1?: string | null,
+  admin_area_level_2?: string | null,
+  locality?: string | null,
+  sublocality?: string | null,
+  route?: string | null,
+  street_number?: string | null,
+  subpremise?: string | null,
+  postal_code?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="im full type">
+
+```ts
+{
+  value?: string,
+  primary?: boolean,
+  label?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  owner_id?: number,
+  org_id?: number,
+  add_time?: string,
+  update_time?: string | null,
+  emails?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  phones?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  is_deleted?: boolean,
+  visible_to?: number,
+  label_ids?: number[],
+  picture_id?: number | null,
+  postal_address?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  notes?: string,
+  im?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  birthday?: string,
+  job_title?: string,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`persons.delete`
+
+Delete a person
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.persons.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires contacts:full. The documented API token cost is 3 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`persons.get`
+
+Get a person by its numeric ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.persons.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `include_fields` | `(next_activity_id \| last_activity_id \| open_deals_count \| related_open_deals_count \| closed_deals_count \| related_closed_deals_count \| participant_open_deals_count \| participant_closed_deals_count \| email_messages_count \| activities_count \| done_activities_count \| undone_activities_count \| files_count \| notes_count \| followers_count \| won_deals_count \| related_won_deals_count \| lost_deals_count \| related_lost_deals_count \| last_incoming_mail_time \| last_outgoing_mail_time \| marketing_status \| doi_status \| smart_bcc_email)[]` | No | — |
+| `custom_fields` | `string[]` | No | — |
+| `include_option_labels` | `boolean` | No | — |
+| `include_labels` | `boolean` | No | — |
+
+OAuth requires contacts:read or contacts:full. The documented API token cost is 1 token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  owner_id?: number,
+  org_id?: number,
+  add_time?: string,
+  update_time?: string | null,
+  emails?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  phones?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  is_deleted?: boolean,
+  visible_to?: number,
+  label_ids?: number[],
+  picture_id?: number | null,
+  postal_address?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  notes?: string,
+  im?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  birthday?: string,
+  job_title?: string,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`persons.list`
+
+List persons with cursor pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.persons.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter_id` | `number` | No | — |
+| `ids` | `number[]` | No | — |
+| `owner_id` | `number` | No | — |
+| `org_id` | `number` | No | — |
+| `deal_id` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+| `updated_until` | `string` | No | — |
+| `sort_by` | `id \| update_time \| add_time` | No | — |
+| `sort_direction` | `asc \| desc` | No | — |
+| `include_fields` | `(next_activity_id \| last_activity_id \| open_deals_count \| related_open_deals_count \| closed_deals_count \| related_closed_deals_count \| participant_open_deals_count \| participant_closed_deals_count \| email_messages_count \| activities_count \| done_activities_count \| undone_activities_count \| files_count \| notes_count \| followers_count \| won_deals_count \| related_won_deals_count \| lost_deals_count \| related_lost_deals_count \| last_incoming_mail_time \| last_outgoing_mail_time \| marketing_status \| doi_status \| smart_bcc_email)[]` | No | — |
+| `custom_fields` | `string[]` | No | — |
+| `include_option_labels` | `boolean` | No | — |
+| `include_labels` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+OAuth requires contacts:read or contacts:full. List arrays are comma-separated; forward additional_data.next_cursor as cursor. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  owner_id?: number,
+  org_id?: number,
+  add_time?: string,
+  update_time?: string | null,
+  emails?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  phones?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  is_deleted?: boolean,
+  visible_to?: number,
+  label_ids?: number[],
+  picture_id?: number | null,
+  postal_address?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  notes?: string,
+  im?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  birthday?: string,
+  job_title?: string,
+  custom_fields?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`persons.update`
+
+Update a person
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.persons.update({ id: 1, name: 'Updated contact' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `owner_id` | `number` | No | — |
+| `org_id` | `number` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `visible_to` | `number` | No | — |
+| `label_ids` | `number[]` | No | — |
+| `postal_address` | `object \| null` | No | — |
+| `notes` | `string` | No | — |
+| `im` | `object[]` | No | — |
+| `birthday` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `marketing_status` | `no_consent \| unsubscribed \| subscribed \| archived` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+
+OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_title fields require company contact sync; marketing_status requires the Campaigns product. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  value?: string,
+  primary?: boolean,
+  label?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string,
+  primary?: boolean,
+  label?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="postal_address full type">
+
+```ts
+{
+  value?: string,
+  country?: string | null,
+  admin_area_level_1?: string | null,
+  admin_area_level_2?: string | null,
+  locality?: string | null,
+  sublocality?: string | null,
+  route?: string | null,
+  street_number?: string | null,
+  subpremise?: string | null,
+  postal_code?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="im full type">
+
+```ts
+{
+  value?: string,
+  primary?: boolean,
+  label?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  owner_id?: number,
+  org_id?: number,
+  add_time?: string,
+  update_time?: string | null,
+  emails?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  phones?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  is_deleted?: boolean,
+  visible_to?: number,
+  label_ids?: number[],
+  picture_id?: number | null,
+  postal_address?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  notes?: string,
+  im?: {
+    value?: string,
+    primary?: boolean,
+    label?: string
+  }[],
+  birthday?: string,
+  job_title?: string,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---\n

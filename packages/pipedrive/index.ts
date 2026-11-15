@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Deals } from './endpoints';
+import { Deals, Persons } from './endpoints';
 import type {
 	PipedriveEndpointInputs,
 	PipedriveEndpointOutputs,
@@ -56,6 +56,11 @@ export type PipedriveEndpoints = {
 	dealCreate: PipedriveEndpoint<'dealCreate'>;
 	dealUpdate: PipedriveEndpoint<'dealUpdate'>;
 	dealDelete: PipedriveEndpoint<'dealDelete'>;
+	personList: PipedriveEndpoint<'personList'>;
+	personGet: PipedriveEndpoint<'personGet'>;
+	personCreate: PipedriveEndpoint<'personCreate'>;
+	personUpdate: PipedriveEndpoint<'personUpdate'>;
+	personDelete: PipedriveEndpoint<'personDelete'>;
 };
 
 const pipedriveEndpointsNested = {
@@ -65,6 +70,13 @@ const pipedriveEndpointsNested = {
 		create: Deals.create,
 		update: Deals.update,
 		delete: Deals.delete,
+	},
+	persons: {
+		list: Persons.list,
+		get: Persons.get,
+		create: Persons.create,
+		update: Persons.update,
+		delete: Persons.delete,
 	},
 } as const;
 
@@ -89,6 +101,26 @@ export const pipedriveEndpointSchemas = {
 		input: PipedriveEndpointInputSchemas.dealDelete,
 		output: PipedriveEndpointOutputSchemas.dealDelete,
 	},
+	'persons.list': {
+		input: PipedriveEndpointInputSchemas.personList,
+		output: PipedriveEndpointOutputSchemas.personList,
+	},
+	'persons.get': {
+		input: PipedriveEndpointInputSchemas.personGet,
+		output: PipedriveEndpointOutputSchemas.personGet,
+	},
+	'persons.create': {
+		input: PipedriveEndpointInputSchemas.personCreate,
+		output: PipedriveEndpointOutputSchemas.personCreate,
+	},
+	'persons.update': {
+		input: PipedriveEndpointInputSchemas.personUpdate,
+		output: PipedriveEndpointOutputSchemas.personUpdate,
+	},
+	'persons.delete': {
+		input: PipedriveEndpointInputSchemas.personDelete,
+		output: PipedriveEndpointOutputSchemas.personDelete,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof pipedriveEndpointsNested
 >;
@@ -105,6 +137,20 @@ const pipedriveEndpointMeta = {
 	'deals.create': { riskLevel: 'write', description: 'Create a deal' },
 	'deals.update': { riskLevel: 'write', description: 'Update a deal' },
 	'deals.delete': { riskLevel: 'destructive', description: 'Delete a deal' },
+	'persons.list': {
+		riskLevel: 'read',
+		description: 'List persons with cursor pagination and filters',
+	},
+	'persons.get': {
+		riskLevel: 'read',
+		description: 'Get a person by its numeric ID',
+	},
+	'persons.create': { riskLevel: 'write', description: 'Create a person' },
+	'persons.update': { riskLevel: 'write', description: 'Update a person' },
+	'persons.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a person',
+	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof pipedriveEndpointsNested
 >;
@@ -179,6 +225,13 @@ export type {
 	DealListResponse,
 	DealResponse,
 	DealUpdateInput,
+	PersonCreateInput,
+	PersonDeleteResponse,
+	PersonGetInput,
+	PersonListInput,
+	PersonListResponse,
+	PersonResponse,
+	PersonUpdateInput,
 	PipedriveEndpointInputs,
 	PipedriveEndpointOutputs,
 } from './endpoints/types';

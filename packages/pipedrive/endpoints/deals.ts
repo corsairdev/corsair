@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { PipedriveEndpoints } from '..';
 import { makePipedriveRequest } from '../client';
+import type { PipedriveEndpoints } from '../index';
 import {
 	PipedriveEndpointInputSchemas,
 	PipedriveEndpointOutputSchemas,

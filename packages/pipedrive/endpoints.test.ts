@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
-import { Deals } from './endpoints';
+import { Deals, Persons } from './endpoints';
 import type { PipedriveContext } from './index';
 
 jest.mock('corsair/core', () => {
@@ -51,6 +51,7 @@ function context(): EndpointContext {
 
 const ctx = context();
 const deal = { id: 12, title: 'Synthetic opportunity', status: 'open' };
+const person = { id: 18, name: 'Synthetic person' };
 
 beforeEach(() => {
 	mockedRequest.mockReset();
@@ -164,6 +165,116 @@ describe('Pipedrive deal endpoints', () => {
 		);
 		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
 			'Private customer opportunity',
+		);
+	});
+});
+
+describe('Pipedrive person endpoints', () => {
+	it('lists persons with documented filters, comma-separated arrays, and cursor', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: [person],
+			additional_data: { next_cursor: 'person-next' },
+		});
+		const result = await Persons.list(ctx, {
+			ids: [18, 19],
+			include_fields: ['open_deals_count'],
+			limit: 100,
+			cursor: 'person-cursor',
+		});
+		expect(result.data).toHaveLength(1);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/persons',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'GET',
+				query: {
+					ids: '18,19',
+					include_fields: 'open_deals_count',
+					limit: 100,
+					cursor: 'person-cursor',
+				},
+			},
+		);
+	});
+
+	it('gets a person with path ID and include-field query', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: person });
+		await Persons.get(ctx, { id: 18, include_fields: ['open_deals_count'] });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/persons/18',
+			'test-api-token',
+			'api_key',
+			{ method: 'GET', query: { include_fields: 'open_deals_count' } },
+		);
+	});
+
+	it('creates a person with the documented JSON body', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: person });
+		await Persons.create(ctx, {
+			name: 'Synthetic person',
+			emails: [{ value: 'person@example.test', primary: true, label: 'work' }],
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/persons',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'POST',
+				body: {
+					name: 'Synthetic person',
+					emails: [
+						{ value: 'person@example.test', primary: true, label: 'work' },
+					],
+				},
+			},
+		);
+	});
+
+	it('updates a person with PATCH and keeps ID out of the body', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: person });
+		await Persons.update(ctx, { id: 18, name: 'Renamed person' });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/persons/18',
+			'test-api-token',
+			'api_key',
+			{ method: 'PATCH', body: { name: 'Renamed person' } },
+		);
+	});
+
+	it('deletes a person and validates the deletion response', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: { id: 18 } });
+		await Persons.delete(ctx, { id: 18 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/persons/18',
+			'test-api-token',
+			'api_key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('rejects invalid person input before network activity and redacts contact data from logs', async () => {
+		await expect(
+			Reflect.apply(Persons.create, undefined, [
+				ctx,
+				{ name: 'Synthetic person', callback: 'https://synthetic.invalid' },
+			]),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+		mockedRequest.mockResolvedValue({ success: true, data: person });
+		await Persons.create(ctx, {
+			name: 'Synthetic person',
+			emails: [{ value: 'private@example.test' }],
+		});
+		expect(mockedLog).toHaveBeenCalledWith(
+			ctx,
+			'pipedrive.persons.create',
+			{},
+			'completed',
+		);
+		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
+			'private@example.test',
 		);
 	});
 });

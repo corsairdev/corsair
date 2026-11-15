@@ -1,7 +1,7 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "Pipedrive"
-description: "Manage Pipedrive deals through the v2 API with validated reads, creation, updates, deletion, and cursor pagination."
-overviewNote: "This initial implementation covers v2 deal list, get, create, update, and delete operations only. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. OAuth reads require deals:read or deals:full; writes require deals:full."
+description: "Manage Pipedrive deals and persons through selected v2 API operations with validated reads, writes, deletes, and cursor pagination."
+overviewNote: "This deliberately partial implementation covers v2 deal and person list, get, create, update, and delete operations only. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Deal reads require deals:read or deals:full and deal writes require deals:full. Person reads require contacts:read or contacts:full and person writes require contacts:full. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
 examples:
   read:
     path: deals.get
@@ -13,12 +13,22 @@ examples:
     title: Create a deal
     args:
       title: Sample opportunity
+  person:
+    path: persons.get
+    title: Get a person by ID
+    args:
+      id: 1
 apiNotes:
   deals.list: "The list operation forwards Pipedrive's opaque cursor and returns additional_data.next_cursor; pass that value as cursor to request the next page. List array query parameters are serialized as comma-separated values as required by the OpenAPI form/explode=false contract. Its documented API token cost is 10 tokens."
   deals.get: "OAuth requires the deals:read or deals:full scope. The documented API token cost is 1 token."
   deals.create: "API-token authentication is sent using Pipedrive's documented x-api-token header. OAuth 2.0 uses a Bearer access token and requires deals:full. The documented API token cost is 5 tokens."
   deals.update: "OAuth requires the deals:full scope. The documented API token cost is 5 tokens."
   deals.delete: "OAuth requires the deals:full scope. The documented API token cost is 3 tokens."
+  persons.list: "OAuth requires contacts:read or contacts:full. List arrays are comma-separated; forward additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
+  persons.get: "OAuth requires contacts:read or contacts:full. The documented API token cost is 1 token."
+  persons.create: "OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_title fields require company contact sync; marketing_status requires the Campaigns product. The documented API token cost is 5 tokens."
+  persons.update: "OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_title fields require company contact sync; marketing_status requires the Campaigns product. The documented API token cost is 5 tokens."
+  persons.delete: "OAuth requires contacts:full. The documented API token cost is 3 tokens."
 apiExamples:
   deals.list:
     call: "{}"
@@ -29,4 +39,14 @@ apiExamples:
   deals.update:
     call: "{ id: 1, title: 'Updated opportunity' }"
   deals.delete:
+    call: "{ id: 1 }"
+  persons.list:
+    call: "{}"
+  persons.get:
+    call: "{ id: 1 }"
+  persons.create:
+    call: "{ name: 'Sample contact' }"
+  persons.update:
+    call: "{ id: 1, name: 'Updated contact' }"
+  persons.delete:
     call: "{ id: 1 }"
