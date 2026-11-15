@@ -1,0 +1,141 @@
+---
+title: "Lemlist plugin"
+sidebarTitle: "Overview"
+description: "Sales engagement and cold email outreach platform for automating multi-channel campaigns, lead tracking, deliverability, and unsubscribes."
+---
+
+Use **Lemlist** through Corsair: one client, typed API calls.
+
+Lemlist uses HTTP Basic authentication. Provide your Lemlist API key from your team settings (`Settings` -> `Integrations` -> `API`).
+The API key is passed as the password with an empty username (`Authorization: Basic base64(:apiKey)`).
+
+Things to know before calling:
+- **Identifiers:** Campaign IDs and Lead IDs follow Lemlist's internal identifier format (e.g., `cam_...`, `lea_...`).
+- **Rate Limiting:** Lemlist enforces API rate limits. The plugin automatically handles HTTP 429 responses and backs off according to the `Retry-After` header.
+- **Campaign Lead Actions:** Most lead management operations (pause, resume, review, mark interested, personalize step) can be performed either globally or scoped to a specific campaign.
+- **Unsubscribes & Blacklist:** Contacts can be unsubscribed or resubscribed either by variable (such as `email` or `domain`) or via the contact management endpoints.
+
+**What you get:**
+
+- 60 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/lemlist better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/lemlist better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/lemlist better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/lemlist better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { lemlist } from '@corsair-dev/lemlist';
+
+export const corsair = createCorsair({
+	plugins: [
+		lemlist(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Lemlist API key before the first call: `pnpm corsair setup --plugin=lemlist --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+lemlist()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'lemlist',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List campaigns**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lemlist.api.campaigns.list({ limit: 10 });
+```
+
+
+**Add a lead to an outreach campaign**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lemlist.api.leads.createInCampaign({
+	campaignId: 'cam_1234567890abcdef',
+	email: 'contact@example.com',
+	firstName: 'Jane',
+	lastName: 'Doe',
+});
+```
+
+
+See the full list on the [API](/plugins/lemlist/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/lemlist/api">
+    Every `lemlist.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
