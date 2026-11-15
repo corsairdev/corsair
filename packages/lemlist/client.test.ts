@@ -39,7 +39,11 @@ function makeApiError(status: number, message: string, retryAfter?: number) {
 			ok: false,
 			status,
 			statusText: message,
-			body: { error: message },
+			body: {
+				error: message,
+				email: 'private@example.com',
+				code: 'BAD_REQUEST',
+			},
 		},
 		message,
 		retryAfter === undefined ? undefined : { retryAfter },
@@ -89,18 +93,47 @@ describe('client.ts', () => {
 	});
 
 	describe('sanitizeApiError', () => {
-		it('redacts request body and strips query parameters from url', () => {
+		it('preserves the ApiError while redacting sensitive data', () => {
 			const err = makeApiError(400, 'Bad Request', 1000);
 			const sanitized = sanitizeApiError(err);
-			expect(sanitized.request.body).toBeUndefined();
-			expect(sanitized.request.query).toBeUndefined();
-			expect(sanitized.request.headers).toBeUndefined();
-			expect(sanitized.request.url).toBe('/');
-			expect(sanitized.url).toBe('https://api.lemlist.com/api/');
+			expect(sanitized).toBe(err);
+			expect(sanitized.request.body).toEqual({
+				email: '[REDACTED]',
+				secret: '[REDACTED]',
+			});
+			expect(sanitized.request.query).toEqual({ email: '[REDACTED]' });
+			expect(sanitized.request.headers).toEqual({
+				Authorization: '[REDACTED]',
+			});
+			expect(sanitized.request.url).toBe('/team');
+			expect(sanitized.url).toBe('https://api.lemlist.com/api/team');
+			expect(sanitized.body).toEqual({
+				error: 'Bad Request',
+				email: '[REDACTED]',
+				code: 'BAD_REQUEST',
+			});
 			expect(sanitized.message).not.toContain('super-secret-key');
 			expect(sanitized.message).not.toContain('private@example.com');
 			expect(sanitized.status).toBe(400);
 			expect(sanitized.retryAfter).toBe(1000);
+		});
+
+		it('preserves useful provider details while removing echoed API keys', () => {
+			const error = makeApiError(
+				400,
+				'Invalid request for key-secret-1234567890',
+			);
+			const sanitized = sanitizeApiError(error, 'key-secret-1234567890');
+
+			expect(sanitized.message).toBe('Invalid request for [REDACTED]');
+			expect(sanitized.body).toMatchObject({
+				code: 'BAD_REQUEST',
+				email: '[REDACTED]',
+			});
+			expect(sanitized).toBe(error);
+			expect(JSON.stringify(sanitized.body)).not.toContain(
+				'key-secret-1234567890',
+			);
 		});
 	});
 
@@ -148,7 +181,18 @@ describe('client.ts', () => {
 			expect(mockRequest).not.toHaveBeenCalled();
 		});
 
-		it('sanitizes ApiError before re-throwing', async () => {
+		it('forwards a configured timeout to the transport', async () => {
+			mockRequest.mockResolvedValue({ _id: 'tea_123' });
+
+			await makeLemlistRequest('/team', 'test_key', {
+				method: 'GET',
+				timeout: 60000,
+			});
+
+			expect(mockRequest.mock.calls[0]?.[0]?.TIMEOUT).toBe(60000);
+		});
+
+		it('preserves and sanitizes ApiError before re-throwing', async () => {
 			const err = makeApiError(429, 'Too Many Requests', 4000);
 			mockRequest.mockRejectedValue(err);
 
@@ -158,9 +202,13 @@ describe('client.ts', () => {
 			);
 
 			expectApiError(thrown);
+			expect(thrown).toBe(err);
 			expect(thrown.status).toBe(429);
 			expect(thrown.retryAfter).toBe(4000);
-			expect(thrown.request.body).toBeUndefined();
+			expect(thrown.request.body).toEqual({
+				email: '[REDACTED]',
+				secret: '[REDACTED]',
+			});
 		});
 
 		it('sanitizes transport Error messages before propagating them', async () => {

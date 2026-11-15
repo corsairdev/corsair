@@ -41,6 +41,7 @@ export const Team = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.teamGet.parse(response);
 		const logFn: (
@@ -72,6 +73,7 @@ export const Team = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.teamGetSenders.parse(response);
 		const logFn: (
@@ -102,6 +104,7 @@ export const Team = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.teamGetCredits.parse(response);
 		const logFn: (
@@ -133,6 +136,7 @@ export const Team = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.teamGetCrmUsers.parse(response);
 		const logFn: (

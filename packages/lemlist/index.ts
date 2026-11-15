@@ -451,7 +451,7 @@ export const lemlistEndpointMeta = {
 		description: 'Retrieve aggregated reports for one or multiple campaigns',
 	},
 	'campaigns.startExport': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Initiate asynchronous export of campaign statistics',
 	},
 	'campaigns.getExportStatus': {
@@ -507,7 +507,7 @@ export const lemlistEndpointMeta = {
 		description: 'Unsubscribe a lead from a campaign by email',
 	},
 	'leads.resume': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Resume activity for a paused lead',
 	},
 	'leads.pause': {

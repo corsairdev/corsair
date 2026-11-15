@@ -32,7 +32,7 @@ pnpm add @corsair-dev/lemlist
 | `campaigns.skipStepForEveryone` | `lemlist.api.campaigns.skipStepForEveryone` | `destructive` | Skip one sequence step for every lead in campaign |
 | `campaigns.skipStepForLeads` | `lemlist.api.campaigns.skipStepForLeads` | `destructive` | Skip one sequence step for specific leads in campaign |
 | `campaigns.start` | `lemlist.api.campaigns.start` | `destructive` | Resume a paused campaign and allow its outreach messages to send |
-| `campaigns.startExport` | `lemlist.api.campaigns.startExport` | `read` | Initiate asynchronous export of campaign statistics |
+| `campaigns.startExport` | `lemlist.api.campaigns.startExport` | `write` | Initiate asynchronous export of campaign statistics |
 | `campaigns.unarchive` | `lemlist.api.campaigns.unarchive` | `write` | Restore an archived campaign |
 | `campaigns.update` | `lemlist.api.campaigns.update` | `write` | Update settings and configuration of a campaign |
 | `campaigns.updateSettings` | `lemlist.api.campaigns.updateSettings` | `write` | Update settings of a campaign |
@@ -52,7 +52,7 @@ pnpm add @corsair-dev/lemlist
 | `leads.pause` | `lemlist.api.leads.pause` | `write` | Pause lead activity across campaigns or in a specific campaign |
 | `leads.personalizeStep` | `lemlist.api.leads.personalizeStep` | `write` | Personalize step message for a single lead |
 | `leads.resetStepPersonalization` | `lemlist.api.leads.resetStepPersonalization` | `destructive` | Reset step personalization for a single lead |
-| `leads.resume` | `lemlist.api.leads.resume` | `write` | Resume activity for a paused lead |
+| `leads.resume` | `lemlist.api.leads.resume` | `destructive` | Resume activity for a paused lead |
 | `leads.review` | `lemlist.api.leads.review` | `destructive` | Manually launch a lead into its campaign, allowing outreach to begin |
 | `leads.skipStep` | `lemlist.api.leads.skipStep` | `destructive` | Skip one step of a running campaign for a single lead |
 | `leads.unsubscribeFromCampaign` | `lemlist.api.leads.unsubscribeFromCampaign` | `destructive` | Unsubscribe a lead from a campaign by email |

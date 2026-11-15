@@ -2,6 +2,7 @@ import {
 	LemlistEndpointInputSchemas,
 	LemlistEndpointOutputSchemas,
 	LemlistSchema,
+	lemlistEndpointMeta,
 	lemlistEndpointSchemas,
 	lemlistEndpointsNested,
 } from './index';
@@ -23,6 +24,14 @@ describe('schema.test.ts', () => {
 		const schemaOps = Object.keys(lemlistEndpointSchemas);
 		expect(schemaOps.sort()).toEqual(nestedOps.sort());
 		expect(schemaOps).toHaveLength(60);
+	});
+
+	it('marks outreach restart and launch operations as destructive', () => {
+		expect(lemlistEndpointMeta['campaigns.start'].riskLevel).toBe(
+			'destructive',
+		);
+		expect(lemlistEndpointMeta['leads.resume'].riskLevel).toBe('destructive');
+		expect(lemlistEndpointMeta['leads.review'].riskLevel).toBe('destructive');
 	});
 
 	describe('Input Schemas', () => {

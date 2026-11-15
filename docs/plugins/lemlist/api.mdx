@@ -120,6 +120,8 @@ await corsair.lemlist.api.campaigns.addAbmLeads({ campaignId: 'cam_1234567890abc
 | `campaignId` | `string` | Yes | — |
 | `leadIds` | `string[]` | Yes | — |
 
+Requires the ABM beta. Input IDs are People Database IDs, and existing contacts on another company may be skipped.
+
 
 
 **Output**
@@ -445,6 +447,8 @@ await corsair.lemlist.api.campaigns.exportLeads({ campaignId: 'cam_1234567890abc
 | `state` | `string` | No | — |
 | `format` | `json \| csv` | No | — |
 
+JSON output is an array; CSV output is returned as text. Use documented comma-separated state filters.
+
 
 
 **Output:** `Record<string, string \| number \| boolean \| null>[] \| string`
@@ -735,6 +739,8 @@ await corsair.lemlist.api.campaigns.getExportStatus({ campaignId: 'cam_123456789
 | `campaignId` | `string` | Yes | — |
 | `exportId` | `string` | Yes | — |
 
+Export status is retained for two hours and files are available for 24 hours after completion.
+
 
 
 **Output**
@@ -833,6 +839,8 @@ await corsair.lemlist.api.campaigns.getSettings({ campaignId: 'cam_1234567890abc
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | — |
+
+Requires the Lemlist Email Pro plan or higher.
 
 
 
@@ -1341,6 +1349,8 @@ await corsair.lemlist.api.campaigns.setExportEmail({ campaignId: 'cam_1234567890
 | `exportId` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 
+The notification email is a required path parameter; the export continues asynchronously.
+
 
 
 **Output**
@@ -1395,6 +1405,8 @@ await corsair.lemlist.api.campaigns.skipStepForEveryone({ campaignId: 'cam_12345
 | `campaignId` | `string` | Yes | — |
 | `stepId` | `string` | Yes | — |
 
+A skipped step cannot be restored. Condition steps are not skippable.
+
 
 
 **Output**
@@ -1426,6 +1438,8 @@ await corsair.lemlist.api.campaigns.skipStepForLeads({ campaignId: 'cam_12345678
 | `campaignId` | `string` | Yes | — |
 | `stepId` | `string` | Yes | — |
 | `leads` | `string[]` | Yes | — |
+
+Accepts up to 100 lead IDs or emails per request; the deprecated single-lead operation remains available at leads.skipStep.
 
 
 
@@ -1493,7 +1507,7 @@ await corsair.lemlist.api.campaigns.start({ campaignId: 'cam_1234567890abcdef' }
 
 Initiate asynchronous export of campaign statistics
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.lemlist.api.campaigns.startExport({ campaignId: 'cam_1234567890abcdef' });
@@ -1504,6 +1518,8 @@ await corsair.lemlist.api.campaigns.startExport({ campaignId: 'cam_1234567890abc
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | — |
+
+Starts an asynchronous export. Poll the returned export ID until status is no longer pending; the download URL expires after 24 hours.
 
 
 
@@ -1811,6 +1827,8 @@ await corsair.lemlist.api.campaigns.updateSettings({ campaignId: 'cam_1234567890
 | `onMeetingBooked` | `object` | No | — |
 | `aiFeatures` | `object` | No | — |
 | `schedule` | `object` | No | — |
+
+Requires Email Pro; send only writable settings sections, and an empty update is rejected.
 
 <AccordionGroup>
 <Accordion title="general full type">
@@ -2155,6 +2173,8 @@ await corsair.lemlist.api.leads.createInCampaign({ campaignId: 'cam_1234567890ab
 | `findPhone` | `boolean` | No | — |
 | `updateStrategy` | `overwrite \| overwriteIgnoreEmpty \| fillEmptyOnly` | No | — |
 
+Creates a new lead and never updates an existing lead. Additional string body keys are stored as custom variables. Enrichment query options may consume credits.
+
 
 
 **Output**
@@ -2431,6 +2451,8 @@ await corsair.lemlist.api.leads.importFromCrm({ campaignId: 'cam_1234567890abcde
 | `userId` | `string` | No | — |
 | `deduplicate` | `boolean \| off \| all \| activeOnly` | No | — |
 | `enrichFeature` | `(find_email \| find_phone \| verify \| linkedin_enrichment)[] \| string` | No | — |
+
+Links the campaign to a filter once and imports asynchronously; requested enrichment features consume credits.
 
 
 
@@ -2761,6 +2783,8 @@ await corsair.lemlist.api.leads.personalizeStep({ campaignId: 'cam_1234567890abc
 | `altMessage` | `string` | No | — |
 | `altMessagePremium` | `string` | No | — |
 
+Only supported message steps can be personalized, and a lead that has reached the step cannot be changed.
+
 
 
 **Output**
@@ -2831,7 +2855,7 @@ await corsair.lemlist.api.leads.resetStepPersonalization({ campaignId: 'cam_1234
 
 Resume activity for a paused lead
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lemlist.api.leads.resume({ leadId: 'lea_123456' });
@@ -2892,6 +2916,8 @@ await corsair.lemlist.api.leads.review({ leadId: 'lea_123456' });
 |------|------|----------|-------------|
 | `leadId` | `string` | Yes | — |
 
+Launches a single lead and may start outreach. The API key user, campaign, AI variables, and sender must satisfy Lemlist's launch guards.
+
 
 
 **Output**
@@ -2924,6 +2950,8 @@ await corsair.lemlist.api.leads.skipStep({ campaignId: 'cam_1234567890abcdef', l
 | `campaignId` | `string` | Yes | — |
 | `leadIdOrEmail` | `string` | Yes | — |
 | `stepId` | `string` | Yes | — |
+
+Deprecated by Lemlist in favor of campaigns.skipStepForLeads; skips cannot be undone.
 
 
 
@@ -3281,6 +3309,8 @@ await corsair.lemlist.api.unsubscribes.bulkUnsubscribeVariables({ values: ['lead
 |------|------|----------|-------------|
 | `values` | `string[]` | Yes | — |
 
+The API accepts up to 10,000 values and returns a text confirmation.
+
 
 
 **Output:** `string`
@@ -3305,6 +3335,8 @@ await corsair.lemlist.api.unsubscribes.exportContacts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `format` | `csv \| json` | No | — |
+
+Returns CSV text by default or a JSON array with format=json.
 
 
 
@@ -3342,6 +3374,8 @@ await corsair.lemlist.api.unsubscribes.exportVariables({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `format` | `csv \| json` | No | — |
+
+Returns CSV text by default or a JSON array with format=json.
 
 
 
@@ -3512,6 +3546,8 @@ await corsair.lemlist.api.unsubscribes.resubscribeVariable({ value: 'lead@exampl
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `value` | `string` | Yes | — |
+
+Lemlist protects unsubscribe records whose source is LEAD or ABUSE from re-subscription.
 
 
 

@@ -37,6 +37,7 @@ export const Activities = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.activitiesList.parse(response);
 		const logFn: (
@@ -70,6 +71,7 @@ export const Activities = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.activitiesDeleteRecordingTranscript.parse(

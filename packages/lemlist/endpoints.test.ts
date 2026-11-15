@@ -27,7 +27,7 @@ const fakeCtx = {
 	endpoints: {},
 	db: {},
 	$getAccountId: async () => 'test-account-id',
-	options: {},
+	options: { timeout: 45000 },
 	keys: {
 		get_dek: async () => 'test-dek',
 		issue_new_dek: async () => 'test-dek',
@@ -221,6 +221,7 @@ async function invoke<I, R>(
 	const contract = routeContracts[operation];
 	expect(mockRequest).toHaveBeenCalledTimes(1);
 	expect(mockRequest.mock.calls[0]?.[2]?.method).toBe(contract.method);
+	expect(mockRequest.mock.calls[0]?.[2]?.timeout).toBe(45000);
 	expect(mockRequest.mock.calls[0]?.[0]).toBe(contract.path);
 	return result;
 }
@@ -1309,6 +1310,8 @@ describe('endpoints.test.ts', () => {
 			expect(mockRequest).toHaveBeenCalledTimes(1);
 			expect(mockRequest.mock.calls[0]?.[1]).toBe('test_api_key');
 			expect(mockRequest.mock.calls[0]?.[2]?.method).toBe('POST');
+			expect(mockRequest.mock.calls[0]?.[2]?.query).toEqual({ role: 'CTO' });
+			expect(mockRequest.mock.calls[0]?.[2]?.body).toBeUndefined();
 			expect(mockLogEvent).toHaveBeenCalledTimes(1);
 			expect(mockLogEvent.mock.calls[0]?.[1]).toBe(
 				'lemlist.leads.addVariables',
@@ -1332,6 +1335,8 @@ describe('endpoints.test.ts', () => {
 			expect(mockRequest).toHaveBeenCalledTimes(1);
 			expect(mockRequest.mock.calls[0]?.[1]).toBe('test_api_key');
 			expect(mockRequest.mock.calls[0]?.[2]?.method).toBe('PATCH');
+			expect(mockRequest.mock.calls[0]?.[2]?.query).toEqual({ role: 'VP' });
+			expect(mockRequest.mock.calls[0]?.[2]?.body).toBeUndefined();
 			expect(mockLogEvent).toHaveBeenCalledTimes(1);
 			expect(mockLogEvent.mock.calls[0]?.[1]).toBe(
 				'lemlist.leads.updateVariables',
@@ -1355,6 +1360,8 @@ describe('endpoints.test.ts', () => {
 			expect(mockRequest).toHaveBeenCalledTimes(1);
 			expect(mockRequest.mock.calls[0]?.[1]).toBe('test_api_key');
 			expect(mockRequest.mock.calls[0]?.[2]?.method).toBe('DELETE');
+			expect(mockRequest.mock.calls[0]?.[2]?.query).toEqual({ role: '' });
+			expect(mockRequest.mock.calls[0]?.[2]?.body).toBeUndefined();
 			expect(mockLogEvent).toHaveBeenCalledTimes(1);
 			expect(mockLogEvent.mock.calls[0]?.[1]).toBe(
 				'lemlist.leads.deleteVariables',

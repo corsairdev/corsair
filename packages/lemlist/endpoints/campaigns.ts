@@ -77,6 +77,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.campaignsList.parse(response);
 		const logFn: (
@@ -109,6 +110,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.campaignsCreate.parse(response);
 		const logFn: (
@@ -139,6 +141,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.campaignsGet.parse(response);
 		const logFn: (
@@ -174,6 +177,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.campaignsUpdate.parse(response);
 		const logFn: (
@@ -205,6 +209,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsGetSettings.parse(response);
@@ -241,6 +246,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsUpdateSettings.parse(response);
@@ -272,6 +278,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.campaignsPause.parse(response);
 		const logFn: (
@@ -302,6 +309,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.campaignsStart.parse(response);
 		const logFn: (
@@ -333,6 +341,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsArchive.parse(response);
@@ -365,6 +374,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsUnarchive.parse(response);
@@ -401,6 +411,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsDuplicate.parse(response);
@@ -433,6 +444,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsGetStatutes.parse(response);
@@ -469,6 +481,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsGetStats.parse(response);
@@ -502,6 +515,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsGetBatchStats.parse(response);
@@ -535,6 +549,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsGetReports.parse(response);
@@ -567,6 +582,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsStartExport.parse(response);
@@ -599,6 +615,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsGetExportStatus.parse(response);
@@ -631,6 +648,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsSetExportEmail.parse(response);
@@ -667,6 +685,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsExportLeads.parse(response);
@@ -699,6 +718,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsSkipStepForEveryone.parse(response);
@@ -733,6 +753,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsSkipStepForLeads.parse(response);
@@ -768,6 +789,7 @@ export const Campaigns = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.campaignsAddAbmLeads.parse(response);

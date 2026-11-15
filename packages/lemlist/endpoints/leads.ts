@@ -77,6 +77,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.leadsGet.parse(response);
 		const logFn: (
@@ -109,6 +110,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.leadsGetByEmail.parse(response);
 		const logFn: (
@@ -142,6 +144,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsListInCampaign.parse(response);
@@ -196,6 +199,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsCreateInCampaign.parse(response);
@@ -234,6 +238,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsUpdateInCampaign.parse(response);
@@ -268,6 +273,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsDeleteFromCampaign.parse(response);
@@ -301,6 +307,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsUnsubscribeFromCampaign.parse(response);
@@ -332,6 +339,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.leadsResume.parse(response);
 		const logFn: (
@@ -363,6 +371,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.leadsPause.parse(response);
 		const logFn: (
@@ -393,6 +402,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.leadsReview.parse(response);
 		const logFn: (
@@ -424,6 +434,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsMarkInterested.parse(response);
@@ -454,6 +465,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsMarkNotInterested.parse(response);
@@ -484,6 +496,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsMarkInterestedInCampaign.parse(
@@ -518,6 +531,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsMarkNotInterestedInCampaign.parse(
@@ -551,6 +565,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed = LemlistEndpointOutputSchemas.leadsSkipStep.parse(response);
 		const logFn: (
@@ -587,6 +602,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsPersonalizeStep.parse(response);
@@ -620,6 +636,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsResetStepPersonalization.parse(
@@ -656,6 +673,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsAddVariables.parse(response);
@@ -689,6 +707,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsUpdateVariables.parse(response);
@@ -728,6 +747,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsDeleteVariables.parse(response);
@@ -765,6 +785,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsImportFromCrm.parse(response);
@@ -798,6 +819,7 @@ export const Leads = {
 			method: req.method,
 			body: req.body,
 			query: req.query,
+			timeout: ctx.options.timeout,
 		});
 		const parsed =
 			LemlistEndpointOutputSchemas.leadsGetCrmFilters.parse(response);

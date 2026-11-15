@@ -72,32 +72,124 @@ export function compactQuery(
 	return Object.keys(defined).length > 0 ? defined : undefined;
 }
 
-/**
- * Re-throws a sanitized `ApiError` stripped of request body and query secrets.
- */
-export function sanitizeApiError(error: ApiError): ApiError {
-	const cleanRequest: ApiRequestOptions = {
-		method: error.request.method,
-		url: '/',
-	};
+const SENSITIVE_ERROR_FIELDS = new Set(
+	[
+		'apiKey',
+		'xApiKey',
+		'authorization',
+		'accessToken',
+		'refreshToken',
+		'token',
+		'clientSecret',
+		'password',
+		'secret',
+		'email',
+		'phone',
+		'leadEmail',
+		'contactEmail',
+		'firstName',
+		'lastName',
+		'companyName',
+		'linkedinUrl',
+		'companyDomain',
+		'value',
+		'values',
+		'variables',
+	].map((field) => field.toLowerCase().replace(/[-_]/g, '')),
+);
 
-	return new ApiError(
-		cleanRequest,
-		{
-			url: `${LEMLIST_API_BASE}/`,
-			ok: false,
-			status: error.status,
-			statusText: 'Request failed',
-			body: undefined,
+function sanitizeErrorText(value: string, apiKey?: string): string {
+	let sanitized = value;
+	if (apiKey) {
+		const credentials = `:${apiKey}`;
+		for (const secret of [
+			apiKey,
+			credentials,
+			Buffer.from(credentials).toString('base64'),
+			basicAuthHeader(apiKey),
+		]) {
+			sanitized = sanitized.replaceAll(secret, '[REDACTED]');
+		}
+	}
+	return sanitized
+		.replace(/Basic\s+[A-Za-z0-9+/=]+/gi, 'Basic [REDACTED]')
+		.replace(
+			/([?&](?:api[_-]?key|token|secret|password|signature)=)[^&\s]+/gi,
+			'$1[REDACTED]',
+		)
+		.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[REDACTED_EMAIL]')
+		.replace(/\+?\d[\d ().-]{6,}\d/g, '[REDACTED_PHONE]');
+}
+
+function sanitizeErrorUrl(value: string, apiKey?: string): string {
+	const sanitized = sanitizeErrorText(value, apiKey);
+	try {
+		const url = new URL(sanitized);
+		url.search = '';
+		url.hash = '';
+		return url.toString();
+	} catch {
+		return sanitized.split(/[?#]/, 1)[0] ?? sanitized;
+	}
+}
+
+// `unknown` because parsed provider JSON can be any shape before this guard.
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+// `unknown` because provider error bodies are untrusted JSON and fields need runtime redaction.
+function sanitizeProviderData(value: unknown, apiKey?: string): unknown {
+	if (typeof value === 'string') return sanitizeErrorText(value, apiKey);
+	if (Array.isArray(value)) {
+		return value.map((item) => sanitizeProviderData(item, apiKey));
+	}
+	if (!isObjectRecord(value)) return value;
+
+	const sanitized: Record<string, unknown> = {};
+	for (const key of Object.keys(value)) {
+		const normalized = key.toLowerCase().replace(/[-_]/g, '');
+		sanitized[key] = SENSITIVE_ERROR_FIELDS.has(normalized)
+			? '[REDACTED]'
+			: sanitizeProviderData(value[key], apiKey);
+	}
+	return sanitized;
+}
+
+/** Preserve the original ApiError and its useful details while redacting customer data. */
+export function sanitizeApiError(error: ApiError, apiKey?: string): ApiError {
+	const request = sanitizeProviderData(error.request, apiKey);
+	if (isObjectRecord(request)) {
+		request.url = sanitizeErrorUrl(error.request.url, apiKey);
+	}
+	Object.defineProperties(error, {
+		message: {
+			value: sanitizeErrorText(error.message, apiKey),
+			configurable: true,
+			writable: true,
 		},
-		`Lemlist API request failed with status ${error.status}`,
-		{
-			retryAfter: error.retryAfter,
-			rateLimitReset: error.rateLimitReset,
-			rateLimitRemaining: error.rateLimitRemaining,
-			rateLimitLimit: error.rateLimitLimit,
+		statusText: {
+			value: sanitizeErrorText(error.statusText, apiKey),
+			configurable: true,
+			writable: true,
 		},
-	);
+		url: {
+			value: sanitizeErrorUrl(error.url, apiKey),
+			configurable: true,
+			writable: true,
+		},
+		body: {
+			value: sanitizeProviderData(error.body, apiKey),
+			configurable: true,
+			writable: true,
+		},
+		request: {
+			value: request,
+			configurable: true,
+			writable: true,
+		},
+	});
+	return error;
 }
 
 export type LemlistRequestOptions = {
@@ -153,7 +245,7 @@ export async function makeLemlistRequest<T>(
 	} catch (error: unknown) {
 		// `unknown` because caught errors in TypeScript have no static type.
 		if (error instanceof ApiError) {
-			throw sanitizeApiError(error);
+			throw sanitizeApiError(error, apiKey);
 		}
 		throw new LemlistAPIError('Lemlist API transport failed');
 	}
