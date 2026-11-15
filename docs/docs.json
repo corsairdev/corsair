@@ -4292,6 +4292,14 @@
                 ]
               },
               {
+                "group": "Short.io",
+                "pages": [
+                  "plugins/shortio/overview",
+                  "plugins/shortio/api",
+                  "plugins/shortio/database"
+                ]
+              },
+              {
                 "group": "Shortcut",
                 "pages": [
                   "plugins/shortcut/overview",

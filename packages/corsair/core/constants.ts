@@ -518,6 +518,7 @@ export const BaseProviders = [
 	'sharepoint',
 	'shippo',
 	'shortcut',
+	'shortio',
 	'slack',
 	'slackbot',
 	'snapchat',
@@ -1138,6 +1139,7 @@ export const ProviderDisplayNames = {
 	sharepoint: 'SharePoint',
 	shippo: 'Shippo',
 	shortcut: 'Shortcut',
+	shortio: 'Short.io',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
@@ -1765,6 +1767,7 @@ export type AllProviders =
 	| 'sharepoint'
 	| 'shippo'
 	| 'shortcut'
+	| 'shortio'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
