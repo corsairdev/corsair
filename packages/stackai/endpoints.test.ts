@@ -207,6 +207,34 @@ describe('StackAI public endpoints', () => {
 			(await errorHandlers.RATE_LIMIT_ERROR.handler(error as Error)).maxRetries,
 		).toBe(0);
 	});
+	it('puts the provider message in the error without echoed input', async () => {
+		reply({ detail: ['Project not published'] }, 404);
+		await expect(
+			plugin.endpoints!.runs.get(ctx, { run_id: id }),
+		).rejects.toThrow('HTTP 404: Project not published');
+		reply(
+			{
+				detail: [
+					{
+						loc: ['body', 'input'],
+						msg: 'Field required',
+						type: 'missing',
+						input: { secret: 'customer data' },
+					},
+				],
+			},
+			422,
+		);
+		let error: unknown;
+		try {
+			await plugin.endpoints!.runs.list(ctx, {});
+		} catch (caught) {
+			error = caught;
+		}
+		expect((error as Error).message).toBe(
+			'StackAI request failed with HTTP 422: body.input: Field required',
+		);
+	});
 	it('does not wait out a long Retry-After on reads', async () => {
 		const longWait = new StackAIAPIError(429, undefined, 86_400_000, 'GET');
 		expect(

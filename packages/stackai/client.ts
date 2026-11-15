@@ -11,9 +11,38 @@ export class StackAIAPIError extends Error {
 		public readonly retryAfter: number | undefined,
 		public readonly method: 'GET' | 'POST',
 	) {
-		super(`StackAI request failed with HTTP ${status}`);
+		const detail = providerMessage(body);
+		super(
+			`StackAI request failed with HTTP ${status}${detail ? `: ${detail}` : ''}`,
+		);
 		this.name = 'StackAIAPIError';
 	}
+}
+
+// Error bodies are `{ detail: string[] }`, `{ errors: [{ message }] }` or a
+// FastAPI 422 `{ detail: [{ loc, msg, input }] }`. Only the messages and field
+// locations are kept: a 422 `input` echoes the caller's data.
+function providerMessage(body: unknown): string | undefined {
+	if (!body || typeof body !== 'object') return undefined;
+	const { detail, errors } = body as { detail?: unknown; errors?: unknown };
+	const parts: string[] = [];
+	if (Array.isArray(detail))
+		for (const item of detail) {
+			if (typeof item === 'string') parts.push(item);
+			else if (item && typeof item === 'object') {
+				const { loc, msg } = item as { loc?: unknown; msg?: unknown };
+				if (typeof msg !== 'string') continue;
+				parts.push(Array.isArray(loc) ? `${loc.join('.')}: ${msg}` : msg);
+			}
+		}
+	else if (typeof detail === 'string') parts.push(detail);
+	if (!parts.length && Array.isArray(errors))
+		for (const item of errors) {
+			const message = (item as { message?: unknown } | null)?.message;
+			if (typeof message === 'string') parts.push(message);
+		}
+	const text = parts.join('; ');
+	return text ? text.slice(0, 300) : undefined;
 }
 
 function retryDelay(value: string | null): number | undefined {
