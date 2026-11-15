@@ -1,0 +1,23 @@
+displayName: PDFLess
+description: Read a PDFLess workspace and list its document templates. Requests send the API key in the apikey header.
+domain: pdfless.com
+recommendedAuth: api_key
+overviewNote: |
+  Auth is the apikey header on https://api.pdfless.com. An empty key was measured as HTTP 401 with message "No API key found in request". The workspace model has no id, so a workspace row is stored only when name is present. A template row is stored only when id is present.
+examples:
+  read:
+    path: templates.list
+    title: List document templates
+    args:
+      page: 1
+      pageSize: 25
+apiNotes:
+  workspace.get: |
+    GET /v1/workspaces. Official fields are name, active, created, modified, quota, and remainingQuota.
+  templates.list: |
+    GET /v1/document-templates. Query names are Page and PageSize. Official fields are id, name, imagePreviewUrl, pdfPreviewUrl, created, and modified.
+apiExamples:
+  workspace.get:
+    call: "{}"
+  templates.list:
+    call: "{ page: 1, pageSize: 25 }"

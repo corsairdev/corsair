@@ -1,0 +1,95 @@
+---
+title: "PDFLess API reference"
+sidebarTitle: "API"
+description: "API reference for the PDFLess plugin in Corsair: every `pdfless.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Templates
+
+### list
+
+`templates.list`
+
+List document templates in the PDFLess workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfless.api.templates.list({ page: 1, pageSize: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+GET /v1/document-templates. Query names are Page and PageSize. Official fields are id, name, imagePreviewUrl, pdfPreviewUrl, created, and modified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  imagePreviewUrl?: string,
+  pdfPreviewUrl?: string,
+  created?: string,
+  modified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspace
+
+### get
+
+`workspace.get`
+
+Read the PDFLess workspace for the connected API key.
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfless.api.workspace.get({});
+```
+
+**Input:** _empty object_
+
+GET /v1/workspaces. Official fields are name, active, created, modified, quota, and remainingQuota.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `quota` | `number` | No | — |
+| `remainingQuota` | `number` | No | — |
+
+
+
+---
+
