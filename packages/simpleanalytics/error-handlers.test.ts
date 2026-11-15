@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SimpleanalyticsAPIError } from './client';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 import type { JsonObject } from './json';
@@ -19,6 +20,26 @@ function build(options: {
 		retryAfter: options.retryAfter,
 		body: options.body,
 	});
+}
+
+function apiError(options: {
+	status: number;
+	method?: string;
+	retryAfter?: number;
+	body?: JsonObject;
+}) {
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/x.json' },
+		{
+			url: 'https://simpleanalytics.com/x.json',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: options.body,
+		},
+		'Simple Analytics error',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 const context = (error: Error) => ({
@@ -141,6 +162,41 @@ describe('simpleanalytics error handlers', () => {
 		});
 		expect(matches('DEFAULT', error)).toBe(true);
 		await expect(run('DEFAULT', error)).resolves.toEqual({ maxRetries: 0 });
+	});
+});
+
+describe('simpleanalytics error handlers on core ApiError', () => {
+	it('retries a 429 ApiError with its Retry-After', async () => {
+		const error = apiError({ status: 429, retryAfter: 5000 });
+		expect(matches('RATE_LIMIT_ERROR', error)).toBe(true);
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toMatchObject({
+			maxRetries: 3,
+			headersRetryAfterMs: 5000,
+		});
+	});
+
+	it('does not retry a 401 or a locked key', () => {
+		expect(matches('AUTH_ERROR', apiError({ status: 401 }))).toBe(true);
+		expect(
+			matches(
+				'AUTH_ERROR',
+				apiError({
+					status: 400,
+					body: { ok: false, error: 'Too many failed attempts' },
+				}),
+			),
+		).toBe(true);
+	});
+
+	it('reads a 423 badge lock', () => {
+		expect(matches('PERMISSION_ERROR', apiError({ status: 423 }))).toBe(true);
+	});
+
+	it('replays a 5xx on a GET but not on a POST', () => {
+		expect(matches('SERVER_ERROR', apiError({ status: 503 }))).toBe(true);
+		expect(
+			matches('SERVER_ERROR', apiError({ status: 503, method: 'POST' })),
+		).toBe(false);
 	});
 });
 

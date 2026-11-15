@@ -1,8 +1,17 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SimpleanalyticsAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isAuthFailure,
+	isBadgeLock,
+	SimpleanalyticsAPIError,
+	statusOf,
+} from './client';
 
-function statusOf(error: Error): number | undefined {
-	return error instanceof SimpleanalyticsAPIError ? error.status : undefined;
+/** The request method, from core's ApiError or this plugin's error. */
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	if (error instanceof SimpleanalyticsAPIError) return error.method;
+	return undefined;
 }
 
 /**
@@ -11,8 +20,9 @@ function statusOf(error: Error): number | undefined {
  * Two things make this map different from most plugins:
  *
  * - A failure usually arrives as HTTP 400 (or 503 from Export) with
- *   `{ ok: false, error }`, and the client turns that into an error with no
- *   status. Those fall to DEFAULT, which does not retry.
+ *   `{ ok: false, error }`. A non-2xx answer stays core's `ApiError`; a 200
+ *   that says `ok: false` becomes a `SimpleanalyticsAPIError` with no status
+ *   and falls to DEFAULT, which does not retry.
  * - An invalid key retried twenty times in fifteen minutes locks it for up to
  *   fifteen minutes, so nothing here retries an auth failure.
  */
@@ -24,22 +34,22 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof SimpleanalyticsAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError || error instanceof SimpleanalyticsAPIError
+					? error.retryAfter
+					: undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// A bad key, a locked key, or a key without access to this website. The
 	// retry budget matters: twenty failures in fifteen minutes lock the key.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimpleanalyticsAPIError && error.isAuthError,
+		match: (error: Error) => isAuthFailure(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 423: a Free-plan website is locked because its Simple Analytics badge is
 	// missing. Only the site owner can fix that.
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimpleanalyticsAPIError && error.isBadgeRequired,
+		match: (error: Error) => isBadgeLock(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404: no such route. 400 with `ok: false` reaches DEFAULT instead.
@@ -60,9 +70,7 @@ export const errorHandlers = {
 	// except websites.add, which is gated on the method.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SimpleanalyticsAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

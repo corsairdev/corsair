@@ -6,7 +6,6 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import type { JsonObject, UnknownJson } from './json';
-import { isJsonObject } from './json';
 
 /**
  * One host serves all three APIs: the Stats API under `/{hostname}.json`, the
@@ -39,8 +38,9 @@ const SIMPLEANALYTICS_RATE_LIMIT_CONFIG: RateLimitConfig = {
  *   `{ code: "BADGE_REQUIRED" }`.
  *
  * A call that returns 200 with `ok: false` is a failure, so the client checks
- * the body and throws. The `__`-prefixed keys are documentation the API adds
- * when `info=true`; they never carry data.
+ * the body and throws this error. A non-2xx answer stays core's `ApiError`
+ * (with the provider's message), and a request that never reached the API
+ * (DNS, reset, timeout) throws this error with the transport failure as cause.
  */
 export class SimpleanalyticsAPIError extends Error {
 	readonly status?: number;
@@ -79,19 +79,12 @@ export class SimpleanalyticsAPIError extends Error {
 
 	/** True when the key is missing, invalid, or locked after failed attempts. */
 	get isAuthError(): boolean {
-		const reason = this.reason?.toLowerCase() ?? '';
-		return (
-			this.status === 401 ||
-			this.status === 403 ||
-			reason.includes('no valid authorization') ||
-			reason.includes('no api-key') ||
-			reason.includes('too many failed attempts')
-		);
+		return isAuthFailure(this);
 	}
 
 	/** True when a Free-plan website is locked because its badge is missing. */
 	get isBadgeRequired(): boolean {
-		return this.code === 'BADGE_REQUIRED' || this.status === 423;
+		return isBadgeLock(this);
 	}
 }
 
@@ -163,14 +156,89 @@ export function segment(value: string | number): string {
 /**
  * The Stats API takes the hostname in the path with `.json` appended, so
  * `simpleanalytics.com` becomes `/simpleanalytics.com.json`. An optional path
- * goes before `.json`.
+ * goes before `.json`, each segment encoded so a hash-mode path such as
+ * `/#/pricing` stays in the request path instead of becoming a fragment. The
+ * root path `/` has no segment to put there; stats.get sends it as `page=/`.
  */
 export function statsPath(hostname: string, path?: string): string {
 	const cleaned = path?.replace(/^\/+/, '');
-	const base = cleaned
-		? `/${segment(hostname)}/${cleaned}`
-		: `/${segment(hostname)}`;
-	return `${base}.json`;
+	if (!cleaned) return `/${segment(hostname)}.json`;
+	const encoded = cleaned.split('/').map(segment).join('/');
+	return `/${segment(hostname)}/${encoded}.json`;
+}
+
+/** True when the caller asked for the homepage alone, as `/`. */
+export function isRootPath(path: string | undefined): boolean {
+	return path !== undefined && path.length > 0 && /^\/+$/.test(path);
+}
+
+/**
+ * Rebuilds core's ApiError with the provider's own message, keeping status,
+ * body, request and rate-limit fields. Core names a 400 only "Bad Request",
+ * which hides why Simple Analytics refused the call.
+ */
+function withProviderMessage(error: ApiError): ApiError {
+	const reason = failureFromBody(error.body, error.status);
+	if (!reason || reason === error.message) return error;
+	return new ApiError(
+		error.request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		reason,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/** Reads the HTTP status from core's ApiError or this plugin's error. */
+export function statusOf(error: Error): number | undefined {
+	if (error instanceof ApiError || error instanceof SimpleanalyticsAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+/** Reads `error` and `code` from the response body of either error type. */
+function bodyFieldsOf(error: Error): { reason?: string; code?: string } {
+	if (error instanceof SimpleanalyticsAPIError) {
+		return { reason: error.reason, code: error.code };
+	}
+	if (error instanceof ApiError) {
+		const record = asRecord(error.body);
+		return {
+			reason: readString(record, 'error'),
+			code: readString(record, 'code'),
+		};
+	}
+	return {};
+}
+
+/** True when the key is missing, invalid, or locked after failed attempts. */
+export function isAuthFailure(error: Error): boolean {
+	const status = statusOf(error);
+	if (status === 401 || status === 403) return true;
+	const reason = bodyFieldsOf(error).reason?.toLowerCase() ?? '';
+	return (
+		reason.includes('no valid authorization') ||
+		reason.includes('no api-key') ||
+		reason.includes('too many failed attempts')
+	);
+}
+
+/** True when a Free-plan website is locked because its badge is missing. */
+export function isBadgeLock(error: Error): boolean {
+	return (
+		statusOf(error) === 423 || bodyFieldsOf(error).code === 'BADGE_REQUIRED'
+	);
 }
 
 // unknown: callers parse the body with the endpoint's zod output schema, and
@@ -206,18 +274,10 @@ export async function makeSimpleanalyticsRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// A 2xx carrying `ok: false` is the normal failure shape here, and
-			// core's client does not throw for it, so `failureFromBody` is what
-			// turns it into an error. This branch is the non-2xx case.
-			throw new SimpleanalyticsAPIError(
-				describeSimpleanalyticsError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method: error.request.method,
-				},
-			);
+			// Core's ApiError passes through so its status, retryAfter and request
+			// reach core's handlers. Only the message is swapped for the provider's
+			// `error` text, which core leaves out for a 400 ("Bad Request").
+			throw withProviderMessage(error);
 		}
 		// A transport failure never held a body or headers, so its cause is safe to
 		// keep. DOMException (fetch timeouts) can fail instanceof Error across realms.
