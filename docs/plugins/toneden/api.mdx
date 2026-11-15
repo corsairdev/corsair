@@ -1,0 +1,2177 @@
+---
+title: "ToneDen API reference"
+sidebarTitle: "API"
+description: "API reference for the ToneDen plugin in Corsair: every `toneden.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attachments
+
+### create
+
+`attachments.create`
+
+Create a contest or a social unlock
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.attachments.create({ type: 'contest', title: 'Win a vinyl' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | contest or unlock |
+| `title` | `string` | No | — |
+| `artwork_url` | `string` | No | — |
+| `link_path` | `string` | No | — |
+| `is_private` | `boolean` | No | — |
+| `is_hidden` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `actions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachment full type">
+
+```ts
+{
+  id?: number | null,
+  owner_id?: number | null,
+  type?: string | null,
+  actions?: {
+  }[] | null,
+  artwork_url?: string | null,
+  title?: string | null,
+  link_path?: string | null,
+  is_private?: boolean | null,
+  is_hidden?: boolean | null,
+  secret_token?: string | null,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`attachments.delete`
+
+Delete a contest or unlock; there is no restore route
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.toneden.api.attachments.delete({ attachment_id: 9100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### entries
+
+`attachments.entries`
+
+Read a contest entry time series, by platform
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.attachments.entries({ attachment_id: 9100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `totals` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="totals full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### entriesTotals
+
+`attachments.entriesTotals`
+
+Read entry counts over the past day, week, month and lifetime
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.attachments.entriesTotals({ attachment_id: 9100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `totals` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="totals full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`attachments.get`
+
+Read one contest or unlock with its actions
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.attachments.get({ attachment_id: 9100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachment full type">
+
+```ts
+{
+  id?: number | null,
+  owner_id?: number | null,
+  type?: string | null,
+  actions?: {
+  }[] | null,
+  artwork_url?: string | null,
+  title?: string | null,
+  link_path?: string | null,
+  is_private?: boolean | null,
+  is_hidden?: boolean | null,
+  secret_token?: string | null,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`attachments.list`
+
+List contests and social unlocks
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.attachments.list({ limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  id?: number | null,
+  owner_id?: number | null,
+  type?: string | null,
+  actions?: {
+  }[] | null,
+  artwork_url?: string | null,
+  title?: string | null,
+  link_path?: string | null,
+  is_private?: boolean | null,
+  is_hidden?: boolean | null,
+  secret_token?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForUser
+
+`attachments.listForUser`
+
+List one user's contests and social unlocks
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.attachments.listForUser({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  id?: number | null,
+  owner_id?: number | null,
+  type?: string | null,
+  actions?: {
+  }[] | null,
+  artwork_url?: string | null,
+  title?: string | null,
+  link_path?: string | null,
+  is_private?: boolean | null,
+  is_hidden?: boolean | null,
+  secret_token?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unlockPlatforms
+
+`attachments.unlockPlatforms`
+
+Read unlock counts by platform
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.attachments.unlockPlatforms({ attachment_id: 9100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `totals` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="totals full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unlocks
+
+`attachments.unlocks`
+
+Read a social unlock time series
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.attachments.unlocks({ attachment_id: 9100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `totals` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="totals full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unlocksTotals
+
+`attachments.unlocksTotals`
+
+Read unlock counts over the past day, week, month and lifetime
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.attachments.unlocksTotals({ attachment_id: 9100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `totals` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="totals full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`attachments.update`
+
+Change the fields of one contest or unlock
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.attachments.update({ attachment_id: 9100, title: 'Win a signed vinyl' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment_id` | `number` | Yes | — |
+| `type` | `string` | No | contest or unlock |
+| `title` | `string` | No | — |
+| `artwork_url` | `string` | No | — |
+| `link_path` | `string` | No | — |
+| `is_private` | `boolean` | No | — |
+| `is_hidden` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `actions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attachment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachment full type">
+
+```ts
+{
+  id?: number | null,
+  owner_id?: number | null,
+  type?: string | null,
+  actions?: {
+  }[] | null,
+  artwork_url?: string | null,
+  title?: string | null,
+  link_path?: string | null,
+  is_private?: boolean | null,
+  is_hidden?: boolean | null,
+  secret_token?: string | null,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create an ad campaign on Facebook or Google; creating one can start spend, so review the body before calling
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.campaigns.create({ title: 'Spring tour', target_type: 'link', target: 'https://toneden.io/ada/new-single' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `status` | `string` | No | — |
+| `target_type` | `string` | No | — |
+| `target` | `string` | No | — |
+
+Creates a real campaign on Facebook or Google. ToneDen documents no required field, so pass the targeting and creative fields the campaign type needs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ad_campaign full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  status?: string | null,
+  target_type?: string | null,
+  target?: string | null,
+  user_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### creativeInsights
+
+`campaigns.creativeInsights`
+
+Read performance data for each ad within a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.campaigns.creativeInsights({ campaign_id: 7788 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | — |
+
+Returns performance for each ad within the campaign rather than one total.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `series` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="series full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete an ad campaign; there is no restore route
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.toneden.api.campaigns.delete({ campaign_id: 7788 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Read one ad campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.campaigns.get({ campaign_id: 7788 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ad_campaign full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  status?: string | null,
+  target_type?: string | null,
+  target?: string | null,
+  user_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insights
+
+`campaigns.insights`
+
+Read one campaign performance data
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.campaigns.insights({ campaign_id: 7788 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `series` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="series full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List one user's ad campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.campaigns.list({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_campaigns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ad_campaigns full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  status?: string | null,
+  target_type?: string | null,
+  target?: string | null,
+  user_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Change an ad campaign; only the given fields are sent
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.campaigns.update({ campaign_id: 7788, status: 'paused' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `status` | `string` | No | — |
+| `target_type` | `string` | No | — |
+| `target` | `string` | No | — |
+| `campaign_id` | `number` | Yes | — |
+
+Only the fields you pass are sent. Use `status` to pause or resume.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ad_campaign full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  status?: string | null,
+  target_type?: string | null,
+  target?: string | null,
+  user_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Links
+
+### create
+
+`links.create`
+
+Create a link with its target, artwork, services and social settings
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.links.create({ title: 'New single', target_type: 'music', target_url: 'https://open.spotify.com/album/abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `target_type` | `string` | No | What the link promotes |
+| `target_url` | `string` | No | — |
+| `custom_domain` | `string` | No | — |
+| `subdomain` | `string` | No | — |
+| `shortened_path` | `string` | No | Check availability with `links.validPath` first |
+| `isrc` | `string` | No | — |
+| `upc` | `string` | No | — |
+| `show_socials` | `boolean` | No | — |
+| `skip_landing_page` | `boolean` | No | — |
+| `sort_services_by_clickthroughs` | `boolean` | No | — |
+| `use_saved_service` | `boolean` | No | — |
+| `affiliate_codes` | `object[]` | No | — |
+| `pixels` | `object[]` | No | — |
+| `services` | `object[]` | No | — |
+| `social_settings` | `Record<string, any>` | No | — |
+| `header` | `string` | No | — |
+| `metadata_title` | `string` | No | — |
+| `metadata_description` | `string` | No | — |
+| `metadata_image_url` | `string` | No | — |
+| `author` | `string` | No | — |
+| `bg_color` | `string` | No | — |
+| `bg_url` | `string` | No | — |
+| `image_url` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `autoplay_preview` | `boolean` | No | — |
+| `button_color` | `string` | No | — |
+| `call_to_action` | `string` | No | — |
+| `date` | `string` | No | — |
+| `location` | `string` | No | — |
+| `price` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="affiliate_codes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pixels full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="services full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  user_id?: number | null,
+  target_type?: string | null,
+  target_url?: string | null,
+  custom_domain?: string | null,
+  subdomain?: string | null,
+  shortened_path?: string | null,
+  isrc?: string | null,
+  upc?: string | null,
+  click_count?: number | null,
+  clickthrough_count?: number | null,
+  show_socials?: boolean | null,
+  skip_landing_page?: boolean | null,
+  sort_services_by_clickthroughs?: boolean | null,
+  use_saved_service?: boolean | null,
+  affiliate_codes?: {
+  }[] | null,
+  pixels?: {
+  }[] | null,
+  services?: {
+  }[] | null,
+  social_settings?: {
+  } | null,
+  header?: string | null,
+  metadata_title?: string | null,
+  metadata_description?: string | null,
+  metadata_image_url?: string | null,
+  author?: string | null,
+  bg_color?: string | null,
+  bg_url?: string | null,
+  image_url?: string | null,
+  preview_url?: string | null,
+  autoplay_preview?: boolean | null,
+  button_color?: string | null,
+  call_to_action?: string | null,
+  date?: string | null,
+  location?: string | null,
+  price?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`links.delete`
+
+Delete a link; there is no restore route
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.toneden.api.links.delete({ link_id: 48213 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `number` | Yes | — |
+
+A deleted link cannot be restored.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### expand
+
+`links.expand`
+
+Expand a music or podcast URL into the tracking pixels, affiliate codes and services a link would carry
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.links.expand({ url: 'https://open.spotify.com/album/abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | A music or podcast URL to expand into a link |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_active` | `boolean \| null` | No | — |
+| `pixels` | `object[] \| null` | No | — |
+| `services` | `object[] \| null` | No | — |
+| `socials` | `object[] \| null` | No | — |
+| `url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pixels full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="services full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="socials full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`links.get`
+
+Read one link with its services, pixels and social settings
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.links.get({ link_id: 48213 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  user_id?: number | null,
+  target_type?: string | null,
+  target_url?: string | null,
+  custom_domain?: string | null,
+  subdomain?: string | null,
+  shortened_path?: string | null,
+  isrc?: string | null,
+  upc?: string | null,
+  click_count?: number | null,
+  clickthrough_count?: number | null,
+  show_socials?: boolean | null,
+  skip_landing_page?: boolean | null,
+  sort_services_by_clickthroughs?: boolean | null,
+  use_saved_service?: boolean | null,
+  affiliate_codes?: {
+  }[] | null,
+  pixels?: {
+  }[] | null,
+  services?: {
+  }[] | null,
+  social_settings?: {
+  } | null,
+  header?: string | null,
+  metadata_title?: string | null,
+  metadata_description?: string | null,
+  metadata_image_url?: string | null,
+  author?: string | null,
+  bg_color?: string | null,
+  bg_url?: string | null,
+  image_url?: string | null,
+  preview_url?: string | null,
+  autoplay_preview?: boolean | null,
+  button_color?: string | null,
+  call_to_action?: string | null,
+  date?: string | null,
+  location?: string | null,
+  price?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insights
+
+`links.insights`
+
+Read one link's performance over a date window
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.links.insights({ link_id: 48213, start: '2026-05-01', end: '2026-05-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `number` | Yes | — |
+| `start` | `string` | No | ISO 8601 date |
+| `end` | `string` | No | ISO 8601 date |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `series` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="series full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insightsOverview
+
+`links.insightsOverview`
+
+Read a summary of one link's performance
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.links.insightsOverview({ link_id: 48213 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `series` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="series full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`links.list`
+
+List links, optionally filtered by target type, with offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.links.list({ target_type: 'music', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_type` | `string` | No | Only links of this target type |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  user_id?: number | null,
+  target_type?: string | null,
+  target_url?: string | null,
+  custom_domain?: string | null,
+  subdomain?: string | null,
+  shortened_path?: string | null,
+  isrc?: string | null,
+  upc?: string | null,
+  click_count?: number | null,
+  clickthrough_count?: number | null,
+  show_socials?: boolean | null,
+  skip_landing_page?: boolean | null,
+  sort_services_by_clickthroughs?: boolean | null,
+  use_saved_service?: boolean | null,
+  affiliate_codes?: {
+  }[] | null,
+  pixels?: {
+  }[] | null,
+  services?: {
+  }[] | null,
+  social_settings?: {
+  } | null,
+  header?: string | null,
+  metadata_title?: string | null,
+  metadata_description?: string | null,
+  metadata_image_url?: string | null,
+  author?: string | null,
+  bg_color?: string | null,
+  bg_url?: string | null,
+  image_url?: string | null,
+  preview_url?: string | null,
+  autoplay_preview?: boolean | null,
+  button_color?: string | null,
+  call_to_action?: string | null,
+  date?: string | null,
+  location?: string | null,
+  price?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForUser
+
+`links.listForUser`
+
+List one user's links
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.links.listForUser({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `target_type` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  user_id?: number | null,
+  target_type?: string | null,
+  target_url?: string | null,
+  custom_domain?: string | null,
+  subdomain?: string | null,
+  shortened_path?: string | null,
+  isrc?: string | null,
+  upc?: string | null,
+  click_count?: number | null,
+  clickthrough_count?: number | null,
+  show_socials?: boolean | null,
+  skip_landing_page?: boolean | null,
+  sort_services_by_clickthroughs?: boolean | null,
+  use_saved_service?: boolean | null,
+  affiliate_codes?: {
+  }[] | null,
+  pixels?: {
+  }[] | null,
+  services?: {
+  }[] | null,
+  social_settings?: {
+  } | null,
+  header?: string | null,
+  metadata_title?: string | null,
+  metadata_description?: string | null,
+  metadata_image_url?: string | null,
+  author?: string | null,
+  bg_color?: string | null,
+  bg_url?: string | null,
+  image_url?: string | null,
+  preview_url?: string | null,
+  autoplay_preview?: boolean | null,
+  button_color?: string | null,
+  call_to_action?: string | null,
+  date?: string | null,
+  location?: string | null,
+  price?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`links.update`
+
+Change the fields of one link; only the given fields are sent
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.links.update({ link_id: 48213, title: 'Renamed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `target_type` | `string` | No | What the link promotes |
+| `target_url` | `string` | No | — |
+| `custom_domain` | `string` | No | — |
+| `subdomain` | `string` | No | — |
+| `shortened_path` | `string` | No | Check availability with `links.validPath` first |
+| `isrc` | `string` | No | — |
+| `upc` | `string` | No | — |
+| `show_socials` | `boolean` | No | — |
+| `skip_landing_page` | `boolean` | No | — |
+| `sort_services_by_clickthroughs` | `boolean` | No | — |
+| `use_saved_service` | `boolean` | No | — |
+| `affiliate_codes` | `object[]` | No | — |
+| `pixels` | `object[]` | No | — |
+| `services` | `object[]` | No | — |
+| `social_settings` | `Record<string, any>` | No | — |
+| `header` | `string` | No | — |
+| `metadata_title` | `string` | No | — |
+| `metadata_description` | `string` | No | — |
+| `metadata_image_url` | `string` | No | — |
+| `author` | `string` | No | — |
+| `bg_color` | `string` | No | — |
+| `bg_url` | `string` | No | — |
+| `image_url` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `autoplay_preview` | `boolean` | No | — |
+| `button_color` | `string` | No | — |
+| `call_to_action` | `string` | No | — |
+| `date` | `string` | No | — |
+| `location` | `string` | No | — |
+| `price` | `string` | No | — |
+
+Only the fields you pass are sent, and a call with no field is rejected before the request.
+
+<AccordionGroup>
+<Accordion title="affiliate_codes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pixels full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="services full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  user_id?: number | null,
+  target_type?: string | null,
+  target_url?: string | null,
+  custom_domain?: string | null,
+  subdomain?: string | null,
+  shortened_path?: string | null,
+  isrc?: string | null,
+  upc?: string | null,
+  click_count?: number | null,
+  clickthrough_count?: number | null,
+  show_socials?: boolean | null,
+  skip_landing_page?: boolean | null,
+  sort_services_by_clickthroughs?: boolean | null,
+  use_saved_service?: boolean | null,
+  affiliate_codes?: {
+  }[] | null,
+  pixels?: {
+  }[] | null,
+  services?: {
+  }[] | null,
+  social_settings?: {
+  } | null,
+  header?: string | null,
+  metadata_title?: string | null,
+  metadata_description?: string | null,
+  metadata_image_url?: string | null,
+  author?: string | null,
+  bg_color?: string | null,
+  bg_url?: string | null,
+  image_url?: string | null,
+  preview_url?: string | null,
+  autoplay_preview?: boolean | null,
+  button_color?: string | null,
+  call_to_action?: string | null,
+  date?: string | null,
+  location?: string | null,
+  price?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validPath
+
+`links.validPath`
+
+Check whether a path and subdomain are still available; answers 200 with `valid: false` rather than failing
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.links.validPath({ path: 'new-single', subdomain: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | The path to check |
+| `subdomain` | `string` | No | — |
+| `custom_domain` | `string` | No | — |
+
+A taken path answers 200 with `valid: false` and a reason; it is not an error.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean` | Yes | — |
+| `reason` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+## Offline Conversions
+
+### upload
+
+`offlineConversions.upload`
+
+Upload offline conversions for a user
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.offlineConversions.upload({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Playbooks
+
+### create
+
+`playbooks.create`
+
+Create a playbook campaign from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.playbooks.create({ title: 'Album rollout', template_id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `template_id` | `number` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playbook_campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="playbook_campaign full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  user_id?: number | null,
+  template_id?: number | null,
+  is_archived?: boolean | null,
+  status?: string | null,
+  subcampaigns?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`playbooks.delete`
+
+Delete a playbook campaign; there is no restore route
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.toneden.api.playbooks.delete({ campaign_id: 9900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`playbooks.get`
+
+Read one playbook campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.playbooks.get({ campaign_id: 9900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playbook_campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="playbook_campaign full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  user_id?: number | null,
+  template_id?: number | null,
+  is_archived?: boolean | null,
+  status?: string | null,
+  subcampaigns?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`playbooks.update`
+
+Change a playbook campaign title or archive state
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.playbooks.update({ campaign_id: 9900, is_archived: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `template_id` | `number` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `campaign_id` | `number` | Yes | — |
+
+Only the fields you pass are sent; archive rather than delete to keep the history.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playbook_campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="playbook_campaign full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  user_id?: number | null,
+  template_id?: number | null,
+  is_archived?: boolean | null,
+  status?: string | null,
+  subcampaigns?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User Lists
+
+### create
+
+`userLists.create`
+
+Create a user list for a Facebook custom audience; the feature requires access from ToneDen support
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.userLists.create({ external_ad_account_id: 'act_123', type: 'email' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_ad_account_id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+
+ToneDen asks you to contact support for access to user lists before using this.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_lists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user_lists full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  type?: string | null,
+  external_ad_account_id?: string | null,
+  size?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`userLists.list`
+
+List one user's advertising user lists
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.userLists.list({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_lists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user_lists full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  type?: string | null,
+  external_ad_account_id?: string | null,
+  size?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateContacts
+
+`userLists.updateContacts`
+
+Add or remove people in a user list
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.userLists.updateContacts({ list_id: 55, add: ['a@acme.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `add` | `string[]` | No | — |
+| `remove` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Read a user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.toneden.api.users.get({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  display_name?: string | null,
+  email?: string | null,
+  type?: string | null,
+  about?: string | null,
+  avatar_url?: string | null,
+  account_count?: number | null,
+  birthday?: string | null,
+  city?: string | null,
+  country?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  state?: string | null,
+  subscription_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Change a user profile's name, email or location
+
+**Risk:** `write`
+
+```ts
+await corsair.toneden.api.users.update({ user_id: 1, display_name: 'Ada L.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `username` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `about` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  display_name?: string | null,
+  email?: string | null,
+  type?: string | null,
+  about?: string | null,
+  avatar_url?: string | null,
+  account_count?: number | null,
+  birthday?: string | null,
+  city?: string | null,
+  country?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  state?: string | null,
+  subscription_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
