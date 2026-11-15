@@ -15,16 +15,18 @@ const RelativeDateStringSchema = z.enum([
 	'TODAY-30DAYS',
 ]);
 
-// The provider accepts an ISO 8601 date or datetime in addition to the
-// relative values above. A regex keeps both accepted forms while still
-// rejecting arbitrary strings.
+// The provider accepts an ISO 8601 datetime in addition to the relative values
+// above. A date without a time is silently ignored by LiveSession (live run
+// 11-15: date_from=2020-01-01&date_to=2020-01-02 returned today's session), so
+// the time part is required.
 const ISO_8601_PATTERN =
-	/^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
+	/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:?\d{2})?$/;
 
 const DateFilterSchema = z.union([
 	RelativeDateStringSchema,
 	z.string().refine((value) => ISO_8601_PATTERN.test(value), {
-		message: 'must be an ISO 8601 date/datetime or a documented relative date',
+		message:
+			'must be an ISO 8601 datetime (e.g. 2026-01-31T00:00:00Z) or a documented relative date',
 	}),
 ]);
 
@@ -83,7 +85,7 @@ export const AlertEventSchema = z
 const AlertEventResponseSchema = z
 	.object({
 		kind: z.number(),
-		value: z.string().optional(),
+		value: z.string().nullish(),
 	})
 	.loose();
 
@@ -162,111 +164,113 @@ export const ListWebsitesInputSchema = z.object({}).strict();
 
 const SessionVisitorGeolocationSchema = z
 	.object({
-		country_code: z.string().optional(),
-		city: z.string().optional(),
-		region: z.string().optional(),
+		country_code: z.string().nullish(),
+		city: z.string().nullish(),
+		region: z.string().nullish(),
 	})
 	.loose();
 
 const SessionVisitorParamsSchema = z
 	.object({
-		name: z.string().optional(),
-		value: z.string().optional(),
+		name: z.string().nullish(),
+		value: z.string().nullish(),
 	})
 	.loose();
 
 const SessionVisitorSchema = z
 	.object({
-		id: z.string().optional(),
-		ip: z.string().optional(),
-		geolocation: SessionVisitorGeolocationSchema.optional(),
-		name: z.string().optional(),
-		email: z.string().optional(),
-		email_hash: z.string().optional(),
-		params: z.array(SessionVisitorParamsSchema).optional(),
-		last_session_timestamp: z.number().int().optional(),
-		first_session_timestamp: z.number().int().optional(),
+		id: z.string().nullish(),
+		ip: z.string().nullish(),
+		geolocation: SessionVisitorGeolocationSchema.nullish(),
+		name: z.string().nullish(),
+		email: z.string().nullish(),
+		email_hash: z.string().nullish(),
+		params: z.array(SessionVisitorParamsSchema).nullish(),
+		last_session_timestamp: z.number().int().nullish(),
+		first_session_timestamp: z.number().int().nullish(),
 	})
 	.loose();
 
 const SessionResolutionSchema = z
 	.object({
-		height: z.number().int().optional(),
-		width: z.number().int().optional(),
-		resolution: z.string().optional(),
+		height: z.number().int().nullish(),
+		width: z.number().int().nullish(),
+		resolution: z.string().nullish(),
 	})
 	.loose();
 
 const SessionOsSchema = z
 	.object({
-		name: z.string().optional(),
-		version: z.string().optional(),
+		name: z.string().nullish(),
+		version: z.string().nullish(),
 	})
 	.loose();
 
 const SessionBrowserSchema = z
 	.object({
-		description: z.string().optional(),
-		name: z.string().optional(),
-		version: z.string().optional(),
+		description: z.string().nullish(),
+		name: z.string().nullish(),
+		version: z.string().nullish(),
 	})
 	.loose();
 
 const SessionUtmSchema = z
 	.object({
-		source: z.string().optional(),
-		medium: z.string().optional(),
-		campaign: z.string().optional(),
-		term: z.string().optional(),
-		content: z.string().optional(),
+		source: z.string().nullish(),
+		medium: z.string().nullish(),
+		campaign: z.string().nullish(),
+		term: z.string().nullish(),
+		content: z.string().nullish(),
 	})
 	.loose();
 
 const SessionPageViewsStatisticsSchema = z
 	.object({
-		count: z.number().int().optional(),
+		count: z.number().int().nullish(),
 	})
 	.loose();
 
 const SessionEventsStatisticsSchema = z
 	.object({
-		clicks: z.number().int().optional(),
-		error_clicks: z.number().int().optional(),
-		rage_clicks: z.number().int().optional(),
-		error_logs: z.number().int().optional(),
-		net_errors: z.number().int().optional(),
+		clicks: z.number().int().nullish(),
+		error_clicks: z.number().int().nullish(),
+		rage_clicks: z.number().int().nullish(),
+		error_logs: z.number().int().nullish(),
+		net_errors: z.number().int().nullish(),
 	})
 	.loose();
 
+// Responses use nullish fields: LiveSession sends null for empty values (live
+// run 11-15: "tags": null on a new session). Inputs stay strict.
 export const SessionSchema = z
 	.object({
 		id: z.string(),
-		website_id: z.string().optional(),
-		session_url: z.string().optional(),
-		creation_timestamp: z.number().int().optional(),
-		duration: z.number().int().optional(),
-		end_timestamp: z.number().int().optional(),
-		active_time: z.number().int().optional(),
-		end_url: z.string().optional(),
-		expiration_timestamp: z.number().int().optional(),
-		last_event_timestamp: z.number().int().optional(),
-		product: z.string().optional(),
-		device: z.string().optional(),
-		tags: z.array(z.string()).optional(),
-		last_seen_page_view_id: z.string().optional(),
-		seen: z.boolean().optional(),
-		referrer: z.string().optional(),
-		start_url: z.string().optional(),
-		visitor_first_session: z.boolean().optional(),
+		website_id: z.string().nullish(),
+		session_url: z.string().nullish(),
+		creation_timestamp: z.number().int().nullish(),
+		duration: z.number().int().nullish(),
+		end_timestamp: z.number().int().nullish(),
+		active_time: z.number().int().nullish(),
+		end_url: z.string().nullish(),
+		expiration_timestamp: z.number().int().nullish(),
+		last_event_timestamp: z.number().int().nullish(),
+		product: z.string().nullish(),
+		device: z.string().nullish(),
+		tags: z.array(z.string()).nullish(),
+		last_seen_page_view_id: z.string().nullish(),
+		seen: z.boolean().nullish(),
+		referrer: z.string().nullish(),
+		start_url: z.string().nullish(),
+		visitor_first_session: z.boolean().nullish(),
 		// The provider spells this field without the second "e".
-		engagment_score: z.number().optional(),
-		visitor: SessionVisitorSchema.optional(),
-		resolution: SessionResolutionSchema.optional(),
-		os: SessionOsSchema.optional(),
-		browser: SessionBrowserSchema.optional(),
-		utm: SessionUtmSchema.optional(),
-		page_views_statistics: SessionPageViewsStatisticsSchema.optional(),
-		events_statistics: SessionEventsStatisticsSchema.optional(),
+		engagment_score: z.number().nullish(),
+		visitor: SessionVisitorSchema.nullish(),
+		resolution: SessionResolutionSchema.nullish(),
+		os: SessionOsSchema.nullish(),
+		browser: SessionBrowserSchema.nullish(),
+		utm: SessionUtmSchema.nullish(),
+		page_views_statistics: SessionPageViewsStatisticsSchema.nullish(),
+		events_statistics: SessionEventsStatisticsSchema.nullish(),
 	})
 	.loose();
 
@@ -281,21 +285,23 @@ export const ListSessionsResponseSchema = z
 	.object({
 		total: z.number().int(),
 		page: PaginationSchema,
-		sessions: z.array(SessionSchema),
+		// Live run 11-15: some empty results (an email filter with no match, a
+		// new account) come back as `"sessions": null`, not `[]`.
+		sessions: z.array(SessionSchema).nullable(),
 	})
 	.loose();
 
 export const AlertSchema = z
 	.object({
 		alert_id: z.string(),
-		name: z.string().optional(),
-		events: z.array(AlertEventResponseSchema).optional(),
+		name: z.string().nullish(),
+		events: z.array(AlertEventResponseSchema).nullish(),
 		// Documented values are "slack" and "webhooks"; kept open for new providers.
-		provider: z.string().optional(),
-		slack_channel_id: z.string().optional(),
-		webhook_id: z.string().optional(),
-		enabled: z.boolean().optional(),
-		creation_date: z.string().optional(),
+		provider: z.string().nullish(),
+		slack_channel_id: z.string().nullish(),
+		webhook_id: z.string().nullish(),
+		enabled: z.boolean().nullish(),
+		creation_date: z.string().nullish(),
 	})
 	.loose();
 
@@ -311,13 +317,13 @@ export const DeleteAlertResponseSchema = z
 export const WebhookSchema = z
 	.object({
 		webhook_id: z.string(),
-		url: z.string().optional(),
-		website: z.string().optional(),
-		website_id: z.string().optional(),
-		version: z.string().optional(),
-		enabled: z.boolean().optional(),
-		created_date: z.number().int().optional(),
-		created_by: z.string().optional(),
+		url: z.string().nullish(),
+		website: z.string().nullish(),
+		website_id: z.string().nullish(),
+		version: z.string().nullish(),
+		enabled: z.boolean().nullish(),
+		created_date: z.number().int().nullish(),
+		created_by: z.string().nullish(),
 	})
 	.loose();
 
@@ -333,7 +339,7 @@ export const DeleteWebhookResponseSchema = z
 export const WebsiteSchema = z
 	.object({
 		website_id: z.string(),
-		host: z.string().optional(),
+		host: z.string().nullish(),
 	})
 	.loose();
 

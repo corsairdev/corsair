@@ -152,7 +152,7 @@ describe('LiveSession HTTP client and endpoints', () => {
 			visitor_id: 'visitor-1',
 			tz: 'Europe/Warsaw',
 			date_from: 'TODAY-30DAYS' as const,
-			date_to: '2026-01-31',
+			date_to: '2026-01-31T23:59:59Z',
 		};
 
 		const result = await livesession({
@@ -177,7 +177,7 @@ describe('LiveSession HTTP client and endpoints', () => {
 			}),
 		);
 		expect(result.page.num).toBe(2);
-		expect(result.sessions[0]?.visitor?.geolocation?.city).toBe('Wroclaw');
+		expect(result.sessions?.[0]?.visitor?.geolocation?.city).toBe('Wroclaw');
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			mockCtx,
 			'livesession.sessions.list',
@@ -452,6 +452,8 @@ describe('LiveSession input boundaries', () => {
 			true,
 		);
 		expect(list!.safeParse({ date_from: 'last week' }).success).toBe(false);
+		// LiveSession ignores a date without a time (live run 11-15).
+		expect(list!.safeParse({ date_from: '2026-01-01' }).success).toBe(false);
 	});
 
 	it('requires the provider-specific destination on alert creation', () => {
@@ -511,6 +513,86 @@ describe('LiveSession output validation and errors', () => {
 		expect(mockLogEvent).not.toHaveBeenCalled();
 	});
 
+	it('parses a real new session with null tags and empty strings', async () => {
+		// Shape from the live run (11-15); ids, URL and location replaced.
+		const realSession = {
+			id: 'session-live-1',
+			website_id: 'website-1',
+			session_url:
+				'https://app.livesession.io/app/sessions/visitor-1/session-live-1',
+			creation_timestamp: 1794702468003,
+			duration: 0,
+			end_timestamp: 0,
+			active_time: 0,
+			end_url: '',
+			expiration_timestamp: 0,
+			last_event_timestamp: 0,
+			product: '',
+			device: 'Desktop',
+			tags: null,
+			seen: false,
+			referrer: '',
+			start_url: 'http://127.0.0.1:8765/',
+			visitor_first_session: true,
+			engagment_score: 2,
+			visitor: {
+				id: 'visitor-1',
+				ip: '',
+				geolocation: {
+					country_code: 'PL',
+					city: 'Wroclaw',
+					region: 'Dolnoslaskie',
+				},
+				last_session_timestamp: 1794702468003,
+				first_session_timestamp: 1794702468003,
+			},
+			resolution: { height: 720, width: 1280, resolution: '' },
+			os: { name: 'Linux', version: '' },
+			browser: {
+				description: 'Chrome 155.0.0.0 on Linux 64-bit',
+				name: 'Chrome',
+				version: '155.0.0.0',
+			},
+			utm: { source: '', medium: '', campaign: '', term: '', content: '' },
+			page_views_statistics: { count: 0 },
+			events_statistics: {
+				clicks: 0,
+				error_clicks: 0,
+				rage_clicks: 0,
+				error_logs: 0,
+				net_errors: 0,
+			},
+		};
+		mockRequest.mockResolvedValue({
+			total: 1,
+			page: { num: 0, size: 25 },
+			sessions: [realSession],
+		});
+
+		const result = await livesession({
+			key: 'test-token',
+		}).endpoints!.sessions.list(mockCtx, { date_from: 'TODAY' });
+
+		expect(result.sessions?.[0]?.tags).toBeNull();
+		expect(result.sessions?.[0]?.device).toBe('Desktop');
+	});
+
+	it('accepts the null sessions list LiveSession returns for an empty result', async () => {
+		// Real response from the live run (11-15): an empty result came back as null.
+		mockRequest.mockResolvedValue({
+			total: 0,
+			page: { num: 0, size: 25 },
+			sessions: null,
+		});
+
+		const result = await livesession({
+			key: 'test-token',
+		}).endpoints!.sessions.list(mockCtx, { email: 'nobody@example.com' });
+
+		expect(result.total).toBe(0);
+		expect(result.sessions).toBeNull();
+	});
+
 	it('preserves provider fields that are not in the documented schema', async () => {
 		mockRequest.mockResolvedValue({
 			...sessionsResponse,
@@ -521,7 +603,7 @@ describe('LiveSession output validation and errors', () => {
 			key: 'test-token',
 		}).endpoints!.sessions.list(mockCtx, {});
 
-		expect(result.sessions[0]).toMatchObject({ future_field: 'kept' });
+		expect(result.sessions?.[0]).toMatchObject({ future_field: 'kept' });
 	});
 
 	it('wraps transport failures with the provider error type', async () => {
