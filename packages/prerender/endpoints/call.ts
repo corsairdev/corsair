@@ -23,14 +23,31 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	options: {
 		/** Rewrites the answer before the output schema parses it. */
 		shape?: (raw: Untyped, parsed: z.output<Input>) => Untyped;
+		/**
+		 * Turns an error that reports a state into an answer, which skips `shape`.
+		 * Returns undefined to let the error through.
+		 */
+		recover?: (error: Untyped) => Untyped | undefined;
 		log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
 	const request = toRequest(parsed);
-	const raw = await makePrerenderRequest(ctx.key, request);
+	let raw: Untyped;
+	// unknown: an answer recovered from an error, already in the output shape.
+	let recovered: Untyped;
+	try {
+		raw = await makePrerenderRequest(ctx.key, request);
+	} catch (error) {
+		recovered = options.recover?.(error);
+		if (recovered === undefined) throw error;
+	}
 	const result = operation.output.parse(
-		options.shape ? options.shape(raw, parsed) : raw,
+		recovered !== undefined
+			? recovered
+			: options.shape
+				? options.shape(raw, parsed)
+				: raw,
 	);
 
 	await logEventFromContext(

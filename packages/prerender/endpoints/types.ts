@@ -93,46 +93,48 @@ export const SearchInputSchema = z
 			.describe('Paging offset. Each page holds 200 URLs.'),
 		adaptiveType: AdaptiveTypeSchema,
 	})
-	.superRefine((value, ctx) => {
-		// A search with neither filter would return the whole cache, which is a
-		// different intent from the one the route documents.
-		if (value.query === undefined && value.exactMatch === undefined) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Supply `query` or `exactMatch`.',
-				path: ['query'],
-			});
-		}
-	});
+	.describe(
+		'With neither `query` nor `exactMatch`, the search pages through the whole cache.',
+	);
 
 export type SearchInput = z.infer<typeof SearchInputSchema>;
 
-/** One cached URL. The docs name the fields this way and pass extras through. */
+/**
+ * One cached URL, as the search route returns it (checked against a live
+ * account on 2026-11-15). Unknown fields pass through.
+ */
 export const CachedUrlSchema = z
 	.object({
 		url: z.string().nullish(),
-		cachedUrl: z
+		domain: z.string().nullish(),
+		adaptiveType: z
 			.string()
 			.nullish()
-			.describe('The cached copy, when the API returns one.'),
-		status: z
+			.describe('The cached variant, `desktop` or `mobile`.'),
+		cacheState: z
 			.string()
 			.nullish()
-			.describe('The cache status, such as `Cached` or `Not Cached`.'),
-		lastCached: z.string().nullish(),
-		expires: z.string().nullish(),
-		adaptiveType: z.string().nullish(),
+			.describe('The cache status, such as `Cached`.'),
+		lastRefresh: z
+			.string()
+			.nullish()
+			.describe('When the page was last rendered, as an ISO timestamp.'),
+		requestedRecacheAt: z
+			.string()
+			.nullish()
+			.describe('When a pending recache was requested, or null.'),
 	})
 	.loose();
 
 export type PrerenderCachedUrl = z.infer<typeof CachedUrlSchema>;
 
+/**
+ * The route answers a bare array of cached URLs; the endpoint wraps it as
+ * `{ urls }` so the result is an object like every other operation's.
+ */
 const SearchOutputSchema = z
 	.object({
 		urls: z.array(CachedUrlSchema),
-		// The API also answers a bare count on some plans; keeping both optional
-		// means either shape parses without inventing a page.
-		totalCount: z.number().nullish(),
 	})
 	.loose();
 
@@ -174,17 +176,14 @@ const CacheClearStatusInputSchema = z.object({});
 export type CacheClearStatusInput = z.infer<typeof CacheClearStatusInputSchema>;
 
 /**
- * The status route answers 200 when no job is queued and 403 while one runs, so
- * a 403 here is a state rather than a failure. The client raises it as an error
- * like any other, and the returned body carries whatever text accompanied it.
+ * The status route answers 200 with `not queued` when no job is waiting and 403
+ * while one runs. The endpoint turns both into `inProgress` rather than raising
+ * the 403, which is a state, not a failure.
  */
 const CacheClearStatusOutputSchema = z
 	.object({
 		message: z.string().nullish(),
-		inProgress: z
-			.boolean()
-			.nullish()
-			.describe('True while a clear job is running.'),
+		inProgress: z.boolean().describe('True while a clear job is running.'),
 	})
 	.loose();
 

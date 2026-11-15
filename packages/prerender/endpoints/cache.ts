@@ -1,5 +1,6 @@
+import { ApiError } from 'corsair/http';
 import type { PrerenderEndpoints } from '..';
-import { segment } from '../client';
+import { readReason, segment } from '../client';
 import { asConfirmation, call } from './call';
 import {
 	PrerenderEndpointInputSchemas as Inputs,
@@ -34,7 +35,7 @@ export const search: PrerenderEndpoints['cacheSearch'] = (ctx, input) =>
 			body: { query, exactMatch, start, adaptiveType },
 		}),
 		{
-			// The route answers a bare array of cached URLs on some plans.
+			// The route answers a bare array of cached URLs.
 			shape: (raw) => (Array.isArray(raw) ? { urls: raw } : raw),
 			log: (_, result) => ({ count: result.urls.length }),
 		},
@@ -76,8 +77,9 @@ export const cacheClear: PrerenderEndpoints['cacheClear'] = (ctx, input) =>
 	);
 
 /**
- * The status route takes the token in the path rather than the body, so the
- * client appends it here and the request carries no body.
+ * The status route takes the token in the path rather than a header or body,
+ * and the request carries no body. It answers 200 `not queued` when no job is
+ * waiting and 403 while one runs; both become `inProgress`.
  */
 export const cacheClearStatus: PrerenderEndpoints['cacheClearStatus'] = (
 	ctx,
@@ -93,8 +95,18 @@ export const cacheClearStatus: PrerenderEndpoints['cacheClearStatus'] = (
 		input,
 		() => ({ method: 'GET', path: `/cache-clear-status/${segment(ctx.key)}` }),
 		{
-			shape: asConfirmation,
-			log: () => ({}),
+			shape: (raw) => ({
+				...(asConfirmation(raw) as object),
+				inProgress: false,
+			}),
+			recover: (error) =>
+				error instanceof ApiError && error.status === 403
+					? {
+							message: readReason(error.body) ?? 'in progress',
+							inProgress: true,
+						}
+					: undefined,
+			log: (_, result) => ({ inProgress: result.inProgress }),
 		},
 	);
 

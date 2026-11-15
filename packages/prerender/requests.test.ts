@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import * as client from './client';
 import { Cache } from './endpoints';
 import { buildContext } from './test-helpers';
@@ -88,9 +89,9 @@ describe('recache', () => {
 
 describe('search', () => {
 	it('posts the query and start offset', async () => {
-		mockedRequest.mockResolvedValue({
-			urls: [{ url: 'https://example.com/path', status: 'Cached' }],
-		});
+		mockedRequest.mockResolvedValue([
+			{ url: 'https://example.com/path', cacheState: 'Cached' },
+		]);
 
 		const result = await Cache.search(ctx, {
 			query: 'example.com/path',
@@ -108,10 +109,10 @@ describe('search', () => {
 			},
 		});
 		expect(result.urls).toHaveLength(1);
-		expect(result.urls[0]?.status).toBe('Cached');
+		expect(result.urls[0]?.cacheState).toBe('Cached');
 	});
 
-	it('accepts the bare array some plans answer with', async () => {
+	it('wraps the bare array the route answers with', async () => {
 		mockedRequest.mockResolvedValue([
 			{ url: 'https://example.com/a', status: 'Cached' },
 		]);
@@ -170,7 +171,7 @@ describe('cacheClear', () => {
 
 describe('cacheClearStatus', () => {
 	it('puts the token in the path and sends no body', async () => {
-		mockedRequest.mockResolvedValue('Not queued');
+		mockedRequest.mockResolvedValue('not queued');
 
 		const result = await Cache.cacheClearStatus(ctx, {});
 
@@ -178,7 +179,40 @@ describe('cacheClearStatus', () => {
 			method: 'GET',
 			path: '/cache-clear-status/prerender-token',
 		});
-		expect(result.message).toBe('Not queued');
+		expect(result).toEqual({ message: 'not queued', inProgress: false });
+		expect(mockedLog).toHaveBeenCalledWith(
+			ctx,
+			'prerender.cacheClearStatus',
+			{ inProgress: false },
+			'completed',
+		);
+	});
+
+	it('reads the documented 403 as a job in progress rather than an error', async () => {
+		mockedRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'GET', url: '/cache-clear-status/[REDACTED]' },
+				{
+					url: 'https://api.prerender.io/cache-clear-status/[REDACTED]',
+					ok: false,
+					status: 403,
+					statusText: 'Forbidden',
+					body: 'in progress',
+				},
+				'Forbidden',
+			),
+		);
+
+		const result = await Cache.cacheClearStatus(ctx, {});
+
+		expect(result).toEqual({ message: 'in progress', inProgress: true });
+	});
+
+	it('lets any other status-route error through', async () => {
+		const failure = new Error('boom');
+		mockedRequest.mockRejectedValue(failure);
+
+		await expect(Cache.cacheClearStatus(ctx, {})).rejects.toBe(failure);
 	});
 });
 

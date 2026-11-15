@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import * as client from './client';
-import { PrerenderAPIError } from './client';
 import { Cache } from './endpoints';
 import { buildContext, captureError } from './test-helpers';
 
@@ -66,10 +66,10 @@ describe('response parsing', () => {
 		).rejects.toThrow();
 	});
 
-	it('rejects a cached URL whose lastCached is not a string', async () => {
-		mockedRequest.mockResolvedValue({
-			urls: [{ url: 'https://example.com/a', lastCached: 12345 }],
-		});
+	it('rejects a cached URL whose lastRefresh is not a string', async () => {
+		mockedRequest.mockResolvedValue([
+			{ url: 'https://example.com/a', lastRefresh: 12345 },
+		]);
 
 		await expect(Cache.search(ctx, { query: 'example.com' })).rejects.toThrow();
 	});
@@ -130,11 +130,13 @@ describe('input validation before the request', () => {
 		).resolves.toBeDefined();
 	});
 
-	it('rejects a search with neither query nor exactMatch, which would dump the cache', async () => {
-		await expect(Cache.search(ctx, {})).rejects.toThrow(
-			/Supply `query` or `exactMatch`/,
-		);
-		expect(mockedRequest).not.toHaveBeenCalled();
+	it('accepts a search with neither query nor exactMatch, which the docs allow', async () => {
+		mockedRequest.mockResolvedValue([]);
+
+		await expect(
+			Cache.search(ctx, { start: 0, adaptiveType: 'mobile' }),
+		).resolves.toEqual({ urls: [] });
+		expect(mockedRequest).toHaveBeenCalledTimes(1);
 	});
 
 	it('accepts a search with only an exactMatch', async () => {
@@ -200,20 +202,23 @@ describe('input validation before the request', () => {
 	});
 
 	it('surfaces a rejection as an error a handler can match', async () => {
-		mockedRequest.mockRejectedValue(
-			new PrerenderAPIError('Prerender 400: Invalid prerenderToken', {
+		const rejection = new ApiError(
+			{ method: 'POST', url: '/recache' },
+			{
+				url: 'https://api.prerender.io/recache',
+				ok: false,
 				status: 400,
-				reason: 'Invalid prerenderToken',
-				method: 'POST',
-				credentialsRejected: true,
-			}),
+				statusText: 'Bad Request',
+				body: 'Invalid prerenderToken',
+			},
+			'Bad Request',
 		);
+		mockedRequest.mockRejectedValue(rejection);
 
 		const error = await captureError(
 			Cache.recache(ctx, { url: 'https://example.com/' }),
 		);
 
-		expect(error).toBeInstanceOf(PrerenderAPIError);
-		expect(error).toMatchObject({ status: 400, credentialsRejected: true });
+		expect(error).toBe(rejection);
 	});
 });

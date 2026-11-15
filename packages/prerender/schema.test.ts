@@ -90,8 +90,8 @@ describe('search input', () => {
 		).toBe(true);
 	});
 
-	it('rejects neither, which would return the whole cache', () => {
-		expect(SearchInputSchema.safeParse({}).success).toBe(false);
+	it('accepts neither, which lists the whole cache a page at a time', () => {
+		expect(SearchInputSchema.safeParse({}).success).toBe(true);
 	});
 
 	it('accepts both, since the API says exactMatch wins', () => {
@@ -171,23 +171,28 @@ describe('change speed input', () => {
 });
 
 describe('output schemas', () => {
-	it('parses a cached URL with its status and dates', () => {
-		expect(
-			CachedUrlSchema.safeParse({
-				url: 'https://example.com/a',
-				status: 'Cached',
-				lastCached: '2026-01-01T00:00:00Z',
-				expires: '2026-01-08T00:00:00Z',
-				adaptiveType: 'desktop',
-			}).success,
-		).toBe(true);
+	it('parses a cached URL as the live search route returns it', () => {
+		// Trimmed from a live account, 2026-11-15.
+		const parsed = CachedUrlSchema.parse({
+			adaptiveType: 'desktop',
+			cacheState: 'Cached',
+			domain: 'corsair.dev',
+			lastRefresh: '2026-11-15T00:30:16.367Z',
+			requestedRecacheAt: null,
+			url: 'https://corsair.dev/',
+		});
+		expect(parsed).toMatchObject({
+			cacheState: 'Cached',
+			lastRefresh: '2026-11-15T00:30:16.367Z',
+			requestedRecacheAt: null,
+		});
 	});
 
 	it('keeps a cache status the schema has not seen', () => {
 		expect(
 			CachedUrlSchema.safeParse({
 				url: 'https://example.com/a',
-				status: 'Some New Status',
+				cacheState: 'Some New Status',
 			}).success,
 		).toBe(true);
 	});
