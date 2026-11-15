@@ -35,6 +35,7 @@ const ProviderErrorEnvelopeSchema = z
 				z
 					.object({
 						name: z.string().optional(),
+						message: z.string().optional(),
 						payload: z.record(z.string(), z.json()).optional(),
 					})
 					.passthrough(),
@@ -48,13 +49,37 @@ type SafeProviderErrorBody = {
 	data: null;
 	errors?: Array<{
 		name?: string;
+		message?: string;
 		payload?: Record<string, string | number | boolean>;
 	}>;
 };
 
+const EMAIL_PATTERN = /[^\s@"'<>()]+@[^\s@"'<>()]+\.[^\s@"'<>()]+/g;
+const URL_PATTERN = /\b(?:https?:\/\/|www\.)\S+/gi;
+const QUOTED_PATTERN = /"[^"]*"|“[^”]*”/g;
+const LONG_TOKEN_PATTERN = /[A-Za-z0-9_-]{32,}/g;
+
+/**
+ * Provider messages explain what to fix ("enrich_mail is not a field of this
+ * request - did you mean enrich_email?"), so they are kept, minus anything that
+ * may echo the request: the key, email addresses, URLs and quoted input values.
+ */
+function redactProviderMessage(message: string, apiKey: string): string {
+	const withoutKey = apiKey
+		? message.split(apiKey).join('[redacted]')
+		: message;
+	return withoutKey
+		.replace(EMAIL_PATTERN, '[email]')
+		.replace(URL_PATTERN, '[url]')
+		.replace(QUOTED_PATTERN, '"[value]"')
+		.replace(LONG_TOKEN_PATTERN, '[redacted]')
+		.slice(0, 300);
+}
+
 // `unknown` because ApiError bodies contain untrusted provider JSON that must be whitelisted before exposure.
 function safeProviderErrorBody(
 	body: unknown,
+	apiKey: string,
 ): SafeProviderErrorBody | undefined {
 	const parsed = ProviderErrorEnvelopeSchema.safeParse(body);
 	if (!parsed.success || !parsed.data.errors) return undefined;
@@ -62,6 +87,9 @@ function safeProviderErrorBody(
 		const safeError: NonNullable<SafeProviderErrorBody['errors']>[number] = {};
 		const name = SchemaErrorName.safeParse(providerError.name);
 		if (name.success) safeError.name = name.data;
+		if (typeof providerError.message === 'string') {
+			safeError.message = redactProviderMessage(providerError.message, apiKey);
+		}
 		const providerPayload = providerError.payload;
 		if (providerPayload) {
 			const safePayload: Record<string, string | number | boolean> = {};
@@ -104,7 +132,12 @@ function safeProviderErrorBody(
 function safeApiError(
 	error: ApiError,
 	method: NonNullable<GetProspectRequestOptions['method']>,
+	apiKey: string,
 ): ApiError {
+	const body = safeProviderErrorBody(error.body, apiKey);
+	const providerMessage = body?.errors?.find(
+		(providerError) => providerError.message,
+	)?.message;
 	const safeRequest: ApiRequestOptions = {
 		method,
 		url: '/v2/[redacted]',
@@ -114,12 +147,14 @@ function safeApiError(
 		ok: false,
 		status: error.status,
 		statusText: '',
-		body: safeProviderErrorBody(error.body),
+		body,
 	};
 	return new ApiError(
 		safeRequest,
 		safeResponse,
-		`GetProspect request failed (HTTP ${error.status})`,
+		providerMessage
+			? `GetProspect request failed (HTTP ${error.status}): ${providerMessage}`
+			: `GetProspect request failed (HTTP ${error.status})`,
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -169,7 +204,7 @@ export async function makeGetProspectRequest<T>(
 	} catch (error: unknown) {
 		// `unknown` because JavaScript can throw any value; narrow to ApiError before reading provider fields.
 		// Core ApiError retains body and request details, which may contain prospect PII.
-		if (error instanceof ApiError) throw safeApiError(error, method);
+		if (error instanceof ApiError) throw safeApiError(error, method, apiKey);
 		// Network errors may include full URLs or transport details; expose only a safe summary.
 		throw new Error('GetProspect request failed');
 	}

@@ -88,6 +88,7 @@ describe('GetProspect HTTP client', () => {
 			errors: [
 				{
 					name: 'RATE_LIMIT',
+					message: '[email] and [redacted]',
 					payload: {
 						code: 'rate_limit_exceeded',
 						bucket: 'search',
@@ -102,6 +103,43 @@ describe('GetProspect HTTP client', () => {
 		expect(caught.message).not.toContain('person@samplemail.test');
 		expect(caught.message).not.toContain('unit-key');
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
+	});
+
+	it('keeps the provider message with echoed input redacted', async () => {
+		fetchSpy.mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					success: false,
+					data: null,
+					errors: [
+						{
+							name: 'VALIDATION_ERROR',
+							message:
+								'enrich_mail is not a field of this request - did you mean enrich_email? Got "Jane Doe" at jane@acme.test from https://www.linkedin.com/in/jane-doe',
+							payload: { code: 'unknown_field' },
+						},
+					],
+				}),
+				{ status: 400, headers: { 'content-type': 'application/json' } },
+			),
+		);
+		// unknown because the rejection may be any transport/provider value; the predicate narrows it.
+		const caught = await makeGetProspectRequest(
+			'/v2/people/enrich',
+			'unit-key',
+			{
+				method: 'POST',
+				body: { enrich_mail: true },
+			},
+		).catch((error: unknown) => error);
+		if (!(caught instanceof ApiError))
+			throw new Error('Expected sanitized ApiError');
+		expect(caught.status).toBe(400);
+		expect(caught.message).toContain('did you mean enrich_email?');
+		for (const leaked of ['Jane Doe', 'jane@acme.test', 'linkedin.com']) {
+			expect(caught.message).not.toContain(leaked);
+			expect(JSON.stringify(caught.body)).not.toContain(leaked);
+		}
 	});
 
 	it('does not expose transport URLs or error details for non-API failures', async () => {
