@@ -86,6 +86,31 @@ function sanitizeValue(value: unknown, secrets: string[]): unknown {
 	return value;
 }
 
+// List filters such as recipientEmail and purchaserEmail put emails in the query
+function isEmailQueryParam(key: string, value: unknown): boolean {
+	return (
+		/email/i.test(key) || (typeof value === 'string' && value.includes('@'))
+	);
+}
+
+/** Replace email query values in a URL; core only redacts credential-named params */
+function redactEmailsInUrl(url: string): string {
+	const queryIndex = url.indexOf('?');
+	if (queryIndex === -1) return url;
+	const hashIndex = url.indexOf('#', queryIndex);
+	const end = hashIndex === -1 ? url.length : hashIndex;
+	const params = new URLSearchParams(url.slice(queryIndex + 1, end));
+	let changed = false;
+	for (const [key, value] of [...params.entries()]) {
+		if (isEmailQueryParam(key, value)) {
+			params.set(key, REDACTED);
+			changed = true;
+		}
+	}
+	if (!changed) return url;
+	return `${url.slice(0, queryIndex + 1)}${params.toString()}${url.slice(end)}`;
+}
+
 /** Redact credentials in-place without replacing core's ApiError instance or clobbering stacks */
 export function redactApiErrorInPlace(
 	error: ApiError,
@@ -104,6 +129,19 @@ export function redactApiErrorInPlace(
 		if (error.request.body !== undefined) {
 			Reflect.set(error.request, 'body', REDACTED);
 		}
+		if (isRecord(error.request.query)) {
+			const query: Record<string, unknown> = { ...error.request.query };
+			for (const [key, value] of Object.entries(query)) {
+				if (isEmailQueryParam(key, value)) query[key] = REDACTED;
+			}
+			Reflect.set(error.request, 'query', query);
+		}
+		if (typeof error.request.url === 'string') {
+			Reflect.set(error.request, 'url', redactEmailsInUrl(error.request.url));
+		}
+	}
+	if (typeof error.url === 'string') {
+		Reflect.set(error, 'url', redactEmailsInUrl(error.url));
 	}
 	if (error.body !== undefined) {
 		Reflect.set(error, 'body', sanitizeValue(error.body, secrets));

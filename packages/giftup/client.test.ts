@@ -227,6 +227,39 @@ describe('Gift Up! client', () => {
 		expect(JSON.stringify(failed.request)).not.toContain('Happy birthday');
 	});
 
+	it('drops email filters from a failed list request query and URL', async () => {
+		const failed = new ApiError(
+			{
+				method: 'GET',
+				url: '/gift-cards',
+				query: { recipientEmail: 'jane@example.com', limit: 10 },
+			},
+			{
+				url: 'https://api.giftup.app/gift-cards?recipientEmail=jane%40example.com&limit=10',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: {},
+			},
+			'Bad Request',
+		);
+		mockRequest.mockRejectedValue(failed);
+		const err = await makeGiftUpRequest('/gift-cards', 'secret-token-value', {
+			query: { recipientEmail: 'jane@example.com', limit: 10 },
+		}).catch((caught: unknown) => caught);
+		expect(err).toBe(failed);
+		expect(failed.request?.query).toEqual({
+			recipientEmail: '[redacted]',
+			limit: 10,
+		});
+		expect(failed.url).toContain('limit=10');
+		const serialized = JSON.stringify({
+			url: failed.url,
+			request: failed.request,
+		});
+		expect(serialized).not.toContain('jane');
+	});
+
 	it('wraps generic non-ApiError in GiftUpAPIError', async () => {
 		mockRequest.mockRejectedValue(new Error('Network failure'));
 
