@@ -651,6 +651,35 @@ describe('signerProfiles, applications, seal, logCapsules, & bareSignatures', ()
 		expect(result.signatureProofsUrl).toBeNull();
 	});
 
+	it('signatureRequests.list: parses the string page number the live API returns', async () => {
+		mockedRequest.mockResolvedValue({
+			signatureRequests: [{ _id: 'sr_1', status: 'CANCELLED', signerIds: [] }],
+			paginationData: { total: 1, page: '1', nbEventsPerPage: 25 },
+		});
+		const result = await SignatureRequestsEndpoints.list(ctx, { page: 1 });
+		expect(result.paginationData).toEqual({
+			total: 1,
+			page: 1,
+			nbEventsPerPage: 25,
+		});
+	});
+
+	it('signers.list: keeps the page fields from signers-paginate', async () => {
+		mockedRequest.mockResolvedValue({
+			total: 0,
+			signerPerPage: 20,
+			currentPage: '1',
+			signers: [],
+		});
+		const result = await SignersEndpoints.list(ctx, { page: 1 });
+		expect(result).toEqual({
+			total: 0,
+			signerPerPage: 20,
+			currentPage: 1,
+			signers: [],
+		});
+	});
+
 	it('applications.getContext: keeps settings and profile fields', async () => {
 		const mockResponse = {
 			appId: 'appId_1',

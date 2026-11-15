@@ -36,10 +36,11 @@ export type SignatureLowLevelProofType = z.infer<
 	typeof SignatureLowLevelProofTypeSchema
 >;
 
+// The live API sends `page` as a string ("1"); coerce so callers get numbers.
 export const PaginationDataSchema = z.object({
-	total: z.number(),
-	page: z.number().nullish(),
-	nbEventsPerPage: z.number().nullish(),
+	total: z.coerce.number(),
+	page: z.coerce.number().nullish(),
+	nbEventsPerPage: z.coerce.number().nullish(),
 });
 export type PaginationData = z.infer<typeof PaginationDataSchema>;
 
@@ -131,6 +132,9 @@ export type SignerCreationResponse = z.infer<
 export const SignersSearchResultSchema = z.object({
 	signers: z.array(SignerSummarySchema),
 	total: z.number(),
+	// Returned by signers-paginate; `currentPage` arrives as a string live.
+	currentPage: z.coerce.number().nullish(),
+	signerPerPage: z.number().nullish(),
 });
 export type SignersSearchResult = z.infer<typeof SignersSearchResultSchema>;
 
