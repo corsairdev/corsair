@@ -520,6 +520,18 @@ export type SessionsSearchOutput = z.infer<typeof SessionsSearchOutputSchema>;
 
 export const SessionsActivitiesInputSchema = z.object({
 	sessionId: z.string().min(1, 'sessionId is required'),
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Activities per page (Gleap default 50)'),
+	skip: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Activities to skip, newest first (Gleap default 0)'),
 	project: z.string().optional(),
 });
 export type SessionsActivitiesInput = z.infer<

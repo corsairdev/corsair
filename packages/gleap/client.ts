@@ -113,11 +113,12 @@ export function redactSensitiveData(value: unknown): unknown {
 export function sanitizeApiError(error: unknown): unknown {
 	if (!(error instanceof ApiError)) return error;
 
-	if (error.request && error.request.body !== undefined) {
-		// unknown because request body may be any serialized JSON payload
-		(error.request as { body?: unknown }).body = redactSensitiveData(
-			error.request.body,
-		);
+	// The request body and query carry what the caller sent (message text,
+	// emails, search terms), so they are dropped rather than key-redacted.
+	if (error.request) {
+		Object.defineProperty(error, 'request', {
+			value: { ...error.request, body: undefined, query: undefined },
+		});
 	}
 
 	if (error.body !== undefined) {

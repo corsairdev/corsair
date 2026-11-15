@@ -37,6 +37,7 @@ The plugin defaults to the European data region base URL (`https://api.gleap.io/
 ```typescript
 gleap({
   key: process.env.GLEAP_API_KEY,
+  projectId: process.env.GLEAP_PROJECT_ID,
   baseUrl: 'https://api.us.gleap.ai/v3',
 });
 ```

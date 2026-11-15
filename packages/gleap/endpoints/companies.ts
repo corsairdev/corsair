@@ -54,7 +54,7 @@ export const get: GleapEndpoints['companiesGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'gleap.companies.get',
-		{ companyId: parsed.companyId },
+		{ found: true },
 		'completed',
 	);
 	return output;
@@ -80,7 +80,7 @@ export const createOrUpdate: GleapEndpoints['companiesCreateOrUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'gleap.companies.createOrUpdate',
-		{ companyId },
+		{ saved: true },
 		'completed',
 	);
 	return output;
@@ -102,7 +102,7 @@ export const del: GleapEndpoints['companiesDelete'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'gleap.companies.delete',
-		{ companyId: parsed.companyId },
+		{ deleted: true },
 		'completed',
 	);
 	return output;

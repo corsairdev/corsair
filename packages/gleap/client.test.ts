@@ -155,10 +155,7 @@ describe('makeGleapRequest', () => {
 
 		expect(caught).toBeInstanceOf(ApiError);
 		const sanitized = caught as ApiError;
-		// unknown because request body is parsed from unknown payload
-		const reqBody = sanitized.request.body as Record<string, unknown>;
-		expect(reqBody.apiKey).toBe('[REDACTED]');
-		expect(reqBody.title).toBe('Test');
+		expect(sanitized.request.body).toBeUndefined();
 		// unknown because response body is parsed from unknown payload
 		const resBody = sanitized.body as Record<string, unknown>;
 		expect(resBody.token).toBe('[REDACTED]');
@@ -184,6 +181,35 @@ describe('makeGleapRequest', () => {
 		expect(redacted.user.name).toBe('Alice');
 		expect(redacted.user.apiKey).toBe('[REDACTED]');
 		expect(redacted.user.secret).toBe('[REDACTED]');
+	});
+
+	it('drops the request body and query, which hold customer content', async () => {
+		const coreError = new ApiError(
+			{
+				method: 'POST',
+				url: '/messages',
+				body: { comment: 'Hi Alice, your refund is approved' },
+				query: { email: 'alice@example.com' },
+			},
+			{
+				url: 'https://api.gleap.io/v3/messages',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: { message: 'Invalid ticket' },
+			},
+			'Bad Request',
+		);
+		mockRequest.mockRejectedValue(coreError);
+		// unknown because caught rejection has no static type until inspected
+		const caught: unknown = await makeGleapRequest('/messages', 'key', {
+			method: 'POST',
+			body: { comment: 'Hi Alice, your refund is approved' },
+		}).catch((e: unknown) => e);
+		expect(caught).toBe(coreError);
+		expect(JSON.stringify(caught)).not.toContain('refund');
+		expect(JSON.stringify(caught)).not.toContain('alice@example.com');
+		expect((caught as ApiError).status).toBe(400);
 	});
 
 	it('sanitizeApiError passes non-ApiError unchanged', () => {

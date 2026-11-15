@@ -185,6 +185,9 @@ export const activities: GleapEndpoints['sessionsActivities'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			...(parsed.limit !== undefined || parsed.skip !== undefined
+				? { query: { limit: parsed.limit, skip: parsed.skip } }
+				: {}),
 			...(await resolveGleapTarget(ctx, parsed.project)),
 		},
 	);

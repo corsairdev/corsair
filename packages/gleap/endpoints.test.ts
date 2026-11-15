@@ -464,6 +464,20 @@ describe('Sessions endpoints', () => {
 			},
 		);
 	});
+
+	it('sessions.activities forwards limit and skip for older pages', async () => {
+		mockedRequest.mockResolvedValue([]);
+		await Sessions.activities(ctx, { sessionId: 's_1', limit: 50, skip: 50 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/sessions/s_1/activities',
+			'test-api-key',
+			{
+				method: 'GET',
+				query: { limit: 50, skip: 50 },
+				projectId: undefined,
+			},
+		);
+	});
 });
 
 describe('Users endpoints', () => {
@@ -788,6 +802,13 @@ describe('Companies endpoints', () => {
 				projectId: undefined,
 			},
 		);
+		// companyId is the customer's own external id (it can be an email), so
+		// it stays out of event payloads.
+		const payloads = mockedLogEvent.mock.calls
+			.filter((call) => String(call[1]).startsWith('gleap.companies.'))
+			.map((call) => JSON.stringify(call[2]));
+		expect(payloads.length).toBeGreaterThan(0);
+		for (const payload of payloads) expect(payload).not.toContain('c_1');
 	});
 });
 
