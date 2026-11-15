@@ -4,8 +4,8 @@ import { certspotter } from './index';
 import { issuancePage } from './test-fixtures';
 
 /**
- * `requests.test.ts` calls the HTTP client, which is built with `maxRetries: 0`
- * so only `error-handlers.ts` decides what is retried.
+ * Core's request() retries a 429 (or a `rate_limited` body) three times with
+ * Retry-After; `error-handlers.ts` decides the rest.
  *
  * Cert Spotter documents that an `internal_error` may be retried with
  * exponential backoff, and both routes are GETs, so every replay here is safe.

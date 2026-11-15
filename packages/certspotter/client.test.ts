@@ -1,13 +1,12 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	CERTSPOTTER_API_BASE,
-	CertSpotterAPIError,
-	describeCertSpotterError,
+	certSpotterErrorCode,
 	makeCertSpotterRequest,
 } from './client';
 import {
 	badCredentials,
-	badQuery,
 	laggingClient,
 	paymentRequired,
 	queryTimeout,
@@ -101,10 +100,14 @@ describe('makeCertSpotterRequest', () => {
 			path: 'issuances',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(CertSpotterAPIError);
-		expect((error as CertSpotterAPIError).code).toBe('bad_credentials');
-		expect((error as CertSpotterAPIError).status).toBe(401);
-		expect((error as Error).message).toContain('Invalid API key');
+		// Core's ApiError goes through unchanged (plugin rules R8), with the
+		// provider's body and its documented code.
+		expect(error).toBeInstanceOf(ApiError);
+		expect(certSpotterErrorCode(error)).toBe('bad_credentials');
+		expect((error as ApiError).status).toBe(401);
+		expect((error as ApiError).body).toMatchObject({
+			message: 'Invalid API key',
+		});
 	});
 
 	it('reads the field an error names', async () => {
@@ -118,29 +121,45 @@ describe('makeCertSpotterRequest', () => {
 			path: 'issuances',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as CertSpotterAPIError).field).toBe('domain');
+		expect((error as ApiError).body).toMatchObject({ field: 'domain' });
 	});
 
-	it('recognises the four documented failure kinds', async () => {
-		const build = async (body: typeof rateLimited, status: number) => {
+	it('reads the documented codes off the ApiError body', async () => {
+		const build = async (body: typeof queryTimeout, status: number) => {
 			respond(body, status);
 			return makeCertSpotterRequest(API_KEY, {
 				method: 'GET',
 				path: 'issuances',
-			}).catch((caught: unknown) => caught) as Promise<CertSpotterAPIError>;
+			}).catch((caught: unknown) => caught);
 		};
 
-		const limited = await build(rateLimited, 429);
-		expect(limited.isRateLimit).toBe(true);
+		expect(certSpotterErrorCode(await build(queryTimeout, 400))).toBe(
+			'timeout',
+		);
+		expect(certSpotterErrorCode(await build(paymentRequired, 400))).toBe(
+			'payment_required',
+		);
+		expect(certSpotterErrorCode(await build(laggingClient, 400))).toBe(
+			'lagging_client',
+		);
+		expect(certSpotterErrorCode(new Error('offline'))).toBeUndefined();
+	});
 
-		const timedOut = await build(queryTimeout, 400);
-		expect(timedOut.isTimeout).toBe(true);
-
-		const unpaid = await build(paymentRequired, 400);
-		expect(unpaid.isPaymentRequired).toBe(true);
-
-		const lagging = await build(laggingClient, 400);
-		expect(lagging.code).toBe('lagging_client');
+	it('lets core retry a rate_limited answer, then passes the 429 through', async () => {
+		jest.useFakeTimers();
+		try {
+			for (let i = 0; i < 4; i += 1) respond(rateLimited, 429);
+			const pending = makeCertSpotterRequest(API_KEY, {
+				method: 'GET',
+				path: 'issuances',
+			}).catch((caught: unknown) => caught);
+			await jest.advanceTimersByTimeAsync(20_000);
+			const error = await pending;
+			expect(fetchMock).toHaveBeenCalledTimes(4);
+			expect((error as ApiError).status).toBe(429);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
 	it('keeps Retry-After from an empty page', async () => {
@@ -159,14 +178,17 @@ describe('makeCertSpotterRequest', () => {
 	});
 
 	it('keeps Retry-After on a 429', async () => {
-		respond({}, 429, { 'Retry-After': '12' });
-
-		const error = await makeCertSpotterRequest(API_KEY, {
+		jest.useFakeTimers();
+		for (let i = 0; i < 4; i += 1) respond({}, 429, { 'Retry-After': '12' });
+		const pending = makeCertSpotterRequest(API_KEY, {
 			method: 'GET',
 			path: 'issuances',
 		}).catch((caught: unknown) => caught);
+		await jest.advanceTimersByTimeAsync(40_000);
+		jest.useRealTimers();
+		const error = await pending;
 
-		expect((error as CertSpotterAPIError).retryAfter).toBe(12000);
+		expect((error as ApiError).retryAfter).toBe(12000);
 	});
 
 	it('records the method', async () => {
@@ -177,7 +199,7 @@ describe('makeCertSpotterRequest', () => {
 			path: 'issuances',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as CertSpotterAPIError).method).toBe('GET');
+		expect((error as ApiError).request.method).toBe('GET');
 	});
 
 	it('never puts the key in the message or its inspection', async () => {
@@ -196,40 +218,5 @@ describe('makeCertSpotterRequest', () => {
 		]) {
 			expect(text).not.toContain(API_KEY);
 		}
-	});
-});
-
-describe('describeCertSpotterError', () => {
-	it('includes both the status and the code', () => {
-		expect(describeCertSpotterError(401, badCredentials, 'x')).toBe(
-			'Cert Spotter 401 bad_credentials: Invalid API key',
-		);
-	});
-
-	it('handles the 503 the free tier returns under load', () => {
-		expect(describeCertSpotterError(503, serviceOutage, 'x')).toContain(
-			'free tier is temporarily unavailable',
-		);
-	});
-
-	it('reads a body with a code but no message', () => {
-		expect(describeCertSpotterError(400, { code: 'bad_request' }, 'Bad')).toBe(
-			'Cert Spotter 400 bad_request: Bad',
-		);
-	});
-
-	it('ignores sub_errors when composing the message', () => {
-		expect(describeCertSpotterError(400, badQuery, 'x')).toBe(
-			'Cert Spotter 400 bad_query: One or more fields in the query string is invalid',
-		);
-	});
-
-	it('falls back for a non-object body', () => {
-		expect(describeCertSpotterError(502, '<html>', 'Bad Gateway')).toBe(
-			'Cert Spotter 502: Bad Gateway',
-		);
-		expect(describeCertSpotterError(undefined, null, 'offline')).toBe(
-			'offline',
-		);
 	});
 });

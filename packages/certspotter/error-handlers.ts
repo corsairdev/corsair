@@ -1,59 +1,54 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { CertSpotterAPIError } from './client';
-
-function codeOf(error: Error): string | undefined {
-	return error instanceof CertSpotterAPIError ? error.code : undefined;
-}
+import { ApiError } from 'corsair/http';
+import { certSpotterErrorCode } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof CertSpotterAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
- * Cert Spotter documents every error code it can return. The two that a caller
- * may act on are `rate_limited` (wait and retry) and `timeout` (the query
- * exceeded the plan's limit, which no retry fixes).
+ * Cert Spotter documents every error code it can return. The errors are core's
+ * ApiError, whose body carries the code. The two a caller may act on are
+ * `rate_limited` (wait and retry) and `timeout` (the query exceeded the plan's
+ * limit, which no retry fixes).
  */
 export const errorHandlers = {
-	// `rate_limited`, or a gateway 429. Both mean the same thing.
+	// `rate_limited`, or a gateway 429. Core's request() already retried it
+	// three times with Retry-After, so it is not replayed again here.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
-			error instanceof CertSpotterAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof CertSpotterAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+			statusOf(error) === 429 || certSpotterErrorCode(error) === 'rate_limited',
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// `bad_credentials`, `disabled_credentials`, `unauthorized`: the key is
 	// wrong, disabled, or lacks the scope. The same request fails again.
 	AUTH_ERROR: {
 		match: (error: Error) =>
 			statusOf(error) === 401 ||
-			codeOf(error) === 'bad_credentials' ||
-			codeOf(error) === 'disabled_credentials' ||
-			codeOf(error) === 'unauthorized',
+			certSpotterErrorCode(error) === 'bad_credentials' ||
+			certSpotterErrorCode(error) === 'disabled_credentials' ||
+			certSpotterErrorCode(error) === 'unauthorized',
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// `payment_required` and `not_allowed_by_plan`: the subscription needs to
 	// change before any retry can help.
 	QUOTA_ERROR: {
 		match: (error: Error) =>
-			error instanceof CertSpotterAPIError && error.isPaymentRequired,
+			statusOf(error) === 402 ||
+			certSpotterErrorCode(error) === 'payment_required' ||
+			certSpotterErrorCode(error) === 'not_allowed_by_plan',
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// `timeout`: the search hit the plan's query limit. Cert Spotter suggests a
 	// longer timeout plan, not a retry.
 	TIMEOUT_ERROR: {
-		match: (error: Error) =>
-			error instanceof CertSpotterAPIError && error.isTimeout,
+		match: (error: Error) => certSpotterErrorCode(error) === 'timeout',
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// `lagging_client`: the firehose consumer fell behind and must restart from
 	// the end rather than replay the same cursor.
 	CONFLICT_ERROR: {
-		match: (error: Error) => codeOf(error) === 'lagging_client',
+		match: (error: Error) => certSpotterErrorCode(error) === 'lagging_client',
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// `bad_request`, `bad_query`, `missing_field`, `invalid_value`,

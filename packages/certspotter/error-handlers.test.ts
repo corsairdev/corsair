@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { CertSpotterAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import {
 	badCredentials,
@@ -21,51 +21,58 @@ function classify(error: Error): HandlerName {
 }
 
 async function strategy(error: Error) {
-	return errorHandlers[classify(error)].handler(error);
+	// Widened: every handler here ignores the error, but core passes it.
+	const handler: (error: Error) => Promise<unknown> =
+		errorHandlers[classify(error)].handler;
+	return handler(error);
 }
 
 /**
- * Builds an error carrying a documented code, the way the client does when it
- * reads the provider's body.
+ * Builds core's ApiError the way request() does, with the provider's body
+ * carrying a documented code.
  */
+function apiError(
+	status: number,
+	// unknown: the provider's error body, or anything a proxy sends.
+	body: unknown = {},
+	options: { retryAfter?: number } = {},
+) {
+	return new ApiError(
+		{ method: 'GET', url: 'issuances' },
+		{
+			url: 'https://api.certspotter.com/v1/issuances',
+			ok: false,
+			status,
+			statusText: '',
+			body,
+		},
+		`Cert Spotter ${status}`,
+		options,
+	);
+}
+
 function codeError(
 	status: number,
 	code: string,
 	options: { retryAfter?: number } = {},
 ) {
-	const error = new CertSpotterAPIError(`Cert Spotter ${status} ${code}`, {
-		status,
-		...options,
-	});
-	// The code comes from the body, which the client keeps; set it directly so
-	// the test does not have to reproduce the ApiError.
-	Object.defineProperty(error, 'code', { value: code, enumerable: true });
-	return error;
+	return apiError(status, { code, message: code }, options);
 }
 
 describe('Cert Spotter error handlers', () => {
-	it('retries rate_limited with backoff', async () => {
+	it('does not replay a rate limit core already retried', async () => {
 		const error = codeError(429, 'rate_limited');
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+	});
+
+	it('treats a rate_limited code as a rate limit whatever the status', () => {
+		expect(classify(codeError(403, 'rate_limited'))).toBe('RATE_LIMIT_ERROR');
 	});
 
 	it('retries a 429 even with no code in the body', async () => {
-		const error = new CertSpotterAPIError('Cert Spotter 429', { status: 429 });
+		const error = apiError(429);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-	});
-
-	it('honours Retry-After on a rate limit', async () => {
-		const error = codeError(429, 'rate_limited', { retryAfter: 12000 });
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 12000,
-			retryStrategy: 'exponential_backoff',
-		});
 	});
 
 	it.each([
@@ -89,7 +96,7 @@ describe('Cert Spotter error handlers', () => {
 	});
 
 	it('does not retry a 402', () => {
-		const error = new CertSpotterAPIError('Cert Spotter 402', { status: 402 });
+		const error = apiError(402);
 		expect(classify(error)).toBe('QUOTA_ERROR');
 	});
 
@@ -100,6 +107,10 @@ describe('Cert Spotter error handlers', () => {
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
+	it('does not retry not_allowed_by_plan', () => {
+		expect(classify(codeError(403, 'not_allowed_by_plan'))).toBe('QUOTA_ERROR');
+	});
+
 	it('does not replay a lagging firehose client', () => {
 		expect(classify(codeError(400, 'lagging_client'))).toBe('CONFLICT_ERROR');
 	});
@@ -107,9 +118,7 @@ describe('Cert Spotter error handlers', () => {
 	it.each([400, 403, 404, 405])(
 		'treats a bare %i as a validation error',
 		(status) => {
-			expect(classify(new CertSpotterAPIError('x', { status }))).toBe(
-				'VALIDATION_ERROR',
-			);
+			expect(classify(apiError(status))).toBe('VALIDATION_ERROR');
 		},
 	);
 
@@ -118,9 +127,7 @@ describe('Cert Spotter error handlers', () => {
 	});
 
 	it('retries a 5xx, which the provider says is safe with backoff', async () => {
-		const error = new CertSpotterAPIError('Cert Spotter 503 service_outage', {
-			status: 503,
-		});
+		const error = codeError(503, 'service_outage');
 		expect(classify(error)).toBe('SERVER_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,

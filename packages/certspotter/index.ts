@@ -144,7 +144,7 @@ export function certspotter<const T extends CertSpotterPluginOptions>(
 	} satisfies InternalCertSpotterPlugin;
 }
 
-export { CertSpotterAPIError } from './client';
+export { certSpotterErrorCode } from './client';
 
 export type {
 	CertSpotterEndpointInputs,
