@@ -363,6 +363,48 @@ describe('manage.disconnect — one account', () => {
 		}
 	});
 
+	it.each([[''], ['   '], [null], [5]])(
+		'rejects account %p with a 400 and deletes nothing',
+		async (account) => {
+			const { db, destroy } = createTestDatabase();
+			try {
+				await seedConnection(db, 't1', 'acc1');
+				await expect(
+					disconnectConnection(internalFor(db), {
+						plugin: 'slack',
+						tenantId: 't1',
+						account: account as unknown as string,
+					}),
+				).rejects.toMatchObject({ status: 400, code: 'bad_request' });
+				expect(await accountCount(db, 'acc1')).toBe(1);
+			} finally {
+				await destroy();
+			}
+		},
+	);
+
+	it('a label that exists only in another tenant disconnects nothing', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			await db
+				.updateTable('corsair_accounts')
+				.set({ tenant_id: 't2' })
+				.where('id', '=', 'acc2')
+				.execute();
+			const result = await disconnectConnection(internalFor(db), {
+				plugin: 'slack',
+				tenantId: 't1',
+				account: 'two@x.com',
+			});
+			expect(result).toEqual({ ok: true, disconnected: false });
+			expect(await accountCount(db, 'acc1')).toBe(1);
+			expect(await accountCount(db, 'acc2')).toBe(1);
+		} finally {
+			await destroy();
+		}
+	});
+
 	it('POST /disconnect passes account through the management handler', async () => {
 		const { db, destroy } = createTestDatabase();
 		try {

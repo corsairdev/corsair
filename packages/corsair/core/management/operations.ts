@@ -308,6 +308,14 @@ export async function disconnectConnection(
 		throw badRequest('tenantId must be a string');
 	}
 	const tenantId = rawTenantId?.trim() || 'default';
+	const rawAccount = input?.account;
+	if (
+		rawAccount !== undefined &&
+		(typeof rawAccount !== 'string' || !rawAccount.trim())
+	) {
+		throw badRequest('account must be a non-empty string');
+	}
+	const account = rawAccount?.trim();
 	if (!internal.database) return { ok: true, disconnected: false };
 
 	const db = internal.database.db;
@@ -335,7 +343,7 @@ export async function disconnectConnection(
 		}
 
 		let accountId: string | undefined;
-		if (input.account !== undefined) {
+		if (account !== undefined) {
 			try {
 				accountId = (
 					await resolveAccount({
@@ -343,7 +351,7 @@ export async function disconnectConnection(
 						kek: internal.kek,
 						integrationId: integration.id,
 						tenantId,
-						ref: input.account,
+						ref: account,
 					})
 				)?.id;
 			} catch (error) {
