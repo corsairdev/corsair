@@ -60,6 +60,7 @@ await corsair.parma.api.deals.get({ id: '123' });
 
 
 ---
+
 ### list
 
 `deals.list`
@@ -834,7 +835,7 @@ await corsair.parma.api.relationships.removeGroup({ relationship_id: '123', rela
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `relationship_id` | `string` | Yes | — |
-| `relationship_group_id` | `string` | Yes | — |
+| `relationship_group_id` | `string` | Yes | Membership id: the `id` from relationships.listGroups, not the `group_id` |
 
 
 
@@ -1135,3 +1136,4 @@ await corsair.parma.api.users.me({});
 
 
 ---
+

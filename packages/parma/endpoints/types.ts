@@ -41,7 +41,9 @@ export const ParmaEndpointInputSchemas = {
 	listRelationshipGroups: relationshipId,
 	addRelationshipGroup: relationshipId.extend({ group_id: z.number().int() }),
 	removeRelationshipGroup: relationshipId.extend({
-		relationship_group_id: routeId,
+		relationship_group_id: routeId.describe(
+			'Membership id: the `id` from relationships.listGroups, not the `group_id`',
+		),
 	}),
 	listRelationshipNotes: relationshipId.extend({ page: z.string().optional() }),
 	listRelationships: z.object({
