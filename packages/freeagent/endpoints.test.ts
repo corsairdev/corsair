@@ -558,6 +558,7 @@ const endpoints = {
 const ctx = {
 	key: 'access-token',
 	database: undefined,
+	db: {},
 	$getAccountId: async () => 'account-test',
 	endpoints,
 };
