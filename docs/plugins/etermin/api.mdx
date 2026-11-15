@@ -3,6 +3,7 @@ title: "eTermin API reference"
 sidebarTitle: "API"
 description: "API reference for the eTermin plugin in Corsair: every `etermin.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -319,7 +320,7 @@ undefined | {
 
 Use this function to create a new appointment in the eTermin calendar
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.etermin.api.appointments.create({});
@@ -507,7 +508,7 @@ await corsair.etermin.api.appointments.list({});
 
 Use this function if you want to update details of an existing appointment.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.etermin.api.appointments.update({});
@@ -531,7 +532,6 @@ await corsair.etermin.api.appointments.update({});
 | `manualconfirmed` | `number` | No | Set to 0 to have the appointment manually confirmed by the appoinment provider, set to 1 if the appointment got confirmed |
 | `sendemail` | `boolean` | No | Send a confirmation email to the adress that was specified in the email parameter (1 = yes, 0 = no). |
 | `msgtype` | `number` | No | ID of the template that is sent to the customer with the API call |
-| `sendsms` | `boolean` | No | Send a confirmation SMS to the phone number that was specified in the phone parameter (1 = yes, 0 = no). |
 | `msgtypesms` | `number` | No | ID of the template that is sent to the customer via SMS with the API call (required to send a SMS) |
 | `notificationmsg` | `boolean` | No | Send an information email to the appointment provider (1 = yes, 0 = no). |
 | `sync` | `boolean` | No | True if the appointment should be synchronized with external calendars (1 = yes, 0 = no). |
@@ -602,7 +602,7 @@ undefined | {
 
 Create a new appointment
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.etermin.api.appointmentSync.create({});
@@ -1329,7 +1329,7 @@ undefined | {
 
 `calendarServices.delete`
 
-Use this function if you want to delete a calendar/service assignment
+Use this function if you want to delete a calendar/service assignment, given by its calendar and service
 
 **Risk:** `destructive`
 
@@ -1341,7 +1341,8 @@ await corsair.etermin.api.calendarServices.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | ID of the calendar service assignment |
+| `calendarid` | `string` | Yes | ID of the calendar |
+| `serviceid` | `string` | Yes | ID of the service to unassign |
 
 
 
@@ -1983,8 +1984,6 @@ await corsair.etermin.api.serviceGroups.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `servicegroupid` | `number` | Yes | ID of the service group that gets updated |
-| `servicegroupde` | `string` | No | Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen |
-| `servicegroupen` | `string` | No | Name of the service group in English. |
 | `additionaltextde` | `string` | No | Additional information of the service group in german. For other languages use additionaltextLANGUAGECODE e.g. additionaltexten |
 | `additionaltexten` | `string` | No | Additional information in English. |
 | `addtextdisplaymode` | `number` | No | Defines the location of the additional text (0 = via Tooltip; 1 = under the name of the service group) |
@@ -2673,7 +2672,7 @@ await corsair.etermin.api.vouchers.list({});
 
 `vouchers.update`
 
-Update an existing voucher
+Update an existing voucher, found by its internal iid (from vouchers.list), not its code
 
 **Risk:** `write`
 
@@ -2685,7 +2684,7 @@ await corsair.etermin.api.vouchers.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | ID of the voucher |
+| `iid` | `number` | Yes | Internal ID of the voucher: the iid field from vouchers.list |
 | `description` | `string` | No | Description of the voucher |
 | `priceinclvat` | `number` | No | Price including vat of the voucher |
 | `priceoriginal` | `number` | No | Should be the same value as in priceinclvat, important with contingent |
@@ -2986,3 +2985,4 @@ await corsair.etermin.api.workingTimes.update({});
 
 
 ---
+
