@@ -1,6 +1,7 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
+// unknown because provider error bodies are untrusted JSON and need recursive inspection.
 function isQuotaExhaustion(value: unknown): boolean {
 	if (typeof value === 'string') {
 		return /daily.{0,40}api.{0,40}limit|monthly.{0,40}api.{0,40}limit|quota.{0,40}(exceed|exhaust|reach)|quota_exhausted/i.test(

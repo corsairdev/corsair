@@ -42,11 +42,13 @@ export type JotformRequestOptions = {
 	baseUrl?: string;
 	// unknown because request body payloads vary by endpoint (JSON or urlencoded form)
 	body?: unknown;
+	// unknown because multipart fields accept endpoint-specific payload values.
 	formData?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	contentType?: string;
 };
 
+// unknown because endpoint responses remain untrusted until their output schema validates them.
 export function makeJotformEndpointRequest(
 	context: { options: { baseUrl?: string } },
 	endpoint: string,
@@ -78,6 +80,11 @@ function isSensitiveKey(key: string): boolean {
 	);
 }
 
+// unknown because provider error JSON can be any value and must be narrowed before traversal.
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 // unknown because arbitrary JSON values from provider errors must be inspected and sanitized recursively.
 function redactSensitiveData(data: unknown): unknown {
 	if (data === null || data === undefined) return data;
@@ -88,9 +95,9 @@ function redactSensitiveData(data: unknown): unknown {
 	if (Array.isArray(data)) {
 		return data.map((item) => redactSensitiveData(item));
 	}
-	if (typeof data === 'object') {
+	if (isRecord(data)) {
 		const result: Record<string, unknown> = {};
-		for (const [k, v] of Object.entries(data as Record<string, unknown>)) {
+		for (const [k, v] of Object.entries(data)) {
 			if (isSensitiveKey(k)) {
 				result[k] = '[REDACTED]';
 			} else {

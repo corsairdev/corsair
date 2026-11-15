@@ -22,6 +22,7 @@ function makeApiError(
 	status: number,
 	message: string,
 	retryAfter?: number,
+	// unknown because provider error bodies can contain arbitrary JSON structures.
 	body: unknown = {},
 ) {
 	return new ApiError(
@@ -164,11 +165,14 @@ describe('makeJotformRequest', () => {
 		expect(error.request.body).toBeUndefined();
 		expect(error.request.url).toBe('/user');
 		expect(error.url).toBe('https://api.jotform.com/user');
-		const body = error.body as Record<string, unknown>;
-		expect(body.apiKey).toBe('[REDACTED]');
-		expect(body.password).toBe('[REDACTED]');
-		expect(body.secret).toBe('[REDACTED]');
-		expect(body.error).toBe('Invalid request');
+		expect(error.body).toEqual(
+			expect.objectContaining({
+				apiKey: '[REDACTED]',
+				password: '[REDACTED]',
+				secret: '[REDACTED]',
+				error: 'Invalid request',
+			}),
+		);
 	});
 
 	it('passes rateLimitConfig with maxRetries 0 to transport', async () => {
