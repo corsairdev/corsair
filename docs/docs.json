@@ -4184,6 +4184,14 @@
                 ]
               },
               {
+                "group": "Sensibo",
+                "pages": [
+                  "plugins/sensibo/overview",
+                  "plugins/sensibo/api",
+                  "plugins/sensibo/database"
+                ]
+              },
+              {
                 "group": "Sentry",
                 "pages": [
                   "plugins/sentry/overview",

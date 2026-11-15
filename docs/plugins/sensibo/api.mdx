@@ -1,0 +1,55 @@
+---
+title: "Sensibo API reference"
+sidebarTitle: "API"
+description: "API reference for the Sensibo plugin in Corsair: every `sensibo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Devices
+
+### list
+
+`devices.list`
+
+List every Sensibo pod on the authenticated account.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.devices.list({ fields: 'id,room' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | Comma-separated pod fields to return. |
+
+Pass a comma-separated field list when you want a smaller pod object. Omit it to take the service default.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
