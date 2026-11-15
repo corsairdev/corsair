@@ -11,7 +11,6 @@ import {
 	SignaturesEndpoints,
 	SignerProfilesEndpoints,
 	SignersEndpoints,
-	UserInvitationsEndpoints,
 } from './endpoints';
 import type { IgnisignContext } from './index';
 
@@ -554,7 +553,7 @@ describe('signatures & proofs endpoints', () => {
 	});
 });
 
-describe('signerProfiles, applications, seal, logCapsules, bareSignatures & userInvitations', () => {
+describe('signerProfiles, applications, seal, logCapsules, & bareSignatures', () => {
 	it('signerProfiles.list: lists signer profiles', async () => {
 		mockedRequest.mockResolvedValue([{ _id: 'prof_1', name: 'Standard' }]);
 		const result = await SignerProfilesEndpoints.list(ctx, {
@@ -671,49 +670,5 @@ describe('signerProfiles, applications, seal, logCapsules, bareSignatures & user
 			proofToken: 'tok_1',
 		});
 		expect(proof.signatureRequestId).toBe('sig_1');
-	});
-
-	it('userInvitations: tests list, invite, resend, cancel and edit', async () => {
-		mockedRequest.mockResolvedValueOnce([]);
-		const list = await UserInvitationsEndpoints.list(ctx, {
-			appId: 'appId_1',
-		});
-		expect(list).toEqual([]);
-
-		mockedRequest.mockResolvedValueOnce({
-			_id: 'inv_1',
-			email: 'collab@example.com',
-		});
-		const invited = await UserInvitationsEndpoints.invite(ctx, {
-			appId: 'appId_1',
-			email: 'collab@example.com',
-			roles: { DEVELOPMENT: ['ADMIN'] },
-		});
-		expect(invited._id).toBe('inv_1');
-
-		mockedRequest.mockResolvedValueOnce({});
-		const resend = await UserInvitationsEndpoints.resend(ctx, {
-			appId: 'appId_1',
-			userInvitationId: 'inv_1',
-		});
-		expect(resend).toEqual({ success: true });
-
-		mockedRequest.mockResolvedValueOnce({});
-		const canceled = await UserInvitationsEndpoints.cancel(ctx, {
-			appId: 'appId_1',
-			userInvitationId: 'inv_1',
-		});
-		expect(canceled).toEqual({ success: true });
-
-		mockedRequest.mockResolvedValueOnce({
-			_id: 'inv_1',
-			roles: { PRODUCTION: ['VIEWER'] },
-		});
-		const edited = await UserInvitationsEndpoints.edit(ctx, {
-			appId: 'appId_1',
-			userInvitationId: 'inv_1',
-			roles: { PRODUCTION: ['VIEWER'] },
-		});
-		expect(edited.roles).toEqual({ PRODUCTION: ['VIEWER'] });
 	});
 });

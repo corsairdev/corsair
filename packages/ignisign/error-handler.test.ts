@@ -117,7 +117,7 @@ describe('Ignisign errorHandlers', () => {
 		const error = new Error('custom error');
 		const context = {
 			pluginId: 'ignisign',
-			operation: 'userInvitations.invite',
+			operation: 'signers.create',
 			input: {},
 			originalError: error,
 		};

@@ -147,26 +147,6 @@ apiExamples:
     code: code_sample
   bareSignatures.getProofs:
     proofToken: token_sample
-  userInvitations.list:
-    appId: appId_sample
-  userInvitations.invite:
-    appId: appId_sample
-    email: colleague@example.com
-    roles:
-      DEVELOPMENT:
-        - ADMIN
-  userInvitations.resend:
-    appId: appId_sample
-    userInvitationId: inv_sample
-  userInvitations.cancel:
-    appId: appId_sample
-    userInvitationId: inv_sample
-  userInvitations.edit:
-    appId: appId_sample
-    userInvitationId: inv_sample
-    roles:
-      DEVELOPMENT:
-        - SIGNER
 apiNotes:
   documents.downloadOriginalDoc: >-
     Returns a binary response `{ kind: 'binary', contentType, base64, size }`.

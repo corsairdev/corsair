@@ -39,16 +39,7 @@ describe('Ignisign schema', () => {
 
 		expect(nestedKeys.sort()).toEqual(schemaKeys.sort());
 		expect(nestedKeys.sort()).toEqual(metaKeys.sort());
-		expect(nestedKeys.length).toBe(46);
-	});
-
-	it('marks invitation email operations as destructive', () => {
-		expect(ignisignEndpointMeta['userInvitations.invite'].riskLevel).toBe(
-			'destructive',
-		);
-		expect(ignisignEndpointMeta['userInvitations.resend'].riskLevel).toBe(
-			'destructive',
-		);
+		expect(nestedKeys.length).toBe(41);
 	});
 });
 
@@ -281,46 +272,6 @@ describe('Ignisign endpoint schemas validation', () => {
 		expect(
 			IgnisignEndpointOutputSchemas['logCapsules.create'].safeParse(validOutput)
 				.success,
-		).toBe(true);
-	});
-
-	it('validates userInvitations.invite input and output', () => {
-		const validInput = {
-			appId: 'appId_abc',
-			email: 'collab@example.com',
-			roles: {
-				DEVELOPMENT: ['ADMIN', 'SIGNER'],
-				PRODUCTION: ['VIEWER'],
-			},
-		};
-		expect(
-			IgnisignEndpointInputSchemas['userInvitations.invite'].safeParse(
-				validInput,
-			).success,
-		).toBe(true);
-
-		// Invalid: bad email
-		expect(
-			IgnisignEndpointInputSchemas['userInvitations.invite'].safeParse({
-				appId: 'appId_abc',
-				email: 'not-an-email',
-				roles: {},
-			}).success,
-		).toBe(false);
-
-		const validOutput = {
-			_id: 'inv_123',
-			email: 'collab@example.com',
-			appId: 'appId_abc',
-			status: 'PENDING',
-			roles: {
-				DEVELOPMENT: ['ADMIN'],
-			},
-		};
-		expect(
-			IgnisignEndpointOutputSchemas['userInvitations.invite'].safeParse(
-				validOutput,
-			).success,
 		).toBe(true);
 	});
 });

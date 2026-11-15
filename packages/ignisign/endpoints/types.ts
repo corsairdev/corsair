@@ -297,22 +297,6 @@ export const BareSignatureProofSchema = z.object({
 });
 export type BareSignatureProof = z.infer<typeof BareSignatureProofSchema>;
 
-export const UserRolesSchema = z.object({
-	DEVELOPMENT: z.array(z.string()).optional(),
-	STAGING: z.array(z.string()).optional(),
-	PRODUCTION: z.array(z.string()).optional(),
-});
-export type UserRoles = z.infer<typeof UserRolesSchema>;
-
-export const UserInvitationSchema = z.object({
-	_id: z.string().optional(),
-	email: z.string().optional(),
-	appId: z.string().optional(),
-	status: z.string().optional(),
-	roles: UserRolesSchema.optional(),
-});
-export type UserInvitation = z.infer<typeof UserInvitationSchema>;
-
 export const IgnisignEndpointInputSchemas = {
 	// signatureRequests
 	'signatureRequests.createInOneCall': z
@@ -694,43 +678,6 @@ export const IgnisignEndpointInputSchemas = {
 			proofToken: z.string(),
 		})
 		.strict(),
-
-	// userInvitations
-	'userInvitations.list': z
-		.object({
-			appId: z.string(),
-		})
-		.strict(),
-
-	'userInvitations.invite': z
-		.object({
-			appId: z.string(),
-			email: z.string().email(),
-			roles: UserRolesSchema,
-		})
-		.strict(),
-
-	'userInvitations.resend': z
-		.object({
-			appId: z.string(),
-			userInvitationId: z.string(),
-		})
-		.strict(),
-
-	'userInvitations.cancel': z
-		.object({
-			appId: z.string(),
-			userInvitationId: z.string(),
-		})
-		.strict(),
-
-	'userInvitations.edit': z
-		.object({
-			appId: z.string(),
-			userInvitationId: z.string(),
-			roles: UserRolesSchema,
-		})
-		.strict(),
 } as const;
 
 export const IgnisignEndpointOutputSchemas = {
@@ -835,17 +782,6 @@ export const IgnisignEndpointOutputSchemas = {
 		scope: z.string().optional(),
 	}),
 	'bareSignatures.getProofs': BareSignatureProofSchema,
-
-	// userInvitations
-	'userInvitations.list': z.array(UserInvitationSchema),
-	'userInvitations.invite': UserInvitationSchema,
-	'userInvitations.resend': z.object({
-		success: z.boolean(),
-	}),
-	'userInvitations.cancel': z.object({
-		success: z.boolean(),
-	}),
-	'userInvitations.edit': UserInvitationSchema,
 } as const;
 
 export type IgnisignEndpointInputs = {

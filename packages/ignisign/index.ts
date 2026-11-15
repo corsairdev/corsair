@@ -230,27 +230,6 @@ export const ignisignEndpointSchemas = {
 		input: IgnisignEndpointInputSchemas['bareSignatures.getProofs'],
 		output: IgnisignEndpointOutputSchemas['bareSignatures.getProofs'],
 	},
-
-	'userInvitations.list': {
-		input: IgnisignEndpointInputSchemas['userInvitations.list'],
-		output: IgnisignEndpointOutputSchemas['userInvitations.list'],
-	},
-	'userInvitations.invite': {
-		input: IgnisignEndpointInputSchemas['userInvitations.invite'],
-		output: IgnisignEndpointOutputSchemas['userInvitations.invite'],
-	},
-	'userInvitations.resend': {
-		input: IgnisignEndpointInputSchemas['userInvitations.resend'],
-		output: IgnisignEndpointOutputSchemas['userInvitations.resend'],
-	},
-	'userInvitations.cancel': {
-		input: IgnisignEndpointInputSchemas['userInvitations.cancel'],
-		output: IgnisignEndpointOutputSchemas['userInvitations.cancel'],
-	},
-	'userInvitations.edit': {
-		input: IgnisignEndpointInputSchemas['userInvitations.edit'],
-		output: IgnisignEndpointOutputSchemas['userInvitations.edit'],
-	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof ignisignEndpointsNested
 >;
@@ -443,29 +422,6 @@ export const ignisignEndpointMeta = {
 		description:
 			'Fetch cryptographic proofs and signer claims using proof access token',
 	},
-
-	'userInvitations.list': {
-		riskLevel: 'read',
-		description:
-			'List pending and accepted user invitations for an application',
-	},
-	'userInvitations.invite': {
-		riskLevel: 'destructive',
-		description:
-			'Invite a new collaborator to an application with environment roles',
-	},
-	'userInvitations.resend': {
-		riskLevel: 'destructive',
-		description: 'Resend invitation email to an invited user',
-	},
-	'userInvitations.cancel': {
-		riskLevel: 'destructive',
-		description: 'Cancel an active user invitation',
-	},
-	'userInvitations.edit': {
-		riskLevel: 'write',
-		description: 'Update environment roles for an invited application user',
-	},
 } as const satisfies RequiredPluginEndpointMeta<typeof ignisignEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -551,6 +507,4 @@ export type {
 	SignerProfile,
 	SignerSummary,
 	SignersSearchResult,
-	UserInvitation,
-	UserRoles,
 } from './endpoints/types';

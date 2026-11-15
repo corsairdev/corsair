@@ -8,7 +8,6 @@ import { SignatureRequestsEndpoints } from './signature-requests';
 import { SignaturesEndpoints } from './signatures';
 import { SignerProfilesEndpoints } from './signer-profiles';
 import { SignersEndpoints } from './signers';
-import { UserInvitationsEndpoints } from './user-invitations';
 
 export const ignisignEndpointsNested = {
 	applications: ApplicationsEndpoints,
@@ -21,7 +20,6 @@ export const ignisignEndpointsNested = {
 	signatures: SignaturesEndpoints,
 	signerProfiles: SignerProfilesEndpoints,
 	signers: SignersEndpoints,
-	userInvitations: UserInvitationsEndpoints,
 } as const;
 
 export { ApplicationsEndpoints } from './applications';
@@ -35,4 +33,3 @@ export { SignaturesEndpoints } from './signatures';
 export { SignerProfilesEndpoints } from './signer-profiles';
 export { SignersEndpoints } from './signers';
 export * from './types';
-export { UserInvitationsEndpoints } from './user-invitations';
