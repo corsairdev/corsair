@@ -1,0 +1,783 @@
+{
+  "id": "geocodio",
+  "displayName": "Geocodio",
+  "description": "Geocode addresses one at a time or in batches of up to 10,000 with Geocodio - reverse geocode coordinates, append Census and district data, and measure driving or straight-line distances.",
+  "npmPackageName": "@corsair-dev/geocodio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "geocodio.api.distance.fromOrigin",
+      "shortPath": "distance.fromOrigin",
+      "description": "Measure driving or straight-line distance and duration from one origin to many destinations, optionally filtering and sorting by either",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": false,
+            "type": "string",
+            "description": "The starting address or `lat,lng` pair"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "string[]",
+            "description": "The addresses or `lat,lng` pairs to measure from the origin"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "driving | haversine | straightline",
+            "description": "`driving` follows roads and gives a duration; `haversine` and `straightline` are the as-the-crow-flies distance"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "miles | km",
+            "description": "Which distance figure to use"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number",
+            "description": "Caps the destinations returned"
+          },
+          {
+            "key": "max_distance",
+            "optional": true,
+            "type": "number",
+            "description": "Drops destinations farther than this"
+          },
+          {
+            "key": "max_duration",
+            "optional": true,
+            "type": "number",
+            "description": "Drops destinations slower than this"
+          },
+          {
+            "key": "min_distance",
+            "optional": true,
+            "type": "number",
+            "description": "Drops destinations nearer than this"
+          },
+          {
+            "key": "min_duration",
+            "optional": true,
+            "type": "number",
+            "description": "Drops destinations faster than this"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "distance | duration",
+            "description": "Which figure to sort by"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed"
+          },
+          {
+            "key": "enterprise",
+            "optional": true,
+            "type": "boolean",
+            "description": "Uses the enterprise host"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "{ query?: string, location?: number[], id?: string | null, distance_miles?: number, distance_km?: number, duration_seconds?: number | null, geocode?: Record<string, any> }[]"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.distance.matrix",
+      "shortPath": "distance.matrix",
+      "description": "Measure every origin against every destination, or pair each origin with one destination, in a single request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origins",
+            "optional": false,
+            "type": "string[]",
+            "description": "The starting addresses or `lat,lng` pairs, one row each"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "string[]",
+            "description": "The addresses or `lat,lng` pairs, one column each"
+          },
+          {
+            "key": "calculation_type",
+            "optional": true,
+            "type": "matrix | pairs",
+            "description": "`matrix` measures every origin against every destination; `pairs` pairs each origin with the destination at the same position"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "driving | haversine | straightline",
+            "description": "`driving` follows roads and gives a duration; `haversine` and `straightline` are the as-the-crow-flies distance"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "miles | km",
+            "description": "Which distance figure to order and filter by"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number",
+            "description": "Caps the cells returned"
+          },
+          {
+            "key": "max_distance",
+            "optional": true,
+            "type": "number",
+            "description": "Drops cells farther than this"
+          },
+          {
+            "key": "max_duration",
+            "optional": true,
+            "type": "number",
+            "description": "Drops cells slower than this"
+          },
+          {
+            "key": "min_distance",
+            "optional": true,
+            "type": "number",
+            "description": "Drops cells nearer than this"
+          },
+          {
+            "key": "min_duration",
+            "optional": true,
+            "type": "number",
+            "description": "Drops cells faster than this"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "distance | duration",
+            "description": "Which figure to sort by"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ origin?: Record<string, any>, destinations: { query?: string, location?: number[], id?: string | null, distance_miles?: number, distance_km?: number, duration_seconds?: number | null, geocode?: Record<string, any> }[] }[]"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.geocode.batch",
+      "shortPath": "geocode.batch",
+      "description": "Geocode up to 10,000 addresses in one request, answered in the order they were sent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "string[]",
+            "description": "The addresses to geocode in one request"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed"
+          },
+          {
+            "key": "enterprise",
+            "optional": true,
+            "type": "boolean",
+            "description": "Uses the enterprise host"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ query: string, response: { results: { stable_address_key?: string | null, address_components: { number?: string, predirectional?: string, street?: string, suffix?: string, postdirectional?: string, unit_type?: string, unit_number?: string, formatted_street?: string, city?: string, county?: string, state_province?: string, postal_code?: string, country?: string, nation?: string, building_name?: string, sublocality?: string }, address_lines?: string[], formatted_address: string, location: { lat: number, lng: number }, accuracy: number, accuracy_type: string, match_type?: string | null, source?: string, fields?: Record<string, any>, destinations?: { query?: string, location?: number[], id?: string | null, distance_miles?: number, distance_km?: number, duration_seconds?: number | null, geocode?: Record<string, any> }[] }[], _warnings?: string[], error?: string, reference?: string } }[]"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.geocode.batchReverse",
+      "shortPath": "geocode.batchReverse",
+      "description": "Reverse geocode up to 10,000 coordinate pairs in one request, answered in the order they were sent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coordinates",
+            "optional": false,
+            "type": "string[]",
+            "description": "The `lat,lng` pairs to reverse geocode in one request"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed"
+          },
+          {
+            "key": "enterprise",
+            "optional": true,
+            "type": "boolean",
+            "description": "Uses the enterprise host"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ query: string, response: { results: { stable_address_key?: string | null, address_components: { number?: string, predirectional?: string, street?: string, suffix?: string, postdirectional?: string, unit_type?: string, unit_number?: string, formatted_street?: string, city?: string, county?: string, state_province?: string, postal_code?: string, country?: string, nation?: string, building_name?: string, sublocality?: string }, address_lines?: string[], formatted_address: string, location: { lat: number, lng: number }, accuracy: number, accuracy_type: string, match_type?: string | null, source?: string, fields?: Record<string, any>, destinations?: { query?: string, location?: number[], id?: string | null, distance_miles?: number, distance_km?: number, duration_seconds?: number | null, geocode?: Record<string, any> }[] }[], _warnings?: string[], error?: string, reference?: string } }[]"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.geocode.forward",
+      "shortPath": "geocode.forward",
+      "description": "Turn an address into coordinates, with a confidence score, the accuracy type that says how the match was made, and the parsed components. Data appends such as timezone or congressional district come back under `fields`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A single-line address, such as `1109 N Highland St, Arlington, VA 22201`"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string",
+            "description": "The street line, without the city"
+          },
+          {
+            "key": "street2",
+            "optional": true,
+            "type": "string",
+            "description": "The unit, suite or floor"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string",
+            "description": "The city"
+          },
+          {
+            "key": "county",
+            "optional": true,
+            "type": "string",
+            "description": "The county"
+          },
+          {
+            "key": "state_province",
+            "optional": true,
+            "type": "string",
+            "description": "The state or province"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string",
+            "description": "The ZIP or postal code"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many matches to return, at most 100"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name"
+          },
+          {
+            "key": "enterprise",
+            "optional": true,
+            "type": "boolean",
+            "description": "Uses api.enterprise.geocod.io, for accounts that have one"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ stable_address_key?: string | null, address_components: { number?: string, predirectional?: string, street?: string, suffix?: string, postdirectional?: string, unit_type?: string, unit_number?: string, formatted_street?: string, city?: string, county?: string, state_province?: string, postal_code?: string, country?: string, nation?: string, building_name?: string, sublocality?: string }, address_lines?: string[], formatted_address: string, location: { lat: number, lng: number }, accuracy: number, accuracy_type: string, match_type?: string | null, source?: string, fields?: Record<string, any>, destinations?: { query?: string, location?: number[], id?: string | null, distance_miles?: number, distance_km?: number, duration_seconds?: number | null, geocode?: Record<string, any> }[] }[]"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.geocode.parse",
+      "shortPath": "geocode.parse",
+      "description": "Split an address into its components without geocoding it, so it costs no lookup",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "An address to split into its components, without geocoding it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address_components",
+            "optional": false,
+            "type": "{ number?: string, predirectional?: string, street?: string, suffix?: string, postdirectional?: string, unit_type?: string, unit_number?: string, formatted_street?: string, city?: string, county?: string, state_province?: string, postal_code?: string, country?: string, nation?: string, building_name?: string, sublocality?: string }"
+          },
+          {
+            "key": "formatted_address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.geocode.reverse",
+      "shortPath": "geocode.reverse",
+      "description": "Turn a latitude and longitude into the nearest address, with the same confidence and components a forward lookup returns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "A `lat,lng` pair, such as `38.886665,-77.094733`"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name"
+          },
+          {
+            "key": "enterprise",
+            "optional": true,
+            "type": "boolean",
+            "description": "Uses the enterprise host"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ stable_address_key?: string | null, address_components: { number?: string, predirectional?: string, street?: string, suffix?: string, postdirectional?: string, unit_type?: string, unit_number?: string, formatted_street?: string, city?: string, county?: string, state_province?: string, postal_code?: string, country?: string, nation?: string, building_name?: string, sublocality?: string }, address_lines?: string[], formatted_address: string, location: { lat: number, lng: number }, accuracy: number, accuracy_type: string, match_type?: string | null, source?: string, fields?: Record<string, any>, destinations?: { query?: string, location?: number[], id?: string | null, distance_miles?: number, distance_km?: number, duration_seconds?: number | null, geocode?: Record<string, any> }[] }[]"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.jobs.delete",
+      "shortPath": "jobs.delete",
+      "description": "Delete a distance job and its stored result",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The job ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Read one distance job, whose status says whether its result is ready",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The job ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ identifier: string, name?: string, created_at?: string, origins_type?: string, origins_count?: number, destinations_type?: string, destinations_count?: number, distance_mode?: string, calculation_type?: string, status?: string, download_url?: string | null, total_calculations?: number, calculations_completed?: number, progress?: number, status_message?: string | null, time_left?: string | null, is_expired?: boolean }"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List the asynchronous distance matrix jobs on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page of jobs to read"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ identifier: string, name?: string, created_at?: string, origins_type?: string, origins_count?: number, destinations_type?: string, destinations_count?: number, distance_mode?: string, calculation_type?: string, status?: string, download_url?: string | null, total_calculations?: number, calculations_completed?: number, progress?: number, status_message?: string | null, time_left?: string | null, is_expired?: boolean }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.lists.all",
+      "shortPath": "lists.all",
+      "description": "List the uploaded spreadsheets and their processing status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page of lists to read"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, status?: { state?: string, progress?: number, message?: string | null, time_left_description?: string | null, time_left_seconds?: string | number | null }, file?: { estimated_rows_count?: number | null, filename?: string | null }, fields?: string[], download_url?: string | null, expires_at?: string | null, _warnings?: string[] }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "prev_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete an uploaded spreadsheet and its results",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The list ID, as `lists.all` returns it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geocodio.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Read one spreadsheet list, whose status and download URL say when its results are ready",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The list ID, as `lists.all` returns it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ state?: string, progress?: number, message?: string | null, time_left_description?: string | null, time_left_seconds?: string | number | null }"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ estimated_rows_count?: number | null, filename?: string | null }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_warnings",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
