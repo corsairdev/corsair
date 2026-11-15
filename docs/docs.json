@@ -2584,6 +2584,14 @@
                 ]
               },
               {
+                "group": "Grist",
+                "pages": [
+                  "plugins/grist/overview",
+                  "plugins/grist/api",
+                  "plugins/grist/database"
+                ]
+              },
+              {
                 "group": "Groq",
                 "pages": [
                   "plugins/groqcloud/overview",

@@ -308,6 +308,7 @@ export const BaseProviders = [
 	'gorgias',
 	'grafana',
 	'griptape',
+	'grist',
 	'groqcloud',
 	'gumroad',
 	'habitica',
@@ -898,6 +899,7 @@ export const ProviderDisplayNames = {
 	gorgias: 'Gorgias',
 	grafana: 'Grafana',
 	griptape: 'Griptape',
+	grist: 'Grist',
 	groqcloud: 'GroqCloud',
 	gumroad: 'Gumroad',
 	habitica: 'Habitica',
@@ -1495,6 +1497,7 @@ export type AllProviders =
 	| 'gorgias'
 	| 'grafana'
 	| 'griptape'
+	| 'grist'
 	| 'groqcloud'
 	| 'gumroad'
 	| 'habitica'
