@@ -9,12 +9,17 @@ export const errorHandlers = {
 			(error instanceof FreshdeskAPIError && error.status === 429),
 		handler: async (error: Error) => {
 			const retryAfter =
-				error instanceof FreshdeskAPIError ? error.retryAfter : undefined;
+				error instanceof ApiError || error instanceof FreshdeskAPIError
+					? error.retryAfter
+					: undefined;
+			const retryable =
+				error instanceof ApiError
+					? error.request.method === 'GET'
+					: error instanceof FreshdeskAPIError && error.retryable;
 			return {
 				// GETs are safe to retry; writes are not replayed because Freshdesk
 				// documents no idempotency key for these operations.
-				maxRetries:
-					error instanceof FreshdeskAPIError && error.retryable ? 2 : 0,
+				maxRetries: retryable ? 2 : 0,
 				headersRetryAfterMs: retryAfter,
 			};
 		},

@@ -79,6 +79,61 @@ function validateDomain(domain: string): string {
 	return hostname;
 }
 
+const JSON_PART_FIELDS = new Set(['structured_body']);
+
+const SAFE_ERROR_TOKEN = /^[A-Za-z0-9_.[\]-]{1,64}$/;
+
+// Freshdesk error bodies list { field, message, code }; messages can echo
+// request values, so only the field names and machine codes are kept.
+function describeFreshdeskErrors(body: unknown): string {
+	if (typeof body !== 'object' || body === null || !('errors' in body))
+		return '';
+	const errors = (body as { errors: unknown }).errors;
+	if (!Array.isArray(errors)) return '';
+	const parts = errors
+		.map((entry: unknown) => {
+			if (typeof entry !== 'object' || entry === null) return null;
+			const { field, code } = entry as { field?: unknown; code?: unknown };
+			const safeCode =
+				typeof code === 'string' && SAFE_ERROR_TOKEN.test(code) ? code : null;
+			if (!safeCode) return null;
+			return typeof field === 'string' && SAFE_ERROR_TOKEN.test(field)
+				? `${field}: ${safeCode}`
+				: safeCode;
+		})
+		.filter((part): part is string => part !== null)
+		.slice(0, 10);
+	return parts.length > 0 ? ` (${parts.join(', ')})` : '';
+}
+
+function stripQuery(url: string): string {
+	const index = url.indexOf('?');
+	return index === -1 ? url : url.slice(0, index);
+}
+
+// Rebuild core's ApiError so status, Retry-After and the rate-limit fields
+// (what error handlers and core read) survive, while the provider body, the
+// request body and query values (search filters hold emails) are dropped.
+function sanitizeApiError(error: ApiError): ApiError {
+	return new ApiError(
+		{ method: error.request.method, url: stripQuery(error.request.url) },
+		{
+			url: stripQuery(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: undefined,
+		},
+		`Freshdesk API request failed with status ${error.status}${describeFreshdeskErrors(error.body)}`,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
 function makeFormData(
 	body: FreshdeskRouteInput['body'],
 	attachments: FreshdeskRouteInput['attachments'],
@@ -99,6 +154,10 @@ function makeFormData(
 			typeof value === 'boolean'
 		) {
 			formData.append(key, String(value));
+		} else if (JSON_PART_FIELDS.has(key) && value !== null) {
+			// The reference's multipart samples send structured_body as one JSON
+			// part: -F 'structured_body={"body_contents":[...]}'.
+			formData.append(key, JSON.stringify(value));
 		} else if (value !== null && value !== undefined) {
 			// Freshdesk reads multipart objects as bracketed parts, e.g.
 			// fields[name]=0 for imports and custom_fields[cf_x]=y for tickets.
@@ -188,14 +247,9 @@ export async function makeFreshdeskRequest(
 	} catch (error: unknown) {
 		if (error instanceof FreshdeskAPIError) throw error;
 		if (error instanceof ApiError) {
-			// Freshdesk validation errors can echo request fields and customer PII.
-			// Keep only status and Retry-After; never propagate the raw API body.
-			throw new FreshdeskAPIError(
-				`Freshdesk API request failed with status ${error.status}`,
-				error.status,
-				error.retryAfter,
-				definition.method === 'GET',
-			);
+			// Freshdesk validation errors can echo request fields and customer PII,
+			// so the ApiError is rebuilt without the raw API body or request data.
+			throw sanitizeApiError(error);
 		}
 		// unknown because network and fetch implementations can reject with non-Error values.
 		throw new FreshdeskAPIError('Freshdesk API request failed');

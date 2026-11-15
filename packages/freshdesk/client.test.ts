@@ -254,8 +254,10 @@ describe('Freshdesk client', () => {
 			FRESHDESK_OPERATIONS.createTicketPostTickets,
 			{ body: { email: 'private-user@freshdesk.invalid' } },
 		).catch((error: unknown) => error);
-		expect(caught).toBeInstanceOf(FreshdeskAPIError);
-		expect(caught).not.toHaveProperty('body');
+		expect(caught).toBeInstanceOf(ApiError);
+		if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(caught.status).toBe(400);
+		expect(caught.body).toBeUndefined();
 		if (!(caught instanceof Error))
 			throw new Error('Expected a sanitized Error');
 		expect(caught.message).not.toContain('private-user@freshdesk.invalid');
