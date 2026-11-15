@@ -1,0 +1,3762 @@
+---
+title: "E2B API reference"
+sidebarTitle: "API"
+description: "API reference for the E2B plugin in Corsair: every `e2b.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Envd
+
+### getEnvironmentVariables
+
+`envd.getEnvironmentVariables`
+
+Environment variables
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.envd.getEnvironmentVariables({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+
+Requires an E2B sandbox access token; the response contains environment values and should be handled as sensitive data.
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### health
+
+`envd.health`
+
+Check the health of the service
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.envd.health({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### metrics
+
+`envd.metrics`
+
+Service stats
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.envd.metrics({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ts` | `number` | No | — |
+| `cpu_count` | `number` | No | — |
+| `cpu_possible` | `number` | No | — |
+| `cpu_target` | `number` | No | — |
+| `cpu_target_attempts` | `number` | No | — |
+| `cpu_write_pending_ms` | `number` | No | — |
+| `cpu_used_pct` | `number` | No | — |
+| `mem_total` | `number` | No | — |
+| `mem_used` | `number` | No | — |
+| `mem_cache` | `number` | No | — |
+| `disk_used` | `number` | No | — |
+| `disk_total` | `number` | No | — |
+| `oom_kills` | `object[]` | No | — |
+| `mem_used_mib` | `number` | No | — |
+| `mem_total_mib` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="oom_kills full type">
+
+```ts
+{
+  seq: number,
+  process: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### list
+
+`events.list`
+
+List events
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.events.list({"query":{"offset":0,"limit":10,"orderAsc":false,"types":["test"]}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  offset?: number,
+  limit?: number,
+  orderAsc?: boolean,
+  types?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  version: string,
+  type: string,
+  eventCategory?: string,
+  eventLabel?: string,
+  eventData?: {
+  } | null,
+  timestamp: string,
+  sandboxId: string,
+  sandboxExecutionId: string,
+  sandboxTemplateId: string,
+  sandboxBuildId: string,
+  sandboxTeamId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listBySandbox
+
+`events.listBySandbox`
+
+List sandbox events
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.events.listBySandbox({"path":{"sandboxID":"test"},"query":{"offset":0,"limit":10,"orderAsc":false,"types":["test"]}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  offset?: number,
+  limit?: number,
+  orderAsc?: boolean,
+  types?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  version: string,
+  type: string,
+  eventCategory?: string,
+  eventLabel?: string,
+  eventData?: {
+  } | null,
+  timestamp: string,
+  sandboxId: string,
+  sandboxExecutionId: string,
+  sandboxTemplateId: string,
+  sandboxBuildId: string,
+  sandboxTeamId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Filesystem
+
+### createDir
+
+`filesystem.createDir`
+
+MakeDir
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.filesystem.createDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entry` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="entry full type">
+
+```ts
+{
+  name?: string,
+  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
+  path?: string,
+  size?: number | string,
+  mode?: number,
+  permissions?: string,
+  owner?: string,
+  group?: string,
+  modifiedTime?: string,
+  symlinkTarget?: string | null,
+  metadata?: {
+  },
+  isSymlink?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createWatcher
+
+`filesystem.createWatcher`
+
+CreateWatcher
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.filesystem.createWatcher({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+This is the unary watcher-creation operation; streaming WatchDir remains out of scope.
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  path?: string,
+  recursive?: boolean,
+  includeEntry?: boolean,
+  allowNetworkMounts?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `watcherId` | `string` | No | — |
+
+
+
+---
+
+### getWatcherEvents
+
+`filesystem.getWatcherEvents`
+
+GetWatcherEvents
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.filesystem.getWatcherEvents({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  watcherId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  name?: string,
+  type?: EVENT_TYPE_UNSPECIFIED | EVENT_TYPE_CREATE | EVENT_TYPE_WRITE | EVENT_TYPE_REMOVE | EVENT_TYPE_RENAME | EVENT_TYPE_CHMOD | string,
+  entry?: {
+    name?: string,
+    type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
+    path?: string,
+    size?: number | string,
+    mode?: number,
+    permissions?: string,
+    owner?: string,
+    group?: string,
+    modifiedTime?: string,
+    symlinkTarget?: string | null,
+    metadata?: {
+    },
+    isSymlink?: boolean
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDir
+
+`filesystem.listDir`
+
+ListDir
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.filesystem.listDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  path?: string,
+  depth?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  name?: string,
+  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
+  path?: string,
+  size?: number | string,
+  mode?: number,
+  permissions?: string,
+  owner?: string,
+  group?: string,
+  modifiedTime?: string,
+  symlinkTarget?: string | null,
+  metadata?: {
+  },
+  isSymlink?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`filesystem.move`
+
+Move
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.filesystem.move({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"source":"/tmp/corsair-e2b/a.txt","destination":"/tmp/corsair-e2b/b.txt"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  source?: string,
+  destination?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entry` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="entry full type">
+
+```ts
+{
+  name?: string,
+  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
+  path?: string,
+  size?: number | string,
+  mode?: number,
+  permissions?: string,
+  owner?: string,
+  group?: string,
+  modifiedTime?: string,
+  symlinkTarget?: string | null,
+  metadata?: {
+  },
+  isSymlink?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`filesystem.remove`
+
+Remove
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.filesystem.remove({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### removeWatcher
+
+`filesystem.removeWatcher`
+
+RemoveWatcher
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.filesystem.removeWatcher({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  watcherId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### stat
+
+`filesystem.stat`
+
+Stat
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.filesystem.stat({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entry` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="entry full type">
+
+```ts
+{
+  name?: string,
+  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
+  path?: string,
+  size?: number | string,
+  mode?: number,
+  permissions?: string,
+  owner?: string,
+  group?: string,
+  modifiedTime?: string,
+  symlinkTarget?: string | null,
+  metadata?: {
+  },
+  isSymlink?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Process
+
+### closeStdin
+
+`process.closeStdin`
+
+CloseStdin
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.process.closeStdin({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101}}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  process?: {
+    pid: number
+  } | {
+    tag: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`process.list`
+
+List
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.process.list({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `processes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="processes full type">
+
+```ts
+{
+  config?: {
+    cmd?: string,
+    args?: string[],
+    envs?: {
+    },
+    cwd?: string | null
+  },
+  pid?: number,
+  tag?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendInput
+
+`process.sendInput`
+
+SendInput
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.process.sendInput({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"input":{"stdin":"aGVsbG8="}}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+stdin and pty bytes use the Connect JSON base64 representation; encode the bytes before passing the string.
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  process?: {
+    pid: number
+  } | {
+    tag: string
+  },
+  input?: {
+    pty: string
+  } | {
+    stdin: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### sendSignal
+
+`process.sendSignal`
+
+SendSignal
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.process.sendSignal({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"signal":"SIGNAL_SIGTERM"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  process?: {
+    pid: number
+  } | {
+    tag: string
+  },
+  signal?: SIGNAL_UNSPECIFIED | SIGNAL_SIGTERM | SIGNAL_SIGKILL
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`process.update`
+
+Update
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.process.update({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"pty":{"size":{"cols":80,"rows":24}}}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  e2bSandboxId: string,
+  e2bSandboxPort: number,
+  connectTimeoutMs?: number,
+  e2bAccessToken: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  process?: {
+    pid: number
+  } | {
+    tag: string
+  },
+  pty?: {
+    size?: {
+      cols?: number,
+      rows?: number
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Sandboxes
+
+### connect
+
+`sandboxes.connect`
+
+Connect sandbox (v2)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.sandboxes.connect({"path":{"sandboxID":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  timeout?: number,
+  memory?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateID` | `string` | Yes | — |
+| `sandboxID` | `string` | Yes | — |
+| `alias` | `string` | No | — |
+| `clientID` | `string` | Yes | — |
+| `envdVersion` | `string` | Yes | — |
+| `envdAccessToken` | `string` | No | — |
+| `trafficAccessToken` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`sandboxes.create`
+
+Create sandbox (v2)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.sandboxes.create({"headers":{"idempotencyKey":"test"},"body":{"templateID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+metadata and envVars are string maps; mcp is an extensible JSON object, as specified by E2B's OpenAPI.
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  idempotencyKey?: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  templateID: string,
+  timeout?: number,
+  cpuCount?: number,
+  autoPause?: boolean,
+  autoPauseMemory?: boolean,
+  autoResume?: {
+    enabled: boolean
+  },
+  allow_internet_access?: boolean,
+  network?: {
+    allowPublicTraffic?: boolean | null,
+    allowOut?: string[],
+    denyOut?: string[],
+    dnsServers?: string[],
+    egressProxy?: {
+      address: string,
+      username?: string,
+      password?: string,
+      tls?: {
+        enabled: boolean,
+        serverName?: string,
+        caCert?: string
+      } | null
+    } | null,
+    maskRequestHost?: string,
+    httpsPorts?: number[],
+    rules?: {
+    }
+  },
+  metadata?: {
+  },
+  envVars?: {
+  },
+  mcp?: {
+  } | null,
+  iam?: {
+    tokens?: {
+    }
+  },
+  volumeMounts?: {
+    name: string,
+    path: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateID` | `string` | Yes | — |
+| `sandboxID` | `string` | Yes | — |
+| `alias` | `string` | No | — |
+| `clientID` | `string` | Yes | — |
+| `envdVersion` | `string` | Yes | — |
+| `envdAccessToken` | `string` | No | — |
+| `trafficAccessToken` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+
+
+
+---
+
+### createSnapshot
+
+`sandboxes.createSnapshot`
+
+Create snapshot
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.sandboxes.createSnapshot({"path":{"sandboxID":"test"},"headers":{"idempotencyKey":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `headers` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+  idempotencyKey?: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  memory?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshotID` | `string` | Yes | — |
+| `names` | `string[]` | Yes | — |
+
+
+
+---
+
+### fork
+
+`sandboxes.fork`
+
+Fork sandbox
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.sandboxes.fork({"path":{"sandboxID":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  timeout?: number,
+  count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  sandbox?: {
+    templateID: string,
+    sandboxID: string,
+    alias?: string,
+    clientID: string,
+    envdVersion: string,
+    envdAccessToken?: string,
+    trafficAccessToken?: string | null,
+    domain?: string | null
+  },
+  error?: {
+    code: number,
+    error_code?: string,
+    message: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`sandboxes.get`
+
+Get sandbox
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.sandboxes.get({"path":{"sandboxID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateID` | `string` | Yes | — |
+| `alias` | `string` | No | — |
+| `sandboxID` | `string` | Yes | — |
+| `clientID` | `string` | Yes | — |
+| `startedAt` | `string` | Yes | — |
+| `endAt` | `string` | Yes | — |
+| `envdVersion` | `string` | Yes | — |
+| `envdUnresponsiveAtPause` | `boolean` | No | — |
+| `envdAccessToken` | `string` | No | — |
+| `allowInternetAccess` | `boolean \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `cpuCount` | `number` | Yes | — |
+| `memoryMB` | `number` | Yes | — |
+| `diskSizeMB` | `number` | Yes | — |
+| `metadata` | `object` | No | — |
+| `state` | `running \| paused \| string` | Yes | — |
+| `network` | `object` | No | — |
+| `lifecycle` | `object` | No | — |
+| `pauseMode` | `full \| filesystem \| string` | No | — |
+| `volumeMounts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="network full type">
+
+```ts
+{
+  allowPublicTraffic?: boolean | null,
+  allowOut?: string[],
+  denyOut?: string[],
+  dnsServers?: string[],
+  egressProxy?: {
+    address: string,
+    username?: string,
+    password?: string,
+    tls?: {
+      enabled: boolean,
+      serverName?: string,
+      caCert?: string
+    } | null
+  } | null,
+  maskRequestHost?: string,
+  httpsPorts?: number[],
+  rules?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="lifecycle full type">
+
+```ts
+{
+  autoResume: boolean,
+  onTimeout: kill | pause | string
+}
+```
+</Accordion>
+
+<Accordion title="volumeMounts full type">
+
+```ts
+{
+  name: string,
+  path: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLogs
+
+`sandboxes.getLogs`
+
+Get sandbox logs (v2)
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.sandboxes.getLogs({"path":{"sandboxID":"test"},"query":{"cursor":0,"limit":1000,"direction":"forward","level":"test","search":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  cursor?: number,
+  limit?: number,
+  direction?: forward | backward,
+  level?: string,
+  search?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  timestamp: string,
+  message: string,
+  level: string,
+  fields: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMetrics
+
+`sandboxes.getMetrics`
+
+Get sandbox metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.sandboxes.getMetrics({"path":{"sandboxID":"test"},"query":{"start":0,"end":0}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  start?: number,
+  end?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  timestamp: string,
+  timestampUnix: number,
+  cpuCount: number,
+  cpuUsedPct: number,
+  memUsed: number,
+  memTotal: number,
+  memCache: number,
+  diskUsed: number,
+  diskTotal: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### kill
+
+`sandboxes.kill`
+
+Delete sandbox
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.sandboxes.kill({"path":{"sandboxID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`sandboxes.list`
+
+List sandboxes (v2)
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.sandboxes.list({"query":{"metadata":"test","state":["running"],"order":"desc","startedAfter":"2026-01-01T00:00:00Z","template":"test","nextToken":"test","limit":100}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+The v2 list operation accepts state as a comma-separated array and returns `{ items, nextToken?, totalRunning? }`; pass nextToken as query.nextToken to continue.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  metadata?: string,
+  state?: (running | paused)[],
+  order?: asc | desc,
+  startedAfter?: string,
+  template?: string,
+  nextToken?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextToken` | `string` | No | — |
+| `totalRunning` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  templateID: string,
+  alias?: string,
+  sandboxID: string,
+  clientID: string,
+  startedAt: string,
+  endAt: string,
+  cpuCount: number,
+  memoryMB: number,
+  diskSizeMB: number,
+  metadata?: {
+  },
+  state: running | paused | string,
+  envdVersion: string,
+  envdUnresponsiveAtPause?: boolean,
+  volumeMounts?: {
+    name: string,
+    path: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMetrics
+
+`sandboxes.listMetrics`
+
+List sandbox metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.sandboxes.listMetrics({"query":{"sandbox_ids":["test"]}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  sandbox_ids: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxes` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sandboxes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSnapshots
+
+`sandboxes.listSnapshots`
+
+List snapshots
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.sandboxes.listSnapshots({"query":{"sandboxID":"test","name":"test","limit":100,"nextToken":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  sandboxID?: string,
+  name?: string,
+  limit?: number,
+  nextToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  snapshotID: string,
+  names: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`sandboxes.pause`
+
+Pause sandbox
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.sandboxes.pause({"path":{"sandboxID":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  memory?: boolean,
+  requireHealthyGuest?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### refresh
+
+`sandboxes.refresh`
+
+Refresh sandbox
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.sandboxes.refresh({"path":{"sandboxID":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  duration?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### setTimeout
+
+`sandboxes.setTimeout`
+
+Set sandbox timeout
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.sandboxes.setTimeout({"path":{"sandboxID":"test"},"body":{"timeout":0}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  timeout: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### updateNetwork
+
+`sandboxes.updateNetwork`
+
+Update sandbox network
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.sandboxes.updateNetwork({"path":{"sandboxID":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  sandboxID: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  allowOut?: string[],
+  denyOut?: string[],
+  dnsServers?: string[],
+  egressProxy?: {
+    address: string,
+    username?: string,
+    password?: string,
+    tls?: {
+      enabled: boolean,
+      serverName?: string,
+      caCert?: string
+    } | null
+  } | null,
+  rules?: {
+  },
+  allow_internet_access?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+## Secrets
+
+### create
+
+`secrets.create`
+
+Create secret
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.secrets.create({"body":{"name":"test","value":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+Secret values are accepted only on create/update and are never returned by list/get operations.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  value: string,
+  metadata?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secretID` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `currentVersion` | `number` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`secrets.delete`
+
+Delete secret
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.secrets.delete({"path":{"secretID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  secretID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`secrets.get`
+
+Get secret
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.secrets.get({"path":{"secretID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  secretID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secretID` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `currentVersion` | `number` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List secrets
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.secrets.list({"query":{"nextToken":"test","limit":100}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue. The response never includes secret values.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  nextToken?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  secretID: string,
+  name: string,
+  currentVersion: number,
+  metadata: {
+  },
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`secrets.update`
+
+Update secret
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.secrets.update({"path":{"secretID":"test"},"body":{"value":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  secretID: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  value: string,
+  metadata?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secretID` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `currentVersion` | `number` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### assign
+
+`tags.assign`
+
+Assign tags
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.tags.assign({"body":{"target":"test","tags":["test"]}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  target: string,
+  tags: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `string[]` | Yes | — |
+| `buildID` | `string` | Yes | — |
+
+
+
+---
+
+### count
+
+`tags.count`
+
+Count template tags
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.tags.count({"path":{"templateID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete tags
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.tags.delete({"body":{"name":"test","tags":["test"]}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  tags: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### exists
+
+`tags.exists`
+
+Check template tag
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.tags.exists({"path":{"templateID":"test"},"query":{"tag":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  tag: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+| `normalizedTag` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List template tags
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.tags.list({"path":{"templateID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  tag: string,
+  buildID: string,
+  createdAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAssignments
+
+`tags.listAssignments`
+
+List template tag assignments
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.tags.listAssignments({"path":{"templateID":"test","tag":"test"},"query":{"cursor":"test","limit":50}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string,
+  tag: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  cursor?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  assignmentId: string,
+  buildId: string,
+  assignedAt: string,
+  buildCreatedAt: string,
+  buildFinishedAt: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGroups
+
+`tags.listGroups`
+
+List template tag groups
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.tags.listGroups({"path":{"templateID":"test"},"query":{"assignmentLimit":6,"tagsLimit":25,"tagsCursor":"test","search":"test","sort":"latest_desc"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  assignmentLimit?: number,
+  tagsLimit?: number,
+  tagsCursor?: string,
+  search?: string,
+  sort?: latest_desc | latest_asc | name_asc | name_desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tag: string,
+  assignments: {
+    assignmentId: string,
+    buildId: string,
+    assignedAt: string,
+    buildCreatedAt: string,
+    buildFinishedAt: string | null
+  }[],
+  hasMore: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### getMaxMetrics
+
+`teams.getMaxMetrics`
+
+Get team metrics max
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.teams.getMaxMetrics({"path":{"teamID":"test"},"query":{"start":0,"end":0,"metric":"concurrent_sandboxes"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  teamID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  start?: number,
+  end?: number,
+  metric: concurrent_sandboxes | sandbox_start_rate
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | Yes | — |
+| `timestampUnix` | `number` | Yes | — |
+| `value` | `number` | Yes | — |
+
+
+
+---
+
+### getMetrics
+
+`teams.getMetrics`
+
+Get team metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.teams.getMetrics({"path":{"teamID":"test"},"query":{"start":0,"end":0}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  teamID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  start?: number,
+  end?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  timestamp: string,
+  timestampUnix: number,
+  concurrentSandboxes: number,
+  sandboxStartRate: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create template (v3)
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.templates.create({"headers":{"idempotencyKey":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+  idempotencyKey?: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  tags?: string[],
+  alias?: string,
+  teamID?: string,
+  cpuCount?: number,
+  maxCpuCount?: number,
+  memoryMB?: number,
+  minFreeDiskMb?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateID` | `string` | Yes | — |
+| `buildID` | `string` | Yes | — |
+| `public` | `boolean` | Yes | — |
+| `names` | `string[]` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `aliases` | `string[]` | Yes | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.templates.delete({"path":{"templateID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`templates.get`
+
+Get template
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.templates.get({"path":{"templateID":"test"},"query":{"nextToken":"test","limit":100}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+Returns the template and its build page, including nextToken from X-Next-Token; pass it as query.nextToken to continue.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  nextToken?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  templateID: string,
+  buildID: string,
+  cpuCount: number | 0,
+  maxCpuCount?: number,
+  memoryMB: number | 0,
+  diskSizeMB: number,
+  public: boolean,
+  aliases: string[],
+  names: string[],
+  createdAt: string,
+  updatedAt: string,
+  createdBy: {
+    id: string,
+    email: string | null
+  } | null,
+  lastSpawnedAt: string | null,
+  spawnCount: number,
+  buildCount: number,
+  envdVersion: string,
+  buildStatus: building | waiting | ready | error | uploaded | string,
+  isDefault?: boolean,
+  description?: string
+}& {
+  builds: {
+    buildID: string,
+    status: building | waiting | ready | error | uploaded | string,
+    createdAt: string,
+    updatedAt: string,
+    finishedAt?: string,
+    cpuCount: number,
+    maxCpuCount?: number,
+    memoryMB: number,
+    diskSizeMB?: number,
+    envdVersion?: string
+  }[],
+  nextToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getBuildLogs
+
+`templates.getBuildLogs`
+
+Get build logs
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.templates.getBuildLogs({"path":{"templateID":"test","buildID":"test"},"query":{"cursor":0,"limit":100,"direction":"forward","level":"test","source":"temporary"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string,
+  buildID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  cursor?: number,
+  limit?: number,
+  direction?: forward | backward,
+  level?: string,
+  source?: temporary | persistent
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  timestamp: string,
+  message: string,
+  level: string,
+  step?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBuildStatus
+
+`templates.getBuildStatus`
+
+Get build status
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.templates.getBuildStatus({"path":{"templateID":"test","buildID":"test"},"query":{"logsOffset":0,"limit":100,"level":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string,
+  buildID: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  logsOffset?: number,
+  limit?: number,
+  level?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `string[]` | Yes | — |
+| `logEntries` | `object[]` | Yes | — |
+| `templateID` | `string` | Yes | — |
+| `buildID` | `string` | Yes | — |
+| `status` | `building \| waiting \| ready \| error \| uploaded \| string` | Yes | — |
+| `reason` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="logEntries full type">
+
+```ts
+{
+  timestamp: string,
+  message: string,
+  level: string,
+  step?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reason full type">
+
+```ts
+{
+  message: string,
+  step?: string,
+  logEntries?: {
+    timestamp: string,
+    message: string,
+    level: string,
+    step?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBuildUploadLink
+
+`templates.getBuildUploadLink`
+
+Get build upload link
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.templates.getBuildUploadLink({"path":{"templateID":"test","hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+Returns an upload URL and headers for a template build file. Treat the response as a short-lived capability; avoid logging it.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string,
+  hash: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `present` | `boolean` | Yes | — |
+| `url` | `string` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByAlias
+
+`templates.getByAlias`
+
+Get template by alias
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.templates.getByAlias({"path":{"alias":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  alias: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateID` | `string` | Yes | — |
+| `public` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List templates (v2)
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.templates.list({"query":{"teamID":"test","nextToken":"test","limit":100}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  teamID?: string,
+  nextToken?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  templateID: string,
+  buildID: string,
+  cpuCount: number | 0,
+  maxCpuCount?: number,
+  memoryMB: number | 0,
+  diskSizeMB: number,
+  public: boolean,
+  aliases: string[],
+  names: string[],
+  createdAt: string,
+  updatedAt: string,
+  createdBy: {
+    id: string,
+    email: string | null
+  } | null,
+  lastSpawnedAt: string | null,
+  spawnCount: number,
+  buildCount: number,
+  envdVersion: string,
+  buildStatus: building | waiting | ready | error | uploaded | string,
+  isDefault?: boolean,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDefault
+
+`templates.listDefault`
+
+List default templates
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.templates.listDefault({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  templateID: string,
+  buildID: string,
+  cpuCount: number | 0,
+  maxCpuCount?: number,
+  memoryMB: number | 0,
+  diskSizeMB: number,
+  public: boolean,
+  aliases: string[],
+  names: string[],
+  createdAt: string,
+  updatedAt: string,
+  createdBy: {
+    id: string,
+    email: string | null
+  } | null,
+  lastSpawnedAt: string | null,
+  spawnCount: number,
+  buildCount: number,
+  envdVersion: string,
+  buildStatus: building | waiting | ready | error | uploaded | string,
+  isDefault?: boolean,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### startBuild
+
+`templates.startBuild`
+
+Start build (v2)
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.templates.startBuild({"path":{"templateID":"test","buildID":"test"},"headers":{"idempotencyKey":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `headers` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string,
+  buildID: string
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+  idempotencyKey?: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  fromImage?: string,
+  fromTemplate?: string,
+  fromImageRegistry?: {
+    type: aws,
+    awsAccessKeyId: string,
+    awsSecretAccessKey: string,
+    awsRegion: string
+  } | {
+    type: gcp,
+    serviceAccountJson: string
+  } | {
+    type: registry,
+    username: string,
+    password: string
+  },
+  force?: boolean,
+  steps?: {
+    type: string,
+    args?: string[],
+    filesHash?: string,
+    force?: boolean
+  }[],
+  startCmd?: string,
+  readyCmd?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`templates.update`
+
+Update template (v2)
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.templates.update({"path":{"templateID":"test"},"body":{}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  templateID: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  public?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `names` | `string[]` | Yes | — |
+
+
+
+---
+
+## Volumes
+
+### create
+
+`volumes.create`
+
+Create team volume
+
+**Risk:** `write`
+
+```ts
+await corsair.e2b.api.volumes.create({"body":{"name":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volumeID` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `domain` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`volumes.delete`
+
+Delete team volume
+
+**Risk:** `destructive`
+
+```ts
+await corsair.e2b.api.volumes.delete({"path":{"volumeID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  volumeID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`volumes.get`
+
+Team volume
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.volumes.get({"path":{"volumeID":"test"}});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  volumeID: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volumeID` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `domain` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`volumes.list`
+
+List team volumes
+
+**Risk:** `read`
+
+```ts
+await corsair.e2b.api.volumes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  volumeID: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

@@ -1,0 +1,3 @@
+displayName: Finmei
+description: Invoicing, expense tracking, and client billing management platform for businesses and freelancers.
+overviewNote: Generate your API token in Finmei under Settings -> Integrations. Each API token is bound to a specific business entity.

@@ -1,0 +1,63 @@
+displayName: Renderform
+description: Render templates to images, PDFs and video, manage templates and their html-editor content, capture screenshots and PDFs, and read usage and fonts with Renderform.
+domain: renderform.io
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key under **Account, API Keys** in Renderform. It goes in the `x-api-key` header.
+
+  **A wrong key returns `400`, not `401`.** Renderform answers `{"msg":"Incorrect API Key","status":400}`, so the plugin identifies an auth failure by the message as well as the status — otherwise a bad key would look like a malformed body and a caller would keep retrying it.
+
+  Rendering, in practice:
+
+  - **A render costs a credit unless it is cached.** An identical request for the same `version` returns the file from the render cache, costs nothing and reports `cached: true`. `cache: false` forces a fresh render and the cost. Reuse `version` deliberately, or leave it off and accept the spend.
+  - **A video render is asynchronous.** An image render is synchronous and `href` is ready. A video format needs a template made in the **Advanced Editor** and answers `202` with `status: "pending"`, so `href` is not usable yet: poll `results.get` with the `requestId` until the status is `done` or `failed`. A video costs 5 credits per started second.
+  - **`data` is keyed by merge fields, not field names.** A field looks like `my-text.text`: the component name, a dot, then the property. `templates.content` returns the `sampleData` a template was previewed with, which is the fastest way to learn the exact keys.
+  - **`fps` is a string.** The spec types it as `"24"`, `"25"` or `"30"` rather than a number, and it is sent that way. `duration` and `recordDuration` are numbers in milliseconds, between 1000 and 30000.
+  - **Two API versions are in use.** Templates, renders and results are on `/api/v2`; `usage` and `fonts` are on `/api/v1`. Both are kept as they are.
+  - **`templates.list` answers a bare array, not a page**, while `results.list` answers a Spring-style page whose rows are in `content`. The two models differ accordingly.
+  - **`templates.update` replaces the tag set.** Sending `tags` swaps the whole list rather than merging into it, and updating metadata is a separate route from updating content: `templates.updateContent` is the one that changes HTML and CSS, and only an `html-editor` template has any.
+  - **A `402` is an exhausted credit balance,** not a bad request; read `usage` before a bulk render loop.
+examples:
+  read:
+    path: usage
+    title: Read credits used and the plan
+    args: {}
+  write:
+    path: render
+    title: Render a template with merge data
+    args:
+      template: template_1234
+      data:
+        # Quoted inside the key: the docs generator prints keys as written, and
+        # a merge field with a dot or a dash is not a bare TypeScript key.
+        "'my-text.text'": John
+      fileName: welcome-card
+apiExamples:
+  render:
+    call: "{ template: 'template_1234', data: { 'my-text.text': 'John' }, fileName: 'welcome-card', version: 'welcome-john-v1' }"
+  results.list:
+    call: "{ template: 'template_1234', page: 0, size: 20 }"
+  results.get:
+    call: "{ identifier: 'req-dc95beb3-8c56-40e9-b428-e6b4c68354a3' }"
+  results.delete:
+    call: "{ identifier: 'req-dc95beb3-8c56-40e9-b428-e6b4c68354a3' }"
+  templates.list:
+    call: "{ name: 'Instagram', tags: ['marketing'] }"
+  templates.get:
+    call: "{ templateId: 'template_1234' }"
+  templates.create:
+    call: "{ name: 'Instagram post', width: 1080, height: 1080, editor: 'canvas-editor', tags: ['marketing'] }"
+  templates.update:
+    call: "{ templateId: 'template_1234', name: 'Renamed', tags: ['new-tag'] }"
+  templates.delete:
+    call: "{ templateId: 'template_1234' }"
+  templates.content:
+    call: "{ templateId: 'template_1234' }"
+  templates.updateContent:
+    call: "{ templateId: 'template_1234', html: '<div class=\"card\">{{my-text.text}}</div>', css: '.card { color: red; }' }"
+  screenshot:
+    call: "{ url: 'https://renderform.io', width: 1920, height: 1080, waitTime: 1000 }"
+  pdf:
+    call: "{ url: 'https://renderform.io', format: 'A4', expires: 3600 }"
+  usage: {}
+  fonts: {}
