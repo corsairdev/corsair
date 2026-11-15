@@ -18,13 +18,14 @@ export const POINTAGRAM_KEY_HEADER = 'Api-Key';
 export const POINTAGRAM_USER_HEADER = 'Api-User';
 
 /**
- * Pointagram documents no rate limit and sends no Retry-After, so this keeps the
- * defaults intact (a partial object replaces them wholesale) and lets
- * `error-handlers.ts` own retries.
+ * Pointagram documents no rate limit. Core's `request()` retries a 429 three
+ * times and honours `Retry-After`, so the handler in `error-handlers.ts` does
+ * not retry again. `x-ratelimit-reset` is left out because Pointagram does not
+ * document it, and core would turn any value it sends into the retry delay.
  */
 const POINTAGRAM_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },

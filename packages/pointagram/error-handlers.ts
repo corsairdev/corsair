@@ -35,14 +35,11 @@ export const errorHandlers = {
 		match: (error: Error) => isAuthRejection(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// Core's request() has already retried the 429 three times, honouring
+	// Retry-After, before this sees it (PLUGIN_PR_RULES R8, Retries).
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof ApiError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A resource the tenant cannot see: a player, team, competition or store item
 	// that does not exist. Retrying the same id cannot succeed.

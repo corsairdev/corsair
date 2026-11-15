@@ -94,25 +94,14 @@ describe('Pointagram errorHandlers', () => {
 		expect(route(zodError)).toBe('VALIDATION_ERROR');
 	});
 
-	it('routes a 429 to RATE_LIMIT_ERROR and honours Retry-After', async () => {
+	it('routes a 429 to RATE_LIMIT_ERROR without retrying again', async () => {
+		// Core's request() has already retried the 429 three times by now.
 		const error = apiError(429, 'Too Many Requests', { status: 'Error' }, 2500);
 
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(
 			HANDLERS.RATE_LIMIT_ERROR?.handler(error, CONTEXT),
-		).resolves.toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 2500,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('falls back to the backoff strategy when a 429 carries no Retry-After', async () => {
-		const error = apiError(429, 'Too Many Requests', { status: 'Error' });
-
-		const result = await HANDLERS.RATE_LIMIT_ERROR?.handler(error, CONTEXT);
-		expect(result?.maxRetries).toBe(3);
-		expect(result?.headersRetryAfterMs).toBeUndefined();
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('replays a transport failure on a read but never on a write', async () => {
