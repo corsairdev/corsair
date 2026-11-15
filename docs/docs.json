@@ -4399,6 +4399,14 @@
                 ]
               },
               {
+                "group": "Spotlightr",
+                "pages": [
+                  "plugins/spotlightr/overview",
+                  "plugins/spotlightr/api",
+                  "plugins/spotlightr/database"
+                ]
+              },
+              {
                 "group": "Spotify",
                 "pages": [
                   "plugins/spotify/overview",
