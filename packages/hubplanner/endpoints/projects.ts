@@ -1,7 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { Project, SuccessResponse, Tag } from './types';
+import type {
+	BooleanResult,
+	NoContent,
+	Project,
+	RemovedIds,
+	Tag,
+	UpdateResult,
+} from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -74,7 +81,7 @@ export const Projects = {
 	update: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['projects.update'].parse(input);
-		const response = await makeHubPlannerRequest<Project[]>(
+		const response = await makeHubPlannerRequest<UpdateResult>(
 			'/project',
 			ctx.key,
 			{
@@ -96,7 +103,7 @@ export const Projects = {
 	delete: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['projects.delete'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BooleanResult>(
 			`/project/${encodeURIComponent(parsedInput.projectId)}`,
 			ctx.key,
 			{ method: 'DELETE' },
@@ -115,14 +122,10 @@ export const Projects = {
 	deleteBulk: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['projects.deleteBulk'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
-			'/project',
-			ctx.key,
-			{
-				method: 'DELETE',
-				body: parsedInput.projectIds,
-			},
-		);
+		const raw = await makeHubPlannerRequest<RemovedIds>('/project', ctx.key, {
+			method: 'DELETE',
+			body: parsedInput.projectIds,
+		});
 		const parsed =
 			HubPlannerEndpointOutputSchemas['projects.deleteBulk'].parse(raw);
 		await logEventFromContext(
@@ -164,7 +167,7 @@ export const Projects = {
 	addResources: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['projects.addResources'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BooleanResult>(
 			`/project/addResourcesToProject/${encodeURIComponent(parsedInput.projectId)}`,
 			ctx.key,
 			{
@@ -186,7 +189,7 @@ export const Projects = {
 	removeResource: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['projects.removeResource'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BooleanResult>(
 			`/project/removeResourceFromProjects/${encodeURIComponent(parsedInput.resourceId)}`,
 			ctx.key,
 			{
@@ -208,7 +211,7 @@ export const Projects = {
 	addClients: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['projects.addClients'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BooleanResult>(
 			`/project/${encodeURIComponent(parsedInput.projectId)}/client`,
 			ctx.key,
 			{
@@ -230,7 +233,7 @@ export const Projects = {
 	removeClient: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['projects.removeClient'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BooleanResult>(
 			`/project/client/${encodeURIComponent(parsedInput.clientId)}`,
 			ctx.key,
 			{
@@ -319,7 +322,7 @@ export const Projects = {
 	removeTag: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['projects.removeTag'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<NoContent>(
 			`/project/${encodeURIComponent(parsedInput.projectId)}/tag/${encodeURIComponent(parsedInput.tagId)}`,
 			ctx.key,
 			{ method: 'DELETE' },

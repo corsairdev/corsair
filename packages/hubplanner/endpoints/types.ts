@@ -5,21 +5,49 @@ export const TagSchema = z
 	.object({
 		tagId: z.string(),
 		value: z.string(),
-		_id: z.string().optional(),
+		_id: z.string().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
 export type Tag = z.infer<typeof TagSchema>;
 
+// Booking deletes answer `{ success: true, ... }`: the single delete adds the deleted booking's
+// fields, the bulk delete adds `message` and `deletedCount`.
 export const SuccessResponseSchema = z
 	.object({
-		success: z.boolean().default(true),
-		message: z.string().optional(),
-		count: z.number().optional(),
+		success: z.boolean(),
+		message: z.string().nullish(),
+		deletedCount: z.number().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;
+
+// Most single deletes and the project/resource/client association calls answer a bare `true`.
+export const BooleanResultSchema = z.boolean();
+export type BooleanResult = z.infer<typeof BooleanResultSchema>;
+
+// Tag removals, cost category and custom field deletes and the bulk time entry delete answer
+// 204 No Content, which core's request() resolves to `undefined`.
+export const NoContentSchema = z.undefined();
+export type NoContent = z.infer<typeof NoContentSchema>;
+
+// Resource deletes and the bulk project delete answer with the array of removed ids.
+export const RemovedIdsSchema = z.array(z.string());
+export type RemovedIds = z.infer<typeof RemovedIdsSchema>;
+
+// PATCH /project and PATCH /resource answer one `{ _id, status: "Updated" }` per updated record,
+// not the records themselves.
+export const UpdateResultSchema = z.array(
+	z
+		.object({
+			_id: z.string(),
+			status: z.string().nullish(),
+		})
+		// `unknown` response properties preserved for forward compatibility with provider additions.
+		.passthrough(),
+);
+export type UpdateResult = z.infer<typeof UpdateResultSchema>;
 
 // ==========================================
 // 1. Projects
@@ -29,32 +57,32 @@ export const ProjectSchema = z
 	.object({
 		_id: z.string(),
 		name: z.string(),
-		links: z.record(z.string(), z.string()).optional(),
-		note: z.string().optional(),
-		createdDate: z.string().optional(),
-		updatedDate: z.string().optional(),
-		timeEntryEnabled: z.boolean().optional(),
-		timeEntryLocked: z.boolean().optional(),
-		timeEntryApproval: z.boolean().optional(),
-		projectCode: z.string().optional(),
-		timeEntryNoteRequired: z.boolean().optional(),
-		budgetHours: z.number().optional(),
-		budgetCashAmount: z.number().optional(),
-		budgetCurrency: z.string().optional(),
-		useStatusColor: z.boolean().optional(),
-		status: z.string().optional(),
-		useProjectDuration: z.boolean().optional(),
-		start: z.string().nullable().optional(),
-		end: z.string().nullable().optional(),
-		backgroundColor: z.string().optional(),
-		metadata: z.string().optional(),
-		projectManagers: z.array(z.string()).optional(),
-		resources: z.array(z.string()).optional(),
-		tags: z.array(TagSchema).optional(),
+		links: z.record(z.string(), z.string()).nullish(),
+		note: z.string().nullish(),
+		createdDate: z.string().nullish(),
+		updatedDate: z.string().nullish(),
+		timeEntryEnabled: z.boolean().nullish(),
+		timeEntryLocked: z.boolean().nullish(),
+		timeEntryApproval: z.boolean().nullish(),
+		projectCode: z.string().nullish(),
+		timeEntryNoteRequired: z.boolean().nullish(),
+		budgetHours: z.number().nullish(),
+		budgetCashAmount: z.number().nullish(),
+		budgetCurrency: z.string().nullish(),
+		useStatusColor: z.boolean().nullish(),
+		status: z.string().nullish(),
+		useProjectDuration: z.boolean().nullish(),
+		start: z.string().nullish(),
+		end: z.string().nullish(),
+		backgroundColor: z.string().nullish(),
+		metadata: z.string().nullish(),
+		projectManagers: z.array(z.string()).nullish(),
+		resources: z.array(z.string()).nullish(),
+		tags: z.array(TagSchema).nullish(),
 		// `unknown` because customer objects contain provider-extensible fields
-		customers: z.array(z.record(z.string(), z.unknown())).optional(),
+		customers: z.array(z.record(z.string(), z.unknown())).nullish(),
 		// `unknown` because custom fields contain arbitrary user-configured key-value pairs
-		customFields: z.array(z.unknown()).optional(),
+		customFields: z.array(z.unknown()).nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -120,12 +148,14 @@ export const ProjectsUpdateInputSchema = z.object({
 				status: z.string().optional(),
 				backgroundColor: z.string().optional(),
 				metadata: z.string().optional(),
+				// `unknown` because custom field values depend on each account's own templates
+				customFields: z.array(z.record(z.string(), z.unknown())).optional(),
 			}),
 		)
 		.min(1, 'At least one project update object is required'),
 });
 export type ProjectsUpdateInput = z.infer<typeof ProjectsUpdateInputSchema>;
-export const ProjectsUpdateResponseSchema = z.array(ProjectSchema);
+export const ProjectsUpdateResponseSchema = UpdateResultSchema;
 export type ProjectsUpdateResponse = z.infer<
 	typeof ProjectsUpdateResponseSchema
 >;
@@ -134,7 +164,7 @@ export const ProjectsDeleteInputSchema = z.object({
 	projectId: z.string().min(1, 'Project ID is required'),
 });
 export type ProjectsDeleteInput = z.infer<typeof ProjectsDeleteInputSchema>;
-export const ProjectsDeleteResponseSchema = SuccessResponseSchema;
+export const ProjectsDeleteResponseSchema = BooleanResultSchema;
 export type ProjectsDeleteResponse = z.infer<
 	typeof ProjectsDeleteResponseSchema
 >;
@@ -147,7 +177,7 @@ export const ProjectsDeleteBulkInputSchema = z.object({
 export type ProjectsDeleteBulkInput = z.infer<
 	typeof ProjectsDeleteBulkInputSchema
 >;
-export const ProjectsDeleteBulkResponseSchema = SuccessResponseSchema;
+export const ProjectsDeleteBulkResponseSchema = RemovedIdsSchema;
 export type ProjectsDeleteBulkResponse = z.infer<
 	typeof ProjectsDeleteBulkResponseSchema
 >;
@@ -174,7 +204,7 @@ export const ProjectsAddResourcesInputSchema = z.object({
 export type ProjectsAddResourcesInput = z.infer<
 	typeof ProjectsAddResourcesInputSchema
 >;
-export const ProjectsAddResourcesResponseSchema = SuccessResponseSchema;
+export const ProjectsAddResourcesResponseSchema = BooleanResultSchema;
 export type ProjectsAddResourcesResponse = z.infer<
 	typeof ProjectsAddResourcesResponseSchema
 >;
@@ -188,7 +218,7 @@ export const ProjectsRemoveResourceInputSchema = z.object({
 export type ProjectsRemoveResourceInput = z.infer<
 	typeof ProjectsRemoveResourceInputSchema
 >;
-export const ProjectsRemoveResourceResponseSchema = SuccessResponseSchema;
+export const ProjectsRemoveResourceResponseSchema = BooleanResultSchema;
 export type ProjectsRemoveResourceResponse = z.infer<
 	typeof ProjectsRemoveResourceResponseSchema
 >;
@@ -202,7 +232,7 @@ export const ProjectsAddClientsInputSchema = z.object({
 export type ProjectsAddClientsInput = z.infer<
 	typeof ProjectsAddClientsInputSchema
 >;
-export const ProjectsAddClientsResponseSchema = SuccessResponseSchema;
+export const ProjectsAddClientsResponseSchema = BooleanResultSchema;
 export type ProjectsAddClientsResponse = z.infer<
 	typeof ProjectsAddClientsResponseSchema
 >;
@@ -216,7 +246,7 @@ export const ProjectsRemoveClientInputSchema = z.object({
 export type ProjectsRemoveClientInput = z.infer<
 	typeof ProjectsRemoveClientInputSchema
 >;
-export const ProjectsRemoveClientResponseSchema = SuccessResponseSchema;
+export const ProjectsRemoveClientResponseSchema = BooleanResultSchema;
 export type ProjectsRemoveClientResponse = z.infer<
 	typeof ProjectsRemoveClientResponseSchema
 >;
@@ -259,7 +289,7 @@ export const ProjectsRemoveTagInputSchema = z.object({
 export type ProjectsRemoveTagInput = z.infer<
 	typeof ProjectsRemoveTagInputSchema
 >;
-export const ProjectsRemoveTagResponseSchema = SuccessResponseSchema;
+export const ProjectsRemoveTagResponseSchema = NoContentSchema;
 export type ProjectsRemoveTagResponse = z.infer<
 	typeof ProjectsRemoveTagResponseSchema
 >;
@@ -271,18 +301,18 @@ export type ProjectsRemoveTagResponse = z.infer<
 export const ResourceSchema = z
 	.object({
 		_id: z.string(),
-		firstName: z.string().optional(),
-		lastName: z.string().optional(),
-		email: z.string().optional(),
-		role: z.string().optional(),
-		status: z.string().optional(),
-		backgroundColor: z.string().optional(),
-		createdDate: z.string().optional(),
-		updatedDate: z.string().optional(),
-		metadata: z.string().optional(),
-		tags: z.array(TagSchema).optional(),
+		firstName: z.string().nullish(),
+		lastName: z.string().nullish(),
+		email: z.string().nullish(),
+		role: z.string().nullish(),
+		status: z.string().nullish(),
+		backgroundColor: z.string().nullish(),
+		createdDate: z.string().nullish(),
+		updatedDate: z.string().nullish(),
+		metadata: z.string().nullish(),
+		tags: z.array(TagSchema).nullish(),
 		// `unknown` because custom fields contain user-defined key-value attributes
-		customFields: z.array(z.unknown()).optional(),
+		customFields: z.array(z.unknown()).nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -310,7 +340,6 @@ export const ResourcesCreateInputSchema = z.object({
 	email: z.string().email().optional(),
 	role: z.string().optional(),
 	status: z.string().optional(),
-	autoInvite: z.boolean().optional(),
 	backgroundColor: z.string().optional(),
 	metadata: z.string().optional(),
 	// `unknown` because custom fields contain user-defined attributes
@@ -334,12 +363,14 @@ export const ResourcesUpdateInputSchema = z.object({
 				status: z.string().optional(),
 				backgroundColor: z.string().optional(),
 				metadata: z.string().optional(),
+				// `unknown` because custom field values depend on each account's own templates
+				customFields: z.array(z.record(z.string(), z.unknown())).optional(),
 			}),
 		)
 		.min(1, 'At least one resource update object is required'),
 });
 export type ResourcesUpdateInput = z.infer<typeof ResourcesUpdateInputSchema>;
-export const ResourcesUpdateResponseSchema = z.array(ResourceSchema);
+export const ResourcesUpdateResponseSchema = UpdateResultSchema;
 export type ResourcesUpdateResponse = z.infer<
 	typeof ResourcesUpdateResponseSchema
 >;
@@ -348,7 +379,7 @@ export const ResourcesDeleteInputSchema = z.object({
 	resourceId: z.string().min(1, 'Resource ID is required'),
 });
 export type ResourcesDeleteInput = z.infer<typeof ResourcesDeleteInputSchema>;
-export const ResourcesDeleteResponseSchema = SuccessResponseSchema;
+export const ResourcesDeleteResponseSchema = RemovedIdsSchema;
 export type ResourcesDeleteResponse = z.infer<
 	typeof ResourcesDeleteResponseSchema
 >;
@@ -361,7 +392,7 @@ export const ResourcesDeleteBulkInputSchema = z.object({
 export type ResourcesDeleteBulkInput = z.infer<
 	typeof ResourcesDeleteBulkInputSchema
 >;
-export const ResourcesDeleteBulkResponseSchema = SuccessResponseSchema;
+export const ResourcesDeleteBulkResponseSchema = RemovedIdsSchema;
 export type ResourcesDeleteBulkResponse = z.infer<
 	typeof ResourcesDeleteBulkResponseSchema
 >;
@@ -405,7 +436,7 @@ export const ResourcesRemoveTagInputSchema = z.object({
 export type ResourcesRemoveTagInput = z.infer<
 	typeof ResourcesRemoveTagInputSchema
 >;
-export const ResourcesRemoveTagResponseSchema = SuccessResponseSchema;
+export const ResourcesRemoveTagResponseSchema = NoContentSchema;
 export type ResourcesRemoveTagResponse = z.infer<
 	typeof ResourcesRemoveTagResponseSchema
 >;
@@ -417,24 +448,24 @@ export type ResourcesRemoveTagResponse = z.infer<
 export const BookingSchema = z
 	.object({
 		_id: z.string(),
-		title: z.string().optional(),
-		state: z.string().optional(),
-		allDay: z.boolean().optional(),
+		title: z.string().nullish(),
+		state: z.string().nullish(),
+		allDay: z.boolean().nullish(),
 		start: z.string(),
 		end: z.string(),
-		stateValue: z.number().optional(),
+		stateValue: z.number().nullish(),
 		resource: z.string(),
 		project: z.string(),
-		note: z.string().optional(),
-		createdDate: z.string().optional(),
-		updatedDate: z.string().optional(),
-		metadata: z.string().optional(),
-		type: z.string().optional(),
-		categoryTemplateId: z.string().optional(),
-		categoryName: z.string().optional(),
-		bookingCreatorId: z.string().optional(),
+		note: z.string().nullish(),
+		createdDate: z.string().nullish(),
+		updatedDate: z.string().nullish(),
+		metadata: z.string().nullish(),
+		type: z.string().nullish(),
+		categoryTemplateId: z.string().nullish(),
+		categoryName: z.string().nullish(),
+		bookingCreatorId: z.string().nullish(),
 		// `unknown` because customFields contains user-configured metadata
-		customFields: z.array(z.unknown()).optional(),
+		customFields: z.array(z.unknown()).nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -549,8 +580,9 @@ export const BookingsDeleteBulkInputSchema = z
 	})
 	.refine(
 		(input) =>
-			Boolean(input.ids?.length || input.resourceId || input.projectId),
-		'At least one booking ID or filter is required',
+			[input.ids?.length, input.resourceId, input.projectId].filter(Boolean)
+				.length === 1,
+		'Provide exactly one of ids, resourceId or projectId',
 	);
 export type BookingsDeleteBulkInput = z.infer<
 	typeof BookingsDeleteBulkInputSchema
@@ -569,20 +601,20 @@ export const TimeEntrySchema = z
 		_id: z.string(),
 		resource: z.string(),
 		project: z.string(),
-		projectName: z.string().optional(),
-		projectType: z.string().optional(),
-		projectStatus: z.string().optional(),
+		projectName: z.string().nullish(),
+		projectType: z.string().nullish(),
+		projectStatus: z.string().nullish(),
 		date: z.string(),
 		minutes: z.number(),
-		note: z.string().optional(),
-		createdDate: z.string().optional(),
-		updatedDate: z.string().optional(),
-		metadata: z.string().optional(),
-		status: z.string().optional(),
-		locked: z.boolean().optional(),
-		creator: z.string().optional(),
-		categoryTemplateId: z.string().optional(),
-		categoryName: z.string().optional(),
+		note: z.string().nullish(),
+		createdDate: z.string().nullish(),
+		updatedDate: z.string().nullish(),
+		metadata: z.string().nullish(),
+		status: z.string().nullish(),
+		locked: z.boolean().nullish(),
+		creator: z.string().nullish(),
+		categoryTemplateId: z.string().nullish(),
+		categoryName: z.string().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -664,7 +696,7 @@ export const TimeEntriesDeleteInputSchema = z.object({
 export type TimeEntriesDeleteInput = z.infer<
 	typeof TimeEntriesDeleteInputSchema
 >;
-export const TimeEntriesDeleteResponseSchema = SuccessResponseSchema;
+export const TimeEntriesDeleteResponseSchema = BooleanResultSchema;
 export type TimeEntriesDeleteResponse = z.infer<
 	typeof TimeEntriesDeleteResponseSchema
 >;
@@ -677,7 +709,7 @@ export const TimeEntriesDeleteBulkInputSchema = z.object({
 export type TimeEntriesDeleteBulkInput = z.infer<
 	typeof TimeEntriesDeleteBulkInputSchema
 >;
-export const TimeEntriesDeleteBulkResponseSchema = SuccessResponseSchema;
+export const TimeEntriesDeleteBulkResponseSchema = NoContentSchema;
 export type TimeEntriesDeleteBulkResponse = z.infer<
 	typeof TimeEntriesDeleteBulkResponseSchema
 >;
@@ -690,12 +722,12 @@ export const BookingCategorySchema = z
 	.object({
 		_id: z.string(),
 		name: z.string(),
-		gridColor: z.string().optional(),
-		type: z.string().optional(),
-		createdDate: z.string().optional(),
-		updatedDate: z.string().optional(),
-		categoryGroupId: z.string().optional(),
-		categoryGroupName: z.string().optional(),
+		gridColor: z.string().nullish(),
+		type: z.string().nullish(),
+		createdDate: z.string().nullish(),
+		updatedDate: z.string().nullish(),
+		categoryGroupId: z.string().nullish(),
+		categoryGroupName: z.string().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -705,7 +737,7 @@ export const CategoryGroupSchema = z
 	.object({
 		_id: z.string(),
 		name: z.string(),
-		type: z.string().optional(),
+		type: z.string().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -715,8 +747,8 @@ export const CostCategorySchema = z
 	.object({
 		_id: z.string(),
 		name: z.string(),
-		createdDate: z.string().optional(),
-		updatedDate: z.string().optional(),
+		createdDate: z.string().nullish(),
+		updatedDate: z.string().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -740,7 +772,8 @@ export const CategoriesCreateInputSchema = z.object({
 	groupId: z.string().min(1, 'Group ID is required'),
 	name: z.string().min(1, 'Category name is required'),
 	gridColor: z.string().optional(),
-	type: z.enum(['NON_OPTIONAL', 'CUSTOM']).optional(),
+	// Required by the API on create and update (400 PROPERTY_ASSERTION_ERROR without it).
+	type: z.enum(['NON_OPTIONAL', 'CUSTOM']),
 });
 export type CategoriesCreateInput = z.infer<typeof CategoriesCreateInputSchema>;
 export const CategoriesCreateResponseSchema = BookingCategorySchema;
@@ -752,7 +785,8 @@ export const CategoriesUpdateInputSchema = z.object({
 	categoryId: z.string().min(1, 'Category ID is required'),
 	name: z.string().min(1, 'Category name is required'),
 	gridColor: z.string().optional(),
-	type: z.enum(['NON_OPTIONAL', 'CUSTOM']).optional(),
+	// Required by the API on create and update (400 PROPERTY_ASSERTION_ERROR without it).
+	type: z.enum(['NON_OPTIONAL', 'CUSTOM']),
 });
 export type CategoriesUpdateInput = z.infer<typeof CategoriesUpdateInputSchema>;
 export const CategoriesUpdateResponseSchema = BookingCategorySchema;
@@ -842,7 +876,7 @@ export const CategoriesDeleteCostCategoryInputSchema = z.object({
 export type CategoriesDeleteCostCategoryInput = z.infer<
 	typeof CategoriesDeleteCostCategoryInputSchema
 >;
-export const CategoriesDeleteCostCategoryResponseSchema = SuccessResponseSchema;
+export const CategoriesDeleteCostCategoryResponseSchema = NoContentSchema;
 export type CategoriesDeleteCostCategoryResponse = z.infer<
 	typeof CategoriesDeleteCostCategoryResponseSchema
 >;
@@ -853,7 +887,7 @@ export type CategoriesDeleteCostCategoryResponse = z.infer<
 
 export const CustomFieldChoiceSchema = z
 	.object({
-		_id: z.string().optional(),
+		_id: z.string().nullish(),
 		value: z.string(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
@@ -865,16 +899,16 @@ export const CustomFieldTemplateSchema = z
 		_id: z.string(),
 		type: z.string(),
 		label: z.string(),
-		instructions: z.string().optional(),
-		placeholderText: z.string().optional(),
-		status: z.string().optional(),
-		allowMultipleValues: z.boolean().or(z.string()).optional(),
-		isRequired: z.boolean().or(z.string()).optional(),
-		canResourceEdit: z.boolean().or(z.string()).optional(),
-		characterLimit: z.string().optional(),
-		isChoicesSortedAlphabetically: z.boolean().or(z.string()).optional(),
-		choices: z.array(CustomFieldChoiceSchema).optional(),
-		defaultValue: z.string().optional(),
+		instructions: z.string().nullish(),
+		placeholderText: z.string().nullish(),
+		status: z.string().nullish(),
+		allowMultipleValues: z.boolean().or(z.string()).nullish(),
+		isRequired: z.boolean().or(z.string()).nullish(),
+		canResourceEdit: z.boolean().or(z.string()).nullish(),
+		characterLimit: z.number().or(z.string()).nullish(),
+		isChoicesSortedAlphabetically: z.boolean().or(z.string()).nullish(),
+		choices: z.array(CustomFieldChoiceSchema).nullish(),
+		defaultValue: z.string().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -967,7 +1001,7 @@ export const CustomFieldsDeleteInputSchema = z.object({
 export type CustomFieldsDeleteInput = z.infer<
 	typeof CustomFieldsDeleteInputSchema
 >;
-export const CustomFieldsDeleteResponseSchema = SuccessResponseSchema;
+export const CustomFieldsDeleteResponseSchema = NoContentSchema;
 export type CustomFieldsDeleteResponse = z.infer<
 	typeof CustomFieldsDeleteResponseSchema
 >;
@@ -1016,7 +1050,7 @@ export const MilestoneSchema = z
 		name: z.string(),
 		date: z.string(),
 		project: z.string(),
-		metadata: z.string().optional(),
+		metadata: z.string().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -1069,7 +1103,7 @@ export const MilestonesDeleteInputSchema = z.object({
 	milestoneId: z.string().min(1, 'Milestone ID is required'),
 });
 export type MilestonesDeleteInput = z.infer<typeof MilestonesDeleteInputSchema>;
-export const MilestonesDeleteResponseSchema = SuccessResponseSchema;
+export const MilestonesDeleteResponseSchema = BooleanResultSchema;
 export type MilestonesDeleteResponse = z.infer<
 	typeof MilestonesDeleteResponseSchema
 >;
@@ -1095,11 +1129,11 @@ export const EventSchema = z
 	.object({
 		_id: z.string(),
 		name: z.string(),
-		eventCode: z.string().optional(),
-		backgroundColor: z.string().optional(),
-		createdDate: z.string().optional(),
-		updatedDate: z.string().optional(),
-		metadata: z.string().optional(),
+		eventCode: z.string().nullish(),
+		backgroundColor: z.string().nullish(),
+		createdDate: z.string().nullish(),
+		updatedDate: z.string().nullish(),
+		metadata: z.string().nullish(),
 	})
 	// `unknown` response properties preserved for forward compatibility with provider additions.
 	.passthrough();
@@ -1146,7 +1180,7 @@ export const EventsDeleteInputSchema = z.object({
 	eventId: z.string().min(1, 'Event ID is required'),
 });
 export type EventsDeleteInput = z.infer<typeof EventsDeleteInputSchema>;
-export const EventsDeleteResponseSchema = SuccessResponseSchema;
+export const EventsDeleteResponseSchema = BooleanResultSchema;
 export type EventsDeleteResponse = z.infer<typeof EventsDeleteResponseSchema>;
 
 export const EventsSearchInputSchema = z.object({

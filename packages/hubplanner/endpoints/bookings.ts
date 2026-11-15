@@ -192,7 +192,7 @@ export const Bookings = {
 		await logEventFromContext(
 			ctx,
 			'hubplanner.bookings.deleteBulk',
-			parsed.count === undefined ? {} : { count: parsed.count },
+			parsed.deletedCount == null ? {} : { count: parsed.deletedCount },
 			'completed',
 		);
 		return parsed;

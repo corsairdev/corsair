@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { Milestone, SuccessResponse } from './types';
+import type { BooleanResult, Milestone } from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -11,11 +11,13 @@ export const Milestones = {
 	list: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['milestones.list'].parse(input);
+		// Hub Planner has no GET /milestone (it answers 404); an empty search lists every milestone.
 		const response = await makeHubPlannerRequest<Milestone[]>(
-			'/milestone',
+			'/milestone/search',
 			ctx.key,
 			{
-				method: 'GET',
+				method: 'POST',
+				body: {},
 				query: {
 					page: parsedInput.page,
 					limit: parsedInput.limit,
@@ -101,7 +103,7 @@ export const Milestones = {
 	delete: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['milestones.delete'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BooleanResult>(
 			`/milestone/${encodeURIComponent(parsedInput.milestoneId)}`,
 			ctx.key,
 			{ method: 'DELETE' },

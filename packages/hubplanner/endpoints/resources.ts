@@ -1,7 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { Resource, SuccessResponse, Tag } from './types';
+import type {
+	NoContent,
+	RemovedIds,
+	Resource,
+	Tag,
+	UpdateResult,
+} from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -78,7 +84,7 @@ export const Resources = {
 	update: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['resources.update'].parse(input);
-		const response = await makeHubPlannerRequest<Resource[]>(
+		const response = await makeHubPlannerRequest<UpdateResult>(
 			'/resource',
 			ctx.key,
 			{
@@ -100,7 +106,7 @@ export const Resources = {
 	delete: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['resources.delete'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<RemovedIds>(
 			`/resource/${encodeURIComponent(parsedInput.resourceId)}`,
 			ctx.key,
 			{ method: 'DELETE' },
@@ -119,14 +125,10 @@ export const Resources = {
 	deleteBulk: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['resources.deleteBulk'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
-			'/resource',
-			ctx.key,
-			{
-				method: 'DELETE',
-				body: parsedInput.resourceIds,
-			},
-		);
+		const raw = await makeHubPlannerRequest<RemovedIds>('/resource', ctx.key, {
+			method: 'DELETE',
+			body: parsedInput.resourceIds,
+		});
 		const parsed =
 			HubPlannerEndpointOutputSchemas['resources.deleteBulk'].parse(raw);
 		await logEventFromContext(
@@ -209,7 +211,7 @@ export const Resources = {
 	removeTag: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['resources.removeTag'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<NoContent>(
 			`/resource/${encodeURIComponent(parsedInput.resourceId)}/tag/${encodeURIComponent(parsedInput.tagId)}`,
 			ctx.key,
 			{ method: 'DELETE' },

@@ -96,6 +96,21 @@ describe('Projects schemas', () => {
 		expect(() =>
 			HubPlannerEndpointInputSchemas['projects.update'].parse({ projects: [] }),
 		).toThrow();
+		// customFields is documented on project updates and must reach the request body.
+		const withCustomFields = {
+			projects: [
+				{ _id: 'p1', customFields: [{ templateId: 't1', value: 'x' }] },
+			],
+		};
+		expect(
+			HubPlannerEndpointInputSchemas['projects.update'].parse(withCustomFields),
+		).toEqual(withCustomFields);
+		// Live PATCH /project answers { _id, status } per record.
+		expect(
+			HubPlannerEndpointOutputSchemas['projects.update'].parse([
+				{ _id: 'p1', status: 'Updated' },
+			]),
+		).toEqual([{ _id: 'p1', status: 'Updated' }]);
 	});
 
 	it('validates projects.delete and deleteBulk inputs', () => {
@@ -368,6 +383,13 @@ describe('Bookings schemas', () => {
 		expect(() =>
 			HubPlannerEndpointInputSchemas['bookings.deleteBulk'].parse({}),
 		).toThrow();
+		// One selector per call: the API documents ids, resourceId and projectId as alternatives.
+		expect(() =>
+			HubPlannerEndpointInputSchemas['bookings.deleteBulk'].parse({
+				ids: ['b1'],
+				projectId: 'p1',
+			}),
+		).toThrow();
 	});
 });
 
@@ -462,6 +484,13 @@ describe('Categories schemas', () => {
 		expect(
 			HubPlannerEndpointInputSchemas['categories.create'].parse(createInput),
 		).toEqual(createInput);
+		// The API answers 400 PROPERTY_ASSERTION_ERROR (type) when it is missing.
+		expect(() =>
+			HubPlannerEndpointInputSchemas['categories.create'].parse({
+				groupId: 'grp1',
+				name: 'No type',
+			}),
+		).toThrow();
 
 		const validCategory = {
 			_id: 'cat1',

@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { Event, SuccessResponse } from './types';
+import type { BooleanResult, Event } from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -93,7 +93,7 @@ export const Events = {
 	delete: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['events.delete'].parse(input);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<BooleanResult>(
 			`/event/${encodeURIComponent(parsedInput.eventId)}`,
 			ctx.key,
 			{ method: 'DELETE' },

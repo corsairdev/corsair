@@ -5,7 +5,7 @@ import type {
 	BookingCategory,
 	CategoryGroup,
 	CostCategory,
-	SuccessResponse,
+	NoContent,
 } from './types';
 import {
 	HubPlannerEndpointInputSchemas,
@@ -268,7 +268,7 @@ export const Categories = {
 			HubPlannerEndpointInputSchemas['categories.deleteCostCategory'].parse(
 				input,
 			);
-		const raw = await makeHubPlannerRequest<SuccessResponse>(
+		const raw = await makeHubPlannerRequest<NoContent>(
 			`/costCategories/${encodeURIComponent(parsedInput.costCategoryId)}`,
 			ctx.key,
 			{ method: 'DELETE' },

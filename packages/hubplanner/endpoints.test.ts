@@ -125,10 +125,11 @@ describe('Projects Endpoints', () => {
 
 	it('projects.update patches project array', async () => {
 		const updates = [{ _id: 'p1', name: 'Updated' }];
-		mockedRequest.mockResolvedValueOnce(updates);
+		// Live PATCH /project answers one { _id, status } per record, not the projects.
+		mockedRequest.mockResolvedValueOnce([{ _id: 'p1', status: 'Updated' }]);
 
 		const result = await Projects.update(ctx, { projects: updates });
-		expect(result).toEqual(updates);
+		expect(result).toEqual([{ _id: 'p1', status: 'Updated' }]);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/project',
 			'test-hubplanner-key',
@@ -146,10 +147,10 @@ describe('Projects Endpoints', () => {
 	});
 
 	it('projects.delete removes project by ID', async () => {
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
 
 		const result = await Projects.delete(ctx, { projectId: 'p1' });
-		expect(result).toEqual({ success: true });
+		expect(result).toBe(true);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/project/p1',
 			'test-hubplanner-key',
@@ -166,10 +167,10 @@ describe('Projects Endpoints', () => {
 	});
 
 	it('projects.deleteBulk removes multiple projects', async () => {
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(['p1', 'p2']);
 
 		const result = await Projects.deleteBulk(ctx, { projectIds: ['p1', 'p2'] });
-		expect(result).toEqual({ success: true });
+		expect(result).toEqual(['p1', 'p2']);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/project',
 			'test-hubplanner-key',
@@ -214,7 +215,7 @@ describe('Projects Endpoints', () => {
 	});
 
 	it('projects.addResources and removeResource manage assignments', async () => {
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
 		await Projects.addResources(ctx, {
 			projectId: 'p1',
 			resourceIds: ['r1', 'r2'],
@@ -228,7 +229,7 @@ describe('Projects Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
 		await Projects.removeResource(ctx, {
 			resourceId: 'r1',
 			projectIds: ['p1'],
@@ -244,7 +245,7 @@ describe('Projects Endpoints', () => {
 	});
 
 	it('projects.addClients and removeClient manage client associations', async () => {
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
 		await Projects.addClients(ctx, { projectId: 'p1', clientIds: ['c1'] });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/project/p1/client',
@@ -255,7 +256,7 @@ describe('Projects Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
 		await Projects.removeClient(ctx, { clientId: 'c1', projectIds: ['p1'] });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/project/client/c1',
@@ -303,7 +304,7 @@ describe('Projects Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(undefined);
 		await Projects.removeTag(ctx, { projectId: 'p1', tagId: 't1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/project/p1/tag/t1',
@@ -385,7 +386,7 @@ describe('Resources Endpoints', () => {
 	});
 
 	it('resources.delete and deleteBulk remove resources', async () => {
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(['r1']);
 		await Resources.delete(ctx, { resourceId: 'r1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/resource/r1',
@@ -395,7 +396,7 @@ describe('Resources Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(['r1', 'r2']);
 		await Resources.deleteBulk(ctx, { resourceIds: ['r1', 'r2'] });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/resource',
@@ -454,7 +455,7 @@ describe('Resources Endpoints', () => {
 		);
 		expect(addTagsRes._id).toBe('r1');
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(undefined);
 		const removeTagRes = await Resources.removeTag(ctx, {
 			resourceId: 'r1',
 			tagId: 'rt1',
@@ -464,7 +465,8 @@ describe('Resources Endpoints', () => {
 			'test-hubplanner-key',
 			{ method: 'DELETE' },
 		);
-		expect(removeTagRes.success).toBe(true);
+		// Live DELETE /resource/:id/tag/:tagId answers 204 No Content.
+		expect(removeTagRes).toBeUndefined();
 	});
 });
 
@@ -568,7 +570,11 @@ describe('Bookings Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce({
+			success: true,
+			message: 'Deleted 2 bookings',
+			deletedCount: 2,
+		});
 		await Bookings.deleteBulk(ctx, { ids: ['b1', 'b2'] });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/booking',
@@ -579,6 +585,21 @@ describe('Bookings Endpoints', () => {
 				query: { ids: 'b1,b2' },
 			},
 		);
+		expect(mockedLogEvent).toHaveBeenLastCalledWith(
+			ctx,
+			'hubplanner.bookings.deleteBulk',
+			{ count: 2 },
+			'completed',
+		);
+	});
+
+	it('rejects delete responses that are not the documented shapes', async () => {
+		mockedRequest.mockResolvedValueOnce({});
+		await expect(Bookings.delete(ctx, { bookingId: 'b1' })).rejects.toThrow();
+		mockedRequest.mockResolvedValueOnce({ success: true });
+		await expect(Events.delete(ctx, { eventId: 'e1' })).rejects.toThrow();
+		mockedRequest.mockResolvedValueOnce({ success: true });
+		await expect(Resources.delete(ctx, { resourceId: 'r1' })).rejects.toThrow();
 	});
 });
 
@@ -658,7 +679,7 @@ describe('TimeEntries Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
 		await TimeEntries.delete(ctx, { timeEntryId: 'te1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/timeentry/te1',
@@ -668,7 +689,7 @@ describe('TimeEntries Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(undefined);
 		await TimeEntries.deleteBulk(ctx, { ids: ['te1', 'te2'] });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/timeentry',
@@ -703,13 +724,17 @@ describe('Categories Endpoints', () => {
 		);
 
 		mockedRequest.mockResolvedValueOnce(mockCategory);
-		await Categories.create(ctx, { groupId: 'g1', name: 'Design' });
+		await Categories.create(ctx, {
+			groupId: 'g1',
+			name: 'Design',
+			type: 'CUSTOM',
+		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/categories',
 			'test-hubplanner-key',
 			{
 				method: 'POST',
-				body: { groupId: 'g1', name: 'Design' },
+				body: { groupId: 'g1', name: 'Design', type: 'CUSTOM' },
 			},
 		);
 
@@ -717,13 +742,14 @@ describe('Categories Endpoints', () => {
 		await Categories.update(ctx, {
 			categoryId: 'cat1',
 			name: 'Design Updated',
+			type: 'CUSTOM',
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/categories/cat1',
 			'test-hubplanner-key',
 			{
 				method: 'PUT',
-				body: { name: 'Design Updated' },
+				body: { name: 'Design Updated', type: 'CUSTOM' },
 			},
 		);
 
@@ -798,7 +824,7 @@ describe('Categories Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(undefined);
 		await Categories.deleteCostCategory(ctx, { costCategoryId: 'cc1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/costCategories/cc1',
@@ -859,7 +885,7 @@ describe('CustomFields Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(undefined);
 		await CustomFields.delete(ctx, { entityType: 'project', id: 'cf1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/project/customField/template/cf1',
@@ -906,12 +932,14 @@ describe('Milestones Endpoints', () => {
 
 		mockedRequest.mockResolvedValueOnce([mockMilestone]);
 		await Milestones.list(ctx, { page: 0, limit: 10 });
+		// GET /milestone is a 404 on the live API; listing goes through an empty search.
 		expect(mockedRequest).toHaveBeenCalledWith(
-			'/milestone',
+			'/milestone/search',
 			'test-hubplanner-key',
 			{
-				method: 'GET',
-				query: expect.any(Object),
+				method: 'POST',
+				body: {},
+				query: { page: 0, limit: 10, sort: undefined },
 			},
 		);
 
@@ -954,7 +982,7 @@ describe('Milestones Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
 		await Milestones.delete(ctx, { milestoneId: 'm1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/milestone/m1',
@@ -1021,7 +1049,7 @@ describe('Events Endpoints', () => {
 			},
 		);
 
-		mockedRequest.mockResolvedValueOnce({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
 		await Events.delete(ctx, { eventId: 'e1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/event/e1',
