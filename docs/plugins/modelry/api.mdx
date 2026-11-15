@@ -14,7 +14,7 @@ description: "API reference for the Modelry plugin in Corsair: every `modelry.ap
 
 `embeds.delete`
 
-Delete embeds
+Delete an embed. This cannot be undone.
 
 **Risk:** `destructive`
 
@@ -40,7 +40,7 @@ await corsair.modelry.api.embeds.delete({});
 
 `embeds.get`
 
-Get embeds
+Get one embed, with its public viewer URL and loader script configuration.
 
 **Risk:** `read`
 
@@ -251,7 +251,7 @@ await corsair.modelry.api.embeds.get({});
 
 `embeds.list`
 
-List embeds
+List a product's 3D/AR web viewers (embeds). An empty result is returned as an empty list.
 
 **Risk:** `read`
 
@@ -380,7 +380,7 @@ await corsair.modelry.api.embeds.list({});
 
 `embeds.publish`
 
-Publish embeds
+Publish an embed so its viewer URL is publicly reachable.
 
 **Risk:** `write`
 
@@ -593,9 +593,9 @@ await corsair.modelry.api.embeds.publish({});
 
 `modelingRequests.approve`
 
-Approve modeling requests
+Accept a delivered model and finish customer QA. The API cannot undo an approval.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.modelry.api.modelingRequests.approve({});
@@ -803,7 +803,7 @@ await corsair.modelry.api.modelingRequests.approve({});
 
 `modelingRequests.assets`
 
-List modeling request assets
+List the files delivered for a modeling request (models, renders, textures) with download URLs.
 
 **Risk:** `read`
 
@@ -932,9 +932,9 @@ await corsair.modelry.api.modelingRequests.assets({});
 
 `modelingRequests.create`
 
-Create modeling requests
+Order a custom 3D model from Modelry. Modelry quotes and bills per model, and the API has no cancel.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.modelry.api.modelingRequests.create({});
@@ -1160,7 +1160,7 @@ await corsair.modelry.api.modelingRequests.create({});
 
 `modelingRequests.get`
 
-Get modeling requests
+Get one modeling request by id or SKU: status, price, QA round and review categories.
 
 **Risk:** `read`
 
@@ -1370,7 +1370,7 @@ await corsair.modelry.api.modelingRequests.get({});
 
 `modelingRequests.list`
 
-List modeling requests
+List modeling requests (3D modelling orders), with workspace, SKU, batch and title filters.
 
 **Risk:** `read`
 
@@ -1505,9 +1505,9 @@ await corsair.modelry.api.modelingRequests.list({});
 
 `modelingRequests.reject`
 
-Reject modeling requests
+Reject a delivered model in customer QA and send it back to Modelry for adjustments. The API cannot undo a rejection.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.modelry.api.modelingRequests.reject({});
@@ -1717,7 +1717,7 @@ await corsair.modelry.api.modelingRequests.reject({});
 
 `productAssets.create`
 
-Create product assets
+Attach an uploaded file to a product, using the signed blob id from `uploads.file` or `uploads.blob`.
 
 **Risk:** `write`
 
@@ -1929,7 +1929,7 @@ await corsair.modelry.api.productAssets.create({});
 
 `productAssets.delete`
 
-Delete product assets
+Delete a product asset. This cannot be undone.
 
 **Risk:** `destructive`
 
@@ -1957,7 +1957,7 @@ await corsair.modelry.api.productAssets.delete({});
 
 `products.create`
 
-Create products
+Create a product (title, SKU, tags, dimensions, links).
 
 **Risk:** `write`
 
@@ -2184,7 +2184,7 @@ await corsair.modelry.api.products.create({});
 
 `products.delete`
 
-Delete products
+Delete a product. This cannot be undone.
 
 **Risk:** `destructive`
 
@@ -2209,7 +2209,7 @@ await corsair.modelry.api.products.delete({});
 
 `products.get`
 
-Get products
+Get one product, with its assets and modeling requests under `included`.
 
 **Risk:** `read`
 
@@ -2419,7 +2419,7 @@ await corsair.modelry.api.products.get({});
 
 `products.list`
 
-List products
+List products in the workspace, with keyword, SKU, batch, tag and label filters. An empty result is returned as an empty list.
 
 **Risk:** `read`
 
@@ -2556,7 +2556,7 @@ await corsair.modelry.api.products.list({});
 
 `products.update`
 
-Update products
+Update the fields of an existing product.
 
 **Risk:** `write`
 
@@ -2786,7 +2786,7 @@ await corsair.modelry.api.products.update({});
 
 `reviews.create`
 
-Create reviews
+Add review issues (comments for Modelry's artists) to a modeling request's current QA round.
 
 **Risk:** `write`
 
@@ -2999,7 +2999,7 @@ await corsair.modelry.api.reviews.create({});
 
 `uploads.blob`
 
-Create a direct upload blob
+Start a direct upload: returns a signed blob id and a presigned URL to PUT the file to.
 
 **Risk:** `write`
 
@@ -3045,7 +3045,7 @@ await corsair.modelry.api.uploads.blob({});
 
 `uploads.file`
 
-Upload a base64 file
+Upload a small file as base64 and get back its signed blob id.
 
 **Risk:** `write`
 
@@ -3081,7 +3081,7 @@ await corsair.modelry.api.uploads.file({});
 
 `workspaces.list`
 
-List workspaces
+List the workspaces the API token can access.
 
 **Risk:** `read`
 
@@ -3204,3 +3204,4 @@ await corsair.modelry.api.workspaces.list({});
 
 
 ---
+
