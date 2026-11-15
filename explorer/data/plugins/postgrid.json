@@ -1,0 +1,2344 @@
+{
+  "id": "postgrid",
+  "displayName": "PostGrid",
+  "description": "Print and mail API for sending letters, postcards and self mailers, with contact, template and tracker management.",
+  "npmPackageName": "@corsair-dev/postgrid",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "postgrid.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact. PostGrid corrects and verifies the address, so the stored one may differ from the one sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addressLine1",
+            "optional": false,
+            "type": "string",
+            "description": "First line of the address."
+          },
+          {
+            "key": "addressLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provinceOrState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalOrZip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2, such as `US`."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skipVerification",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip address correction and verification."
+          },
+          {
+            "key": "forceVerifiedStatus",
+            "optional": true,
+            "type": "boolean",
+            "description": "Override the address verification status."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "boolean",
+            "description": "Hide the details apart from the final print."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always `contact`."
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressLine1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressLine2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "provinceOrState",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postalOrZip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "`verified`, `corrected` or `failed`."
+          },
+          {
+            "key": "skipVerification",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "forceVerifiedStatus",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact. Orders already created from it keep their own copy of the address",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `contact_` id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact with its address verification status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `contact_` id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always `contact`."
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressLine1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressLine2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "provinceOrState",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postalOrZip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "`verified`, `corrected` or `failed`."
+          },
+          {
+            "key": "skipVerification",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "forceVerifiedStatus",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts, optionally with a plain or structured search, paged by `skip` and `limit`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to skip. Increment it by `limit` to page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to return."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A plain string, or a JSON object of structured queries such as {\"metadata.campaignID\": \"ABC\"}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always `list`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number",
+            "description": "Total documents including the skipped ones; page while skip < totalCount."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.letters.cancel",
+      "shortPath": "letters.cancel",
+      "description": "Cancel a letter while it is still `ready`. After that it is already printing",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `letter_` id. A letter can be cancelled while `ready`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`."
+          },
+          {
+            "key": "imbStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "USPS intelligent-mail stage, only on live US mail."
+          },
+          {
+            "key": "imbDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imbZIPCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A signed link to preview this order."
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string | { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, html?: string | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "uploadedPDF",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressPlacement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "doubleSided",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "envelope",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.letters.create",
+      "shortPath": "letters.create",
+      "description": "Print and mail a letter, which costs postage and cannot be recalled once it leaves `ready`. Pass `idempotencyKey` so a retry prints one letter, not two",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string | { id?: string, firstName?: string, lastName?: string, companyName?: string, addressLine1?: string, addressLine2?: string, city?: string, provinceOrState?: string, postalOrZip?: string, countryCode?: string, email?: string, phoneNumber?: string, jobTitle?: string, skipVerification?: boolean, forceVerifiedStatus?: boolean, secret?: boolean, metadata?: Record<string, JsonValue> }",
+            "description": "The recipient: a contact id or the address fields."
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string",
+            "description": "When to send it. Omit to send as soon as possible."
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "first_class | standard_class | express | certified | certified_return_receipt | registered | usps_first_class | usps_standard_class | usps_eddm | usps_express_2_day | usps_express_3_day | usps_first_class_certified | usps_first_class_certified_return_receipt | usps_first_class_registered | usps_express_3_day_signature_confirmation | usps_express_3_day_certified | usps_express_3_day_certified_return_receipt | usps_express_3_day_adult_signature_confirmation | ca_post_lettermail | ca_post_personalized | ca_post_neighbourhood_mail | ca_post_registered | ca_post_expedited_with_signature | ca_post_expedited | ca_post_xpresspost_with_signature | ca_post_xpresspost | royal_mail_first_class | royal_mail_standard_class | royal_mail_second_class | au_post_regular | au_post_second_class | ups_express_overnight | ups_express_2_day | ups_express_3_day | ups_express_3_day_signature_confirmation | ups_express_3_day_adult_signature_confirmation",
+            "description": "The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same value to retry this order within 24 hours without creating a second one."
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | { id?: string, firstName?: string, lastName?: string, companyName?: string, addressLine1?: string, addressLine2?: string, city?: string, provinceOrState?: string, postalOrZip?: string, countryCode?: string, email?: string, phoneNumber?: string, jobTitle?: string, skipVerification?: boolean, forceVerifiedStatus?: boolean, secret?: boolean, metadata?: Record<string, JsonValue> }",
+            "description": "The sender: a contact id or the address fields."
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string",
+            "description": "The letter body. Supply this or a template."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "A `template_` id to render instead of raw html."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "us_letter | a4"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "boolean",
+            "description": "Print in colour."
+          },
+          {
+            "key": "doubleSided",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "addressPlacement",
+            "optional": true,
+            "type": "top_first_page | insert_blank_page"
+          },
+          {
+            "key": "envelope",
+            "optional": true,
+            "type": "string",
+            "description": "A custom envelope id, or `standard` for the default envelope. Express postage is `mailingClass: express`."
+          },
+          {
+            "key": "perforatedPage",
+            "optional": true,
+            "type": "1",
+            "description": "The page to perforate, for a tear-off return slip. PostGrid accepts only 1, the first page."
+          },
+          {
+            "key": "returnEnvelope",
+            "optional": true,
+            "type": "string",
+            "description": "A `return_envelope_` id to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`."
+          },
+          {
+            "key": "imbStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "USPS intelligent-mail stage, only on live US mail."
+          },
+          {
+            "key": "imbDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imbZIPCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A signed link to preview this order."
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string | { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, html?: string | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "uploadedPDF",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressPlacement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "doubleSided",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "envelope",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.letters.get",
+      "shortPath": "letters.get",
+      "description": "Read one letter, optionally with its template expanded inline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `letter_` id."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "template[]",
+            "description": "Read the nested template inline. Not supported on a list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`."
+          },
+          {
+            "key": "imbStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "USPS intelligent-mail stage, only on live US mail."
+          },
+          {
+            "key": "imbDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imbZIPCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A signed link to preview this order."
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string | { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, html?: string | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "uploadedPDF",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "addressPlacement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "doubleSided",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "envelope",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.letters.list",
+      "shortPath": "letters.list",
+      "description": "List letters with their status, paged by `skip` and `limit`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to skip. Increment it by `limit` to page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to return."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A plain string, or a JSON object of structured queries such as {\"metadata.campaignID\": \"ABC\"}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always `list`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number",
+            "description": "Total documents including the skipped ones; page while skip < totalCount."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, status?: string | null, imbStatus?: string | null, imbDate?: string | null, imbZIPCode?: string | null, live?: boolean | null, description?: string | null, sendDate?: string | null, to?: { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null, from?: { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null, mergeVariables?: Record<string, JsonValue> | null, metadata?: Record<string, JsonValue> | null, url?: string | null, pageCount?: number | null, html?: string | null, template?: string | { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, html?: string | null, metadata?: Record<string, JsonValue> | null } | null, uploadedPDF?: string | null, addressPlacement?: string | null, color?: boolean | null, doubleSided?: boolean | null, envelope?: string | null, mailingClass?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.postcards.cancel",
+      "shortPath": "postcards.cancel",
+      "description": "Cancel a postcard while it is still `ready`",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `postcard_` id. Cancellable while `ready`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`."
+          },
+          {
+            "key": "imbStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "USPS intelligent-mail stage, only on live US mail."
+          },
+          {
+            "key": "imbDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imbZIPCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A signed link to preview this order."
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "frontHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "frontTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.postcards.create",
+      "shortPath": "postcards.create",
+      "description": "Print and mail a postcard with a front and a back face, which costs postage and cannot be recalled once printing",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string | { id?: string, firstName?: string, lastName?: string, companyName?: string, addressLine1?: string, addressLine2?: string, city?: string, provinceOrState?: string, postalOrZip?: string, countryCode?: string, email?: string, phoneNumber?: string, jobTitle?: string, skipVerification?: boolean, forceVerifiedStatus?: boolean, secret?: boolean, metadata?: Record<string, JsonValue> }",
+            "description": "The recipient: a contact id or the address fields."
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string",
+            "description": "When to send it. Omit to send as soon as possible."
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "first_class | standard_class | express | certified | certified_return_receipt | registered | usps_first_class | usps_standard_class | usps_eddm | usps_express_2_day | usps_express_3_day | usps_first_class_certified | usps_first_class_certified_return_receipt | usps_first_class_registered | usps_express_3_day_signature_confirmation | usps_express_3_day_certified | usps_express_3_day_certified_return_receipt | usps_express_3_day_adult_signature_confirmation | ca_post_lettermail | ca_post_personalized | ca_post_neighbourhood_mail | ca_post_registered | ca_post_expedited_with_signature | ca_post_expedited | ca_post_xpresspost_with_signature | ca_post_xpresspost | royal_mail_first_class | royal_mail_standard_class | royal_mail_second_class | au_post_regular | au_post_second_class | ups_express_overnight | ups_express_2_day | ups_express_3_day | ups_express_3_day_signature_confirmation | ups_express_3_day_adult_signature_confirmation",
+            "description": "The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same value to retry this order within 24 hours without creating a second one."
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | { id?: string, firstName?: string, lastName?: string, companyName?: string, addressLine1?: string, addressLine2?: string, city?: string, provinceOrState?: string, postalOrZip?: string, countryCode?: string, email?: string, phoneNumber?: string, jobTitle?: string, skipVerification?: boolean, forceVerifiedStatus?: boolean, secret?: boolean, metadata?: Record<string, JsonValue> }",
+            "description": "The sender: a contact id or the address fields."
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "6x4 | 9x6 | 11x6",
+            "description": "Which postcard stock to print."
+          },
+          {
+            "key": "frontHTML",
+            "optional": true,
+            "type": "string",
+            "description": "The front face. Supply this or `frontTemplate`."
+          },
+          {
+            "key": "backHTML",
+            "optional": true,
+            "type": "string",
+            "description": "The back face. Supply this or `backTemplate`."
+          },
+          {
+            "key": "frontTemplate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backTemplate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`."
+          },
+          {
+            "key": "imbStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "USPS intelligent-mail stage, only on live US mail."
+          },
+          {
+            "key": "imbDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imbZIPCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A signed link to preview this order."
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "frontHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "frontTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.postcards.get",
+      "shortPath": "postcards.get",
+      "description": "Read one postcard, optionally with its template expanded",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `postcard_` id."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "template[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`."
+          },
+          {
+            "key": "imbStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "USPS intelligent-mail stage, only on live US mail."
+          },
+          {
+            "key": "imbDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imbZIPCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A signed link to preview this order."
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "frontHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "frontTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.postcards.list",
+      "shortPath": "postcards.list",
+      "description": "List postcards with their status, paged by `skip` and `limit`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to skip. Increment it by `limit` to page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to return."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A plain string, or a JSON object of structured queries such as {\"metadata.campaignID\": \"ABC\"}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always `list`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number",
+            "description": "Total documents including the skipped ones; page while skip < totalCount."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, status?: string | null, imbStatus?: string | null, imbDate?: string | null, imbZIPCode?: string | null, live?: boolean | null, description?: string | null, sendDate?: string | null, to?: { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null, from?: { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null, mergeVariables?: Record<string, JsonValue> | null, metadata?: Record<string, JsonValue> | null, url?: string | null, pageCount?: number | null, size?: string | null, frontHTML?: string | null, backHTML?: string | null, frontTemplate?: string | null, backTemplate?: string | null, mailingClass?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.selfMailers.create",
+      "shortPath": "selfMailers.create",
+      "description": "Print and mail a folded self mailer with inside and outside panels, which costs postage and cannot be recalled once printing",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string | { id?: string, firstName?: string, lastName?: string, companyName?: string, addressLine1?: string, addressLine2?: string, city?: string, provinceOrState?: string, postalOrZip?: string, countryCode?: string, email?: string, phoneNumber?: string, jobTitle?: string, skipVerification?: boolean, forceVerifiedStatus?: boolean, secret?: boolean, metadata?: Record<string, JsonValue> }",
+            "description": "The recipient: a contact id or the address fields."
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string",
+            "description": "When to send it. Omit to send as soon as possible."
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "first_class | standard_class | express | certified | certified_return_receipt | registered | usps_first_class | usps_standard_class | usps_eddm | usps_express_2_day | usps_express_3_day | usps_first_class_certified | usps_first_class_certified_return_receipt | usps_first_class_registered | usps_express_3_day_signature_confirmation | usps_express_3_day_certified | usps_express_3_day_certified_return_receipt | usps_express_3_day_adult_signature_confirmation | ca_post_lettermail | ca_post_personalized | ca_post_neighbourhood_mail | ca_post_registered | ca_post_expedited_with_signature | ca_post_expedited | ca_post_xpresspost_with_signature | ca_post_xpresspost | royal_mail_first_class | royal_mail_standard_class | royal_mail_second_class | au_post_regular | au_post_second_class | ups_express_overnight | ups_express_2_day | ups_express_3_day | ups_express_3_day_signature_confirmation | ups_express_3_day_adult_signature_confirmation",
+            "description": "The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Reuse the same value to retry this order within 24 hours without creating a second one."
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | { id?: string, firstName?: string, lastName?: string, companyName?: string, addressLine1?: string, addressLine2?: string, city?: string, provinceOrState?: string, postalOrZip?: string, countryCode?: string, email?: string, phoneNumber?: string, jobTitle?: string, skipVerification?: boolean, forceVerifiedStatus?: boolean, secret?: boolean, metadata?: Record<string, JsonValue> }",
+            "description": "The sender: a contact id or the address fields."
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "8.5x11_bifold | 8.5x11_trifold | 9.5x16_trifold",
+            "description": "Which fold to print and finish."
+          },
+          {
+            "key": "insideHTML",
+            "optional": true,
+            "type": "string",
+            "description": "The inside panel. Supply this or `insideTemplate`."
+          },
+          {
+            "key": "outsideHTML",
+            "optional": true,
+            "type": "string",
+            "description": "The outside panel. Supply this or `outsideTemplate`."
+          },
+          {
+            "key": "insideTemplate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outsideTemplate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`."
+          },
+          {
+            "key": "imbStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "USPS intelligent-mail stage, only on live US mail."
+          },
+          {
+            "key": "imbDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imbZIPCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A signed link to preview this order."
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "insideHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outsideHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "insideTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outsideTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.selfMailers.get",
+      "shortPath": "selfMailers.get",
+      "description": "Read one self mailer, optionally with its template expanded",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `self_mailer_` id."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "template[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`."
+          },
+          {
+            "key": "imbStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "USPS intelligent-mail stage, only on live US mail."
+          },
+          {
+            "key": "imbDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imbZIPCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sendDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "mergeVariables",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A signed link to preview this order."
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "insideHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outsideHTML",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "insideTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outsideTemplate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingClass",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.selfMailers.list",
+      "shortPath": "selfMailers.list",
+      "description": "List self mailers with their status, paged by `skip` and `limit`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to skip. Increment it by `limit` to page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to return."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A plain string, or a JSON object of structured queries such as {\"metadata.campaignID\": \"ABC\"}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always `list`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number",
+            "description": "Total documents including the skipped ones; page while skip < totalCount."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, status?: string | null, imbStatus?: string | null, imbDate?: string | null, imbZIPCode?: string | null, live?: boolean | null, description?: string | null, sendDate?: string | null, to?: { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null, from?: { id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, jobTitle?: string | null, addressLine1?: string | null, addressLine2?: string | null, city?: string | null, provinceOrState?: string | null, postalOrZip?: string | null, countryCode?: string | null, email?: string | null, phoneNumber?: string | null, addressStatus?: string | null, skipVerification?: boolean | null, forceVerifiedStatus?: boolean | null, secret?: boolean | null, metadata?: Record<string, JsonValue> | null } | null, mergeVariables?: Record<string, JsonValue> | null, metadata?: Record<string, JsonValue> | null, url?: string | null, pageCount?: number | null, size?: string | null, insideHTML?: string | null, outsideHTML?: string | null, insideTemplate?: string | null, outsideTemplate?: string | null, mailingClass?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a template whose `{{variableName}}` marks are filled from merge variables",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "The template body. `{{variableName}}` marks a merge variable."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a template. Orders already created from it are unaffected",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `template_` id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template and its HTML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `template_` id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List print templates, paged by `skip` and `limit`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to skip. Increment it by `limit` to page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many documents to return."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A plain string, or a JSON object of structured queries such as {\"metadata.campaignID\": \"ABC\"}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always `list`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number",
+            "description": "Total documents including the skipped ones; page while skip < totalCount."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, live?: boolean | null, description?: string | null, html?: string | null, metadata?: Record<string, JsonValue> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Change a template's HTML, description or metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `template_` id."
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postgrid.api.trackers.get",
+      "shortPath": "trackers.get",
+      "description": "Read one tracker: the PURL and QR-code destination an order references, with its visit counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `tracker_` id. A tracker is the PURL and QR-code destination used in an order, not the order itself."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The resource id, such as `contact_…` or `letter_…`."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null",
+            "description": "Always `tracker`."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "live",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirectURLTemplate",
+            "optional": true,
+            "type": "string | null",
+            "description": "The base template for the URLs this tracker generates."
+          },
+          {
+            "key": "urlExpireAfterDays",
+            "optional": true,
+            "type": "number | null",
+            "description": "How long a generated URL stays valid: 30, 60, 90, 180 or 365 days."
+          },
+          {
+            "key": "visitCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of interactions this tracker recorded."
+          },
+          {
+            "key": "uniqueVisitCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The number of distinct interactions this tracker recorded."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

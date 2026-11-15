@@ -1,0 +1,2234 @@
+{
+  "id": "polygon",
+  "displayName": "Polygon OMS",
+  "description": "Polygon Open Money Stack (OMS) payments API for moving money between crypto and fiat, with quotes, transfers, wallets, customers and webhooks.",
+  "npmPackageName": "@corsair-dev/polygon",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "polygon.api.cashLocations.list",
+      "shortPath": "cashLocations.list",
+      "description": "List the retail cash locations in range, nearest first, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "The cash provider configuration to query, as set up for this project."
+          },
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number",
+            "description": "Search center latitude."
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number",
+            "description": "Search center longitude."
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Search radius in miles, above 0 and at most 100."
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "cash_in | cash_out",
+            "description": "Only locations that take deposits (`cash_in`) or pay out (`cash_out`)."
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string",
+            "description": "Scope availability to one `cst_` customer."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource."
+          },
+          {
+            "key": "startingAfter",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `nextCursor`."
+          },
+          {
+            "key": "endingBefore",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `previousCursor`, to page backwards."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The effective page size OMS applied."
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when more rows exist in the direction of travel."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `startingAfter`."
+          },
+          {
+            "key": "previousCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `endingBefore` to page backwards."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, cashLocationReference?: string | null, name?: string | null, provider?: string | null, address?: string | null, city?: string | null, state?: string | null, zipCode?: string | null, country?: string | null, coordinates?: { latitude: number, longitude: number } | null, distance?: number | null, distanceUnit?: string | null, buyAllowed?: boolean | null, sellAllowed?: boolean | null, hours?: string | null, supportedAssets?: string[] | null, maxTransaction?: string | null, maxDailyPerCustomer?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a customer. Individuals need a first and last name; businesses need a legal name and email. Identity verification follows the project policy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "individual | business",
+            "description": "Which KYC or KYB policy this customer follows."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string",
+            "description": "E.164 format, such as +12125551234."
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier, kept on the customer for cross-referencing."
+          },
+          {
+            "key": "signedAgreement",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the customer accepted the OMS terms. Defaults to false."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string",
+            "description": "Legal first name. Individuals only."
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string",
+            "description": "Individuals only."
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string",
+            "description": "Legal last name. Individuals only."
+          },
+          {
+            "key": "birthDate",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD. Write-only: OMS never returns it."
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code."
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string",
+            "description": "Used for geo-based compliance checks. Write-only."
+          },
+          {
+            "key": "residentialAddress",
+            "optional": true,
+            "type": "{ line1?: string, line2?: string, city?: string, state?: string, zipCode?: string, country?: string }",
+            "description": "Write-only: OMS never returns it. Which parts it requires depends on the project's KYC policy."
+          },
+          {
+            "key": "companyLegalName",
+            "optional": true,
+            "type": "string",
+            "description": "Legal business name. Businesses only, and required to create one."
+          },
+          {
+            "key": "dbaName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "registrationCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "registrationNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "websiteUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessDescription",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`individual` or `business`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The composed name, left out when the customer has none."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyLegalName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Where the customer is in onboarding. A status OMS adds later must not fail a read, so this stays a string."
+          },
+          {
+            "key": "hold",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null, retryable?: boolean | null } | null"
+          },
+          {
+            "key": "signedAgreement",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "endorsements",
+            "optional": true,
+            "type": "{ type?: string | null, status?: string | null, requirements?: {} | null, failure?: { code?: string | null, message?: string | null, retryable?: boolean | null } | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer. OMS returns the record in its offboarded state",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The `cst_` id of the customer."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`individual` or `business`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The composed name, left out when the customer has none."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyLegalName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Where the customer is in onboarding. A status OMS adds later must not fail a read, so this stays a string."
+          },
+          {
+            "key": "hold",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null, retryable?: boolean | null } | null"
+          },
+          {
+            "key": "signedAgreement",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "endorsements",
+            "optional": true,
+            "type": "{ type?: string | null, status?: string | null, requirements?: {} | null, failure?: { code?: string | null, message?: string | null, retryable?: boolean | null } | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer with its onboarding status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The `cst_` id of the customer."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`individual` or `business`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The composed name, left out when the customer has none."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyLegalName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Where the customer is in onboarding. A status OMS adds later must not fail a read, so this stays a string."
+          },
+          {
+            "key": "hold",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null, retryable?: boolean | null } | null"
+          },
+          {
+            "key": "signedAgreement",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "endorsements",
+            "optional": true,
+            "type": "{ type?: string | null, status?: string | null, requirements?: {} | null, failure?: { code?: string | null, message?: string | null, retryable?: boolean | null } | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers, filtered by status, email, external id or creation window, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | actionRequired | active | rejected | offboarded",
+            "description": "Only customers in this status."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Only this exact email address."
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string",
+            "description": "Only the customer carrying this `externalId`."
+          },
+          {
+            "key": "createdAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Only customers created after this ISO 8601 timestamp."
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Only customers created before this ISO 8601 timestamp."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `cursor`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, type?: string | null, name?: string | null, firstName?: string | null, middleName?: string | null, lastName?: string | null, companyLegalName?: string | null, email?: string | null, phone?: string | null, nationality?: string | null, externalId?: string | null, status?: string | null, hold?: { code?: string | null, message?: string | null } | null, failure?: { code?: string | null, message?: string | null, retryable?: boolean | null } | null, signedAgreement?: boolean | null, endorsements?: { type?: string | null, status?: string | null, requirements?: {} | null, failure?: { code?: string | null, message?: string | null, retryable?: boolean | null } | null }[] | null, metadata?: Record<string, string> | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page cursor. While `hasMore` is true, pass it back as `cursor`; it is absent on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update a customer's details, or request additional endorsements. Personal data fields are write-only",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The `cst_` id of the customer."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signedAgreement",
+            "optional": true,
+            "type": "boolean",
+            "description": "One-way: OMS does not accept setting it back to false."
+          },
+          {
+            "key": "endorsements",
+            "optional": true,
+            "type": "(basic | cryptoCustody | usd)[]",
+            "description": "Request additional endorsements. Existing ones are not removed, and naming any triggers re-evaluation."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string",
+            "description": "Legal first name. Individuals only."
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string",
+            "description": "Individuals only."
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string",
+            "description": "Legal last name. Individuals only."
+          },
+          {
+            "key": "birthDate",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD. Write-only: OMS never returns it."
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code."
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string",
+            "description": "Used for geo-based compliance checks. Write-only."
+          },
+          {
+            "key": "residentialAddress",
+            "optional": true,
+            "type": "{ line1?: string, line2?: string, city?: string, state?: string, zipCode?: string, country?: string }",
+            "description": "Write-only: OMS never returns it. Which parts it requires depends on the project's KYC policy."
+          },
+          {
+            "key": "companyLegalName",
+            "optional": true,
+            "type": "string",
+            "description": "Legal business name. Businesses only, and required to create one."
+          },
+          {
+            "key": "dbaName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "registrationCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "registrationNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "websiteUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessDescription",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`individual` or `business`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The composed name, left out when the customer has none."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyLegalName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Where the customer is in onboarding. A status OMS adds later must not fail a read, so this stays a string."
+          },
+          {
+            "key": "hold",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null, retryable?: boolean | null } | null"
+          },
+          {
+            "key": "signedAgreement",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "endorsements",
+            "optional": true,
+            "type": "{ type?: string | null, status?: string | null, requirements?: {} | null, failure?: { code?: string | null, message?: string | null, retryable?: boolean | null } | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.networks.list",
+      "shortPath": "networks.list",
+      "description": "List the networks, rails and assets this project can route, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource."
+          },
+          {
+            "key": "startingAfter",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `nextCursor`."
+          },
+          {
+            "key": "endingBefore",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `previousCursor`, to page backwards."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The effective page size OMS applied."
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when more rows exist in the direction of travel."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `startingAfter`."
+          },
+          {
+            "key": "previousCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `endingBefore` to page backwards."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ network: string, category?: string | null, type?: string | null, chainId?: number | null, networkFamily?: string | null, displayName?: string | null, assets?: { asset?: string | null, contractAddress?: string | null, decimals?: number | null }[] | null, supportedBy?: { externalAccount?: { asSource?: string[] | null, asDestination?: string[] | null } | null, depositAddress?: { asSource?: boolean | null, asDestination?: boolean | null } | null, virtualAccount?: { asSource?: boolean | null, asDestination?: boolean | null } | null, cashIn?: { asSource?: boolean | null, asDestination?: boolean | null } | null, card?: { asSource?: boolean | null, asDestination?: boolean | null } | null, wallet?: { asSource?: boolean | null, asDestination?: boolean | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.quotes.create",
+      "shortPath": "quotes.create",
+      "description": "Price a transfer: set the amount on one side and OMS calculates the other. Nothing moves until a transaction accepts the quote",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted."
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The `cst_` customer this quote is for."
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{ type: walletCrypto, details: { id: string, asset: string, network: ethereum | polygon | base | solana | tron | bnb }, amount?: string } | { type: walletFiat, details: { id: string, asset: usd }, amount?: string } | { type: card, details: { id: string, asset: usd }, amount?: string }",
+            "description": "What funds the transaction."
+          },
+          {
+            "key": "destination",
+            "optional": false,
+            "type": "{ type: walletCrypto, details: { id: string, asset: string, network: ethereum | polygon | base | solana | tron | bnb }, amount?: string } | { type: walletExternal, details: { id?: string, blockchainAddress?: string, asset: string, network: ethereum | polygon | base | solana | tron | bnb }, amount?: string } | { type: walletFiat, details: { id: string, asset: usd }, amount?: string } | { type: bankUs, details: { id: string, asset: usd, network: ach | achSameDay | wire | rtp | instant | intraBank, memo?: string }, amount?: string } | { type: card, details: { id: string, asset: usd }, amount?: string } | { type: cash, details: { asset: usd, cashLocationId: string, cashLocationReference: string, amount: string } }",
+            "description": "The instrument that receives the funds."
+          },
+          {
+            "key": "sponsorGas",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, OMS absorbs the on-chain gas for the delivery. Only true is supported today."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Free-form pairs, copied to the resulting transaction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`open`, `accepted` or `expired`."
+          },
+          {
+            "key": "sourceToDestination",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pricing",
+            "optional": true,
+            "type": "{ source?: { amount?: string | null, asset?: string | null } | null, destination?: { amount?: string | null, asset?: string | null } | null, fees: { type?: string | null, amount?: string | null, asset?: string | null }[], exchangeRate?: string | null, fixedAmountSide?: string | null, sponsorGas?: boolean | null } | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.quotes.get",
+      "shortPath": "quotes.get",
+      "description": "Read one quote with its status and pricing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quoteId",
+            "optional": false,
+            "type": "string",
+            "description": "The `qt_` id of the quote."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`open`, `accepted` or `expired`."
+          },
+          {
+            "key": "sourceToDestination",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pricing",
+            "optional": true,
+            "type": "{ source?: { amount?: string | null, asset?: string | null } | null, destination?: { amount?: string | null, asset?: string | null } | null, fees: { type?: string | null, amount?: string | null, asset?: string | null }[], exchangeRate?: string | null, fixedAmountSide?: string | null, sponsorGas?: boolean | null } | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.transactions.create",
+      "shortPath": "transactions.create",
+      "description": "Accept a quote and move the money. This is the irreversible step: pricing is locked at the quote and the transfer starts as soon as OMS accepts it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted."
+          },
+          {
+            "key": "quoteId",
+            "optional": false,
+            "type": "string",
+            "description": "The `qt_` quote to accept. It must be `open` with unexpired pricing."
+          },
+          {
+            "key": "deviceFingerprint",
+            "optional": true,
+            "type": "string",
+            "description": "The end user fingerprint, used for risk screening."
+          },
+          {
+            "key": "webSessionId",
+            "optional": true,
+            "type": "string",
+            "description": "The risk-session id from the Sardine SDK. Required when the quote funds from or delivers to a card, and rejected as 422 RiskSessionRequired when missing."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Free-form pairs, echoed back on reads."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status."
+          },
+          {
+            "key": "subStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "A finer, status-scoped state such as `processing.fundsPulled`."
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: string | null } | null"
+          },
+          {
+            "key": "pricing",
+            "optional": true,
+            "type": "{ source?: { amount?: string | null, asset?: string | null } | null, destination?: { amount?: string | null, asset?: string | null } | null, fees: { type?: string | null, amount?: string | null, asset?: string | null }[], exchangeRate?: string | null, fixedAmountSide?: string | null, sponsorGas?: boolean | null } | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string | null, id?: string | null, asset?: string | null, network?: string | null, details?: {} | null } | null"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "{ type?: string | null, id?: string | null, asset?: string | null, network?: string | null, details?: {} | null } | null"
+          },
+          {
+            "key": "precursor",
+            "optional": true,
+            "type": "{ type?: string | null, id?: string | null } | null"
+          },
+          {
+            "key": "transfers",
+            "optional": true,
+            "type": "{ id?: string | null, role?: string | null, rail?: string | null, attempt?: number | null }[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.transactions.get",
+      "shortPath": "transactions.get",
+      "description": "Read one transaction with its status, pricing and transfers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string",
+            "description": "The `txn_` id of the transaction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle status."
+          },
+          {
+            "key": "subStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "A finer, status-scoped state such as `processing.fundsPulled`."
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: string | null } | null"
+          },
+          {
+            "key": "pricing",
+            "optional": true,
+            "type": "{ source?: { amount?: string | null, asset?: string | null } | null, destination?: { amount?: string | null, asset?: string | null } | null, fees: { type?: string | null, amount?: string | null, asset?: string | null }[], exchangeRate?: string | null, fixedAmountSide?: string | null, sponsorGas?: boolean | null } | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "{ type?: string | null, id?: string | null, asset?: string | null, network?: string | null, details?: {} | null } | null"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "{ type?: string | null, id?: string | null, asset?: string | null, network?: string | null, details?: {} | null } | null"
+          },
+          {
+            "key": "precursor",
+            "optional": true,
+            "type": "{ type?: string | null, id?: string | null } | null"
+          },
+          {
+            "key": "transfers",
+            "optional": true,
+            "type": "{ id?: string | null, role?: string | null, rail?: string | null, attempt?: number | null }[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List transactions filtered by status, customer, wallet, precursor or creation window, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(processing | awaitingAction | completed | failed)[]",
+            "description": "Only transactions in these statuses."
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string",
+            "description": "Matches rows where the customer is on either side."
+          },
+          {
+            "key": "walletId",
+            "optional": true,
+            "type": "string",
+            "description": "Transactions where this wallet is the source or destination."
+          },
+          {
+            "key": "virtualAccountId",
+            "optional": true,
+            "type": "string",
+            "description": "The transaction's originating virtual account."
+          },
+          {
+            "key": "depositAddressId",
+            "optional": true,
+            "type": "string",
+            "description": "The transaction's originating deposit address."
+          },
+          {
+            "key": "cashInId",
+            "optional": true,
+            "type": "string",
+            "description": "The transaction's originating cash-in."
+          },
+          {
+            "key": "createdAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive lower bound on `createdAt`."
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive upper bound on `createdAt`."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Matches a transaction id, a customer id, or a customer email."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource."
+          },
+          {
+            "key": "startingAfter",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `nextCursor`."
+          },
+          {
+            "key": "endingBefore",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `previousCursor`, to page backwards."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The effective page size OMS applied."
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when more rows exist in the direction of travel."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `startingAfter`."
+          },
+          {
+            "key": "previousCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `endingBefore` to page backwards."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, status?: string | null, subStatus?: string | null, customer?: { id?: string | null } | null, pricing?: { source?: { amount?: string | null, asset?: string | null } | null, destination?: { amount?: string | null, asset?: string | null } | null, fees: { type?: string | null, amount?: string | null, asset?: string | null }[], exchangeRate?: string | null, fixedAmountSide?: string | null, sponsorGas?: boolean | null } | null, source?: { type?: string | null, id?: string | null, asset?: string | null, network?: string | null, details?: {} | null } | null, destination?: { type?: string | null, id?: string | null, asset?: string | null, network?: string | null, details?: {} | null } | null, precursor?: { type?: string | null, id?: string | null } | null, transfers?: { id?: string | null, role?: string | null, rail?: string | null, attempt?: number | null }[] | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.wallets.balance",
+      "shortPath": "wallets.balance",
+      "description": "Read one wallet balance in its asset, with an estimated value. The balance can be negative after a clawback",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `wlt_` id of the wallet."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, customerId?: string | null, asset?: string | null, chain?: string | null, address?: string | null, balance?: string | null, currencyName?: string | null, estimatedBalanceValue?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.wallets.create",
+      "shortPath": "wallets.create",
+      "description": "Create a custodial, noncustodial or fiat wallet for a customer. OMS has no route to delete a wallet, so a live wallet stays on the customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted."
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The `cst_` customer who owns the wallet."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "custodial | noncustodial | fiat",
+            "description": "`custodial` needs `details.network` and `details.asset`; `noncustodial` needs `details.networkFamily`; `fiat` needs `details.asset: usd`."
+          },
+          {
+            "key": "details",
+            "optional": false,
+            "type": "{ network?: ethereum | polygon | base | solana | tron | bnb, asset?: string, networkFamily?: evm | solana | tron }"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`walletCrypto` or `walletFiat`."
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: string | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`pending`, `active`, `frozen`, `suspended` or `closed`."
+          },
+          {
+            "key": "asset",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string | null",
+            "description": "Crypto wallets only."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Crypto wallets only."
+          },
+          {
+            "key": "routing",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "balances",
+            "optional": true,
+            "type": "{ asset?: string | null, network?: string | null, balance?: string | null, estimatedValueUsd?: string | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "operationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "walletId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pairs",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.wallets.get",
+      "shortPath": "wallets.get",
+      "description": "Read one wallet by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `wlt_` id of the wallet."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`walletCrypto` or `walletFiat`."
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: string | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`pending`, `active`, `frozen`, `suspended` or `closed`."
+          },
+          {
+            "key": "asset",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string | null",
+            "description": "Crypto wallets only."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Crypto wallets only."
+          },
+          {
+            "key": "routing",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "balances",
+            "optional": true,
+            "type": "{ asset?: string | null, network?: string | null, balance?: string | null, estimatedValueUsd?: string | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.wallets.list",
+      "shortPath": "wallets.list",
+      "description": "List wallets, scoped to a customer or type, with balance ordering and cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string",
+            "description": "Scope to one `cst_` customer."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "custodial | noncustodial | fiat",
+            "description": "Only wallets of this kind."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Matches a wallet id or an on-chain address."
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string",
+            "description": "Orders by the balance's estimated USD value."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Balance sort direction. Needs `orderBy`."
+          },
+          {
+            "key": "includeHidden",
+            "optional": true,
+            "type": "string[]",
+            "description": "`claimed` adds wallets currently claimed by a live instrument."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource."
+          },
+          {
+            "key": "startingAfter",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `nextCursor`."
+          },
+          {
+            "key": "endingBefore",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `previousCursor`, to page backwards."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The effective page size OMS applied."
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when more rows exist in the direction of travel."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `startingAfter`."
+          },
+          {
+            "key": "previousCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `endingBefore` to page backwards."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, type?: string | null, customer?: { id?: string | null } | null, status?: string | null, asset?: string | null, network?: string | null, address?: string | null, routing?: {} | null, provider?: string | null, label?: string | null, balances?: { asset?: string | null, network?: string | null, balance?: string | null, estimatedValueUsd?: string | null }[] | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a webhook endpoint. The HMAC signing key is returned only here, so store it when the call returns",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Where OMS posts deliveries."
+          },
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "string[]",
+            "description": "Event types to receive, such as transaction.settled. `*` subscribes to every type."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "Per-delivery HTTP timeout. Defaults to 5000."
+          },
+          {
+            "key": "notifyThresholdSecs",
+            "optional": true,
+            "type": "number",
+            "description": "Down-notification threshold. Defaults to 3600."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ id?: string | null, object?: string | null, url?: string | null, status?: string | null, statusReason?: string | null, subscriptions?: string[] | null, timeoutMs?: number | null, notifyThresholdSecs?: number | null, successCount?: number | null, failureCount?: number | null, mode?: string | null, createdAt?: string | null, updatedAt?: string | null }"
+          },
+          {
+            "key": "signingKey",
+            "optional": false,
+            "type": "string",
+            "description": "The cleartext HMAC key, shown only here and on a same-key retry. Store it to verify deliveries."
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook endpoint. Deliveries stop immediately and the signing key is discarded",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The `whk_` id of the webhook."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`enabled`, `disabled` or `suspended`."
+          },
+          {
+            "key": "statusReason",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why OMS suspended the endpoint."
+          },
+          {
+            "key": "subscriptions",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The event types this endpoint receives. `*` means every type."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number | null",
+            "description": "Defaults to 5000, capped at 10000."
+          },
+          {
+            "key": "notifyThresholdSecs",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "successCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failureCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null",
+            "description": "`live` or `sandbox`."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The `whk_` id of the webhook."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`enabled`, `disabled` or `suspended`."
+          },
+          {
+            "key": "statusReason",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why OMS suspended the endpoint."
+          },
+          {
+            "key": "subscriptions",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The event types this endpoint receives. `*` means every type."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number | null",
+            "description": "Defaults to 5000, capped at 10000."
+          },
+          {
+            "key": "notifyThresholdSecs",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "successCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failureCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null",
+            "description": "`live` or `sandbox`."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook endpoints with their delivery counts and cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "enabled | disabled | suspended",
+            "description": "Only webhooks in this status."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The previous page's `cursor`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ webhook?: { id?: string | null, object?: string | null, url?: string | null, status?: string | null, statusReason?: string | null, subscriptions?: string[] | null, timeoutMs?: number | null, notifyThresholdSecs?: number | null, successCount?: number | null, failureCount?: number | null, mode?: string | null, createdAt?: string | null, updatedAt?: string | null } | null, deliveryCount?: number | null, successCount?: number | null, failureCount?: number | null, failureRate?: number | null }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Absent on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygon.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook's URL, subscriptions or delivery settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The `whk_` id of the webhook."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscriptions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notifyThresholdSecs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`enabled`, `disabled` or `suspended`."
+          },
+          {
+            "key": "statusReason",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why OMS suspended the endpoint."
+          },
+          {
+            "key": "subscriptions",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The event types this endpoint receives. `*` means every type."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number | null",
+            "description": "Defaults to 5000, capped at 10000."
+          },
+          {
+            "key": "notifyThresholdSecs",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "successCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failureCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null",
+            "description": "`live` or `sandbox`."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
