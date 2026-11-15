@@ -1,0 +1,431 @@
+---
+title: "Pipedrive API reference"
+sidebarTitle: "API"
+description: "API reference for the Pipedrive plugin in Corsair: every `pipedrive.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Deals
+
+### create
+
+`deals.create`
+
+Create a deal
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.deals.create({ title: 'Sample opportunity' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `owner_id` | `number` | No | — |
+| `person_id` | `number \| null` | No | — |
+| `org_id` | `number \| null` | No | — |
+| `pipeline_id` | `number` | No | — |
+| `stage_id` | `number` | No | — |
+| `value` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `archive_time` | `string \| null` | No | — |
+| `status` | `string` | No | — |
+| `probability` | `number` | No | — |
+| `lost_reason` | `string` | No | — |
+| `visible_to` | `number` | No | — |
+| `close_time` | `string` | No | — |
+| `won_time` | `string` | No | — |
+| `lost_time` | `string` | No | — |
+| `expected_close_date` | `string` | No | — |
+| `label_ids` | `number[]` | No | — |
+| `channel` | `number \| null` | No | — |
+| `channel_id` | `string \| null` | No | — |
+| `origin_id` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+
+API-token authentication is sent using Pipedrive's documented x-api-token header. OAuth 2.0 uses a Bearer access token and requires deals:full. The documented API token cost is 5 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  owner_id?: number,
+  person_id?: number | null,
+  org_id?: number | null,
+  pipeline_id?: number,
+  stage_id?: number,
+  value?: number,
+  currency?: string,
+  add_time?: string,
+  update_time?: string | null,
+  stage_change_time?: string | null,
+  is_deleted?: boolean,
+  is_archived?: boolean,
+  status?: string,
+  probability?: number | null,
+  lost_reason?: string | null,
+  visible_to?: number,
+  close_time?: string | null,
+  won_time?: string | null,
+  lost_time?: string | null,
+  expected_close_date?: string | null,
+  label_ids?: number[],
+  origin?: string,
+  origin_id?: string | null,
+  channel?: number | null,
+  channel_id?: string | null,
+  source_lead_id?: string | null,
+  arr?: number | null,
+  mrr?: number | null,
+  acv?: number | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`deals.delete`
+
+Delete a deal
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.deals.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires the deals:full scope. The documented API token cost is 3 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`deals.get`
+
+Get a deal by its numeric ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.deals.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `include_fields` | `(next_activity_id \| last_activity_id \| first_won_time \| products_count \| files_count \| notes_count \| followers_count \| email_messages_count \| activities_count \| done_activities_count \| undone_activities_count \| participants_count \| last_incoming_mail_time \| last_outgoing_mail_time \| smart_bcc_email \| source_lead_id)[]` | No | — |
+| `custom_fields` | `string[]` | No | — |
+| `include_option_labels` | `boolean` | No | — |
+| `include_labels` | `boolean` | No | — |
+
+OAuth requires the deals:read or deals:full scope. The documented API token cost is 1 token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  owner_id?: number,
+  person_id?: number | null,
+  org_id?: number | null,
+  pipeline_id?: number,
+  stage_id?: number,
+  value?: number,
+  currency?: string,
+  add_time?: string,
+  update_time?: string | null,
+  stage_change_time?: string | null,
+  is_deleted?: boolean,
+  is_archived?: boolean,
+  status?: string,
+  probability?: number | null,
+  lost_reason?: string | null,
+  visible_to?: number,
+  close_time?: string | null,
+  won_time?: string | null,
+  lost_time?: string | null,
+  expected_close_date?: string | null,
+  label_ids?: number[],
+  origin?: string,
+  origin_id?: string | null,
+  channel?: number | null,
+  channel_id?: string | null,
+  source_lead_id?: string | null,
+  arr?: number | null,
+  mrr?: number | null,
+  acv?: number | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deals.list`
+
+List deals with cursor pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.deals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter_id` | `number` | No | — |
+| `ids` | `number[]` | No | — |
+| `owner_id` | `number` | No | — |
+| `person_id` | `number` | No | — |
+| `org_id` | `number` | No | — |
+| `pipeline_id` | `number` | No | — |
+| `stage_id` | `number` | No | — |
+| `status` | `(open \| won \| lost \| deleted)[]` | No | — |
+| `updated_since` | `string` | No | — |
+| `updated_until` | `string` | No | — |
+| `sort_by` | `id \| update_time \| add_time` | No | — |
+| `sort_direction` | `asc \| desc` | No | — |
+| `include_fields` | `(next_activity_id \| last_activity_id \| first_won_time \| products_count \| files_count \| notes_count \| followers_count \| email_messages_count \| activities_count \| done_activities_count \| undone_activities_count \| participants_count \| last_incoming_mail_time \| last_outgoing_mail_time \| smart_bcc_email \| source_lead_id)[]` | No | — |
+| `custom_fields` | `string[]` | No | — |
+| `include_option_labels` | `boolean` | No | — |
+| `include_labels` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+The list operation forwards Pipedrive's opaque cursor and returns additional_data.next_cursor; pass that value as cursor to request the next page. List array query parameters are serialized as comma-separated values as required by the OpenAPI form/explode=false contract. Its documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  owner_id?: number,
+  person_id?: number | null,
+  org_id?: number | null,
+  pipeline_id?: number,
+  stage_id?: number,
+  value?: number,
+  currency?: string,
+  add_time?: string,
+  update_time?: string | null,
+  stage_change_time?: string | null,
+  is_deleted?: boolean,
+  is_archived?: boolean,
+  status?: string,
+  probability?: number | null,
+  lost_reason?: string | null,
+  visible_to?: number,
+  close_time?: string | null,
+  won_time?: string | null,
+  lost_time?: string | null,
+  expected_close_date?: string | null,
+  label_ids?: number[],
+  origin?: string,
+  origin_id?: string | null,
+  channel?: number | null,
+  channel_id?: string | null,
+  source_lead_id?: string | null,
+  arr?: number | null,
+  mrr?: number | null,
+  acv?: number | null,
+  custom_fields?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`deals.update`
+
+Update a deal
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.deals.update({ id: 1, title: 'Updated opportunity' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `owner_id` | `number` | No | — |
+| `person_id` | `number \| null` | No | — |
+| `org_id` | `number \| null` | No | — |
+| `pipeline_id` | `number` | No | — |
+| `stage_id` | `number` | No | — |
+| `value` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `archive_time` | `string \| null` | No | — |
+| `status` | `string` | No | — |
+| `probability` | `number` | No | — |
+| `lost_reason` | `string` | No | — |
+| `visible_to` | `number` | No | — |
+| `close_time` | `string` | No | — |
+| `won_time` | `string` | No | — |
+| `lost_time` | `string` | No | — |
+| `expected_close_date` | `string` | No | — |
+| `label_ids` | `number[]` | No | — |
+| `channel` | `number \| null` | No | — |
+| `channel_id` | `string \| null` | No | — |
+| `origin_id` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+| `is_deleted` | `false` | No | — |
+
+OAuth requires the deals:full scope. The documented API token cost is 5 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  owner_id?: number,
+  person_id?: number | null,
+  org_id?: number | null,
+  pipeline_id?: number,
+  stage_id?: number,
+  value?: number,
+  currency?: string,
+  add_time?: string,
+  update_time?: string | null,
+  stage_change_time?: string | null,
+  is_deleted?: boolean,
+  is_archived?: boolean,
+  status?: string,
+  probability?: number | null,
+  lost_reason?: string | null,
+  visible_to?: number,
+  close_time?: string | null,
+  won_time?: string | null,
+  lost_time?: string | null,
+  expected_close_date?: string | null,
+  label_ids?: number[],
+  origin?: string,
+  origin_id?: string | null,
+  channel?: number | null,
+  channel_id?: string | null,
+  source_lead_id?: string | null,
+  arr?: number | null,
+  mrr?: number | null,
+  acv?: number | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

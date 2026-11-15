@@ -1,4 +1,32 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
 displayName: "Pipedrive"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+description: "Manage Pipedrive deals through the v2 API with validated reads, creation, updates, deletion, and cursor pagination."
+overviewNote: "This initial implementation covers v2 deal list, get, create, update, and delete operations only. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. OAuth reads require deals:read or deals:full; writes require deals:full."
+examples:
+  read:
+    path: deals.get
+    title: Get a deal by ID
+    args:
+      id: 1
+  write:
+    path: deals.create
+    title: Create a deal
+    args:
+      title: Sample opportunity
+apiNotes:
+  deals.list: "The list operation forwards Pipedrive's opaque cursor and returns additional_data.next_cursor; pass that value as cursor to request the next page. List array query parameters are serialized as comma-separated values as required by the OpenAPI form/explode=false contract. Its documented API token cost is 10 tokens."
+  deals.get: "OAuth requires the deals:read or deals:full scope. The documented API token cost is 1 token."
+  deals.create: "API-token authentication is sent using Pipedrive's documented x-api-token header. OAuth 2.0 uses a Bearer access token and requires deals:full. The documented API token cost is 5 tokens."
+  deals.update: "OAuth requires the deals:full scope. The documented API token cost is 5 tokens."
+  deals.delete: "OAuth requires the deals:full scope. The documented API token cost is 3 tokens."
+apiExamples:
+  deals.list:
+    call: "{}"
+  deals.get:
+    call: "{ id: 1 }"
+  deals.create:
+    call: "{ title: 'Sample opportunity' }"
+  deals.update:
+    call: "{ id: 1, title: 'Updated opportunity' }"
+  deals.delete:
+    call: "{ id: 1 }"

@@ -1,7 +1,17 @@
-import { get as exampleGet } from './example';
+import {
+	createDeal,
+	deleteDeal,
+	getDeal,
+	listDeals,
+	updateDeal,
+} from './deals';
 
-export const Example = {
-	get: exampleGet,
+export const Deals = {
+	list: listDeals,
+	get: getDeal,
+	create: createDeal,
+	update: updateDeal,
+	delete: deleteDeal,
 };
 
 export * from './types';

@@ -1,44 +1,53 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { request } from 'corsair/http';
 
-export class PipedriveAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'PipedriveAPIError';
-	}
-}
+export const PIPEDRIVE_API_BASE = 'https://api.pipedrive.com/api/v2';
+export const PIPEDRIVE_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	// Error handlers own 429 retries so daily-budget exhaustion is not replayed.
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		// Pipedrive documents this as the remaining burst-window reset duration.
+		retryAfter: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
 
-// TODO: Update with your API base URL
-const PIPEDRIVE_API_BASE = 'https://api.example.com';
+type PipedriveAuthType = 'api_key' | 'oauth_2';
 
 export async function makePipedriveRequest<T>(
 	endpoint: string,
 	apiKey: string,
+	authType: PipedriveAuthType,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// `unknown` because endpoint-specific bodies are Zod-validated before transport.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	if (!apiKey) throw new AuthMissingError('pipedrive', authType);
 
+	const { method = 'GET', body, query } = options;
 	const config: OpenAPIConfig = {
 		BASE: PIPEDRIVE_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		...(authType === 'oauth_2' ? { TOKEN: apiKey } : {}),
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			...(authType === 'api_key' ? { 'x-api-token': apiKey } : {}),
 		},
 	};
-
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
@@ -47,19 +56,9 @@ export async function makePipedriveRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
-
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new PipedriveAPIError(error.message);
-		}
-		throw new PipedriveAPIError('Unknown error');
-	}
+	return request<T>(config, requestOptions, {
+		rateLimitConfig: PIPEDRIVE_RATE_LIMIT_CONFIG,
+	});
 }
