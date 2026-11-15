@@ -221,8 +221,43 @@ describe('withTenant account scope', () => {
 		it('list with limit/offset pages over the merged set', async () => {
 			await seed({ a: 3, b: 2 });
 			const t = corsair.withTenant('t1');
-			expect(await notes(t).list({ limit: 4 })).toHaveLength(4);
-			expect(await notes(t).list({ limit: 4, offset: 4 })).toHaveLength(1);
+			const page1 = await notes(t).list({ limit: 4 });
+			const page2 = await notes(t).list({ limit: 4, offset: 4 });
+			expect(page1).toHaveLength(4);
+			expect(page2).toHaveLength(1);
+			expect(titles([...page1, ...page2])).toEqual([
+				'a0',
+				'a1',
+				'a2',
+				'b0',
+				'b1',
+			]);
+		});
+
+		it('point lookups on a shared entity_id answer from the oldest account', async () => {
+			await addAccount('a', 'a@x.com', 'tok-a');
+			await addAccount('b', 'b@x.com', 'tok-b');
+			// the newer account's row is the older row
+			await notes(bound('b')).upsertByEntityId('dup', { title: 'from-b' });
+			await new Promise((r) => setTimeout(r, 5));
+			await notes(bound('a')).upsertByEntityId('dup', { title: 'from-a' });
+			const t = corsair.withTenant('t1');
+			const row = await notes(t).findByEntityId('dup');
+			expect(row.data.title).toBe('from-a');
+			expect(row.account).toBe('a@x.com');
+			const [a] = await notes(bound('a')).findManyByEntityIds(['dup']);
+			expect(await notes(t).findIdByEntityId('dup')).toBe(a.id);
+			expect(await notes(t).existsByEntityId('dup')).toBe(true);
+			const many = await notes(t).findManyByEntityIds(['dup']);
+			expect(many.map((r: any) => r.account).sort()).toEqual([
+				'a@x.com',
+				'b@x.com',
+			]);
+			const found = await notes(t).search({ entity_id: 'dup' });
+			expect(found.map((r: any) => r.account).sort()).toEqual([
+				'a@x.com',
+				'b@x.com',
+			]);
 		});
 
 		it('count sums both accounts', async () => {

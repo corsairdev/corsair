@@ -404,6 +404,21 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		};
 	}
 
+	// Same entity_id in several accounts: the oldest account wins (ids are in
+	// that order), regardless of row timestamps.
+	async function findOldest(entityId: string) {
+		const { ids, labels } = await readScope();
+		const q = baseQuery(db, ids, entityTypeName).where(
+			'entity_id',
+			'=',
+			entityId,
+		);
+		const rows = await q.execute();
+		if (!Array.isArray(ids)) return { row: rows[0], labels };
+		rows.sort((a, b) => ids.indexOf(a.account_id) - ids.indexOf(b.account_id));
+		return { row: rows[0], labels };
+	}
+
 	async function parseRows(
 		rows: CorsairEntity[],
 		labels?: Map<string, string>,
@@ -440,10 +455,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 
 	return {
 		findByEntityId: async (entityId) => {
-			const { ids, labels } = await readScope();
-			const row = await baseQuery(db, ids, entityTypeName)
-				.where('entity_id', '=', entityId)
-				.executeTakeFirst();
+			const { row, labels } = await findOldest(entityId);
 			return row ? (await parseRows([row], labels))[0]! : null;
 		},
 
@@ -457,11 +469,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		},
 
 		findIdByEntityId: async (entityId) => {
-			const { ids } = await readScope();
-			const row = await baseQuery(db, ids, entityTypeName)
-				.select('id')
-				.where('entity_id', '=', entityId)
-				.executeTakeFirst();
+			const { row } = await findOldest(entityId);
 			return row?.id ?? null;
 		},
 
