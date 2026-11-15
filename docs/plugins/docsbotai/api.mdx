@@ -1,0 +1,2050 @@
+---
+title: "DocsBot AI API reference"
+sidebarTitle: "API"
+description: "API reference for the DocsBot AI plugin in Corsair: every `docsbotai.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bots
+
+### create
+
+`bots.create`
+
+Create a bot
+
+**Risk:** `write`
+
+```ts
+await corsair.docsbotai.api.bots.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `privacy` | `public \| private` | No | — |
+| `language` | `string` | No | — |
+| `model` | `string` | No | — |
+| `tools` | `Record<string, any>` | No | — |
+| `retrieverTags` | `object[]` | No | — |
+| `embeddingModel` | `string` | No | — |
+| `copyFrom` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="retrieverTags full type">
+
+```ts
+{
+  key: string,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `privacy` | `string \| null` | No | — |
+| `indexId` | `string \| null` | No | — |
+| `model` | `string \| null` | No | — |
+| `embeddingModel` | `string \| null` | No | — |
+| `customPrompt` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `questionCount` | `number \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+| `sourceCount` | `number \| null` | No | — |
+| `chunkCount` | `number \| null` | No | — |
+| `rateLimitMessages` | `number \| null` | No | — |
+| `rateLimitSeconds` | `number \| null` | No | — |
+| `rateLimitIPAllowlist` | `string[] \| null` | No | — |
+| `logRetentionDays` | `number \| null` | No | — |
+| `recordIP` | `boolean \| null` | No | — |
+| `classify` | `boolean \| null` | No | — |
+| `allowedDomains` | `string[] \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `alignment` | `string \| null` | No | — |
+| `botIcon` | `string \| false \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `branding` | `boolean \| null` | No | — |
+| `supportLink` | `string \| null` | No | — |
+| `showButtonLabel` | `string \| false \| null` | No | — |
+| `showCopyButton` | `boolean \| null` | No | — |
+| `hideSources` | `boolean \| null` | No | — |
+| `allowSourceDownloads` | `boolean \| null` | No | — |
+| `labels` | `Record<string, any> \| null` | No | — |
+| `tools` | `Record<string, any> \| null` | No | — |
+| `glossary` | `object[] \| null` | No | — |
+| `retrieverTags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="glossary full type">
+
+```ts
+{
+  word: string,
+  translation: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="retrieverTags full type">
+
+```ts
+{
+  key: string,
+  description: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`bots.delete`
+
+Delete a bot
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.bots.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`bots.get`
+
+Get a bot
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.bots.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `privacy` | `string \| null` | No | — |
+| `indexId` | `string \| null` | No | — |
+| `model` | `string \| null` | No | — |
+| `embeddingModel` | `string \| null` | No | — |
+| `customPrompt` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `questionCount` | `number \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+| `sourceCount` | `number \| null` | No | — |
+| `chunkCount` | `number \| null` | No | — |
+| `rateLimitMessages` | `number \| null` | No | — |
+| `rateLimitSeconds` | `number \| null` | No | — |
+| `rateLimitIPAllowlist` | `string[] \| null` | No | — |
+| `logRetentionDays` | `number \| null` | No | — |
+| `recordIP` | `boolean \| null` | No | — |
+| `classify` | `boolean \| null` | No | — |
+| `allowedDomains` | `string[] \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `alignment` | `string \| null` | No | — |
+| `botIcon` | `string \| false \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `branding` | `boolean \| null` | No | — |
+| `supportLink` | `string \| null` | No | — |
+| `showButtonLabel` | `string \| false \| null` | No | — |
+| `showCopyButton` | `boolean \| null` | No | — |
+| `hideSources` | `boolean \| null` | No | — |
+| `allowSourceDownloads` | `boolean \| null` | No | — |
+| `labels` | `Record<string, any> \| null` | No | — |
+| `tools` | `Record<string, any> \| null` | No | — |
+| `glossary` | `object[] \| null` | No | — |
+| `retrieverTags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="glossary full type">
+
+```ts
+{
+  word: string,
+  translation: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="retrieverTags full type">
+
+```ts
+{
+  key: string,
+  description: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bots.list`
+
+List bots
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.bots.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `q` | `string` | No | — |
+| `privacy` | `public \| private` | No | — |
+| `sort` | `name \| newest \| ai-credits \| conversations` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `view` | `full \| summary` | No | — |
+
+
+
+**Output:** `object[] \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  privacy?: string | null,
+  indexId?: string | null,
+  model?: string | null,
+  embeddingModel?: string | null,
+  customPrompt?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  status?: string | null,
+  questionCount?: number | null,
+  pageCount?: number | null,
+  sourceCount?: number | null,
+  chunkCount?: number | null,
+  rateLimitMessages?: number | null,
+  rateLimitSeconds?: number | null,
+  rateLimitIPAllowlist?: string[] | null,
+  logRetentionDays?: number | null,
+  recordIP?: boolean | null,
+  classify?: boolean | null,
+  allowedDomains?: string[] | null,
+  color?: string | null,
+  icon?: string | null,
+  alignment?: string | null,
+  botIcon?: string | false | null,
+  logo?: string | null,
+  branding?: boolean | null,
+  supportLink?: string | null,
+  showButtonLabel?: string | false | null,
+  showCopyButton?: boolean | null,
+  hideSources?: boolean | null,
+  allowSourceDownloads?: boolean | null,
+  labels?: Record<string, any> | null,
+  tools?: Record<string, any> | null,
+  glossary?: {
+    word: string,
+    translation: string
+  }[] | null,
+  retrieverTags?: {
+    key: string,
+    description: string
+  }[] | null
+}[] | {
+  bots: {
+    id: string,
+    name?: string | null,
+    description?: string | null,
+    privacy?: string | null,
+    indexId?: string | null,
+    model?: string | null,
+    embeddingModel?: string | null,
+    customPrompt?: string | null,
+    language?: string | null,
+    createdAt?: string | null,
+    status?: string | null,
+    questionCount?: number | null,
+    pageCount?: number | null,
+    sourceCount?: number | null,
+    chunkCount?: number | null,
+    rateLimitMessages?: number | null,
+    rateLimitSeconds?: number | null,
+    rateLimitIPAllowlist?: string[] | null,
+    logRetentionDays?: number | null,
+    recordIP?: boolean | null,
+    classify?: boolean | null,
+    allowedDomains?: string[] | null,
+    color?: string | null,
+    icon?: string | null,
+    alignment?: string | null,
+    botIcon?: string | false | null,
+    logo?: string | null,
+    branding?: boolean | null,
+    supportLink?: string | null,
+    showButtonLabel?: string | false | null,
+    showCopyButton?: boolean | null,
+    hideSources?: boolean | null,
+    allowSourceDownloads?: boolean | null,
+    labels?: Record<string, any> | null,
+    tools?: Record<string, any> | null,
+    glossary?: {
+      word: string,
+      translation: string
+    }[] | null,
+    retrieverTags?: {
+      key: string,
+      description: string
+    }[] | null
+  }[],
+  totalCount: number,
+  page: number,
+  pageSize: number,
+  totalPages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reports
+
+`bots.reports`
+
+Get monthly reports
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.bots.reports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `month` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `availableReports` | `string[]` | Yes | — |
+| `report` | `object \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="report full type">
+
+```ts
+{
+  month?: string | null,
+  totalQuestions?: number | null,
+  resolved?: number | null,
+  unresolved?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`bots.stats`
+
+Get bot statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.bots.stats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `timeDelta` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalCount` | `number \| null` | No | — |
+| `totalMessages` | `number \| null` | No | — |
+| `totalConversations` | `number \| null` | No | — |
+| `resolutionRate` | `string \| null` | No | — |
+| `couldAnswerRate` | `string \| null` | No | — |
+| `deflectionRate` | `string \| null` | No | — |
+| `timeSaved` | `number \| null` | No | — |
+| `labels` | `string[] \| null` | No | — |
+| `countData` | `(number \| null)[] \| null` | No | — |
+| `negativeData` | `(number \| null)[] \| null` | No | — |
+| `positiveData` | `(number \| null)[] \| null` | No | — |
+| `couldAnswerData` | `(number \| null)[] \| null` | No | — |
+| `escalatedData` | `(number \| null)[] \| null` | No | — |
+| `messagesData` | `(number \| null)[] \| null` | No | — |
+| `percentageLabels` | `string[] \| null` | No | — |
+| `counts` | `(number \| null)[] \| null` | No | — |
+| `escalatedLabels` | `string[] \| null` | No | — |
+| `escalatedCounts` | `(number \| null)[] \| null` | No | — |
+| `answerLabels` | `string[] \| null` | No | — |
+| `answerCounts` | `(number \| null)[] \| null` | No | — |
+| `conversationData` | `(number \| null)[] \| null` | No | — |
+| `resolvedConfirmedData` | `(number \| null)[] \| null` | No | — |
+| `resolvedAssumedData` | `(number \| null)[] \| null` | No | — |
+| `unresolvedData` | `(number \| null)[] \| null` | No | — |
+| `escalatedHandledData` | `(number \| null)[] \| null` | No | — |
+| `escalatedTriggeredData` | `(number \| null)[] \| null` | No | — |
+| `csatData` | `(number \| null)[] \| null` | No | — |
+| `answeredRateData` | `(number \| null)[] \| null` | No | — |
+| `conversationDeflectionData` | `(number \| null)[] \| null` | No | — |
+| `avgSentimentData` | `(number \| null)[] \| null` | No | — |
+| `resolvedLabels` | `string[] \| null` | No | — |
+| `resolvedCounts` | `(number \| null)[] \| null` | No | — |
+| `conversationEscalatedLabels` | `string[] \| null` | No | — |
+| `conversationEscalatedCounts` | `(number \| null)[] \| null` | No | — |
+| `sentimentLabels` | `string[] \| null` | No | — |
+| `sentimentCounts` | `(number \| null)[] \| null` | No | — |
+| `conversationAnsweredLabels` | `string[] \| null` | No | — |
+| `conversationAnsweredCounts` | `(number \| null)[] \| null` | No | — |
+| `conversationTopicLabels` | `string[] \| null` | No | — |
+| `conversationTopicData` | `Record<string, (number \| null)[]> \| null` | No | — |
+| `conversationTopicPieLabels` | `string[] \| null` | No | — |
+| `conversationTopicCounts` | `(number \| null)[] \| null` | No | — |
+
+
+
+---
+
+### update
+
+`bots.update`
+
+Update a bot
+
+**Risk:** `write`
+
+```ts
+await corsair.docsbotai.api.bots.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `privacy` | `public \| private` | No | — |
+| `language` | `string` | No | — |
+| `model` | `string` | No | — |
+| `tools` | `Record<string, any>` | No | — |
+| `retrieverTags` | `object[]` | No | — |
+| `customPrompt` | `string` | No | — |
+| `allowedDomains` | `string[]` | No | — |
+| `color` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `alignment` | `left \| right` | No | — |
+| `botIcon` | `string \| false` | No | — |
+| `logo` | `string` | No | — |
+| `branding` | `boolean` | No | — |
+| `supportLink` | `string` | No | — |
+| `showButtonLabel` | `string \| false` | No | — |
+| `showCopyButton` | `boolean` | No | — |
+| `hideSources` | `boolean` | No | — |
+| `allowSourceDownloads` | `boolean` | No | — |
+| `labels` | `Record<string, any>` | No | — |
+| `glossary` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="retrieverTags full type">
+
+```ts
+{
+  key: string,
+  description: string
+}[]
+```
+</Accordion>
+
+<Accordion title="glossary full type">
+
+```ts
+{
+  word: string,
+  translation: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `privacy` | `string \| null` | No | — |
+| `indexId` | `string \| null` | No | — |
+| `model` | `string \| null` | No | — |
+| `embeddingModel` | `string \| null` | No | — |
+| `customPrompt` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `questionCount` | `number \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+| `sourceCount` | `number \| null` | No | — |
+| `chunkCount` | `number \| null` | No | — |
+| `rateLimitMessages` | `number \| null` | No | — |
+| `rateLimitSeconds` | `number \| null` | No | — |
+| `rateLimitIPAllowlist` | `string[] \| null` | No | — |
+| `logRetentionDays` | `number \| null` | No | — |
+| `recordIP` | `boolean \| null` | No | — |
+| `classify` | `boolean \| null` | No | — |
+| `allowedDomains` | `string[] \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `alignment` | `string \| null` | No | — |
+| `botIcon` | `string \| false \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `branding` | `boolean \| null` | No | — |
+| `supportLink` | `string \| null` | No | — |
+| `showButtonLabel` | `string \| false \| null` | No | — |
+| `showCopyButton` | `boolean \| null` | No | — |
+| `hideSources` | `boolean \| null` | No | — |
+| `allowSourceDownloads` | `boolean \| null` | No | — |
+| `labels` | `Record<string, any> \| null` | No | — |
+| `tools` | `Record<string, any> \| null` | No | — |
+| `glossary` | `object[] \| null` | No | — |
+| `retrieverTags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="glossary full type">
+
+```ts
+{
+  word: string,
+  translation: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="retrieverTags full type">
+
+```ts
+{
+  key: string,
+  description: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversations
+
+### captureLead
+
+`conversations.captureLead`
+
+Capture a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.docsbotai.api.conversations.captureLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `conversationId` | `string` | Yes | — |
+| `metadata` | `Record<string, any>` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### delete
+
+`conversations.delete`
+
+Delete a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.conversations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `conversationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List conversations
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversations` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  title?: string | null,
+  summary?: string | null,
+  sentiment?: string | null,
+  model?: string | null,
+  email?: string | null,
+  metadata?: Record<string, any> | null,
+  answered?: boolean | null,
+  resolved?: string | null,
+  escalated?: string | null,
+  alias?: string | null,
+  ip?: string | null,
+  truncated?: boolean | null,
+  topic?: string | null,
+  testing?: boolean | null,
+  channel?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  perPage?: number,
+  totalCount?: number,
+  hasMorePages?: boolean,
+  viewableCount?: number,
+  planLimit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ticket
+
+`conversations.ticket`
+
+Generate a support ticket from a conversation with the AI model
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.conversations.ticket({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `conversationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Leads
+
+### delete
+
+`leads.delete`
+
+Delete a lead
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.leads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `leadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`leads.list`
+
+List leads
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.leads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  metadata?: Record<string, any> | null,
+  ip?: string | null,
+  alias?: string | null,
+  email?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  perPage?: number,
+  totalCount?: number,
+  hasMorePages?: boolean,
+  viewableCount?: number,
+  planLimit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Questions
+
+### delete
+
+`questions.delete`
+
+Delete a question
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.questions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `questionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`questions.list`
+
+List questions
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.questions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `ascending` | `boolean` | No | — |
+| `ip` | `string` | No | — |
+| `rating` | `-1 \| 0 \| 1` | No | — |
+| `escalated` | `boolean` | No | — |
+| `couldAnswer` | `boolean` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `questions` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string | null,
+  question?: string | null,
+  answer?: string | null,
+  standaloneQuestion?: string | null,
+  sources?: Record<string, any>[] | null,
+  rating?: number | null,
+  escalation?: boolean | null,
+  deleted?: boolean | null,
+  couldAnswer?: boolean | null,
+  metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  perPage?: number,
+  totalCount?: number,
+  hasMorePages?: boolean,
+  viewableCount?: number,
+  planLimit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rate
+
+`questions.rate`
+
+Rate an answer
+
+**Risk:** `write`
+
+```ts
+await corsair.docsbotai.api.questions.rate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `answerId` | `string` | Yes | — |
+| `rating` | `-1 \| 0 \| 1` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+## Research
+
+### list
+
+`research.list`
+
+List research jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.research.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  jobId: string,
+  status?: string | null,
+  title?: string | null,
+  question?: string | null,
+  response?: Record<string, any> | null,
+  createdAt?: string | null,
+  completedAt?: string | null,
+  cancelledAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  perPage?: number,
+  totalCount?: number,
+  hasMorePages?: boolean,
+  viewableCount?: number,
+  planLimit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### search
+
+`search.search`
+
+Search bot content
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.search.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `top_k` | `number \| null` | No | — |
+| `autocut` | `boolean \| number` | No | — |
+| `alpha` | `number` | No | — |
+| `use_glossary` | `boolean` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `include_untagged` | `boolean` | No | — |
+| `source_id` | `string \| null` | No | — |
+| `file_id` | `string \| null` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  title?: string | null,
+  url?: string | null,
+  fileId?: string | null,
+  page?: number | null,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sources
+
+### create
+
+`sources.create`
+
+Create a source and start indexing it (uses page quota; OCR bills AI credits per page)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.sources.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `type` | `url \| document \| sitemap \| wp \| urls \| csv \| rss \| qa \| youtube` | Yes | — |
+| `title` | `string` | No | — |
+| `url` | `string` | No | — |
+| `file` | `string` | No | — |
+| `fileDir` | `string` | No | — |
+| `faqs` | `object[]` | No | — |
+| `scheduleInterval` | `daily \| weekly \| monthly \| none` | No | — |
+| `processImages` | `boolean` | No | — |
+| `ocr` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="faqs full type">
+
+```ts
+{
+  question: string,
+  answer: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `processedPages` | `object \| null` | No | — |
+| `faqs` | `object[] \| null` | No | — |
+| `indexedUrls` | `object[] \| null` | No | — |
+| `warnsList` | `string[] \| null` | No | — |
+| `carbonFiles` | `number \| object[] \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+| `chunkCount` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `scheduleInterval` | `string \| null` | No | — |
+| `processImages` | `boolean \| null` | No | — |
+| `ocr` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  p: string,
+  n?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="processedPages full type">
+
+```ts
+{
+  count: number,
+  total: number
+} | null
+```
+</Accordion>
+
+<Accordion title="faqs full type">
+
+```ts
+{
+  question: string,
+  answer: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="indexedUrls full type">
+
+```ts
+{
+  source: string,
+  title: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="carbonFiles full type">
+
+```ts
+number | {
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sources.delete`
+
+Delete a source
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.sources.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `sourceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`sources.get`
+
+Get a source
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.sources.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `sourceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `processedPages` | `object \| null` | No | — |
+| `faqs` | `object[] \| null` | No | — |
+| `indexedUrls` | `object[] \| null` | No | — |
+| `warnsList` | `string[] \| null` | No | — |
+| `carbonFiles` | `number \| object[] \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+| `chunkCount` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `scheduleInterval` | `string \| null` | No | — |
+| `processImages` | `boolean \| null` | No | — |
+| `ocr` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  p: string,
+  n?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="processedPages full type">
+
+```ts
+{
+  count: number,
+  total: number
+} | null
+```
+</Accordion>
+
+<Accordion title="faqs full type">
+
+```ts
+{
+  question: string,
+  answer: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="indexedUrls full type">
+
+```ts
+{
+  source: string,
+  title: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="carbonFiles full type">
+
+```ts
+number | {
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUploadUrl
+
+`sources.getUploadUrl`
+
+Get a presigned source upload URL
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.sources.getUploadUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `file` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`sources.list`
+
+List sources
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.sources.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `tags` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sources` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  status?: string | null,
+  title?: string | null,
+  url?: string | null,
+  file?: string | null,
+  files?: {
+    p: string,
+    n?: number | null
+  }[] | null,
+  processedPages?: {
+    count: number,
+    total: number
+  } | null,
+  faqs?: {
+    question: string,
+    answer: string
+  }[] | null,
+  indexedUrls?: {
+    source: string,
+    title: string
+  }[] | null,
+  warnsList?: string[] | null,
+  carbonFiles?: number | {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null,
+    url?: string | null
+  }[] | null,
+  createdAt?: string | null,
+  pageCount?: number | null,
+  chunkCount?: number | null,
+  tags?: string[] | null,
+  scheduleInterval?: string | null,
+  processImages?: boolean | null,
+  ocr?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  perPage?: number,
+  totalCount?: number,
+  hasMorePages?: boolean,
+  viewableCount?: number,
+  planLimit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retry
+
+`sources.retry`
+
+Re-index a failed source (uses page quota; OCR bills AI credits per page)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.sources.retry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `sourceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `processedPages` | `object \| null` | No | — |
+| `faqs` | `object[] \| null` | No | — |
+| `indexedUrls` | `object[] \| null` | No | — |
+| `warnsList` | `string[] \| null` | No | — |
+| `carbonFiles` | `number \| object[] \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+| `chunkCount` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `scheduleInterval` | `string \| null` | No | — |
+| `processImages` | `boolean \| null` | No | — |
+| `ocr` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  p: string,
+  n?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="processedPages full type">
+
+```ts
+{
+  count: number,
+  total: number
+} | null
+```
+</Accordion>
+
+<Accordion title="faqs full type">
+
+```ts
+{
+  question: string,
+  answer: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="indexedUrls full type">
+
+```ts
+{
+  source: string,
+  title: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="carbonFiles full type">
+
+```ts
+number | {
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadFile
+
+`sources.uploadFile`
+
+Upload bytes to a presigned source URL
+
+**Risk:** `write`
+
+```ts
+await corsair.docsbotai.api.sources.uploadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uploadUrl` | `string` | Yes | — |
+| `data` | `custom` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+## Teams
+
+### get
+
+`teams.get`
+
+Get a team
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `questionCount` | `number \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+| `sourceCount` | `number \| null` | No | — |
+| `chunkCount` | `number \| null` | No | — |
+| `botCount` | `number \| null` | No | — |
+| `openAIKey` | `string \| null` | No | — |
+| `plan` | `Record<string, any> \| null` | No | — |
+| `roles` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.teams.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  createdAt?: string | null,
+  status?: string | null,
+  questionCount?: number | null,
+  pageCount?: number | null,
+  sourceCount?: number | null,
+  chunkCount?: number | null,
+  botCount?: number | null,
+  openAIKey?: string | null,
+  plan?: Record<string, any> | null,
+  roles?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listMembers
+
+`teams.listMembers`
+
+List team members
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.teams.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uid: string,
+  displayName?: string | null,
+  email?: string | null,
+  photoURL?: string | null,
+  role?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`teams.update`
+
+Update a team
+
+**Risk:** `write`
+
+```ts
+await corsair.docsbotai.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `openAIKey` | `string \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `questionCount` | `number \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+| `sourceCount` | `number \| null` | No | — |
+| `chunkCount` | `number \| null` | No | — |
+| `botCount` | `number \| null` | No | — |
+| `openAIKey` | `string \| null` | No | — |
+| `plan` | `Record<string, any> \| null` | No | — |
+| `roles` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.docsbotai.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `targetUrl` | `string` | Yes | — |
+| `events` | `(lead.created \| deep_research.done \| conversation.escalated \| conversation.rated)[]` | Yes | — |
+| `label` | `string` | No | — |
+| `source` | `string` | No | — |
+| `expirationDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `targetUrl` | `string \| null` | No | — |
+| `events` | `string[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `expirationDate` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docsbotai.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `targetUrl` | `string \| null` | No | — |
+| `events` | `string[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `expirationDate` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.docsbotai.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  targetUrl?: string | null,
+  events?: string[] | null,
+  status?: string | null,
+  label?: string | null,
+  expirationDate?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.docsbotai.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `botId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `targetUrl` | `string` | No | — |
+| `status` | `string` | No | — |
+| `label` | `string` | No | — |
+| `expirationDate` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `targetUrl` | `string \| null` | No | — |
+| `events` | `string[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `expirationDate` | `string \| null` | No | — |
+
+
+
+---
+

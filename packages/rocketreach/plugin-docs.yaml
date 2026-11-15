@@ -1,0 +1,45 @@
+displayName: RocketReach
+description: Person and company lookup and search, bulk lookup with status polling, and email verification with RocketReach.
+domain: rocketreach.co
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key under **API Usage & Settings** on your [account page](https://rocketreach.co/account?section=nav_gen_api). It travels in the `Api-Key` header; the `api_key` query parameter still works but is documented as deprecated and is never used here.
+
+  Lookups and verification can spend credits, so those four operations are marked `write` even where the HTTP verb is `GET`. Searches return summaries without spending lookup credits and are marked `read`. Search requests still count toward plan limits. Things to know:
+
+  - **A `403` on a lookup is not a permission problem.** Running out of lookup credits returns `403 Forbidden` with only an explanatory `detail`; there is no structured credit field to check. The plugin exposes `isOutOfLookupCredits` for exactly this case, and no retry can help. Only `/email/verify` reports an empty balance as a `402`, and that one names the pool in `credit_type` and a `purchase_url`.
+  - **`status` decides whether a lookup is final.** A lookup answers `complete`, `progress`, `searching` or `not queued`. Anything but `complete` means the contact fields are not settled: the cached emails may be withheld and the rest arrives later. Poll `person.checkStatus` with the profile ID or the `RR-Request-ID` rather than treating a `200` as finished.
+  - **A bulk lookup has no body.** `person.bulkLookup` answers a bare `200` with the request ID in the `RR-Request-ID` header, so the plugin returns `requestId` (or `null` when RocketReach sends no header) and that is what to poll with.
+  - **`email.verify` can cost nothing.** It charges one verification credit and refunds it when the status is `unknown` or `checks.format_valid` is false, which is why the response carries `credits_charged` as `0` or `1`. `status` and `checks.catchall` answer different questions: a catch-all domain whose mailbox was confirmed is `valid` while `catchall` is `true`.
+  - **Search is not lookup.** `person.search` returns profile summaries and a `teaser`, with no unlocked contact details. `company.search` returns company summaries. Unlocking a profile is a lookup, and that is the call that spends a lookup credit.
+  - **Rate limits are layered.** There is a global ceiling of 10 requests per second across every endpoint, plus a per-route, per-plan limit per minute. A `429` carries a `Retry-After` in seconds, which the plugin honours.
+  - **The universal account returns your key.** `account.universal` includes the caller's own `api_key` in its body; the plugin strips it before returning, so a credential never lands in a caller's logs or stored records.
+  - **Bulk prerequisites.** Enable a webhook for bulk lookups in RocketReach, or supply its `webhook_id`.
+  - **Paging:** `page_size` tops out at 100 and `start` at 10,000 on both searches.
+examples:
+  read:
+    path: account.get
+    title: Read the account and its credit balance
+    args: {}
+  write:
+    path: person.lookup
+    title: Look up a person by email
+    args:
+      email: john.doe@example.com
+apiExamples:
+  account.get: {}
+  account.universal: {}
+  person.lookup:
+    call: "{ email: 'john.doe@example.com', return_cached_emails: true }"
+  person.bulkLookup:
+    call: "{ queries: [{ email: 'john.doe@example.com' }, { linkedin_url: 'www.linkedin.com/in/jamesgullbrand' }], profile_list: 'Q1 prospects' }"
+  person.checkStatus:
+    call: "{ ids: [5244, 5245] }"
+  person.search:
+    call: "{ query: { current_title: ['CTO'], company_domain: ['stripe.com'] }, page_size: 20 }"
+  company.lookup:
+    call: "{ domain: 'google.com' }"
+  company.search:
+    call: "{ query: { industry: ['Internet'], employees: ['1001-5000'] }, page_size: 20 }"
+  email.verify:
+    call: "{ email: 'johndoe@google.com' }"

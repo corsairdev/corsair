@@ -1,0 +1,63 @@
+{
+  "id": 1069365,
+  "name": "corsair-plugin-test-1794490650",
+  "key": "corsair-plugin-test-1794490650",
+  "filters": {
+    "groups": [
+      {
+        "properties": [],
+        "rollout_percentage": 0,
+        "aggregation_group_type_index": null
+      }
+    ],
+    "aggregation_group_type_index": null
+  },
+  "deleted": true,
+  "active": false,
+  "archived": false,
+  "created_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "created_at": "2026-11-12T13:38:11.185612Z",
+  "updated_at": "2026-11-12T13:38:12.043392Z",
+  "version": 3,
+  "last_modified_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "ensure_experience_continuity": false,
+  "experiment_set": [],
+  "experiment_set_metadata": [],
+  "surveys": [],
+  "features": [],
+  "can_edit": true,
+  "usage_dashboard": null,
+  "analytics_dashboards": [],
+  "has_enriched_analytics": false,
+  "user_access_level": "manager",
+  "is_remote_configuration": false,
+  "has_encrypted_payloads": false,
+  "status": "DELETED",
+  "evaluation_runtime": "all",
+  "bucketing_identifier": "distinct_id",
+  "last_called_at": null,
+  "is_used_in_replay_settings": false,
+  "is_eligible_for_experiment": false,
+  "evaluation_contexts": [],
+  "tags": ["corsair-plugin-test"]
+}
