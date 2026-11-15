@@ -7,7 +7,16 @@ import type { FreshdeskContext } from './index';
 
 const apiKey = process.env.FRESHDESK_API_KEY ?? '';
 const domain = process.env.FRESHDESK_DOMAIN ?? '';
-const describeLive = apiKey && domain ? describe : describe.skip;
+const missingCredentials = [
+	...(apiKey ? [] : ['FRESHDESK_API_KEY']),
+	...(domain ? [] : ['FRESHDESK_DOMAIN']),
+];
+if (missingCredentials.length > 0) {
+	console.warn(
+		`Skipping Freshdesk live tests: set ${missingCredentials.join(' and ')}.`,
+	);
+}
+const describeLive = missingCredentials.length === 0 ? describe : describe.skip;
 
 function buildContext(): FreshdeskContext {
 	return {

@@ -16,7 +16,7 @@ description: "API reference for the Freshdesk plugin in Corsair: every `freshdes
 
 Create a Note: POST /api/v2/tickets/[ticket_id]/notes (Freshdesk API v2).
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.freshdesk.api.routes.addNoteToATicketPostNotes.run({ pathParams: { ticketId: '123' }, body: { body: 'Internal note', private: true } });
@@ -436,10 +436,10 @@ await corsair.freshdesk.api.routes.bulkDeleteTicketsPostBulkDelete.run({  });
 
 Update Multiple Tickets: POST /api/v2/tickets/bulk_update (Freshdesk API v2).
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.freshdesk.api.routes.bulkUpdateTicketsPostBulkUpdate.run({  });
+await corsair.freshdesk.api.routes.bulkUpdateTicketsPostBulkUpdate.run({ body: { bulk_action: { ids: [20, 21], properties: { status: 4 } } } });
 ```
 
 **Input**
@@ -2124,7 +2124,7 @@ Create an Outbound Email: POST /api/v2/tickets/outbound_email (Freshdesk API v2)
 **Risk:** `destructive`
 
 ```ts
-await corsair.freshdesk.api.routes.createOutboundEmailPostOutboundEmail.run({  });
+await corsair.freshdesk.api.routes.createOutboundEmailPostOutboundEmail.run({ body: { email: 'customer@example.com', subject: 'Following up on your request', description: 'Details of the follow-up', email_config_id: 1 } });
 ```
 
 **Input**
@@ -2133,7 +2133,7 @@ await corsair.freshdesk.api.routes.createOutboundEmailPostOutboundEmail.run({  }
 |------|------|----------|-------------|
 | `pathParams` | `object` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
-| `body` | `object` | No | — |
+| `body` | `object` | Yes | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -2150,8 +2150,8 @@ await corsair.freshdesk.api.routes.createOutboundEmailPostOutboundEmail.run({  }
 ```ts
 {
   name?: string | null,
-  email?: string | null,
-  subject?: string | null,
+  email: string,
+  subject: string,
   type?: string | null,
   status?: number | null,
   priority?: number | null,
@@ -2159,7 +2159,7 @@ await corsair.freshdesk.api.routes.createOutboundEmailPostOutboundEmail.run({  }
   attachments?: JsonValue[] | null,
   custom_fields?: Record<string, JsonValue> | null,
   due_by?: string | null,
-  email_config_id?: number | null,
+  email_config_id: number,
   fr_due_by?: string | null,
   group_id?: number | null,
   tags?: string[] | null,

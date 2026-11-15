@@ -3,8 +3,6 @@ description: Manage support tickets, customer records, agents, groups, knowledge
 domain: freshdesk.com
 recommendedAuth: api_key
 factory:
-  options:
-    domain: acme.freshdesk.com
   note: "Each connected account stores its own Freshdesk hostname (the `domain` field) next to its API key: `pnpm corsair setup --plugin=freshdesk --tenant=acme domain=acme.freshdesk.com`, or the connect page with Hub. Set the `domain` option only for a single-account setup; it overrides the stored value."
 overviewNote: |
   Every Freshdesk account has its own hostname (for example `acme.freshdesk.com`), so each connected account supplies it as the `domain` field with its API key; the `domain` plugin option overrides it for single-account setups. Freshdesk API v2 does not support custom CNAMEs. The API key is sent using HTTP Basic authentication with `X` as the password.
@@ -36,7 +34,7 @@ apiExamples:
   routes.createTicketPostTickets.run:
     call: "{ body: { email: 'customer@example.com', subject: 'Cannot log in', description: 'Details of the issue', status: 2, priority: 1 } }"
   routes.createOutboundEmailPostOutboundEmail.run:
-    call: "{  }"
+    call: "{ body: { email: 'customer@example.com', subject: 'Following up on your request', description: 'Details of the follow-up', email_config_id: 1 } }"
   routes.viewATicketGet.run:
     call: "{ pathParams: { id: '123' } }"
   routes.ticketAssociationGetAssociatedTickets.run:
@@ -50,7 +48,7 @@ apiExamples:
   routes.updateTicketPut.run:
     call: "{ pathParams: { id: '123' }, body: { status: 4 } }"
   routes.bulkUpdateTicketsPostBulkUpdate.run:
-    call: "{  }"
+    call: "{ body: { bulk_action: { ids: [20, 21], properties: { status: 4 } } } }"
   routes.forwardTicketsPostForward.run:
     call: "{ pathParams: { id: '123' } }"
   routes.ticketMergePutMerge.run:

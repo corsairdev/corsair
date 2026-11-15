@@ -54,9 +54,7 @@ import { freshdesk } from '@corsair-dev/freshdesk';
 
 export const corsair = createCorsair({
 	plugins: [
-		freshdesk({
-			domain: 'acme.freshdesk.com',
-		}),
+		freshdesk(),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
@@ -81,9 +79,7 @@ Store the Freshdesk API key before the first call: `pnpm corsair setup --plugin=
 Each connected account stores its own Freshdesk hostname (the `domain` field) next to its API key: `pnpm corsair setup --plugin=freshdesk --tenant=acme domain=acme.freshdesk.com`, or the connect page with Hub. Set the `domain` option only for a single-account setup; it overrides the stored value.
 
 ```ts
-freshdesk({
-	domain: 'acme.freshdesk.com',
-})
+freshdesk()
 ```
 
 More: [API Key](/concepts/api-key)
