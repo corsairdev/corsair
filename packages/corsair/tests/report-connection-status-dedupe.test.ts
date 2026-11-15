@@ -4,7 +4,7 @@ import type { HubConfig } from '../hub/types';
 
 const authStatus = {
 	authType: 'oauth_2',
-	status: 'ready',
+	status: 'ready' as 'ready' | 'not_started',
 	connected: true,
 	missingRequiredFields: [] as string[],
 };
@@ -34,15 +34,15 @@ const hub: HubConfig = {
 	signingSecret: '',
 	instanceKey: 'env_1',
 };
-const github = {
+const github: CorsairPlugin = {
 	id: 'github',
 	options: { authType: 'oauth_2' },
-} as unknown as CorsairPlugin;
+};
 
 // Fire-and-forget: let the async report path settle before asserting.
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 
-async function afterCall(
+function startCall(
 	verified: boolean,
 	extra: { tenantId?: string; hub?: HubConfig } = {},
 ) {
@@ -55,6 +55,13 @@ async function afterCall(
 		tenantId: extra.tenantId ?? 'tenant_1',
 		verified,
 	});
+}
+
+async function afterCall(
+	verified: boolean,
+	extra: { tenantId?: string; hub?: HubConfig } = {},
+) {
+	startCall(verified, extra);
 	await settle();
 }
 
@@ -65,11 +72,12 @@ describe('per-call connection reports', () => {
 		post.mockReset().mockResolvedValue({ ok: true });
 		readStatus.mockClear();
 		authStatus.status = 'ready';
+		authStatus.connected = true;
 		resetConnectionReportMemory();
 	});
 	afterEach(() => jest.useRealTimers());
 
-	it('sends the first report, then skips identical ones without reading the auth status', async () => {
+	it('sends the first report, then skips identical ones', async () => {
 		await afterCall(true);
 		await afterCall(true);
 		await afterCall(true);
@@ -80,7 +88,26 @@ describe('per-call connection reports', () => {
 			status: 'ready',
 			verified: true,
 		});
-		expect(readStatus).toHaveBeenCalledTimes(1);
+	});
+
+	it('sends one report when overlapping calls finish together', async () => {
+		startCall(true);
+		startCall(true);
+		startCall(true);
+		await settle();
+		expect(readStatus).toHaveBeenCalledTimes(3);
+		expect(post).toHaveBeenCalledTimes(1);
+	});
+
+	it('reports a disconnect that follows a refused refresh, though verified stays false', async () => {
+		await afterCall(false);
+		authStatus.status = 'not_started';
+		authStatus.connected = false;
+		await afterCall(false);
+		expect(post.mock.calls.map((c) => c[0].body.connected)).toEqual([
+			true,
+			false,
+		]);
 	});
 
 	it('reports a change at once: a call that needs auth, then one that works again', async () => {

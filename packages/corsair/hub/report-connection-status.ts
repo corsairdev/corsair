@@ -105,10 +105,7 @@ export async function registerHubWebhookTenantLink(
 // key saved, webhook link) always go out, and count as the last one sent.
 export const REPORT_REFRESH_MS = 10 * 60 * 1000;
 const MAX_REMEMBERED = 5000;
-const lastSent = new Map<
-	string,
-	{ fingerprint: string; verified: boolean; at: number }
->();
+const lastSent = new Map<string, { fingerprint: string; at: number }>();
 
 function connectionKey(
 	hub: HubConfig,
@@ -143,7 +140,6 @@ function remember(key: string, body: ReportConnectionStatusInput): void {
 	}
 	lastSent.set(key, {
 		fingerprint: fingerprintOf(body),
-		verified: body.verified,
 		at: Date.now(),
 	});
 }
@@ -207,21 +203,10 @@ async function reportPluginConnectionStatusFromBindingAsync(input: {
 	}
 
 	const effectiveTenantId = input.tenantId?.trim() || 'default';
-	const prior = lastSent.get(
-		connectionKey(input.hub, effectiveTenantId, input.plugin.id),
-	);
-	const fresh =
-		prior !== undefined && Date.now() - prior.at < REPORT_REFRESH_MS;
-	// The call ended the way the last report said (worked, or needs auth):
-	// nothing new for Hub, so skip reading the auth status as well.
-	if (
-		fresh &&
-		input.verified !== undefined &&
-		prior.verified === input.verified
-	) {
-		return;
-	}
-
+	// Always read the stored status: a matching `verified` does not mean the
+	// connection is unchanged (e.g. a refused refresh, then a disconnect, both
+	// report verified: false while `connected` flips), and credentials can
+	// change in another process, so an in-memory invalidation would miss it.
 	const authStatus = await getPluginAuthStatus(
 		internal,
 		input.plugin,
@@ -240,7 +225,17 @@ async function reportPluginConnectionStatusFromBindingAsync(input: {
 		verified: input.verified ?? authStatus.connected,
 		missingFields: authStatus.missingRequiredFields,
 	});
-	if (fresh && prior.fingerprint === fingerprintOf(body)) {
+	// Read the last report only after the await, and decide and send without
+	// yielding: overlapping calls that finish together then see the report the
+	// first of them just sent, instead of each sending the same one.
+	const prior = lastSent.get(
+		connectionKey(input.hub, effectiveTenantId, input.plugin.id),
+	);
+	if (
+		prior !== undefined &&
+		Date.now() - prior.at < REPORT_REFRESH_MS &&
+		prior.fingerprint === fingerprintOf(body)
+	) {
 		return;
 	}
 	sendReport(input.hub, body);
