@@ -1,5 +1,6 @@
 displayName: Google Classroom
 description: Manage Google Classroom courses, rosters, classwork, submissions, add-ons, guardian links, and notification registrations.
+domain: classroom.google.com
 recommendedAuth: oauth_2
 overviewNote: |
   This plugin uses Google OAuth 2.0 access tokens. The default consent request uses the narrowest 10-scope set that covers all stable operations; set the plugin's oauthScopes option to an even smaller supported set when a deployment enables only selected operations. Enable the Google Classroom API in the Google Cloud project and complete Google's OAuth app verification where required.

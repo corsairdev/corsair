@@ -2,3 +2,4 @@
 # `pnpm validate:plugins` fails until the TODO is replaced.
 displayName: "PDF-API.io"
 description: PDF generation API that renders designer and HTML templates into PDF documents and merges multiple templates.
+domain: pdf-api.io
