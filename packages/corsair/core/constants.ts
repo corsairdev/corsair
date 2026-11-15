@@ -303,6 +303,7 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'googleslides',
+	'googletasks',
 	'gorgias',
 	'grafana',
 	'griptape',
@@ -884,6 +885,7 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	googleslides: 'Google Slides',
+	googletasks: 'Google Tasks',
 	gorgias: 'Gorgias',
 	grafana: 'Grafana',
 	griptape: 'Griptape',
@@ -1472,6 +1474,7 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'googleslides'
+	| 'googletasks'
 	| 'gorgias'
 	| 'grafana'
 	| 'griptape'
