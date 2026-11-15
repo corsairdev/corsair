@@ -282,21 +282,75 @@ it('encodes valid path slugs', async () => {
 		'https://api.minerstat.com/v3/hardware/a%20b',
 	);
 });
-it('preserves rate limit error and retry-after without retry', async () => {
+const rateLimited = (retryAfter: string) =>
+	new Response(
+		JSON.stringify({ error: { code: 'rate_limited', message: 'Slow down' } }),
+		{
+			status: 429,
+			headers: {
+				'Content-Type': 'application/json',
+				'Retry-After': retryAfter,
+			},
+		},
+	);
+it('retries a 429 after Retry-After and returns the next response', async () => {
+	jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+	try {
+		fetchMock.mockResolvedValueOnce(rateLimited('5')).mockResolvedValueOnce(
+			new Response(JSON.stringify(paged([coin])), {
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		const pending = api.coins.list({});
+		await jest.advanceTimersByTimeAsync(5000);
+		await expect(pending).resolves.toEqual(paged([coin]));
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	} finally {
+		jest.useRealTimers();
+	}
+});
+it('preserves the rate limit error and retry-after once core retries run out', async () => {
+	jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+	try {
+		for (let i = 0; i < 4; i++)
+			fetchMock.mockResolvedValueOnce(rateLimited('5'));
+		const pending = api.coins.list({}).catch((caught) => caught);
+		await jest.advanceTimersByTimeAsync(20000);
+		await expect(pending).resolves.toMatchObject({
+			status: 429,
+			retryAfter: 5000,
+			body: { error: { code: 'rate_limited', message: 'Slow down' } },
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(4);
+	} finally {
+		jest.useRealTimers();
+	}
+});
+it('accepts hardware and coin types minerstat adds later', async () => {
 	fetchMock.mockResolvedValueOnce(
 		new Response(
-			JSON.stringify({ error: { code: 'rate_limited', message: 'Slow down' } }),
-			{
-				status: 429,
-				headers: { 'Content-Type': 'application/json', 'Retry-After': '5' },
-			},
+			JSON.stringify(
+				paged([
+					{
+						slug: 'npu',
+						manufacturer: 'Acme',
+						model: 'N1',
+						type: 'NPU',
+						powerWatts: null,
+						releaseDate: null,
+					},
+				]),
+			),
+			{ headers: { 'Content-Type': 'application/json' } },
 		),
 	);
-	await expect(api.coins.list({})).rejects.toMatchObject({
-		status: 429,
-		retryAfter: 5000,
-		body: { error: { code: 'rate_limited', message: 'Slow down' } },
+	await expect(api.hardware.list({})).resolves.toMatchObject({
+		results: [{ type: 'NPU' }],
 	});
+	// Inputs stay strict; `unknown` casts past the input type to send an undocumented value.
+	await expect(
+		api.hardware.list({ type: 'NPU' as unknown as 'GPU' }),
+	).rejects.toBeDefined();
 	expect(fetchMock).toHaveBeenCalledTimes(1);
 });
 it('sends the API key without exposing it in provider errors', async () => {
@@ -331,4 +385,60 @@ it('rejects malformed responses and missing credentials', async () => {
 	} finally {
 		if (previous !== undefined) process.env.MINERSTAT_API_KEY = previous;
 	}
+});
+it('parses trimmed live responses from the free plan', async () => {
+	// Captured 2026-11-15 from api.minerstat.com on a free-plan key.
+	const history = {
+		generatedAt: '2026-11-15T03:23:48.480Z',
+		dataUpdatedAt: null,
+		coin: 'btc',
+		symbol: 'BTC',
+		offset: 0,
+		limit: 1,
+		count: 1,
+		results: [
+			{
+				t: '2026-11-15T03:19:05.063Z',
+				difficulty: 134823837323272,
+				networkHashrate: 985213007958652500000,
+				priceUsd: 65359.68235733015,
+				revenueUsdPerHashPerDay: 3.18377441251607e-14,
+			},
+		],
+		notice:
+			'Responses are limited to 20 results on the Free plan. Upgrade at https://minerstat.com/developers/billing for full access.',
+	};
+	const pool = {
+		generatedAt: '2026-11-15T03:24:04.285Z',
+		dataUpdatedAt: null,
+		pool: {
+			slug: 'f2pool',
+			name: 'F2Pool',
+			website: 'https://f2pool.com',
+			type: 'pool',
+			founded: '2013',
+			coins: [
+				{
+					coin: 'btc',
+					symbol: 'BTC',
+					algorithm: 'sha-256',
+					fee: 0.025,
+					payoutScheme: 'PPS+',
+					minPayout: 0.005,
+					apiStatus: 'healthy',
+				},
+			],
+		},
+	};
+	for (const body of [history, pool]) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+	await expect(api.coins.history({ slug: 'btc', limit: 1 })).resolves.toEqual(
+		history,
+	);
+	await expect(api.pools.get({ slug: 'f2pool' })).resolves.toEqual(pool);
 });
