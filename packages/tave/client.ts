@@ -52,6 +52,23 @@ function readErrorMessage(body: unknown): string | undefined {
 }
 
 /** True when the body is a document rather than the API's JSON. */
+/**
+ * VSCO Workspace labels JSON answers `text/html` (seen on its 401s), and core
+ * parses only JSON content types, so a JSON object or array that arrives as
+ * text is parsed here. HTML and other text are left as they are.
+ * unknown: the body is whatever core resolved.
+ */
+export function parseJsonText(body: unknown): unknown {
+	if (typeof body !== 'string') return body;
+	const text = body.trim();
+	if (!text.startsWith('{') && !text.startsWith('[')) return body;
+	try {
+		return JSON.parse(text);
+	} catch {
+		return body;
+	}
+}
+
 function looksLikeHtml(body: unknown): boolean {
 	return typeof body === 'string' && /^\s*<(!doctype|html)/i.test(body);
 }
@@ -66,7 +83,7 @@ export function describeTaveError(
 		// A 200 with the docs page means the path is not an API route.
 		return `VSCO Workspace answered HTML instead of JSON for a path that is not an API route (status ${status ?? 200}).`;
 	}
-	const text = readErrorMessage(body) ?? fallback;
+	const text = readErrorMessage(parseJsonText(body)) ?? fallback;
 	return status === undefined ? text : `VSCO Workspace ${status}: ${text}`;
 }
 
@@ -120,7 +137,9 @@ export async function makeTaveRequest(
 		// unknown: the response shape is the endpoint's concern; the caller
 		// parses it with its zod output schema.
 		// Core's default config retries a 429 three times (R8).
-		const response = await request<unknown>(config, requestOptions);
+		const response = parseJsonText(
+			await request<unknown>(config, requestOptions),
+		);
 		// A route that does not exist answers 200 with the docs page, so an HTML
 		// body has to become an error rather than a record.
 		if (looksLikeHtml(response)) {
@@ -173,7 +192,7 @@ function toTaveApiError(error: ApiError): ApiError {
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			body: error.body,
+			body: parseJsonText(error.body),
 		},
 		describeTaveError(error.status, error.body, error.message),
 		{

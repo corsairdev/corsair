@@ -592,4 +592,29 @@ describe('path ids and sent data', () => {
 		expect(error.request.body).toBeUndefined();
 		expect(JSON.stringify(error)).not.toContain('555-0100');
 	});
+
+	it('reads a JSON answer that VSCO labels text/html', async () => {
+		// Seen live: the 401 body is JSON sent as text/html.
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({ error: true, status: 401, message: 'Unauthorized' }),
+				{
+					status: 401,
+					headers: { 'Content-Type': 'text/html; charset=UTF-8' },
+				},
+			),
+		);
+		const error = await rejection(invoke(Jobs.get, { jobId: job.id }));
+		expect(error.body).toMatchObject({ status: 401, message: 'Unauthorized' });
+		expect(error.message).toBe('VSCO Workspace 401: Unauthorized');
+
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(job), {
+				status: 200,
+				headers: { 'Content-Type': 'text/html; charset=UTF-8' },
+			}),
+		);
+		const read = await invoke(Jobs.get, { jobId: job.id });
+		expect(read.id).toBe(job.id);
+	});
 });
