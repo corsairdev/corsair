@@ -1,0 +1,67 @@
+displayName: Ninox
+description: Read a Ninox workspace and its modules, list tables and their fields, and read, create, update, upsert and delete records, with a row-level change feed for tables that track history.
+domain: ninox.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a workspace API key in the Ninox app under **Workspace Integration**. Each key is scoped to one workspace and grants access to that workspace only, and some routes need a specific grant on the key, which shows up as a 403 rather than a bad-key error.
+
+  The workspace id is the twelve-character lowercase code in the workspace, which is a required input on every call because the API has no "current workspace" notion.
+
+  What to know:
+
+  - **Names, not ids, address modules and tables.** A module or table is addressed by its name, so a rename breaks a stored name. The plugin percent-encodes the segment, because a name can hold a space or an ampersand.
+  - **A record is `{ id, values }`.** `values` is keyed by the table's own field names, and each cell is a string, number, boolean or null, never a nested object. `fields.list` gives the names and types a write must use.
+  - **Dates, numbers and choices have their own cell rules.** A `date`, `timestamp` or `appointment` takes an ISO 8601 string or a Unix millisecond value. A `number` takes a finite number or a numeric string. A `boolean` takes only `true` or `false`, not `1` or `0`. A `choice` or `multi` takes an option id or label, and reads back as the option id.
+  - **Writes are transactional across the batch.** A create, update or delete applies to every record or none: one bad record rolls the whole set back. So a batch that succeeds reported every id.
+  - **`_expected` protects a concurrent edit.** Put the values you read into `_expected` on an update, and if one changed since, Ninox answers 409 instead of overwriting. `override: true` skips that check.
+  - **The change feed needs history tracking.** `records.changes` answers 400 on a table that does not track history. It returns `meta.asOf`; pass that back as `since` on the next poll so nothing falls between two polls, and pass the first page's `asOf` as `asOf` while paging one poll.
+  - **A 409 can also be an ambiguous upsert.** When more than one row holds the `matchField` value, Ninox refuses rather than picking one, so `matchField` must be a field marked unique.
+
+  The route quirk worth knowing: a single record is `record/{id}` while the collection is `records`, and the delete takes its ids in a `{ records: [...] }` body rather than a bare array. The plugin handles both.
+examples:
+  read:
+    path: records.list
+    title: Read two rows from a table
+    args:
+      workspaceId: abcdefghijkl
+      moduleName: CRM
+      tableName: Contacts
+      limit: 2
+  write:
+    path: records.create
+    title: Create a contact
+    args:
+      workspaceId: abcdefghijkl
+      moduleName: CRM
+      tableName: Contacts
+      records:
+        - Name: Dana Okafor
+          Email: dana@northwind.example
+apiExamples:
+  workspace.get:
+    call: "{ workspaceId: 'abcdefghijkl' }"
+  modules.list:
+    call: "{ workspaceId: 'abcdefghijkl', limit: 20 }"
+  tables.list:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM' }"
+  fields.list:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts' }"
+  records.list:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', filter: '{\"Email\":\"dana@northwind.example\"}', limit: 10 }"
+  records.get:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', recordId: 12 }"
+  records.create:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', records: [{ Name: 'Dana Okafor', Email: 'dana@northwind.example' }] }"
+  records.update:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', records: [{ id: 12, Name: 'Dana O.' }] }"
+  records.delete:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', recordIds: [12, 13] }"
+  records.upsert:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', matchField: 'Email', records: [{ Email: 'dana@northwind.example', Name: 'Dana Okafor' }] }"
+  records.changes:
+    call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', since: '2026-11-16T09:00:00Z' }"
+apiNotes:
+  records.list: 'filter is a JSON string, and only columns the table marks filterable are accepted.'
+  records.update: 'Put values you read into _expected; a mismatch answers 409 unless override is true.'
+  records.changes: 'Needs history tracking on the table, which otherwise answers 400. Pass meta.asOf back as since on the next poll.'
+  records.upsert: 'matchField must be a field marked unique; an ambiguous match answers 409 rather than picking a row.'
