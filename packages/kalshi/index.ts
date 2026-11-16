@@ -77,6 +77,7 @@ export type KalshiEndpoints = {
 	marketsGet: KalshiEndpoint<'marketsGet'>;
 	marketsOrderbook: KalshiEndpoint<'marketsOrderbook'>;
 	marketsTrades: KalshiEndpoint<'marketsTrades'>;
+	marketsCandlesticks: KalshiEndpoint<'marketsCandlesticks'>;
 	eventsList: KalshiEndpoint<'eventsList'>;
 	eventsGet: KalshiEndpoint<'eventsGet'>;
 	seriesList: KalshiEndpoint<'seriesList'>;
@@ -103,6 +104,7 @@ const kalshiEndpointsNested = {
 		get: Markets.get,
 		orderbook: Markets.orderbook,
 		trades: Markets.trades,
+		candlesticks: Markets.candlesticks,
 	},
 	events: {
 		list: Events.list,
@@ -152,6 +154,10 @@ export const kalshiEndpointSchemas = {
 	'markets.trades': {
 		input: KalshiEndpointInputSchemas.marketsTrades,
 		output: KalshiEndpointOutputSchemas.marketsTrades,
+	},
+	'markets.candlesticks': {
+		input: KalshiEndpointInputSchemas.marketsCandlesticks,
+		output: KalshiEndpointOutputSchemas.marketsCandlesticks,
 	},
 	'events.list': {
 		input: KalshiEndpointInputSchemas.eventsList,
@@ -239,6 +245,11 @@ const kalshiEndpointMeta = {
 	'markets.trades': {
 		riskLevel: 'read',
 		description: 'List recent trades, optionally for one market',
+	},
+	'markets.candlesticks': {
+		riskLevel: 'read',
+		description:
+			'Get OHLC candlesticks for a market over a time range, by minute, hour or day',
 	},
 	'events.list': {
 		riskLevel: 'read',
@@ -403,6 +414,8 @@ export type {
 	ExchangeStatusResponse,
 	KalshiEndpointInputs,
 	KalshiEndpointOutputs,
+	MarketsCandlesticksInput,
+	MarketsCandlesticksResponse,
 	MarketsGetInput,
 	MarketsGetResponse,
 	MarketsListInput,

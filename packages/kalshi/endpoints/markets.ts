@@ -87,9 +87,40 @@ export const trades: KalshiEndpoints['marketsTrades'] = async (ctx, input) => {
 	return KalshiEndpointOutputSchemas.marketsTrades.parse(response);
 };
 
+export const candlesticks: KalshiEndpoints['marketsCandlesticks'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = KalshiEndpointInputSchemas.marketsCandlesticks.parse(input);
+	if (!ctx.key) {
+		throw new AuthMissingError('kalshi', 'api_key');
+	}
+	const response = await makeKalshiRequest(
+		`/series/${encodeURIComponent(parsed.series_ticker)}/markets/${encodeURIComponent(parsed.ticker)}/candlesticks`,
+		ctx.key,
+		{
+			method: 'GET',
+			query: {
+				start_ts: parsed.start_ts,
+				end_ts: parsed.end_ts,
+				period_interval: parsed.period_interval,
+			},
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'kalshi.markets.candlesticks',
+		{ ...parsed },
+		'completed',
+	);
+	return KalshiEndpointOutputSchemas.marketsCandlesticks.parse(response);
+};
+
 export const Markets = {
 	list,
 	get,
 	orderbook,
 	trades,
+	candlesticks,
 } as const;

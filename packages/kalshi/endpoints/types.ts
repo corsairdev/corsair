@@ -241,6 +241,53 @@ const MarketsTradesResponseSchema = z.object({
 });
 export type MarketsTradesResponse = z.infer<typeof MarketsTradesResponseSchema>;
 
+const MarketsCandlesticksInputSchema = z.object({
+	series_ticker: z.string().min(1),
+	ticker: z.string().min(1),
+	/** Unix seconds; returns candlesticks ending on or after this time. */
+	start_ts: z.number().int(),
+	/** Unix seconds; returns candlesticks ending on or before this time. */
+	end_ts: z.number().int(),
+	/** Candlestick length in minutes: 1 (minute), 60 (hour) or 1440 (day). */
+	period_interval: z.union([z.literal(1), z.literal(60), z.literal(1440)]),
+});
+export type MarketsCandlesticksInput = z.infer<
+	typeof MarketsCandlesticksInputSchema
+>;
+const CandlestickBidAskSchema = z.looseObject({
+	open_dollars: z.string(),
+	low_dollars: z.string(),
+	high_dollars: z.string(),
+	close_dollars: z.string(),
+});
+/** Trade prices are null for a period in which nothing traded. */
+const CandlestickPriceSchema = z.looseObject({
+	open_dollars: z.string().nullable().optional(),
+	low_dollars: z.string().nullable().optional(),
+	high_dollars: z.string().nullable().optional(),
+	close_dollars: z.string().nullable().optional(),
+	mean_dollars: z.string().nullable().optional(),
+	previous_dollars: z.string().nullable().optional(),
+	min_dollars: z.string().nullable().optional(),
+	max_dollars: z.string().nullable().optional(),
+});
+const MarketsCandlesticksResponseSchema = z.object({
+	ticker: z.string(),
+	candlesticks: z.array(
+		z.looseObject({
+			end_period_ts: z.number().int(),
+			yes_bid: CandlestickBidAskSchema,
+			yes_ask: CandlestickBidAskSchema,
+			price: CandlestickPriceSchema,
+			volume_fp: z.string(),
+			open_interest_fp: z.string(),
+		}),
+	),
+});
+export type MarketsCandlesticksResponse = z.infer<
+	typeof MarketsCandlesticksResponseSchema
+>;
+
 // ── events ──────────────────────────────────────────────────────────────────
 
 const EventsListInputSchema = z.object({
@@ -475,6 +522,7 @@ export type KalshiEndpointInputs = {
 	marketsGet: MarketsGetInput;
 	marketsOrderbook: MarketsOrderbookInput;
 	marketsTrades: MarketsTradesInput;
+	marketsCandlesticks: MarketsCandlesticksInput;
 	eventsList: EventsListInput;
 	eventsGet: EventsGetInput;
 	seriesList: SeriesListInput;
@@ -498,6 +546,7 @@ export type KalshiEndpointOutputs = {
 	marketsGet: MarketsGetResponse;
 	marketsOrderbook: MarketsOrderbookResponse;
 	marketsTrades: MarketsTradesResponse;
+	marketsCandlesticks: MarketsCandlesticksResponse;
 	eventsList: EventsListResponse;
 	eventsGet: EventsGetResponse;
 	seriesList: SeriesListResponse;
@@ -521,6 +570,7 @@ export const KalshiEndpointInputSchemas = {
 	marketsGet: MarketsGetInputSchema,
 	marketsOrderbook: MarketsOrderbookInputSchema,
 	marketsTrades: MarketsTradesInputSchema,
+	marketsCandlesticks: MarketsCandlesticksInputSchema,
 	eventsList: EventsListInputSchema,
 	eventsGet: EventsGetInputSchema,
 	seriesList: SeriesListInputSchema,
@@ -544,6 +594,7 @@ export const KalshiEndpointOutputSchemas = {
 	marketsGet: MarketsGetResponseSchema,
 	marketsOrderbook: MarketsOrderbookResponseSchema,
 	marketsTrades: MarketsTradesResponseSchema,
+	marketsCandlesticks: MarketsCandlesticksResponseSchema,
 	eventsList: EventsListResponseSchema,
 	eventsGet: EventsGetResponseSchema,
 	seriesList: SeriesListResponseSchema,

@@ -20,7 +20,7 @@ describe('Kalshi operation risk levels', () => {
 		const others = Object.entries(meta)
 			.filter(([op]) => !op.startsWith('orders.') || /\.(list|get)$/.test(op))
 			.map(([, entry]) => (entry as { riskLevel?: string }).riskLevel);
-		expect(others.length).toBe(16);
+		expect(others.length).toBe(17);
 		expect(new Set(others)).toEqual(new Set(['read']));
 	});
 });

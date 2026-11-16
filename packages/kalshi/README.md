@@ -16,6 +16,7 @@ pnpm add @corsair-dev/kalshi
 | `events.list` | `kalshi.api.events.list` | `read` | List events with filters and cursor pagination |
 | `exchange.schedule` | `kalshi.api.exchange.schedule` | `read` | Get the exchange trading schedule and maintenance windows |
 | `exchange.status` | `kalshi.api.exchange.status` | `read` | Get whether the exchange and trading are currently active |
+| `markets.candlesticks` | `kalshi.api.markets.candlesticks` | `read` | Get OHLC candlesticks for a market over a time range, by minute, hour or day |
 | `markets.get` | `kalshi.api.markets.get` | `read` | Get a market by ticker, including its price ranges |
 | `markets.list` | `kalshi.api.markets.list` | `read` | List markets with filters and cursor pagination |
 | `markets.orderbook` | `kalshi.api.markets.orderbook` | `read` | Get the order book for a market |

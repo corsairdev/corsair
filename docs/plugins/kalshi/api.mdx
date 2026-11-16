@@ -267,6 +267,76 @@ await corsair.kalshi.api.exchange.status({});
 
 ## Markets
 
+### candlesticks
+
+`markets.candlesticks`
+
+Get OHLC candlesticks for a market over a time range, by minute, hour or day
+
+**Risk:** `read`
+
+```ts
+await corsair.kalshi.api.markets.candlesticks({ series_ticker: 'KXHIGHNY', ticker: 'KXHIGHNY-26NOV12-T60', start_ts: 1762848000, end_ts: 1762934400, period_interval: 60 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `series_ticker` | `string` | Yes | — |
+| `ticker` | `string` | Yes | — |
+| `start_ts` | `number` | Yes | — |
+| `end_ts` | `number` | Yes | — |
+| `period_interval` | `1 \| 60 \| 1440` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `candlesticks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="candlesticks full type">
+
+```ts
+{
+  end_period_ts: number,
+  yes_bid: {
+    open_dollars: string,
+    low_dollars: string,
+    high_dollars: string,
+    close_dollars: string
+  },
+  yes_ask: {
+    open_dollars: string,
+    low_dollars: string,
+    high_dollars: string,
+    close_dollars: string
+  },
+  price: {
+    open_dollars?: string | null,
+    low_dollars?: string | null,
+    high_dollars?: string | null,
+    close_dollars?: string | null,
+    mean_dollars?: string | null,
+    previous_dollars?: string | null,
+    min_dollars?: string | null,
+    max_dollars?: string | null
+  },
+  volume_fp: string,
+  open_interest_fp: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### get
 
 `markets.get`

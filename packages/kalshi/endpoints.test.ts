@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { AuthMissingError } from 'corsair/core';
 import type { KalshiContext } from '.';
-import { serializeKalshiCredentials } from './client';
+import { KalshiAPIError, serializeKalshiCredentials } from './client';
 import { Events } from './endpoints/events';
 import { Exchange } from './endpoints/exchange';
 import { Markets } from './endpoints/markets';
@@ -260,6 +260,119 @@ describe('Kalshi endpoints', () => {
 				query: { ticker: market.ticker, limit: 1 },
 			});
 			expect(result.trades[0]?.count_fp).toBe('3.00');
+		});
+
+		describe('candlesticks', () => {
+			const input = {
+				series_ticker: 'KXHIGHNY',
+				ticker: market.ticker,
+				start_ts: 1762848000,
+				end_ts: 1762934400,
+				period_interval: 60 as const,
+			};
+			const bidAsk = {
+				open_dollars: '0.5500',
+				low_dollars: '0.5400',
+				high_dollars: '0.5700',
+				close_dollars: '0.5600',
+			};
+
+			it('calls GET /series/:series/markets/:ticker/candlesticks', async () => {
+				mockRequest.mockResolvedValueOnce({
+					ticker: market.ticker,
+					candlesticks: [
+						{
+							end_period_ts: 1762851600,
+							yes_bid: bidAsk,
+							yes_ask: bidAsk,
+							price: {
+								open_dollars: '0.5500',
+								close_dollars: '0.5600',
+								previous_dollars: null,
+							},
+							volume_fp: '12.00',
+							open_interest_fp: '40.00',
+						},
+						{
+							end_period_ts: 1762855200,
+							yes_bid: bidAsk,
+							yes_ask: bidAsk,
+							// A period with no trades has null trade prices.
+							price: { open_dollars: null, close_dollars: null },
+							volume_fp: '0.00',
+							open_interest_fp: '40.00',
+						},
+					],
+				});
+
+				const result = await Markets.candlesticks(ctx, input);
+
+				expect(sent()).toMatchObject({
+					method: 'GET',
+					url: `/series/KXHIGHNY/markets/${market.ticker}/candlesticks`,
+					query: {
+						start_ts: input.start_ts,
+						end_ts: input.end_ts,
+						period_interval: 60,
+					},
+				});
+				expect(result.ticker).toBe(market.ticker);
+				expect(result.candlesticks).toHaveLength(2);
+				expect(result.candlesticks[0]?.price.close_dollars).toBe('0.5600');
+				expect(result.candlesticks[1]?.price.open_dollars).toBeNull();
+				expect(mockLog).toHaveBeenCalledWith(
+					ctx,
+					'kalshi.markets.candlesticks',
+					input,
+					'completed',
+				);
+			});
+
+			it('URL-encodes both tickers', async () => {
+				mockRequest.mockResolvedValueOnce({ ticker: 'A B', candlesticks: [] });
+
+				await Markets.candlesticks(ctx, {
+					...input,
+					series_ticker: 'S/1',
+					ticker: 'A B',
+				});
+
+				expect(sent().url).toBe('/series/S%2F1/markets/A%20B/candlesticks');
+			});
+
+			it('rejects a period_interval Kalshi does not define', async () => {
+				await expect(
+					Markets.candlesticks(ctx, { ...input, period_interval: 5 as never }),
+				).rejects.toThrow();
+				expect(mockRequest).not.toHaveBeenCalled();
+			});
+
+			it('rejects a missing time range', async () => {
+				const { end_ts: _end, ...withoutEnd } = input;
+				await expect(
+					Markets.candlesticks(ctx, withoutEnd as never),
+				).rejects.toThrow();
+				expect(mockRequest).not.toHaveBeenCalled();
+			});
+
+			it('surfaces an API error as a KalshiAPIError and logs nothing', async () => {
+				mockRequest.mockRejectedValueOnce(new Error('Not found'));
+
+				const error = await Markets.candlesticks(ctx, input).catch(
+					(e: unknown) => e,
+				);
+
+				expect(error).toBeInstanceOf(KalshiAPIError);
+				expect((error as Error).message).toBe('Not found');
+				expect(mockLog).not.toHaveBeenCalled();
+			});
+
+			it('refuses to run without a key', async () => {
+				await expect(
+					Markets.candlesticks(noKeyCtx, input),
+				).rejects.toBeInstanceOf(AuthMissingError);
+				expect(mockRequest).not.toHaveBeenCalled();
+			});
 		});
 	});
 

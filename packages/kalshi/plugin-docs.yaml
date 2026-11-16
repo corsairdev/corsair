@@ -25,6 +25,8 @@ apiExamples:
     call: "{ ticker: 'KXHIGHNY-26NOV12-T60' }"
   markets.orderbook:
     call: "{ ticker: 'KXHIGHNY-26NOV12-T60', depth: 10 }"
+  markets.candlesticks:
+    call: "{ series_ticker: 'KXHIGHNY', ticker: 'KXHIGHNY-26NOV12-T60', start_ts: 1762848000, end_ts: 1762934400, period_interval: 60 }"
   series.get:
     call: "{ series_ticker: 'KXHIGHNY' }"
   orders.get:
