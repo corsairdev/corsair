@@ -7,12 +7,12 @@ overviewNote: |
 
   Things to know:
 
-  - **Paging is offset based.** `limit` caps at 100 and `offset` skips within the result set; `summary.numResults` is the total available, not the size of this page.
+  - **Paging is offset based.** `limit` caps at 100 and `offset` skips within the result set; `summary.totalResults` is the total available; `summary.numResults` is the size of this page.
   - **A search with no matches is a success.** TomTom answers 200 with an empty `results` array, so check the array rather than the status.
   - **`radius` needs a point.** A radius without `lat` and `lon` is rejected before the request, because the API ignores it otherwise.
   - **Routes take coordinates, not addresses.** Geocode first, then pass the resulting positions. `origins` and `destinations` each accept several waypoints, joined with colons in the path.
-  - **Traffic needs a bounding box.** `traffic.incidents` takes `minLon,minLat,maxLon,maxLat`; the whole world is `-180,-90,180,90`. An inverted box is rejected here rather than at the provider.
-  - **Tiles are images, not JSON.** `traffic.tile` returns a PNG body; the incidents layer has no style segment in its path.
+  - **Traffic needs a bounding box.** `traffic.incidents` takes `minLon,minLat,maxLon,maxLat` covering at most 10,000 km², such as `4.88,52.36,4.92,52.39` for central Amsterdam. An inverted box is rejected here rather than at the provider.
+  - **Tiles are images, not JSON.** `traffic.tile` returns `{ content_type, base64 }`: the PNG bytes base64-encoded. Both layers take a style in the path (`style` for flow, `incident_style` for incidents).
   - **A 403 is a plan limit.** The key is valid but does not cover the product or the region, so the plugin does not retry it.
 examples:
   read:
@@ -50,8 +50,8 @@ apiExamples:
   traffic.tile:
     call: "{ layer: 'flow', style: 'relative-delay', zoom: 12, x: 2100, y: 1350 }"
 apiNotes:
-  search.fuzzy: '`radius` needs both `lat` and `lon`. `limit` caps at 100, and `summary.numResults` is the total, not the page size.'
-  search.geocode: 'The query goes in the path, so a full address works but should be URL-encoded by the caller if it contains reserved characters.'
+  search.fuzzy: '`radius` needs both `lat` and `lon`. `limit` caps at 100. `summary.totalResults` is the total match count and `summary.numResults` the size of this page.'
+  search.geocode: 'The query goes in the path. Pass the address as plain text; the plugin encodes it.'
   routing.calculate: 'Waypoints are joined in the path, origins then destinations. `depart_at` uses future traffic when `traffic` is on.'
-  traffic.incidents: 'The bounding box is minLon,minLat,maxLon,maxLat. `category_filter` is the sum of the category numbers you want.'
-  traffic.tile: 'The flow layer names a style in the path; the incidents layer has no style segment.'
+  traffic.incidents: 'The bounding box is minLon,minLat,maxLon,maxLat. The box may cover at most 10,000 km². `category_filter` is a list of category numbers, such as [1, 6] for Accident and Jam, and `time_validity_filter` takes present, future or both.'
+  traffic.tile: 'Returns the PNG as base64. The flow layer defaults to the relative style and the incidents layer to s3.'
