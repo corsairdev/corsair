@@ -823,6 +823,22 @@ describe('Mistral AI input checks', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('refuses a voice sample or reference audio that is not base64 before calling Mistral', async () => {
+		await expect(
+			client.corsair.mistralai.api.voices.create({
+				name: 'Narrator',
+				sample_audio: 'not base64!',
+			}),
+		).rejects.toThrow('sample_audio is not valid base64');
+		await expect(
+			client.corsair.mistralai.api.audio.speech({
+				input: 'hi',
+				ref_audio: 'not base64!',
+			}),
+		).rejects.toThrow('ref_audio is not valid base64');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('sends a transcription by URL without a file part', async () => {
 		fetchMock.mockResolvedValueOnce(
 			jsonResponse({

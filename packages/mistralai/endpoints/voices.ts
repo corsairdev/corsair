@@ -1,5 +1,5 @@
 import type { MistralAiEndpoints } from '../index';
-import { callMistralAi } from './shared';
+import { callMistralAi, decodeBase64 } from './shared';
 import {
 	MistralAiEndpointInputSchemas,
 	MistralAiEndpointOutputSchemas,
@@ -30,6 +30,8 @@ export const create: MistralAiEndpoints['voicesCreate'] = async (
 	rawInput,
 ) => {
 	const input = MistralAiEndpointInputSchemas.voicesCreate.parse(rawInput);
+	// Checked only: malformed base64 is refused before anything is sent.
+	if (input.sample_audio) decodeBase64(input.sample_audio, 'sample_audio');
 	return callMistralAi(ctx, '/v1/audio/voices', {
 		method: 'POST',
 		body: input,
