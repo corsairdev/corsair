@@ -179,9 +179,12 @@ describe('widgets.userStats', () => {
 		await expect(
 			// Cast past the type: the point is that the schema refuses a missing
 			// user at runtime for a caller passing untyped input.
-			endpoints.widgets.userStats(makeContext() as never, {
-				widgetKey: WIDGET_KEY,
-			} as never),
+			endpoints.widgets.userStats(
+				makeContext() as never,
+				{
+					widgetKey: WIDGET_KEY,
+				} as never,
+			),
 		).rejects.toThrow();
 	});
 });
