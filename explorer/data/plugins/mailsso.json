@@ -1,0 +1,430 @@
+{
+  "id": "mailsso",
+  "displayName": "Mails.so",
+  "description": "Email address validation with Mails.so - check one address for deliverability, start a batch validation job for a list, and read the job back with its per-address results.",
+  "npmPackageName": "@corsair-dev/mailsso",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mailsso.api.validations.batch",
+      "shortPath": "validations.batch",
+      "description": "Start a batch validation job for at least 2 different email addresses; Mails.so documents it as paid-plan only, but a free account with credits ran batches in our test, and an account without access gets MailssoSubscriptionRequiredError. The job cannot be deleted through the API. It returns the job at once with no results: follow it with validations.getBatch until status is completed (it reads processing meanwhile).",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "validations.getBatch",
+          "idArg": "id",
+          "statusPath": "status",
+          "done": ["completed"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]",
+            "description": "The addresses to validate. Mails.so refuses a batch with fewer than 2 different addresses (use validations.single for one)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the batch job"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name of the batch job, often empty"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string",
+            "description": "When the job was created, ISO 8601"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string",
+            "description": "When the job last changed, ISO 8601"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the job was deleted, if it was"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the job finished; null while it is still running"
+          },
+          {
+            "key": "archived_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the job was archived, if it was"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the account that started the job"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number",
+            "description": "Number of addresses in the batch"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number | null",
+            "description": "Progress counter reported by Mails.so"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null",
+            "description": "How long the job took"
+          },
+          {
+            "key": "duplicates",
+            "optional": true,
+            "type": "number | null",
+            "description": "Number of duplicate addresses"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Kind of job; list for a batch"
+          },
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set by Mails.so; empty on batches started with this plugin"
+          },
+          {
+            "key": "file_key",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set by Mails.so; empty on batches started with this plugin"
+          },
+          {
+            "key": "skip_emails",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Set by Mails.so; true on batches started with this plugin"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job status; pending right after the job is created"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailsso.api.validations.getBatch",
+      "shortPath": "validations.getBatch",
+      "description": "Read a batch validation job by id: status processing while it runs, and once completed the counts per result and the validation of every address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The batch job id returned by validations.batch, for example 3aace594-f454-42e4-9cb3-198b6253320c."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the batch job"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name of the batch job, often empty"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string",
+            "description": "When the job was created, ISO 8601"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the job last changed, ISO 8601"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the job was deleted, if it was"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the job finished; null while it is still running"
+          },
+          {
+            "key": "archived_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the job was archived, if it was"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Id of the account that started the job"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null",
+            "description": "Number of addresses in the batch"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number | null",
+            "description": "Progress counter reported by Mails.so"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null",
+            "description": "How long the job took"
+          },
+          {
+            "key": "duplicates",
+            "optional": true,
+            "type": "number | null",
+            "description": "Number of duplicate addresses"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Kind of job; list for a batch"
+          },
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set by Mails.so; empty on batches started with this plugin"
+          },
+          {
+            "key": "file_key",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set by Mails.so; empty on batches started with this plugin"
+          },
+          {
+            "key": "skip_emails",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Set by Mails.so; true on batches started with this plugin"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Job status: processing while running, completed when finished"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "Record<string, number> | null",
+            "description": "Counts for a finished job: the total, one per verdict, and one per reason"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ id: string, email: string, username?: string | null, domain?: string | null, did_you_mean?: string | null, mx_record?: string | null, provider?: string | null, score?: number | null, isv_format?: boolean | null, isv_domain?: boolean | null, isv_mx?: boolean | null, isv_noblock?: boolean | null, isv_nocatchall?: boolean | null, isv_nogeneric?: boolean | null, is_disposable?: boolean | null, is_free?: boolean | null, avatar?: string | null, result: string, reason?: string | null }[] | null",
+            "description": "One validation result per address; present on completed jobs, so treat it as absent while the job is processing"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailsso.api.validations.single",
+      "shortPath": "validations.single",
+      "description": "Validate one email address: deliverability result and reason, a 0-100 score, and format, domain, MX, block-list, catch-all, generic, disposable and free-provider checks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The email address to validate. A malformed address is not an error: Mails.so answers it as undeliverable with reason invalid_format."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the validation"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The address that was validated"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null",
+            "description": "The part of the address before the @"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null",
+            "description": "The part of the address after the @"
+          },
+          {
+            "key": "did_you_mean",
+            "optional": true,
+            "type": "string | null",
+            "description": "A suggested correction when the domain looks misspelled"
+          },
+          {
+            "key": "mx_record",
+            "optional": true,
+            "type": "string | null",
+            "description": "Mail server of the domain"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null",
+            "description": "Mailbox provider, for example google_workspace"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "number | null",
+            "description": "Overall validity score, 0 to 100"
+          },
+          {
+            "key": "isv_format",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The format is valid"
+          },
+          {
+            "key": "isv_domain",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The domain is valid"
+          },
+          {
+            "key": "isv_mx",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The MX record is valid; null when it was not checked"
+          },
+          {
+            "key": "isv_noblock",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Not on a block list"
+          },
+          {
+            "key": "isv_nocatchall",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The domain does not accept every address (not catch-all)"
+          },
+          {
+            "key": "isv_nogeneric",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Not a generic role address such as info@ or admin@"
+          },
+          {
+            "key": "is_disposable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The address belongs to a disposable email service"
+          },
+          {
+            "key": "is_free",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The address belongs to a free email provider"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string | null",
+            "description": "Avatar URL, when one was found"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string",
+            "description": "Overall verdict: deliverable, undeliverable, risky, or a fourth value for checks that could not finish"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why Mails.so reached that verdict, for example accepted_email, invalid_domain, invalid_format or catch_all"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

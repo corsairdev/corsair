@@ -1,0 +1,45 @@
+{
+  "results": [
+    {
+      "id": "01a1cff9-d34d-7542-943f-506a7d21a825",
+      "distinct_id": "distinct-id-1",
+      "viewed": false,
+      "viewers": [],
+      "recording_duration": 7,
+      "active_seconds": 7,
+      "inactive_seconds": 0,
+      "start_time": "2026-11-12T13:37:01.114000Z",
+      "end_time": "2026-11-12T13:37:08.963000Z",
+      "click_count": 0,
+      "keypress_count": 0,
+      "mouse_activity_count": 18,
+      "console_log_count": 0,
+      "console_warn_count": 0,
+      "console_error_count": 0,
+      "start_url": "https://corsair.dev/blog/google-workspace-api-integration",
+      "person": {
+        "id": null,
+        "name": null,
+        "distinct_ids": ["distinct-id-1"],
+        "properties": {},
+        "created_at": null,
+        "uuid": "8c887703-bf3f-5aa6-9a8a-a3fd030056a5",
+        "last_seen_at": null
+      },
+      "retention_period_days": 30,
+      "expiry_time": "2026-12-12T00:00:00Z",
+      "recording_ttl": 30,
+      "snapshot_source": "web",
+      "snapshot_library": null,
+      "ongoing": true,
+      "activity_score": 30.87,
+      "external_references": [],
+      "matches_filters": true,
+      "total_size": null,
+      "event_count": null
+    }
+  ],
+  "has_next": true,
+  "version": 4,
+  "next_cursor": "eyJvcmRlcl92YWx1ZSI6ICIyMDI2LTExLTEyVDEzOjI3OjAzLjI1OTAwMCswMDowMCIsICJzZWNvbmRhcnlfdmFsdWUiOiAiMDFhMWNmZjAtYmI2YS03M2M5LWJhZTMtYTk3NmU1MjQ3YzkyIn0="
+}

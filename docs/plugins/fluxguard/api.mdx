@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Fluxguard: every `fluxguard.api.*` operation with input and output types."
+title: "Fluxguard API reference"
+sidebarTitle: "API"
+description: "API reference for the Fluxguard plugin in Corsair: every `fluxguard.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `fluxguard.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -519,8 +518,8 @@ Returns an array of example changes from your own account, or seeded data on a n
   } | null,
   siteCategories?: string[] | null,
   pageCategories?: string[] | null,
-  files?: Record<string, unknown> | null,
-  alarms?: Record<string, unknown>[] | null
+  files?: Record<string, any> | null,
+  alarms?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>

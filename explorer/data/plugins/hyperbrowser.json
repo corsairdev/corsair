@@ -1,0 +1,1669 @@
+{
+  "id": "hyperbrowser",
+  "displayName": "Hyperbrowser",
+  "description": "Fast cloud browsers for AI agents, web scraping, multi-page crawling, searching, and structured data extraction.",
+  "npmPackageName": "@corsair-dev/hyperbrowser",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "hyperbrowser.api.crawl.create",
+      "shortPath": "crawl.create",
+      "description": "Start an asynchronous multi-page crawl job (consumes compute credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "followLinks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignoreSitemap",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "excludePatterns",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "includePatterns",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sessionOptions",
+            "optional": true,
+            "type": "{ useUltraStealth?: boolean, useStealth?: boolean, useProxy?: boolean, proxyServer?: string, proxyServerPassword?: string, proxyServerUsername?: string, proxyCountry?: string, proxyState?: string, proxyCity?: string | null, region?: string, operatingSystems?: string[], device?: string[], platform?: string[], locales?: string[], screen?: { width?: number, height?: number, deviceScaleFactor?: number }, solveCaptchas?: boolean, solverType?: visual, adblock?: boolean, trackers?: boolean, annoyances?: boolean, enableWebRecording?: boolean, enableVideoWebRecording?: boolean, profile?: { id?: string, persistChanges?: boolean }, acceptCookies?: boolean, staticIpId?: string, saveDownloads?: boolean, extensionIds?: string[], urlBlocklist?: string[], browserArgs?: string[], timeoutMinutes?: number, enableWindowManager?: boolean, enableWindowManagerTaskbar?: boolean, viewOnlyLiveView?: boolean, disablePasswordManager?: boolean, enableAlwaysOpenPdfExternally?: boolean, disablePostQuantumKeyAgreement?: boolean, enableWebMcp?: boolean }"
+          },
+          {
+            "key": "scrapeOptions",
+            "optional": true,
+            "type": "{ formats?: (html | links | markdown | screenshot)[], includeTags?: string[], excludeTags?: string[], onlyMainContent?: boolean, waitFor?: number, timeout?: number, waitUntil?: load | domcontentloaded | networkidle }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.crawl.createWeb",
+      "shortPath": "crawl.createWeb",
+      "description": "Start an asynchronous web crawl job using the Web API engine (consumes compute credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "none | auto | ultra"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "{ formats?: (markdown | html | links | screenshot | branding | { type: markdown } | { type: html } | { type: links } | { type: branding } | { type: screenshot, fullPage?: boolean, format?: jpeg | png | webp, cropToContent?: boolean, cropToContentMaxHeight?: number, cropToContentMinHeight?: number } | { type: json, schema?: Record<string, any>, prompt?: string })[], sanitize?: none | basic | advanced, includeSelectors?: string[], excludeSelectors?: string[] }"
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "{ profileId?: string, solveCaptchas?: string, screen?: { width: number, height: number }, location?: { country?: string, state?: string, city?: string } }"
+          },
+          {
+            "key": "navigation",
+            "optional": true,
+            "type": "{ waitUntil?: load | domcontentloaded | networkidle, timeoutMs?: number, waitFor?: number }"
+          },
+          {
+            "key": "cache",
+            "optional": true,
+            "type": "{ maxAgeSeconds?: number }"
+          },
+          {
+            "key": "crawlOptions",
+            "optional": true,
+            "type": "{ maxPages?: number, followLinks?: boolean, ignoreSitemap?: boolean, excludePatterns?: string[], includePatterns?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.crawl.get",
+      "shortPath": "crawl.get",
+      "description": "Get crawl job status and crawled pages data by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "totalCrawledPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPageBatches",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPageBatch",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ url: string, status: completed | failed | string, error?: string | null, markdown?: string, html?: string, links?: string[], screenshot?: string, metadata?: Record<string, string | string[]> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.crawl.getStatus",
+      "shortPath": "crawl.getStatus",
+      "description": "Get the current status of an asynchronous crawl job by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.crawl.getWeb",
+      "shortPath": "crawl.getWeb",
+      "description": "Get web crawl job status and crawled page data by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPageBatches",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPageBatch",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ url: string, status: completed | failed | pending | running | string, error?: string | null, markdown?: string, html?: string, links?: string[], screenshot?: string, json?: Record<string, any>, branding?: Record<string, any>, metadata?: Record<string, string | string[]> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.crawl.getWebStatus",
+      "shortPath": "crawl.getWebStatus",
+      "description": "Get the current status of an asynchronous web crawl job by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.extract.create",
+      "shortPath": "extract.create",
+      "description": "Start an AI structured data extraction job across URLs (consumes compute credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxLinks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "sessionOptions",
+            "optional": true,
+            "type": "{ useUltraStealth?: boolean, useStealth?: boolean, useProxy?: boolean, proxyServer?: string, proxyServerPassword?: string, proxyServerUsername?: string, proxyCountry?: string, proxyState?: string, proxyCity?: string | null, region?: string, operatingSystems?: string[], device?: string[], platform?: string[], locales?: string[], screen?: { width?: number, height?: number, deviceScaleFactor?: number }, solveCaptchas?: boolean, solverType?: visual, adblock?: boolean, trackers?: boolean, annoyances?: boolean, enableWebRecording?: boolean, enableVideoWebRecording?: boolean, profile?: { id?: string, persistChanges?: boolean }, acceptCookies?: boolean, staticIpId?: string, saveDownloads?: boolean, extensionIds?: string[], urlBlocklist?: string[], browserArgs?: string[], timeoutMinutes?: number, enableWindowManager?: boolean, enableWindowManagerTaskbar?: boolean, viewOnlyLiveView?: boolean, disablePasswordManager?: boolean, enableAlwaysOpenPdfExternally?: boolean, disablePostQuantumKeyAgreement?: boolean, enableWebMcp?: boolean }"
+          },
+          {
+            "key": "waitFor",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.extract.get",
+      "shortPath": "extract.get",
+      "description": "Get the extracted structured data and status of an extract job by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.extract.getStatus",
+      "shortPath": "extract.getStatus",
+      "description": "Get the current status of an asynchronous extract job by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.profiles.create",
+      "shortPath": "profiles.create",
+      "description": "Create a new persistent browser profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.profiles.delete",
+      "shortPath": "profiles.delete",
+      "description": "Permanently delete a persistent browser profile by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.profiles.fork",
+      "shortPath": "profiles.fork",
+      "description": "Fork an existing persistent browser profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.profiles.get",
+      "shortPath": "profiles.get",
+      "description": "Get persistent browser profile details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.profiles.list",
+      "shortPath": "profiles.list",
+      "description": "List persistent browser profiles with optional pagination and name filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, teamId?: string, createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.scrape.create",
+      "shortPath": "scrape.create",
+      "description": "Start an asynchronous web scrape job (consumes compute credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionOptions",
+            "optional": true,
+            "type": "{ useUltraStealth?: boolean, useStealth?: boolean, useProxy?: boolean, proxyServer?: string, proxyServerPassword?: string, proxyServerUsername?: string, proxyCountry?: string, proxyState?: string, proxyCity?: string | null, region?: string, operatingSystems?: string[], device?: string[], platform?: string[], locales?: string[], screen?: { width?: number, height?: number, deviceScaleFactor?: number }, solveCaptchas?: boolean, solverType?: visual, adblock?: boolean, trackers?: boolean, annoyances?: boolean, enableWebRecording?: boolean, enableVideoWebRecording?: boolean, profile?: { id?: string, persistChanges?: boolean }, acceptCookies?: boolean, staticIpId?: string, saveDownloads?: boolean, extensionIds?: string[], urlBlocklist?: string[], browserArgs?: string[], timeoutMinutes?: number, enableWindowManager?: boolean, enableWindowManagerTaskbar?: boolean, viewOnlyLiveView?: boolean, disablePasswordManager?: boolean, enableAlwaysOpenPdfExternally?: boolean, disablePostQuantumKeyAgreement?: boolean, enableWebMcp?: boolean }"
+          },
+          {
+            "key": "scrapeOptions",
+            "optional": true,
+            "type": "{ formats?: (html | links | markdown | screenshot)[], includeTags?: string[], excludeTags?: string[], onlyMainContent?: boolean, waitFor?: number, timeout?: number, waitUntil?: load | domcontentloaded | networkidle }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.scrape.createBatch",
+      "shortPath": "scrape.createBatch",
+      "description": "Start an asynchronous batch scrape job across multiple URLs (consumes compute credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "sessionOptions",
+            "optional": true,
+            "type": "{ useUltraStealth?: boolean, useStealth?: boolean, useProxy?: boolean, proxyServer?: string, proxyServerPassword?: string, proxyServerUsername?: string, proxyCountry?: string, proxyState?: string, proxyCity?: string | null, region?: string, operatingSystems?: string[], device?: string[], platform?: string[], locales?: string[], screen?: { width?: number, height?: number, deviceScaleFactor?: number }, solveCaptchas?: boolean, solverType?: visual, adblock?: boolean, trackers?: boolean, annoyances?: boolean, enableWebRecording?: boolean, enableVideoWebRecording?: boolean, profile?: { id?: string, persistChanges?: boolean }, acceptCookies?: boolean, staticIpId?: string, saveDownloads?: boolean, extensionIds?: string[], urlBlocklist?: string[], browserArgs?: string[], timeoutMinutes?: number, enableWindowManager?: boolean, enableWindowManagerTaskbar?: boolean, viewOnlyLiveView?: boolean, disablePasswordManager?: boolean, enableAlwaysOpenPdfExternally?: boolean, disablePostQuantumKeyAgreement?: boolean, enableWebMcp?: boolean }"
+          },
+          {
+            "key": "scrapeOptions",
+            "optional": true,
+            "type": "{ formats?: (html | links | markdown | screenshot)[], includeTags?: string[], excludeTags?: string[], onlyMainContent?: boolean, waitFor?: number, timeout?: number, waitUntil?: load | domcontentloaded | networkidle }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.scrape.get",
+      "shortPath": "scrape.get",
+      "description": "Get scrape job status and content data by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ markdown?: string, html?: string, links?: string[], screenshot?: string, metadata?: Record<string, string | string[]> }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.scrape.getBatch",
+      "shortPath": "scrape.getBatch",
+      "description": "Get results and page data of a batch scrape job by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | running | completed | failed | stopped | string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ url: string, status: pending | running | completed | failed | stopped | string, error?: string | null, markdown?: string, html?: string, links?: string[], screenshot?: string, metadata?: Record<string, string | string[]> }[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalScrapedPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPageBatches",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPageBatch",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.scrape.getBatchStatus",
+      "shortPath": "scrape.getBatchStatus",
+      "description": "Get the current status of an asynchronous batch scrape job by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.scrape.getStatus",
+      "shortPath": "scrape.getStatus",
+      "description": "Get the current status of an asynchronous scrape job by job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.create",
+      "shortPath": "sessions.create",
+      "description": "Create and launch a cloud browser session (consumes compute credits)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "useUltraStealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useStealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useProxy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "proxyServer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyServerPassword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyServerUsername",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxyCity",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operatingSystems",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "locales",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "screen",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number }"
+          },
+          {
+            "key": "solveCaptchas",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "solverType",
+            "optional": true,
+            "type": "visual"
+          },
+          {
+            "key": "adblock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "annoyances",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableWebRecording",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableVideoWebRecording",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ id?: string, persistChanges?: boolean }"
+          },
+          {
+            "key": "acceptCookies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "staticIpId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "saveDownloads",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extensionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "urlBlocklist",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "browserArgs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "timeoutMinutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enableWindowManager",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableWindowManagerTaskbar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewOnlyLiveView",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disablePasswordManager",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableAlwaysOpenPdfExternally",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disablePostQuantumKeyAgreement",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableWebMcp",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | closed | error | close-error | string"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditsUsed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sessionUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "liveUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wsEndpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webdriverEndpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "computerActionEndpoint",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.evaluateCaptcha",
+      "shortPath": "sessions.evaluateCaptcha",
+      "description": "Run CAPTCHA evaluation and solving on an active session (consumes credits)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "captcha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "captchaType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iterations",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxIterations",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "solverType",
+            "optional": true,
+            "type": "visual"
+          },
+          {
+            "key": "useUltraStealth",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "captcha",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "iterationsRequested",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterationsRun",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "solved",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "solvedCaptchas",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.get",
+      "shortPath": "sessions.get",
+      "description": "Get cloud browser session details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | closed | error | close-error | string"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditsUsed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sessionUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "liveUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wsEndpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webdriverEndpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "computerActionEndpoint",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.getDownloadsUrl",
+      "shortPath": "sessions.getDownloadsUrl",
+      "description": "Get the downloads archive URL for a browser session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "not_enabled | pending | in_progress | completed | failed | string"
+          },
+          {
+            "key": "downloadsUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.getRecordingUrl",
+      "shortPath": "sessions.getRecordingUrl",
+      "description": "Get the web recording replay URL for a browser session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "not_enabled | pending | in_progress | completed | failed | string"
+          },
+          {
+            "key": "recordingUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.getVideoRecordingUrl",
+      "shortPath": "sessions.getVideoRecordingUrl",
+      "description": "Get the video recording URL for a browser session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "not_enabled | pending | in_progress | completed | failed | string"
+          },
+          {
+            "key": "recordingUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.list",
+      "shortPath": "sessions.list",
+      "description": "List cloud browser sessions with optional pagination and status filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessions",
+            "optional": true,
+            "type": "{ id?: string, teamId?: string, status?: active | closed | error | close-error | string, startTime?: string | number | null, endTime?: string | number | null, createdAt?: string, updatedAt?: string, creditsUsed?: number | null, sessionUrl?: string, liveUrl?: string, token?: string, wsEndpoint?: string, webdriverEndpoint?: string, computerActionEndpoint?: string }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.stop",
+      "shortPath": "sessions.stop",
+      "description": "Stop an active cloud browser session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.sessions.update",
+      "shortPath": "sessions.update",
+      "description": "Update live configuration of a running browser session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ id: string, type: profile, params: { persistChanges?: boolean, persistNetworkCache?: boolean } } | { id: string, type: proxy, params: { enabled: boolean, staticIpId?: string, location?: { country?: string, state?: string, city?: string } } } | { id: string, type: screen, params: { width: number, height: number } } | { id: string, type: solveCaptchas, params: { enabled: boolean, solverType?: visual } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "solveCaptchas",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "telemetryReady",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.web.fetch",
+      "shortPath": "web.fetch",
+      "description": "Fetch web page content in multiple formats using cloud browser (consumes compute credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "none | auto | ultra"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "{ formats?: (markdown | html | links | screenshot | branding | { type: markdown } | { type: html } | { type: links } | { type: branding } | { type: screenshot, fullPage?: boolean, format?: jpeg | png | webp, cropToContent?: boolean, cropToContentMaxHeight?: number, cropToContentMinHeight?: number } | { type: json, schema?: Record<string, any>, prompt?: string })[], sanitize?: none | basic | advanced, includeSelectors?: string[], excludeSelectors?: string[] }"
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "{ profileId?: string, solveCaptchas?: string, screen?: { width: number, height: number }, location?: { country?: string, state?: string, city?: string } }"
+          },
+          {
+            "key": "navigation",
+            "optional": true,
+            "type": "{ waitUntil?: load | domcontentloaded | networkidle, timeoutMs?: number, waitFor?: number }"
+          },
+          {
+            "key": "cache",
+            "optional": true,
+            "type": "{ maxAgeSeconds?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "completed | failed | pending | running | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ markdown?: string, html?: string, links?: string[], screenshot?: string, json?: Record<string, any>, branding?: Record<string, any>, metadata?: Record<string, string | string[]> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hyperbrowser.api.web.search",
+      "shortPath": "web.search",
+      "description": "Search the web with clean structured results (consumes compute credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxAgeSeconds",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "completed | failed | pending | running | stopped | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ query: string, results: { title: string, url: string, description?: string }[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,88 @@
+displayName: Happy Scribe
+description: Transcription, subtitle and meeting-notetaker platform with Happy Scribe - start transcriptions and translations, send the notetaker to meetings, export transcripts, read discovered contacts, and manage human-service orders.
+domain: happyscribe.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Happy Scribe under My workspace, API access. Things to know before you call:
+
+  - **Credit-spending creates.** `transcriptions.create`, `translations.createTask` and `meetings.create` spend Happy Scribe credits. `orders.create` stays incomplete (unpaid) until `orders.confirm` or an explicit `confirm: true`; human orders are then irreversible.
+  - **Four async lifecycles.** Transcriptions report `state` until `automatic_done`; exports `state` until `ready` with a `download_link`; translation tasks `state` until `done`; meetings report `status` (a different field) until `completed`. The plugin declares jobs for all four, so the agent's get_job follows them.
+  - **Rate limits.** The transcription-creation endpoint allows about 200 requests per user per hour; a 429 carries `retry_in_seconds` in the body and the plugin waits exactly that before retrying.
+  - **Pagination is inconsistent.** `transcriptions.list` pages from 0 with `perPage` default 5; `companies.list` and `people.list` page from 1 with `perPage` up to 100; `memberships.list` pages from 1, 25 at a time. All return `nextPageUrl` when another page exists.
+  - **Deleting.** `transcriptions.delete` moves the file to the Trash; pass `permanent: true` to delete it for good.
+  - **Intelligence API is enrollment-gated.** `companies`, `people` and the person/company filters on `transcriptions.list` answer 404 until the organization is enrolled; contact Happy Scribe support to enroll.
+  - **Local files.** `uploads.getSignedUrl` returns a pre-signed S3 URL; upload the file bytes there yourself, then pass a `tmpUrl` to `transcriptions.create`.
+  - **Webhooks.** Configure a meeting webhook in Settings, Webhooks and set its signing secret (`whsec_...`) as the plugin's `webhookSecret`. Deliveries are HMAC-signed twice; unsigned or stale deliveries are rejected. If your own route receives them, pass the raw body (`await request.text()`) to `processWebhook`, not `request.json()`: transcripts carry numbers like `0.0` that change when re-serialized, and the signature check then fails. The payload does not name the organization, so with multi-tenancy pass the tenant as `query.tenantId` (for example from `?tenantId=` on the endpoint URL).
+  - **Languages.** Language codes are BCP-47 (`en-GB`, `es`); human services are available only for some of them.
+examples:
+  read:
+    path: transcriptions.list
+    title: List transcriptions in an organization
+    args:
+      organizationId: 123
+      perPage: 25
+  write:
+    path: transcriptions.create
+    title: Transcribe media from a URL
+    args:
+      organizationId: 123
+      name: My Interview
+      language: en-GB
+      tmpUrl: https://example.com/my_media.mp3
+apiExamples:
+  transcriptions.list:
+    call: "{ organizationId: 123, page: 0, perPage: 25 }"
+  transcriptions.create:
+    call: "{ organizationId: 123, name: 'My Interview', language: 'en-GB', tmpUrl: 'https://example.com/my_media.mp3', tags: ['To do'] }"
+  transcriptions.getDetails:
+    call: "{ fileId: '9josdjdfo09j309omsldknslkjndfjknsdfs' }"
+  transcriptions.getSummary:
+    call: "{ fileId: '9josdjdfo09j309omsldknslkjndfjknsdfs' }"
+  transcriptions.updateDetails:
+    call: "{ fileId: '9josdjdfo09j309omsldknslkjndfjknsdfs', organizationId: 123, sharingEnabled: true }"
+  transcriptions.delete:
+    call: "{ fileId: '9josdjdfo09j309omsldknslkjndfjknsdfs' }"
+  exports.create:
+    call: "{ format: 'txt', transcriptionIds: ['9josdjdfo09j309omsldknslkjndfjknsdfs'] }"
+  exports.get:
+    call: "{ exportId: '5d5b1a9b4c8c4c0001f3e4a2' }"
+  translations.createTask:
+    call: "{ sourceTranscriptionId: '9josdjdfo09j309omsldknslkjndfjknsdfs', targetLanguage: 'es' }"
+  translations.getTask:
+    call: "{ taskId: '054fe9f3aa0b446baea730fba688f96c' }"
+  meetings.create:
+    call: "{ organizationId: 413, meetingUrl: 'https://zoom.us/j/123456789', joinAt: '2026-07-20T14:00:00Z', language: 'en' }"
+  meetings.get:
+    call: "{ meetingId: 'mtg_01k0h4r9s8x7c2dvq3m5n6p4ab' }"
+  uploads.getSignedUrl:
+    call: "{ filename: 'my_media.mp3' }"
+  glossaries.list:
+    call: "{ organizationId: 123 }"
+  styleGuides.list:
+    call: "{ organizationId: 123 }"
+  organizations.list:
+    call: "{}"
+  memberships.list:
+    call: "{ organizationId: 123 }"
+  memberships.add:
+    call: "{ organizationId: 123, email: 'new-hire@acme.com', role: 'member' }"
+  memberships.updateRole:
+    call: "{ membershipId: 9002, role: 'admin' }"
+  memberships.remove:
+    call: "{ membershipId: 9002 }"
+  orders.create:
+    call: "{ url: 'https://example.com/media.mp3', language: 'es', service: 'pro', organizationId: 123 }"
+  orders.createTranslation:
+    call: "{ sourceTranscriptionId: '9josdjdfo09j309omsldknslkjndfjknsdfs', targetLanguages: ['es'], organizationId: 123 }"
+  orders.get:
+    call: "{ orderId: '10b1edd9381d4a00a3d0db1ca1b3d0cf' }"
+  orders.confirm:
+    call: "{ orderId: '10b1edd9381d4a00a3d0db1ca1b3d0cf' }"
+  companies.list:
+    call: "{ organizationId: 123, domain: 'acme.com' }"
+  companies.get:
+    call: "{ companyId: 1, organizationId: 123 }"
+  people.list:
+    call: "{ organizationId: 123, search: 'Jane' }"
+  people.get:
+    call: "{ personId: 1, organizationId: 123 }"

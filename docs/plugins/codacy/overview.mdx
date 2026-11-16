@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Codacy plugin"
+sidebarTitle: "Overview"
 description: "Read Codacy code quality data - your account, organizations, repositories and their language and analysis tool settings, plus the catalog of analysis tools and their code patterns."
 ---
 
@@ -32,16 +33,20 @@ Things to know:
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/codacy
+npm install corsair @corsair-dev/codacy better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/codacy
+yarn add corsair @corsair-dev/codacy better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/codacy
+pnpm install corsair @corsair-dev/codacy better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/codacy
+bun add corsair @corsair-dev/codacy better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -75,7 +80,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Codacy API key before the first call: `pnpm corsair setup --plugin=codacy --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 codacy()

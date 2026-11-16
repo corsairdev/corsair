@@ -1,0 +1,1478 @@
+---
+title: "ServiceM8 API reference"
+sidebarTitle: "API"
+description: "API reference for the ServiceM8 plugin in Corsair: every `servicem8.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assets
+
+### list
+
+`assets.list`
+
+List assets
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.assets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  company_uuid?: string | number | null,
+  asset_code?: string | number | null,
+  asset_type_uuid?: string | number | null,
+  name?: string | number | null,
+  lat?: number | string | null,
+  lng?: number | string | null,
+  geo_timestamp?: string | number | null,
+  altitude?: number | string | null,
+  field_data?: {
+    uuid?: string | number | null,
+    fieldType?: string | number | null,
+    fieldName?: string | number | null,
+    fieldValue?: string | number | null,
+    sortOrder?: number | string | null
+  }[] | false | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Clients
+
+### list
+
+`clients.list`
+
+List clients
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.clients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  name: string,
+  abn_number?: string | number | null,
+  address?: string | number | null,
+  billing_address?: string | number | null,
+  is_individual?: number | string | boolean | null,
+  parent_company_uuid?: string | number | null,
+  website?: string | number | null,
+  address_street?: string | number | null,
+  address_city?: string | number | null,
+  address_state?: string | number | null,
+  address_postcode?: string | number | null,
+  address_country?: string | number | null,
+  fax_number?: string | number | null,
+  badges?: string | number | null,
+  tax_rate_uuid?: string | number | null,
+  billing_attention?: string | number | null,
+  payment_terms?: string | number | null,
+  deposit_percent?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`clients.retrieve`
+
+Retrieve a client
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.clients.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `abn_number` | `string \| number \| null` | No | — |
+| `address` | `string \| number \| null` | No | — |
+| `billing_address` | `string \| number \| null` | No | — |
+| `is_individual` | `number \| string \| boolean \| null` | No | — |
+| `parent_company_uuid` | `string \| number \| null` | No | — |
+| `website` | `string \| number \| null` | No | — |
+| `address_street` | `string \| number \| null` | No | — |
+| `address_city` | `string \| number \| null` | No | — |
+| `address_state` | `string \| number \| null` | No | — |
+| `address_postcode` | `string \| number \| null` | No | — |
+| `address_country` | `string \| number \| null` | No | — |
+| `fax_number` | `string \| number \| null` | No | — |
+| `badges` | `string \| number \| null` | No | — |
+| `tax_rate_uuid` | `string \| number \| null` | No | — |
+| `billing_attention` | `string \| number \| null` | No | — |
+| `payment_terms` | `string \| number \| null` | No | — |
+| `deposit_percent` | `number \| string \| null` | No | — |
+
+
+
+---
+
+## Custom Fields
+
+### delete
+
+`customFields.delete`
+
+Delete a custom field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.servicem8.api.customFields.delete({ UUID: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `UUID` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errorCode` | `number` | No | — |
+| `message` | `string` | No | — |
+| `UUID` | `string` | No | — |
+
+
+
+---
+
+## Document Templates
+
+### list
+
+`documentTemplates.list`
+
+List document templates
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.documentTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  template_type?: string | number | null,
+  related_object?: string | number | null,
+  name?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### list
+
+`forms.list`
+
+List forms
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.forms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  name?: string | number | null,
+  document_template_uuid?: string | number | null,
+  can_be_used_independently?: string | number | null,
+  badge_mandatory_state?: string | number | null,
+  badge_name?: string | number | null,
+  template_fields?: {
+    name?: string | number | null,
+    fieldType?: string | number | null,
+    value?: string | number | null,
+    sortOrder?: number | string | null
+  }[] | false | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`forms.retrieve`
+
+Retrieve a form
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.forms.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `name` | `string \| number \| null` | No | — |
+| `document_template_uuid` | `string \| number \| null` | No | — |
+| `can_be_used_independently` | `string \| number \| null` | No | — |
+| `badge_mandatory_state` | `string \| number \| null` | No | — |
+| `badge_name` | `string \| number \| null` | No | — |
+| `template_fields` | `object[] \| false \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="template_fields full type">
+
+```ts
+{
+  name?: string | number | null,
+  fieldType?: string | number | null,
+  value?: string | number | null,
+  sortOrder?: number | string | null
+}[] | false | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Job Activities
+
+### retrieve
+
+`jobActivities.retrieve`
+
+Retrieve a job activity
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.jobActivities.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `job_uuid` | `string \| number \| null` | No | — |
+| `staff_uuid` | `string \| number \| null` | No | — |
+| `start_date` | `string \| number \| null` | No | — |
+| `end_date` | `string \| number \| null` | No | — |
+| `activity_was_scheduled` | `string \| number \| null` | No | — |
+| `activity_was_recorded` | `string \| number \| null` | No | — |
+| `activity_was_automated` | `string \| number \| null` | No | — |
+| `has_been_opened` | `string \| number \| null` | No | — |
+| `has_been_opened_timestamp` | `string \| number \| null` | No | — |
+| `travel_time_in_seconds` | `number \| string \| null` | No | — |
+| `travel_distance_in_meters` | `number \| string \| null` | No | — |
+| `material_uuid` | `string \| number \| null` | No | — |
+| `edit_by_staff_uuid` | `string \| number \| null` | No | — |
+
+
+
+---
+
+## Job Payments
+
+### create
+
+`jobPayments.create`
+
+Create a job payment
+
+**Risk:** `write`
+
+```ts
+await corsair.servicem8.api.jobPayments.create({ job_uuid: '550e8400-e29b-41d4-a716-446655440000', amount: '12.00', method: 'Cash' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_uuid` | `string` | No | — |
+| `actioned_by_uuid` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+| `amount` | `string` | No | — |
+| `method` | `string` | No | — |
+| `note` | `string` | No | — |
+| `attachment_uuid` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `recordUuid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  errorCode?: number,
+  message?: string,
+  UUID?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`jobPayments.delete`
+
+Delete a job payment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.servicem8.api.jobPayments.delete({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errorCode` | `number` | No | — |
+| `message` | `string` | No | — |
+| `UUID` | `string` | No | — |
+
+
+
+---
+
+### retrieve
+
+`jobPayments.retrieve`
+
+Retrieve a job payment
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.jobPayments.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `job_uuid` | `string \| number \| null` | No | — |
+| `actioned_by_uuid` | `string \| number \| null` | No | — |
+| `timestamp` | `string \| number \| null` | No | — |
+| `amount` | `string \| number \| null` | No | — |
+| `method` | `string \| number \| null` | No | — |
+| `note` | `string \| number \| null` | No | — |
+| `attachment_uuid` | `string \| number \| null` | No | — |
+| `is_deposit` | `number \| string \| boolean \| null` | No | — |
+
+
+
+---
+
+### update
+
+`jobPayments.update`
+
+Update a job payment
+
+**Risk:** `write`
+
+```ts
+await corsair.servicem8.api.jobPayments.update({
+	uuid: '550e8400-e29b-41d4-a716-446655440000',
+	body: { amount: '13.00' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  job_uuid?: string,
+  actioned_by_uuid?: string,
+  timestamp?: string,
+  amount?: string,
+  method?: string,
+  note?: string,
+  attachment_uuid?: string,
+  uuid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errorCode` | `number` | No | — |
+| `message` | `string` | No | — |
+| `UUID` | `string` | No | — |
+
+
+
+---
+
+## Jobs
+
+### create
+
+`jobs.create`
+
+Create a job (may incur ServiceM8 account charges)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.servicem8.api.jobs.create({ status: 'Quote' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `Quote \| Work Order \| Unsuccessful \| Completed` | Yes | — |
+| `created_by_staff_uuid` | `string` | No | — |
+| `date` | `string` | No | — |
+| `company_uuid` | `string` | No | — |
+| `billing_address` | `string` | No | — |
+| `payment_date` | `string` | No | — |
+| `payment_actioned_by_uuid` | `string` | No | — |
+| `payment_method` | `string` | No | — |
+| `payment_amount` | `string` | No | — |
+| `category_uuid` | `string` | No | — |
+| `payment_note` | `string` | No | — |
+| `invoice_sent` | `0 \| 1` | No | — |
+| `invoice_date` | `string` | No | — |
+| `purchase_order_number` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `job_address` | `string` | No | — |
+| `job_description` | `string` | No | — |
+| `work_done_description` | `string` | No | — |
+| `queue_uuid` | `string` | No | — |
+| `queue_expiry_date` | `string` | No | — |
+| `queue_assigned_staff_uuid` | `string` | No | — |
+| `badges` | `string` | No | — |
+| `quote_date` | `string` | No | — |
+| `quote_sent` | `0 \| 1` | No | — |
+| `work_order_date` | `string` | No | — |
+| `payment_processed` | `0 \| 1` | No | — |
+| `payment_received` | `0 \| 1` | No | — |
+| `completion_date` | `string` | No | — |
+| `unsuccessful_date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `recordUuid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  errorCode?: number,
+  message?: string,
+  UUID?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+List jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.jobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  created_by_staff_uuid?: string | number | null,
+  date?: string | number | null,
+  company_uuid?: string | number | null,
+  billing_address?: string | number | null,
+  status: string,
+  lng?: number | string | null,
+  lat?: number | string | null,
+  payment_date?: string | number | null,
+  payment_actioned_by_uuid?: string | number | null,
+  payment_method?: string | number | null,
+  payment_amount?: string | number | null,
+  category_uuid?: string | number | null,
+  payment_note?: string | number | null,
+  geo_is_valid?: number | string | boolean | null,
+  purchase_order_number?: string | number | null,
+  invoice_sent?: number | string | boolean | null,
+  invoice_sent_stamp?: string | number | null,
+  invoice_date?: string | number | null,
+  geo_country?: string | number | null,
+  geo_postcode?: string | number | null,
+  geo_state?: string | number | null,
+  geo_city?: string | number | null,
+  geo_street?: string | number | null,
+  geo_number?: string | number | null,
+  queue_uuid?: string | number | null,
+  queue_expiry_date?: string | number | null,
+  queue_assigned_staff_uuid?: string | number | null,
+  badges?: string | number | null,
+  quote_date?: string | number | null,
+  quote_sent?: number | string | boolean | null,
+  quote_sent_stamp?: string | number | null,
+  work_order_date?: string | number | null,
+  job_address?: string | number | null,
+  job_description?: string | number | null,
+  work_done_description?: string | number | null,
+  generated_job_id?: string | number | null,
+  total_invoice_amount?: string | number | null,
+  payment_processed?: number | string | boolean | null,
+  payment_processed_stamp?: string | number | null,
+  payment_received?: number | string | boolean | null,
+  payment_received_stamp?: string | number | null,
+  completion_date?: string | number | null,
+  completion_actioned_by_uuid?: string | number | null,
+  unsuccessful_date?: string | number | null,
+  job_is_scheduled_until_stamp?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`jobs.retrieve`
+
+Retrieve a job
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.jobs.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `created_by_staff_uuid` | `string \| number \| null` | No | — |
+| `date` | `string \| number \| null` | No | — |
+| `company_uuid` | `string \| number \| null` | No | — |
+| `billing_address` | `string \| number \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `lng` | `number \| string \| null` | No | — |
+| `lat` | `number \| string \| null` | No | — |
+| `payment_date` | `string \| number \| null` | No | — |
+| `payment_actioned_by_uuid` | `string \| number \| null` | No | — |
+| `payment_method` | `string \| number \| null` | No | — |
+| `payment_amount` | `string \| number \| null` | No | — |
+| `category_uuid` | `string \| number \| null` | No | — |
+| `payment_note` | `string \| number \| null` | No | — |
+| `geo_is_valid` | `number \| string \| boolean \| null` | No | — |
+| `purchase_order_number` | `string \| number \| null` | No | — |
+| `invoice_sent` | `number \| string \| boolean \| null` | No | — |
+| `invoice_sent_stamp` | `string \| number \| null` | No | — |
+| `invoice_date` | `string \| number \| null` | No | — |
+| `geo_country` | `string \| number \| null` | No | — |
+| `geo_postcode` | `string \| number \| null` | No | — |
+| `geo_state` | `string \| number \| null` | No | — |
+| `geo_city` | `string \| number \| null` | No | — |
+| `geo_street` | `string \| number \| null` | No | — |
+| `geo_number` | `string \| number \| null` | No | — |
+| `queue_uuid` | `string \| number \| null` | No | — |
+| `queue_expiry_date` | `string \| number \| null` | No | — |
+| `queue_assigned_staff_uuid` | `string \| number \| null` | No | — |
+| `badges` | `string \| number \| null` | No | — |
+| `quote_date` | `string \| number \| null` | No | — |
+| `quote_sent` | `number \| string \| boolean \| null` | No | — |
+| `quote_sent_stamp` | `string \| number \| null` | No | — |
+| `work_order_date` | `string \| number \| null` | No | — |
+| `job_address` | `string \| number \| null` | No | — |
+| `job_description` | `string \| number \| null` | No | — |
+| `work_done_description` | `string \| number \| null` | No | — |
+| `generated_job_id` | `string \| number \| null` | No | — |
+| `total_invoice_amount` | `string \| number \| null` | No | — |
+| `payment_processed` | `number \| string \| boolean \| null` | No | — |
+| `payment_processed_stamp` | `string \| number \| null` | No | — |
+| `payment_received` | `number \| string \| boolean \| null` | No | — |
+| `payment_received_stamp` | `string \| number \| null` | No | — |
+| `completion_date` | `string \| number \| null` | No | — |
+| `completion_actioned_by_uuid` | `string \| number \| null` | No | — |
+| `unsuccessful_date` | `string \| number \| null` | No | — |
+| `job_is_scheduled_until_stamp` | `string \| number \| null` | No | — |
+
+
+
+---
+
+## Locations
+
+### list
+
+`locations.list`
+
+List locations
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.locations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  name: string,
+  state: string,
+  line1?: string | number | null,
+  line2?: string | number | null,
+  line3?: string | number | null,
+  city?: string | number | null,
+  country?: string | number | null,
+  post_code?: string | number | null,
+  phone_1?: string | number | null,
+  lng?: number | string | null,
+  lat?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`locations.retrieve`
+
+Retrieve a location
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.locations.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `line1` | `string \| number \| null` | No | — |
+| `line2` | `string \| number \| null` | No | — |
+| `line3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
+| `post_code` | `string \| number \| null` | No | — |
+| `phone_1` | `string \| number \| null` | No | — |
+| `lng` | `number \| string \| null` | No | — |
+| `lat` | `number \| string \| null` | No | — |
+
+
+
+---
+
+## Materials
+
+### list
+
+`materials.list`
+
+List materials
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.materials.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  name: string,
+  item_number?: string | number | null,
+  price?: string | number | null,
+  cost?: string | number | null,
+  quantity_in_stock?: number | string | null,
+  price_includes_taxes?: number | string | boolean | null,
+  barcode?: string | number | null,
+  item_is_inventoried?: number | string | boolean | null,
+  item_description?: string | number | null,
+  use_description_for_invoicing?: string | number | null,
+  tax_rate_uuid?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`materials.retrieve`
+
+Retrieve a material
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.materials.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `item_number` | `string \| number \| null` | No | — |
+| `price` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `quantity_in_stock` | `number \| string \| null` | No | — |
+| `price_includes_taxes` | `number \| string \| boolean \| null` | No | — |
+| `barcode` | `string \| number \| null` | No | — |
+| `item_is_inventoried` | `number \| string \| boolean \| null` | No | — |
+| `item_description` | `string \| number \| null` | No | — |
+| `use_description_for_invoicing` | `string \| number \| null` | No | — |
+| `tax_rate_uuid` | `string \| number \| null` | No | — |
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Create a job note
+
+**Risk:** `write`
+
+```ts
+await corsair.servicem8.api.notes.create({ related_object: 'job', related_object_uuid: '550e8400-e29b-41d4-a716-446655440000', note: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | No | — |
+| `related_object` | `string` | No | — |
+| `related_object_uuid` | `string` | No | — |
+| `note` | `string` | No | — |
+| `action_required` | `string` | No | — |
+| `action_completed_by_staff_uuid` | `string` | No | — |
+| `edit_by_staff_uuid` | `string` | No | — |
+| `create_date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `recordUuid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  errorCode?: number,
+  message?: string,
+  UUID?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Delete a job note
+
+**Risk:** `destructive`
+
+```ts
+await corsair.servicem8.api.notes.delete({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errorCode` | `number` | No | — |
+| `message` | `string` | No | — |
+| `UUID` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`notes.list`
+
+List job notes
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.notes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  related_object?: string | number | null,
+  related_object_uuid?: string | number | null,
+  note?: string | number | null,
+  action_required?: string | number | null,
+  action_completed_by_staff_uuid?: string | number | null,
+  edit_by_staff_uuid?: string | number | null,
+  create_date?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`notes.retrieve`
+
+Retrieve a job note
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.notes.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `related_object` | `string \| number \| null` | No | — |
+| `related_object_uuid` | `string \| number \| null` | No | — |
+| `note` | `string \| number \| null` | No | — |
+| `action_required` | `string \| number \| null` | No | — |
+| `action_completed_by_staff_uuid` | `string \| number \| null` | No | — |
+| `edit_by_staff_uuid` | `string \| number \| null` | No | — |
+| `create_date` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Update a job note
+
+**Risk:** `write`
+
+```ts
+await corsair.servicem8.api.notes.update({
+	uuid: '550e8400-e29b-41d4-a716-446655440000',
+	body: { note: 'Updated' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  uuid?: string,
+  related_object?: string,
+  related_object_uuid?: string,
+  note?: string,
+  action_required?: string,
+  action_completed_by_staff_uuid?: string,
+  edit_by_staff_uuid?: string,
+  create_date?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errorCode` | `number` | No | — |
+| `message` | `string` | No | — |
+| `UUID` | `string` | No | — |
+
+
+
+---
+
+## Queues
+
+### list
+
+`queues.list`
+
+List job queues
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.queues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  name?: string | number | null,
+  default_timeframe?: number | string | null,
+  subscribed_staff?: string | number | null,
+  requires_assignment?: number | string | boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`queues.retrieve`
+
+Retrieve a job queue
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.queues.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `name` | `string \| number \| null` | No | — |
+| `default_timeframe` | `number \| string \| null` | No | — |
+| `subscribed_staff` | `string \| number \| null` | No | — |
+| `requires_assignment` | `number \| string \| boolean \| null` | No | — |
+
+
+
+---
+
+## Staff
+
+### retrieve
+
+`staff.retrieve`
+
+Retrieve a staff member
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.staff.retrieve({ uuid: '550e8400-e29b-41d4-a716-446655440000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| number \| null` | No | — |
+| `active` | `number \| string \| boolean \| null` | No | — |
+| `edit_date` | `string \| number \| null` | No | — |
+| `first` | `string` | Yes | — |
+| `last` | `string` | Yes | — |
+| `email` | `string \| number \| null` | No | — |
+| `mobile` | `string \| number \| null` | No | — |
+| `lng` | `number \| string \| null` | No | — |
+| `lat` | `number \| string \| null` | No | — |
+| `geo_timestamp` | `string \| number \| null` | No | — |
+| `job_title` | `string \| number \| null` | No | — |
+| `navigating_to_job_uuid` | `string \| number \| null` | No | — |
+| `navigating_timestamp` | `string \| number \| null` | No | — |
+| `navigating_expiry_timestamp` | `string \| number \| null` | No | — |
+| `color` | `string \| number \| null` | No | — |
+| `custom_icon_url` | `string \| number \| null` | No | — |
+| `status_message` | `string \| number \| null` | No | — |
+| `status_message_timestamp` | `string \| number \| null` | No | — |
+| `hide_from_schedule` | `number \| string \| boolean \| null` | No | — |
+| `can_receive_push_notification` | `string \| number \| null` | No | — |
+| `security_role_uuid` | `string \| number \| null` | No | — |
+| `labour_material_uuid` | `string \| number \| null` | No | — |
+
+
+
+---
+
+## Tasks
+
+### list
+
+`tasks.list`
+
+List tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.servicem8.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | number | null,
+  active?: number | string | boolean | null,
+  edit_date?: string | number | null,
+  name: string,
+  due_date?: string | number | null,
+  task_details?: string | number | null,
+  related_object?: string | number | null,
+  related_object_uuid?: string | number | null,
+  task_complete?: string | number | null,
+  completed_timestamp?: string | number | null,
+  completed_by_staff_uuid?: string | number | null,
+  assigned_to_staff_uuid?: string | number | null,
+  created_by_staff_uuid?: string | number | null,
+  create_date?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
