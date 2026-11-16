@@ -1,8 +1,19 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SurveymonkeyAPIError } from './client';
 
+/** HTTP failures arrive as core's `ApiError`; network failures as `SurveymonkeyAPIError`. */
 function statusOf(error: Error): number | undefined {
-	return error instanceof SurveymonkeyAPIError ? error.status : undefined;
+	if (error instanceof ApiError || error instanceof SurveymonkeyAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request?.method;
+	if (error instanceof SurveymonkeyAPIError) return error.method;
+	return undefined;
 }
 
 /**
@@ -17,45 +28,42 @@ function statusOf(error: Error): number | undefined {
  * that timed out may have committed.
  */
 export const errorHandlers = {
+	// Core's request() already retries a 429 three times and honours
+	// Retry-After (R8), so the handler does not retry again.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs:
-				error instanceof SurveymonkeyAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
+				error instanceof ApiError || error instanceof SurveymonkeyAPIError
+					? error.retryAfter
+					: undefined,
 		}),
 	},
 	// 401 is a wrong or revoked token. 403 is a missing scope or a plan without
 	// direct API access, which a retry cannot change.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SurveymonkeyAPIError && error.isAuthError,
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status === 401 || status === 403;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404 is an id or route that does not exist. It is terminal.
 	NOT_FOUND_ERROR: {
-		match: (error: Error) =>
-			error instanceof SurveymonkeyAPIError && error.isNotFound,
+		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 is a field or filter the API rejected, so the same body fails again.
 	VALIDATION_ERROR: {
-		match: (error: Error) => {
-			const status = statusOf(error);
-			return (
-				error.name === 'ZodError' ||
-				(error instanceof SurveymonkeyAPIError && error.isValidation)
-			);
-		},
+		match: (error: Error) =>
+			error.name === 'ZodError' || statusOf(error) === 400,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A 5xx may have reached the account, so only reads are replayed.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SurveymonkeyAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

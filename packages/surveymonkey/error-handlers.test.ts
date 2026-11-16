@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SurveymonkeyAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -22,19 +23,44 @@ function entry(name: keyof CorsairErrorHandler) {
 	return found;
 }
 
+/** Core's HTTP error, the shape an HTTP failure reaches the handlers in. */
+function apiError(status: number, method: 'GET' | 'POST' = 'GET'): ApiError {
+	return new ApiError(
+		{ method, url: '/surveys' },
+		{
+			url: 'https://api.surveymonkey.com/v3/surveys',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`HTTP ${status}`,
+		{ retryAfter: status === 429 ? 3000 : undefined },
+	);
+}
+
 describe('surveymonkey error handling', () => {
-	it('retries a 429 with the Retry-After the API sent', async () => {
-		const error = new SurveymonkeyAPIError('rate limited', {
-			status: 429,
-			retryAfter: 3000,
-		});
+	it('leaves 429 retries to core, which already retried three times', async () => {
+		const error = apiError(429);
 
 		expect(entry('RATE_LIMIT_ERROR').match(error, context)).toBe(true);
 		expect(await entry('RATE_LIMIT_ERROR').handler(error, context)).toEqual({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs: 3000,
-			retryStrategy: 'exponential_backoff',
 		});
+	});
+
+	it("classifies core's ApiError by status", () => {
+		expect(entry('AUTH_ERROR').match(apiError(401), context)).toBe(true);
+		expect(entry('AUTH_ERROR').match(apiError(403), context)).toBe(true);
+		expect(entry('NOT_FOUND_ERROR').match(apiError(404), context)).toBe(true);
+		expect(entry('VALIDATION_ERROR').match(apiError(400), context)).toBe(true);
+		expect(entry('SERVER_ERROR').match(apiError(502, 'GET'), context)).toBe(
+			true,
+		);
+		expect(entry('SERVER_ERROR').match(apiError(502, 'POST'), context)).toBe(
+			false,
+		);
 	});
 
 	it('sends no Retry-After when the API did not', async () => {
