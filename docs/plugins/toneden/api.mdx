@@ -33,17 +33,7 @@ await corsair.toneden.api.attachments.create({ type: 'contest', title: 'Win a vi
 | `is_private` | `boolean` | No | — |
 | `is_hidden` | `boolean` | No | — |
 | `message` | `string` | No | — |
-| `actions` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="actions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `actions` | `number` | No | — |
 
 
 
@@ -61,8 +51,7 @@ await corsair.toneden.api.attachments.create({ type: 'contest', title: 'Win a vi
   id?: number | null,
   owner_id?: number | null,
   type?: string | null,
-  actions?: {
-  }[] | null,
+  actions?: number | null,
   artwork_url?: string | null,
   title?: string | null,
   link_path?: string | null,
@@ -250,8 +239,7 @@ await corsair.toneden.api.attachments.get({ attachment_id: 9100 });
   id?: number | null,
   owner_id?: number | null,
   type?: string | null,
-  actions?: {
-  }[] | null,
+  actions?: number | null,
   artwork_url?: string | null,
   title?: string | null,
   link_path?: string | null,
@@ -305,8 +293,7 @@ await corsair.toneden.api.attachments.listForUser({ user_id: 1, type: 'unlock' }
   id?: number | null,
   owner_id?: number | null,
   type?: string | null,
-  actions?: {
-  }[] | null,
+  actions?: number | null,
   artwork_url?: string | null,
   title?: string | null,
   link_path?: string | null,
@@ -496,17 +483,7 @@ await corsair.toneden.api.attachments.update({ attachment_id: 9100, title: 'Win 
 | `is_private` | `boolean` | No | — |
 | `is_hidden` | `boolean` | No | — |
 | `message` | `string` | No | — |
-| `actions` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="actions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `actions` | `number` | No | — |
 
 
 
@@ -524,8 +501,7 @@ await corsair.toneden.api.attachments.update({ attachment_id: 9100, title: 'Win 
   id?: number | null,
   owner_id?: number | null,
   type?: string | null,
-  actions?: {
-  }[] | null,
+  actions?: number | null,
   artwork_url?: string | null,
   title?: string | null,
   link_path?: string | null,
@@ -908,10 +884,10 @@ await corsair.toneden.api.links.create({ title: 'New single', target_type: 'musi
 | `skip_landing_page` | `boolean` | No | — |
 | `sort_services_by_clickthroughs` | `boolean` | No | — |
 | `use_saved_service` | `boolean` | No | — |
-| `affiliate_codes` | `object[]` | No | — |
+| `affiliate_codes` | `Record<string, string>` | No | Affiliate codes by store, e.g. &#123; itunes, amazon &#125; |
 | `pixels` | `object[]` | No | — |
 | `services` | `object[]` | No | — |
-| `social_settings` | `Record<string, any>` | No | — |
+| `social_settings` | `object[]` | No | Social profile links shown on the landing page |
 | `header` | `string` | No | — |
 | `metadata_title` | `string` | No | — |
 | `metadata_description` | `string` | No | — |
@@ -929,14 +905,6 @@ await corsair.toneden.api.links.create({ title: 'New single', target_type: 'musi
 | `price` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="affiliate_codes full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="pixels full type">
 
 ```ts
@@ -946,6 +914,14 @@ await corsair.toneden.api.links.create({ title: 'New single', target_type: 'musi
 </Accordion>
 
 <Accordion title="services full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="social_settings full type">
 
 ```ts
 {
@@ -983,14 +959,13 @@ await corsair.toneden.api.links.create({ title: 'New single', target_type: 'musi
   skip_landing_page?: boolean | null,
   sort_services_by_clickthroughs?: boolean | null,
   use_saved_service?: boolean | null,
-  affiliate_codes?: {
-  }[] | null,
+  affiliate_codes?: Record<string, string | null> | null,
   pixels?: {
   }[] | null,
   services?: {
   }[] | null,
   social_settings?: {
-  } | null,
+  }[] | null,
   header?: string | null,
   metadata_title?: string | null,
   metadata_description?: string | null,
@@ -1161,14 +1136,13 @@ await corsair.toneden.api.links.get({ link_id: 48213 });
   skip_landing_page?: boolean | null,
   sort_services_by_clickthroughs?: boolean | null,
   use_saved_service?: boolean | null,
-  affiliate_codes?: {
-  }[] | null,
+  affiliate_codes?: Record<string, string | null> | null,
   pixels?: {
   }[] | null,
   services?: {
   }[] | null,
   social_settings?: {
-  } | null,
+  }[] | null,
   header?: string | null,
   metadata_title?: string | null,
   metadata_description?: string | null,
@@ -1349,14 +1323,13 @@ await corsair.toneden.api.links.listForUser({ user_id: 1 });
   skip_landing_page?: boolean | null,
   sort_services_by_clickthroughs?: boolean | null,
   use_saved_service?: boolean | null,
-  affiliate_codes?: {
-  }[] | null,
+  affiliate_codes?: Record<string, string | null> | null,
   pixels?: {
   }[] | null,
   services?: {
   }[] | null,
   social_settings?: {
-  } | null,
+  }[] | null,
   header?: string | null,
   metadata_title?: string | null,
   metadata_description?: string | null,
@@ -1410,10 +1383,10 @@ await corsair.toneden.api.links.update({ link_id: 48213, title: 'Renamed' });
 | `skip_landing_page` | `boolean` | No | — |
 | `sort_services_by_clickthroughs` | `boolean` | No | — |
 | `use_saved_service` | `boolean` | No | — |
-| `affiliate_codes` | `object[]` | No | — |
+| `affiliate_codes` | `Record<string, string>` | No | Affiliate codes by store, e.g. &#123; itunes, amazon &#125; |
 | `pixels` | `object[]` | No | — |
 | `services` | `object[]` | No | — |
-| `social_settings` | `Record<string, any>` | No | — |
+| `social_settings` | `object[]` | No | Social profile links shown on the landing page |
 | `header` | `string` | No | — |
 | `metadata_title` | `string` | No | — |
 | `metadata_description` | `string` | No | — |
@@ -1433,14 +1406,6 @@ await corsair.toneden.api.links.update({ link_id: 48213, title: 'Renamed' });
 Only the fields you pass are sent, and a call with no field is rejected before the request.
 
 <AccordionGroup>
-<Accordion title="affiliate_codes full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="pixels full type">
 
 ```ts
@@ -1450,6 +1415,14 @@ Only the fields you pass are sent, and a call with no field is rejected before t
 </Accordion>
 
 <Accordion title="services full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="social_settings full type">
 
 ```ts
 {
@@ -1487,14 +1460,13 @@ Only the fields you pass are sent, and a call with no field is rejected before t
   skip_landing_page?: boolean | null,
   sort_services_by_clickthroughs?: boolean | null,
   use_saved_service?: boolean | null,
-  affiliate_codes?: {
-  }[] | null,
+  affiliate_codes?: Record<string, string | null> | null,
   pixels?: {
   }[] | null,
   services?: {
   }[] | null,
   social_settings?: {
-  } | null,
+  }[] | null,
   header?: string | null,
   metadata_title?: string | null,
   metadata_description?: string | null,
