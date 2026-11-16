@@ -409,3 +409,69 @@ describe('JungleScout endpoint schemas', () => {
 		});
 	});
 });
+
+describe('responses from the OpenAPI examples (developer.junglescout.com v1)', () => {
+	it('accepts share of voice brands with null sponsored metrics', () => {
+		const brand = {
+			brand: 'Callaway',
+			combined_products: 9,
+			combined_weighted_sov: 0.2826,
+			combined_basic_sov: 0.0818,
+			combined_average_position: 41.33,
+			combined_average_price: 220.41,
+			organic_products: 9,
+			organic_weighted_sov: 0.315,
+			organic_basic_sov: 0.0938,
+			organic_average_position: 41.33,
+			organic_average_price: 220.41,
+			sponsored_products: 0,
+			sponsored_weighted_sov: 0,
+			sponsored_basic_sov: 0,
+			sponsored_average_position: null,
+			sponsored_average_price: null,
+		};
+		expect(
+			ShareOfVoiceResponseSchema.safeParse({
+				data: {
+					id: 'us/golf clubs',
+					type: 'share_of_voice',
+					attributes: {
+						estimated_30_day_search_volume: 1000,
+						exact_suggested_bid_median: 1.5,
+						product_count: 50,
+						updated_at: '2026-04-22T00:00:00.000Z',
+						brands: [brand],
+						top_asins: [],
+					},
+				},
+			}).success,
+		).toBe(true);
+	});
+
+	it('accepts a sales estimate without attributes.asin (not in the schema)', () => {
+		expect(
+			SalesEstimatesQueryResponseSchema.safeParse({
+				data: [
+					{
+						id: 'us/B08JYQLKXZ',
+						type: 'sales_estimate_result',
+						attributes: {
+							is_parent: false,
+							is_variant: true,
+							is_standalone: false,
+							parent_asin: 'B09RWP4NXB',
+							variants: [],
+							data: [
+								{
+									date: '2026-04-22',
+									estimated_units_sold: 1563,
+									last_known_price: 30.8,
+								},
+							],
+						},
+					},
+				],
+			}).success,
+		).toBe(true);
+	});
+});
