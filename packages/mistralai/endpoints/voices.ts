@@ -37,7 +37,6 @@ export const create: MistralAiEndpoints['voicesCreate'] = async (
 		body: input,
 		output: MistralAiEndpointOutputSchemas.voicesCreate,
 		event: 'voices.create',
-		logged: { name: input.name },
 	});
 };
 

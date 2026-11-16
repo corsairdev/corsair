@@ -30,7 +30,6 @@ export const create: MistralAiEndpoints['audioAgentsCreate'] = async (
 		body: input,
 		output: MistralAiEndpointOutputSchemas.audioAgentsCreate,
 		event: 'audioAgents.create',
-		logged: { name: input.name },
 	});
 };
 

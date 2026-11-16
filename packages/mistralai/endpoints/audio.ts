@@ -65,7 +65,6 @@ export const transcribe: MistralAiEndpoints['audioTranscribe'] = async (
 		logged: {
 			model: input.model,
 			file_id: input.file_id,
-			filename: input.filename,
 		},
 	});
 };

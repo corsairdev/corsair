@@ -11,7 +11,7 @@ type CallOptions<S extends z.ZodType> = MistralAiRequestOptions & {
 	event: string;
 	/**
 	 * What the event log keeps: ids and model names only, never prompts,
-	 * messages or file content.
+	 * messages, file content or caller-written names and filenames.
 	 */
 	logged?: Record<string, string | number | boolean | undefined>;
 };

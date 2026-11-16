@@ -30,7 +30,7 @@ export const create: MistralAiEndpoints['agentsCreate'] = async (
 		body: input,
 		output: MistralAiEndpointOutputSchemas.agentsCreate,
 		event: 'agents.create',
-		logged: { model: input.model, name: input.name },
+		logged: { model: input.model },
 	});
 };
 

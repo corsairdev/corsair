@@ -911,6 +911,44 @@ describe('Mistral AI input checks', () => {
 	});
 });
 
+describe('Mistral AI event log', () => {
+	it('keeps caller-written names and filenames out of corsair_events', async () => {
+		fetchMock
+			.mockResolvedValueOnce(jsonResponse({ ...voice, name: 'Jane Doe voice' }))
+			.mockResolvedValueOnce(
+				jsonResponse({
+					id: FILE_ID,
+					object: 'file',
+					bytes: 13,
+					created_at: 1,
+					filename: 'jane-doe-medical.wav',
+					purpose: 'audio',
+				}),
+			);
+		await client.corsair.mistralai.api.voices.create({
+			name: 'Jane Doe voice',
+			sample_audio: hello,
+		});
+		await client.corsair.mistralai.api.files.upload({
+			filename: 'jane-doe-medical.wav',
+			content_base64: hello,
+			purpose: 'audio',
+		});
+
+		const rows = await client.testDb.db
+			.selectFrom('corsair_events')
+			.selectAll()
+			.execute();
+		const logged = JSON.stringify(rows);
+		expect(logged).toContain('mistralai.voices.create');
+		expect(logged).toContain('mistralai.files.upload');
+		// The payload is readable here: the ids and byte count are in it.
+		expect(logged).toContain('bytes');
+		expect(logged).not.toContain('Jane Doe');
+		expect(logged).not.toContain('jane-doe-medical');
+	});
+});
+
 type History = MistralAiEndpointInputs['chatComplete']['messages'];
 
 describe('Mistral AI answers sent back as history', () => {

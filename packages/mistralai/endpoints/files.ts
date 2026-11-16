@@ -38,7 +38,6 @@ export const upload: MistralAiEndpoints['filesUpload'] = async (
 		output: MistralAiEndpointOutputSchemas.filesUpload,
 		event: 'files.upload',
 		logged: {
-			filename: input.filename,
 			purpose: input.purpose,
 			bytes: bytes.length,
 		},
