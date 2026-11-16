@@ -52,7 +52,8 @@ describeLive('Helpwise live API smoke tests (read-only)', () => {
 		);
 
 		const parsed = ContactsListResponseSchema.parse(res);
-		expect(Array.isArray(parsed.results)).toBe(true);
+		// An account with no contacts answers `results: null`.
+		expect(parsed.results === null || Array.isArray(parsed.results)).toBe(true);
 	});
 
 	it('GET /tags lists tags', async () => {
@@ -61,6 +62,7 @@ describeLive('Helpwise live API smoke tests (read-only)', () => {
 		});
 
 		const parsed = TagsListResponseSchema.parse(res);
-		expect(Array.isArray(parsed)).toBe(true);
+		// An account with no tags answers `null`.
+		expect(parsed === null || Array.isArray(parsed)).toBe(true);
 	});
 });
