@@ -353,6 +353,26 @@ describe('resolveFileInput', () => {
 			{ maxBytes: 1 },
 		);
 		expect(Array.from(atLimit.bytes)).toEqual([255]);
+		// Whitespace is not data, escaped or not, so it doesn't count toward the limit.
+		const trailingNewline = await resolveFileInput(
+			'data:application/octet-stream;base64,/w==%0A',
+			{ maxBytes: 1 },
+		);
+		expect(Array.from(trailingNewline.bytes)).toEqual([255]);
+		const spaced = await resolveFileInput(
+			`data:application/octet-stream;base64,%2F${'%20'.repeat(50)}w%3D%3D${'%0D%0A'.repeat(50)}`,
+			{ maxBytes: 1 },
+		);
+		expect(Array.from(spaced.bytes)).toEqual([255]);
+		await expect(
+			resolveFileInput('data:application/octet-stream;base64,AQI%3D', {
+				maxBytes: 1,
+			}),
+		).rejects.toThrow(/larger than/);
+		// Base64 is ASCII; an escaped byte past it is refused, not passed on.
+		await expect(
+			resolveFileInput('data:application/octet-stream;base64,%2F%C3%A9'),
+		).rejects.toThrow('not valid base64');
 		// Plain { base64 } is not a URL, so a % in it is still refused.
 		await expect(resolveFileInput({ base64: '%2Fw%3D%3D' })).rejects.toThrow(
 			'not valid base64',
@@ -400,6 +420,37 @@ describe('resolveFileInput', () => {
 				{ base64: Buffer.alloc(2048).toString('base64') },
 				{ maxBytes: 1024 },
 			),
+		).rejects.toThrow(/larger than/);
+	});
+
+	it('refuses base64 cut short instead of returning part of the file', async () => {
+		// A group of four left with one character holds no whole byte; Node would
+		// drop it and return the rest.
+		for (const base64 of ['AQIDZ', 'Z', 'AQ=', 'AQI==', 'AQ==AQ==', 'A===']) {
+			await expect(resolveFileInput({ base64 })).rejects.toThrow(
+				'not valid base64',
+			);
+		}
+		// Padding stays optional, and the URL-safe alphabet still works.
+		const decode = async (base64: string) =>
+			Array.from((await resolveFileInput({ base64 })).bytes);
+		expect(await decode('AQ')).toEqual([1]);
+		expect(await decode('AQ==')).toEqual([1]);
+		expect(await decode('AQI')).toEqual([1, 2]);
+		expect(await decode('AQI=')).toEqual([1, 2]);
+		expect(await decode('AQID')).toEqual([1, 2, 3]);
+		expect(await decode('A Q I D\n')).toEqual([1, 2, 3]);
+		expect(await decode('_-8')).toEqual(
+			Array.from(Buffer.from('/+8=', 'base64')),
+		);
+		// Without padding the size is exact: two bytes fit a two-byte limit.
+		expect(
+			Array.from(
+				(await resolveFileInput({ base64: 'AQI' }, { maxBytes: 2 })).bytes,
+			),
+		).toEqual([1, 2]);
+		await expect(
+			resolveFileInput({ base64: 'AQI' }, { maxBytes: 1 }),
 		).rejects.toThrow(/larger than/);
 	});
 

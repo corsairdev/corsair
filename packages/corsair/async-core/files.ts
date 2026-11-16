@@ -99,24 +99,23 @@ function withinLimit(
 /**
  * A data URL's percent-encoded body as the bytes it encodes; `%FF` is byte 255, not text.
  *
- * Decoding stops once the output passes `cap`, and a body too long to fit is
- * refused before it is encoded at all. `maxBytes` is the limit the error names.
+ * Decoding stops once the output passes `maxBytes`, and a body too long to fit
+ * is refused before it is encoded at all.
  */
 function fromPercentEncoded(
 	body: string,
 	maxBytes: number | undefined,
-	cap: number | undefined = maxBytes,
 ): Uint8Array {
 	// Every three characters decode to at least one byte (`%41` is the tightest).
-	if (cap !== undefined && Math.ceil(body.length / 3) > cap)
-		throw tooLarge(maxBytes ?? cap);
+	if (maxBytes !== undefined && Math.ceil(body.length / 3) > maxBytes)
+		throw tooLarge(maxBytes);
 	const raw = new TextEncoder().encode(body);
 	const out = new Uint8Array(
-		cap === undefined ? raw.length : Math.min(raw.length, cap),
+		maxBytes === undefined ? raw.length : Math.min(raw.length, maxBytes),
 	);
 	let length = 0;
 	for (let i = 0; i < raw.length; i++) {
-		if (cap !== undefined && length === cap) throw tooLarge(maxBytes ?? cap);
+		if (maxBytes !== undefined && length === maxBytes) throw tooLarge(maxBytes);
 		// The digits come from the bytes too: `i` counts bytes, so a non-ASCII
 		// character earlier in `body` would shift a string index.
 		const hex =
@@ -133,32 +132,64 @@ function fromPercentEncoded(
 	return length === out.length ? out : out.slice(0, length);
 }
 
+const notBase64 = () => new Error('The file is not valid base64.');
+
+// Tab, line feed, vertical tab, form feed, carriage return and space.
+const ASCII_WHITESPACE = new Set([0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x20]);
+
 /**
  * A base64 data URL's body as base64 text. Like `fetch`, the body is
- * percent-decoded first, so `%2Fw%3D%3D` reads as `/w==`. A plain `{ base64 }`
+ * percent-decoded first, so `%2Fw%3D%3D` reads as `/w==`. Whitespace, escaped
+ * or not, is dropped because base64 ignores it, and the text that remains is
+ * held to the longest base64 that can fit `maxBytes`. A plain `{ base64 }`
  * input is not a URL and skips this.
  */
 function base64Text(body: string, maxBytes: number | undefined): string {
 	if (!body.includes('%')) return body;
-	// Padded base64 is 4 characters per 3 bytes, so longer text is over the
-	// limit. Whitespace is dropped first because base64 ignores it; an escaped
-	// space (`%20`) still counts, and base64 never needs one.
+	const text = body.replace(/\s+/g, '');
+	// Padded base64 is 4 characters for every 3 bytes, so longer text is over the limit.
 	const cap =
-		maxBytes === undefined ? undefined : Math.ceil((maxBytes + 2) / 3) * 4;
-	const decoded = fromPercentEncoded(body.replace(/\s+/g, ''), maxBytes, cap);
-	return Buffer.from(decoded).toString('latin1');
+		maxBytes === undefined
+			? text.length
+			: Math.min(text.length, Math.ceil(maxBytes / 3) * 4);
+	const out = new Uint8Array(cap);
+	let length = 0;
+	for (let i = 0; i < text.length; i++) {
+		let code = text.charCodeAt(i);
+		const hex = code === 0x25 ? text.slice(i + 1, i + 3) : '';
+		if (/^[0-9a-fA-F]{2}$/.test(hex)) {
+			code = Number.parseInt(hex, 16);
+			i += 2;
+		}
+		if (ASCII_WHITESPACE.has(code)) continue;
+		// Base64 is ASCII; anything wider is refused, not cut down to a byte.
+		if (code > 0x7f) throw notBase64();
+		if (length === cap) throw tooLarge(maxBytes ?? cap);
+		out[length++] = code;
+	}
+	return Buffer.from(out.buffer, 0, length).toString('latin1');
 }
 
+/**
+ * Base64 or base64url text as bytes, by the forgiving-base64 rules browsers use:
+ * whitespace is ignored and padding is optional, but `=` only ends a full group
+ * of four, and a group left with one character is refused. Node's decoder
+ * would drop that character and return a shorter file.
+ */
 function fromBase64(text: string, maxBytes: number | undefined): Uint8Array {
-	const clean = text.replace(/\s+/g, '');
-	if (!/^[A-Za-z0-9+/_-]*={0,2}$/.test(clean) || clean.length === 0) {
-		throw new Error('The file is not valid base64.');
+	let clean = text.replace(/\s+/g, '');
+	if (clean.length % 4 === 0) {
+		if (clean.endsWith('==')) clean = clean.slice(0, -2);
+		else if (clean.endsWith('=')) clean = clean.slice(0, -1);
 	}
-	// Refused before decoding when even the smallest decode would be over the limit.
 	if (
-		maxBytes !== undefined &&
-		Math.floor((clean.length * 3) / 4) - 2 > maxBytes
+		clean.length === 0 ||
+		clean.length % 4 === 1 ||
+		!/^[A-Za-z0-9+/_-]+$/.test(clean)
 	)
+		throw notBase64();
+	// Without padding, 4 characters are exactly 3 bytes, so the size is known before decoding.
+	if (maxBytes !== undefined && Math.floor((clean.length * 3) / 4) > maxBytes)
 		throw tooLarge(maxBytes);
 	return withinLimit(new Uint8Array(Buffer.from(clean, 'base64')), maxBytes);
 }
