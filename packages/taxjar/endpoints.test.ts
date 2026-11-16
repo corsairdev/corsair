@@ -33,6 +33,8 @@ const API_KEY = 'taxjar-test-key';
 
 // The fake context only carries what the endpoints read (ctx.key). Typing the
 // endpoint generically keeps each call's own output type.
+// unknown: the constraint has to accept every endpoint's own result type;
+// ReturnType<E> then gives each call its concrete one.
 function invoke<E extends (ctx: never, input: never) => Promise<unknown>>(
 	endpoint: E,
 	// unknown: negative cases pass values no schema accepts.
@@ -588,6 +590,18 @@ describe('error handling', () => {
 		await expect(
 			invoke(Transactions.ordersRemove, { transactionId: '123' }),
 		).rejects.toThrow();
+	});
+
+	it('sends the provider on an update, in the body', async () => {
+		respond({ order: { transaction_id: '123' } });
+
+		await invoke(Transactions.ordersUpdate, {
+			transactionId: '123',
+			provider: 'pos',
+			amount: 10,
+		});
+
+		expect(lastRequest().body).toEqual({ provider: 'pos', amount: 10 });
 	});
 
 	it('encodes ids and sends the provider on get', async () => {

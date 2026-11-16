@@ -502,6 +502,7 @@ export type OrdersGetInput = z.infer<typeof OrdersGetInputSchema>;
 
 export const OrdersUpdateInputSchema = z.object({
 	transactionId: TransactionIdSchema,
+	provider: ProviderSchema,
 	sales_tax: z.number().optional().describe('The sales tax collected.'),
 	transaction_date: IsoDateSchema.optional(),
 	...TransactionBodyShape,
@@ -592,6 +593,7 @@ export type RefundsGetInput = z.infer<typeof RefundsGetInputSchema>;
 
 export const RefundsUpdateInputSchema = z.object({
 	transactionId: TransactionIdSchema,
+	provider: ProviderSchema,
 	sales_tax: z.number().optional().describe('The sales tax collected.'),
 	transaction_date: IsoDateSchema.optional(),
 	transaction_reference_id: z.string().optional(),

@@ -661,6 +661,7 @@ await corsair.taxjar.api.orders.update({ transactionId: '123', amount: 17, shipp
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `provider` | `string` | No | The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with. |
 | `sales_tax` | `number` | No | The sales tax collected. |
 | `transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
 | `from_country` | `string` | No | — |
@@ -1070,6 +1071,7 @@ await corsair.taxjar.api.refunds.update({ transactionId: 'r1', transaction_refer
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `provider` | `string` | No | The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with. |
 | `sales_tax` | `number` | No | The sales tax collected. |
 | `transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
 | `transaction_reference_id` | `string` | No | — |
