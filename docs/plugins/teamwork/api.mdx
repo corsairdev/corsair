@@ -26378,7 +26378,7 @@ Get milestones by due date in a time range
 ```ts
 await corsair.teamwork.api.v3_get_projects_api_v3_milestones_metrics_deadlines_json({
 	path: {},
-	query: {},
+	query: { startDate: '2026-01-01', endDate: '2026-01-31' },
 });
 ```
 
@@ -28777,7 +28777,7 @@ Performance of users completing the most tasks
 ```ts
 await corsair.teamwork.api.v3_get_projects_api_v3_people_metrics_performance_json({
 	path: {},
-	query: {},
+	query: { startDate: '2026-01-01', endDate: '2026-01-31' },
 });
 ```
 
@@ -29086,7 +29086,7 @@ Return the user utilization.
 ```ts
 await corsair.teamwork.api.v3_get_projects_api_v3_people_utilization_json({
 	path: {},
-	query: {},
+	query: { startDate: '2026-01-01', endDate: '2026-01-31' },
 });
 ```
 
@@ -30054,7 +30054,7 @@ Get the total billable time per project
 ```ts
 await corsair.teamwork.api.v3_get_projects_api_v3_projects_metrics_billable_json({
 	path: {},
-	query: {},
+	query: { startDate: '2026-01-01', endDate: '2026-01-31' },
 });
 ```
 
@@ -36693,7 +36693,7 @@ Returns task completions for all users
 ```ts
 await corsair.teamwork.api.v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json({
 	path: {},
-	query: {},
+	query: { startDate: '2026-01-01', endDate: '2026-01-31' },
 });
 ```
 
@@ -42879,7 +42879,7 @@ Get time report
 ```ts
 await corsair.teamwork.api.v3_get_projects_api_v3_time_report_json({
 	path: {},
-	query: {},
+	query: { startDate: '2026-01-01', endDate: '2026-01-31', type: 'user' },
 });
 ```
 
@@ -43170,7 +43170,7 @@ Get time report totals
 ```ts
 await corsair.teamwork.api.v3_get_projects_api_v3_time_report_totals_json({
 	path: {},
-	query: {},
+	query: { startDate: '2026-01-01', endDate: '2026-01-31' },
 });
 ```
 
@@ -45344,9 +45344,9 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_tasks_taskid_json({
 			},
 		},
 		taskOptions: {
-			notify: true,
+			notify: false,
 			everyoneMustDo: true,
-			isTemplate: true,
+			isTemplate: false,
 			parseInlineTags: true,
 			appendAssignees: true,
 			checkInvalidusers: true,
@@ -47470,38 +47470,8 @@ await corsair.teamwork.api.v3_post_projects_api_v3_me_personaltasks_json({
 	path: {},
 	query: {},
 	body: {
-		task: {
-			startAt: '2026-01-15T12:00:00Z',
-			startDate: '2026-01-15',
-			dueAt: '2026-01-15T12:00:00Z',
-			dueDate: '2026-01-15',
-			originalDueDate: '2026-01-15',
-			priority: { Value: 'medium', Null: true, Set: true },
-			customFields: {
-				Values: [{
-					customfieldId: 1,
-					value: null,
-					countryCode: 'US',
-					currencySymbol: '$',
-					urlTextToDisplay: 'View details',
-				}],
-			},
-		},
-		taskOptions: {
-			notify: true,
-			everyoneMustDo: true,
-			isTemplate: true,
-			parseInlineTags: true,
-			appendAssignees: true,
-			checkInvalidusers: true,
-			pushSubtasks: true,
-			pushDependents: true,
-		},
-		tags: [{}],
-		attachments: {},
-		attachmentOptions: {},
-		predecessors: [{ id: 1, type: 'tasks' }],
-		workflows: {},
+		task: { name: 'Draft the launch post', dueAt: '2026-01-15' },
+		taskOptions: { notify: false },
 	},
 });
 ```
@@ -48947,7 +48917,7 @@ await corsair.teamwork.api.v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_
 			dueAt: '2026-01-20',
 			description: 'Create a task using the Teamwork V3 API',
 		},
-		taskOptions: { notify: true },
+		taskOptions: { notify: false },
 	},
 });
 ```
@@ -49604,7 +49574,7 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasklists_tasklistid_tasks_js
 			dueAt: '2026-01-20',
 			description: 'Create a task using the Teamwork V3 API',
 		},
-		taskOptions: { notify: true },
+		taskOptions: { notify: false },
 		card: { columnId: 1 },
 	},
 });
@@ -50382,38 +50352,8 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasks_taskid_subtasks_json({
 	path: { taskId: 1 },
 	query: {},
 	body: {
-		task: {
-			startAt: '2026-01-15T12:00:00Z',
-			startDate: '2026-01-15',
-			dueAt: '2026-01-15T12:00:00Z',
-			dueDate: '2026-01-15',
-			originalDueDate: '2026-01-15',
-			priority: { Value: 'medium', Null: true, Set: true },
-			customFields: {
-				Values: [{
-					customfieldId: 1,
-					value: null,
-					countryCode: 'US',
-					currencySymbol: '$',
-					urlTextToDisplay: 'View details',
-				}],
-			},
-		},
-		taskOptions: {
-			notify: true,
-			everyoneMustDo: true,
-			isTemplate: true,
-			parseInlineTags: true,
-			appendAssignees: true,
-			checkInvalidusers: true,
-			pushSubtasks: true,
-			pushDependents: true,
-		},
-		tags: [{}],
-		attachments: {},
-		attachmentOptions: {},
-		predecessors: [{ id: 1, type: 'tasks' }],
-		workflows: {},
+		task: { name: 'Review the draft', dueAt: '2026-01-15' },
+		taskOptions: { notify: false },
 	},
 });
 ```
@@ -52418,9 +52358,9 @@ await corsair.teamwork.api.v3_put_projects_api_v3_tasks_taskid_json({
 			},
 		},
 		taskOptions: {
-			notify: true,
+			notify: false,
 			everyoneMustDo: true,
-			isTemplate: true,
+			isTemplate: false,
 			parseInlineTags: true,
 			appendAssignees: true,
 			checkInvalidusers: true,

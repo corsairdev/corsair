@@ -517,7 +517,7 @@ apiExamples:
   v3_get_projects_api_v3_me_personaltasks_json:
     args: {"path":{},"query":{}}
   v3_post_projects_api_v3_me_personaltasks_json:
-    args: {"path":{},"query":{},"body":{"task":{"startAt":"2026-01-15T12:00:00Z","startDate":"2026-01-15","dueAt":"2026-01-15T12:00:00Z","dueDate":"2026-01-15","originalDueDate":"2026-01-15","priority":{"Value":"medium","Null":true,"Set":true},"customFields":{"Values":[{"customfieldId":1,"value":null,"countryCode":"US","currencySymbol":"$","urlTextToDisplay":"View details"}]}},"taskOptions":{"notify":true,"everyoneMustDo":true,"isTemplate":true,"parseInlineTags":true,"appendAssignees":true,"checkInvalidusers":true,"pushSubtasks":true,"pushDependents":true},"tags":[{}],"attachments":{},"attachmentOptions":{},"predecessors":[{"id":1,"type":"tasks"}],"workflows":{}}}
+    args: {"path":{},"query":{},"body":{"task":{"name":"Draft the launch post","dueAt":"2026-01-15"},"taskOptions":{"notify":false}}}
   v3_get_projects_api_v3_me_personaltasks_id_json:
     args: {"path":{"id":1},"query":{}}
   v3_get_projects_api_v3_me_timers_json:
@@ -539,7 +539,7 @@ apiExamples:
   v3_get_projects_api_v3_milestones_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_milestones_metrics_deadlines_json:
-    args: {"path":{},"query":{}}
+    args: {"path":{},"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
   v3_get_projects_api_v3_milestones_milestoneid_json:
     args: {"path":{"milestoneId":1},"query":{}}
   v3_get_projects_api_v3_milestones_milestoneid_project_json:
@@ -565,9 +565,9 @@ apiExamples:
   v3_get_projects_api_v3_people_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_people_metrics_performance_json:
-    args: {"path":{},"query":{}}
+    args: {"path":{},"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
   v3_get_projects_api_v3_people_utilization_json:
-    args: {"path":{},"query":{}}
+    args: {"path":{},"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
   v3_delete_projects_api_v3_people_personid_json:
     args: {"path":{"personId":1},"query":{}}
   v3_get_projects_api_v3_people_personid_json:
@@ -577,7 +577,7 @@ apiExamples:
   v3_get_projects_api_v3_projects_metrics_active_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_projects_metrics_billable_json:
-    args: {"path":{},"query":{}}
+    args: {"path":{},"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
   v3_get_projects_api_v3_projects_metrics_healths_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_projects_metrics_invoices_json:
@@ -643,7 +643,7 @@ apiExamples:
   v3_get_projects_api_v3_reporting_precanned_tasktime_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json:
-    args: {"path":{},"query":{}}
+    args: {"path":{},"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
   v3_get_projects_api_v3_statuses_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_statuses_timeline_json:
@@ -651,7 +651,7 @@ apiExamples:
   v3_get_projects_api_v3_taskgroups_taskgroupid_tasks_json:
     args: {"path":{"taskgroupId":1},"query":{}}
   v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json:
-    args: {"path":{"taskgroupId":1},"query":{},"body":{"task":{"tasklistId":1,"name":"Create a task from the Teamwork API","assignees":{"userIds":[2],"teamIds":[],"companyIds":[]},"priority":"medium","startAt":"2026-01-15","dueAt":"2026-01-20","description":"Create a task using the Teamwork V3 API"},"taskOptions":{"notify":true}}}
+    args: {"path":{"taskgroupId":1},"query":{},"body":{"task":{"tasklistId":1,"name":"Create a task from the Teamwork API","assignees":{"userIds":[2],"teamIds":[],"companyIds":[]},"priority":"medium","startAt":"2026-01-15","dueAt":"2026-01-20","description":"Create a task using the Teamwork V3 API"},"taskOptions":{"notify":false}}}
   v3_get_projects_api_v3_tasklists_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_tasklists_templates_json:
@@ -665,7 +665,7 @@ apiExamples:
   v3_get_projects_api_v3_tasklists_tasklistid_tasks_json:
     args: {"path":{"tasklistId":1},"query":{}}
   v3_post_projects_api_v3_tasklists_tasklistid_tasks_json:
-    args: {"path":{"tasklistId":1},"query":{},"body":{"task":{"tasklistId":1,"name":"Create a task from the Teamwork API","assignees":{"userIds":[2],"teamIds":[],"companyIds":[]},"priority":"medium","startAt":"2026-01-15","dueAt":"2026-01-20","description":"Create a task using the Teamwork V3 API"},"taskOptions":{"notify":true},"card":{"columnId":1}}}
+    args: {"path":{"tasklistId":1},"query":{},"body":{"task":{"tasklistId":1,"name":"Create a task from the Teamwork API","assignees":{"userIds":[2],"teamIds":[],"companyIds":[]},"priority":"medium","startAt":"2026-01-15","dueAt":"2026-01-20","description":"Create a task using the Teamwork V3 API"},"taskOptions":{"notify":false},"card":{"columnId":1}}}
   v3_get_projects_api_v3_tasklists_tasklistid_time_total_json:
     args: {"path":{"tasklistId":1},"query":{}}
   v3_get_projects_api_v3_tasks_json:
@@ -681,9 +681,9 @@ apiExamples:
   v3_get_projects_api_v3_tasks_taskid_json:
     args: {"path":{"taskId":1},"query":{}}
   v3_patch_projects_api_v3_tasks_taskid_json:
-    args: {"path":{"taskId":1},"query":{},"body":{"task":{"startAt":"2026-01-15T12:00:00Z","startDate":"2026-01-15","dueAt":"2026-01-15T12:00:00Z","dueDate":"2026-01-15","originalDueDate":"2026-01-15","priority":{"Value":"medium","Null":true,"Set":true},"customFields":{"Values":[{"customfieldId":1,"value":null,"countryCode":"US","currencySymbol":"$","urlTextToDisplay":"View details"}]}},"taskOptions":{"notify":true,"everyoneMustDo":true,"isTemplate":true,"parseInlineTags":true,"appendAssignees":true,"checkInvalidusers":true,"pushSubtasks":true,"pushDependents":true},"tags":[{}],"attachments":{},"attachmentOptions":{},"predecessors":[{"id":1,"type":"tasks"}],"workflows":{}}}
+    args: {"path":{"taskId":1},"query":{},"body":{"task":{"startAt":"2026-01-15T12:00:00Z","startDate":"2026-01-15","dueAt":"2026-01-15T12:00:00Z","dueDate":"2026-01-15","originalDueDate":"2026-01-15","priority":{"Value":"medium","Null":true,"Set":true},"customFields":{"Values":[{"customfieldId":1,"value":null,"countryCode":"US","currencySymbol":"$","urlTextToDisplay":"View details"}]}},"taskOptions":{"notify":false,"everyoneMustDo":true,"isTemplate":false,"parseInlineTags":true,"appendAssignees":true,"checkInvalidusers":true,"pushSubtasks":true,"pushDependents":true},"tags":[{}],"attachments":{},"attachmentOptions":{},"predecessors":[{"id":1,"type":"tasks"}],"workflows":{}}}
   v3_put_projects_api_v3_tasks_taskid_json:
-    args: {"path":{"taskId":1},"query":{},"body":{"task":{"startAt":"2026-01-15T12:00:00Z","startDate":"2026-01-15","dueAt":"2026-01-15T12:00:00Z","dueDate":"2026-01-15","originalDueDate":"2026-01-15","priority":{"Value":"medium","Null":true,"Set":true},"customFields":{"Values":[{"customfieldId":1,"value":null,"countryCode":"US","currencySymbol":"$","urlTextToDisplay":"View details"}]}},"taskOptions":{"notify":true,"everyoneMustDo":true,"isTemplate":true,"parseInlineTags":true,"appendAssignees":true,"checkInvalidusers":true,"pushSubtasks":true,"pushDependents":true},"tags":[{}],"attachments":{},"attachmentOptions":{},"predecessors":[{"id":1,"type":"tasks"}],"workflows":{}}}
+    args: {"path":{"taskId":1},"query":{},"body":{"task":{"startAt":"2026-01-15T12:00:00Z","startDate":"2026-01-15","dueAt":"2026-01-15T12:00:00Z","dueDate":"2026-01-15","originalDueDate":"2026-01-15","priority":{"Value":"medium","Null":true,"Set":true},"customFields":{"Values":[{"customfieldId":1,"value":null,"countryCode":"US","currencySymbol":"$","urlTextToDisplay":"View details"}]}},"taskOptions":{"notify":false,"everyoneMustDo":true,"isTemplate":false,"parseInlineTags":true,"appendAssignees":true,"checkInvalidusers":true,"pushSubtasks":true,"pushDependents":true},"tags":[{}],"attachments":{},"attachmentOptions":{},"predecessors":[{"id":1,"type":"tasks"}],"workflows":{}}}
   v3_get_projects_api_v3_tasks_taskid_project_json:
     args: {"path":{"taskId":1},"query":{}}
   v3_post_projects_api_v3_tasks_taskid_reminders_json:
@@ -695,7 +695,7 @@ apiExamples:
   v3_get_projects_api_v3_tasks_taskid_subtasks_json:
     args: {"path":{"taskId":1},"query":{}}
   v3_post_projects_api_v3_tasks_taskid_subtasks_json:
-    args: {"path":{"taskId":1},"query":{},"body":{"task":{"startAt":"2026-01-15T12:00:00Z","startDate":"2026-01-15","dueAt":"2026-01-15T12:00:00Z","dueDate":"2026-01-15","originalDueDate":"2026-01-15","priority":{"Value":"medium","Null":true,"Set":true},"customFields":{"Values":[{"customfieldId":1,"value":null,"countryCode":"US","currencySymbol":"$","urlTextToDisplay":"View details"}]}},"taskOptions":{"notify":true,"everyoneMustDo":true,"isTemplate":true,"parseInlineTags":true,"appendAssignees":true,"checkInvalidusers":true,"pushSubtasks":true,"pushDependents":true},"tags":[{}],"attachments":{},"attachmentOptions":{},"predecessors":[{"id":1,"type":"tasks"}],"workflows":{}}}
+    args: {"path":{"taskId":1},"query":{},"body":{"task":{"name":"Review the draft","dueAt":"2026-01-15"},"taskOptions":{"notify":false}}}
   v3_get_projects_api_v3_tasks_taskid_time_json:
     args: {"path":{"taskId":1},"query":{}}
   v3_post_projects_api_v3_tasks_taskid_time_json:
@@ -705,9 +705,9 @@ apiExamples:
   v3_get_projects_api_v3_time_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_time_report_json:
-    args: {"path":{},"query":{}}
+    args: {"path":{},"query":{"startDate":"2026-01-01","endDate":"2026-01-31","type":"user"}}
   v3_get_projects_api_v3_time_report_totals_json:
-    args: {"path":{},"query":{}}
+    args: {"path":{},"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
   v3_get_projects_api_v3_time_report_type_json:
     args: {"path":{"type":"project"},"query":{}}
   v3_get_projects_api_v3_time_total_json:
