@@ -510,9 +510,7 @@ export function buildCorsairClient<
 			plugin.id,
 			effectiveTenantId,
 			ensureProvisioned,
-			accounts && (kek || accounts[plugin.id])
-				? { ref: accounts[plugin.id], kek: kek ?? '' }
-				: undefined,
+			accounts ? { ref: accounts[plugin.id], kek: kek ?? '' } : undefined,
 		);
 
 		// api.db reads span every account of an unbound plugin; ctx.db stays strict.

@@ -107,6 +107,38 @@ describe('withTenant account scope', () => {
 		expect(await t.demo.api.token()).toBe('tok-b');
 	});
 
+	describe('without a kek', () => {
+		const noKek = () => {
+			const c = createCorsair({
+				plugins: [demo],
+				database: env.db,
+				multiTenancy: true,
+			});
+			getCorsairInternal(c).database!.isPg = false;
+			return dynamic<'demo'>(c).withTenant('t1');
+		};
+
+		it('two unbound accounts throw account_required instead of picking the oldest', async () => {
+			await addAccount('a', 'a@x.com', 'tok-a');
+			await addAccount('b', 'b@x.com', 'tok-b');
+			const err = asSelectionError(
+				await noKek()
+					.demo.api.note()
+					.then(neverResolves, (e) => e),
+			);
+			expect(err.code).toBe('account_required');
+			expect(err.accounts.map((a) => a.id).sort()).toEqual([
+				'acct-a',
+				'acct-b',
+			]);
+		});
+
+		it('a single account still resolves', async () => {
+			await addAccount('a', 'a@x.com', 'tok-a');
+			expect(await noKek().demo.api.note()).toBe(true);
+		});
+	});
+
 	it('unbound with two accounts rejects api calls with account_required naming both labels', async () => {
 		await addAccount('a', 'a@x.com', 'tok-a');
 		await addAccount('b', 'b@x.com', 'tok-b');
