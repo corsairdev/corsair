@@ -24,7 +24,10 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeTruveraRequest(ctx.key, toRequest(parsed));
+	const raw = await makeTruveraRequest(ctx.key, toRequest(parsed), {
+		// Unit tests pass a bare context, so options can be missing.
+		sandbox: ctx.options?.sandbox,
+	});
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

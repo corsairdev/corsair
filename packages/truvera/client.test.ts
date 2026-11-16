@@ -1,9 +1,11 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeTruveraError,
 	makeTruveraRequest,
 	TRUVERA_API_BASE,
-	TruveraAPIError,
+	TRUVERA_SANDBOX_API_BASE,
+	truveraErrorDetails,
 } from './client';
 import { unauthorized, validationFailed } from './test-fixtures';
 
@@ -114,10 +116,13 @@ describe('makeTruveraRequest', () => {
 			path: 'credentials',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(TruveraAPIError);
-		expect((error as TruveraAPIError).status).toBe(401);
-		expect((error as TruveraAPIError).type).toBe('ServerError');
-		expect((error as Error).message).toContain('Cannot decode JWT');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect(truveraErrorDetails(error)?.type).toBe('ServerError');
+		// Truvera quotes the token it could not decode; that part is masked.
+		expect(JSON.stringify((error as ApiError).body)).not.toContain(
+			'eyJhbGciOiJIUzUxMiJ9',
+		);
 	});
 
 	it('keeps the per-field errors a rejected credential returns', async () => {
@@ -129,24 +134,26 @@ describe('makeTruveraRequest', () => {
 			body: {},
 		}).catch((caught: unknown) => caught);
 
-		const typed = error as TruveraAPIError;
-		expect(typed.errors).toHaveLength(2);
-		expect(typed.errors?.[0]?.path).toBe('credential.issuer');
-		expect(typed.hasFieldErrors).toBe(true);
-		expect(typed.message).toContain('credential.issuer');
+		const details = truveraErrorDetails(error);
+		expect(details?.errors).toHaveLength(2);
+		expect(details?.errors[0]?.path).toBe('credential.issuer');
+		expect(describeTruveraError(400, (error as ApiError).body, '')).toContain(
+			'credential.issuer',
+		);
 	});
 
-	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
-		respond({}, 429, { 'Retry-After': '8' });
+	it('retries a 429 in core and keeps Retry-After on the final error', async () => {
+		// Core makes 1 attempt plus 3 retries.
+		for (let i = 0; i < 4; i += 1) respond({}, 429, { 'Retry-After': '1' });
 
 		const error = await makeTruveraRequest(KEY, {
 			method: 'GET',
 			path: 'dids',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TruveraAPIError).retryAfter).toBe(8000);
-		expect((error as TruveraAPIError).isRateLimit).toBe(true);
-	});
+		expect((error as ApiError).retryAfter).toBe(1000);
+		expect((error as ApiError).status).toBe(429);
+	}, 20_000);
 
 	it('records the method so a credential issue is not replayed', async () => {
 		respond({}, 500);
@@ -157,7 +164,43 @@ describe('makeTruveraRequest', () => {
 			body: {},
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TruveraAPIError).method).toBe('POST');
+		expect((error as ApiError).request.method).toBe('POST');
+	});
+
+	it('masks the key when Truvera echoes it, and drops the request body', async () => {
+		respond(
+			{
+				message: `Cannot decode JWT: ${KEY}`,
+				errors: [{ path: '/credentials', message: `bad key ${KEY}` }],
+				status: 401,
+				type: 'ServerError',
+			},
+			401,
+		);
+
+		const error = await makeTruveraRequest(KEY, {
+			method: 'POST',
+			path: 'credentials',
+			body: { password: 'issuance-secret' },
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		for (const text of [inspect(error), JSON.stringify(error)]) {
+			expect(text).not.toContain(KEY);
+			expect(text).not.toContain('issuance-secret');
+		}
+	});
+
+	it('uses the sandbox host when asked', async () => {
+		respond([]);
+
+		await makeTruveraRequest(
+			KEY,
+			{ method: 'GET', path: 'dids' },
+			{ sandbox: true },
+		);
+
+		expect(lastRequest().url.startsWith(TRUVERA_SANDBOX_API_BASE)).toBe(true);
 	});
 
 	it('never puts the key in the message or its inspection', async () => {

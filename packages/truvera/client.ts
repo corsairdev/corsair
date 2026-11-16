@@ -7,13 +7,16 @@ import type {
 import { ApiError, request } from 'corsair/http';
 
 export const TRUVERA_API_BASE = 'https://api.truvera.io';
+/** The sandbox host; test-mode API keys only work here. */
+export const TRUVERA_SANDBOX_API_BASE = 'https://api-testnet.truvera.io';
 
-// error-handlers.ts owns retries. The object has to be complete: request.ts
-// replaces its defaults wholesale, so a partial one either skips the
-// rate-limit block or throws reading `headerNames`.
+// Core's request() retries a 429 three times and honours Retry-After, so the
+// 429 handler in error-handlers.ts does not retry again. The object has to be
+// complete: request.ts replaces its defaults wholesale, so a partial one either
+// skips the rate-limit block or throws reading `headerNames`.
 const TRUVERA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -22,55 +25,79 @@ const TRUVERA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 /**
  * Truvera answers an error as `{ status, type, message, errors: [{ path,
  * message }] }`. The `type` is `ServerError` for most failures, so the status is
- * what distinguishes them and `errors` says which field was wrong.
+ * what distinguishes them and `errors` says which field was wrong. HTTP
+ * failures stay core's ApiError; `truveraErrorDetails` and
+ * `describeTruveraError` read this body.
  */
-export class TruveraAPIError extends Error {
-	readonly status?: number;
-	/** The provider's error type, usually `ServerError`. */
-	readonly type?: string;
-	/** Per-field messages, when the provider named the offending fields. */
-	readonly errors?: { path?: string; message?: string }[];
-	/** Milliseconds from a Retry-After header, when Truvera sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, which decides replay safety. */
-	readonly method?: string;
+export type TruveraErrorDetails = {
+	type?: string;
+	errors: { path?: string; message?: string }[];
+};
 
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			type?: string;
-			errors?: { path?: string; message?: string }[];
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'TruveraAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		const body = asRecord(cause?.body);
-		this.type =
-			options.type ?? (typeof body?.type === 'string' ? body.type : undefined);
-		this.errors = options.errors ?? readErrors(cause?.body);
-	}
+/** Reads Truvera's error body from core's ApiError, or undefined otherwise. */
+export function truveraErrorDetails(
+	// unknown: any thrown value; only core's ApiError has a body to read.
+	error: unknown,
+): TruveraErrorDetails | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	const body = asRecord(error.body);
+	return {
+		type: typeof body?.type === 'string' ? body.type : undefined,
+		errors: readErrors(error.body) ?? [],
+	};
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
+const REDACTED = '[REDACTED]';
 
-	/** The plan's transaction limit is reached; no retry can fix it. */
-	get isPaymentRequired(): boolean {
-		return this.status === 402;
-	}
+/** Masks the key and whatever token Truvera quotes after "JWT:". */
+function scrubText(text: string, secret: string): string {
+	const masked = secret.length > 0 ? text.split(secret).join(REDACTED) : text;
+	return masked.replace(/(JWT:\s*)\S+/g, `$1${REDACTED}`);
+}
 
-	/** True when the field-level errors named a path, which a caller can act on. */
-	get hasFieldErrors(): boolean {
-		return (this.errors ?? []).some((entry) => entry.path !== undefined);
-	}
+// unknown: any JSON value from the error body; strings are scrubbed in place.
+function scrub(value: unknown, secret: string): unknown {
+	if (typeof value === 'string') return scrubText(value, secret);
+	if (Array.isArray(value)) return value.map((entry) => scrub(entry, secret));
+	const record = asRecord(value);
+	if (!record) return value;
+	return Object.fromEntries(
+		Object.entries(record).map(([key, entry]) => [key, scrub(entry, secret)]),
+	);
+}
+
+/**
+ * Core's ApiError keeps the request it failed on, body included, and a
+ * credential or wallet body carries subject data, emails and passwords.
+ * Truvera's 401 can also echo the API key back in its message. This rebuilds
+ * the same ApiError without the request body and with the key masked in the
+ * response body and message. Status and retryAfter stay as they were.
+ */
+function withoutRequestData(error: ApiError, apiKey: string): ApiError {
+	const echoed =
+		JSON.stringify(scrub(error.body ?? null, apiKey)) !==
+			JSON.stringify(error.body ?? null) ||
+		scrubText(error.message, apiKey) !== error.message;
+	if (error.request.body === undefined && !echoed) return error;
+	const stripped = new ApiError(
+		{ ...error.request, body: undefined },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: echoed ? scrub(error.body, apiKey) : error.body,
+		},
+		echoed ? scrubText(error.message, apiKey) : error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	stripped.stack = error.stack;
+	return stripped;
 }
 
 // unknown: the error body is untyped until `errors` is read as an array.
@@ -135,9 +162,10 @@ export function segment(value: string | number): string {
 export async function makeTruveraRequest(
 	apiKey: string,
 	{ method, path, query, body }: TruveraRequest,
+	options: { sandbox?: boolean } = {},
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
-		BASE: TRUVERA_API_BASE,
+		BASE: options.sandbox ? TRUVERA_SANDBOX_API_BASE : TRUVERA_API_BASE,
 		VERSION: '1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -160,17 +188,9 @@ export async function makeTruveraRequest(
 			rateLimitConfig: TRUVERA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof TruveraAPIError) throw error;
-		if (error instanceof ApiError) {
-			throw new TruveraAPIError(
-				describeTruveraError(error.status, error.body, error.message),
-				{ cause: error, method },
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new TruveraAPIError(error.message, { cause: error, method });
-		}
-		throw new TruveraAPIError('Unknown Truvera error', { method });
+		// Core's ApiError goes through as an ApiError (plugin rules R8), only
+		// without the request data it carried.
+		if (error instanceof ApiError) throw withoutRequestData(error, apiKey);
+		throw error;
 	}
 }

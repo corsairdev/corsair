@@ -37,6 +37,11 @@ export type TruveraPluginOptions = {
 	hooks?: InternalTruveraPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof truveraEndpointsNested>;
+	/**
+	 * Send requests to the sandbox host, https://api-testnet.truvera.io, which
+	 * uses test data. Test-mode API keys only work there.
+	 */
+	sandbox?: boolean;
 };
 
 export type TruveraContext = CorsairPluginContext<
@@ -433,7 +438,13 @@ export function truvera<const T extends TruveraPluginOptions>(
 	} satisfies InternalTruveraPlugin;
 }
 
-export { TruveraAPIError } from './client';
+export type { TruveraErrorDetails } from './client';
+export {
+	describeTruveraError,
+	TRUVERA_API_BASE,
+	TRUVERA_SANDBOX_API_BASE,
+	truveraErrorDetails,
+} from './client';
 export type {
 	CreateDidInput,
 	CreateRegistryInput,

@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { TruveraAPIError } from './client';
 import {
 	errorHandlers,
 	mergeErrorHandlers,
@@ -18,37 +18,42 @@ function classify(error: Error): HandlerName {
 	return name;
 }
 
+// Every handler ignores its arguments now, so it is called the way core
+// calls it, with the error, through a widened signature.
 async function strategy(error: Error) {
-	return errorHandlers[classify(error)].handler(error);
+	const handler = errorHandlers[classify(error)].handler as (
+		error: Error,
+	) => Promise<unknown>;
+	return handler(error);
 }
 
 function apiError(
 	status: number,
 	options: { retryAfter?: number; method?: string } = {},
 ) {
-	return new TruveraAPIError(`Truvera ${status}: failed`, {
-		status,
-		...options,
-	});
+	// Without a method the request counts as a write, so it is never replayed.
+	return new ApiError(
+		{
+			method: (options.method ?? 'POST') as 'GET' | 'POST',
+			url: 'x',
+		},
+		{
+			url: 'https://api.truvera.io/x',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`Truvera ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('Truvera error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = apiError(429);
+	it('leaves 429 retries to core, which already retried with Retry-After', async () => {
+		const error = apiError(429, { retryAfter: 8000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('honours Retry-After on a 429', async () => {
-		expect(await strategy(apiError(429, { retryAfter: 8000 }))).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 8000,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 401', async () => {

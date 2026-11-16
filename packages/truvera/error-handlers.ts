@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TruveraAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof TruveraAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -11,15 +11,11 @@ function statusOf(error: Error): number | undefined {
  * reached, 404 for an unknown resource, and 429 for a rate limit.
  */
 export const errorHandlers = {
+	// Core's request() already retried a 429 three times with Retry-After, so
+	// it is not replayed again here.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof TruveraAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TruveraAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401: a missing, wrong or revoked API key.
 	AUTH_ERROR: {
@@ -29,8 +25,7 @@ export const errorHandlers = {
 	// 402: the plan's transaction limit. Nothing is charged, and no retry fixes
 	// it until the plan changes.
 	QUOTA_ERROR: {
-		match: (error: Error) =>
-			error instanceof TruveraAPIError && error.isPaymentRequired,
+		match: (error: Error) => statusOf(error) === 402,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 for a rejected body or a DID the account does not own, 404 for an
@@ -46,9 +41,9 @@ export const errorHandlers = {
 	// a replay would mint a second one.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TruveraAPIError &&
-			error.method === 'GET' &&
-			(statusOf(error) ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

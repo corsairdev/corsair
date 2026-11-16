@@ -4,8 +4,9 @@ import { truvera } from './index';
 import { credentialMetadata, didDocument, registry } from './test-fixtures';
 
 /**
- * `requests.test.ts` calls the HTTP client, which is built with `maxRetries: 0`
- * so only `error-handlers.ts` decides what is retried.
+ * Core's request() retries a 429 three times with Retry-After, and the
+ * plugin's 429 handler adds none. This file goes through `createCorsair` to
+ * prove both layers together.
  *
  * Issuing a credential is never replayed on a 5xx: a replay would mint a second
  * credential with a different proof.
