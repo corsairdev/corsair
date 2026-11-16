@@ -1,0 +1,1874 @@
+{
+  "id": "shortio",
+  "displayName": "Short.io",
+  "description": "Manage branded short links and inspect domains using the Short.io API.",
+  "npmPackageName": "@corsair-dev/shortio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "shortio.api.domains.get",
+      "shortPath": "domains.get",
+      "description": "Get a domain by its ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unicodeHostname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "extra_records | not_registered | configured | not_configured | registration_pending | not_verified | string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TeamId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasFavicon",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "segmentKey",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hideReferer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "linkType",
+            "optional": true,
+            "type": "increment | random | secure | four-char | eight-char | ten-char | string | null"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hideVisitorIp",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableAI",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "httpsLevel",
+            "optional": true,
+            "type": "none | redirect | hsts | string | null"
+          },
+          {
+            "key": "httpsLinks",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect404",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhookURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGA",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationFB",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationAdroll",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGTM",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "clientStorage",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "caseSensitive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "incrementCounter",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "robots",
+            "optional": true,
+            "type": "allow | disallow | noindex | string | null"
+          },
+          {
+            "key": "sslCertExpirationDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sslCertInstalledSuccess",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "domainRegistrationId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UserId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "exportEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isFavorite",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ipExclusions",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "userPlan",
+            "optional": true,
+            "type": "tiny | hobby | small | standard | large | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List domains with limit and offset.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "noTeamId",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pattern",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, hostname: string, unicodeHostname?: string | null, state?: extra_records | not_registered | configured | not_configured | registration_pending | not_verified | string | null, createdAt?: string | null, updatedAt?: string | null, TeamId?: number | null, hasFavicon?: boolean | null, segmentKey?: string | null, hideReferer?: boolean | null, linkType?: increment | random | secure | four-char | eight-char | ten-char | string | null, cloaking?: boolean | null, hideVisitorIp?: boolean | null, enableAI?: boolean | null, httpsLevel?: none | redirect | hsts | string | null, httpsLinks?: boolean | null, redirect404?: string | null, webhookURL?: string | null, integrationGA?: string | null, integrationFB?: string | null, integrationAdroll?: string | null, integrationGTM?: string | null, clientStorage?: Record<string, any> | null, caseSensitive?: boolean | null, incrementCounter?: string | number | null, robots?: allow | disallow | noindex | string | null, sslCertExpirationDate?: string | null, sslCertInstalledSuccess?: boolean | null, domainRegistrationId?: number | null, UserId?: number | null, exportEnabled?: boolean | null, isFavorite?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "shortio.api.links.archive",
+      "shortPath": "links.archive",
+      "description": "Archive a link.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.archiveBulk",
+      "shortPath": "links.archiveBulk",
+      "description": "Archive up to 150 links.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.create",
+      "shortPath": "links.create",
+      "description": "Create a branded short link.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "expiredURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "utmSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utmMedium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utmCampaign",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utmTerm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utmContent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "androidURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "iphoneURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "clicksLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "passwordContact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skipQS",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "splitURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "splitPercent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "integrationAdroll",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationFB",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGA",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGTM",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectType",
+            "optional": true,
+            "type": "301 | 302 | 307 | 308 | null"
+          },
+          {
+            "key": "originalURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "allowDuplicates",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "originalURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "idString",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "shortURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secureShortURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "expiredURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "utmSource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmMedium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmCampaign",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "androidURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "iphoneURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "clicksLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "passwordContact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skipQS",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "splitURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "splitPercent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "integrationAdroll",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationFB",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGA",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGTM",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectType",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "FolderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DomainId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "OwnerId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasPassword",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "User",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, email?: string | null, photoURL?: string | null } | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "duplicate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.delete",
+      "shortPath": "links.delete",
+      "description": "Delete a link by its ID.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idString",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.deleteBulk",
+      "shortPath": "links.deleteBulk",
+      "description": "Delete up to 150 links.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.expand",
+      "shortPath": "links.expand",
+      "description": "Expand a short link by domain and path.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "originalURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "idString",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "shortURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secureShortURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "expiredURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "utmSource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmMedium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmCampaign",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "androidURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "iphoneURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "clicksLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "passwordContact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skipQS",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "splitURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "splitPercent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "integrationAdroll",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationFB",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGA",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGTM",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectType",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "FolderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DomainId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "OwnerId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasPassword",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "User",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, email?: string | null, photoURL?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.get",
+      "shortPath": "links.get",
+      "description": "Get a link by its ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domainId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "originalURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "idString",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "shortURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secureShortURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "expiredURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "utmSource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmMedium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmCampaign",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "androidURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "iphoneURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "clicksLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "passwordContact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skipQS",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "splitURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "splitPercent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "integrationAdroll",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationFB",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGA",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGTM",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectType",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "FolderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DomainId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "OwnerId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasPassword",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "User",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, email?: string | null, photoURL?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.list",
+      "shortPath": "links.list",
+      "description": "List links for a domain with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "idString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateSortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ originalURL: string, path: string | null, idString: string, id: string | number, shortURL: string, secureShortURL: string, cloaking?: boolean | null, password?: string | null, expiresAt?: string | number | null, expiredURL?: string | null, title?: string | null, tags?: string[] | null, utmSource?: string | null, utmMedium?: string | null, utmCampaign?: string | null, utmTerm?: string | null, utmContent?: string | null, ttl?: string | number | null, androidURL?: string | null, iphoneURL?: string | null, createdAt?: string | number | null, clicksLimit?: number | null, passwordContact?: boolean | null, skipQS?: boolean | null, archived?: boolean | null, splitURL?: string | null, splitPercent?: number | null, integrationAdroll?: string | null, integrationFB?: string | null, integrationGA?: string | null, integrationGTM?: string | null, redirectType?: string | number | null, FolderId?: string | null, DomainId?: number | null, OwnerId?: number | null, hasPassword?: boolean | null, User?: { id?: number | null, name?: string | null, email?: string | null, photoURL?: string | null } | null }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.unarchive",
+      "shortPath": "links.unarchive",
+      "description": "Unarchive a link.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.unarchiveBulk",
+      "shortPath": "links.unarchiveBulk",
+      "description": "Unarchive up to 150 links.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "shortio.api.links.update",
+      "shortPath": "links.update",
+      "description": "Update a link by its ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ cloaking?: boolean, password?: string, expiresAt?: string | number | null, expiredURL?: string | null, title?: string, tags?: string[], utmSource?: string, utmMedium?: string, utmCampaign?: string, utmTerm?: string, utmContent?: string, ttl?: string | number | null, path?: string | null, androidURL?: string | null, iphoneURL?: string | null, createdAt?: string | number | null, clicksLimit?: number | null, passwordContact?: boolean | null, skipQS?: boolean, archived?: boolean, splitURL?: string | null, splitPercent?: number | null, integrationAdroll?: string | null, integrationFB?: string | null, integrationGA?: string | null, integrationGTM?: string | null, redirectType?: 301 | 302 | 307 | 308 | null, originalURL?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "originalURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "idString",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "shortURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secureShortURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "expiredURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "utmSource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmMedium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmCampaign",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmTerm",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utmContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "androidURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "iphoneURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "clicksLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "passwordContact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skipQS",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "splitURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "splitPercent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "integrationAdroll",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationFB",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGA",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "integrationGTM",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectType",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "FolderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DomainId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "OwnerId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasPassword",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "User",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, email?: string | null, photoURL?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "shortio.db.domains.search",
+      "entityName": "domains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hostname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unicodeHostname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TeamId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hasFavicon",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "segmentKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hideReferer",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "linkType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cloaking",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hideVisitorIp",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "enableAI",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "httpsLevel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "httpsLinks",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "redirect404",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webhookURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationGA",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationFB",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationAdroll",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationGTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "caseSensitive",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "robots",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sslCertExpirationDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sslCertInstalledSuccess",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "domainRegistrationId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "UserId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "exportEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isFavorite",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "userPlan",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "shortio.db.links.search",
+      "entityName": "links",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "originalURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idString",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "secureShortURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cloaking",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "password",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expiredURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "utmSource",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "utmMedium",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "utmCampaign",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "utmTerm",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "utmContent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "androidURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "iphoneURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "clicksLimit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "passwordContact",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "skipQS",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "splitURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "splitPercent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "integrationAdroll",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationFB",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationGA",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationGTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "FolderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DomainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "OwnerId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hasPassword",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}
