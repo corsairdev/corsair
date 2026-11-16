@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { TelnyxAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { telnyxErrorDetails } from './client';
 import { Calls, Messages, MessagingProfiles, PhoneNumbers } from './endpoints';
 import {
 	availablePhoneNumbersList,
@@ -69,18 +70,18 @@ function expectAuthenticated() {
 }
 
 /**
- * Resolves to the rejection reason, narrowed to the plugin's own error type.
+ * Resolves to the rejection reason, narrowed to core's ApiError.
  * A promise can reject with any value, so this is the one place the reason is
  * treated as untyped before it is narrowed.
  */
-async function rejection(promise: Promise<unknown>): Promise<TelnyxAPIError> {
+async function rejection(promise: Promise<unknown>): Promise<ApiError> {
 	const caught = await promise.then(
 		() => undefined,
 		// unknown: a rejection reason has no static type.
 		(caught: unknown) => caught,
 	);
-	expect(caught).toBeInstanceOf(TelnyxAPIError);
-	return caught as TelnyxAPIError;
+	expect(caught).toBeInstanceOf(ApiError);
+	return caught as ApiError;
 }
 
 beforeEach(() => {
@@ -518,9 +519,10 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('10009');
-		expect(error.message).toContain('Telnyx 401 10009');
-		expect(error.message).toContain('Authentication failed');
+		expect(telnyxErrorDetails(error)?.errors[0]?.code).toBe('10009');
+		expect(telnyxErrorDetails(error)?.errors[0]?.title).toContain(
+			'Authentication failed',
+		);
 	});
 
 	it('keeps every error entry', async () => {
@@ -538,8 +540,8 @@ describe('error handling', () => {
 			invoke(Messages.messagesGet, { messageId: 'x' }),
 		);
 
-		expect(error.errors).toHaveLength(2);
-		expect(error.errors[1]?.title).toBe('Second');
+		expect(telnyxErrorDetails(error)?.errors).toHaveLength(2);
+		expect(telnyxErrorDetails(error)?.errors[1]?.title).toBe('Second');
 	});
 
 	it('reads the insufficient-funds code', async () => {
@@ -553,7 +555,10 @@ describe('error handling', () => {
 			}),
 		);
 
-		expect(error.code).toBe('20100');
+		expect(telnyxErrorDetails(error)?.errors[0]?.code).toBe('20100');
+		// The phone numbers and text in the send body stay off the error.
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('+13125550002');
 	});
 
 	it('parses a 404 for an unknown resource', async () => {
@@ -564,7 +569,7 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(404);
-		expect(error.code).toBe('10005');
+		expect(telnyxErrorDetails(error)?.errors[0]?.code).toBe('10005');
 	});
 
 	it('never leaks the key through the error', async () => {

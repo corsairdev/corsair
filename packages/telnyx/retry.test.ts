@@ -4,9 +4,9 @@ import { telnyx } from './index';
 import { messageResponse, messagingProfilesList } from './test-fixtures';
 
 /**
- * `endpoints.test.ts` calls the HTTP client, which is built with
- * `maxRetries: 0` so only `error-handlers.ts` decides what is retried. This
- * file goes through `createCorsair` to prove that layer runs.
+ * Core's request() retries a 429 three times with Retry-After, and the
+ * plugin's 429 handler does not add more. This file goes through
+ * `createCorsair` to prove both layers together.
  *
  * Reads replay after a 5xx, writes never do: a repeated message send charges a
  * second message, and a repeated dial places a second call.
@@ -73,7 +73,7 @@ describe('rate-limit retries through createCorsair', () => {
 	it('gives up after the builtin retry budget', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			// The handler allows 3 retries, so 4 attempts in total.
+			// Core retries a 429 three times, so 4 attempts in total.
 			for (let i = 0; i < 4; i += 1) {
 				respond({ errors: [{ title: 'Too many requests' }] }, 429);
 			}

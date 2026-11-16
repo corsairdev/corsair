@@ -359,7 +359,8 @@ export function telnyx<const T extends TelnyxPluginOptions>(
 	} satisfies InternalTelnyxPlugin;
 }
 
-export { TelnyxAPIError } from './client';
+export type { TelnyxErrorDetails } from './client';
+export { telnyxErrorDetails } from './client';
 
 export type {
 	AvailablePhoneNumbersListInput,

@@ -1,20 +1,18 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TelnyxAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { telnyxErrorDetails } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof TelnyxAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // Error bodies are `{ errors: [{ code, title, detail }] }`.
 export const errorHandlers = {
+	// Core's request() already retried a 429 three times with Retry-After, so
+	// it is not replayed again here.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TelnyxAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,
@@ -29,8 +27,9 @@ export const errorHandlers = {
 	// 20100 is "Insufficient Funds" in the published error list.
 	INSUFFICIENT_BALANCE_ERROR: {
 		match: (error: Error) =>
-			error instanceof TelnyxAPIError &&
-			(error.status === 402 || error.code === '20100'),
+			statusOf(error) === 402 ||
+			telnyxErrorDetails(error)?.errors.some((e) => e.code === '20100') ===
+				true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 422 rejected fields, 400 invalid input, 404 unknown resource.
@@ -55,9 +54,9 @@ export const errorHandlers = {
 	// call or charges a second message.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TelnyxAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

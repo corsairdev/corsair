@@ -1,5 +1,5 @@
 import type { ErrorHandler, ErrorMatcher } from 'corsair/core';
-import { TelnyxAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 function apiError(
@@ -8,12 +8,18 @@ function apiError(
 	retryAfter?: number,
 	code?: string,
 ) {
-	return new TelnyxAPIError(`Telnyx ${status}`, {
-		status,
-		method,
-		retryAfter,
-		code,
-	});
+	return new ApiError(
+		{ method, url: '/messages' },
+		{
+			url: 'https://api.telnyx.com/v2/messages',
+			ok: false,
+			status,
+			statusText: '',
+			body: code ? { errors: [{ code, title: 'Insufficient Funds' }] } : {},
+		},
+		`Telnyx ${status}`,
+		{ retryAfter },
+	);
 }
 
 const context = {} as Parameters<ErrorHandler>[1];
@@ -41,13 +47,11 @@ describe('telnyx error handlers', () => {
 		expect(Object.keys(errorHandlers).at(-1)).toBe('DEFAULT');
 	});
 
-	it('retries a 429 and passes a Retry-After through', async () => {
-		await expect(
-			handler('RATE_LIMIT_ERROR')(apiError(429, 'GET', 2000), context),
-		).resolves.toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 2000,
-			retryStrategy: 'exponential_backoff',
+	it('leaves 429 retries to core, which already retried with Retry-After', async () => {
+		const error = apiError(429, 'GET', 2000);
+		expect(match('RATE_LIMIT_ERROR')(error)).toBe(true);
+		await expect(handler('RATE_LIMIT_ERROR')(error, context)).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 
