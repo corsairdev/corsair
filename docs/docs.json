@@ -4476,7 +4476,7 @@
                 ]
               },
               {
-                "group": "Supersaas",
+                "group": "SuperSaaS",
                 "pages": [
                   "plugins/supersaas/overview",
                   "plugins/supersaas/api",

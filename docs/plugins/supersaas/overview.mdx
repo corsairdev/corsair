@@ -1,10 +1,10 @@
 ---
-title: "Supersaas plugin"
+title: "SuperSaaS plugin"
 sidebarTitle: "Overview"
 description: "Appointment scheduling API for managing users, bookings, slots, and schedules."
 ---
 
-Use **Supersaas** through Corsair: one client, typed API calls.
+Use **SuperSaaS** through Corsair: one client, typed API calls.
 
 SuperSaaS uses HTTP Basic auth: the account name is the username and the API key the password. Store the key as the API key and the account name as `account_name` on the account. The key is under Account Info, API Key.
 
@@ -71,7 +71,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-Store the Supersaas API key before the first call: `pnpm corsair setup --plugin=supersaas --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+Store the SuperSaaS API key before the first call: `pnpm corsair setup --plugin=supersaas --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 supersaas()

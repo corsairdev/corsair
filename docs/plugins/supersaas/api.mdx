@@ -1,7 +1,7 @@
 ---
-title: "Supersaas API reference"
+title: "SuperSaaS API reference"
 sidebarTitle: "API"
-description: "API reference for the Supersaas plugin in Corsair: every `supersaas.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+description: "API reference for the SuperSaaS plugin in Corsair: every `supersaas.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
 
 <Info>
@@ -156,7 +156,7 @@ await corsair.supersaas.api.bookings.get({});
 
 `bookings.list`
 
-List bookings for a schedule, optionally only those of one user or one slot
+List bookings for a schedule, optionally within a start and finish window (resource and service schedules)
 
 **Risk:** `read`
 
