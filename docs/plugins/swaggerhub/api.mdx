@@ -853,7 +853,7 @@ await corsair.swaggerhub.api.comments.create({ owner: 'your-org', api: 'petstore
 | `body` | `string` | Yes | — |
 | `range` | `object` | No | — |
 
-The route documents `replies` as required, so the plugin always sends it, as an empty array. `range` anchors the comment to a line range and takes all six offsets.
+The route documents `replies` as required, so the plugin always sends it, as an empty array. `range` anchors the comment to a line range and takes all six offsets. The API refuses a comment without one, so a comment with no `range` goes on line 1.
 
 <AccordionGroup>
 <Accordion title="range full type">
@@ -1775,7 +1775,7 @@ await corsair.swaggerhub.api.projects.update({ owner: 'your-org', projectId: 'my
 | `domains` | `string[]` | No | — |
 | `templates` | `string[]` | No | — |
 
-Sends PUT, which **replaces** the project. A collection left out is cleared, so the plugin always sends all three.
+Sends PUT, which **replaces** the project. A collection left out is cleared, so the plugin always sends all three. The PUT also needs `name`; when you leave it out the plugin sends the project id, which is the project's name.
 
 
 
@@ -1974,7 +1974,7 @@ Posts the definition and answers `{ valid, recognized, spec, summary, findings }
 
 `templates.delete`
 
-Delete one template version. There is no undo
+Delete one template version, or the whole template when no version is given. There is no undo
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -1988,9 +1988,9 @@ await corsair.swaggerhub.api.templates.delete({ owner: 'your-org', templateId: '
 |------|------|----------|-------------|
 | `owner` | `string` | Yes | — |
 | `templateId` | `string` | Yes | — |
-| `version` | `string` | Yes | — |
+| `version` | `string` | No | — |
 
-Deletes one template version. The route answers 204, so the plugin reports the ids.
+Deletes one template version, or the whole template when `version` is left out (the API will not delete a template's only version). The route answers 204, so the plugin reports the ids.
 
 
 
@@ -2000,7 +2000,7 @@ Deletes one template version. The route answers 204, so the plugin reports the i
 |------|------|----------|-------------|
 | `owner` | `string` | Yes | — |
 | `templateId` | `string` | Yes | — |
-| `version` | `string` | Yes | — |
+| `version` | `string` | No | — |
 | `deleted` | `true` | Yes | — |
 
 
