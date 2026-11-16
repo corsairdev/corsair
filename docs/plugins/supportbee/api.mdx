@@ -759,6 +759,7 @@ Links the two ids, which is what makes the filter act. The route documents 201 w
 |------|------|----------|-------------|
 | `rule_id` | `string` | Yes | — |
 | `consequence_id` | `string` | Yes | — |
+| `filter_id` | `string` | No | The new filter id, when returned. |
 | `created` | `true` | Yes | — |
 
 
@@ -1985,16 +1986,29 @@ Wraps the payload in `ticket` and answers the created ticket. SupportBee also ac
 | `archived` | `boolean \| null` | No | — |
 | `spam` | `boolean \| null` | No | — |
 | `summary` | `string \| null` | No | — |
-| `source` | `string[] \| null` | No | — |
+| `source` | `string[] \| Record<string, string \| null> \| null` | No | — |
 | `cc` | `string[] \| null` | No | — |
 | `bcc` | `string[] \| null` | No | — |
-| `labels` | `string[] \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
 | `requester` | `object \| null` | No | — |
 | `content` | `object \| null` | No | — |
 | `current_user_asignee` | `object \| null` | No | — |
 | `current_team_asignee` | `object \| null` | No | — |
+| `current_user_assignee` | `object \| null` | No | — |
+| `current_team_assignee` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+(string | {
+  id?: number | null,
+  name?: string | null,
+  color?: string | null
+})[] | null
+```
+</Accordion>
+
 <Accordion title="requester full type">
 
 ```ts
@@ -2075,6 +2089,62 @@ Wraps the payload in `ticket` and answers the created ticket. SupportBee also ac
 </Accordion>
 
 <Accordion title="current_team_asignee full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="current_user_assignee full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null,
+  name?: string | null,
+  agent?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="current_team_assignee full type">
 
 ```ts
 {
@@ -2182,10 +2252,14 @@ Answers `{ ticket }`. The ticket carries its requester, content, labels, and its
   archived?: boolean | null,
   spam?: boolean | null,
   summary?: string | null,
-  source?: string[] | null,
+  source?: string[] | Record<string, string | null> | null,
   cc?: string[] | null,
   bcc?: string[] | null,
-  labels?: string[] | null,
+  labels?: (string | {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  })[] | null,
   requester?: {
     id?: number | null,
     email?: string | null,
@@ -2248,6 +2322,50 @@ Answers `{ ticket }`. The ticket carries its requester, content, labels, and its
     } | null
   } | null,
   current_team_asignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_user_assignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_assignee?: {
     id?: number | null,
     name?: string | null,
     picture?: {
@@ -2338,10 +2456,14 @@ Answers `{ tickets, total, current_page, per_page, total_pages }`, 15 a page in 
   archived?: boolean | null,
   spam?: boolean | null,
   summary?: string | null,
-  source?: string[] | null,
+  source?: string[] | Record<string, string | null> | null,
   cc?: string[] | null,
   bcc?: string[] | null,
-  labels?: string[] | null,
+  labels?: (string | {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  })[] | null,
   requester?: {
     id?: number | null,
     email?: string | null,
@@ -2404,6 +2526,50 @@ Answers `{ tickets, total, current_page, per_page, total_pages }`, 15 a page in 
     } | null
   } | null,
   current_team_asignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_user_assignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_assignee?: {
     id?: number | null,
     name?: string | null,
     picture?: {
@@ -2618,10 +2784,14 @@ The parameter is **`query`**, not `q`. Answers the same wrapper as the list rout
   archived?: boolean | null,
   spam?: boolean | null,
   summary?: string | null,
-  source?: string[] | null,
+  source?: string[] | Record<string, string | null> | null,
   cc?: string[] | null,
   bcc?: string[] | null,
-  labels?: string[] | null,
+  labels?: (string | {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  })[] | null,
   requester?: {
     id?: number | null,
     email?: string | null,
@@ -2684,6 +2854,50 @@ The parameter is **`query`**, not `q`. Answers the same wrapper as the list rout
     } | null
   } | null,
   current_team_asignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_user_assignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_assignee?: {
     id?: number | null,
     name?: string | null,
     picture?: {
