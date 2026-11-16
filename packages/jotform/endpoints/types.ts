@@ -10,7 +10,7 @@ function createJotformEnvelope<T extends z.ZodTypeAny>(contentSchema: T) {
 			message: z.string(),
 			content: contentSchema,
 			duration: z.string().optional(),
-			info: z.string().optional(),
+			info: z.string().nullish(),
 			'limit-left': z.union([z.number(), z.string()]).optional(),
 		})
 		.passthrough();
@@ -24,7 +24,7 @@ function createJotformListEnvelope<T extends z.ZodTypeAny>(contentSchema: T) {
 			message: z.string(),
 			content: contentSchema,
 			duration: z.string().optional(),
-			info: z.string().optional(),
+			info: z.string().nullish(),
 			resultSet: z
 				.object({
 					offset: z.union([z.number(), z.string()]).optional(),
@@ -131,7 +131,11 @@ export const JotformFolderSchema = z
 		parent: z.string().nullable().optional(),
 		color: z.string().nullable().optional(),
 		path: z.string().nullable().optional(),
-		forms: z.array(z.string()).optional(),
+		// Jotform returns forms as an object keyed by form ID; older payloads used an ID list.
+		// unknown because each form entry is a full form record we do not model here.
+		forms: z
+			.union([z.array(z.string()), z.record(z.string(), z.unknown())])
+			.optional(),
 	})
 	.passthrough();
 
@@ -687,7 +691,10 @@ export const JotformEndpointOutputSchemas = {
 	// ── Folders ──
 	'folders.get': createJotformEnvelope(JotformFolderSchema),
 	'folders.create': createJotformEnvelope(JotformFolderSchema),
-	'folders.update': createJotformEnvelope(JotformFolderSchema),
+	// The update response echoes only the changed properties, without id.
+	'folders.update': createJotformEnvelope(
+		JotformFolderSchema.extend({ id: z.string().optional() }),
+	),
 	// unknown because folder deletion returns string status or status object
 	'folders.delete': createJotformEnvelope(
 		z.union([z.string(), z.record(z.string(), z.unknown()), z.boolean()]),
@@ -696,7 +703,10 @@ export const JotformEndpointOutputSchemas = {
 	// ── Labels ──
 	'labels.get': createJotformEnvelope(JotformLabelSchema),
 	'labels.create': createJotformEnvelope(JotformLabelSchema),
-	'labels.update': createJotformEnvelope(JotformLabelSchema),
+	// The update response echoes only the changed properties, without id.
+	'labels.update': createJotformEnvelope(
+		JotformLabelSchema.extend({ id: z.string().optional() }),
+	),
 	// unknown because label deletion returns string status or status object
 	'labels.delete': createJotformEnvelope(
 		z.union([z.string(), z.record(z.string(), z.unknown()), z.boolean()]),
