@@ -244,7 +244,7 @@ export const supersaasEndpointMeta = {
 	'bookings.list': {
 		riskLevel: 'read',
 		description:
-			'List bookings for a schedule, optionally only those of one user or one slot',
+			'List bookings for a schedule, optionally within a start and finish window (resource and service schedules)',
 	},
 	'bookings.get': {
 		riskLevel: 'read',

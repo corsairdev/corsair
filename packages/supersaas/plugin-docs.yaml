@@ -1,4 +1,4 @@
-displayName: "Supersaas"
+displayName: "SuperSaaS"
 description: Appointment scheduling API for managing users, bookings, slots, and schedules.
 overviewNote: |
   SuperSaaS uses HTTP Basic auth: the account name is the username and the API key the password. Store the key as the API key and the account name as `account_name` on the account. The key is under Account Info, API Key.

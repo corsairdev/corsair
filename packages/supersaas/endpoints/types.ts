@@ -199,7 +199,7 @@ export type SupersaasCreated = z.infer<typeof CreatedSchema>;
 
 const UsersListInputSchema = z.object({ ...paging });
 
-export type UsersListInput = z.infer<typeof UsersListInputSchema>;
+export type UsersListInput = z.input<typeof UsersListInputSchema>;
 
 const UsersListResponseSchema = z.array(UserSchema);
 
@@ -244,7 +244,7 @@ const userBody = {
 
 const UsersCreateInputSchema = z.object(userBody);
 
-export type UsersCreateInput = z.infer<typeof UsersCreateInputSchema>;
+export type UsersCreateInput = z.input<typeof UsersCreateInputSchema>;
 
 /** Supplying your own key turns a create into an update of that key. */
 const UsersCreateWithKeyInputSchema = z.object({
@@ -257,14 +257,14 @@ const UsersCreateWithKeyInputSchema = z.object({
 	...userBody,
 });
 
-export type UsersCreateWithKeyInput = z.infer<
+export type UsersCreateWithKeyInput = z.input<
 	typeof UsersCreateWithKeyInputSchema
 >;
 
 const UserTargetSchema = z.object({ id: UserId });
 // UserId is a string already; numeric ids pass as digit strings.
 
-export type UserTargetInput = z.infer<typeof UserTargetSchema>;
+export type UserTargetInput = z.input<typeof UserTargetSchema>;
 
 const UsersGetResponseSchema = UserSchema;
 
@@ -285,7 +285,7 @@ const UsersUpdateInputSchema = z.object({
 		),
 });
 
-export type UsersUpdateInput = z.infer<typeof UsersUpdateInputSchema>;
+export type UsersUpdateInput = z.input<typeof UsersUpdateInputSchema>;
 
 const UsersUpdateResponseSchema = UpdatedSchema;
 
@@ -303,7 +303,7 @@ export type SupersaasDeleted = z.infer<typeof DeletedSchema>;
 
 const ScheduleTargetSchema = z.object({ schedule_id: ScheduleId });
 
-export type ScheduleTargetInput = z.infer<typeof ScheduleTargetSchema>;
+export type ScheduleTargetInput = z.input<typeof ScheduleTargetSchema>;
 
 const BookingsListInputSchema = z.object({
 	schedule_id: ScheduleId,
@@ -321,7 +321,7 @@ const BookingsListInputSchema = z.object({
 		.describe('Records to return. For paging use schedules.range.'),
 });
 
-export type BookingsListInput = z.infer<typeof BookingsListInputSchema>;
+export type BookingsListInput = z.input<typeof BookingsListInputSchema>;
 
 const BookingsListResponseSchema = z.array(BookingSchema);
 
@@ -388,7 +388,7 @@ const BookingsCreateInputSchema = z
 		}
 	});
 
-export type BookingsCreateInput = z.infer<typeof BookingsCreateInputSchema>;
+export type BookingsCreateInput = z.input<typeof BookingsCreateInputSchema>;
 
 const BookingsCreateResponseSchema = CreatedSchema;
 
@@ -401,7 +401,7 @@ const BookingTargetSchema = z.object({
 	booking_id: IdIn,
 });
 
-export type BookingTargetInput = z.infer<typeof BookingTargetSchema>;
+export type BookingTargetInput = z.input<typeof BookingTargetSchema>;
 
 const BookingsGetResponseSchema = BookingSchema;
 
@@ -412,7 +412,7 @@ const BookingsUpdateInputSchema = z.object({
 	booking_id: IdIn,
 });
 
-export type BookingsUpdateInput = z.infer<typeof BookingsUpdateInputSchema>;
+export type BookingsUpdateInput = z.input<typeof BookingsUpdateInputSchema>;
 
 const BookingsUpdateResponseSchema = UpdatedSchema;
 
@@ -440,7 +440,7 @@ const SlotsListInputSchema = z.object({
 	offset: z.number().int().min(0).optional().describe('Records to skip.'),
 });
 
-export type SlotsListInput = z.infer<typeof SlotsListInputSchema>;
+export type SlotsListInput = z.input<typeof SlotsListInputSchema>;
 
 const SlotsListResponseSchema = z.array(SlotSchema);
 
@@ -464,7 +464,7 @@ const slotBody = {
 
 const SlotsCreateInputSchema = z.object(slotBody);
 
-export type SlotsCreateInput = z.infer<typeof SlotsCreateInputSchema>;
+export type SlotsCreateInput = z.input<typeof SlotsCreateInputSchema>;
 
 const SlotsCreateResponseSchema = CreatedSchema;
 
@@ -475,7 +475,7 @@ const SlotTargetSchema = z.object({
 	slot_id: IdIn,
 });
 
-export type SlotTargetInput = z.infer<typeof SlotTargetSchema>;
+export type SlotTargetInput = z.input<typeof SlotTargetSchema>;
 
 const SlotsGetResponseSchema = SlotSchema;
 
@@ -493,7 +493,7 @@ const SlotsUpdateInputSchema = z.object({
 	price: slotBody.price,
 });
 
-export type SlotsUpdateInput = z.infer<typeof SlotsUpdateInputSchema>;
+export type SlotsUpdateInput = z.input<typeof SlotsUpdateInputSchema>;
 
 const SlotsUpdateResponseSchema = UpdatedSchema;
 
@@ -524,7 +524,7 @@ const ScheduleChangesInputSchema = z.object({
 	...scheduleReadPaging,
 });
 
-export type ScheduleChangesInput = z.infer<typeof ScheduleChangesInputSchema>;
+export type ScheduleChangesInput = z.input<typeof ScheduleChangesInputSchema>;
 
 const ScheduleChangesResponseSchema = ScheduleReadSchema;
 
@@ -541,7 +541,7 @@ const ScheduleRangeInputSchema = z.object({
 	...scheduleReadPaging,
 });
 
-export type ScheduleRangeInput = z.infer<typeof ScheduleRangeInputSchema>;
+export type ScheduleRangeInput = z.input<typeof ScheduleRangeInputSchema>;
 
 const ScheduleRangeResponseSchema = ScheduleReadSchema;
 
@@ -559,7 +559,7 @@ const ScheduleAgendaInputSchema = z.object({
 	from: LocalDateTime.optional(),
 });
 
-export type ScheduleAgendaInput = z.infer<typeof ScheduleAgendaInputSchema>;
+export type ScheduleAgendaInput = z.input<typeof ScheduleAgendaInputSchema>;
 
 const ScheduleAgendaResponseSchema = ScheduleReadSchema;
 
@@ -580,7 +580,7 @@ const ScheduleFreeInputSchema = z.object({
 		.describe('Spaces to return, default 10.'),
 });
 
-export type ScheduleFreeInput = z.infer<typeof ScheduleFreeInputSchema>;
+export type ScheduleFreeInput = z.input<typeof ScheduleFreeInputSchema>;
 
 const ScheduleFreeResponseSchema = ScheduleReadSchema;
 
