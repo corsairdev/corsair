@@ -1,4 +1,5 @@
 import type { TapfiliateEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	CustomersCancelInputSchema,
@@ -54,7 +55,7 @@ export const get: TapfiliateEndpoints['customersGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/customers/${parsed.customerId}/`,
+			path: `/customers/${segment(parsed.customerId)}/`,
 		}),
 	);
 };
@@ -76,6 +77,7 @@ export const create: TapfiliateEndpoints['customersCreate'] = async (
 			path: '/customers/',
 			body: {
 				customer_id: parsed.customer_id,
+				status: parsed.status,
 				referral_code: parsed.referral_code,
 				tracking_id: parsed.tracking_id,
 				click_id: parsed.click_id,
@@ -103,7 +105,7 @@ export const update: TapfiliateEndpoints['customersUpdate'] = async (
 			const { customerId, ...changes } = parsed;
 			return {
 				method: 'PATCH',
-				path: `/customers/${customerId}/`,
+				path: `/customers/${segment(customerId)}/`,
 				body: changes,
 			};
 		},
@@ -120,7 +122,7 @@ export const remove: TapfiliateEndpoints['customersRemove'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/customers/${parsed.customerId}/`,
+			path: `/customers/${segment(parsed.customerId)}/`,
 		}),
 	);
 };
@@ -139,7 +141,7 @@ export const cancel: TapfiliateEndpoints['customersCancel'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/customers/${parsed.customerId}/status/`,
+			path: `/customers/${segment(parsed.customerId)}/status/`,
 		}),
 	);
 };
@@ -158,7 +160,7 @@ export const uncancel: TapfiliateEndpoints['customersUncancel'] = async (
 		input,
 		(parsed) => ({
 			method: 'PUT',
-			path: `/customers/${parsed.customerId}/status/`,
+			path: `/customers/${segment(parsed.customerId)}/status/`,
 		}),
 	);
 };

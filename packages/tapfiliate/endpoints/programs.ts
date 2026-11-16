@@ -1,4 +1,5 @@
 import type { TapfiliateEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	ProgramsAddAffiliateInputSchema,
@@ -45,7 +46,7 @@ export const get: TapfiliateEndpoints['programsGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/programs/${parsed.programId}/`,
+			path: `/programs/${segment(parsed.programId)}/`,
 		}),
 	);
 };
@@ -64,7 +65,7 @@ export const affiliates: TapfiliateEndpoints['programsAffiliates'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/programs/${parsed.programId}/affiliates/`,
+			path: `/programs/${segment(parsed.programId)}/affiliates/`,
 			query: {
 				page: parsed.page,
 				source_id: parsed.source_id,
@@ -90,7 +91,7 @@ export const addAffiliate: TapfiliateEndpoints['programsAddAffiliate'] = async (
 		input,
 		(parsed) => ({
 			method: 'POST',
-			path: `/programs/${parsed.programId}/affiliates/`,
+			path: `/programs/${segment(parsed.programId)}/affiliates/`,
 			body: {
 				affiliate: { id: parsed.affiliateId },
 				approved: parsed.approved,
@@ -114,7 +115,7 @@ export const getAffiliate: TapfiliateEndpoints['programsGetAffiliate'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/programs/${parsed.programId}/affiliates/${parsed.affiliateId}/`,
+			path: `/programs/${segment(parsed.programId)}/affiliates/${segment(parsed.affiliateId)}/`,
 		}),
 	);
 };
@@ -131,7 +132,7 @@ export const updateAffiliate: TapfiliateEndpoints['programsUpdateAffiliate'] =
 			input,
 			(parsed) => ({
 				method: 'PATCH',
-				path: `/programs/${parsed.programId}/affiliates/${parsed.affiliateId}/`,
+				path: `/programs/${segment(parsed.programId)}/affiliates/${segment(parsed.affiliateId)}/`,
 				// Only send the key when the caller named it, so omitting it keeps
 				// the coupon and `null` removes it.
 				body: parsed.coupon === undefined ? {} : { coupon: parsed.coupon },
@@ -151,7 +152,7 @@ export const approveAffiliate: TapfiliateEndpoints['programsApproveAffiliate'] =
 			input,
 			(parsed) => ({
 				method: 'PUT',
-				path: `/programs/${parsed.programId}/affiliates/${parsed.affiliateId}/approved/`,
+				path: `/programs/${segment(parsed.programId)}/affiliates/${segment(parsed.affiliateId)}/approved/`,
 			}),
 		);
 	};
@@ -168,7 +169,7 @@ export const disapproveAffiliate: TapfiliateEndpoints['programsDisapproveAffilia
 			input,
 			(parsed) => ({
 				method: 'DELETE',
-				path: `/programs/${parsed.programId}/affiliates/${parsed.affiliateId}/approved/`,
+				path: `/programs/${segment(parsed.programId)}/affiliates/${segment(parsed.affiliateId)}/approved/`,
 			}),
 		);
 	};

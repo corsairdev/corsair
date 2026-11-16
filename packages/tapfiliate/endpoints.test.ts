@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { TapfiliateAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import {
 	Affiliates,
 	Conversions,
@@ -97,16 +97,14 @@ function expectAuthenticated() {
  * A promise can reject with any value, so this is the one place the reason is
  * treated as untyped before it is narrowed.
  */
-async function rejection(
-	promise: Promise<unknown>,
-): Promise<TapfiliateAPIError> {
+async function rejection(promise: Promise<unknown>): Promise<ApiError> {
 	const caught = await promise.then(
 		() => undefined,
 		// unknown: a rejection reason has no static type.
 		(caught: unknown) => caught,
 	);
-	expect(caught).toBeInstanceOf(TapfiliateAPIError);
-	return caught as TapfiliateAPIError;
+	expect(caught).toBeInstanceOf(ApiError);
+	return caught as ApiError;
 }
 
 beforeEach(() => {
@@ -189,7 +187,9 @@ describe('affiliates.get and affiliates.create', () => {
 			lastname: 'Jameson',
 		});
 		// The generated password is the only way to reach the new account.
-		expect(result.password).toBe('generated-password-1234');
+		expect('password' in result ? result.password : undefined).toBe(
+			'generated-password-1234',
+		);
 	});
 
 	it('rejects an address missing country.code before sending', async () => {
@@ -246,9 +246,11 @@ describe('affiliate reporting', () => {
 
 		const result = await invoke(Affiliates.payments, {
 			affiliateId: 'jane-jameson',
+			page: 2,
 		});
 
 		expect(lastRequest().path).toBe('/1.6/affiliates/jane-jameson/payments/');
+		expect(lastRequest().query).toEqual({ page: '2' });
 		expect(result[0]?.id).toBe('pa_abc123');
 	});
 
@@ -257,9 +259,11 @@ describe('affiliate reporting', () => {
 
 		const result = await invoke(Affiliates.programs, {
 			affiliateId: 'jane-jameson',
+			page: 2,
 		});
 
 		expect(lastRequest().path).toBe('/1.6/affiliates/jane-jameson/programs/');
+		expect(lastRequest().query).toEqual({ page: '2' });
 		expect(result[0]?.approved).toBe(true);
 	});
 
@@ -518,7 +522,8 @@ describe('commissions', () => {
 		expect(lastRequest().query).toEqual({
 			affiliate_id: 'jane-jameson',
 			status: 'approved',
-			paid: 'false',
+			// The reference takes 1 or 0 for this filter.
+			paid: '0',
 		});
 		expect(result[0]?.kind).toBe('regular');
 	});
@@ -588,6 +593,18 @@ describe('customers', () => {
 			customer_id: 'cust-1',
 			referral_code: 'janejameson',
 		});
+	});
+
+	it('creates a trial customer with its status', async () => {
+		respond(customer);
+
+		await invoke(Customers.create, {
+			customer_id: 'cust-1',
+			referral_code: 'janejameson',
+			status: 'trial',
+		});
+
+		expect(lastRequest().body).toMatchObject({ status: 'trial' });
 	});
 
 	it('rejects a customer with no customer_id', async () => {
@@ -713,7 +730,7 @@ describe('payments, balances and clicks', () => {
 
 	it('rejects a click with no tracking reference', async () => {
 		await expect(invoke(Payments.clicksCreate, {})).rejects.toThrow(
-			/tracking reference/,
+			/referral_code, or asset_id with source_id/,
 		);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -753,7 +770,8 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(404);
-		expect(error.traceId).toBe(requestErrorResponse.traceId);
+		// The traceId stays in the response body for support.
+		expect(error.body?.traceId).toBe(requestErrorResponse.traceId);
 	});
 
 	it('parses the errors envelope and names the rejected field', async () => {
@@ -768,9 +786,10 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(400);
-		expect(error.errors).toEqual([
-			{ message: 'This coupon is already in use.', property_path: 'coupon' },
-		]);
+		expect(error.body?.errors?.[0]).toMatchObject({
+			message: 'This coupon is already in use.',
+			property_path: 'coupon',
+		});
 		expect(error.message).toContain('This coupon is already in use.');
 	});
 
@@ -782,7 +801,6 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(409);
-		expect(error.code).toBe('commission_approved');
 		expect(error.message).toContain('commission_approved');
 	});
 
@@ -794,6 +812,24 @@ describe('error handling', () => {
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
 		expect(require('node:util').inspect(error)).not.toContain(API_KEY);
+	});
+
+	it('keeps the sent affiliate email and password out of the error', async () => {
+		respond(validationErrorResponse, 400);
+
+		const error = await rejection(
+			invoke(Affiliates.create, {
+				firstname: 'Jane',
+				lastname: 'Jameson',
+				email: 'jane@example.com',
+				password: 'hunter2-secret',
+			}),
+		);
+
+		expect(error.request.body).toBeUndefined();
+		const dumped = JSON.stringify(error);
+		expect(dumped).not.toContain('jane@example.com');
+		expect(dumped).not.toContain('hunter2-secret');
 	});
 
 	it('fails loudly when a list answers a non-array', async () => {
@@ -815,5 +851,53 @@ describe('logging', () => {
 			{},
 			'completed',
 		);
+	});
+});
+
+describe('documented contracts', () => {
+	it('encodes a string id in the path', async () => {
+		respond(affiliations);
+		await invoke(Affiliates.programs, { affiliateId: 'a/b?c' });
+		expect(lastRequest().path).toBe('/1.6/affiliates/a%2Fb%3Fc/programs/');
+	});
+
+	it('reports a created affiliate when the answer has no body', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+		const result = await invoke(Affiliates.create, {
+			email: 'jane@example-blog.inc',
+			firstname: 'Jane',
+			lastname: 'Jameson',
+		});
+		expect(result).toEqual({ created: true, email: 'jane@example-blog.inc' });
+	});
+
+	it('reports an updated conversion when the PATCH answers no body', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+		const result = await invoke(Conversions.conversionsUpdate, {
+			conversionId: 42,
+			amount: 30.55,
+		});
+		expect(result).toEqual({ id: 42, updated: true });
+	});
+
+	it('takes a customer_id alone on a conversion and lets Tapfiliate decide', async () => {
+		respond(conversion);
+		await invoke(Conversions.conversionsCreate, {
+			customer_id: 'cust-1',
+			amount: 10,
+		});
+		expect(lastRequest().body).toMatchObject({ customer_id: 'cust-1' });
+	});
+
+	it('takes a source_id with a referral_code on a click', async () => {
+		respond({ id: '1-abc' });
+		await invoke(Payments.clicksCreate, {
+			referral_code: 'janejameson',
+			source_id: '1-aaaaaa',
+		});
+		expect(lastRequest().body).toMatchObject({
+			referral_code: 'janejameson',
+			source_id: '1-aaaaaa',
+		});
 	});
 });

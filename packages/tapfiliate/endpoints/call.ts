@@ -40,6 +40,15 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 }
 
 /**
+ * True when a write answered without a body. Core resolves an empty body as
+ * `undefined` (or `''` for an empty text body).
+ * unknown: the response body is untyped.
+ */
+export function isEmptyBody(raw: unknown): boolean {
+	return raw === undefined || raw === null || raw === '';
+}
+
+/**
  * The deletes answer 204 with no body, so there is nothing to parse and the
  * endpoint reports what it did. Returning the raw body would turn an empty
  * answer into a fake record.

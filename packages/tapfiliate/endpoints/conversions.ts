@@ -1,5 +1,5 @@
 import type { TapfiliateEndpoints } from '..';
-import { call, callDelete } from './call';
+import { call, callDelete, isEmptyBody } from './call';
 import {
 	CommissionsApproveInputSchema,
 	CommissionsApproveResponseSchema,
@@ -134,6 +134,11 @@ export const conversionsUpdate: TapfiliateEndpoints['conversionsUpdate'] =
 					},
 				};
 			},
+			{
+				// The reference documents a 200 with no body; report the outcome then.
+				shape: (raw, parsed) =>
+					isEmptyBody(raw) ? { id: parsed.conversionId, updated: true } : raw,
+			},
 		);
 	};
 
@@ -169,7 +174,8 @@ export const commissionsList: TapfiliateEndpoints['commissionsList'] = async (
 				page: parsed.page,
 				affiliate_id: parsed.affiliate_id,
 				status: parsed.status,
-				paid: parsed.paid,
+				// The reference takes 1 or 0, not true or false.
+				paid: parsed.paid === undefined ? undefined : parsed.paid ? 1 : 0,
 			},
 		}),
 	);

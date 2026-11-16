@@ -1,4 +1,5 @@
 import type { TapfiliateEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	BalancesListInputSchema,
@@ -52,7 +53,7 @@ export const paymentsGet: TapfiliateEndpoints['paymentsGet'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/payments/${parsed.paymentId}/`,
+			path: `/payments/${segment(parsed.paymentId)}/`,
 		}),
 	);
 };
@@ -88,7 +89,7 @@ export const paymentsCancel: TapfiliateEndpoints['paymentsCancel'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/payments/${parsed.paymentId}/`,
+			path: `/payments/${segment(parsed.paymentId)}/`,
 		}),
 	);
 };
@@ -185,7 +186,7 @@ export const clicksGet: TapfiliateEndpoints['clicksGet'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/clicks/${parsed.clickId}/`,
+			path: `/clicks/${segment(parsed.clickId)}/`,
 		}),
 	);
 };

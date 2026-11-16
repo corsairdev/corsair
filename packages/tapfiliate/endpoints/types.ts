@@ -324,11 +324,18 @@ export const AffiliatesCreateInputSchema = z.object({
 
 export type AffiliatesCreateInput = z.input<typeof AffiliatesCreateInputSchema>;
 
-// Tapfiliate returns the created affiliate plus a `password` when it generated
-// one, so the password is typed here rather than left off the output.
-export const AffiliatesCreateResponseSchema = AffiliateSchema.extend({
-	password: z.string().nullish(),
-});
+/**
+ * The reference documents a 200 with no body. When Tapfiliate does send the
+ * affiliate (with a generated `password`), that is returned; otherwise the
+ * plugin reports `{ created: true, email }`, and the affiliate's `id` comes from
+ * `affiliates.list` (it is derived from the first and last name).
+ */
+export const AffiliatesCreateResponseSchema = z.union([
+	AffiliateSchema.extend({
+		password: z.string().nullish(),
+	}),
+	z.object({ created: z.literal(true), email: z.string() }),
+]);
 
 export type AffiliatesCreateResponse = z.infer<
 	typeof AffiliatesCreateResponseSchema
@@ -356,6 +363,7 @@ export type AffiliatesBalancesResponse = z.infer<
 
 export const AffiliatesPaymentsInputSchema = z.object({
 	affiliateId: AffiliateIdSchema,
+	page: PageSchema,
 });
 
 export type AffiliatesPaymentsInput = z.infer<
@@ -370,6 +378,7 @@ export type AffiliatesPaymentsResponse = z.infer<
 
 export const AffiliatesProgramsInputSchema = z.object({
 	affiliateId: AffiliateIdSchema,
+	page: PageSchema,
 });
 
 export type AffiliatesProgramsInput = z.infer<
@@ -567,8 +576,49 @@ const TrackingReferenceShape = {
 	source_id: z
 		.string()
 		.optional()
-		.describe('The click source ID. Pair it with `asset_id`.'),
+		.describe(
+			'The click source ID. Pair it with `asset_id`; on a click it can also override the source of a `referral_code`.',
+		),
 } as const;
+
+/**
+ * A conversion may skip the tracking reference when `customer_id` names an
+ * existing customer in a recurring program; Tapfiliate decides that and
+ * answers 400 otherwise.
+ */
+function requireConversionReference(
+	value: Parameters<typeof requireTrackingReference>[0] & {
+		customer_id?: string;
+	},
+	ctx: z.RefinementCtx,
+) {
+	if (value.customer_id !== undefined) return;
+	requireTrackingReference(value, ctx);
+}
+
+/**
+ * A click names its affiliate with `referral_code` or `asset_id` + `source_id`.
+ * A `source_id` sent with `referral_code` overrides the code's own source.
+ */
+function requireClickReference(
+	value: { referral_code?: string; asset_id?: string; source_id?: string },
+	ctx: z.RefinementCtx,
+) {
+	if (value.referral_code === undefined && value.asset_id === undefined) {
+		ctx.addIssue({
+			code: 'custom',
+			message: 'Provide referral_code, or asset_id with source_id.',
+			path: ['referral_code'],
+		});
+	}
+	if (value.asset_id !== undefined && value.source_id === undefined) {
+		ctx.addIssue({
+			code: 'custom',
+			message: 'asset_id needs source_id.',
+			path: ['source_id'],
+		});
+	}
+}
 
 function requireTrackingReference(
 	value: {
@@ -656,7 +706,9 @@ export const ConversionsCreateInputSchema = z
 		customer_id: z
 			.string()
 			.optional()
-			.describe('The `cu_...` customer to attribute the conversion to.'),
+			.describe(
+				'Your own customer ID (`customer.customer_id`, not the `cu_...` id). On its own it attributes the conversion only when it matches an existing customer in a recurring program; otherwise send a tracking reference too.',
+			),
 		commissions: z
 			.array(
 				z
@@ -676,7 +728,7 @@ export const ConversionsCreateInputSchema = z
 			.optional()
 			.describe('Up to 40 key/value pairs.'),
 	})
-	.superRefine(requireTrackingReference);
+	.superRefine(requireConversionReference);
 
 export type ConversionsCreateInput = z.input<
 	typeof ConversionsCreateInputSchema
@@ -718,7 +770,14 @@ export type ConversionsUpdateInput = z.input<
 	typeof ConversionsUpdateInputSchema
 >;
 
-export const ConversionsUpdateResponseSchema = ConversionSchema;
+/**
+ * The reference documents a 200 with no body; then the plugin reports
+ * `{ id, updated: true }`. A conversion body, if sent, is returned as is.
+ */
+export const ConversionsUpdateResponseSchema = z.union([
+	ConversionSchema,
+	z.object({ id: z.number(), updated: z.literal(true) }),
+]);
 
 export type ConversionsUpdateResponse = z.infer<
 	typeof ConversionsUpdateResponseSchema
@@ -741,7 +800,9 @@ export const CommissionsListInputSchema = z.object({
 	paid: z
 		.boolean()
 		.optional()
-		.describe('Only paid, or only unpaid commissions.'),
+		.describe(
+			'Only commissions in a paid payout (true), or all others (false). Sent as 1 or 0.',
+		),
 });
 
 export type CommissionsListInput = z.infer<typeof CommissionsListInputSchema>;
@@ -842,6 +903,10 @@ export const CustomersCreateInputSchema = z
 			.string()
 			.min(1)
 			.describe('Your own customer ID. It must be unique in the account.'),
+		status: z
+			.enum(['new', 'trial', 'lead'])
+			.optional()
+			.describe('The starting status. Tapfiliate defaults to `new`.'),
 	})
 	.superRefine(requireTrackingReference);
 
@@ -1015,7 +1080,7 @@ export const ClicksCreateInputSchema = z
 		referrer: z.string().optional().describe('Stored as sent.'),
 		landing_page: z.string().optional().describe('Stored as sent.'),
 	})
-	.superRefine(requireTrackingReference);
+	.superRefine(requireClickReference);
 
 export type ClicksCreateInput = z.input<typeof ClicksCreateInputSchema>;
 

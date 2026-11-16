@@ -1,5 +1,6 @@
 import type { TapfiliateEndpoints } from '..';
-import { call, callDelete } from './call';
+import { segment } from '../client';
+import { call, callDelete, isEmptyBody } from './call';
 import {
 	AffiliatesBalancesInputSchema,
 	AffiliatesBalancesResponseSchema,
@@ -57,7 +58,7 @@ export const get: TapfiliateEndpoints['affiliatesGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/affiliates/${parsed.affiliateId}/`,
+			path: `/affiliates/${segment(parsed.affiliateId)}/`,
 		}),
 	);
 };
@@ -87,6 +88,11 @@ export const create: TapfiliateEndpoints['affiliatesCreate'] = async (
 				custom_fields: parsed.custom_fields,
 			},
 		}),
+		{
+			// The reference documents a 200 with no body; report the outcome then.
+			shape: (raw, parsed) =>
+				isEmptyBody(raw) ? { created: true, email: parsed.email } : raw,
+		},
 	);
 };
 
@@ -100,7 +106,7 @@ export const remove: TapfiliateEndpoints['affiliatesRemove'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/affiliates/${parsed.affiliateId}/`,
+			path: `/affiliates/${segment(parsed.affiliateId)}/`,
 		}),
 	);
 };
@@ -119,7 +125,7 @@ export const balances: TapfiliateEndpoints['affiliatesBalances'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/affiliates/${parsed.affiliateId}/balances/`,
+			path: `/affiliates/${segment(parsed.affiliateId)}/balances/`,
 		}),
 	);
 };
@@ -138,7 +144,8 @@ export const payments: TapfiliateEndpoints['affiliatesPayments'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/affiliates/${parsed.affiliateId}/payments/`,
+			path: `/affiliates/${segment(parsed.affiliateId)}/payments/`,
+			query: { page: parsed.page },
 		}),
 	);
 };
@@ -157,7 +164,8 @@ export const programs: TapfiliateEndpoints['affiliatesPrograms'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/affiliates/${parsed.affiliateId}/programs/`,
+			path: `/affiliates/${segment(parsed.affiliateId)}/programs/`,
+			query: { page: parsed.page },
 		}),
 	);
 };
