@@ -68,7 +68,9 @@ export async function makePipedriveRequest<T>(
 		});
 	} catch (error: unknown) {
 		// `unknown` is required because transport failures may be non-Error rejection values.
-		if (body instanceof FormData && error instanceof ApiError) {
+		// Core's ApiError keeps the sent body (binary image or JSON with customer
+		// fields); rebuild it without the body so that data stays out of errors.
+		if (body !== undefined && error instanceof ApiError) {
 			const { body: _binaryBody, ...safeRequest } = error.request;
 			void _binaryBody;
 			throw new ApiError(

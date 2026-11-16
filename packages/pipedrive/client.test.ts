@@ -313,6 +313,41 @@ describe('Pipedrive HTTP client', () => {
 	});
 });
 
+describe('Pipedrive request errors', () => {
+	it('drops a JSON write body (customer fields) from the ApiError', async () => {
+		const sent = { name: 'Private Person', notes: 'confidential note' };
+		mockedRequest.mockRejectedValueOnce(
+			new ApiError(
+				{ method: 'POST', url: '/persons', body: sent },
+				{
+					url: `${PIPEDRIVE_API_BASE}/persons`,
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: { success: false, error: 'Invalid field' },
+				},
+				'Bad Request',
+			),
+		);
+		const error = await makePipedriveRequest(
+			'/persons',
+			'test-token',
+			'api_key',
+			{
+				method: 'POST',
+				body: sent,
+			},
+		).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			status: 400,
+			body: { error: 'Invalid field' },
+		});
+		expect((error as ApiError).request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('confidential note');
+	});
+});
+
 describe('withOAuthRetry', () => {
 	it('refreshes once after a 401 and resends the write with the new token', async () => {
 		const endpoint = jest

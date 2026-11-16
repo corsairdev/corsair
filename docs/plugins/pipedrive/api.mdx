@@ -2120,7 +2120,7 @@ await corsair.pipedrive.api.products.duplicate({ id: 1 });
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 
-OAuth requires products:full. This creates a duplicate including all variations, prices, and custom fields using POST /products/{id}/duplicate with an empty JSON body. The documented API token cost is 5 tokens.
+OAuth requires products:full. This creates a duplicate including all variations, prices, and custom fields using `POST /products/{id}/duplicate` with an empty JSON body. The documented API token cost is 5 tokens.
 
 
 
@@ -2559,7 +2559,7 @@ await corsair.pipedrive.api.products.images.update({ id: 1, data: new Blob([awai
 | `data` | `custom` | Yes | — |
 | `file_name` | `string` | No | — |
 
-OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it image.<type> from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens.
+OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it `image.<type>` from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens.
 
 
 
@@ -2611,7 +2611,7 @@ await corsair.pipedrive.api.products.images.upload({ id: 1, data: new Blob([awai
 | `data` | `custom` | Yes | — |
 | `file_name` | `string` | No | — |
 
-OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it image.<type> from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens.
+OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it `image.<type>` from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens.
 
 
 

@@ -792,6 +792,7 @@ describe('Pipedrive responses from the live API (sandbox, 11-16)', () => {
 	};
 
 	it('parses deals, organizations and activities with null fields', () => {
+		// `unknown`: wraps each fixture (deal, organization, activity) in a list envelope.
 		const list = (data: unknown) => ({
 			success: true,
 			data: [data],
