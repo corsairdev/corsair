@@ -1,17 +1,25 @@
 import type { ErrorHandler, ErrorMatcher } from 'corsair/core';
-import { TalentHRAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/** Core's HTTP error, the shape an HTTP failure reaches the handlers in. */
 function apiError(
 	status: number,
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST',
 	retryAfter?: number,
 ) {
-	return new TalentHRAPIError(`TalentHR ${status}`, {
-		status,
-		method,
-		retryAfter,
-	});
+	return new ApiError(
+		{ method, url: '/directory' },
+		{
+			url: 'https://pubapi.talenthr.io/v1/directory',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`TalentHR ${status}`,
+		{ retryAfter },
+	);
 }
 
 const context = {} as Parameters<ErrorHandler>[1];
@@ -40,25 +48,14 @@ describe('talenthr error handlers', () => {
 		expect(names.at(-1)).toBe('DEFAULT');
 	});
 
-	it('retries a 429 and passes a Retry-After through', async () => {
+	it('leaves 429 retries to core and passes a Retry-After through', async () => {
 		const error = apiError(429, 'GET', 2500);
 
+		expect(match('RATE_LIMIT_ERROR')(error)).toBe(true);
 		await expect(handler('RATE_LIMIT_ERROR')(error, context)).resolves.toEqual({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs: 2500,
-			retryStrategy: 'exponential_backoff',
 		});
-	});
-
-	it('falls back to exponential backoff when a 429 carries no header', async () => {
-		const result = await handler('RATE_LIMIT_ERROR')(
-			apiError(429, 'GET'),
-			context,
-		);
-
-		// TalentHR documents 2000 requests per minute and sends no Retry-After.
-		expect(result.maxRetries).toBe(3);
-		expect(result.retryStrategy).toBe('exponential_backoff');
 	});
 
 	it('does not retry a refused key', async () => {

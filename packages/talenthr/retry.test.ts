@@ -4,10 +4,8 @@ import { talenthr } from './index';
 import { directoryResponse, employeeResponse } from './test-fixtures';
 
 /**
- * `endpoints.test.ts` calls the HTTP client, which is built with
- * `maxRetries: 0` so only `error-handlers.ts` decides what is retried. This
- * file goes through `createCorsair` to prove that layer runs: it is the only
- * place a 429 can be retried at all.
+ * Core's `request()` retries a 429 three times (R8) and the plugin's handler
+ * adds none. This file goes through `createCorsair` to pin that end to end.
  *
  * Reads replay after a 5xx, writes never do. Repeating `employees.hire` or
  * `timeOff.create` would create a second record.
@@ -74,7 +72,7 @@ describe('rate-limit retries through createCorsair', () => {
 	it('gives up after the builtin retry budget', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			// The handler allows 3 retries, so 4 attempts in total.
+			// Core retries 3 times and the handler none, so 4 attempts in total.
 			for (let i = 0; i < 4; i += 1) {
 				respond({ message: 'Too many requests' }, 429);
 			}
@@ -90,7 +88,7 @@ describe('rate-limit retries through createCorsair', () => {
 });
 
 describe('fake-timer delay pinning', () => {
-	it('waits the documented window when a 429 carries no Retry-After', async () => {
+	it('waits the first core backoff step when a 429 carries no Retry-After', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ message: 'Too many requests' }, 429);

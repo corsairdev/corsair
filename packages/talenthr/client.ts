@@ -1,9 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const TALENTHR_API_BASE = 'https://pubapi.talenthr.io/v1';
@@ -69,18 +65,6 @@ export class TalentHRAPIError extends Error {
 		return this.status === 401;
 	}
 }
-
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads Retry-After into the error. TalentHR documents 2000 requests per
-// minute per key and no Retry-After header.
-const TALENTHR_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-	isRateLimitError: (status) => status === 429,
-};
 
 type TalentHRErrorDetails = {
 	message?: string;
@@ -191,22 +175,9 @@ export async function makeTalentHRRequest(
 	try {
 		// unknown: the response shape is the endpoint's concern, not the
 		// client's; the caller parses it with its zod output schema.
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: TALENTHR_RATE_LIMIT_CONFIG,
-		});
+		return await request<unknown>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const details = readErrorDetails(error.body);
-			throw new TalentHRAPIError(
-				describeTalentHRError(error.status, error.body, error.message),
-				{
-					cause: error,
-					code: details.code,
-					hrCode: details.hrCode,
-					hrCodeKey: details.hrCodeKey,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw toTalentHRApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new TalentHRAPIError(error.message, {
@@ -216,4 +187,43 @@ export async function makeTalentHRRequest(
 		}
 		throw new TalentHRAPIError('Unknown TalentHR error', { method });
 	}
+}
+
+/**
+ * Core's `ApiError` goes through (R8): its `status` and `retryAfter` are what
+ * core's 429 retry and the error handlers read. It is rebuilt only to drop the
+ * sent body, form data and query, which hold employee records (names, emails,
+ * SSNs, birth dates), and to carry TalentHR's own message.
+ */
+function toTalentHRApiError(error: ApiError): ApiError {
+	let url = error.url;
+	try {
+		const parsed = new URL(error.url);
+		parsed.search = '';
+		url = parsed.toString();
+	} catch {
+		// A relative or empty url carries no query to drop.
+	}
+	return new ApiError(
+		{
+			...error.request,
+			body: undefined,
+			formData: undefined,
+			query: undefined,
+		},
+		{
+			url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeTalentHRError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }

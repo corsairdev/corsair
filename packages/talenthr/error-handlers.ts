@@ -1,22 +1,35 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { TalentHRAPIError } from './client';
 
+/** HTTP failures arrive as core's `ApiError`; network failures as `TalentHRAPIError`. */
 function statusOf(error: Error): number | undefined {
-	return error instanceof TalentHRAPIError ? error.status : undefined;
+	if (error instanceof ApiError || error instanceof TalentHRAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request?.method;
+	if (error instanceof TalentHRAPIError) return error.method;
+	return undefined;
 }
 
 // Status codes: https://apidocs.talenthr.io, Introduction, Errors.
 export const errorHandlers = {
-	// TalentHR caps a key at 2000 requests per minute and does not document a
-	// Retry-After header, so the 60 second window is the fallback delay when
-	// the response carries none.
+	// TalentHR caps a key at 2000 requests per minute and documents no
+	// Retry-After header. Core's request() already retries a 429 three times
+	// with backoff (honouring Retry-After when sent), so the handler does not
+	// retry again (R8).
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs:
-				error instanceof TalentHRAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
+				error instanceof ApiError || error instanceof TalentHRAPIError
+					? error.retryAfter
+					: undefined,
 		}),
 	},
 	// A 401 means the key was refused. TalentHR sends a missing tenant under
@@ -54,9 +67,7 @@ export const errorHandlers = {
 	// and a repeated hire or time off request creates a second record.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TalentHRAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

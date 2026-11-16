@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { basicAuthHeader, TalentHRAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { basicAuthHeader } from './client';
 import { Employees, Organization, ReferenceData, TimeOff } from './endpoints';
 import {
 	deletedResponse,
@@ -81,14 +82,14 @@ function expectAuthenticated() {
  * A promise can reject with any value, so this is the one place the reason is
  * treated as untyped before the typeof check narrows it.
  */
-async function rejection(promise: Promise<unknown>): Promise<TalentHRAPIError> {
+async function rejection(promise: Promise<unknown>): Promise<ApiError> {
 	const caught = await promise.then(
 		() => undefined,
 		// unknown: a rejection reason has no static type.
 		(caught: unknown) => caught,
 	);
-	expect(caught).toBeInstanceOf(TalentHRAPIError);
-	return caught as TalentHRAPIError;
+	expect(caught).toBeInstanceOf(ApiError);
+	return caught as ApiError;
 }
 
 beforeEach(() => {
@@ -321,6 +322,19 @@ describe('employees.rehire', () => {
 			employment_status: { employment_status_id: 11 },
 		});
 		expect(result.employee_id).toBe(34);
+	});
+
+	it('forwards prevent_email on a rehire', async () => {
+		respond({ success: true, data: { employee_id: 34 } });
+		await invoke(Employees.rehire, {
+			employeeId: 34,
+			hire_date: '2026-06-01',
+			reports_to_employee_id: 15,
+			employment_status: { employment_status_id: 11 },
+			prevent_email: true,
+		});
+
+		expect(lastRequest().body).toMatchObject({ prevent_email: true });
 	});
 });
 
@@ -642,21 +656,41 @@ describe('referenceData.employmentStatuses', () => {
 });
 
 describe('error handling', () => {
-	it('turns a 401 into a TalentHRAPIError carrying the tenant code', async () => {
+	it("passes a 401 through as core's ApiError with TalentHR's message", async () => {
 		respond(unauthorizedResponse, 401);
 
 		const apiError = await rejection(invoke(Employees.get, { employeeId: 15 }));
 
 		expect(apiError.status).toBe(401);
-		expect(apiError.isAuthError).toBe(true);
-		// A refused key arrives as a missing tenant, so both readings exist.
-		expect(apiError.isTenantNotFound).toBe(true);
-		expect(apiError.hrCodeKey).toBe('not_found_tenancy');
+		// A refused key arrives as a missing tenant; the body keeps the code.
+		expect(apiError.body?.error?.hr_code_key).toBe('not_found_tenancy');
 		expect(apiError.message).toContain('TalentHR 401 not_found_tenancy');
-		expect(apiError.method).toBe('GET');
+		expect(apiError.request.method).toBe('GET');
 	});
 
-	it('turns a 404 into a TalentHRAPIError that is not an auth failure', async () => {
+	it('keeps the sent employee record out of the error', async () => {
+		respond(
+			{ success: false, error: { message: 'Invalid data', code: 422 } },
+			422,
+		);
+
+		const apiError = await rejection(
+			invoke(Employees.hire, {
+				first_name: 'John',
+				last_name: 'Doe',
+				email: 'john.doe@example.com',
+				hire_date: '2024-02-29',
+				employment_status: { employment_status_id: 1 },
+				reports_to_employee_id: 15,
+			}),
+		);
+
+		expect(apiError.status).toBe(422);
+		expect(apiError.request.body).toBeUndefined();
+		expect(JSON.stringify(apiError)).not.toContain('john.doe@example.com');
+	});
+
+	it('passes a 404 through with its status', async () => {
 		respond(notFoundResponse, 404);
 
 		const apiError = await rejection(
@@ -664,7 +698,6 @@ describe('error handling', () => {
 		);
 
 		expect(apiError.status).toBe(404);
-		expect(apiError.isAuthError).toBe(false);
 	});
 
 	it('never leaks the key through the error', async () => {
