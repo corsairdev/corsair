@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { TemplatedAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { Assets, Renders, Templates } from './endpoints';
 import {
 	account,
@@ -78,20 +78,19 @@ function expectAuthenticated() {
 }
 
 /**
- * Resolves to the rejection reason, narrowed to the plugin's own error type.
+ * Resolves to the rejection reason, narrowed to core's ApiError, which the
+ * client passes on.
  * A promise can reject with any value, so this is the one place the reason is
  * treated as untyped before it is narrowed.
  */
-async function rejection(
-	promise: Promise<unknown>,
-): Promise<TemplatedAPIError> {
+async function rejection(promise: Promise<unknown>): Promise<ApiError> {
 	const caught = await promise.then(
 		() => undefined,
 		// unknown: a rejection reason has no static type.
 		(caught: unknown) => caught,
 	);
-	expect(caught).toBeInstanceOf(TemplatedAPIError);
-	return caught as TemplatedAPIError;
+	expect(caught).toBeInstanceOf(ApiError);
+	return caught as ApiError;
 }
 
 beforeEach(() => {
@@ -164,6 +163,23 @@ describe('renders.create', () => {
 		// A single render answers one object, not an array.
 		expect(Array.isArray(result)).toBe(false);
 		expect((result as { url?: string | null }).url).toBe(render.url);
+	});
+
+	it('sends numeric, boolean and object layer overrides as given', async () => {
+		respond(renderCreated);
+
+		await invoke(Renders.rendersCreate, {
+			template: 'tpl-1',
+			layers: {
+				title: { x: 100, hide: true, animation: { in: { type: 'fade' } } },
+			},
+		});
+
+		expect(lastRequest().body).toMatchObject({
+			layers: {
+				title: { x: 100, hide: true, animation: { in: { type: 'fade' } } },
+			},
+		});
 	});
 
 	it('accepts a batch of templates without a single template', async () => {
@@ -431,9 +447,24 @@ describe('uploads', () => {
 		const sent = init.body as FormData;
 		expect(sent).toBeInstanceOf(FormData);
 		expect(sent.get('file')).toBeInstanceOf(Blob);
+		// A named file part, not the default "blob".
+		expect((sent.get('file') as File).name).toBe('logo.png');
 		expect(sent.getAll('tags')).toEqual(['brand']);
 		expect(sent.get('externalId')).toBe('asset-1');
 		expect(result.id).toBe('upl_123abc');
+	});
+
+	it('infers the media type from the extension when none is given', async () => {
+		respond(upload);
+
+		await invoke(Assets.uploadsCreate, {
+			fileName: 'logo.webp',
+			fileBase64: Buffer.from('fake-webp-bytes').toString('base64'),
+		});
+
+		const [, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+		const file = (init.body as FormData).get('file') as File;
+		expect(file.type).toBe('image/webp');
 	});
 
 	it('deletes uploads with repeated ids query values', async () => {
@@ -518,8 +549,32 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(404);
-		expect(error.code).toBe('Not Found');
-		expect(error.path).toBe('/v1/nope');
+		expect(error.body).toMatchObject({ error: 'Not Found', path: '/v1/nope' });
+	});
+
+	it('drops the render payload from the error it throws', async () => {
+		respond(notFoundResponse, 404);
+
+		const error = await rejection(
+			invoke(Renders.rendersCreate, {
+				template: 'tpl-1',
+				layers: { 'text-1': { text: 'Client secret plan for Jane Doe' } },
+			}),
+		);
+
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('Jane Doe');
+		expect(require('node:util').inspect(error, { depth: 10 })).not.toContain(
+			'Jane Doe',
+		);
+	});
+
+	it('encodes ids so a crafted one cannot reach another route', async () => {
+		respond(render);
+
+		await invoke(Renders.rendersGet, { renderId: '../template/abc?x=1' });
+
+		expect(lastRequest().path).toBe('/v1/render/..%2Ftemplate%2Fabc%3Fx%3D1');
 	});
 
 	it('never leaks the key through the error', async () => {

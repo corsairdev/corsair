@@ -1,4 +1,5 @@
 import type { TemplatedEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	AccountInputSchema,
@@ -66,9 +67,18 @@ export const uploadsCreate: TemplatedEndpoints['uploadsCreate'] = async (
 			// arrive base64 encoded and are rebuilt as a Blob so the boundary and
 			// filename are sent correctly.
 			formData: {
-				file: new Blob([Buffer.from(parsed.fileBase64, 'base64')], {
-					type: parsed.contentType ?? 'application/octet-stream',
-				}),
+				// A File, not a bare Blob, so the part carries the name and its
+				// extension; the media type falls back to the extension's.
+				file: new File(
+					[Buffer.from(parsed.fileBase64, 'base64')],
+					parsed.fileName,
+					{
+						type:
+							parsed.contentType ??
+							contentTypeFor(parsed.fileName) ??
+							'application/octet-stream',
+					},
+				),
 				tags: parsed.tags,
 				externalId: parsed.externalId,
 			},
@@ -93,6 +103,20 @@ export const uploadsRemove: TemplatedEndpoints['uploadsRemove'] = async (
 		}),
 	);
 };
+
+const CONTENT_TYPES: Record<string, string> = {
+	jpg: 'image/jpeg',
+	jpeg: 'image/jpeg',
+	png: 'image/png',
+	webp: 'image/webp',
+	svg: 'image/svg+xml',
+};
+
+/** The media type for an upload's extension, when it is one Templated takes. */
+export function contentTypeFor(fileName: string): string | undefined {
+	const extension = fileName.split('.').pop()?.toLowerCase();
+	return extension ? CONTENT_TYPES[extension] : undefined;
+}
 
 // ── folders ───────────────────────────────────────────────────────────────
 
@@ -146,7 +170,7 @@ export const foldersUpdate: TemplatedEndpoints['foldersUpdate'] = async (
 		input,
 		(parsed) => ({
 			method: 'PUT',
-			path: `/folder/${parsed.folderId}`,
+			path: `/folder/${segment(parsed.folderId)}`,
 			body: { name: parsed.name },
 		}),
 	);
@@ -160,7 +184,10 @@ export const foldersRemove: TemplatedEndpoints['foldersRemove'] = async (
 		ctx,
 		{ event: 'folders.remove', input: FoldersRemoveInputSchema },
 		input,
-		(parsed) => ({ method: 'DELETE', path: `/folder/${parsed.folderId}` }),
+		(parsed) => ({
+			method: 'DELETE',
+			path: `/folder/${segment(parsed.folderId)}`,
+		}),
 	);
 };
 

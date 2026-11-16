@@ -1,4 +1,5 @@
 import type { TemplatedEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	TemplatesAddTagsInputSchema,
@@ -55,7 +56,7 @@ export const templatesGet: TemplatedEndpoints['templatesGet'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/template/${parsed.templateId}`,
+			path: `/template/${segment(parsed.templateId)}`,
 			query: {
 				includeLayers: parsed.includeLayers,
 				includePages: parsed.includePages,
@@ -78,7 +79,7 @@ export const templatesLayers: TemplatedEndpoints['templatesLayers'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/template/${parsed.templateId}/layers`,
+			path: `/template/${segment(parsed.templateId)}/layers`,
 			query: { includeLockedLayers: parsed.includeLockedLayers },
 		}),
 	);
@@ -114,7 +115,7 @@ export const templatesRemove: TemplatedEndpoints['templatesRemove'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/template/${parsed.templateId}`,
+			path: `/template/${segment(parsed.templateId)}`,
 		}),
 	);
 };
@@ -133,7 +134,7 @@ export const templatesAddTags: TemplatedEndpoints['templatesAddTags'] = async (
 		input,
 		(parsed) => ({
 			method: 'POST',
-			path: `/template/${parsed.templateId}/tags`,
+			path: `/template/${segment(parsed.templateId)}/tags`,
 			// The route takes a bare array of strings, not an object.
 			body: parsed.tags,
 		}),
@@ -152,7 +153,7 @@ export const templatesRemoveTags: TemplatedEndpoints['templatesRemoveTags'] =
 			input,
 			(parsed) => ({
 				method: 'DELETE',
-				path: `/template/${parsed.templateId}/tags`,
+				path: `/template/${segment(parsed.templateId)}/tags`,
 				body: parsed.tags,
 			}),
 		);

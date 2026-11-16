@@ -24,6 +24,17 @@ export const LimitSchema = z
 	.optional()
 	.describe('Items per page. Templated defaults it to 15.');
 
+/**
+ * One layer's overrides. The render docs type most properties as strings, but
+ * some as numbers (`x`, `padding_x`, `text_stroke_width`), booleans (`hide`,
+ * `autofit`) or objects (`animation`), so values take any JSON type.
+ */
+export const LayerOverrideSchema = z.record(
+	z.string(),
+	// unknown: the docs list over 40 layer properties of mixed types.
+	z.unknown(),
+);
+
 export const RenderIdSchema = z.string().min(1).describe('The render ID.');
 export const TemplateIdSchema = z.string().min(1).describe('The template ID.');
 
@@ -91,7 +102,7 @@ export const RendersCreateInputSchema = z
 				'Batch render several templates. When present, `template` is ignored and not required.',
 			),
 		layers: z
-			.record(z.string(), z.record(z.string(), z.string()))
+			.record(z.string(), LayerOverrideSchema)
 			.optional()
 			.describe(
 				'Layer overrides keyed by layer name, each a map of property to value, e.g. `{ "text-1": { "text": "Hello" } }`.',
@@ -293,10 +304,12 @@ export const TemplateLayerSchema = z
 		// A text layer can carry an open style map; the documented keys are here.
 		color: z.string().nullish(),
 		background: z.string().nullish(),
-		fontFamily: z.string().nullish(),
-		fontSize: z.number().nullish(),
-		fontWeight: z.string().nullish(),
-		textAlign: z.string().nullish(),
+		// The documented layer keys are snake_case; font_size is a CSS string
+		// such as "24px" on a write, and the layers route can answer a number.
+		font_family: z.string().nullish(),
+		font_size: z.union([z.string(), z.number()]).nullish(),
+		font_weight: z.union([z.string(), z.number()]).nullish(),
+		text_align: z.string().nullish(),
 		// An image layer points at a URL or an upload ID.
 		image_url: z.string().nullish(),
 		locked: z.boolean().nullish(),

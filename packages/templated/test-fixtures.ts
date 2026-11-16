@@ -60,10 +60,10 @@ export const templateLayer = {
 	rotation: 0,
 	color: '#FF0000',
 	background: '#0000FF',
-	fontFamily: 'Roboto',
-	fontSize: 32,
-	fontWeight: 'bold',
-	textAlign: 'center',
+	font_family: 'Roboto',
+	font_size: '32px',
+	font_weight: 'bold',
+	text_align: 'center',
 	locked: false,
 };
 

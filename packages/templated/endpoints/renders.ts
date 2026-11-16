@@ -1,4 +1,5 @@
 import type { TemplatedEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	RendersCreateInputSchema,
@@ -44,7 +45,10 @@ export const rendersGet: TemplatedEndpoints['rendersGet'] = async (
 			output: RendersGetResponseSchema,
 		},
 		input,
-		(parsed) => ({ method: 'GET', path: `/render/${parsed.renderId}` }),
+		(parsed) => ({
+			method: 'GET',
+			path: `/render/${segment(parsed.renderId)}`,
+		}),
 	);
 };
 
@@ -82,7 +86,7 @@ export const rendersDuplicate: TemplatedEndpoints['rendersDuplicate'] = async (
 		input,
 		(parsed) => ({
 			method: 'POST',
-			path: `/render/${parsed.renderId}/duplicate`,
+			path: `/render/${segment(parsed.renderId)}/duplicate`,
 		}),
 	);
 };
@@ -97,7 +101,7 @@ export const rendersRemove: TemplatedEndpoints['rendersRemove'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/render/${parsed.renderId}`,
+			path: `/render/${segment(parsed.renderId)}`,
 		}),
 	);
 };
