@@ -401,7 +401,7 @@ const tapfiliateEndpointMeta = {
 			"Change an affiliate's coupon in a program; null removes it and omitting it changes nothing",
 	},
 	'programs.approveAffiliate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Approve an affiliate for a program and email them when the program notifies on approval',
 	},
@@ -421,12 +421,12 @@ const tapfiliateEndpointMeta = {
 			'Read one conversion with every commission, including MLM levels, and its fraud warnings',
 	},
 	'conversions.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Track a conversion and create its commissions, attributed through a coupon, click, referral code, asset or tracking ID',
 	},
 	'conversions.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Change a conversion's amount, external ID or metadata; commissions change only with recalculate_commissions and a numeric amount",
 	},
@@ -447,16 +447,16 @@ const tapfiliateEndpointMeta = {
 			'Read one commission of any kind: regular, recurring, MLM level or bonus',
 	},
 	'commissions.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: "Change a commission's amount or comment",
 	},
 	'commissions.approve': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Approve a commission, also when it was disapproved before, and fire the commission triggers',
 	},
 	'commissions.disapprove': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Disapprove a commission from pending or approved, which removes it from the affiliate balance',
 	},
@@ -504,14 +504,15 @@ const tapfiliateEndpointMeta = {
 		description: 'Read one payment with its affiliate, amount and currency',
 	},
 	'payments.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Record one payment or an array of payments; Tapfiliate creates none when any entry is invalid',
+			'Record one payment or an array of payments; an affiliate on an automated payout method is also paid out through that provider. Tapfiliate creates none when any entry is invalid',
 	},
 	'payments.cancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			"Cancel a payment, which removes it from the affiliate's balance without reversing an outside payout",
+			'Cancel a payment. It stops counting against the affiliate balance, so the balance goes back up by its amount; an outside payout already sent is not reversed, and there is no undo',
 	},
 	'balances.list': {
 		riskLevel: 'read',

@@ -24,16 +24,16 @@ pnpm add @corsair-dev/tapfiliate
 | `clicks.create` | `tapfiliate.api.clicks.create` | `write` | Record a click and return its ID for use as click_id when creating a conversion |
 | `clicks.get` | `tapfiliate.api.clicks.get` | `read` | Read one click with its device details, country and metadata, plus its affiliate and program |
 | `clicks.list` | `tapfiliate.api.clicks.list` | `read` | List clicks on your programs, filtered by program, affiliate or date; needs the click-report feature on your plan |
-| `commissions.approve` | `tapfiliate.api.commissions.approve` | `write` | Approve a commission, also when it was disapproved before, and fire the commission triggers |
-| `commissions.disapprove` | `tapfiliate.api.commissions.disapprove` | `write` | Disapprove a commission from pending or approved, which removes it from the affiliate balance |
+| `commissions.approve` | `tapfiliate.api.commissions.approve` | `destructive` | Approve a commission, also when it was disapproved before, and fire the commission triggers |
+| `commissions.disapprove` | `tapfiliate.api.commissions.disapprove` | `destructive` | Disapprove a commission from pending or approved, which removes it from the affiliate balance |
 | `commissions.get` | `tapfiliate.api.commissions.get` | `read` | Read one commission of any kind: regular, recurring, MLM level or bonus |
 | `commissions.list` | `tapfiliate.api.commissions.list` | `read` | List commissions, filtered by affiliate, status or whether they are paid |
-| `commissions.update` | `tapfiliate.api.commissions.update` | `write` | Change a commission's amount or comment |
-| `conversions.create` | `tapfiliate.api.conversions.create` | `write` | Track a conversion and create its commissions, attributed through a coupon, click, referral code, asset or tracking ID |
+| `commissions.update` | `tapfiliate.api.commissions.update` | `destructive` | Change a commission's amount or comment |
+| `conversions.create` | `tapfiliate.api.conversions.create` | `destructive` | Track a conversion and create its commissions, attributed through a coupon, click, referral code, asset or tracking ID |
 | `conversions.delete` | `tapfiliate.api.conversions.delete` | `destructive` | Permanently delete a conversion with all of its commissions and metadata |
 | `conversions.get` | `tapfiliate.api.conversions.get` | `read` | Read one conversion with every commission, including MLM levels, and its fraud warnings |
 | `conversions.list` | `tapfiliate.api.conversions.list` | `read` | List conversions with their commissions, newest first, filtered by program, affiliate, external ID or date |
-| `conversions.update` | `tapfiliate.api.conversions.update` | `write` | Change a conversion's amount, external ID or metadata; commissions change only with recalculate_commissions and a numeric amount |
+| `conversions.update` | `tapfiliate.api.conversions.update` | `destructive` | Change a conversion's amount, external ID or metadata; commissions change only with recalculate_commissions and a numeric amount |
 | `customers.cancel` | `tapfiliate.api.customers.cancel` | `write` | Cancel a customer, which stops its automatic recurring commissions; another call can reactivate it |
 | `customers.create` | `tapfiliate.api.customers.create` | `write` | Create a customer attributed to an affiliate; no commission is created until a conversion arrives |
 | `customers.delete` | `tapfiliate.api.customers.delete` | `destructive` | Permanently delete a customer and its metadata; its conversions and commissions stay but lose the link |
@@ -41,13 +41,13 @@ pnpm add @corsair-dev/tapfiliate
 | `customers.list` | `tapfiliate.api.customers.list` | `read` | List customers, newest first, filtered by program, customer ID, affiliate or date range |
 | `customers.uncancel` | `tapfiliate.api.customers.uncancel` | `write` | Reactivate a canceled customer, restoring recurring commissions from now without back-filling |
 | `customers.update` | `tapfiliate.api.customers.update` | `write` | Change a customer's customer_id or replace its metadata |
-| `payments.cancel` | `tapfiliate.api.payments.cancel` | `write` | Cancel a payment, which removes it from the affiliate's balance without reversing an outside payout |
-| `payments.create` | `tapfiliate.api.payments.create` | `write` | Record one payment or an array of payments; Tapfiliate creates none when any entry is invalid |
+| `payments.cancel` | `tapfiliate.api.payments.cancel` | `destructive` | Cancel a payment. It stops counting against the affiliate balance, so the balance goes back up by its amount; an outside payout already sent is not reversed, and there is no undo |
+| `payments.create` | `tapfiliate.api.payments.create` | `destructive` | Record one payment or an array of payments; Tapfiliate creates none when any entry is invalid |
 | `payments.get` | `tapfiliate.api.payments.get` | `read` | Read one payment with its affiliate, amount and currency |
 | `payments.list` | `tapfiliate.api.payments.list` | `read` | List payments that were not canceled, newest first |
 | `programs.addAffiliate` | `tapfiliate.api.programs.addAffiliate` | `write` | Add an existing affiliate to a program, approved by default, or pending or disapproved explicitly |
 | `programs.affiliates` | `tapfiliate.api.programs.affiliates` | `read` | List a program's affiliates in every approval state, with each one's coupon and referral link |
-| `programs.approveAffiliate` | `tapfiliate.api.programs.approveAffiliate` | `write` | Approve an affiliate for a program and email them when the program notifies on approval |
+| `programs.approveAffiliate` | `tapfiliate.api.programs.approveAffiliate` | `destructive` | Approve an affiliate for a program and email them when the program notifies on approval |
 | `programs.disapproveAffiliate` | `tapfiliate.api.programs.disapproveAffiliate` | `write` | Disapprove an affiliate for a program; they keep the record but earn nothing there |
 | `programs.get` | `tapfiliate.api.programs.get` | `read` | Read one program, including an archived one, with its currency, cookie time and status |
 | `programs.getAffiliate` | `tapfiliate.api.programs.getAffiliate` | `read` | Read one affiliate within a program, with their program-specific coupon and approval state |

@@ -92,29 +92,36 @@ describe('tapfiliate plugin definition', () => {
 		}
 	});
 
-	it('marks only the deletes destructive and irreversible', () => {
+	it('marks money moves, sends and deletes destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = Object.entries(meta)
 			.filter(([, entry]) => entry.riskLevel === 'destructive')
 			.map(([name]) => name)
 			.sort();
 
+		// R8: payouts, commission changes, conversions (which create commissions
+		// and fire affiliate postbacks), approval emails and deletes.
 		expect(destructive).toEqual([
+			'affiliates.delete',
+			'commissions.approve',
+			'commissions.disapprove',
+			'commissions.update',
+			'conversions.create',
+			'conversions.delete',
+			'conversions.update',
+			'customers.delete',
+			'payments.cancel',
+			'payments.create',
+			'programs.approveAffiliate',
+		]);
+		for (const name of [
 			'affiliates.delete',
 			'conversions.delete',
 			'customers.delete',
-		]);
-		for (const name of destructive) {
+			'payments.cancel',
+		]) {
 			expect(meta[name as keyof typeof meta]?.irreversible).toBe(true);
 		}
-	});
-
-	it('treats a payment cancel as a reversible write, not a delete', () => {
-		// The route is a DELETE but the effect is a cancellation, so it stays a
-		// write and is not marked irreversible.
-		const meta = plugin.endpointMeta ?? {};
-		expect(meta['payments.cancel']?.riskLevel).toBe('write');
-		expect(meta['payments.cancel']?.irreversible).toBeUndefined();
 		expect(meta['customers.cancel']?.riskLevel).toBe('write');
 	});
 
