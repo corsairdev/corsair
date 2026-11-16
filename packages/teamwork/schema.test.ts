@@ -240,6 +240,40 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		expect(schema?.safeParse({ project: 'not an object' }).success).toBe(false);
 	});
 
+	it('lets V1 bodies carry fields the V1 spec leaves out, and still checks the documented ones', () => {
+		const createMilestone =
+			teamworkInputSchemas['v1_post_projects_id_milestones_json'];
+		const createTasklist =
+			teamworkInputSchemas['v1_post_projects_id_tasklists_json'];
+		// Teamwork's reference documents title and name; the V1 OpenAPI file omits them.
+		expect(
+			createMilestone?.safeParse({
+				path: { id: '1' },
+				body: {
+					milestone: { title: 'Launch', deadline: '20261130', notify: false },
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			createTasklist?.safeParse({
+				path: { id: '1' },
+				body: { 'todo-list': { name: 'Backlog' } },
+			}).success,
+		).toBe(true);
+		expect(
+			createMilestone?.safeParse({
+				path: { id: '1' },
+				body: { milestone: { title: 'Launch', notify: 'yes' } },
+			}).success,
+		).toBe(false);
+		expect(
+			createMilestone?.safeParse({
+				path: { id: '1', extra: '2' },
+				body: { milestone: { title: 'Launch' } },
+			}).success,
+		).toBe(false);
+	});
+
 	it('validates documented numeric maps without allowing unrelated body fields', () => {
 		const ratesSchema =
 			teamworkInputSchemas[

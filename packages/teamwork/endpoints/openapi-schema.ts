@@ -20,8 +20,12 @@ function isRecord(value: unknown): value is OpenApiDocument {
  * booleans where the spec says string. So in a response every field is
  * optional and nullable, enums are open and min/max limits are dropped;
  * `v1Response` also accepts any JSON scalar where the spec names one.
+ * `v1Request` checks the documented body fields but lets other keys through:
+ * the V1 spec leaves out fields its own reference documents (a milestone's
+ * `title`, a task list's `name`, a task's `description`), so a strict body
+ * could not create a named record.
  */
-type SchemaMode = 'request' | 'response' | 'v1Response';
+type SchemaMode = 'request' | 'v1Request' | 'response' | 'v1Response';
 
 // A JSON scalar of any type, for V1 response fields whose published type doesn't match the wire.
 const looseScalar = z.union([z.string(), z.number(), z.boolean()]);
@@ -33,7 +37,7 @@ function schemaFromOpenApi(
 	mode: SchemaMode,
 	cache: Map<string, z.ZodType>,
 ): z.ZodType {
-	const strictRequests = mode === 'request';
+	const strictRequests = mode === 'request' || mode === 'v1Request';
 	const looseScalars = mode === 'v1Response';
 	if (!isRecord(value)) {
 		// `unknown` is necessary because the provider omitted a schema for this JSON value.
@@ -153,6 +157,9 @@ function schemaFromOpenApi(
 			);
 		} else if (strictRequests && value.additionalProperties === true) {
 			// `unknown` is necessary because OpenAPI explicitly permits arbitrary JSON map values here.
+			schema = objectSchema.catchall(z.unknown());
+		} else if (mode === 'v1Request') {
+			// `unknown` is necessary because the V1 spec omits documented body fields (see SchemaMode).
 			schema = objectSchema.catchall(z.unknown());
 		} else if (strictRequests) {
 			schema = objectSchema.strict();
@@ -306,7 +313,7 @@ function createInputSchema(
 		const bodySchema = schemaFromOpenApi(
 			operation.body,
 			definitions,
-			'request',
+			operation.version === 'v1' ? 'v1Request' : 'request',
 			new Map(),
 		);
 		inputShape.body = operation.bodyRequired

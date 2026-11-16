@@ -380,8 +380,21 @@ export type { TeamworkV2Inputs, TeamworkV2Outputs };
 
 import type { TeamworkV3Inputs, TeamworkV3Outputs } from './operation-types-v3';
 export type { TeamworkV3Inputs, TeamworkV3Outputs };
-export type TeamworkEndpointInputs = TeamworkV1Inputs &
-	TeamworkV2Inputs &
+/** V1 bodies also take fields the V1 spec leaves out (see `v1Request` in openapi-schema.ts). */
+type TeamworkOpenBody<T> = T extends Array<infer Item>
+	? Array<TeamworkOpenBody<Item>>
+	: T extends object
+		? { [Key in keyof T]: TeamworkOpenBody<T[Key]> } & {
+				[key: string]: TeamworkJsonValue | undefined;
+			}
+		: T;
+export type TeamworkEndpointInputs = {
+	[Id in keyof TeamworkV1Inputs]: {
+		[Field in keyof TeamworkV1Inputs[Id]]: Field extends 'body'
+			? TeamworkOpenBody<TeamworkV1Inputs[Id][Field]>
+			: TeamworkV1Inputs[Id][Field];
+	};
+} & TeamworkV2Inputs &
 	TeamworkV3Inputs;
 /**
  * What a response really holds. The live run on 11-16 got null for unset
