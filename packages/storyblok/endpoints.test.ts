@@ -640,6 +640,26 @@ describe('space resolution', () => {
 		expect(lastRequest(fetchMock).origin).toBe('https://api-us.storyblok.com');
 	});
 
+	it('lists spaces with no space configured, since that is how one is found', async () => {
+		respond(fetchMock, { spaces: [] });
+
+		await Spaces.list(
+			{
+				key: API_KEY,
+				options: { region: 'us' },
+				keys: {
+					get_space_id: jest.fn().mockResolvedValue(null),
+					get_region: jest.fn().mockResolvedValue(null),
+				},
+			} as never,
+			{} as never,
+		);
+
+		const sent = lastRequest(fetchMock);
+		expect(sent.origin).toBe('https://api-us.storyblok.com');
+		expect(sent.path).toBe('/v1/spaces');
+	});
+
 	it('throws a clear error when no space is configured', async () => {
 		const { AuthMissingError } = jest.requireActual('corsair/core');
 

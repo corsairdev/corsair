@@ -25,14 +25,17 @@ export type StoryblokSpace = {
 	prefix: string;
 };
 
+/** The plugin option wins over the stored account value, as for the space. */
+async function resolveRegion(ctx: StoryblokContext): Promise<StoryblokRegion> {
+	const storedRegion = await ctx.keys?.get_region?.();
+	return ctx.options.region ?? pickRegion(storedRegion) ?? 'eu';
+}
+
 export async function resolveSpace(
 	ctx: StoryblokContext,
 ): Promise<StoryblokSpace> {
 	const optionSpace = ctx.options.spaceId;
-	const optionRegion = ctx.options.region;
-	const storedRegion = await ctx.keys?.get_region?.();
-	// The plugin option wins over the stored account value, as for the space.
-	const region = optionRegion ?? pickRegion(storedRegion) ?? 'eu';
+	const region = await resolveRegion(ctx);
 	if (optionSpace !== undefined) {
 		return {
 			spaceId: optionSpace,
@@ -102,7 +105,23 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const space = await resolveSpace(ctx);
+	// `spaces.list` sits above every space and is how a caller finds a space
+	// id, so a missing space only fails the routes that sit below one.
+	let space: StoryblokSpace;
+	let missingSpace: unknown; // unknown: the AuthMissingError, rethrown as is
+	try {
+		space = await resolveSpace(ctx);
+	} catch (error) {
+		if (!(error instanceof AuthMissingError)) throw error;
+		missingSpace = error;
+		const region = await resolveRegion(ctx);
+		space = {
+			spaceId: Number.NaN,
+			region,
+			base: storyblokBase(region),
+			prefix: '',
+		};
+	}
 	const {
 		method,
 		path,
@@ -110,6 +129,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		body,
 		scope = 'scoped',
 	} = toRequest(parsed, space);
+	if (missingSpace !== undefined && scope !== 'root') throw missingSpace;
 	const raw = await makeStoryblokRequest(ctx.key, space.base, {
 		method,
 		// The scope decides how the route meets the space prefix, so no endpoint
