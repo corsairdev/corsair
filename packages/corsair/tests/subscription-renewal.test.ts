@@ -4,6 +4,7 @@ import {
 	generateDEK,
 } from '../core/auth/encryption';
 import { renewAccounts, renewSubscriptions } from '../oauth/renewal';
+import { resolveAccountFromWebhookLink } from '../webhooks/tenant-links';
 import { createTestDatabase } from './setup-db';
 
 const internalBase = {
@@ -193,6 +194,44 @@ describe('renewal per account', () => {
 				failed: [],
 			});
 			expect(tokens).toEqual(['tok-a1', 'tok-a2']);
+		} finally {
+			t.cleanup();
+		}
+	});
+
+	it('saves each renewed webhook link on its own account', async () => {
+		const t = createTestDatabase();
+		try {
+			await seedTwoAccounts(t);
+			const rows = [
+				{ tenantId: 't1', integrationName: 'outlook', accountId: 'a1' },
+				{ tenantId: 't1', integrationName: 'outlook', accountId: 'a2' },
+			];
+			let n = 0;
+			await renewAccounts({
+				corsair: {},
+				internal: {
+					...internalBase,
+					kek,
+					database: t.database,
+					plugins: [plugin],
+				},
+				rows,
+				subscribeAndReport: async () => ({
+					linkType: 'subscription_id',
+					externalId: `sub-${++n}`,
+				}),
+			});
+			for (const [i, id] of ['a1', 'a2'].entries()) {
+				const found = await resolveAccountFromWebhookLink({
+					database: t.database,
+					kek,
+					pluginId: 'outlook',
+					linkType: 'subscription_id',
+					externalId: `sub-${i + 1}`,
+				});
+				expect(found?.id).toBe(id);
+			}
 		} finally {
 			t.cleanup();
 		}
