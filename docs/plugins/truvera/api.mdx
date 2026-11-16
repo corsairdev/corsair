@@ -297,7 +297,7 @@ await corsair.truvera.api.credentials.revoke({ credential_id: 'https://creds.tru
 |------|------|----------|-------------|
 | `credential_id` | `string` | Yes | The credential URI, as the issue or list route returned it |
 
-Makes every verification of the credential fail. This can be undone with `credentials.unrevoke`.
+Makes every verification of the credential fail. It can be undone with `credentials.unrevoke` only when the registry was created with `add_only: false`; in an add-only registry (the default) the revocation is permanent.
 
 
 
@@ -339,7 +339,7 @@ await corsair.truvera.api.credentials.unrevoke({ credential_id: 'https://creds.t
 
 Create a DID with its keys, optionally with a DIDComm service endpoint
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.truvera.api.dids.create({ type: 'cheqd', key_type: 'ed25519' });
@@ -840,7 +840,7 @@ await corsair.truvera.api.profiles.update({ did: 'did:cheqd:mainnet:ac2b9027-ec1
 
 Create a revocation registry
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.truvera.api.registries.create({ type: 'dock', add_only: false });
@@ -1085,7 +1085,7 @@ Applies one action to several credentials in one call. `credential_ids` are the 
 
 Create a JSON credential schema that a credential type and subject follow
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.truvera.api.schemas.create({ name: 'Basic Credential', type: 'object', properties: { name: { type: 'string' } }, required: ['name'] });
