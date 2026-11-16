@@ -14,9 +14,9 @@ description: "API reference for the Supersaas plugin in Corsair: every `supersaa
 
 `bookings.create`
 
-Book an appointment. A resource schedule needs start and finish, a capacity schedule needs a slot id, and the two are not interchangeable
+Book an appointment; SuperSaaS may email the customer a confirmation, depending on the schedule settings. A resource schedule needs start and finish, a capacity schedule needs a slot id
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.supersaas.api.bookings.create({});
@@ -26,11 +26,11 @@ await corsair.supersaas.api.bookings.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schedule_id` | `number` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
 | `start` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
 | `finish` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `slot_id` | `string` | No | — |
-| `resource_id` | `string` | No | — |
+| `slot_id` | `number \| string` | No | — |
+| `resource_id` | `number \| string` | No | — |
 | `full_name` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
 | `address` | `string \| null` | No | — |
@@ -43,8 +43,8 @@ await corsair.supersaas.api.bookings.create({});
 | `field_2_r` | `string \| null` | No | — |
 | `super_field` | `string \| null` | No | — |
 | `form_id` | `string \| null` | No | — |
-| `webhook` | `boolean` | No | — |
-| `user_id` | `string` | No | Create the booking on behalf of this user. |
+| `user_id` | `number \| string` | No | Create the booking on behalf of this user (id or your own key). |
+| `webhook` | `boolean` | No | Trigger the schedule's webhooks for this booking. |
 
 
 
@@ -53,8 +53,8 @@ await corsair.supersaas.api.bookings.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `created` | `true` | Yes | — |
-| `key` | `string` | Yes | — |
-| `id` | `string` | No | Present only when SuperSaaS answered a body; the id otherwise arrives in a Location header this client cannot read. |
+| `id` | `string` | Yes | The new record id, from the Location header. |
+| `location` | `string` | Yes | The new record URL SuperSaaS returned. |
 
 
 
@@ -76,7 +76,8 @@ await corsair.supersaas.api.bookings.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `booking_id` | `string` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
+| `booking_id` | `number \| string` | Yes | — |
 
 
 
@@ -107,7 +108,8 @@ await corsair.supersaas.api.bookings.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `booking_id` | `string` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
+| `booking_id` | `number \| string` | Yes | — |
 
 
 
@@ -115,12 +117,18 @@ await corsair.supersaas.api.bookings.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
+| `id` | `number \| string \| null` | No | — |
 | `start` | `string \| null` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
 | `finish` | `string \| null` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
 | `created_on` | `string \| null` | No | — |
 | `updated_on` | `string \| null` | No | — |
-| `user_id` | `string \| null` | No | — |
+| `created_by` | `string \| null` | No | — |
+| `schedule_id` | `number \| string \| null` | No | — |
+| `schedule_name` | `string \| null` | No | — |
+| `price` | `number \| string \| null` | No | — |
+| `waitlisted` | `boolean \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `user_id` | `number \| string \| null` | No | — |
 | `user_name` | `string \| null` | No | — |
 | `full_name` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
@@ -128,9 +136,9 @@ await corsair.supersaas.api.bookings.get({});
 | `mobile` | `string \| null` | No | — |
 | `phone` | `string \| null` | No | — |
 | `country` | `string \| null` | No | — |
-| `resource_id` | `string \| null` | No | — |
+| `resource_id` | `number \| string \| null` | No | — |
 | `resource_name` | `string \| null` | No | — |
-| `slot_id` | `string \| null` | No | — |
+| `slot_id` | `number \| string \| null` | No | — |
 | `lat` | `number \| null` | No | — |
 | `long` | `number \| null` | No | — |
 | `field_1` | `string \| null` | No | — |
@@ -138,7 +146,7 @@ await corsair.supersaas.api.bookings.get({});
 | `field_1_r` | `string \| null` | No | — |
 | `field_2_r` | `string \| null` | No | — |
 | `super_field` | `string \| null` | No | — |
-| `form_id` | `string \| null` | No | — |
+| `form_id` | `number \| string \| null` | No | — |
 
 
 
@@ -160,10 +168,10 @@ await corsair.supersaas.api.bookings.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schedule_id` | `number` | Yes | — |
-| `user_id` | `string` | No | — |
-| `slot_id` | `string` | No | — |
-| `from` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
+| `start` | `string` | No | Only bookings from this time (resource and service schedules). |
+| `finish` | `string` | No | Only bookings up to this time (resource and service schedules). |
+| `limit` | `number` | No | Records to return. For paging use schedules.range. |
 
 
 
@@ -174,12 +182,18 @@ await corsair.supersaas.api.bookings.list({});
 
 ```ts
 {
-  id?: string | null,
+  id?: number | string | null,
   start?: string | null,
   finish?: string | null,
   created_on?: string | null,
   updated_on?: string | null,
-  user_id?: string | null,
+  created_by?: string | null,
+  schedule_id?: number | string | null,
+  schedule_name?: string | null,
+  price?: number | string | null,
+  waitlisted?: boolean | null,
+  deleted?: boolean | null,
+  user_id?: number | string | null,
   user_name?: string | null,
   full_name?: string | null,
   email?: string | null,
@@ -187,9 +201,9 @@ await corsair.supersaas.api.bookings.list({});
   mobile?: string | null,
   phone?: string | null,
   country?: string | null,
-  resource_id?: string | null,
+  resource_id?: number | string | null,
   resource_name?: string | null,
-  slot_id?: string | null,
+  slot_id?: number | string | null,
   lat?: number | null,
   long?: number | null,
   field_1?: string | null,
@@ -197,7 +211,7 @@ await corsair.supersaas.api.bookings.list({});
   field_1_r?: string | null,
   field_2_r?: string | null,
   super_field?: string | null,
-  form_id?: string | null
+  form_id?: number | string | null
 }[]
 ```
 </Accordion>
@@ -210,9 +224,9 @@ await corsair.supersaas.api.bookings.list({});
 
 `bookings.update`
 
-Change a booking's time or details
+Change a booking's time or details; SuperSaaS may email the customer about the change, depending on the schedule settings
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.supersaas.api.bookings.update({});
@@ -222,12 +236,11 @@ await corsair.supersaas.api.bookings.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `booking_id` | `string` | Yes | — |
-| `schedule_id` | `number` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
 | `start` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
 | `finish` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `slot_id` | `string` | No | — |
-| `resource_id` | `string` | No | — |
+| `slot_id` | `number \| string` | No | — |
+| `resource_id` | `number \| string` | No | — |
 | `full_name` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
 | `address` | `string \| null` | No | — |
@@ -240,7 +253,7 @@ await corsair.supersaas.api.bookings.update({});
 | `field_2_r` | `string \| null` | No | — |
 | `super_field` | `string \| null` | No | — |
 | `form_id` | `string \| null` | No | — |
-| `webhook` | `boolean` | No | — |
+| `booking_id` | `number \| string` | Yes | — |
 
 
 
@@ -248,30 +261,8 @@ await corsair.supersaas.api.bookings.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
-| `start` | `string \| null` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `finish` | `string \| null` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `created_on` | `string \| null` | No | — |
-| `updated_on` | `string \| null` | No | — |
-| `user_id` | `string \| null` | No | — |
-| `user_name` | `string \| null` | No | — |
-| `full_name` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `mobile` | `string \| null` | No | — |
-| `phone` | `string \| null` | No | — |
-| `country` | `string \| null` | No | — |
-| `resource_id` | `string \| null` | No | — |
-| `resource_name` | `string \| null` | No | — |
-| `slot_id` | `string \| null` | No | — |
-| `lat` | `number \| null` | No | — |
-| `long` | `number \| null` | No | — |
-| `field_1` | `string \| null` | No | — |
-| `field_2` | `string \| null` | No | — |
-| `field_1_r` | `string \| null` | No | — |
-| `field_2_r` | `string \| null` | No | — |
-| `super_field` | `string \| null` | No | — |
-| `form_id` | `string \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `updated` | `true` | Yes | — |
 
 
 
@@ -295,25 +286,36 @@ await corsair.supersaas.api.schedules.agenda({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schedule_id` | `number` | No | — |
+| `schedule_id` | `number` | No | The schedule id, the number at the end of the Configure Overview URL. |
 | `user` | `string` | Yes | The user's name or id, or 0 for the administrator. |
 | `from` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookings` | `object[] \| null` | No | — |
+| `slots` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="bookings full type">
 
 ```ts
 {
-  id?: string | null,
+  id?: number | string | null,
   start?: string | null,
   finish?: string | null,
   created_on?: string | null,
   updated_on?: string | null,
-  user_id?: string | null,
+  created_by?: string | null,
+  schedule_id?: number | string | null,
+  schedule_name?: string | null,
+  price?: number | string | null,
+  waitlisted?: boolean | null,
+  deleted?: boolean | null,
+  user_id?: number | string | null,
   user_name?: string | null,
   full_name?: string | null,
   email?: string | null,
@@ -321,9 +323,9 @@ await corsair.supersaas.api.schedules.agenda({});
   mobile?: string | null,
   phone?: string | null,
   country?: string | null,
-  resource_id?: string | null,
+  resource_id?: number | string | null,
   resource_name?: string | null,
-  slot_id?: string | null,
+  slot_id?: number | string | null,
   lat?: number | null,
   long?: number | null,
   field_1?: string | null,
@@ -331,11 +333,65 @@ await corsair.supersaas.api.schedules.agenda({});
   field_1_r?: string | null,
   field_2_r?: string | null,
   super_field?: string | null,
-  form_id?: string | null
-}[]
+  form_id?: number | string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="slots full type">
+
+```ts
+{
+  id?: number | string | null,
+  start?: string | null,
+  finish?: string | null,
+  title?: string | null,
+  description?: string | null,
+  location?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  count?: number | null,
+  capacity?: number | null,
+  price?: number | string | null,
+  resource_id?: number | string | null,
+  resource_name?: string | null,
+  bookings?: {
+    id?: number | string | null,
+    start?: string | null,
+    finish?: string | null,
+    created_on?: string | null,
+    updated_on?: string | null,
+    created_by?: string | null,
+    schedule_id?: number | string | null,
+    schedule_name?: string | null,
+    price?: number | string | null,
+    waitlisted?: boolean | null,
+    deleted?: boolean | null,
+    user_id?: number | string | null,
+    user_name?: string | null,
+    full_name?: string | null,
+    email?: string | null,
+    address?: string | null,
+    mobile?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    resource_id?: number | string | null,
+    resource_name?: string | null,
+    slot_id?: number | string | null,
+    lat?: number | null,
+    long?: number | null,
+    field_1?: string | null,
+    field_2?: string | null,
+    field_1_r?: string | null,
+    field_2_r?: string | null,
+    super_field?: string | null,
+    form_id?: number | string | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -356,27 +412,115 @@ await corsair.supersaas.api.schedules.changes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schedule_id` | `number` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
 | `from` | `string` | No | Only changes after this time. Omitted shows the ten most recent. |
+| `to` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
+| `limit` | `number` | No | Records to return. |
+| `offset` | `number` | No | Records to skip, to read past a full page. |
+| `slot` | `boolean` | No | Group the answer by slot (capacity schedules). |
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookings` | `object[] \| null` | No | — |
+| `slots` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="bookings full type">
 
 ```ts
 {
-  type?: string | null,
-  id?: string | null,
+  id?: number | string | null,
   start?: string | null,
   finish?: string | null,
-  updated_on?: string | null
-}[]
+  created_on?: string | null,
+  updated_on?: string | null,
+  created_by?: string | null,
+  schedule_id?: number | string | null,
+  schedule_name?: string | null,
+  price?: number | string | null,
+  waitlisted?: boolean | null,
+  deleted?: boolean | null,
+  user_id?: number | string | null,
+  user_name?: string | null,
+  full_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  mobile?: string | null,
+  phone?: string | null,
+  country?: string | null,
+  resource_id?: number | string | null,
+  resource_name?: string | null,
+  slot_id?: number | string | null,
+  lat?: number | null,
+  long?: number | null,
+  field_1?: string | null,
+  field_2?: string | null,
+  field_1_r?: string | null,
+  field_2_r?: string | null,
+  super_field?: string | null,
+  form_id?: number | string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="slots full type">
+
+```ts
+{
+  id?: number | string | null,
+  start?: string | null,
+  finish?: string | null,
+  title?: string | null,
+  description?: string | null,
+  location?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  count?: number | null,
+  capacity?: number | null,
+  price?: number | string | null,
+  resource_id?: number | string | null,
+  resource_name?: string | null,
+  bookings?: {
+    id?: number | string | null,
+    start?: string | null,
+    finish?: string | null,
+    created_on?: string | null,
+    updated_on?: string | null,
+    created_by?: string | null,
+    schedule_id?: number | string | null,
+    schedule_name?: string | null,
+    price?: number | string | null,
+    waitlisted?: boolean | null,
+    deleted?: boolean | null,
+    user_id?: number | string | null,
+    user_name?: string | null,
+    full_name?: string | null,
+    email?: string | null,
+    address?: string | null,
+    mobile?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    resource_id?: number | string | null,
+    resource_name?: string | null,
+    slot_id?: number | string | null,
+    lat?: number | null,
+    long?: number | null,
+    field_1?: string | null,
+    field_2?: string | null,
+    field_1_r?: string | null,
+    field_2_r?: string | null,
+    super_field?: string | null,
+    form_id?: number | string | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -397,26 +541,112 @@ await corsair.supersaas.api.schedules.free({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schedule_id` | `number` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
 | `from` | `string` | Yes | Return free spaces that occur after this time. |
+| `maxresults` | `number` | No | Spaces to return, default 10. |
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookings` | `object[] \| null` | No | — |
+| `slots` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="bookings full type">
 
 ```ts
 {
+  id?: number | string | null,
   start?: string | null,
   finish?: string | null,
-  resource_id?: string | null,
-  resource_name?: string | null
-}[]
+  created_on?: string | null,
+  updated_on?: string | null,
+  created_by?: string | null,
+  schedule_id?: number | string | null,
+  schedule_name?: string | null,
+  price?: number | string | null,
+  waitlisted?: boolean | null,
+  deleted?: boolean | null,
+  user_id?: number | string | null,
+  user_name?: string | null,
+  full_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  mobile?: string | null,
+  phone?: string | null,
+  country?: string | null,
+  resource_id?: number | string | null,
+  resource_name?: string | null,
+  slot_id?: number | string | null,
+  lat?: number | null,
+  long?: number | null,
+  field_1?: string | null,
+  field_2?: string | null,
+  field_1_r?: string | null,
+  field_2_r?: string | null,
+  super_field?: string | null,
+  form_id?: number | string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="slots full type">
+
+```ts
+{
+  id?: number | string | null,
+  start?: string | null,
+  finish?: string | null,
+  title?: string | null,
+  description?: string | null,
+  location?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  count?: number | null,
+  capacity?: number | null,
+  price?: number | string | null,
+  resource_id?: number | string | null,
+  resource_name?: string | null,
+  bookings?: {
+    id?: number | string | null,
+    start?: string | null,
+    finish?: string | null,
+    created_on?: string | null,
+    updated_on?: string | null,
+    created_by?: string | null,
+    schedule_id?: number | string | null,
+    schedule_name?: string | null,
+    price?: number | string | null,
+    waitlisted?: boolean | null,
+    deleted?: boolean | null,
+    user_id?: number | string | null,
+    user_name?: string | null,
+    full_name?: string | null,
+    email?: string | null,
+    address?: string | null,
+    mobile?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    resource_id?: number | string | null,
+    resource_name?: string | null,
+    slot_id?: number | string | null,
+    lat?: number | null,
+    long?: number | null,
+    field_1?: string | null,
+    field_2?: string | null,
+    field_1_r?: string | null,
+    field_2_r?: string | null,
+    super_field?: string | null,
+    form_id?: number | string | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -437,25 +667,39 @@ await corsair.supersaas.api.schedules.range({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schedule_id` | `number` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
 | `from` | `string` | No | Appointments starting at or after this. |
 | `to` | `string` | No | Appointments starting before this. |
+| `limit` | `number` | No | Records to return. |
+| `offset` | `number` | No | Records to skip, to read past a full page. |
+| `slot` | `boolean` | No | Group the answer by slot (capacity schedules). |
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookings` | `object[] \| null` | No | — |
+| `slots` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="bookings full type">
 
 ```ts
 {
-  id?: string | null,
+  id?: number | string | null,
   start?: string | null,
   finish?: string | null,
   created_on?: string | null,
   updated_on?: string | null,
-  user_id?: string | null,
+  created_by?: string | null,
+  schedule_id?: number | string | null,
+  schedule_name?: string | null,
+  price?: number | string | null,
+  waitlisted?: boolean | null,
+  deleted?: boolean | null,
+  user_id?: number | string | null,
   user_name?: string | null,
   full_name?: string | null,
   email?: string | null,
@@ -463,9 +707,9 @@ await corsair.supersaas.api.schedules.range({});
   mobile?: string | null,
   phone?: string | null,
   country?: string | null,
-  resource_id?: string | null,
+  resource_id?: number | string | null,
   resource_name?: string | null,
-  slot_id?: string | null,
+  slot_id?: number | string | null,
   lat?: number | null,
   long?: number | null,
   field_1?: string | null,
@@ -473,11 +717,65 @@ await corsair.supersaas.api.schedules.range({});
   field_1_r?: string | null,
   field_2_r?: string | null,
   super_field?: string | null,
-  form_id?: string | null
-}[]
+  form_id?: number | string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="slots full type">
+
+```ts
+{
+  id?: number | string | null,
+  start?: string | null,
+  finish?: string | null,
+  title?: string | null,
+  description?: string | null,
+  location?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  count?: number | null,
+  capacity?: number | null,
+  price?: number | string | null,
+  resource_id?: number | string | null,
+  resource_name?: string | null,
+  bookings?: {
+    id?: number | string | null,
+    start?: string | null,
+    finish?: string | null,
+    created_on?: string | null,
+    updated_on?: string | null,
+    created_by?: string | null,
+    schedule_id?: number | string | null,
+    schedule_name?: string | null,
+    price?: number | string | null,
+    waitlisted?: boolean | null,
+    deleted?: boolean | null,
+    user_id?: number | string | null,
+    user_name?: string | null,
+    full_name?: string | null,
+    email?: string | null,
+    address?: string | null,
+    mobile?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    resource_id?: number | string | null,
+    resource_name?: string | null,
+    slot_id?: number | string | null,
+    lat?: number | null,
+    long?: number | null,
+    field_1?: string | null,
+    field_2?: string | null,
+    field_1_r?: string | null,
+    field_2_r?: string | null,
+    super_field?: string | null,
+    form_id?: number | string | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -500,11 +798,14 @@ await corsair.supersaas.api.slots.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schedule_id` | `number` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
 | `start` | `string` | Yes | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
 | `finish` | `string` | Yes | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `capacity` | `number` | No | — |
-| `resource_id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `location` | `string` | No | — |
+| `capacity` | `number` | No | Bookings the slot takes; 0 closes it. |
+| `price` | `number \| string` | No | — |
 
 
 
@@ -513,8 +814,8 @@ await corsair.supersaas.api.slots.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `created` | `true` | Yes | — |
-| `key` | `string` | Yes | — |
-| `id` | `string` | No | Present only when SuperSaaS answered a body; the id otherwise arrives in a Location header this client cannot read. |
+| `id` | `string` | Yes | The new record id, from the Location header. |
+| `location` | `string` | Yes | The new record URL SuperSaaS returned. |
 
 
 
@@ -536,7 +837,8 @@ await corsair.supersaas.api.slots.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `slot_id` | `string` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
+| `slot_id` | `number \| string` | Yes | — |
 
 
 
@@ -567,7 +869,8 @@ await corsair.supersaas.api.slots.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `slot_id` | `string` | Yes | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
+| `slot_id` | `number \| string` | Yes | — |
 
 
 
@@ -575,15 +878,60 @@ await corsair.supersaas.api.slots.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
+| `id` | `number \| string \| null` | No | — |
 | `start` | `string \| null` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
 | `finish` | `string \| null` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
 | `created_on` | `string \| null` | No | — |
 | `updated_on` | `string \| null` | No | — |
-| `booked` | `number \| null` | No | — |
-| `capacity` | `number \| null` | No | — |
-| `resource_id` | `string \| null` | No | — |
+| `count` | `number \| null` | No | Bookings in the slot (free reads). |
+| `capacity` | `number \| null` | No | Null or empty means no limit; 0 accepts no bookings. |
+| `price` | `number \| string \| null` | No | — |
+| `resource_id` | `number \| string \| null` | No | — |
 | `resource_name` | `string \| null` | No | — |
+| `bookings` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="bookings full type">
+
+```ts
+{
+  id?: number | string | null,
+  start?: string | null,
+  finish?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  created_by?: string | null,
+  schedule_id?: number | string | null,
+  schedule_name?: string | null,
+  price?: number | string | null,
+  waitlisted?: boolean | null,
+  deleted?: boolean | null,
+  user_id?: number | string | null,
+  user_name?: string | null,
+  full_name?: string | null,
+  email?: string | null,
+  address?: string | null,
+  mobile?: string | null,
+  phone?: string | null,
+  country?: string | null,
+  resource_id?: number | string | null,
+  resource_name?: string | null,
+  slot_id?: number | string | null,
+  lat?: number | null,
+  long?: number | null,
+  field_1?: string | null,
+  field_2?: string | null,
+  field_1_r?: string | null,
+  field_2_r?: string | null,
+  super_field?: string | null,
+  form_id?: number | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -605,9 +953,11 @@ await corsair.supersaas.api.slots.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `schedule_id` | `number` | Yes | — |
-| `from` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `to` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
+| `from` | `string` | No | Slots from this time (sent as start). |
+| `to` | `string` | No | Slots up to this time (sent as finish). |
+| `limit` | `number` | No | Records to return, default 100, max 2500. |
+| `offset` | `number` | No | Records to skip. |
 
 
 
@@ -618,15 +968,51 @@ await corsair.supersaas.api.slots.list({});
 
 ```ts
 {
-  id?: string | null,
+  id?: number | string | null,
   start?: string | null,
   finish?: string | null,
+  title?: string | null,
+  description?: string | null,
+  location?: string | null,
   created_on?: string | null,
   updated_on?: string | null,
-  booked?: number | null,
+  count?: number | null,
   capacity?: number | null,
-  resource_id?: string | null,
-  resource_name?: string | null
+  price?: number | string | null,
+  resource_id?: number | string | null,
+  resource_name?: string | null,
+  bookings?: {
+    id?: number | string | null,
+    start?: string | null,
+    finish?: string | null,
+    created_on?: string | null,
+    updated_on?: string | null,
+    created_by?: string | null,
+    schedule_id?: number | string | null,
+    schedule_name?: string | null,
+    price?: number | string | null,
+    waitlisted?: boolean | null,
+    deleted?: boolean | null,
+    user_id?: number | string | null,
+    user_name?: string | null,
+    full_name?: string | null,
+    email?: string | null,
+    address?: string | null,
+    mobile?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    resource_id?: number | string | null,
+    resource_name?: string | null,
+    slot_id?: number | string | null,
+    lat?: number | null,
+    long?: number | null,
+    field_1?: string | null,
+    field_2?: string | null,
+    field_1_r?: string | null,
+    field_2_r?: string | null,
+    super_field?: string | null,
+    form_id?: number | string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -651,12 +1037,15 @@ await corsair.supersaas.api.slots.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `slot_id` | `string` | Yes | — |
-| `schedule_id` | `number` | Yes | — |
-| `start` | `string` | Yes | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `finish` | `string` | Yes | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `capacity` | `number` | No | — |
-| `resource_id` | `string` | No | — |
+| `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
+| `slot_id` | `number \| string` | Yes | — |
+| `start` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
+| `finish` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `location` | `string` | No | — |
+| `capacity` | `number` | No | Bookings the slot takes; 0 closes it. |
+| `price` | `number \| string` | No | — |
 
 
 
@@ -664,15 +1053,8 @@ await corsair.supersaas.api.slots.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
-| `start` | `string \| null` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `finish` | `string \| null` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
-| `created_on` | `string \| null` | No | — |
-| `updated_on` | `string \| null` | No | — |
-| `booked` | `number \| null` | No | — |
-| `capacity` | `number \| null` | No | — |
-| `resource_id` | `string \| null` | No | — |
-| `resource_name` | `string \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `updated` | `true` | Yes | — |
 
 
 
@@ -720,8 +1102,8 @@ await corsair.supersaas.api.users.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `created` | `true` | Yes | — |
-| `key` | `string` | Yes | — |
-| `id` | `string` | No | Present only when SuperSaaS answered a body; the id otherwise arrives in a Location header this client cannot read. |
+| `id` | `string` | Yes | The new record id, from the Location header. |
+| `location` | `string` | Yes | The new record URL SuperSaaS returned. |
 
 
 
@@ -768,8 +1150,8 @@ await corsair.supersaas.api.users.createWithKey({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `created` | `true` | Yes | — |
-| `key` | `string` | Yes | — |
-| `id` | `string` | No | Present only when SuperSaaS answered a body; the id otherwise arrives in a Location header this client cannot read. |
+| `id` | `string` | Yes | The new record id, from the Location header. |
+| `location` | `string` | Yes | The new record URL SuperSaaS returned. |
 
 
 
@@ -830,8 +1212,8 @@ await corsair.supersaas.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
-| `fk` | `string \| null` | No | Your own key, when you supplied one. |
+| `id` | `number \| string \| null` | No | — |
+| `fk` | `number \| string \| null` | No | Your own key, when you supplied one. |
 | `name` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
 | `full_name` | `string \| null` | No | — |
@@ -843,9 +1225,9 @@ await corsair.supersaas.api.users.get({});
 | `field_1` | `string \| null` | No | — |
 | `field_2` | `string \| null` | No | — |
 | `super_field` | `string \| null` | No | — |
-| `credit` | `string \| null` | No | — |
+| `credit` | `number \| string \| null` | No | — |
 | `role` | `number \| null` | No | 3 regular, 4 superuser, -1 blocked. |
-| `group` | `number \| null` | No | — |
+| `group` | `number \| string \| null` | No | — |
 | `created_on` | `string \| null` | No | — |
 | `last_login` | `string \| null` | No | — |
 
@@ -881,8 +1263,8 @@ await corsair.supersaas.api.users.list({});
 
 ```ts
 {
-  id?: string | null,
-  fk?: string | null,
+  id?: number | string | null,
+  fk?: number | string | null,
   name?: string | null,
   email?: string | null,
   full_name?: string | null,
@@ -894,9 +1276,9 @@ await corsair.supersaas.api.users.list({});
   field_1?: string | null,
   field_2?: string | null,
   super_field?: string | null,
-  credit?: string | null,
+  credit?: number | string | null,
   role?: number | null,
-  group?: number | null,
+  group?: number | string | null,
   created_on?: string | null,
   last_login?: string | null
 }[]
@@ -948,24 +1330,8 @@ await corsair.supersaas.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
-| `fk` | `string \| null` | No | Your own key, when you supplied one. |
-| `name` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `full_name` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `mobile` | `string \| null` | No | — |
-| `phone` | `string \| null` | No | — |
-| `country` | `string \| null` | No | — |
-| `timezone` | `string \| null` | No | — |
-| `field_1` | `string \| null` | No | — |
-| `field_2` | `string \| null` | No | — |
-| `super_field` | `string \| null` | No | — |
-| `credit` | `string \| null` | No | — |
-| `role` | `number \| null` | No | 3 regular, 4 superuser, -1 blocked. |
-| `group` | `number \| null` | No | — |
-| `created_on` | `string \| null` | No | — |
-| `last_login` | `string \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `updated` | `true` | Yes | — |
 
 
 
