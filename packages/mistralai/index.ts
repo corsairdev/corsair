@@ -291,18 +291,20 @@ const BATCH_JOB = {
 } as const;
 
 export const mistralAiEndpointMeta = {
+	// Model calls bill per token or page, and batch.create bills every request
+	// in the job: spending credits makes them destructive (PLUGIN_PR_RULES R8).
 	'chat.complete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Generate a chat answer from a list of messages, with optional tools and JSON output; spends Mistral credits',
 	},
 	'fim.complete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Fill in code between a prompt and a suffix with a Codestral model; spends Mistral credits',
 	},
 	'agents.complete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Run an agent on a list of messages with the agent's instructions and tools; spends Mistral credits",
 	},
@@ -359,42 +361,42 @@ export const mistralAiEndpointMeta = {
 			'Remove a version alias from an agent; the version itself stays (beta)',
 	},
 	'embeddings.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Turn one or more texts into embedding vectors; spends Mistral credits',
 	},
 	'classifiers.moderate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Score texts against moderation categories (sexual, hate, violence, self-harm…); spends Mistral credits',
 	},
 	'classifiers.moderateChat': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Score a conversation against moderation categories; spends Mistral credits',
 	},
 	'classifiers.classify': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Classify texts with a fine-tuned classifier model; spends Mistral credits',
 	},
 	'classifiers.classifyChat': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Classify conversations with a fine-tuned classifier model; spends Mistral credits',
 	},
 	'ocr.process': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Read a PDF or image (URL or uploaded file) into markdown per page, with optional structured annotations; spends Mistral credits',
 	},
 	'audio.speech': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Turn text into speech; returns base64 audio (mp3 by default); spends Mistral credits',
 	},
 	'audio.transcribe': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Transcribe audio from base64 content, a URL or an uploaded file, optionally with speakers and timestamps; spends Mistral credits',
 	},
@@ -501,7 +503,7 @@ export const mistralAiEndpointMeta = {
 			'List batch jobs, filtered by status, model or date; page with page and page_size',
 	},
 	'batch.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits and needs a Mistral plan with billing enabled (402 otherwise). Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED',
 		job: BATCH_JOB,
@@ -523,7 +525,7 @@ export const mistralAiEndpointMeta = {
 			'Ask Mistral to cancel a batch job: status goes to CANCELLATION_REQUESTED, then CANCELLED; there is no way to resume it',
 	},
 	'responses.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Generate a response with the Responses API (input items, tools, reasoning); spends Mistral credits',
 	},

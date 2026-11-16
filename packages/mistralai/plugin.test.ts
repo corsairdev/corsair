@@ -44,15 +44,29 @@ describe('Mistral AI plugin definition', () => {
 				.filter(([, entry]) => entry.riskLevel === level)
 				.map(([op]) => op);
 		expect(by('read')).toHaveLength(19);
-		expect(by('write')).toHaveLength(25);
+		expect(by('write')).toHaveLength(12);
+		// Deletes and cancels, plus every call that spends credits (R8).
 		expect(by('destructive').sort()).toEqual([
+			'agents.complete',
 			'agents.delete',
 			'agents.deleteAlias',
+			'audio.speech',
+			'audio.transcribe',
 			'audioAgents.delete',
 			'batch.cancel',
+			'batch.create',
 			'batch.delete',
+			'chat.complete',
+			'classifiers.classify',
+			'classifiers.classifyChat',
+			'classifiers.moderate',
+			'classifiers.moderateChat',
+			'embeddings.create',
 			'files.delete',
+			'fim.complete',
 			'models.delete',
+			'ocr.process',
+			'responses.create',
 			'voices.delete',
 		]);
 	});
