@@ -379,7 +379,7 @@ await corsair.vercel.api.deployments.cancelDeployment({});
 
 Start a deployment from a Git ref, from inline files, or as a redeploy of an existing deployment. It builds in the background: follow readyState with getDeployment. target production replaces the live site once ready.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.vercel.api.deployments.createDeployment({ name: 'my-site', project: 'my-site', target: 'production', gitSource: { type: 'github', org: 'acme', repo: 'my-site', ref: 'main' } });

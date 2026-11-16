@@ -158,7 +158,10 @@ export const deleteEnvVariable = defineEndpoint({
 			deleted: true,
 			idOrName: input.idOrName,
 			id: input.id,
-			removed: asList(result).map(withoutValue),
+			// Vercel's model allows null entries in this list.
+			removed: asList(result)
+				.filter((env) => env !== null && typeof env === 'object')
+				.map(withoutValue),
 		};
 	},
 });

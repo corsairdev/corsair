@@ -153,8 +153,10 @@ export const createDeployment = defineEndpoint({
 	},
 	// Inline file contents can hold source and config secrets: log paths only.
 	// Build/install commands can carry tokens: log that they were set.
-	logInput: ({ files, projectSettings, ...rest }) => ({
+	// meta is free-form and can hold customer data: log its keys only.
+	logInput: ({ files, projectSettings, meta, ...rest }) => ({
 		...rest,
+		meta: meta ? Object.keys(meta) : undefined,
 		projectSettings: maskCommands(projectSettings),
 		files: files?.map((file) =>
 			'data' in file

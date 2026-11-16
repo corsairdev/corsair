@@ -145,3 +145,13 @@ describe('error handlers', () => {
 		});
 	});
 });
+
+describe('path segments', () => {
+	it('rejects "." and ".." so a URL path cannot collapse to a parent route', async () => {
+		const { seg } = await import('./client');
+		expect(() => seg('..')).toThrow(/not a valid Vercel id/);
+		expect(() => seg('.')).toThrow(/not a valid Vercel id/);
+		expect(seg('my site')).toBe('my%20site');
+		expect(seg('a..b')).toBe('a..b');
+	});
+});

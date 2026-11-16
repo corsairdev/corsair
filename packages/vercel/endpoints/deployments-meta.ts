@@ -12,7 +12,9 @@ export const vercelDeploymentsMeta = {
 			'Get one deployment by id or hostname: readyState (QUEUED, BUILDING, READY, ERROR, CANCELED), URL, aliases, creator, Git metadata and error details.',
 	},
 	createDeployment: {
-		riskLevel: 'write',
+		// Builds use billable build minutes, and a production deploy replaces
+		// the live site (R8: spends money).
+		riskLevel: 'destructive',
 		description:
 			'Start a deployment from a Git ref, from inline files, or as a redeploy of an existing deployment. It builds in the background: follow readyState with getDeployment. target production replaces the live site once ready.',
 		job: {

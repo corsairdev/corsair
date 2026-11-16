@@ -379,3 +379,19 @@ describe('envs', () => {
 		});
 	});
 });
+
+describe('deleteEnvVariable response with nulls', () => {
+	beforeEach(() => jest.clearAllMocks());
+
+	it('skips null entries in the removed list', async () => {
+		request.mockResolvedValueOnce([
+			null,
+			{ id: 'env_1', key: 'X', value: 'v' },
+		]);
+		const result = await deleteEnvVariable(ctx, {
+			idOrName: 'prj_1',
+			id: 'env_1',
+		});
+		expect(result.removed).toEqual([{ id: 'env_1', key: 'X' }]);
+	});
+});

@@ -139,5 +139,11 @@ export async function makeAuthenticatedVercelRequest<T>(
 
 /** Encodes one path segment (ids, names, domains, keys). */
 export function seg(value: string | number): string {
-	return encodeURIComponent(String(value));
+	const text = String(value);
+	// encodeURIComponent leaves dots alone and URL parsing collapses "." and
+	// "..", so an id of ".." could turn an env-var delete into a project delete.
+	if (text === '.' || text === '..') {
+		throw new Error(`"${text}" is not a valid Vercel id or name.`);
+	}
+	return encodeURIComponent(text);
 }

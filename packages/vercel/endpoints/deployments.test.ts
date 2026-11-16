@@ -483,3 +483,19 @@ describe('createDeployment event payload', () => {
 		expect(logged).toContain('[redacted]');
 	});
 });
+
+describe('createDeployment meta in the event', () => {
+	beforeEach(() => jest.clearAllMocks());
+
+	it('logs meta keys, not values', async () => {
+		request.mockResolvedValueOnce({ id: 'dpl_1', url: 'site.vercel.app' });
+		await createDeployment(ctx, {
+			name: 'site',
+			files: [{ file: 'index.html', data: '<h1>hi</h1>' }],
+			meta: { customerEmail: 'customer@example.com' },
+		});
+		const logged = JSON.stringify(logEvent.mock.calls[0]?.[2]);
+		expect(logged).toContain('customerEmail');
+		expect(logged).not.toContain('customer@example.com');
+	});
+});
