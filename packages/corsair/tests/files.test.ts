@@ -319,6 +319,9 @@ describe('resolveFileInput', () => {
 			deps,
 		);
 		expect(Array.from(binary.bytes)).toEqual([255, 0]);
+		// A non-ASCII character before an escape takes two bytes; the escape still decodes.
+		const accented = await resolveFileInput('data:text/plain,é%20x', {}, deps);
+		expect(new TextDecoder().decode(accented.bytes)).toBe('é x');
 		expect(asked).toEqual([]);
 	});
 

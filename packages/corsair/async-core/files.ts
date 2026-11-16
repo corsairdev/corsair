@@ -101,7 +101,12 @@ function fromPercentEncoded(body: string): Uint8Array {
 	const out: number[] = [];
 	const raw = new TextEncoder().encode(body);
 	for (let i = 0; i < raw.length; i++) {
-		const hex = raw[i] === 0x25 ? body.slice(i + 1, i + 3) : '';
+		// The digits come from the bytes too: `i` counts bytes, so a non-ASCII
+		// character earlier in `body` would shift a string index.
+		const hex =
+			raw[i] === 0x25
+				? String.fromCharCode(raw[i + 1] ?? 0, raw[i + 2] ?? 0)
+				: '';
 		if (/^[0-9a-fA-F]{2}$/.test(hex)) {
 			out.push(Number.parseInt(hex, 16));
 			i += 2;
