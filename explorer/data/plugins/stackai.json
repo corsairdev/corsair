@@ -1,0 +1,305 @@
+{
+  "id": "stackai",
+  "displayName": "StackAI",
+  "description": "Inspect project input and output schemas and manage asynchronous StackAI runs.",
+  "npmPackageName": "@corsair-dev/stackai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "stackai.api.projects.ioSchema",
+      "shortPath": "projects.ioSchema",
+      "description": "Inspect a project version input and output schema.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "latest | draft | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input_kind: start_node | legacy_input_nodes | string, inputs: { id: string, name: string }[], outputs: { id: string, name: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stackai.api.runs.cancel",
+      "shortPath": "runs.cancel",
+      "description": "Request cancellation of an owned run. It cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ response_code?: string | null, meta?: Record<string, any> }"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stackai.api.runs.get",
+      "shortPath": "runs.get",
+      "description": "Get a run and its current state.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ run_id: string, project_id: string | null, project_version?: number | null, status: queued | running | paused | succeeded | failed | cancelled | string, error: string | null, created_at: string, started_at: string | null, completed_at: string | null, run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | string | null, created_by: { type: user | personal_api_key | org_api_key | system | end_user | unknown | string, id: string | null } | null, usage: { total_tokens: number, details: { provider: string, model_id: string, connection_id: string | null, input_tokens: number | null, output_tokens: number | null }[] }, parent_run_id: string | null, parent_project_id: string | null, input: Record<string, any> | null, output: Record<string, any> | null, citations: { knowledge_base_id: string | null, resource_id: string | null, source_url: string | null, source_type: knowledge_base | website | document | other | string, position: { page_index: number | null, chunk_index: number | null, page_number: number | null } | null }[] | null, pending_input: { question: string, context: string | null, response_type: text | approval | choice | unknown | string, choices: string[] | null, resume_token: string, resume_token_expires_at: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stackai.api.runs.list",
+      "shortPath": "runs.list",
+      "description": "List runs using cursor pagination and filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | running | paused | succeeded | failed | cancelled | null"
+          },
+          {
+            "key": "run_type",
+            "optional": true,
+            "type": "workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | null"
+          },
+          {
+            "key": "created_by_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at__gte",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at__lte",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ run_id: string, project_id: string | null, project_version?: number | null, status: queued | running | paused | succeeded | failed | cancelled | string, error: string | null, created_at: string, started_at: string | null, completed_at: string | null, run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | string | null, created_by: { type: user | personal_api_key | org_api_key | system | end_user | unknown | string, id: string | null } | null, usage: { total_tokens: number, details: { provider: string, model_id: string, connection_id: string | null, input_tokens: number | null, output_tokens: number | null }[] }, parent_run_id: string | null, parent_project_id: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "prev_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stackai.api.runs.resume",
+      "shortPath": "runs.resume",
+      "description": "Resume an ask-human paused run. The run continues executing and bills model usage.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resume_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_type",
+            "optional": true,
+            "type": "text | approval | choice | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ response_code?: string | null, meta?: Record<string, any> }"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stackai.api.runs.start",
+      "shortPath": "runs.start",
+      "description": "Start an asynchronous project run. Each run executes the workflow and bills model usage.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "project_version",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ response_code?: string | null, meta?: Record<string, any>, data: { run_id: string, project_id: string | null, project_version?: number | null, status: queued | running | paused | succeeded | failed | cancelled | string, error: string | null, created_at: string, started_at: string | null, completed_at: string | null, run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | string | null, created_by: { type: user | personal_api_key | org_api_key | system | end_user | unknown | string, id: string | null } | null, usage: { total_tokens: number, details: { provider: string, model_id: string, connection_id: string | null, input_tokens: number | null, output_tokens: number | null }[] }, parent_run_id: string | null, parent_project_id: string | null, input: Record<string, any> | null, output: Record<string, any> | null, citations: { knowledge_base_id: string | null, resource_id: string | null, source_url: string | null, source_type: knowledge_base | website | document | other | string, position: { page_index: number | null, chunk_index: number | null, page_number: number | null } | null }[] | null, pending_input: { question: string, context: string | null, response_type: text | approval | choice | unknown | string, choices: string[] | null, resume_token: string, resume_token_expires_at: string | null } | null } }"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
