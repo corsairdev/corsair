@@ -4,7 +4,13 @@
 import { createClient } from './test-fixtures';
 
 const key = process.env.MISTRAL_API_KEY;
-const live = process.env.LIVE_TEST === '1' && key ? describe : describe.skip;
+const live = (() => {
+	if (process.env.LIVE_TEST === '1' && key) return describe;
+	console.warn(
+		'Skipping Mistral AI live tests: set LIVE_TEST=1 and MISTRAL_API_KEY to run them.',
+	);
+	return describe.skip;
+})();
 
 live('Mistral AI live (read-only)', () => {
 	it('lists the models the key can use', async () => {
