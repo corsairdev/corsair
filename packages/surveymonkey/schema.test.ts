@@ -29,15 +29,20 @@ describe('surveymonkey schema', () => {
 		const parsed = SurveymonkeySchema.webhooks.response_completed.parse({
 			event_type: 'response_completed',
 			event_id: 'a1',
-			object_type: 'survey',
-			object_id: '1234',
-			resources: [{ id: '5001', type: 'response' }],
+			object_type: 'response',
+			object_id: '123456',
+			// The documented callback: resources is an object of ids.
+			resources: {
+				respondent_id: '123456789',
+				collector_id: '123456789',
+				survey_id: '123456789',
+			},
 			// A field the vendor adds later must not fail the parse.
 			something_new: true,
 		});
 
 		expect(parsed.event_type).toBe('response_completed');
-		expect(parsed.resources?.[0]?.id).toBe('5001');
+		expect(parsed.resources?.survey_id).toBe('123456789');
 	});
 
 	it('rejects a body with no event type', () => {

@@ -828,9 +828,6 @@ export function surveymonkey<const T extends SurveymonkeyPluginOptions>(
 		webhooks: {},
 		endpointMeta: surveymonkeyEndpointMeta,
 		endpointSchemas: surveymonkeyEndpointSchemas,
-		// Events are verified per request, so a delivery is only accepted when the
-		// app's credentials are configured and the signature matches.
-		pluginWebhookMatcher: (request) => 'sm-signature' in request.headers,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx, source) => {
 			if (source !== 'endpoint' && source !== 'webhook') {

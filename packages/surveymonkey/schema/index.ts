@@ -1,26 +1,29 @@
 import { z } from 'zod';
 
 /**
- * SurveyMonkey delivers webhooks with a body that names the event and carries
- * the survey or collector, plus the respondent and collector ids. This plugin
- * has no signature scheme to verify, so the body is all it can read.
+ * SurveyMonkey's callback body names the event and carries the ids involved in
+ * `resources`, an object such as `{ respondent_id, recipient_id, collector_id,
+ * survey_id, user_id }` (which keys appear depends on the webhook).
  */
 const WebhookBodySchema = z
 	.object({
+		name: z.string().nullish(),
+		filter_type: z.string().nullish(),
+		filter_id: z.string().nullish(),
 		event_type: z.string(),
 		event_id: z.string().nullish(),
+		event_datetime: z.string().nullish(),
 		object_type: z.string().nullish(),
 		object_id: z.string().nullish(),
 		resources: z
-			.array(
-				z
-					.object({
-						id: z.string().nullish(),
-						type: z.string().nullish(),
-						href: z.string().nullish(),
-					})
-					.loose(),
-			)
+			.object({
+				respondent_id: z.string().nullish(),
+				recipient_id: z.string().nullish(),
+				collector_id: z.string().nullish(),
+				survey_id: z.string().nullish(),
+				user_id: z.string().nullish(),
+			})
+			.loose()
 			.nullish(),
 	})
 	.loose();
