@@ -209,6 +209,7 @@ describe('upsertAccount', () => {
 			integrationName: 'gmail',
 			tenantId: 't1',
 			identity,
+			allowMany: true,
 		});
 	const rowCount = async () =>
 		(await t.database.db.selectFrom('corsair_accounts').select('id').execute())
@@ -353,6 +354,7 @@ describe('upsertAccount', () => {
 				kek: KEK,
 				integrationName: 'nope',
 				tenantId: 't1',
+				allowMany: true,
 			}),
 		).rejects.toThrow("Integration 'nope' not found. Run setupCorsair first.");
 	});

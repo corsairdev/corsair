@@ -60,6 +60,7 @@ describe('two accounts end to end', () => {
 			database: env.db,
 			kek: KEK,
 			multiTenancy: true,
+			multiAccount: true,
 		});
 		getCorsairInternal(corsair).database!.isPg = false;
 		await setupCorsair(corsair, { tenantId: 't1' });

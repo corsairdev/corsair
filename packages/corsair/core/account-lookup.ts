@@ -340,6 +340,8 @@ export async function upsertAccount(i: {
 	integrationName: string;
 	tenantId: string;
 	identity?: AccountIdentity;
+	/** Off: one account per tenant and plugin; a new identity replaces it. */
+	allowMany: boolean;
 }): Promise<{ accountId: string; created: boolean }> {
 	const { database, kek, tenantId, identity } = i;
 	return database.db.transaction().execute(async (trx) => {
@@ -371,7 +373,8 @@ export async function upsertAccount(i: {
 			rows.map(async (r) => ({ row: r, ...(await readIdentity(r, kek)) })),
 		);
 		const same = known.find((k) => k.ref === identity.id);
-		const target = same ?? known.find((k) => !k.ref);
+		const target =
+			same ?? known.find((k) => !k.ref) ?? (i.allowMany ? undefined : known[0]);
 		if (target) {
 			if (!same || (identity.label && target.label !== identity.label)) {
 				await writeIdentity(trx, target.row, identity, kek);
@@ -397,9 +400,10 @@ async function sealIdentity(
 	existing: Record<string, string>,
 	identity: AccountIdentity,
 ) {
+	const { account_label: _stale, ...kept } = existing;
 	return encryptConfig(
 		{
-			...existing,
+			...kept,
 			account_ref: identity.id,
 			...(identity.label ? { account_label: identity.label } : {}),
 		},

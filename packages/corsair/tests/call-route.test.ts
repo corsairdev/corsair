@@ -486,6 +486,7 @@ describe('call and db routes with an account', () => {
 			database: env.db,
 			kek: KEK,
 			multiTenancy: true,
+			multiAccount: true,
 		} as any);
 		getCorsairInternal(corsair).database!.isPg = false;
 		await setupCorsair(corsair, { tenantId: 't1' });

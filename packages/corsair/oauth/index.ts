@@ -81,8 +81,15 @@ async function ensureAccount(
 	pluginId: string,
 	tenantId: string,
 	kek: string,
+	allowMany: boolean,
 ): Promise<void> {
-	await upsertAccount({ database, kek, integrationName: pluginId, tenantId });
+	await upsertAccount({
+		database,
+		kek,
+		integrationName: pluginId,
+		tenantId,
+		allowMany,
+	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -292,7 +299,13 @@ export async function processOAuthCallback(
 	}
 
 	// Ensure tenant account row exists before writing tokens
-	await ensureAccount(internal.database, pluginId, tenantId, internal.kek);
+	await ensureAccount(
+		internal.database,
+		pluginId,
+		tenantId,
+		internal.kek,
+		internal.multiAccount,
+	);
 
 	const tokens = await exchangeCodeForTokens(
 		code,

@@ -201,6 +201,7 @@ describe('pick-first sites use the oldest account', () => {
 			kek: KEK,
 			integrationName: 'gmail',
 			tenantId: 't1',
+			allowMany: false,
 		};
 		await upsertAccount(args);
 		await upsertAccount(args);

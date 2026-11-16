@@ -493,6 +493,13 @@ export function buildCorsairClient<
 		}
 	}
 
+	// Off: one account per plugin, so an unbound plugin just uses the oldest.
+	const multiAccount = internalConfig?.multiAccount === true;
+	const accountScope = (pluginId: string) =>
+		accounts && (multiAccount || accounts[pluginId])
+			? { ref: accounts[pluginId] }
+			: undefined;
+
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
 	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
 
@@ -510,12 +517,15 @@ export function buildCorsairClient<
 			plugin.id,
 			effectiveTenantId,
 			ensureProvisioned,
-			accounts ? { ref: accounts[plugin.id], kek: kek ?? '' } : undefined,
+			accountScope(plugin.id) && {
+				ref: accounts?.[plugin.id],
+				kek: kek ?? '',
+			},
 		);
 
 		// api.db reads span every account of an unbound plugin; ctx.db stays strict.
 		const fanOut =
-			database && kek && accounts && !accounts[plugin.id]
+			multiAccount && database && kek && accounts && !accounts[plugin.id]
 				? () =>
 						fanOutAccounts({
 							db: database.db,
@@ -602,7 +612,7 @@ export function buildCorsairClient<
 				database,
 				extraAccountFields,
 				ensureProvisioned,
-				account: accounts ? { ref: accounts[plugin.id] } : undefined,
+				account: accountScope(plugin.id),
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}

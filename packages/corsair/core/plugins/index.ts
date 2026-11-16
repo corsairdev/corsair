@@ -812,6 +812,11 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	plugins: Plugins;
 	/** If true, enables tenant-scoped access via `withTenant()` */
 	multiTenancy?: boolean;
+	/**
+	 * Allow several accounts per tenant and plugin. Off (default): one account,
+	 * and connecting a different identity replaces it.
+	 */
+	multiAccount?: boolean;
 	/** Root-level error handlers that apply when plugin-specific handlers are not defined */
 	errorHandlers?: CorsairErrorHandler;
 	/**

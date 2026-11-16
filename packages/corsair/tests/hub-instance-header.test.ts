@@ -2,11 +2,12 @@ import { hubApiGet, hubApiPost } from '../hub/client/http';
 import { CORSAIR_SDK_CAPABILITIES } from '../hub/sdk-version';
 import type { HubConfig } from '../hub/types';
 
-const hub = (instanceKey?: string): HubConfig => ({
+const hub = (instanceKey?: string, multiAccount?: boolean): HubConfig => ({
 	apiUrl: 'https://hub.example',
 	projectApiKey: 'ck_cloud_test_key',
 	signingSecret: 'signing-secret',
 	instanceKey,
+	multiAccount,
 });
 
 function mockFetch() {
@@ -68,15 +69,19 @@ describe('x-corsair-capabilities on the wire', () => {
 		global.fetch = originalFetch;
 	});
 
-	it('is sent on hub POSTs', async () => {
+	const post = (h: HubConfig) =>
+		hubApiPost({ hub: h, path: '/x', body: {}, parseResponse: parse });
+
+	it('is sent on hub POSTs when multiAccount is on', async () => {
 		const sent = mockFetch();
-		await hubApiPost({
-			hub: hub(),
-			path: '/x',
-			body: {},
-			parseResponse: parse,
-		});
+		await post(hub(undefined, true));
 		expect(sent[0]?.['x-corsair-capabilities']).toBe(CORSAIR_SDK_CAPABILITIES);
 		expect(CORSAIR_SDK_CAPABILITIES).toBe('multi-account');
+	});
+
+	it('is absent by default', async () => {
+		const sent = mockFetch();
+		await post(hub());
+		expect('x-corsair-capabilities' in sent[0]!).toBe(false);
 	});
 });

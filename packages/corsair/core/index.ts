@@ -35,6 +35,7 @@ export type CorsairInternalConfig = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	multiTenancy: boolean;
+	multiAccount: boolean;
 	permissions?: CorsairPermissionsOptions;
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
@@ -111,9 +112,15 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		database: resolvedDatabase,
 		kek,
 		multiTenancy: !!config.multiTenancy,
+		multiAccount: config.multiAccount === true,
 		permissions: rootPermissions,
 		manual: config.manual,
-		hub: config.hub ? resolveHubConfigInput(config.hub) : undefined,
+		hub: config.hub
+			? resolveHubConfigInput({
+					...config.hub,
+					multiAccount: config.multiAccount === true,
+				})
+			: undefined,
 		encryptDataAtRest: config.encryptDataAtRest === true,
 	};
 

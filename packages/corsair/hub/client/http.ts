@@ -7,10 +7,12 @@ import { resolveHubDeliveryUrl } from '../resolve-delivery-url';
 import { CORSAIR_SDK_CAPABILITIES, CORSAIR_SDK_VERSION } from '../sdk-version';
 import type { HubConfig } from '../types';
 
-function corsairSdkHeaders(): Record<string, string> {
+function corsairSdkHeaders(hub: HubConfig): Record<string, string> {
 	return {
 		'x-corsair-sdk-version': CORSAIR_SDK_VERSION,
-		'x-corsair-capabilities': CORSAIR_SDK_CAPABILITIES,
+		...(hub.multiAccount
+			? { 'x-corsair-capabilities': CORSAIR_SDK_CAPABILITIES }
+			: {}),
 	};
 }
 
@@ -148,7 +150,7 @@ export async function hubApiPost<T>(input: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
 			...instanceKeyHeader(input.hub),
-			...corsairSdkHeaders(),
+			...corsairSdkHeaders(input.hub),
 			...input.extraHeaders,
 		},
 		body: JSON.stringify(input.body),

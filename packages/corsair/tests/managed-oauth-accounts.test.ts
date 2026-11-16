@@ -46,6 +46,7 @@ describe('managed oauth delivery by account identity', () => {
 			database: env.db,
 			kek: KEK,
 			multiTenancy: true,
+			multiAccount: true,
 		});
 		// A Kysely input is assumed Postgres; the sqlite test DB has no FOR UPDATE.
 		getCorsairInternal(corsair).database!.isPg = false;

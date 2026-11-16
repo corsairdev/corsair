@@ -53,6 +53,7 @@ describe('withTenant account scope', () => {
 			database: env.db,
 			kek: KEK,
 			multiTenancy: true,
+			multiAccount: true,
 		});
 		getCorsairInternal(corsair).database!.isPg = false;
 		await setupCorsair(corsair, { tenantId: 't1' });
@@ -113,6 +114,7 @@ describe('withTenant account scope', () => {
 				plugins: [demo],
 				database: env.db,
 				multiTenancy: true,
+				multiAccount: true,
 			});
 			getCorsairInternal(c).database!.isPg = false;
 			return dynamic<'demo'>(c).withTenant('t1');
@@ -258,6 +260,7 @@ describe('withTenant account scope', () => {
 				plugins: [demo],
 				database: env.db,
 				multiTenancy: true,
+				multiAccount: true,
 			});
 			await addAccount('a', 'a@x.com', 'tok-a');
 		});
@@ -421,6 +424,7 @@ describe('withTenant account scope', () => {
 					database: env.db,
 					kek: KEK,
 					multiTenancy: true,
+					multiAccount: true,
 					encryptDataAtRest: true,
 				}),
 			);

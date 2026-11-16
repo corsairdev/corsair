@@ -111,6 +111,7 @@ export async function processManagedOAuthDelivery(
 				integrationName: pluginId,
 				tenantId,
 				identity: account,
+				allowMany: internal.multiAccount,
 			}));
 		} catch (error) {
 			if (error instanceof AccountSelectionError) {
