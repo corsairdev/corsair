@@ -1852,6 +1852,25 @@ describe('Thread response blocks', () => {
 		expect(result.response?.[1]?.type).toBe('chart');
 	});
 
+	it('rejects a table cell result with none of its table fields', async () => {
+		mockedRequest.mockResolvedValue({
+			...validOutputs.cellsGetOutput,
+			result: { type: 'table' },
+		});
+		await expect(
+			Cells.getOutput(ctx, validInputs.cellsGetOutput),
+		).rejects.toThrow();
+	});
+
+	it('parses a cell result type Hex adds later', async () => {
+		mockedRequest.mockResolvedValue({
+			...validOutputs.cellsGetOutput,
+			result: { type: 'chart', url: 'https://app.hex.tech/chart/1' },
+		});
+		const result = await Cells.getOutput(ctx, validInputs.cellsGetOutput);
+		expect(result.result.type).toBe('chart');
+	});
+
 	it('still rejects a known block type with invalid fields', async () => {
 		mockedRequest.mockResolvedValue({
 			...validOutputs.threadsGet,
