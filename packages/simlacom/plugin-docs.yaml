@@ -13,7 +13,7 @@ overviewNote: |
 
   Binary upload expects base64 in `body`; binary download responses are `{ kind: 'binary', contentType, base64 }` and the client enforces a 20 MiB safety limit.
 
-  The plugin excludes the 27 provider-hosted integration-module callback/configuration routes and all inbound webhook receiving/management (outside issue #2408).
+  The plugin excludes the 27 provider-hosted integration-module callback/configuration routes, the `update-scopes` route (it mints a new API key) and all inbound webhook receiving/management (outside issue #2408).
 examples:
   read:
     path: api.apiVersions.get
@@ -162,7 +162,7 @@ apiExamples:
       "body":
         "customer":
           "externalId": "demo"
-  customers.postByExternalidsubscriptions.post:
+  customers.byExternalidSubscriptions.post:
     args:
       "path":
         "externalId": "demo"
@@ -205,7 +205,7 @@ apiExamples:
     args:
       "path":
         "externalId": "demo"
-  corporateCustomers.getByExternalidaddresses.get:
+  corporateCustomers.getByExternalidAddresses.get:
     args:
       "path":
         "externalId": "demo"
@@ -224,7 +224,7 @@ apiExamples:
       "body":
         "address":
           "index": "demo"
-  corporateCustomers.getByExternalidcompanies.get:
+  corporateCustomers.getByExternalidCompanies.get:
     args:
       "path":
         "externalId": "demo"
@@ -243,7 +243,7 @@ apiExamples:
       "body":
         "company":
           "isMain": false
-  corporateCustomers.getByExternalidcontacts.get:
+  corporateCustomers.getByExternalidContacts.get:
     args:
       "path":
         "externalId": "demo"
@@ -269,31 +269,31 @@ apiExamples:
       "body":
         "customerCorporate":
           "externalId": "demo"
-  customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post:
+  customerInteraction.cartBySiteClear.post:
     args:
       "path":
         "site": "demo"
       "body":
         "cart":
           "clearedAt": "2025-01-01 12:00:00+00:00"
-  customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post:
+  customerInteraction.cartBySiteSet.post:
     args:
       "path":
         "site": "demo"
       "body":
         "cart":
           "externalId": "demo"
-  customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get:
+  customerInteraction.getCartBySiteByCustomerid.get:
     args:
       "path":
         "customerId": "demo"
         "site": "demo"
-  customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get:
+  customerInteraction.getFavoritesBySiteByCustomerid.get:
     args:
       "path":
         "site": "demo"
         "customerId": "demo"
-  customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post:
+  customerInteraction.favoritesBySiteByCustomeridAdd.post:
     args:
       "path":
         "site": "demo"
@@ -302,7 +302,7 @@ apiExamples:
         "favorite":
           "offer":
             "id": 1
-  customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post:
+  customerInteraction.favoritesBySiteByCustomeridRemove.post:
     args:
       "path":
         "site": "demo"
@@ -316,7 +316,7 @@ apiExamples:
       "body":
         "order":
           "weight": 1
-  deliveries.postDeliverygenericBySubcodetracking.post:
+  deliveries.deliveryGenericBySubcodeTracking.post:
     args:
       "path":
         "subcode": "demo"
@@ -333,7 +333,7 @@ apiExamples:
           "date": "2025-01-01"
           "time":
             "from": "12:00"
-  deliveries.getDeliveryshipmentsById.get:
+  deliveries.getDeliveryShipmentsById.get:
     args:
       "path":
         "id": 1
@@ -385,13 +385,6 @@ apiExamples:
           "code": "demo"
           "integrationCode": "demo"
           "clientId": "demo"
-  integration.postIntegrationModulesByCodeupdateScopes.post:
-    args:
-      "path":
-        "code": "demo"
-      "body":
-        "requires":
-          "scopes": []
   knowledgeBase.documents.get:
     args: {}
   knowledgeBase.documentsCreate.post:
@@ -447,27 +440,27 @@ apiExamples:
     args:
       "path":
         "id": 1
-  loyalty.postAccountByIdactivate.post:
+  loyalty.accountByIdActivate.post:
     args:
       "path":
         "id": 1
-  loyalty.postAccountByIdbonuscharge.post:
-    args:
-      "path":
-        "id": 1
-      "body":
-        "amount": 1
-  loyalty.postAccountByIdbonuscredit.post:
+  loyalty.accountByIdBonusCharge.post:
     args:
       "path":
         "id": 1
       "body":
         "amount": 1
-  loyalty.getAccountByIdbonusoperations.get:
+  loyalty.accountByIdBonusCredit.post:
     args:
       "path":
         "id": 1
-  loyalty.getAccountByIdbonusByStatusdetails.get:
+      "body":
+        "amount": 1
+  loyalty.getAccountByIdBonusOperations.get:
+    args:
+      "path":
+        "id": 1
+  loyalty.getAccountByIdBonusByStatusDetails.get:
     args:
       "path":
         "id": 1
@@ -631,7 +624,7 @@ apiExamples:
           "status": "demo"
           "createdAt": "2025-01-01 12:00:00"
           "paidAt": "2025-01-01 12:00:00"
-  payments.getPaymentinvoiceByInvoiceuuid.get:
+  payments.getPaymentInvoiceByInvoiceuuid.get:
     args:
       "path":
         "invoiceUuid": "demo"
@@ -797,7 +790,7 @@ apiExamples:
       "body":
         "site":
           "name": "demo"
-  dataBook.getReferencesitesByCodetracker.get:
+  dataBook.getReferenceSitesByCodeTracker.get:
     args:
       "path":
         "code": "demo"
@@ -986,7 +979,7 @@ apiExamples:
     args:
       "path":
         "id": 1
-  tasks.getByIdcomments.get:
+  tasks.getByIdComments.get:
     args:
       "path":
         "id": 1
@@ -1049,7 +1042,7 @@ apiExamples:
     args:
       "path":
         "id": 1
-  users.postByIdstatus.post:
+  users.byIdStatus.post:
     args:
       "path":
         "id": 1
@@ -1060,7 +1053,7 @@ apiExamples:
       "body":
         "verification":
           "code": "demo"
-  verification.getSmsByCheckidstatus.get:
+  verification.getSmsByCheckidStatus.get:
     args:
       "path":
         "checkId": "demo"

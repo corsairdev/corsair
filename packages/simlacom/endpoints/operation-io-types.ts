@@ -451,10 +451,6 @@ export type OpenApiApiIntegrationModuleEditResponse = {
 	info?: Record<string, JsonValue>;
 };
 export type OpenApiRequires = { scopes: Array<string> };
-export type OpenApiApiUpdateScopesResponse = {
-	success?: boolean;
-	apiKey?: string;
-};
 export type OpenApiKnowledgeBaseDocumentListResponse = {
 	success?: boolean;
 	pagination?: OpenApiCursorPaginationResponse;
@@ -7589,7 +7585,7 @@ export type SimlaComEndpointInputs = {
 		path: { externalId: string };
 		body: OpenApiCustomerEditInput;
 	};
-	'customers.postByExternalidsubscriptions.post': {
+	'customers.byExternalidSubscriptions.post': {
 		path: { externalId: string };
 		body: OpenApiCustomerSubscriptionInput;
 	};
@@ -7692,7 +7688,7 @@ export type SimlaComEndpointInputs = {
 		path: { externalId: string };
 		query?: { by?: 'id' | 'externalId'; site?: string };
 	};
-	'corporateCustomers.getByExternalidaddresses.get': {
+	'corporateCustomers.getByExternalidAddresses.get': {
 		path: { externalId: string };
 		query?: {
 			'filter[name]'?: string;
@@ -7719,7 +7715,7 @@ export type SimlaComEndpointInputs = {
 		};
 		body: { address?: OpenApiSerializedCustomerAddress2 };
 	};
-	'corporateCustomers.getByExternalidcompanies.get': {
+	'corporateCustomers.getByExternalidCompanies.get': {
 		path: { externalId: string };
 		query?: {
 			by?: 'id' | 'externalId';
@@ -7743,7 +7739,7 @@ export type SimlaComEndpointInputs = {
 		};
 		body: { company?: OpenApiSerializedCompany2 };
 	};
-	'corporateCustomers.getByExternalidcontacts.get': {
+	'corporateCustomers.getByExternalidContacts.get': {
 		path: { externalId: string };
 		query?: {
 			by?: 'id' | 'externalId';
@@ -7772,36 +7768,36 @@ export type SimlaComEndpointInputs = {
 		query?: { by?: 'id' | 'externalId'; site?: string };
 		body: { customerCorporate?: OpenApiSerializedCustomerCorporate2 };
 	};
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post': {
+	'customerInteraction.cartBySiteClear.post': {
 		path: { site: string };
 		query?: { siteBy?: 'id' | 'code' };
 		body: OpenApiCartSetInput2;
 	};
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post': {
+	'customerInteraction.cartBySiteSet.post': {
 		path: { site: string };
 		query?: { siteBy?: 'id' | 'code' };
 		body: OpenApiCartSetInput;
 	};
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get': {
+	'customerInteraction.getCartBySiteByCustomerid.get': {
 		path: { customerId: string; site: string };
 		query?: { by?: 'id' | 'externalId'; siteBy?: 'id' | 'code' };
 	};
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get': {
+	'customerInteraction.getFavoritesBySiteByCustomerid.get': {
 		path: { site: string; customerId: string };
 		query?: { by?: 'id' | 'externalId'; siteBy?: 'id' | 'code' };
 	};
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post': {
+	'customerInteraction.favoritesBySiteByCustomeridAdd.post': {
 		path: { site: string; customerId: string };
 		query?: { by?: 'id' | 'externalId'; siteBy?: 'id' | 'code' };
 		body: OpenApiFavoriteUpdateInput;
 	};
-	'customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post': {
+	'customerInteraction.favoritesBySiteByCustomeridRemove.post': {
 		path: { site: string; customerId: string };
 		query?: { by?: 'id' | 'externalId'; siteBy?: 'id' | 'code' };
 		body: OpenApiFavoriteUpdateInput;
 	};
 	'deliveries.deliveryCalculate.post': { body: OpenApiCalculateRequest };
-	'deliveries.postDeliverygenericBySubcodetracking.post': {
+	'deliveries.deliveryGenericBySubcodeTracking.post': {
 		path: { subcode: string };
 		body: { statusUpdate?: Array<OpenApiRequestStatusUpdateItem> };
 	};
@@ -7825,7 +7821,7 @@ export type SimlaComEndpointInputs = {
 	'deliveries.deliveryShipmentsCreate.post': {
 		body: OpenApiApiDeliveryShipmentEditRequest;
 	};
-	'deliveries.getDeliveryshipmentsById.get': { path: { id: number } };
+	'deliveries.getDeliveryShipmentsById.get': { path: { id: number } };
 	'deliveries.deliveryShipmentsByIdEdit.post': {
 		path: { id: number };
 		body: OpenApiApiDeliveryShipmentEditRequest2;
@@ -7860,10 +7856,6 @@ export type SimlaComEndpointInputs = {
 	'integration.integrationModulesByCodeEdit.post': {
 		path: { code: string };
 		body: { integrationModule?: OpenApiIntegrationModule };
-	};
-	'integration.postIntegrationModulesByCodeupdateScopes.post': {
-		path: { code: string };
-		body: { requires?: OpenApiRequires };
 	};
 	'knowledgeBase.documents.get': {
 		query?: {
@@ -7914,16 +7906,16 @@ export type SimlaComEndpointInputs = {
 	};
 	'loyalty.accountCreate.post': { body: OpenApiLoyaltyAccountCreateInput };
 	'loyalty.getAccountById.get': { path: { id: number } };
-	'loyalty.postAccountByIdactivate.post': { path: { id: number } };
-	'loyalty.postAccountByIdbonuscharge.post': {
+	'loyalty.accountByIdActivate.post': { path: { id: number } };
+	'loyalty.accountByIdBonusCharge.post': {
 		path: { id: number };
 		body: OpenApiLoyaltyBonusChargeInput;
 	};
-	'loyalty.postAccountByIdbonuscredit.post': {
+	'loyalty.accountByIdBonusCredit.post': {
 		path: { id: number };
 		body: OpenApiLoyaltyBonusCreditInput;
 	};
-	'loyalty.getAccountByIdbonusoperations.get': {
+	'loyalty.getAccountByIdBonusOperations.get': {
 		path: { id: number };
 		query?: {
 			limit?: 20 | 50 | 100;
@@ -7932,7 +7924,7 @@ export type SimlaComEndpointInputs = {
 			'filter[createdAtTo]'?: string;
 		};
 	};
-	'loyalty.getAccountByIdbonusByStatusdetails.get': {
+	'loyalty.getAccountByIdBonusByStatusDetails.get': {
 		path: { id: number; status: string };
 		query?: { limit?: 20 | 50 | 100; page?: number; 'filter[date]'?: string };
 	};
@@ -8197,7 +8189,7 @@ export type SimlaComEndpointInputs = {
 	'payments.paymentInvoiceImport.post': {
 		body: { invoice?: OpenApiApiImportInvoiceRequest };
 	};
-	'payments.getPaymentinvoiceByInvoiceuuid.get': {
+	'payments.getPaymentInvoiceByInvoiceuuid.get': {
 		path: { invoiceUuid: string };
 	};
 	'payments.paymentUpdateInvoice.post': {
@@ -8297,7 +8289,7 @@ export type SimlaComEndpointInputs = {
 		path: { code: string };
 		body: OpenApiSiteEditInput & { site?: OpenApiSiteValidation };
 	};
-	'dataBook.getReferencesitesByCodetracker.get': { path: { code: string } };
+	'dataBook.getReferenceSitesByCodeTracker.get': { path: { code: string } };
 	'dataBook.referenceStatusGroups.get': {};
 	'dataBook.referenceStatuses.get': {};
 	'dataBook.referenceStatusesByCodeEdit.post': {
@@ -8571,7 +8563,7 @@ export type SimlaComEndpointInputs = {
 		};
 	};
 	'tasks.getById.get': { path: { id: number } };
-	'tasks.getByIdcomments.get': {
+	'tasks.getByIdComments.get': {
 		path: { id: number };
 		query?: { limit?: 20 | 50 | 100; page?: number };
 	};
@@ -8716,14 +8708,14 @@ export type SimlaComEndpointInputs = {
 		};
 	};
 	'users.getById.get': { path: { id: number } };
-	'users.postByIdstatus.post': {
+	'users.byIdStatus.post': {
 		path: { id: number };
 		body: { status?: 'free' | 'busy' | 'dinner' | 'break' };
 	};
 	'verification.smsConfirm.post': {
 		body: { verification?: OpenApiSmsVerificationConfirm };
 	};
-	'verification.getSmsByCheckidstatus.get': { path: { checkId: string } };
+	'verification.getSmsByCheckidStatus.get': { path: { checkId: string } };
 	'webAnalytics.clientIdsUpload.post': { body: OpenApiClientIdUploadInput };
 	'webAnalytics.sourcesUpload.post': { body: OpenApiSourcesUploadInput };
 	'webAnalytics.visitsUpload.post': { body: OpenApiVisitsUploadInput };
@@ -8761,7 +8753,7 @@ export type SimlaComEndpointOutputs = {
 	'customers.upload.post': OpenApiCustomersUploadResponse;
 	'customers.getByExternalid.get': OpenApiCustomersGetResponse;
 	'customers.byExternalidEdit.post': OpenApiCustomersEditResponse;
-	'customers.postByExternalidsubscriptions.post': OpenApiSimpleResponse;
+	'customers.byExternalidSubscriptions.post': OpenApiSimpleResponse;
 	'corporateCustomers.list.get': OpenApiCustomersCorporateListResponse;
 	'corporateCustomers.combine.post': OpenApiSimpleResponse;
 	'corporateCustomers.create.post': OpenApiCustomersCreateResponse;
@@ -8772,33 +8764,33 @@ export type SimlaComEndpointOutputs = {
 	'corporateCustomers.notesByIdDelete.post': OpenApiSimpleResponse;
 	'corporateCustomers.upload.post': OpenApiCustomersUploadResponse;
 	'corporateCustomers.getByExternalid.get': OpenApiCustomersCorporateGetResponse;
-	'corporateCustomers.getByExternalidaddresses.get': OpenApiAbstractResponse & {
+	'corporateCustomers.getByExternalidAddresses.get': OpenApiAbstractResponse & {
 		addresses?: Array<OpenApiCustomerAddress>;
 	};
 	'corporateCustomers.byExternalidAddressesCreate.post': OpenApiModifyResponse;
 	'corporateCustomers.byExternalidAddressesByEntityexternalidEdit.post': OpenApiModifyResponse;
-	'corporateCustomers.getByExternalidcompanies.get': OpenApiAbstractResponse & {
+	'corporateCustomers.getByExternalidCompanies.get': OpenApiAbstractResponse & {
 		companies?: Array<OpenApiCompany>;
 	};
 	'corporateCustomers.byExternalidCompaniesCreate.post': OpenApiModifyResponse;
 	'corporateCustomers.byExternalidCompaniesByEntityexternalidEdit.post': OpenApiModifyResponse;
-	'corporateCustomers.getByExternalidcontacts.get': OpenApiAbstractResponse & {
+	'corporateCustomers.getByExternalidContacts.get': OpenApiAbstractResponse & {
 		contacts?: Array<OpenApiCustomerContact>;
 	};
 	'corporateCustomers.byExternalidContactsCreate.post': OpenApiModifyResponse;
 	'corporateCustomers.byExternalidContactsByEntityexternalidEdit.post': OpenApiModifyResponse;
 	'corporateCustomers.byExternalidEdit.post': OpenApiCustomersEditResponse;
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post': OpenApiSimpleResponse2;
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post': OpenApiSimpleResponse2;
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get': OpenApiCartGetResponse;
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get': OpenApiFavoritesListResponse;
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post': OpenApiSimpleResponse2;
-	'customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post': OpenApiSimpleResponse2;
+	'customerInteraction.cartBySiteClear.post': OpenApiSimpleResponse2;
+	'customerInteraction.cartBySiteSet.post': OpenApiSimpleResponse2;
+	'customerInteraction.getCartBySiteByCustomerid.get': OpenApiCartGetResponse;
+	'customerInteraction.getFavoritesBySiteByCustomerid.get': OpenApiFavoritesListResponse;
+	'customerInteraction.favoritesBySiteByCustomeridAdd.post': OpenApiSimpleResponse2;
+	'customerInteraction.favoritesBySiteByCustomeridRemove.post': OpenApiSimpleResponse2;
 	'deliveries.deliveryCalculate.post': OpenApiCalculateResponse;
-	'deliveries.postDeliverygenericBySubcodetracking.post': OpenApiSimpleResponse5;
+	'deliveries.deliveryGenericBySubcodeTracking.post': OpenApiSimpleResponse5;
 	'deliveries.deliveryShipments.get': OpenApiApiDeliveryShipmentListResponse;
 	'deliveries.deliveryShipmentsCreate.post': OpenApiApiDeliveryShipmentEditResponse;
-	'deliveries.getDeliveryshipmentsById.get': OpenApiApiDeliveryShipmentGetResponse;
+	'deliveries.getDeliveryShipmentsById.get': OpenApiApiDeliveryShipmentGetResponse;
 	'deliveries.deliveryShipmentsByIdEdit.post': OpenApiApiDeliveryShipmentEditResponse;
 	'files.list.get': OpenApiFilesListResponse;
 	'files.upload.post': OpenApiFileEditResponse;
@@ -8812,7 +8804,6 @@ export type SimlaComEndpointOutputs = {
 	'files.byIdEdit.post': OpenApiFileEditResponse;
 	'integration.getIntegrationModulesByCode.get': OpenApiApiIntegrationModuleGetResponse;
 	'integration.integrationModulesByCodeEdit.post': OpenApiApiIntegrationModuleEditResponse;
-	'integration.postIntegrationModulesByCodeupdateScopes.post': OpenApiApiUpdateScopesResponse;
 	'knowledgeBase.documents.get': OpenApiKnowledgeBaseDocumentListResponse;
 	'knowledgeBase.documentsCreate.post': OpenApiSimpleIdResponse;
 	'knowledgeBase.documentsHistory.get': OpenApiKnowledgeBaseDocumentHistoryResponse;
@@ -8825,11 +8816,11 @@ export type SimlaComEndpointOutputs = {
 	'knowledgeBase.sectionsByIdEdit.post': OpenApiSimpleIdResponse;
 	'loyalty.accountCreate.post': OpenApiLoyaltyAccountInfoResponse;
 	'loyalty.getAccountById.get': OpenApiLoyaltyAccountGetResponse;
-	'loyalty.postAccountByIdactivate.post': OpenApiLoyaltyAccountActivationResponse;
-	'loyalty.postAccountByIdbonuscharge.post': OpenApiAbstractResponse;
-	'loyalty.postAccountByIdbonuscredit.post': OpenApiLoyaltyBonusResponse;
-	'loyalty.getAccountByIdbonusoperations.get': OpenApiLoyaltyAccountBonusOperationsResponse;
-	'loyalty.getAccountByIdbonusByStatusdetails.get': OpenApiLoyaltyAccountBonusResponse;
+	'loyalty.accountByIdActivate.post': OpenApiLoyaltyAccountActivationResponse;
+	'loyalty.accountByIdBonusCharge.post': OpenApiAbstractResponse;
+	'loyalty.accountByIdBonusCredit.post': OpenApiLoyaltyBonusResponse;
+	'loyalty.getAccountByIdBonusOperations.get': OpenApiLoyaltyAccountBonusOperationsResponse;
+	'loyalty.getAccountByIdBonusByStatusDetails.get': OpenApiLoyaltyAccountBonusResponse;
 	'loyalty.accountByIdEdit.post': OpenApiLoyaltyAccountGetResponse2;
 	'loyalty.accounts.get': OpenApiLoyaltyAccountsListResponse;
 	'loyalty.bonusOperations.get': OpenApiLoyaltyBonusOperationsResponse;
@@ -8863,7 +8854,7 @@ export type SimlaComEndpointOutputs = {
 	'payments.paymentCheck.post': OpenApiApiCheckResponse;
 	'payments.paymentCreateInvoice.post': OpenApiApiCreateInvoiceResponse;
 	'payments.paymentInvoiceImport.post': OpenApiApiImportInvoiceResponse;
-	'payments.getPaymentinvoiceByInvoiceuuid.get': OpenApiApiGetInvoiceResponse;
+	'payments.getPaymentInvoiceByInvoiceuuid.get': OpenApiApiGetInvoiceResponse;
 	'payments.paymentUpdateInvoice.post': OpenApiApiUpdateInvoiceResponse;
 	'dataBook.referenceCostGroups.get': OpenApiCostGroupsListResponse;
 	'dataBook.referenceCostGroupsByCodeEdit.post': OpenApiSimpleResponse2;
@@ -8899,7 +8890,7 @@ export type SimlaComEndpointOutputs = {
 	'dataBook.referencePushCategoriesByCodeEdit.post': OpenApiSimpleIdResponse;
 	'dataBook.referenceSites.get': OpenApiSitesListResponse;
 	'dataBook.referenceSitesByCodeEdit.post': OpenApiSimpleIdResponse;
-	'dataBook.getReferencesitesByCodetracker.get': OpenApiTrackerSiteSettingsResponse;
+	'dataBook.getReferenceSitesByCodeTracker.get': OpenApiTrackerSiteSettingsResponse;
 	'dataBook.referenceStatusGroups.get': OpenApiStatusGroupsListResponse;
 	'dataBook.referenceStatuses.get': OpenApiStatusesListResponse;
 	'dataBook.referenceStatusesByCodeEdit.post': OpenApiSimpleResponse2;
@@ -8945,7 +8936,7 @@ export type SimlaComEndpointOutputs = {
 	'tasks.create.post': OpenApiTasksCreateResponse;
 	'tasks.history.get': OpenApiTaskHistoryResponse;
 	'tasks.getById.get': OpenApiTasksGetResponse;
-	'tasks.getByIdcomments.get': OpenApiTaskCommentsListResponse;
+	'tasks.getByIdComments.get': OpenApiTaskCommentsListResponse;
 	'tasks.byIdEdit.post': OpenApiSimpleResponse2;
 	'telephony.callEvent.post': OpenApiCallEventResponse;
 	'telephony.calls.get': OpenApiCallsResponse;
@@ -8968,9 +8959,9 @@ export type SimlaComEndpointOutputs = {
 	'users.userGroups.get': OpenApiUserGroupListResponse;
 	'users.list.get': OpenApiUsersListResponse;
 	'users.getById.get': OpenApiUsersGetResponse;
-	'users.postByIdstatus.post': OpenApiSimpleResponse2;
+	'users.byIdStatus.post': OpenApiSimpleResponse2;
 	'verification.smsConfirm.post': OpenApiSmsVerificationResponse;
-	'verification.getSmsByCheckidstatus.get': OpenApiSmsVerificationResponse;
+	'verification.getSmsByCheckidStatus.get': OpenApiSmsVerificationResponse;
 	'webAnalytics.clientIdsUpload.post': OpenApiClientIdUploadResponse;
 	'webAnalytics.sourcesUpload.post': OpenApiSourcesUploadResponse;
 	'webAnalytics.visitsUpload.post': OpenApiVisitsUploadResponse;
@@ -9008,7 +8999,7 @@ export const SIMLACOM_OPERATION_IDS = [
 	'customers.upload.post',
 	'customers.getByExternalid.get',
 	'customers.byExternalidEdit.post',
-	'customers.postByExternalidsubscriptions.post',
+	'customers.byExternalidSubscriptions.post',
 	'corporateCustomers.list.get',
 	'corporateCustomers.combine.post',
 	'corporateCustomers.create.post',
@@ -9019,27 +9010,27 @@ export const SIMLACOM_OPERATION_IDS = [
 	'corporateCustomers.notesByIdDelete.post',
 	'corporateCustomers.upload.post',
 	'corporateCustomers.getByExternalid.get',
-	'corporateCustomers.getByExternalidaddresses.get',
+	'corporateCustomers.getByExternalidAddresses.get',
 	'corporateCustomers.byExternalidAddressesCreate.post',
 	'corporateCustomers.byExternalidAddressesByEntityexternalidEdit.post',
-	'corporateCustomers.getByExternalidcompanies.get',
+	'corporateCustomers.getByExternalidCompanies.get',
 	'corporateCustomers.byExternalidCompaniesCreate.post',
 	'corporateCustomers.byExternalidCompaniesByEntityexternalidEdit.post',
-	'corporateCustomers.getByExternalidcontacts.get',
+	'corporateCustomers.getByExternalidContacts.get',
 	'corporateCustomers.byExternalidContactsCreate.post',
 	'corporateCustomers.byExternalidContactsByEntityexternalidEdit.post',
 	'corporateCustomers.byExternalidEdit.post',
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post',
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post',
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get',
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get',
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post',
-	'customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post',
+	'customerInteraction.cartBySiteClear.post',
+	'customerInteraction.cartBySiteSet.post',
+	'customerInteraction.getCartBySiteByCustomerid.get',
+	'customerInteraction.getFavoritesBySiteByCustomerid.get',
+	'customerInteraction.favoritesBySiteByCustomeridAdd.post',
+	'customerInteraction.favoritesBySiteByCustomeridRemove.post',
 	'deliveries.deliveryCalculate.post',
-	'deliveries.postDeliverygenericBySubcodetracking.post',
+	'deliveries.deliveryGenericBySubcodeTracking.post',
 	'deliveries.deliveryShipments.get',
 	'deliveries.deliveryShipmentsCreate.post',
-	'deliveries.getDeliveryshipmentsById.get',
+	'deliveries.getDeliveryShipmentsById.get',
 	'deliveries.deliveryShipmentsByIdEdit.post',
 	'files.list.get',
 	'files.upload.post',
@@ -9049,7 +9040,6 @@ export const SIMLACOM_OPERATION_IDS = [
 	'files.byIdEdit.post',
 	'integration.getIntegrationModulesByCode.get',
 	'integration.integrationModulesByCodeEdit.post',
-	'integration.postIntegrationModulesByCodeupdateScopes.post',
 	'knowledgeBase.documents.get',
 	'knowledgeBase.documentsCreate.post',
 	'knowledgeBase.documentsHistory.get',
@@ -9062,11 +9052,11 @@ export const SIMLACOM_OPERATION_IDS = [
 	'knowledgeBase.sectionsByIdEdit.post',
 	'loyalty.accountCreate.post',
 	'loyalty.getAccountById.get',
-	'loyalty.postAccountByIdactivate.post',
-	'loyalty.postAccountByIdbonuscharge.post',
-	'loyalty.postAccountByIdbonuscredit.post',
-	'loyalty.getAccountByIdbonusoperations.get',
-	'loyalty.getAccountByIdbonusByStatusdetails.get',
+	'loyalty.accountByIdActivate.post',
+	'loyalty.accountByIdBonusCharge.post',
+	'loyalty.accountByIdBonusCredit.post',
+	'loyalty.getAccountByIdBonusOperations.get',
+	'loyalty.getAccountByIdBonusByStatusDetails.get',
 	'loyalty.accountByIdEdit.post',
 	'loyalty.accounts.get',
 	'loyalty.bonusOperations.get',
@@ -9100,7 +9090,7 @@ export const SIMLACOM_OPERATION_IDS = [
 	'payments.paymentCheck.post',
 	'payments.paymentCreateInvoice.post',
 	'payments.paymentInvoiceImport.post',
-	'payments.getPaymentinvoiceByInvoiceuuid.get',
+	'payments.getPaymentInvoiceByInvoiceuuid.get',
 	'payments.paymentUpdateInvoice.post',
 	'dataBook.referenceCostGroups.get',
 	'dataBook.referenceCostGroupsByCodeEdit.post',
@@ -9136,7 +9126,7 @@ export const SIMLACOM_OPERATION_IDS = [
 	'dataBook.referencePushCategoriesByCodeEdit.post',
 	'dataBook.referenceSites.get',
 	'dataBook.referenceSitesByCodeEdit.post',
-	'dataBook.getReferencesitesByCodetracker.get',
+	'dataBook.getReferenceSitesByCodeTracker.get',
 	'dataBook.referenceStatusGroups.get',
 	'dataBook.referenceStatuses.get',
 	'dataBook.referenceStatusesByCodeEdit.post',
@@ -9182,7 +9172,7 @@ export const SIMLACOM_OPERATION_IDS = [
 	'tasks.create.post',
 	'tasks.history.get',
 	'tasks.getById.get',
-	'tasks.getByIdcomments.get',
+	'tasks.getByIdComments.get',
 	'tasks.byIdEdit.post',
 	'telephony.callEvent.post',
 	'telephony.calls.get',
@@ -9201,9 +9191,9 @@ export const SIMLACOM_OPERATION_IDS = [
 	'users.userGroups.get',
 	'users.list.get',
 	'users.getById.get',
-	'users.postByIdstatus.post',
+	'users.byIdStatus.post',
 	'verification.smsConfirm.post',
-	'verification.getSmsByCheckidstatus.get',
+	'verification.getSmsByCheckidStatus.get',
 	'webAnalytics.clientIdsUpload.post',
 	'webAnalytics.sourcesUpload.post',
 	'webAnalytics.visitsUpload.post',

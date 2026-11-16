@@ -155,7 +155,7 @@ describe('OpenAPI-derived Zod schemas', () => {
 		).toBe(true);
 
 		const addressList = SIMLACOM_OUTPUT_SCHEMAS.get(
-			'corporateCustomers.getByExternalidaddresses.get',
+			'corporateCustomers.getByExternalidAddresses.get',
 		);
 		expect(
 			addressList?.safeParse({ success: true, addresses: [] }).success,

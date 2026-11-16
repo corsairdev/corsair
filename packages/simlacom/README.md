@@ -30,7 +30,7 @@ Official sources: [v5 method reference](https://rest-api-docs.simla.com/v5/), [A
 
 ## Operation inventory
 
-The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-versions` and `/api/credentials` discovery methods. Every route links to the [official API reference](https://rest-api-docs.simla.com/v5/).
+The list below covers 227 `/api/v5/*` methods and the two documented `/api/api-versions` and `/api/credentials` discovery methods. Every route links to the [official API reference](https://rest-api-docs.simla.com/v5/).
 
 | Corsair operation | Method | Route | Risk |
 | --- | --- | --- | --- |
@@ -64,7 +64,7 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 | `customers.upload.post` | POST | [`/api/v5/customers/upload`](https://rest-api-docs.simla.com/v5/) | write |
 | `customers.getByExternalid.get` | GET | [`/api/v5/customers/{externalId}`](https://rest-api-docs.simla.com/v5/) | read |
 | `customers.byExternalidEdit.post` | POST | [`/api/v5/customers/{externalId}/edit`](https://rest-api-docs.simla.com/v5/) | write |
-| `customers.postByExternalidsubscriptions.post` | POST | [`/api/v5/customers/{externalId}/subscriptions`](https://rest-api-docs.simla.com/v5/) | write |
+| `customers.byExternalidSubscriptions.post` | POST | [`/api/v5/customers/{externalId}/subscriptions`](https://rest-api-docs.simla.com/v5/) | write |
 | `corporateCustomers.list.get` | GET | [`/api/v5/customers-corporate`](https://rest-api-docs.simla.com/v5/) | read |
 | `corporateCustomers.combine.post` | POST | [`/api/v5/customers-corporate/combine`](https://rest-api-docs.simla.com/v5/) | destructive |
 | `corporateCustomers.create.post` | POST | [`/api/v5/customers-corporate/create`](https://rest-api-docs.simla.com/v5/) | write |
@@ -75,27 +75,27 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 | `corporateCustomers.notesByIdDelete.post` | POST | [`/api/v5/customers-corporate/notes/{id}/delete`](https://rest-api-docs.simla.com/v5/) | destructive |
 | `corporateCustomers.upload.post` | POST | [`/api/v5/customers-corporate/upload`](https://rest-api-docs.simla.com/v5/) | write |
 | `corporateCustomers.getByExternalid.get` | GET | [`/api/v5/customers-corporate/{externalId}`](https://rest-api-docs.simla.com/v5/) | read |
-| `corporateCustomers.getByExternalidaddresses.get` | GET | [`/api/v5/customers-corporate/{externalId}/addresses`](https://rest-api-docs.simla.com/v5/) | read |
+| `corporateCustomers.getByExternalidAddresses.get` | GET | [`/api/v5/customers-corporate/{externalId}/addresses`](https://rest-api-docs.simla.com/v5/) | read |
 | `corporateCustomers.byExternalidAddressesCreate.post` | POST | [`/api/v5/customers-corporate/{externalId}/addresses/create`](https://rest-api-docs.simla.com/v5/) | write |
 | `corporateCustomers.byExternalidAddressesByEntityexternalidEdit.post` | POST | [`/api/v5/customers-corporate/{externalId}/addresses/{entityExternalId}/edit`](https://rest-api-docs.simla.com/v5/) | write |
-| `corporateCustomers.getByExternalidcompanies.get` | GET | [`/api/v5/customers-corporate/{externalId}/companies`](https://rest-api-docs.simla.com/v5/) | read |
+| `corporateCustomers.getByExternalidCompanies.get` | GET | [`/api/v5/customers-corporate/{externalId}/companies`](https://rest-api-docs.simla.com/v5/) | read |
 | `corporateCustomers.byExternalidCompaniesCreate.post` | POST | [`/api/v5/customers-corporate/{externalId}/companies/create`](https://rest-api-docs.simla.com/v5/) | write |
 | `corporateCustomers.byExternalidCompaniesByEntityexternalidEdit.post` | POST | [`/api/v5/customers-corporate/{externalId}/companies/{entityExternalId}/edit`](https://rest-api-docs.simla.com/v5/) | write |
-| `corporateCustomers.getByExternalidcontacts.get` | GET | [`/api/v5/customers-corporate/{externalId}/contacts`](https://rest-api-docs.simla.com/v5/) | read |
+| `corporateCustomers.getByExternalidContacts.get` | GET | [`/api/v5/customers-corporate/{externalId}/contacts`](https://rest-api-docs.simla.com/v5/) | read |
 | `corporateCustomers.byExternalidContactsCreate.post` | POST | [`/api/v5/customers-corporate/{externalId}/contacts/create`](https://rest-api-docs.simla.com/v5/) | write |
 | `corporateCustomers.byExternalidContactsByEntityexternalidEdit.post` | POST | [`/api/v5/customers-corporate/{externalId}/contacts/{entityExternalId}/edit`](https://rest-api-docs.simla.com/v5/) | write |
 | `corporateCustomers.byExternalidEdit.post` | POST | [`/api/v5/customers-corporate/{externalId}/edit`](https://rest-api-docs.simla.com/v5/) | write |
-| `customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post` | POST | [`/api/v5/customer-interaction/{site}/cart/clear`](https://rest-api-docs.simla.com/v5/) | destructive |
-| `customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post` | POST | [`/api/v5/customer-interaction/{site}/cart/set`](https://rest-api-docs.simla.com/v5/) | write |
-| `customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get` | GET | [`/api/v5/customer-interaction/{site}/cart/{customerId}`](https://rest-api-docs.simla.com/v5/) | read |
-| `customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get` | GET | [`/api/v5/customer-interaction/{site}/favorites/{customerId}`](https://rest-api-docs.simla.com/v5/) | read |
-| `customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post` | POST | [`/api/v5/customer-interaction/{site}/favorites/{customerId}/add`](https://rest-api-docs.simla.com/v5/) | write |
-| `customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post` | POST | [`/api/v5/customer-interaction/{site}/favorites/{customerId}/remove`](https://rest-api-docs.simla.com/v5/) | write |
+| `customerInteraction.cartBySiteClear.post` | POST | [`/api/v5/customer-interaction/{site}/cart/clear`](https://rest-api-docs.simla.com/v5/) | destructive |
+| `customerInteraction.cartBySiteSet.post` | POST | [`/api/v5/customer-interaction/{site}/cart/set`](https://rest-api-docs.simla.com/v5/) | write |
+| `customerInteraction.getCartBySiteByCustomerid.get` | GET | [`/api/v5/customer-interaction/{site}/cart/{customerId}`](https://rest-api-docs.simla.com/v5/) | read |
+| `customerInteraction.getFavoritesBySiteByCustomerid.get` | GET | [`/api/v5/customer-interaction/{site}/favorites/{customerId}`](https://rest-api-docs.simla.com/v5/) | read |
+| `customerInteraction.favoritesBySiteByCustomeridAdd.post` | POST | [`/api/v5/customer-interaction/{site}/favorites/{customerId}/add`](https://rest-api-docs.simla.com/v5/) | write |
+| `customerInteraction.favoritesBySiteByCustomeridRemove.post` | POST | [`/api/v5/customer-interaction/{site}/favorites/{customerId}/remove`](https://rest-api-docs.simla.com/v5/) | write |
 | `deliveries.deliveryCalculate.post` | POST | [`/api/v5/delivery/calculate`](https://rest-api-docs.simla.com/v5/) | read |
-| `deliveries.postDeliverygenericBySubcodetracking.post` | POST | [`/api/v5/delivery/generic/{subcode}/tracking`](https://rest-api-docs.simla.com/v5/) | write |
+| `deliveries.deliveryGenericBySubcodeTracking.post` | POST | [`/api/v5/delivery/generic/{subcode}/tracking`](https://rest-api-docs.simla.com/v5/) | write |
 | `deliveries.deliveryShipments.get` | GET | [`/api/v5/delivery/shipments`](https://rest-api-docs.simla.com/v5/) | read |
 | `deliveries.deliveryShipmentsCreate.post` | POST | [`/api/v5/delivery/shipments/create`](https://rest-api-docs.simla.com/v5/) | destructive |
-| `deliveries.getDeliveryshipmentsById.get` | GET | [`/api/v5/delivery/shipments/{id}`](https://rest-api-docs.simla.com/v5/) | read |
+| `deliveries.getDeliveryShipmentsById.get` | GET | [`/api/v5/delivery/shipments/{id}`](https://rest-api-docs.simla.com/v5/) | read |
 | `deliveries.deliveryShipmentsByIdEdit.post` | POST | [`/api/v5/delivery/shipments/{id}/edit`](https://rest-api-docs.simla.com/v5/) | write |
 | `files.list.get` | GET | [`/api/v5/files`](https://rest-api-docs.simla.com/v5/) | read |
 | `files.upload.post` | POST | [`/api/v5/files/upload`](https://rest-api-docs.simla.com/v5/) | write |
@@ -105,7 +105,6 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 | `files.byIdEdit.post` | POST | [`/api/v5/files/{id}/edit`](https://rest-api-docs.simla.com/v5/) | write |
 | `integration.getIntegrationModulesByCode.get` | GET | [`/api/v5/integration-modules/{code}`](https://rest-api-docs.simla.com/v5/) | read |
 | `integration.integrationModulesByCodeEdit.post` | POST | [`/api/v5/integration-modules/{code}/edit`](https://rest-api-docs.simla.com/v5/) | write |
-| `integration.postIntegrationModulesByCodeupdateScopes.post` | POST | [`/api/v5/integration-modules/{code}/update-scopes`](https://rest-api-docs.simla.com/v5/) | write |
 | `knowledgeBase.documents.get` | GET | [`/api/v5/knowledge-base/documents`](https://rest-api-docs.simla.com/v5/) | read |
 | `knowledgeBase.documentsCreate.post` | POST | [`/api/v5/knowledge-base/documents/create`](https://rest-api-docs.simla.com/v5/) | write |
 | `knowledgeBase.documentsHistory.get` | GET | [`/api/v5/knowledge-base/documents/history`](https://rest-api-docs.simla.com/v5/) | read |
@@ -118,11 +117,11 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 | `knowledgeBase.sectionsByIdEdit.post` | POST | [`/api/v5/knowledge-base/sections/{id}/edit`](https://rest-api-docs.simla.com/v5/) | write |
 | `loyalty.accountCreate.post` | POST | [`/api/v5/loyalty/account/create`](https://rest-api-docs.simla.com/v5/) | write |
 | `loyalty.getAccountById.get` | GET | [`/api/v5/loyalty/account/{id}`](https://rest-api-docs.simla.com/v5/) | read |
-| `loyalty.postAccountByIdactivate.post` | POST | [`/api/v5/loyalty/account/{id}/activate`](https://rest-api-docs.simla.com/v5/) | write |
-| `loyalty.postAccountByIdbonuscharge.post` | POST | [`/api/v5/loyalty/account/{id}/bonus/charge`](https://rest-api-docs.simla.com/v5/) | destructive |
-| `loyalty.postAccountByIdbonuscredit.post` | POST | [`/api/v5/loyalty/account/{id}/bonus/credit`](https://rest-api-docs.simla.com/v5/) | destructive |
-| `loyalty.getAccountByIdbonusoperations.get` | GET | [`/api/v5/loyalty/account/{id}/bonus/operations`](https://rest-api-docs.simla.com/v5/) | read |
-| `loyalty.getAccountByIdbonusByStatusdetails.get` | GET | [`/api/v5/loyalty/account/{id}/bonus/{status}/details`](https://rest-api-docs.simla.com/v5/) | read |
+| `loyalty.accountByIdActivate.post` | POST | [`/api/v5/loyalty/account/{id}/activate`](https://rest-api-docs.simla.com/v5/) | write |
+| `loyalty.accountByIdBonusCharge.post` | POST | [`/api/v5/loyalty/account/{id}/bonus/charge`](https://rest-api-docs.simla.com/v5/) | destructive |
+| `loyalty.accountByIdBonusCredit.post` | POST | [`/api/v5/loyalty/account/{id}/bonus/credit`](https://rest-api-docs.simla.com/v5/) | destructive |
+| `loyalty.getAccountByIdBonusOperations.get` | GET | [`/api/v5/loyalty/account/{id}/bonus/operations`](https://rest-api-docs.simla.com/v5/) | read |
+| `loyalty.getAccountByIdBonusByStatusDetails.get` | GET | [`/api/v5/loyalty/account/{id}/bonus/{status}/details`](https://rest-api-docs.simla.com/v5/) | read |
 | `loyalty.accountByIdEdit.post` | POST | [`/api/v5/loyalty/account/{id}/edit`](https://rest-api-docs.simla.com/v5/) | write |
 | `loyalty.accounts.get` | GET | [`/api/v5/loyalty/accounts`](https://rest-api-docs.simla.com/v5/) | read |
 | `loyalty.bonusOperations.get` | GET | [`/api/v5/loyalty/bonus/operations`](https://rest-api-docs.simla.com/v5/) | read |
@@ -156,7 +155,7 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 | `payments.paymentCheck.post` | POST | [`/api/v5/payment/check`](https://rest-api-docs.simla.com/v5/) | read |
 | `payments.paymentCreateInvoice.post` | POST | [`/api/v5/payment/create-invoice`](https://rest-api-docs.simla.com/v5/) | destructive |
 | `payments.paymentInvoiceImport.post` | POST | [`/api/v5/payment/invoice/import`](https://rest-api-docs.simla.com/v5/) | write |
-| `payments.getPaymentinvoiceByInvoiceuuid.get` | GET | [`/api/v5/payment/invoice/{invoiceUuid}`](https://rest-api-docs.simla.com/v5/) | read |
+| `payments.getPaymentInvoiceByInvoiceuuid.get` | GET | [`/api/v5/payment/invoice/{invoiceUuid}`](https://rest-api-docs.simla.com/v5/) | read |
 | `payments.paymentUpdateInvoice.post` | POST | [`/api/v5/payment/update-invoice`](https://rest-api-docs.simla.com/v5/) | destructive |
 | `dataBook.referenceCostGroups.get` | GET | [`/api/v5/reference/cost-groups`](https://rest-api-docs.simla.com/v5/) | read |
 | `dataBook.referenceCostGroupsByCodeEdit.post` | POST | [`/api/v5/reference/cost-groups/{code}/edit`](https://rest-api-docs.simla.com/v5/) | write |
@@ -192,7 +191,7 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 | `dataBook.referencePushCategoriesByCodeEdit.post` | POST | [`/api/v5/reference/push-categories/{code}/edit`](https://rest-api-docs.simla.com/v5/) | write |
 | `dataBook.referenceSites.get` | GET | [`/api/v5/reference/sites`](https://rest-api-docs.simla.com/v5/) | read |
 | `dataBook.referenceSitesByCodeEdit.post` | POST | [`/api/v5/reference/sites/{code}/edit`](https://rest-api-docs.simla.com/v5/) | write |
-| `dataBook.getReferencesitesByCodetracker.get` | GET | [`/api/v5/reference/sites/{code}/tracker`](https://rest-api-docs.simla.com/v5/) | read |
+| `dataBook.getReferenceSitesByCodeTracker.get` | GET | [`/api/v5/reference/sites/{code}/tracker`](https://rest-api-docs.simla.com/v5/) | read |
 | `dataBook.referenceStatusGroups.get` | GET | [`/api/v5/reference/status-groups`](https://rest-api-docs.simla.com/v5/) | read |
 | `dataBook.referenceStatuses.get` | GET | [`/api/v5/reference/statuses`](https://rest-api-docs.simla.com/v5/) | read |
 | `dataBook.referenceStatusesByCodeEdit.post` | POST | [`/api/v5/reference/statuses/{code}/edit`](https://rest-api-docs.simla.com/v5/) | write |
@@ -238,7 +237,7 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 | `tasks.create.post` | POST | [`/api/v5/tasks/create`](https://rest-api-docs.simla.com/v5/) | write |
 | `tasks.history.get` | GET | [`/api/v5/tasks/history`](https://rest-api-docs.simla.com/v5/) | read |
 | `tasks.getById.get` | GET | [`/api/v5/tasks/{id}`](https://rest-api-docs.simla.com/v5/) | read |
-| `tasks.getByIdcomments.get` | GET | [`/api/v5/tasks/{id}/comments`](https://rest-api-docs.simla.com/v5/) | read |
+| `tasks.getByIdComments.get` | GET | [`/api/v5/tasks/{id}/comments`](https://rest-api-docs.simla.com/v5/) | read |
 | `tasks.byIdEdit.post` | POST | [`/api/v5/tasks/{id}/edit`](https://rest-api-docs.simla.com/v5/) | write |
 | `telephony.callEvent.post` | POST | [`/api/v5/telephony/call/event`](https://rest-api-docs.simla.com/v5/) | write |
 | `telephony.calls.get` | GET | [`/api/v5/telephony/calls`](https://rest-api-docs.simla.com/v5/) | read |
@@ -257,9 +256,9 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 | `users.userGroups.get` | GET | [`/api/v5/user-groups`](https://rest-api-docs.simla.com/v5/) | read |
 | `users.list.get` | GET | [`/api/v5/users`](https://rest-api-docs.simla.com/v5/) | read |
 | `users.getById.get` | GET | [`/api/v5/users/{id}`](https://rest-api-docs.simla.com/v5/) | read |
-| `users.postByIdstatus.post` | POST | [`/api/v5/users/{id}/status`](https://rest-api-docs.simla.com/v5/) | write |
+| `users.byIdStatus.post` | POST | [`/api/v5/users/{id}/status`](https://rest-api-docs.simla.com/v5/) | write |
 | `verification.smsConfirm.post` | POST | [`/api/v5/verification/sms/confirm`](https://rest-api-docs.simla.com/v5/) | write |
-| `verification.getSmsByCheckidstatus.get` | GET | [`/api/v5/verification/sms/{checkId}/status`](https://rest-api-docs.simla.com/v5/) | read |
+| `verification.getSmsByCheckidStatus.get` | GET | [`/api/v5/verification/sms/{checkId}/status`](https://rest-api-docs.simla.com/v5/) | read |
 | `webAnalytics.clientIdsUpload.post` | POST | [`/api/v5/web-analytics/client-ids/upload`](https://rest-api-docs.simla.com/v5/) | write |
 | `webAnalytics.sourcesUpload.post` | POST | [`/api/v5/web-analytics/sources/upload`](https://rest-api-docs.simla.com/v5/) | write |
 | `webAnalytics.visitsUpload.post` | POST | [`/api/v5/web-analytics/visits/upload`](https://rest-api-docs.simla.com/v5/) | write |
@@ -267,6 +266,6 @@ The list below covers 228 `/api/v5/*` methods and the two documented `/api/api-v
 
 ## Excluded routes and features
 
-The reference also describes 27 provider-hosted integration-module callback/configuration routes (including `/{configUrl}`, `/{registerUrl}`, and dynamic delivery, payment, telephony and messaging action URLs). These are destinations Simla.com invokes as part of separately hosted integrations, not stable Simla.com REST routes for a Corsair client, so they are excluded. Webhook receiving/management is excluded by issue #2408; this plugin registers no inbound webhooks.
+The reference also describes 27 provider-hosted integration-module callback/configuration routes (including `/{configUrl}`, `/{registerUrl}`, and dynamic delivery, payment, telephony and messaging action URLs). These are destinations Simla.com invokes as part of separately hosted integrations, not stable Simla.com REST routes for a Corsair client, so they are excluded. `POST /api/v5/integration-modules/{code}/update-scopes` is also left out: it mints a new API key, and a plugin should not hand out or replace the key it is connected with. Webhook receiving/management is excluded by issue #2408; this plugin registers no inbound webhooks.
 
 The live smoke test is read-only. Set `SIMLACOM_API_KEY` and `SIMLACOM_SUBDOMAIN`, then run `pnpm --dir packages/simlacom test:live`; without both values it logs a skip warning and does not call Simla.com.

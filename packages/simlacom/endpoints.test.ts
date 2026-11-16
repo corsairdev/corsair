@@ -71,7 +71,7 @@ describe('documented operation transport', () => {
 				});
 			});
 
-		expect(SIMLACOM_OPERATIONS).toHaveLength(230);
+		expect(SIMLACOM_OPERATIONS).toHaveLength(229);
 		for (const operation of SIMLACOM_OPERATIONS) {
 			const path: Record<string, string | number> = {};
 			// Query value types vary by OpenAPI parameter and are narrowed by its generated schema.

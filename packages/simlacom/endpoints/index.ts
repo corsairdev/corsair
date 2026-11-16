@@ -117,9 +117,9 @@ export const simlaComEndpointsNested = {
 		byExternalidEdit: {
 			post: createSimlaComOperationEndpoint('customers.byExternalidEdit.post'),
 		},
-		postByExternalidsubscriptions: {
+		byExternalidSubscriptions: {
 			post: createSimlaComOperationEndpoint(
-				'customers.postByExternalidsubscriptions.post',
+				'customers.byExternalidSubscriptions.post',
 			),
 		},
 	},
@@ -162,9 +162,9 @@ export const simlaComEndpointsNested = {
 				'corporateCustomers.getByExternalid.get',
 			),
 		},
-		getByExternalidaddresses: {
+		getByExternalidAddresses: {
 			get: createSimlaComOperationEndpoint(
-				'corporateCustomers.getByExternalidaddresses.get',
+				'corporateCustomers.getByExternalidAddresses.get',
 			),
 		},
 		byExternalidAddressesCreate: {
@@ -177,9 +177,9 @@ export const simlaComEndpointsNested = {
 				'corporateCustomers.byExternalidAddressesByEntityexternalidEdit.post',
 			),
 		},
-		getByExternalidcompanies: {
+		getByExternalidCompanies: {
 			get: createSimlaComOperationEndpoint(
-				'corporateCustomers.getByExternalidcompanies.get',
+				'corporateCustomers.getByExternalidCompanies.get',
 			),
 		},
 		byExternalidCompaniesCreate: {
@@ -192,9 +192,9 @@ export const simlaComEndpointsNested = {
 				'corporateCustomers.byExternalidCompaniesByEntityexternalidEdit.post',
 			),
 		},
-		getByExternalidcontacts: {
+		getByExternalidContacts: {
 			get: createSimlaComOperationEndpoint(
-				'corporateCustomers.getByExternalidcontacts.get',
+				'corporateCustomers.getByExternalidContacts.get',
 			),
 		},
 		byExternalidContactsCreate: {
@@ -213,35 +213,35 @@ export const simlaComEndpointsNested = {
 			),
 		},
 	},
-	customerActionsOnTheSiteOfTheStore: {
-		postCustomerInteractionBySitecartclear: {
+	customerInteraction: {
+		cartBySiteClear: {
 			post: createSimlaComOperationEndpoint(
-				'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post',
+				'customerInteraction.cartBySiteClear.post',
 			),
 		},
-		postCustomerInteractionBySitecartset: {
+		cartBySiteSet: {
 			post: createSimlaComOperationEndpoint(
-				'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post',
+				'customerInteraction.cartBySiteSet.post',
 			),
 		},
-		getCustomerInteractionBySitecartByCustomerid: {
+		getCartBySiteByCustomerid: {
 			get: createSimlaComOperationEndpoint(
-				'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get',
+				'customerInteraction.getCartBySiteByCustomerid.get',
 			),
 		},
-		getCustomerInteractionBySitefavoritesByCustomerid: {
+		getFavoritesBySiteByCustomerid: {
 			get: createSimlaComOperationEndpoint(
-				'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get',
+				'customerInteraction.getFavoritesBySiteByCustomerid.get',
 			),
 		},
-		postCustomerInteractionBySitefavoritesByCustomeridadd: {
+		favoritesBySiteByCustomeridAdd: {
 			post: createSimlaComOperationEndpoint(
-				'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post',
+				'customerInteraction.favoritesBySiteByCustomeridAdd.post',
 			),
 		},
-		customerInteractionBySiteFavoritesByCustomeridRemove: {
+		favoritesBySiteByCustomeridRemove: {
 			post: createSimlaComOperationEndpoint(
-				'customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post',
+				'customerInteraction.favoritesBySiteByCustomeridRemove.post',
 			),
 		},
 	},
@@ -251,9 +251,9 @@ export const simlaComEndpointsNested = {
 				'deliveries.deliveryCalculate.post',
 			),
 		},
-		postDeliverygenericBySubcodetracking: {
+		deliveryGenericBySubcodeTracking: {
 			post: createSimlaComOperationEndpoint(
-				'deliveries.postDeliverygenericBySubcodetracking.post',
+				'deliveries.deliveryGenericBySubcodeTracking.post',
 			),
 		},
 		deliveryShipments: {
@@ -264,9 +264,9 @@ export const simlaComEndpointsNested = {
 				'deliveries.deliveryShipmentsCreate.post',
 			),
 		},
-		getDeliveryshipmentsById: {
+		getDeliveryShipmentsById: {
 			get: createSimlaComOperationEndpoint(
-				'deliveries.getDeliveryshipmentsById.get',
+				'deliveries.getDeliveryShipmentsById.get',
 			),
 		},
 		deliveryShipmentsByIdEdit: {
@@ -304,11 +304,6 @@ export const simlaComEndpointsNested = {
 		integrationModulesByCodeEdit: {
 			post: createSimlaComOperationEndpoint(
 				'integration.integrationModulesByCodeEdit.post',
-			),
-		},
-		postIntegrationModulesByCodeupdateScopes: {
-			post: createSimlaComOperationEndpoint(
-				'integration.postIntegrationModulesByCodeupdateScopes.post',
 			),
 		},
 	},
@@ -367,29 +362,27 @@ export const simlaComEndpointsNested = {
 		getAccountById: {
 			get: createSimlaComOperationEndpoint('loyalty.getAccountById.get'),
 		},
-		postAccountByIdactivate: {
+		accountByIdActivate: {
+			post: createSimlaComOperationEndpoint('loyalty.accountByIdActivate.post'),
+		},
+		accountByIdBonusCharge: {
 			post: createSimlaComOperationEndpoint(
-				'loyalty.postAccountByIdactivate.post',
+				'loyalty.accountByIdBonusCharge.post',
 			),
 		},
-		postAccountByIdbonuscharge: {
+		accountByIdBonusCredit: {
 			post: createSimlaComOperationEndpoint(
-				'loyalty.postAccountByIdbonuscharge.post',
+				'loyalty.accountByIdBonusCredit.post',
 			),
 		},
-		postAccountByIdbonuscredit: {
-			post: createSimlaComOperationEndpoint(
-				'loyalty.postAccountByIdbonuscredit.post',
-			),
-		},
-		getAccountByIdbonusoperations: {
+		getAccountByIdBonusOperations: {
 			get: createSimlaComOperationEndpoint(
-				'loyalty.getAccountByIdbonusoperations.get',
+				'loyalty.getAccountByIdBonusOperations.get',
 			),
 		},
-		getAccountByIdbonusByStatusdetails: {
+		getAccountByIdBonusByStatusDetails: {
 			get: createSimlaComOperationEndpoint(
-				'loyalty.getAccountByIdbonusByStatusdetails.get',
+				'loyalty.getAccountByIdBonusByStatusDetails.get',
 			),
 		},
 		accountByIdEdit: {
@@ -511,9 +504,9 @@ export const simlaComEndpointsNested = {
 				'payments.paymentInvoiceImport.post',
 			),
 		},
-		getPaymentinvoiceByInvoiceuuid: {
+		getPaymentInvoiceByInvoiceuuid: {
 			get: createSimlaComOperationEndpoint(
-				'payments.getPaymentinvoiceByInvoiceuuid.get',
+				'payments.getPaymentInvoiceByInvoiceuuid.get',
 			),
 		},
 		paymentUpdateInvoice: {
@@ -675,9 +668,9 @@ export const simlaComEndpointsNested = {
 				'dataBook.referenceSitesByCodeEdit.post',
 			),
 		},
-		getReferencesitesByCodetracker: {
+		getReferenceSitesByCodeTracker: {
 			get: createSimlaComOperationEndpoint(
-				'dataBook.getReferencesitesByCodetracker.get',
+				'dataBook.getReferenceSitesByCodeTracker.get',
 			),
 		},
 		referenceStatusGroups: {
@@ -873,8 +866,8 @@ export const simlaComEndpointsNested = {
 		getById: {
 			get: createSimlaComOperationEndpoint('tasks.getById.get'),
 		},
-		getByIdcomments: {
-			get: createSimlaComOperationEndpoint('tasks.getByIdcomments.get'),
+		getByIdComments: {
+			get: createSimlaComOperationEndpoint('tasks.getByIdComments.get'),
 		},
 		byIdEdit: {
 			post: createSimlaComOperationEndpoint('tasks.byIdEdit.post'),
@@ -936,17 +929,17 @@ export const simlaComEndpointsNested = {
 		getById: {
 			get: createSimlaComOperationEndpoint('users.getById.get'),
 		},
-		postByIdstatus: {
-			post: createSimlaComOperationEndpoint('users.postByIdstatus.post'),
+		byIdStatus: {
+			post: createSimlaComOperationEndpoint('users.byIdStatus.post'),
 		},
 	},
 	verification: {
 		smsConfirm: {
 			post: createSimlaComOperationEndpoint('verification.smsConfirm.post'),
 		},
-		getSmsByCheckidstatus: {
+		getSmsByCheckidStatus: {
 			get: createSimlaComOperationEndpoint(
-				'verification.getSmsByCheckidstatus.get',
+				'verification.getSmsByCheckidStatus.get',
 			),
 		},
 	},
@@ -1201,12 +1194,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('customers.byExternalidEdit.post'),
 		),
 	},
-	'customers.postByExternalidsubscriptions.post': {
+	'customers.byExternalidSubscriptions.post': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('customers.postByExternalidsubscriptions.post'),
+			getSimlaComOperation('customers.byExternalidSubscriptions.post'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('customers.postByExternalidsubscriptions.post'),
+			getSimlaComOperation('customers.byExternalidSubscriptions.post'),
 		),
 	},
 	'corporateCustomers.list.get': {
@@ -1289,12 +1282,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('corporateCustomers.getByExternalid.get'),
 		),
 	},
-	'corporateCustomers.getByExternalidaddresses.get': {
+	'corporateCustomers.getByExternalidAddresses.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('corporateCustomers.getByExternalidaddresses.get'),
+			getSimlaComOperation('corporateCustomers.getByExternalidAddresses.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('corporateCustomers.getByExternalidaddresses.get'),
+			getSimlaComOperation('corporateCustomers.getByExternalidAddresses.get'),
 		),
 	},
 	'corporateCustomers.byExternalidAddressesCreate.post': {
@@ -1321,12 +1314,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			),
 		),
 	},
-	'corporateCustomers.getByExternalidcompanies.get': {
+	'corporateCustomers.getByExternalidCompanies.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('corporateCustomers.getByExternalidcompanies.get'),
+			getSimlaComOperation('corporateCustomers.getByExternalidCompanies.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('corporateCustomers.getByExternalidcompanies.get'),
+			getSimlaComOperation('corporateCustomers.getByExternalidCompanies.get'),
 		),
 	},
 	'corporateCustomers.byExternalidCompaniesCreate.post': {
@@ -1353,12 +1346,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			),
 		),
 	},
-	'corporateCustomers.getByExternalidcontacts.get': {
+	'corporateCustomers.getByExternalidContacts.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('corporateCustomers.getByExternalidcontacts.get'),
+			getSimlaComOperation('corporateCustomers.getByExternalidContacts.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('corporateCustomers.getByExternalidcontacts.get'),
+			getSimlaComOperation('corporateCustomers.getByExternalidContacts.get'),
 		),
 	},
 	'corporateCustomers.byExternalidContactsCreate.post': {
@@ -1393,84 +1386,66 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('corporateCustomers.byExternalidEdit.post'),
 		),
 	},
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post':
-		{
-			input: createOperationInputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post',
-				),
+	'customerInteraction.cartBySiteClear.post': {
+		input: createOperationInputSchema(
+			getSimlaComOperation('customerInteraction.cartBySiteClear.post'),
+		),
+		output: createOperationOutputSchema(
+			getSimlaComOperation('customerInteraction.cartBySiteClear.post'),
+		),
+	},
+	'customerInteraction.cartBySiteSet.post': {
+		input: createOperationInputSchema(
+			getSimlaComOperation('customerInteraction.cartBySiteSet.post'),
+		),
+		output: createOperationOutputSchema(
+			getSimlaComOperation('customerInteraction.cartBySiteSet.post'),
+		),
+	},
+	'customerInteraction.getCartBySiteByCustomerid.get': {
+		input: createOperationInputSchema(
+			getSimlaComOperation('customerInteraction.getCartBySiteByCustomerid.get'),
+		),
+		output: createOperationOutputSchema(
+			getSimlaComOperation('customerInteraction.getCartBySiteByCustomerid.get'),
+		),
+	},
+	'customerInteraction.getFavoritesBySiteByCustomerid.get': {
+		input: createOperationInputSchema(
+			getSimlaComOperation(
+				'customerInteraction.getFavoritesBySiteByCustomerid.get',
 			),
-			output: createOperationOutputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post',
-				),
+		),
+		output: createOperationOutputSchema(
+			getSimlaComOperation(
+				'customerInteraction.getFavoritesBySiteByCustomerid.get',
 			),
-		},
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post':
-		{
-			input: createOperationInputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post',
-				),
+		),
+	},
+	'customerInteraction.favoritesBySiteByCustomeridAdd.post': {
+		input: createOperationInputSchema(
+			getSimlaComOperation(
+				'customerInteraction.favoritesBySiteByCustomeridAdd.post',
 			),
-			output: createOperationOutputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post',
-				),
+		),
+		output: createOperationOutputSchema(
+			getSimlaComOperation(
+				'customerInteraction.favoritesBySiteByCustomeridAdd.post',
 			),
-		},
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get':
-		{
-			input: createOperationInputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get',
-				),
+		),
+	},
+	'customerInteraction.favoritesBySiteByCustomeridRemove.post': {
+		input: createOperationInputSchema(
+			getSimlaComOperation(
+				'customerInteraction.favoritesBySiteByCustomeridRemove.post',
 			),
-			output: createOperationOutputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get',
-				),
+		),
+		output: createOperationOutputSchema(
+			getSimlaComOperation(
+				'customerInteraction.favoritesBySiteByCustomeridRemove.post',
 			),
-		},
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get':
-		{
-			input: createOperationInputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get',
-				),
-			),
-			output: createOperationOutputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get',
-				),
-			),
-		},
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post':
-		{
-			input: createOperationInputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post',
-				),
-			),
-			output: createOperationOutputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post',
-				),
-			),
-		},
-	'customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post':
-		{
-			input: createOperationInputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post',
-				),
-			),
-			output: createOperationOutputSchema(
-				getSimlaComOperation(
-					'customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post',
-				),
-			),
-		},
+		),
+	},
 	'deliveries.deliveryCalculate.post': {
 		input: createOperationInputSchema(
 			getSimlaComOperation('deliveries.deliveryCalculate.post'),
@@ -1479,16 +1454,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('deliveries.deliveryCalculate.post'),
 		),
 	},
-	'deliveries.postDeliverygenericBySubcodetracking.post': {
+	'deliveries.deliveryGenericBySubcodeTracking.post': {
 		input: createOperationInputSchema(
-			getSimlaComOperation(
-				'deliveries.postDeliverygenericBySubcodetracking.post',
-			),
+			getSimlaComOperation('deliveries.deliveryGenericBySubcodeTracking.post'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation(
-				'deliveries.postDeliverygenericBySubcodetracking.post',
-			),
+			getSimlaComOperation('deliveries.deliveryGenericBySubcodeTracking.post'),
 		),
 	},
 	'deliveries.deliveryShipments.get': {
@@ -1507,12 +1478,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('deliveries.deliveryShipmentsCreate.post'),
 		),
 	},
-	'deliveries.getDeliveryshipmentsById.get': {
+	'deliveries.getDeliveryShipmentsById.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('deliveries.getDeliveryshipmentsById.get'),
+			getSimlaComOperation('deliveries.getDeliveryShipmentsById.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('deliveries.getDeliveryshipmentsById.get'),
+			getSimlaComOperation('deliveries.getDeliveryShipmentsById.get'),
 		),
 	},
 	'deliveries.deliveryShipmentsByIdEdit.post': {
@@ -1581,18 +1552,6 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 		),
 		output: createOperationOutputSchema(
 			getSimlaComOperation('integration.integrationModulesByCodeEdit.post'),
-		),
-	},
-	'integration.postIntegrationModulesByCodeupdateScopes.post': {
-		input: createOperationInputSchema(
-			getSimlaComOperation(
-				'integration.postIntegrationModulesByCodeupdateScopes.post',
-			),
-		),
-		output: createOperationOutputSchema(
-			getSimlaComOperation(
-				'integration.postIntegrationModulesByCodeupdateScopes.post',
-			),
 		),
 	},
 	'knowledgeBase.documents.get': {
@@ -1691,44 +1650,44 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('loyalty.getAccountById.get'),
 		),
 	},
-	'loyalty.postAccountByIdactivate.post': {
+	'loyalty.accountByIdActivate.post': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('loyalty.postAccountByIdactivate.post'),
+			getSimlaComOperation('loyalty.accountByIdActivate.post'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('loyalty.postAccountByIdactivate.post'),
+			getSimlaComOperation('loyalty.accountByIdActivate.post'),
 		),
 	},
-	'loyalty.postAccountByIdbonuscharge.post': {
+	'loyalty.accountByIdBonusCharge.post': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('loyalty.postAccountByIdbonuscharge.post'),
+			getSimlaComOperation('loyalty.accountByIdBonusCharge.post'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('loyalty.postAccountByIdbonuscharge.post'),
+			getSimlaComOperation('loyalty.accountByIdBonusCharge.post'),
 		),
 	},
-	'loyalty.postAccountByIdbonuscredit.post': {
+	'loyalty.accountByIdBonusCredit.post': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('loyalty.postAccountByIdbonuscredit.post'),
+			getSimlaComOperation('loyalty.accountByIdBonusCredit.post'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('loyalty.postAccountByIdbonuscredit.post'),
+			getSimlaComOperation('loyalty.accountByIdBonusCredit.post'),
 		),
 	},
-	'loyalty.getAccountByIdbonusoperations.get': {
+	'loyalty.getAccountByIdBonusOperations.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('loyalty.getAccountByIdbonusoperations.get'),
+			getSimlaComOperation('loyalty.getAccountByIdBonusOperations.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('loyalty.getAccountByIdbonusoperations.get'),
+			getSimlaComOperation('loyalty.getAccountByIdBonusOperations.get'),
 		),
 	},
-	'loyalty.getAccountByIdbonusByStatusdetails.get': {
+	'loyalty.getAccountByIdBonusByStatusDetails.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('loyalty.getAccountByIdbonusByStatusdetails.get'),
+			getSimlaComOperation('loyalty.getAccountByIdBonusByStatusDetails.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('loyalty.getAccountByIdbonusByStatusdetails.get'),
+			getSimlaComOperation('loyalty.getAccountByIdBonusByStatusDetails.get'),
 		),
 	},
 	'loyalty.accountByIdEdit.post': {
@@ -1993,12 +1952,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('payments.paymentInvoiceImport.post'),
 		),
 	},
-	'payments.getPaymentinvoiceByInvoiceuuid.get': {
+	'payments.getPaymentInvoiceByInvoiceuuid.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('payments.getPaymentinvoiceByInvoiceuuid.get'),
+			getSimlaComOperation('payments.getPaymentInvoiceByInvoiceuuid.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('payments.getPaymentinvoiceByInvoiceuuid.get'),
+			getSimlaComOperation('payments.getPaymentInvoiceByInvoiceuuid.get'),
 		),
 	},
 	'payments.paymentUpdateInvoice.post': {
@@ -2281,12 +2240,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('dataBook.referenceSitesByCodeEdit.post'),
 		),
 	},
-	'dataBook.getReferencesitesByCodetracker.get': {
+	'dataBook.getReferenceSitesByCodeTracker.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('dataBook.getReferencesitesByCodetracker.get'),
+			getSimlaComOperation('dataBook.getReferenceSitesByCodeTracker.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('dataBook.getReferencesitesByCodetracker.get'),
+			getSimlaComOperation('dataBook.getReferenceSitesByCodeTracker.get'),
 		),
 	},
 	'dataBook.referenceStatusGroups.get': {
@@ -2647,12 +2606,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('tasks.getById.get'),
 		),
 	},
-	'tasks.getByIdcomments.get': {
+	'tasks.getByIdComments.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('tasks.getByIdcomments.get'),
+			getSimlaComOperation('tasks.getByIdComments.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('tasks.getByIdcomments.get'),
+			getSimlaComOperation('tasks.getByIdComments.get'),
 		),
 	},
 	'tasks.byIdEdit.post': {
@@ -2793,12 +2752,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('users.getById.get'),
 		),
 	},
-	'users.postByIdstatus.post': {
+	'users.byIdStatus.post': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('users.postByIdstatus.post'),
+			getSimlaComOperation('users.byIdStatus.post'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('users.postByIdstatus.post'),
+			getSimlaComOperation('users.byIdStatus.post'),
 		),
 	},
 	'verification.smsConfirm.post': {
@@ -2809,12 +2768,12 @@ export const simlaComEndpointSchemas: RequiredPluginEndpointSchemas<
 			getSimlaComOperation('verification.smsConfirm.post'),
 		),
 	},
-	'verification.getSmsByCheckidstatus.get': {
+	'verification.getSmsByCheckidStatus.get': {
 		input: createOperationInputSchema(
-			getSimlaComOperation('verification.getSmsByCheckidstatus.get'),
+			getSimlaComOperation('verification.getSmsByCheckidStatus.get'),
 		),
 		output: createOperationOutputSchema(
-			getSimlaComOperation('verification.getSmsByCheckidstatus.get'),
+			getSimlaComOperation('verification.getSmsByCheckidStatus.get'),
 		),
 	},
 	'webAnalytics.clientIdsUpload.post': {
@@ -2975,7 +2934,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'write',
 		description: 'Customer editing',
 	},
-	'customers.postByExternalidsubscriptions.post': {
+	'customers.byExternalidSubscriptions.post': {
 		riskLevel: 'write',
 		description: 'Subscribe/unsubscribe customer to mailings',
 	},
@@ -3020,7 +2979,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'read',
 		description: 'Getting information on corporate customer',
 	},
-	'corporateCustomers.getByExternalidaddresses.get': {
+	'corporateCustomers.getByExternalidAddresses.get': {
 		riskLevel: 'read',
 		description: 'List of addresses for a corporate customer',
 	},
@@ -3032,7 +2991,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'write',
 		description: 'Editing the address of the corporate customer',
 	},
-	'corporateCustomers.getByExternalidcompanies.get': {
+	'corporateCustomers.getByExternalidCompanies.get': {
 		riskLevel: 'read',
 		description: 'List of companies of a contact person',
 	},
@@ -3044,7 +3003,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'write',
 		description: 'Editing the company of the corporate customer',
 	},
-	'corporateCustomers.getByExternalidcontacts.get': {
+	'corporateCustomers.getByExternalidContacts.get': {
 		riskLevel: 'read',
 		description: 'List of contact persons of the corporate customer',
 	},
@@ -3062,42 +3021,36 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'write',
 		description: 'Corporate customer editing',
 	},
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post':
-		{
-			riskLevel: 'destructive',
-			description: 'Cleaning the current cart of the customer',
-		},
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post':
-		{
-			riskLevel: 'write',
-			description: 'Creating or overwriting cart data',
-		},
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get':
-		{
-			riskLevel: 'read',
-			description: 'Getting the current cart of the customer',
-		},
-	'customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get':
-		{
-			riskLevel: 'read',
-			description: 'Getting a list of favorites for the customer',
-		},
-	'customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post':
-		{
-			riskLevel: 'write',
-			description: "Adding a product offer to the customer's list of favorites",
-		},
-	'customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post':
-		{
-			riskLevel: 'write',
-			description:
-				"Deleting a product offer from the customer's list of favorites",
-		},
+	'customerInteraction.cartBySiteClear.post': {
+		riskLevel: 'destructive',
+		description: 'Cleaning the current cart of the customer',
+	},
+	'customerInteraction.cartBySiteSet.post': {
+		riskLevel: 'write',
+		description: 'Creating or overwriting cart data',
+	},
+	'customerInteraction.getCartBySiteByCustomerid.get': {
+		riskLevel: 'read',
+		description: 'Getting the current cart of the customer',
+	},
+	'customerInteraction.getFavoritesBySiteByCustomerid.get': {
+		riskLevel: 'read',
+		description: 'Getting a list of favorites for the customer',
+	},
+	'customerInteraction.favoritesBySiteByCustomeridAdd.post': {
+		riskLevel: 'write',
+		description: "Adding a product offer to the customer's list of favorites",
+	},
+	'customerInteraction.favoritesBySiteByCustomeridRemove.post': {
+		riskLevel: 'write',
+		description:
+			"Deleting a product offer from the customer's list of favorites",
+	},
 	'deliveries.deliveryCalculate.post': {
 		riskLevel: 'read',
 		description: 'Calculation of the delivery cost',
 	},
-	'deliveries.postDeliverygenericBySubcodetracking.post': {
+	'deliveries.deliveryGenericBySubcodeTracking.post': {
 		riskLevel: 'write',
 		description: 'Updating of delivery statuses',
 	},
@@ -3109,7 +3062,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'destructive',
 		description: 'Shipment creation',
 	},
-	'deliveries.getDeliveryshipmentsById.get': {
+	'deliveries.getDeliveryShipmentsById.get': {
 		riskLevel: 'read',
 		description: 'Getting information on shipment',
 	},
@@ -3148,10 +3101,6 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 	'integration.integrationModulesByCodeEdit.post': {
 		riskLevel: 'write',
 		description: 'Integration module creation/editing',
-	},
-	'integration.postIntegrationModulesByCodeupdateScopes.post': {
-		riskLevel: 'write',
-		description: 'Updating permissions for the API key',
 	},
 	'knowledgeBase.documents.get': {
 		riskLevel: 'read',
@@ -3203,23 +3152,23 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		description:
 			'Getting information about participation in the loyalty program',
 	},
-	'loyalty.postAccountByIdactivate.post': {
+	'loyalty.accountByIdActivate.post': {
 		riskLevel: 'write',
 		description: 'Activation of participation in the loyalty program',
 	},
-	'loyalty.postAccountByIdbonuscharge.post': {
+	'loyalty.accountByIdBonusCharge.post': {
 		riskLevel: 'destructive',
 		description: 'Charging off bonuses to a loyalty program participant',
 	},
-	'loyalty.postAccountByIdbonuscredit.post': {
+	'loyalty.accountByIdBonusCredit.post': {
 		riskLevel: 'destructive',
 		description: 'Accrual of bonuses for participation in the loyalty program',
 	},
-	'loyalty.getAccountByIdbonusoperations.get': {
+	'loyalty.getAccountByIdBonusOperations.get': {
 		riskLevel: 'read',
 		description: 'History of the bonus account for a specific participation',
 	},
-	'loyalty.getAccountByIdbonusByStatusdetails.get': {
+	'loyalty.getAccountByIdBonusByStatusDetails.get': {
 		riskLevel: 'read',
 		description: 'Getting details on the bonus account',
 	},
@@ -3355,7 +3304,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'write',
 		description: 'Import the invoice',
 	},
-	'payments.getPaymentinvoiceByInvoiceuuid.get': {
+	'payments.getPaymentInvoiceByInvoiceuuid.get': {
 		riskLevel: 'read',
 		description: 'Get the invoice',
 	},
@@ -3499,7 +3448,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'write',
 		description: 'Store creation/editing',
 	},
-	'dataBook.getReferencesitesByCodetracker.get': {
+	'dataBook.getReferenceSitesByCodeTracker.get': {
 		riskLevel: 'read',
 		description: 'Getting store tracker settings',
 	},
@@ -3685,7 +3634,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'read',
 		description: 'Getting information on task',
 	},
-	'tasks.getByIdcomments.get': {
+	'tasks.getByIdComments.get': {
 		riskLevel: 'read',
 		description: 'Receiving comments on the task',
 	},
@@ -3761,7 +3710,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'read',
 		description: 'Getting information on user',
 	},
-	'users.postByIdstatus.post': {
+	'users.byIdStatus.post': {
 		riskLevel: 'write',
 		description: 'Change user status',
 	},
@@ -3769,7 +3718,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		riskLevel: 'write',
 		description: 'Confirmation of verification',
 	},
-	'verification.getSmsByCheckidstatus.get': {
+	'verification.getSmsByCheckidStatus.get': {
 		riskLevel: 'read',
 		description: 'Checking the verification status',
 	},
