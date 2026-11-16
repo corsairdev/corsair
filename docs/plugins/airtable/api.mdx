@@ -411,6 +411,7 @@ await corsair.airtable.api.webhooks.getPayloads({});
 | `baseId` | `string` | Yes | — |
 | `webhookId` | `string` | Yes | — |
 | `cursor` | `number` | No | — |
+| `limit` | `number` | No | — |
 
 
 
@@ -418,7 +419,8 @@ await corsair.airtable.api.webhooks.getPayloads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `cursorForNextPayload` | `number` | No | — |
+| `cursor` | `number` | No | — |
+| `mightHaveMore` | `boolean` | No | — |
 | `payloads` | `any[]` | Yes | — |
 
 
