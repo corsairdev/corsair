@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Agents,
 	Audio,
@@ -606,7 +607,10 @@ export function mistralai<const T extends MistralAiPluginOptions>(
 		pluginTenantWebhookMatcher: () => null,
 		oauthWebhookTenantLinkResolver: () => null,
 		errorHandlers: mergeErrorHandlers(options.errorHandlers),
-		/** Uses `options.key` when set, else the stored API key; empty when there is none. */
+		/**
+		 * Uses `options.key` when set, else the stored API key. A missing key
+		 * throws AuthMissingError, so Corsair can offer a connect link.
+		 */
 		keyBuilder: async (ctx: MistralAiKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -614,7 +618,10 @@ export function mistralai<const T extends MistralAiPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('mistralai', 'api_key');
+				}
+				return res;
 			}
 
 			return '';
