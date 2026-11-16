@@ -68,7 +68,7 @@ Create a campaign in draft from a sequence graph; it contacts nobody until campa
 **Risk:** `write`
 
 ```ts
-await corsair.needle.api.campaigns.create({ name: 'EMEA logistics Q4', graph: { nodes: [{ id: 'start', kind: 'start' }, { id: 'end', kind: 'end' }] } });
+await corsair.needle.api.campaigns.create({ name: 'EMEA logistics Q4', graph: { nodes: [{ id: 'start', kind: 'start' }, { id: 'end', kind: 'end' }], edges: [{ from: 'start', to: 'end' }] } });
 ```
 
 **Input**
@@ -188,7 +188,7 @@ await corsair.needle.api.campaigns.delete({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a
 
 Enroll up to 500 leads at once, with one result per lead so a batch can partly succeed; an enrolled lead can be contacted
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.needle.api.campaigns.enroll({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', leadIds: ['1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'] });
@@ -488,9 +488,9 @@ await corsair.needle.api.campaigns.stopLeads({ campaignId: '4d5e6f7a-8b9c-4d0e-9
 
 `campaigns.update`
 
-Rename a campaign, replace its graph, or set active to start sending and paused to halt it
+Rename a campaign, replace its graph, or set active to start sending and paused to halt it; going active begins contact and cannot be undone
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.needle.api.campaigns.update({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', status: 'active' });
@@ -588,7 +588,7 @@ Preview an AI-composed message for a lead without sending it, with the context s
 **Risk:** `read`
 
 ```ts
-await corsair.needle.api.compose.preview({ channel: 'linkedin', connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f', leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' });
+await corsair.needle.api.compose.preview({ channel: 'linkedin', connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f', identity: 'dana-okafor', prompt: 'Mention the Rotterdam hub and ask for a short call.' });
 ```
 
 **Input**
@@ -597,21 +597,11 @@ await corsair.needle.api.compose.preview({ channel: 'linkedin', connectedAccount
 |------|------|----------|-------------|
 | `channel` | `linkedin \| instagram` | Yes | — |
 | `connectedAccountId` | `string` | Yes | The connected account the message would be sent from. |
-| `leadId` | `string` | No | — |
-| `instructions` | `string` | No | — |
-| `context` | `object` | No | Extra hints for the composer, such as the offer to mention. |
-
-<AccordionGroup>
-<Accordion title="context full type">
-
-```ts
-{
-  notes?: string,
-  offer?: string
-}
-```
-</Accordion>
-</AccordionGroup>
+| `identity` | `string` | Yes | Who the message is for: a LinkedIn identifier, path, URL or user id, or an Instagram username, handle or URL. |
+| `prompt` | `string` | Yes | What the message should say, in plain instructions. |
+| `context` | `(profile \| posts \| conversation \| lead_properties)[]` | No | What the composer may read. Defaults at the provider to conversation only. |
+| `maxChars` | `number` | No | An upper bound on the message length. |
+| `leadProperties` | `Record<string, string>` | No | Facts about the lead the composer may use. |
 
 
 

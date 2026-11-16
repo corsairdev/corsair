@@ -52,7 +52,7 @@ apiExamples:
   campaigns.list:
     call: "{ status: 'active' }"
   campaigns.create:
-    call: "{ name: 'EMEA logistics Q4', graph: { nodes: [{ id: 'start', kind: 'start' }, { id: 'end', kind: 'end' }] } }"
+    call: "{ name: 'EMEA logistics Q4', graph: { nodes: [{ id: 'start', kind: 'start' }, { id: 'end', kind: 'end' }], edges: [{ from: 'start', to: 'end' }] } }"
   campaigns.get:
     call: "{ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a' }"
   campaigns.update:
@@ -78,7 +78,7 @@ apiExamples:
   places.search:
     call: "{ query: 'dentists in Munich', limit: 10 }"
   compose.preview:
-    call: "{ channel: 'linkedin', connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f', leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' }"
+    call: "{ channel: 'linkedin', connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f', identity: 'dana-okafor', prompt: 'Mention the Rotterdam hub and ask for a short call.' }"
 apiNotes:
   leads.upsert: 'Answers created or matched; on a match it patches the fields sent onto the existing lead.'
   leads.update: 'Sending identities replaces the whole identity set rather than adding a channel.'

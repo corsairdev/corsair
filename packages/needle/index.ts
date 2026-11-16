@@ -270,9 +270,12 @@ const needleEndpointMeta = {
 		description: 'Read one campaign, including its sequence graph and status',
 	},
 	'campaigns.update': {
-		riskLevel: 'write',
+		// Setting status active starts contacting the campaign's leads, so this
+		// needs the same approval a send does (R8).
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Rename a campaign, replace its graph, or set active to start sending and paused to halt it',
+			'Rename a campaign, replace its graph, or set active to start sending and paused to halt it; going active begins contact and cannot be undone',
 	},
 	'campaigns.delete': {
 		riskLevel: 'destructive',
@@ -290,7 +293,10 @@ const needleEndpointMeta = {
 			'Page through the leads enrolled in a campaign with their status',
 	},
 	'campaigns.enroll': {
-		riskLevel: 'write',
+		// An enrolled lead can be contacted as soon as the campaign runs, so this
+		// needs the same approval a send does (R8).
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Enroll up to 500 leads at once, with one result per lead so a batch can partly succeed; an enrolled lead can be contacted',
 	},

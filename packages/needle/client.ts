@@ -31,50 +31,65 @@ function readString(
  * Every Needle error is `{ requestId, error, data? }` with no machine-readable
  * code, so the HTTP status is the only classification and `requestId` is what
  * their support asks for. It is kept on the error for that reason.
+ *
+ * An HTTP failure stays core's `ApiError` (see `sanitizeApiError`), so its
+ * status and Retry-After reach core and the handlers. This class covers only a
+ * transport failure, which never had a response.
  */
 export class NeedleAPIError extends Error {
-	readonly status?: number;
-	/** Needle's id for the failed request, quoted to their support. */
-	readonly requestId?: string;
-	/** Extra detail Needle attached, usually field-level validation. */
-	// unknown: `data` has no documented shape; it is the provider's own detail.
-	readonly data?: unknown;
-	/** Milliseconds from a Retry-After header, when Needle sent one. */
-	readonly retryAfter?: number;
 	readonly method?: string;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			requestId?: string;
-			data?: unknown;
-			retryAfter?: number;
-			method?: string;
-		} = {},
+		options: { cause?: Error; method?: string } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'NeedleAPIError';
-		this.status = options.status;
-		this.requestId = options.requestId;
-		this.data = options.data;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	/** 403 is a key without the scope this route needs, or a plan limit. */
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
+/**
+ * Rebuilds Needle's HTTP error as a core `ApiError`, keeping its status,
+ * rate-limit fields and the provider's `{ requestId, error }` body.
+ *
+ * The sent body is dropped: it holds lead names, email addresses and message
+ * text, and Needle quotes field-level detail back in `data`. The request id is
+ * the part support needs, and it survives in the body.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const record = asRecord(error.body);
+	const envelope =
+		record === null
+			? undefined
+			: {
+					requestId: readString(record, 'requestId'),
+					error: readString(record, 'error'),
+					data: asRecord(record)?.data,
+				};
+	return new ApiError(
+		{ ...request, url: request.url.split('?')[0] ?? request.url },
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: envelope,
+		},
+		describeNeedleError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 // unknown: see NeedleAPIError.
@@ -129,20 +144,10 @@ export async function makeNeedleRequest(
 			rateLimitConfig: NEEDLE_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new NeedleAPIError(
-				describeNeedleError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					requestId: readString(asRecord(error.body), 'requestId'),
-					data: asRecord(error.body)?.data,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
+			// A transport failure never had a response body, so its cause is safe.
 			throw new NeedleAPIError(error.message, { cause: error, method });
 		}
 		throw new NeedleAPIError('Unknown Needle error', { method });

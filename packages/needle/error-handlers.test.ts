@@ -1,4 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { NeedleAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -23,16 +24,24 @@ async function strategy(error: Error) {
 	});
 }
 
+/** Builds the core `ApiError` the client throws for an HTTP failure. */
 function apiError(
 	status: number,
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE' = 'GET',
 	options: { retryAfter?: number } = {},
-) {
-	return new NeedleAPIError(`Needle ${status}: failed`, {
-		status,
-		method,
-		...options,
-	});
+): ApiError {
+	return new ApiError(
+		{ method, url: '/leads' },
+		{
+			url: 'https://needle.app/api/v1/leads',
+			ok: false,
+			status,
+			statusText: 'error',
+			body: { requestId: 'r1', error: 'failed' },
+		},
+		'Needle failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('needle error handlers', () => {
@@ -94,7 +103,7 @@ describe('needle error handlers', () => {
 	});
 
 	it('falls back to DEFAULT for a transport failure', () => {
-		expect(classify(new Error('socket hang up'))).toBe('DEFAULT');
+		expect(classify(new NeedleAPIError('socket hang up'))).toBe('DEFAULT');
 	});
 });
 
@@ -116,12 +125,12 @@ describe('mergeErrorHandlers', () => {
 	it('runs a caller handler for a status no builtin covers', () => {
 		const custom = {
 			match: (error: Error) =>
-				error instanceof NeedleAPIError && error.status === 502,
+				error instanceof ApiError && error.status === 502,
 			handler: async () => ({ maxRetries: 9 }),
 		};
 		const merged = mergeErrorHandlers(errorHandlers, { CUSTOM: custom });
 
-		const failure = new NeedleAPIError('bad gateway', { status: 502 });
+		const failure = apiError(502);
 		const firstMatch = Object.entries(merged).find(([, entry]) =>
 			entry?.match?.(failure, {
 				pluginId: 'needle',

@@ -1,5 +1,4 @@
 import { createCorsair } from 'corsair';
-import type { CorsairEndpoint } from 'corsair/core';
 import { asRecord } from 'corsair/core';
 import type { NeedlePluginOptions } from './index';
 import { needle, needleEndpointsNested } from './index';
@@ -42,11 +41,37 @@ function makeContext(key = 'sk-ndl-test') {
 	};
 }
 
-// unknown: each operation has its own input and output, and every call site
-// passes a concrete value that the operation's schema validates.
-type Endpoint = CorsairEndpoint<never, unknown, unknown>;
+/**
+ * The endpoint functions expect the plugin's full runtime context, which a test
+ * cannot build without a database and a key manager. They only read `ctx.key`
+ * and `ctx.log`, both of which `makeContext` provides.
+ */
+/**
+ * The endpoint functions expect the plugin's full runtime context, which a test
+ * cannot build without a database and a key manager. They only read `ctx.key`
+ * and `ctx.log`, both of which `makeContext` provides.
+ */
+// unknown: each operation takes its own parsed input, and every call site passes
+// a concrete value that the operation's own schema validates.
+//
+// `as never` below is used at two kinds of site, and nothing else: an invalid
+// value handed to a rejection test (`status: 'running'`, `operator: 'matches'`),
+// or a partial object standing in for the plugin runtime context. TypeScript
+// cannot express either without the cast, because the real types forbid exactly
+// what the test is checking for.
+type TestEndpoint = (
+	ctx: ReturnType<typeof makeContext>,
+	input: unknown,
+) => Promise<unknown>;
 
-const endpoints = needleEndpointsNested;
+const endpoints = needleEndpointsNested as unknown as {
+	[G in keyof typeof needleEndpointsNested]: {
+		[K in keyof (typeof needleEndpointsNested)[G]]: TestEndpoint;
+	};
+};
+
+/** Any one endpoint, as the helpers above describe it. */
+type Endpoint = TestEndpoint;
 
 /** Runs one endpoint and returns the response and the request that made it. */
 async function capture(
@@ -68,12 +93,22 @@ async function capture(
 	}) as typeof fetch;
 
 	try {
-		const result = await endpoint(makeContext() as never, input);
+		const result = await endpoint(makeContext(), input);
 		if (!url) throw new Error('no request was made');
 		return { result, url, init };
 	} finally {
 		globalThis.fetch = original;
 	}
+}
+
+/**
+ * Resolves to whatever the promise rejected with, so an assertion can read
+ * `String(error)` without a cast.
+ * unknown: a rejection reason has no static type; each caller only stringifies
+ * it, so a stricter type would be invented rather than checked.
+ */
+async function captureError<T>(promise: Promise<T>): Promise<unknown> {
+	return promise.catch((caught: unknown) => caught);
 }
 
 function sentBody(init: RequestInit): Record<string, unknown> {
@@ -124,7 +159,7 @@ describe('leads.create', () => {
 
 	it('rejects identities without a channel', async () => {
 		await expect(
-			endpoints.leads.create(makeContext() as never, {
+			endpoints.leads.create(makeContext(), {
 				identities: {},
 				timezone: 'Europe/London',
 			}),
@@ -135,12 +170,9 @@ describe('leads.create', () => {
 		await expect(
 			// Cast past the type: the point is that the schema refuses a missing
 			// timezone at runtime for a caller passing untyped input.
-			endpoints.leads.create(
-				makeContext() as never,
-				{
-					identities: { linkedin: 'dana-okafor' },
-				} as never,
-			),
+			endpoints.leads.create(makeContext(), {
+				identities: { linkedin: 'dana-okafor' },
+			} as never),
 		).rejects.toThrow();
 	});
 
@@ -175,7 +207,7 @@ describe('leads.get', () => {
 
 	it('rejects a lead id that is not a uuid', async () => {
 		await expect(
-			endpoints.leads.get(makeContext() as never, { leadId: 'not-a-uuid' }),
+			endpoints.leads.get(makeContext(), { leadId: 'not-a-uuid' }),
 		).rejects.toThrow();
 	});
 });
@@ -297,7 +329,7 @@ describe('leads.list and leads.search', () => {
 
 	it('rejects an operator Needle does not define', async () => {
 		await expect(
-			endpoints.leads.search(makeContext() as never, {
+			endpoints.leads.search(makeContext(), {
 				filters: [
 					{ field: 'email', operator: 'matches' as never, value: 'a@b.com' },
 				],
@@ -312,13 +344,13 @@ describe('leads.list and leads.search', () => {
 			value: 'a@b.com',
 		}));
 		await expect(
-			endpoints.leads.search(makeContext() as never, { filters }),
+			endpoints.leads.search(makeContext(), { filters }),
 		).rejects.toThrow();
 	});
 
 	it('rejects a query longer than the documented 200 characters', async () => {
 		await expect(
-			endpoints.leads.search(makeContext() as never, {
+			endpoints.leads.search(makeContext(), {
 				query: 'x'.repeat(201),
 			}),
 		).rejects.toThrow();
@@ -352,8 +384,31 @@ describe('campaigns', () => {
 
 	it('rejects a status Needle does not define', async () => {
 		await expect(
-			endpoints.campaigns.list(makeContext() as never, {
+			endpoints.campaigns.list(makeContext(), {
 				status: 'running' as never,
+			}),
+		).rejects.toThrow();
+	});
+
+	it('reads one campaign by id', async () => {
+		const { result, url } = await capture(
+			endpoints.campaigns.get,
+			{ campaignId: campaign.campaign.id },
+			campaign,
+		);
+
+		expect(url).toBe(
+			`https://needle.app/api/v1/campaigns/${campaign.campaign.id}`,
+		);
+		const read = asRecord(asRecord(result)?.campaign);
+		expect(read?.name).toBe('EMEA logistics Q4');
+		expect(read?.status).toBe('draft');
+	});
+
+	it('rejects a campaign id that is not a uuid', async () => {
+		await expect(
+			endpoints.campaigns.get(makeContext(), {
+				campaignId: 'not-a-uuid',
 			}),
 		).rejects.toThrow();
 	});
@@ -384,19 +439,16 @@ describe('campaigns', () => {
 
 	it('rejects a delay node without a duration', async () => {
 		await expect(
-			endpoints.campaigns.create(
-				makeContext() as never,
-				{
-					name: 'Missing wait',
-					graph: {
-						nodes: [
-							{ id: 'start', kind: 'start' },
-							{ id: 'wait', kind: 'delay' },
-							{ id: 'end', kind: 'end' },
-						],
-					},
-				} as never,
-			),
+			endpoints.campaigns.create(makeContext(), {
+				name: 'Missing wait',
+				graph: {
+					nodes: [
+						{ id: 'start', kind: 'start' },
+						{ id: 'wait', kind: 'delay' },
+						{ id: 'end', kind: 'end' },
+					],
+				},
+			} as never),
 		).rejects.toThrow(/needs a duration/);
 	});
 
@@ -427,23 +479,20 @@ describe('campaigns', () => {
 
 	it('rejects an action node without a channel and step', async () => {
 		await expect(
-			endpoints.campaigns.create(
-				makeContext() as never,
-				{
-					name: 'No action',
-					graph: {
-						nodes: [
-							{ id: 'start', kind: 'start' },
-							{ id: 'msg', kind: 'action' },
-							{ id: 'end', kind: 'end' },
-						],
-						edges: [
-							{ from: 'start', to: 'msg' },
-							{ from: 'msg', to: 'end' },
-						],
-					},
-				} as never,
-			),
+			endpoints.campaigns.create(makeContext(), {
+				name: 'No action',
+				graph: {
+					nodes: [
+						{ id: 'start', kind: 'start' },
+						{ id: 'msg', kind: 'action' },
+						{ id: 'end', kind: 'end' },
+					],
+					edges: [
+						{ from: 'start', to: 'msg' },
+						{ from: 'msg', to: 'end' },
+					],
+				},
+			} as never),
 		).rejects.toThrow(/needs a channel and an action/);
 	});
 
@@ -482,7 +531,7 @@ describe('campaigns', () => {
 
 	it('rejects an action name Needle does not define', async () => {
 		await expect(
-			endpoints.campaigns.create(makeContext() as never, {
+			endpoints.campaigns.create(makeContext(), {
 				name: 'Bad step',
 				graph: {
 					nodes: [
@@ -506,7 +555,7 @@ describe('campaigns', () => {
 
 	it('rejects a graph with fewer than two nodes', async () => {
 		await expect(
-			endpoints.campaigns.create(makeContext() as never, {
+			endpoints.campaigns.create(makeContext(), {
 				name: 'Too short',
 				graph: {
 					nodes: [{ id: 'start', kind: 'start' }],
@@ -532,7 +581,7 @@ describe('campaigns', () => {
 
 	it('rejects archiving through update, which only takes active or paused', async () => {
 		await expect(
-			endpoints.campaigns.update(makeContext() as never, {
+			endpoints.campaigns.update(makeContext(), {
 				campaignId: campaign.campaign.id,
 				status: 'archived' as never,
 			}),
@@ -604,7 +653,7 @@ describe('campaigns.enroll and stopLeads', () => {
 
 	it('rejects an empty lead list', async () => {
 		await expect(
-			endpoints.campaigns.enroll(makeContext() as never, {
+			endpoints.campaigns.enroll(makeContext(), {
 				campaignId: campaign.campaign.id,
 				leadIds: [],
 			}),
@@ -618,7 +667,7 @@ describe('campaigns.enroll and stopLeads', () => {
 				`00000000-0000-4000-8000-${String(index).padStart(12, '0')}`,
 		);
 		await expect(
-			endpoints.campaigns.enroll(makeContext() as never, {
+			endpoints.campaigns.enroll(makeContext(), {
 				campaignId: campaign.campaign.id,
 				leadIds: many,
 			}),
@@ -654,7 +703,7 @@ describe('suppressions', () => {
 
 	it('rejects a reason Needle does not define', async () => {
 		await expect(
-			endpoints.suppressions.list(makeContext() as never, {
+			endpoints.suppressions.list(makeContext(), {
 				reason: 'spam' as never,
 			}),
 		).rejects.toThrow();
@@ -685,7 +734,7 @@ describe('suppressions', () => {
 
 	it('rejects a company entry without a domain', async () => {
 		await expect(
-			endpoints.suppressions.create(makeContext() as never, {
+			endpoints.suppressions.create(makeContext(), {
 				entries: [{ scope: 'company', reason: 'competitor' } as never],
 			}),
 		).rejects.toThrow();
@@ -728,7 +777,7 @@ describe('suppressions', () => {
 
 	it('rejects a channel Needle does not have', async () => {
 		await expect(
-			endpoints.suppressions.check(makeContext() as never, {
+			endpoints.suppressions.check(makeContext(), {
 				identities: [{ channel: 'email', identity: 'a@b.com' } as never],
 			}),
 		).rejects.toThrow();
@@ -765,9 +814,9 @@ describe('places.search', () => {
 	});
 
 	it('rejects a search with neither a query nor a location', async () => {
-		await expect(
-			endpoints.places.search(makeContext() as never, {}),
-		).rejects.toThrow(/query or location/);
+		await expect(endpoints.places.search(makeContext(), {})).rejects.toThrow(
+			/query or location/,
+		);
 	});
 });
 
@@ -796,13 +845,10 @@ describe('compose.preview', () => {
 
 	it('rejects a compose without an identity or a prompt', async () => {
 		await expect(
-			endpoints.compose.preview(
-				makeContext() as never,
-				{
-					channel: 'linkedin',
-					connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f',
-				} as never,
-			),
+			endpoints.compose.preview(makeContext(), {
+				channel: 'linkedin',
+				connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f',
+			} as never),
 		).rejects.toThrow();
 	});
 
@@ -827,7 +873,7 @@ describe('compose.preview', () => {
 
 	it('rejects a context source the provider does not offer', async () => {
 		await expect(
-			endpoints.compose.preview(makeContext() as never, {
+			endpoints.compose.preview(makeContext(), {
 				channel: 'linkedin',
 				connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f',
 				identity: 'dana-okafor',
@@ -840,9 +886,9 @@ describe('compose.preview', () => {
 
 describe('needle error reporting', () => {
 	it('keeps Needle’s requestId, which their support asks for', async () => {
-		const error = await capture(endpoints.account.me, {}, invalidKey, {
-			status: 401,
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			capture(endpoints.account.me, {}, invalidKey, { status: 401 }),
+		);
 
 		expect(String(error)).toContain('invalid or has been revoked');
 		expect(String(error)).toContain(invalidKey.requestId);
@@ -863,17 +909,17 @@ describe('needle error reporting', () => {
 	});
 
 	it('reports validation detail on 422', async () => {
-		const error = await capture(endpoints.account.me, {}, validationError, {
-			status: 422,
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			capture(endpoints.account.me, {}, validationError, { status: 422 }),
+		);
 
 		expect(String(error)).toContain('at least one channel');
 	});
 
 	it('does not leak the API key into the error message', async () => {
-		const error = await capture(endpoints.account.me, {}, invalidKey, {
-			status: 401,
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			capture(endpoints.account.me, {}, invalidKey, { status: 401 }),
+		);
 
 		expect(String(error)).not.toContain('sk-ndl-test');
 	});
@@ -936,12 +982,15 @@ describe('needle plugin definition', () => {
 		expect(meta['campaigns.delete']?.irreversible).toBeUndefined();
 	});
 
-	it('marks sends and enrollments as writes', () => {
+	it('marks anything that can start contact as destructive', () => {
 		const meta = needle().endpointMeta ?? {};
-		expect(meta['campaigns.enroll']?.riskLevel).toBe('write');
-		expect(meta['campaigns.update']?.riskLevel).toBe('write');
+		// Activating a campaign or enrolling leads both begin outreach, so R8
+		// requires the approval a destructive call gets.
+		expect(meta['campaigns.enroll']?.riskLevel).toBe('destructive');
+		expect(meta['campaigns.update']?.riskLevel).toBe('destructive');
 		// A preview never sends, so it stays a read.
 		expect(meta['compose.preview']?.riskLevel).toBe('read');
+		expect(meta['campaigns.stopLeads']?.riskLevel).toBe('write');
 	});
 
 	it('has input and output schemas for every operation', () => {
