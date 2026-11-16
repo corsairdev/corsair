@@ -7,6 +7,7 @@ type WebhooksGetPayloadsInput = {
 	baseId: string;
 	webhookId: string;
 	cursor?: number;
+	limit?: number;
 };
 
 type WebhooksGetPayloadsResponse = AirtableWebhookPayloadsResponse;
@@ -21,7 +22,8 @@ export const getPayloads = async (
 		{
 			method: 'GET',
 			query: {
-				cursor: input.cursor ?? 0,
+				cursor: input.cursor,
+				limit: input.limit,
 			},
 		},
 	);

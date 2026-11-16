@@ -76,7 +76,8 @@ const RecordsUpdateInputSchema = z.object({
 const WebhooksGetPayloadsInputSchema = z.object({
 	baseId: z.string(),
 	webhookId: z.string(),
-	cursor: z.number().optional(),
+	cursor: z.number().int().optional(),
+	limit: z.number().int().min(1).max(50).optional(),
 });
 
 export const AirtableEndpointInputSchemas = {
@@ -198,7 +199,8 @@ const RecordsUpdateResponseSchema = z
 // Webhook payload items use unknown for payloads because they mirror Airtable’s dynamic webhook format
 const WebhooksGetPayloadsResponseSchema = z
 	.object({
-		cursorForNextPayload: z.number().optional(),
+		cursor: z.number().optional(),
+		mightHaveMore: z.boolean().optional(),
 		payloads: z.array(z.unknown()).default([]),
 	})
 	.loose();
