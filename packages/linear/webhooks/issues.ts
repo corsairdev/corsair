@@ -7,6 +7,8 @@ import { createLinearMatch, verifyLinearWebhookSignature } from './types';
 // the assignee is unchanged so the row does not lose what list/get stored.
 async function storedAssignee(
 	ctx: Parameters<LinearWebhooks['issueCreate']['handler']>[0],
+	// `assignee` is unknown: the webhook schema doesn't model it, and the value is only passed
+	// through when Linear sends one.
 	data: { id: string; assigneeId?: string | null; assignee?: unknown },
 ): Promise<LinearIssue['assignee']> {
 	if (data.assignee !== undefined)

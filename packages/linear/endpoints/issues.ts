@@ -8,6 +8,7 @@ import type {
 	IssuesListResponse,
 	IssueUpdateResponse,
 } from './types';
+import { LinearEndpointInputSchemas } from './types';
 
 // Single selection for every query that upserts issues: upsertByEntityId replaces the
 // stored row, so a thinner query would drop fields another path stored.
@@ -187,7 +188,10 @@ const ISSUE_DELETE_MUTATION = `
   }
 `;
 
-export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
+export const list: LinearEndpoints['issuesList'] = async (ctx, rawInput) => {
+	// Core doesn't apply input schemas to direct calls; parse so a bad filter or orderBy
+	// fails here instead of reaching Linear.
+	const input = LinearEndpointInputSchemas.issuesList.parse(rawInput);
 	const teamFilter = input.teamId
 		? { team: { id: { eq: input.teamId } } }
 		: undefined;

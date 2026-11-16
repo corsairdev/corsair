@@ -65,6 +65,21 @@ describe('linear issues.list filter and orderBy', () => {
 	});
 });
 
+// `never` casts: these inputs are invalid on purpose, so they can't match the input type.
+describe('linear issues.list parses its input', () => {
+	it('rejects an unsupported filter before calling Linear', async () => {
+		await expect(
+			list(ctx, { filter: { title: { like: 'x' } } } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects an unsupported orderBy before calling Linear', async () => {
+		await expect(list(ctx, { orderBy: 'priority' } as never)).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+});
+
 describe('linear issues.list input schema', () => {
 	const parse = (input: object) =>
 		LinearEndpointInputSchemas.issuesList.safeParse(input);
