@@ -616,22 +616,8 @@ await corsair.storyblok.api.datasourceEntries.delete({ datasource_entry_id: 888 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `datasource_entry` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="datasource_entry full type">
-
-```ts
-{
-  id?: number | null,
-  name?: string | null,
-  value?: string | null,
-  dimension_value?: string | null,
-  position?: number | null
-}
-```
-</Accordion>
-</AccordionGroup>
+| `id` | `number \| string` | Yes | The id (or, for a tag, the id or name) that was deleted. |
+| `deleted` | `true` | Yes | — |
 
 
 
@@ -853,23 +839,8 @@ await corsair.storyblok.api.datasources.delete({ datasource_id: 777 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `datasource` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="datasource full type">
-
-```ts
-{
-  id?: number | null,
-  name?: string | null,
-  slug?: string | null,
-  dimensions?: Record<string, any>[] | null,
-  created_at?: string | null,
-  updated_at?: string | null
-}
-```
-</Accordion>
-</AccordionGroup>
+| `id` | `number \| string` | Yes | The id (or, for a tag, the id or name) that was deleted. |
+| `deleted` | `true` | Yes | — |
 
 
 
@@ -2027,21 +1998,8 @@ await corsair.storyblok.api.tags.delete({ tag_id: '5' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tag` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="tag full type">
-
-```ts
-{
-  id?: number | null,
-  name?: string | null,
-  taggings_count?: number | null,
-  tag_on_stories?: number | null
-}
-```
-</Accordion>
-</AccordionGroup>
+| `id` | `number \| string` | Yes | The id (or, for a tag, the id or name) that was deleted. |
+| `deleted` | `true` | Yes | — |
 
 
 
