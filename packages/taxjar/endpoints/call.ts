@@ -40,19 +40,25 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 }
 
 /**
- * The deletes answer 204 with no body, so there is nothing to parse and the
- * endpoint reports what it did. Returning the raw body would turn an empty
- * answer into a fake record.
+ * The deletes answer the removed record with most fields nulled (seen live in
+ * the sandbox). That body is parsed as the provider's confirmation, and the
+ * endpoint reports success rather than handing back a half-empty record.
  */
 export async function callDelete<Input extends z.ZodType>(
 	ctx: TaxJarContext,
-	operation: { event: string; input: Input },
+	operation: {
+		event: string;
+		input: Input;
+		// The provider's confirmation body; parsing it is the check.
+		confirm: z.ZodType;
+	},
 	// unknown: raw caller input, parsed below by the operation's input schema.
 	rawInput: unknown,
 	toRequest: (parsed: z.output<Input>) => TaxJarRequest,
 ): Promise<{ success: true }> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	await makeTaxJarRequest(ctx.key, toRequest(parsed));
+	const raw = await makeTaxJarRequest(ctx.key, toRequest(parsed));
+	operation.confirm.parse(raw);
 
 	await logEventFromContext(ctx, `taxjar.${operation.event}`, {}, 'completed');
 	return { success: true };

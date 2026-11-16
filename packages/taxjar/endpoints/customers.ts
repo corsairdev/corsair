@@ -1,6 +1,8 @@
 import type { TaxJarEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
+	CustomerDeletedSchema,
 	CustomerIdsResponseSchema,
 	CustomerResponseSchema,
 	CustomersCreateInputSchema,
@@ -60,7 +62,7 @@ export const customersGet: TaxJarEndpoints['customersGet'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/customers/${parsed.customerId}`,
+			path: `/customers/${segment(parsed.customerId)}`,
 		}),
 	);
 };
@@ -81,7 +83,7 @@ export const customersUpdate: TaxJarEndpoints['customersUpdate'] = async (
 			const { customerId, ...body } = parsed;
 			return {
 				method: 'PUT',
-				path: `/customers/${customerId}`,
+				path: `/customers/${segment(customerId)}`,
 				body,
 			};
 		},
@@ -94,11 +96,15 @@ export const customersRemove: TaxJarEndpoints['customersRemove'] = async (
 ) => {
 	return callDelete(
 		ctx,
-		{ event: 'customers.remove', input: CustomersRemoveInputSchema },
+		{
+			event: 'customers.remove',
+			input: CustomersRemoveInputSchema,
+			confirm: CustomerDeletedSchema,
+		},
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/customers/${parsed.customerId}`,
+			path: `/customers/${segment(parsed.customerId)}`,
 		}),
 	);
 };

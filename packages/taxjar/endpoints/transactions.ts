@@ -1,12 +1,15 @@
 import type { TaxJarEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
+	OrderDeletedSchema,
 	OrdersCreateInputSchema,
 	OrdersGetInputSchema,
 	OrdersListInputSchema,
 	OrdersRemoveInputSchema,
 	OrdersUpdateInputSchema,
 	OrderTransactionResponseSchema,
+	RefundDeletedSchema,
 	RefundIdsResponseSchema,
 	RefundsCreateInputSchema,
 	RefundsGetInputSchema,
@@ -74,7 +77,8 @@ export const ordersGet: TaxJarEndpoints['ordersGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/transactions/orders/${parsed.transactionId}`,
+			path: `/transactions/orders/${segment(parsed.transactionId)}`,
+			query: { provider: parsed.provider },
 		}),
 	);
 };
@@ -95,7 +99,7 @@ export const ordersUpdate: TaxJarEndpoints['ordersUpdate'] = async (
 			const { transactionId, ...body } = parsed;
 			return {
 				method: 'PUT',
-				path: `/transactions/orders/${transactionId}`,
+				path: `/transactions/orders/${segment(transactionId)}`,
 				body,
 			};
 		},
@@ -108,11 +112,16 @@ export const ordersRemove: TaxJarEndpoints['ordersRemove'] = async (
 ) => {
 	return callDelete(
 		ctx,
-		{ event: 'orders.remove', input: OrdersRemoveInputSchema },
+		{
+			event: 'orders.remove',
+			input: OrdersRemoveInputSchema,
+			confirm: OrderDeletedSchema,
+		},
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/transactions/orders/${parsed.transactionId}`,
+			path: `/transactions/orders/${segment(parsed.transactionId)}`,
+			query: { provider: parsed.provider },
 		}),
 	);
 };
@@ -174,7 +183,8 @@ export const refundsGet: TaxJarEndpoints['refundsGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/transactions/refunds/${parsed.transactionId}`,
+			path: `/transactions/refunds/${segment(parsed.transactionId)}`,
+			query: { provider: parsed.provider },
 		}),
 	);
 };
@@ -195,7 +205,7 @@ export const refundsUpdate: TaxJarEndpoints['refundsUpdate'] = async (
 			const { transactionId, ...body } = parsed;
 			return {
 				method: 'PUT',
-				path: `/transactions/refunds/${transactionId}`,
+				path: `/transactions/refunds/${segment(transactionId)}`,
 				body,
 			};
 		},
@@ -208,11 +218,16 @@ export const refundsRemove: TaxJarEndpoints['refundsRemove'] = async (
 ) => {
 	return callDelete(
 		ctx,
-		{ event: 'refunds.remove', input: RefundsRemoveInputSchema },
+		{
+			event: 'refunds.remove',
+			input: RefundsRemoveInputSchema,
+			confirm: RefundDeletedSchema,
+		},
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/transactions/refunds/${parsed.transactionId}`,
+			path: `/transactions/refunds/${segment(parsed.transactionId)}`,
+			query: { provider: parsed.provider },
 		}),
 	);
 };

@@ -50,11 +50,11 @@ apiExamples:
   addresses.validate:
     call: "{ country: 'US', state: 'AZ', zip: '85297', city: 'Gilbert', street: '3301 South Greenfield Rd' }"
   taxes.calculate:
-    call: "{ from_country: 'US', from_zip: '33018', to_country: 'US', to_zip: '97035', amount: 15, shipping: 1.5 }"
+    call: "{ from_country: 'US', from_zip: '92093', from_state: 'CA', to_country: 'US', to_zip: '90002', to_state: 'CA', amount: 15, shipping: 1.5 }"
   orders.list:
     call: "{ from_transaction_date: '2026-11-01', to_transaction_date: '2026-11-30' }"
   orders.create:
-    call: "{ transaction_id: '123', transaction_date: '2026-11-15', to_country: 'US', to_zip: '90002', amount: 16.5, shipping: 1.5, sales_tax: 0.95 }"
+    call: "{ transaction_id: '123', transaction_date: '2026-11-15', to_country: 'US', to_zip: '90002', to_state: 'CA', amount: 16.5, shipping: 1.5, sales_tax: 0.95 }"
   orders.get:
     call: "{ transactionId: '123' }"
   orders.update:
@@ -64,11 +64,11 @@ apiExamples:
   refunds.list:
     call: "{ from_transaction_date: '2026-11-01', to_transaction_date: '2026-11-30' }"
   refunds.create:
-    call: "{ transaction_id: 'r1', transaction_reference_id: '123', transaction_date: '2026-11-16', to_country: 'US', amount: 16.5, shipping: 1.5 }"
+    call: "{ transaction_id: 'r1', transaction_reference_id: '123', transaction_date: '2026-11-16', to_country: 'US', to_zip: '90002', to_state: 'CA', amount: -16.5, shipping: -1.5, sales_tax: -0.95 }"
   refunds.get:
     call: "{ transactionId: 'r1' }"
   refunds.update:
-    call: "{ transactionId: 'r1', amount: 10, shipping: 1.5 }"
+    call: "{ transactionId: 'r1', transaction_reference_id: '123', amount: -10, shipping: -1.5 }"
   refunds.delete:
     call: "{ transactionId: 'r1' }"
   customers.list: {}

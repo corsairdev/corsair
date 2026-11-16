@@ -1,4 +1,5 @@
 import type { TaxJarEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	AddressesValidateInputSchema,
@@ -42,7 +43,7 @@ export const ratesGet: TaxJarEndpoints['ratesGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/rates/${parsed.zip}`,
+			path: `/rates/${segment(parsed.zip)}`,
 			// The rate route takes the address as query values, not a body. The
 			// rate itself comes back as a decimal string.
 			query: {

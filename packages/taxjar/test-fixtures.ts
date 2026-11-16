@@ -234,3 +234,38 @@ export const unprocessableResponse = {
 	status: 422,
 	error: 'Unprocessable Entity',
 };
+
+/** DELETE answers from the sandbox (11-16): the removed record, fields nulled. */
+export const orderDeleted = {
+	order: {
+		to_zip: null,
+		line_items: [],
+		shipping: null,
+		user_id: 335723,
+		sales_tax: null,
+		provider: 'api',
+		transaction_id: '123',
+		amount: null,
+	},
+};
+
+export const refundDeleted = {
+	refund: {
+		to_zip: null,
+		line_items: [],
+		shipping: null,
+		user_id: 335723,
+		sales_tax: null,
+		provider: 'api',
+		transaction_id: 'r1',
+		amount: null,
+	},
+};
+
+export const customerDeleted = {
+	customer: {
+		customer_id: '123',
+		name: 'Dunder Mifflin Paper Company',
+		exemption_type: 'wholesale',
+	},
+};

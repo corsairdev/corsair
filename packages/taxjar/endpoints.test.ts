@@ -1,16 +1,20 @@
 import { logEventFromContext } from 'corsair/core';
-import { readNumber, TaxJarAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { readNumber } from './client';
 import { Customers, Reference, Transactions } from './endpoints';
 import {
 	categories,
 	customer,
+	customerDeleted,
 	customerIds,
 	nexusRegions,
 	notFoundResponse,
 	order,
+	orderDeleted,
 	orderIds,
 	rates,
 	refund,
+	refundDeleted,
 	refundIds,
 	summaryRates,
 	taxCalculation,
@@ -74,18 +78,19 @@ function expectAuthenticated() {
 }
 
 /**
- * Resolves to the rejection reason, narrowed to the plugin's own error type.
+ * Resolves to the rejection reason, narrowed to core's ApiError, which the
+ * client passes on.
  * A promise can reject with any value, so this is the one place the reason is
  * treated as untyped before it is narrowed.
  */
-async function rejection(promise: Promise<unknown>): Promise<TaxJarAPIError> {
+async function rejection(promise: Promise<unknown>): Promise<ApiError> {
 	const caught = await promise.then(
 		() => undefined,
 		// unknown: a rejection reason has no static type.
 		(caught: unknown) => caught,
 	);
-	expect(caught).toBeInstanceOf(TaxJarAPIError);
-	return caught as TaxJarAPIError;
+	expect(caught).toBeInstanceOf(ApiError);
+	return caught as ApiError;
 }
 
 beforeEach(() => {
@@ -393,7 +398,7 @@ describe('order transactions', () => {
 		// The path id must not reappear in the body.
 		expect(lastRequest().body).toEqual({ amount: 17, shipping: 2 });
 
-		respondEmpty(204);
+		respond(orderDeleted);
 		const deleted = await invoke(Transactions.ordersRemove, {
 			transactionId: '123',
 		});
@@ -453,7 +458,7 @@ describe('refund transactions', () => {
 		expect(lastRequest()).toMatchObject({ method: 'PUT' });
 		expect(lastRequest().body).toEqual({ shipping: 2 });
 
-		respondEmpty(204);
+		respond(refundDeleted);
 		await invoke(Transactions.refundsRemove, { transactionId: 'r1' });
 		expect(lastRequest()).toMatchObject({ method: 'DELETE' });
 	});
@@ -509,7 +514,7 @@ describe('customers', () => {
 		});
 		expect(lastRequest().body).toEqual({ exemption_type: 'government' });
 
-		respondEmpty(204);
+		respond(customerDeleted);
 		const deleted = await invoke(Customers.customersRemove, {
 			customerId: '123',
 		});
@@ -525,7 +530,7 @@ describe('error handling', () => {
 		const error = await rejection(invoke(Reference.categoriesList, {}));
 
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('Unauthorized');
+		expect(error.body).toMatchObject({ error: 'Unauthorized' });
 		expect(error.message).toContain('TaxJar 401 Unauthorized');
 		expect(error.message).toContain('Not authorized for route');
 	});
@@ -536,7 +541,7 @@ describe('error handling', () => {
 		const error = await rejection(invoke(Reference.categoriesList, {}));
 
 		expect(error.status).toBe(404);
-		expect(error.code).toBe('Not Found');
+		expect(error.body).toMatchObject({ error: 'Not Found' });
 	});
 
 	it('parses a 422 with the field named in detail', async () => {
@@ -554,6 +559,51 @@ describe('error handling', () => {
 
 		expect(error.status).toBe(422);
 		expect(error.message).toContain('to_zip is not a valid postal code');
+	});
+
+	it('drops the transaction body (addresses, amounts) from the error', async () => {
+		respond(unprocessableResponse, 422);
+
+		const error = await rejection(
+			invoke(Transactions.ordersCreate, {
+				transaction_id: '123',
+				transaction_date: '2026-11-15',
+				to_country: 'US',
+				to_zip: '90002',
+				to_street: '1 Secret Lane',
+				shipping: 0,
+			}),
+		);
+
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('Secret Lane');
+	});
+
+	it('refuses a delete the provider did not confirm', async () => {
+		respond({ order: {} });
+
+		await expect(
+			invoke(Transactions.ordersRemove, { transactionId: '123' }),
+		).rejects.toThrow();
+	});
+
+	it('encodes ids and sends the provider on get', async () => {
+		respond({ order: { transaction_id: 'a/b' } });
+
+		await invoke(Transactions.ordersGet, {
+			transactionId: 'a/b',
+			provider: 'pos',
+		});
+
+		expect(lastRequest().path).toBe('/v2/transactions/orders/a%2Fb');
+		expect(lastRequest().query).toEqual({ provider: 'pos' });
+	});
+
+	it('rejects a dot-segment id', async () => {
+		await expect(
+			invoke(Transactions.ordersRemove, { transactionId: '..' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('never leaks the key through the error', async () => {

@@ -21,15 +21,28 @@ const ZipSchema = z
 	.min(1)
 	.describe('A postal code, 5 digits or ZIP+4.');
 
+// Ids go into the path encoded; `.` and `..` survive encoding as dot
+// segments, which would change the route.
+const notDotSegment = (value: string) => value !== '.' && value !== '..';
+
 const TransactionIdSchema = z
 	.string()
 	.min(1)
+	.refine(notDotSegment, 'Not a valid transaction ID.')
 	.describe('The unique transaction ID you assigned.');
 
 const CustomerIdSchema = z
 	.string()
 	.min(1)
+	.refine(notDotSegment, 'Not a valid customer ID.')
 	.describe('The unique customer ID you assigned.');
+
+const ProviderSchema = z
+	.string()
+	.optional()
+	.describe(
+		'The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with.',
+	);
 
 const IsoDateSchema = z
 	.string()
@@ -200,9 +213,12 @@ export type AddressesValidateResponse = z.infer<
 
 const NexusAddressSchema = z
 	.object({
-		id: z.string().describe('An identifier for this nexus location.'),
+		id: z
+			.string()
+			.optional()
+			.describe('An identifier for this nexus location.'),
 		country: z.string(),
-		zip: ZipSchema,
+		zip: ZipSchema.optional(),
 		state: z.string().optional(),
 		city: z.string().optional(),
 		street: z.string().optional(),
@@ -267,7 +283,8 @@ const TaxJurisdictionsSchema = z
 
 const TaxBreakdownItemSchema = z
 	.object({
-		id: z.string().nullish(),
+		// The sandbox and stored transactions answer numeric line item ids.
+		id: z.union([z.string(), z.number()]).nullish(),
 		taxable_amount: MoneySchema.nullish(),
 		tax_collectable: MoneySchema.nullish(),
 		combined_tax_rate: RateSchema.nullish(),
@@ -368,7 +385,9 @@ const TransactionBodyShape = {
 	amount: z
 		.number()
 		.optional()
-		.describe('The order amount, excluding shipping.'),
+		.describe(
+			'The total amount of the order including shipping, excluding sales tax.',
+		),
 	// Required by TaxJar on a create even when it is 0.
 	shipping: z
 		.number()
@@ -415,7 +434,8 @@ export type OrdersListResponse = z.infer<typeof TransactionIdsResponseSchema>;
 
 const TransactionLineItemOutputSchema = z
 	.object({
-		id: z.string().nullish(),
+		// A stored transaction answers numeric line item ids (seen live).
+		id: z.union([z.string(), z.number()]).nullish(),
 		quantity: z.number().nullish(),
 		product_identifier: z.string().nullish(),
 		product_tax_code: z.string().nullish(),
@@ -475,12 +495,14 @@ export type OrdersCreateInput = z.input<typeof OrdersCreateInputSchema>;
 
 export const OrdersGetInputSchema = z.object({
 	transactionId: TransactionIdSchema,
+	provider: ProviderSchema,
 });
 
 export type OrdersGetInput = z.infer<typeof OrdersGetInputSchema>;
 
 export const OrdersUpdateInputSchema = z.object({
 	transactionId: TransactionIdSchema,
+	sales_tax: z.number().optional().describe('The sales tax collected.'),
 	transaction_date: IsoDateSchema.optional(),
 	...TransactionBodyShape,
 });
@@ -489,6 +511,7 @@ export type OrdersUpdateInput = z.input<typeof OrdersUpdateInputSchema>;
 
 export const OrdersRemoveInputSchema = z.object({
 	transactionId: TransactionIdSchema,
+	provider: ProviderSchema,
 });
 
 export type OrdersRemoveInput = z.infer<typeof OrdersRemoveInputSchema>;
@@ -562,12 +585,14 @@ export type RefundsCreateInput = z.input<typeof RefundsCreateInputSchema>;
 
 export const RefundsGetInputSchema = z.object({
 	transactionId: TransactionIdSchema,
+	provider: ProviderSchema,
 });
 
 export type RefundsGetInput = z.infer<typeof RefundsGetInputSchema>;
 
 export const RefundsUpdateInputSchema = z.object({
 	transactionId: TransactionIdSchema,
+	sales_tax: z.number().optional().describe('The sales tax collected.'),
 	transaction_date: IsoDateSchema.optional(),
 	transaction_reference_id: z.string().optional(),
 	...TransactionBodyShape,
@@ -577,6 +602,7 @@ export type RefundsUpdateInput = z.input<typeof RefundsUpdateInputSchema>;
 
 export const RefundsRemoveInputSchema = z.object({
 	transactionId: TransactionIdSchema,
+	provider: ProviderSchema,
 });
 
 export type RefundsRemoveInput = z.infer<typeof RefundsRemoveInputSchema>;
@@ -764,3 +790,18 @@ export const TaxJarEndpointOutputSchemas = {
 	customersUpdate: CustomerResponseSchema,
 	customersRemove: z.object({ success: z.literal(true) }),
 } as const;
+
+/**
+ * A delete answers the record it removed, with most fields nulled, under the
+ * resource's key. The plugin checks that the provider named the record before
+ * reporting success.
+ */
+export const OrderDeletedSchema = z.object({
+	order: z.object({ transaction_id: z.string() }).loose(),
+});
+export const RefundDeletedSchema = z.object({
+	refund: z.object({ transaction_id: z.string() }).loose(),
+});
+export const CustomerDeletedSchema = z.object({
+	customer: z.object({ customer_id: z.string() }).loose(),
+});
