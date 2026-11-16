@@ -307,7 +307,7 @@ const storyBody = {
 			'The URL segment. Storyblok derives full_slug from this and the parent.',
 		),
 	content: AttributesSchema.describe(
-		'One object per component field, keyed by the component name, with a component key naming the content type.',
+		'The story content: a component key naming the content type plus that component\'s fields, keyed by field name, such as { component: "page", title: "Welcome" }.',
 	),
 	parent_id: z.number().int().nullish(),
 	group_id: z.string().nullish(),
@@ -504,9 +504,11 @@ const DatasourceEntriesListInputSchema = z.object({
 		'Only entries of this datasource.',
 	),
 	dimension: z
-		.string()
+		.union([z.number().int(), z.string().regex(/^\d+$/)])
 		.optional()
-		.describe('Only entries of this dimension value.'),
+		.describe(
+			'The numeric id of a dimension; entries then carry that dimension_value.',
+		),
 });
 
 export type DatasourceEntriesListInput = z.infer<
