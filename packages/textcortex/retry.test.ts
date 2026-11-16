@@ -4,9 +4,9 @@ import { textcortex } from './index';
 import { chatResponse, modelsResponse } from './test-fixtures';
 
 /**
- * `endpoints.test.ts` calls the HTTP client, which is built with
- * `maxRetries: 0` so only `error-handlers.ts` decides what is retried. This
- * file goes through `createCorsair` to prove that layer runs.
+ * Core's request() retries a 429 three times with Retry-After;
+ * `error-handlers.ts` decides the rest. This file goes through `createCorsair`
+ * to prove that layer runs.
  *
  * Reads replay after a 5xx, paid generations never do: a repeated completion
  * can bill a second answer.

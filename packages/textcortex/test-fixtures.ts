@@ -125,3 +125,28 @@ export const insufficientCreditsResponse = {
 	message: 'Insufficient credits',
 	status: 'fail',
 };
+
+// A Responses answer as the live API sent it on 11-16, trimmed (ids shortened).
+export const responsesLive = {
+	id: 'resp_1',
+	object: 'response',
+	created_at: 1794789042,
+	model: 'gemini-3-8-flash',
+	status: 'completed',
+	output: [
+		{
+			type: 'message',
+			id: 'msg_1',
+			role: 'assistant',
+			status: 'completed',
+			content: [
+				{ id: 'otxt_1', type: 'output_text', text: 'pong', annotations: [] },
+			],
+		},
+	],
+	output_text: 'pong',
+	usage: { input_tokens: 7, output_tokens: 2, total_tokens: 9 },
+	error: null,
+	incomplete_details: null,
+	store: false,
+};

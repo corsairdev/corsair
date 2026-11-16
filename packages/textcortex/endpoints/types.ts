@@ -244,8 +244,8 @@ export const ResponsesResponseSchema = z
 		created_at: z.number().nullish(),
 		model: z.string().nullish(),
 		status: z.string().nullish(),
-		// A content block carries a type and its text; other keys are read-only
-		// metadata the docs leave open.
+		// An output item is a message whose `content` holds `output_text` parts
+		// (live, 11-16); other keys are metadata the docs leave open.
 		output: z
 			.array(
 				z
@@ -254,9 +254,24 @@ export const ResponsesResponseSchema = z
 						text: z.string().nullish(),
 						id: z.string().nullish(),
 						role: z.string().nullish(),
+						status: z.string().nullish(),
+						content: z
+							.array(
+								z
+									.object({
+										type: z.string().nullish(),
+										text: z.string().nullish(),
+									})
+									.loose(),
+							)
+							.nullish(),
 					})
 					.loose(),
 			)
+			.nullish(),
+		incomplete_details: z
+			.object({ reason: z.string().nullish() })
+			.loose()
 			.nullish(),
 		output_text: z.string().nullish(),
 		usage: z

@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { textCortexErrorDetails } from './client';
 import { Account, Ai } from './endpoints';
+import { ResponsesResponseSchema } from './endpoints/types';
 import {
 	balanceResponse,
 	capabilitiesResponse,
@@ -10,6 +11,7 @@ import {
 	insufficientCreditsResponse,
 	modelsResponse,
 	openAiErrorResponse,
+	responsesLive,
 	responsesResponse,
 	unauthorizedResponse,
 	validationErrorResponse,
@@ -286,6 +288,14 @@ describe('images.create and web.search', () => {
 	it('rejects an empty search query', async () => {
 		await expect(invoke(Ai.webSearch, { query: '' })).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('live response shapes (11-16)', () => {
+	it('reads the text of a Responses message from its content parts', () => {
+		const result = ResponsesResponseSchema.parse(responsesLive);
+		expect(result.output?.[0]?.content?.[0]?.text).toBe('pong');
+		expect(result.incomplete_details?.reason).toBeUndefined();
 	});
 });
 
