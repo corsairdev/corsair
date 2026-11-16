@@ -63,6 +63,15 @@ describe('makeTombaRequest', () => {
 		expect(sent.headers.get('x-tomba-secret')).toBe('tb-secret');
 	});
 
+	it("waits up to the 180 s Tomba asks for, not core's 20 s", async () => {
+		const timeout = jest.spyOn(AbortSignal, 'timeout');
+		respond({ data: {} });
+
+		await makeTombaRequest(CREDENTIALS, { method: 'GET', path: 'me' });
+
+		expect(timeout).toHaveBeenCalledWith(180_000);
+	});
+
 	it('never puts either credential in the URL', async () => {
 		respond({ data: {} });
 

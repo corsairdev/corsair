@@ -124,6 +124,9 @@ export async function makeTombaRequest(
 		VERSION: '1.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// Tomba asks for at least 180 s: lookups and verifications run live
+		// against mail servers. Core's default is 20 s.
+		TIMEOUT: 180_000,
 		HEADERS: {
 			Accept: 'application/json',
 			'X-Tomba-Key': credentials.apiKey,
