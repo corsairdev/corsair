@@ -213,6 +213,23 @@ describe('contacts', () => {
 		expect(result).toEqual({ id: 'ct_1', deleted: true });
 	});
 
+	it('accepts the { id } body a live delete answers with', async () => {
+		// Live run 11-16: DELETE /contacts/:id answers 200 { "id": "ct_..." }.
+		respond(fetchMock, { id: 'ct_1' });
+
+		const result = await invoke(Contacts.remove, { contactId: 'ct_1' });
+
+		expect(result).toEqual({ id: 'ct_1', deleted: true });
+	});
+
+	it('throws when a delete answers a different id', async () => {
+		respond(fetchMock, { id: 'ct_2' });
+
+		await expect(
+			invoke(Contacts.remove, { contactId: 'ct_1' }),
+		).rejects.toThrow(/answered a delete with a body/);
+	});
+
 	it('throws when a delete answers a body, so a failure is not read as success', async () => {
 		respond(fetchMock, { exception: 'ApplicationException' });
 
@@ -282,9 +299,10 @@ describe('contactLists', () => {
 	});
 
 	it('removes a contact with the list id in the path', async () => {
-		respond(fetchMock, contactList);
+		// Live run 11-16: the route answers only the list id.
+		respond(fetchMock, { id: 'cl_1' });
 
-		await invoke(ContactLists.removeContact, {
+		const result = await invoke(ContactLists.removeContact, {
 			contactId: 'ct_1',
 			contactListId: 'cl_1',
 		});
@@ -293,6 +311,7 @@ describe('contactLists', () => {
 			method: 'DELETE',
 			path: '/v1.0/contacts/ct_1/contact-lists/cl_1',
 		});
+		expect(result).toEqual({ id: 'cl_1' });
 	});
 });
 

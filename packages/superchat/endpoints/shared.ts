@@ -59,11 +59,14 @@ export function deletion(
 	id: string,
 ): { id: string; deleted: true } {
 	if (raw !== undefined && raw !== null) {
-		const isObject =
+		// Superchat answers an empty body or `{ id }` naming the deleted record
+		// (DELETE /contacts/:id returns 200 `{ "id": "ct_..." }`). Anything else,
+		// including a different id, is not a confirmation.
+		const confirms =
 			typeof raw === 'object' &&
 			!Array.isArray(raw) &&
-			Object.keys(raw).length === 0;
-		if (!isObject) {
+			Object.entries(raw).every(([key, value]) => key === 'id' && value === id);
+		if (!confirms) {
 			throw new Error(
 				'Superchat answered a delete with a body, so nothing was confirmed. Re-read the record before assuming it was removed.',
 			);

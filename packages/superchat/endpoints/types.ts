@@ -130,7 +130,7 @@ const ContactListSchema = z
 
 export type SuperchatContactList = z.infer<typeof ContactListSchema>;
 
-/** A contact-list delete answers only the removed list's id. */
+/** A list delete, and removing a contact from a list, answer only the list id. */
 const DeletedContactListSchema = z.object({ id: z.string() }).loose();
 
 export type DeletedContactList = z.infer<typeof DeletedContactListSchema>;
@@ -626,7 +626,7 @@ export type SuperchatEndpointOutputs = {
 	contactListsDelete: DeletedContactList;
 	contactListsForContact: ContactListsForContactResponse;
 	contactListsAddContact: SuperchatContactList;
-	contactListsRemoveContact: SuperchatContactList;
+	contactListsRemoveContact: DeletedContactList;
 	conversationsList: ConversationsListResponse;
 	conversationsGet: ConversationsGetResponse;
 	conversationsUpdate: ConversationsUpdateResponse;
@@ -682,7 +682,7 @@ export const SuperchatEndpointOutputSchemas = {
 	contactListsDelete: DeletedContactListSchema,
 	contactListsForContact: ContactListsForContactResponseSchema,
 	contactListsAddContact: ContactListSchema,
-	contactListsRemoveContact: ContactListSchema,
+	contactListsRemoveContact: DeletedContactListSchema,
 	conversationsList: ConversationsListResponseSchema,
 	conversationsGet: ConversationsGetResponseSchema,
 	conversationsUpdate: ConversationsUpdateResponseSchema,
