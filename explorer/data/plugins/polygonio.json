@@ -1,0 +1,864 @@
+{
+  "id": "polygonio",
+  "displayName": "Polygon.io",
+  "description": "US stock market data from Polygon.io (now Massive) - historical aggregates, ticker reference data, snapshots and market status.",
+  "npmPackageName": "@corsair-dev/polygonio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "polygonio.api.aggregates.bars",
+      "shortPath": "aggregates.bars",
+      "description": "Read historical OHLC and volume bars for a ticker over a custom range and window size, with `next_url` paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextUrl",
+            "optional": true,
+            "type": "string",
+            "description": "The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so none of them is required."
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string",
+            "description": "A case-sensitive ticker, such as AAPL."
+          },
+          {
+            "key": "multiplier",
+            "optional": true,
+            "type": "number",
+            "description": "The size of each window, such as 5 for a 5-minute bar."
+          },
+          {
+            "key": "timespan",
+            "optional": true,
+            "type": "second | minute | hour | day | week | month | quarter | year",
+            "description": "The unit of the window."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the range, as YYYY-MM-DD or a millisecond timestamp."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End of the range, inclusive, as YYYY-MM-DD or a millisecond timestamp."
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether prices are adjusted for splits. The API adjusts by default."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Order by timestamp. The API defaults to ascending."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many base aggregates to read. Defaults to 5000, and the maximum is 50000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "queryCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "resultsCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matching rows."
+          },
+          {
+            "key": "next_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present while another page exists; pass it back to the same operation as `nextUrl`."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.aggregates.dailySummary",
+      "shortPath": "aggregates.dailySummary",
+      "description": "Read one ticker's open and close for a date, with any pre-market and after-hours prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string",
+            "description": "A case-sensitive ticker, such as AAPL."
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "The trading date, as YYYY-MM-DD."
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether prices are adjusted for splits. The API adjusts by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null",
+            "description": "The trading date."
+          },
+          {
+            "key": "open",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "high",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "low",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "close",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "volume",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "afterHours",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "preMarket",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.aggregates.marketSummary",
+      "shortPath": "aggregates.marketSummary",
+      "description": "Read every US stock's OHLC and volume for one trading date, in a single page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "The trading date, as YYYY-MM-DD. A non-trading date returns no rows."
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether prices are adjusted for splits. The API adjusts by default."
+          },
+          {
+            "key": "include_otc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include OTC securities. The API excludes them by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "queryCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "resultsCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matching rows."
+          },
+          {
+            "key": "next_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present while another page exists; pass it back to the same operation as `nextUrl`."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.aggregates.previousDay",
+      "shortPath": "aggregates.previousDay",
+      "description": "Read the previous trading day's open, high, low, close and volume",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string",
+            "description": "A case-sensitive ticker, such as AAPL."
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether prices are adjusted for splits. The API adjusts by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "queryCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "resultsCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matching rows."
+          },
+          {
+            "key": "next_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present while another page exists; pass it back to the same operation as `nextUrl`."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.market.exchanges",
+      "shortPath": "market.exchanges",
+      "description": "List the known exchanges with their MICs, names and asset classes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextUrl",
+            "optional": true,
+            "type": "string",
+            "description": "The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched."
+          },
+          {
+            "key": "asset_class",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by asset class."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by locale."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matching rows."
+          },
+          {
+            "key": "next_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present while another page exists; pass it back to the same operation as `nextUrl`."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, type?: string | null, asset_class?: string | null, locale?: string | null, name?: string | null, acronym?: string | null, mic?: string | null, operating_mic?: string | null, participant_id?: string | null, url?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.market.holidays",
+      "shortPath": "market.holidays",
+      "description": "Read upcoming market holidays with their closed or early-close hours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "holidays",
+            "optional": false,
+            "type": "{ date?: string | null, exchange?: string | null, name?: string | null, status?: string | null, open?: string | null, close?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.market.status",
+      "shortPath": "market.status",
+      "description": "Read the current trading status of the US exchanges, currency markets and index groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string | null",
+            "description": "`open`, `closed`, `extended-hours` or `early-close`."
+          },
+          {
+            "key": "earlyHours",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "afterHours",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "serverTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "exchanges",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "currencies",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "indicesGroups",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.snapshots.movers",
+      "shortPath": "snapshots.movers",
+      "description": "Read the top 20 gainers or losers in the US stock market",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "gainers | losers",
+            "description": "Whether to return the top gainers or the top losers."
+          },
+          {
+            "key": "include_otc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include OTC securities. The API excludes them by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "{ ticker?: string | null, todaysChange?: number | null, todaysChangePerc?: number | null, updated?: number | null, day?: { o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null } | null, min?: { o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null } | null, prevDay?: { o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null } | null, lastTrade?: { T?: string | null, p?: number | null, s?: number | null, x?: number | null, i?: string | null, t?: number | null, c?: number[] | null, z?: number | null } | null, lastQuote?: { P?: number | null, S?: number | null, p?: number | null, s?: number | null, t?: number | null } | null, fmv?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.snapshots.snapshot",
+      "shortPath": "snapshots.snapshot",
+      "description": "Read a ticker's latest snapshot: last day and minute bars, previous day, and the change so far today",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string",
+            "description": "A case-sensitive ticker, such as AAPL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "{ ticker?: string | null, todaysChange?: number | null, todaysChangePerc?: number | null, updated?: number | null, day?: { o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null } | null, min?: { o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null } | null, prevDay?: { o?: number | null, h?: number | null, l?: number | null, c?: number | null, v?: number | null, vw?: number | null, n?: number | null, t?: number | null, T?: string | null, otc?: boolean | null } | null, lastTrade?: { T?: string | null, p?: number | null, s?: number | null, x?: number | null, i?: string | null, t?: number | null, c?: number[] | null, z?: number | null } | null, lastQuote?: { P?: number | null, S?: number | null, p?: number | null, s?: number | null, t?: number | null } | null, fmv?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.tickers.list",
+      "shortPath": "tickers.list",
+      "description": "List ticker symbols filtered by type, market, exchange, CUSIP, CIK or name, with `next_url` paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextUrl",
+            "optional": true,
+            "type": "string",
+            "description": "The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched."
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string",
+            "description": "One exact ticker symbol."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "A ticker type code, as `tickers.types` reports them."
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string",
+            "description": "A market, such as `stocks`, `crypto`, `fx` or `otc`."
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 10383 Market Identifier Code, such as XNYS."
+          },
+          {
+            "key": "cusip",
+            "optional": true,
+            "type": "string",
+            "description": "A CUSIP. The API accepts it but never returns it."
+          },
+          {
+            "key": "cik",
+            "optional": true,
+            "type": "string",
+            "description": "An SEC Central Index Key."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Tickers as they were on this date. Defaults to the latest."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Matches within the ticker and the company name."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to return only actively traded tickers. Defaults to true."
+          },
+          {
+            "key": "tickerGte",
+            "optional": true,
+            "type": "string",
+            "description": "Ticker at or after this value."
+          },
+          {
+            "key": "tickerGt",
+            "optional": true,
+            "type": "string",
+            "description": "Ticker after this value."
+          },
+          {
+            "key": "tickerLte",
+            "optional": true,
+            "type": "string",
+            "description": "Ticker at or before this value."
+          },
+          {
+            "key": "tickerLt",
+            "optional": true,
+            "type": "string",
+            "description": "Ticker before this value."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Order by the `sort` field."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The field to sort on, such as `ticker`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 100, and the maximum is 1000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matching rows."
+          },
+          {
+            "key": "next_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present while another page exists; pass it back to the same operation as `nextUrl`."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ ticker?: string | null, name?: string | null, active?: boolean | null, type?: string | null, market?: string | null, locale?: string | null, primary_exchange?: string | null, currency_name?: string | null, cik?: string | null, composite_figi?: string | null, share_class_figi?: string | null, list_date?: string | null, delisted_utc?: string | null, last_updated_utc?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.tickers.overview",
+      "shortPath": "tickers.overview",
+      "description": "Read one ticker with its company details, optionally as it was on a given date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string",
+            "description": "A case-sensitive ticker, such as AAPL."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Read the ticker as it was on this date, which matters when a symbol was reused. Defaults to the latest."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matching rows."
+          },
+          {
+            "key": "next_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present while another page exists; pass it back to the same operation as `nextUrl`."
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ ticker?: string | null, name?: string | null, active?: boolean | null, type?: string | null, market?: string | null, locale?: string | null, primary_exchange?: string | null, currency_name?: string | null, cik?: string | null, composite_figi?: string | null, share_class_figi?: string | null, list_date?: string | null, delisted_utc?: string | null, last_updated_utc?: string | null, description?: string | null, homepage_url?: string | null, market_cap?: number | null, total_employees?: number | null, phone_number?: string | null, sic_code?: string | null, sic_description?: string | null, round_lot?: number | null, ticker_root?: string | null, ticker_suffix?: string | null, share_class_shares_outstanding?: number | null, weighted_shares_outstanding?: number | null, address?: { address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, postal_code?: string | null } | null, branding?: { logo_url?: string | null, icon_url?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "polygonio.api.tickers.types",
+      "shortPath": "tickers.types",
+      "description": "List the ticker type codes, which `tickers.list` filters on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_class",
+            "optional": true,
+            "type": "string",
+            "description": "`stocks`, `options`, `crypto`, `fx` or `indices`."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "`us` or `global`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OK`, `DELAYED` when the plan delays data, or `ERROR`."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matching rows."
+          },
+          {
+            "key": "next_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present while another page exists; pass it back to the same operation as `nextUrl`."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ code?: string | null, description?: string | null, asset_class?: string | null, locale?: string | null }[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

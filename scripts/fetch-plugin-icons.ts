@@ -169,6 +169,11 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://cdn.prod.website-files.com/65d658559223871198e78bca/6995e1929b75bc0cd4eecdfa_griptape%20favicon2.png',
 	postman:
 		'https://www.postman.com/_mk-www-next/icons/android-chrome-512x512.png',
+	// The site's apple touch icon (black cubes on a white tile, same as its
+	// light-mode favicon); twenty-icons served the dark-mode one, white on
+	// transparent, which disappears on a light background.
+	stackai:
+		'https://framerusercontent.com/images/V6q3uNO6whySwl1EXE4Yv0Krf8.png',
 	recallai:
 		'https://cdn.prod.website-files.com/620d732b1f1f7b244ac89f0e/620d732c1f1f7ba1edc89f35_Favicon%20256.png',
 	// The site only has a 32px favicon; the context.dev Brand API has the same
