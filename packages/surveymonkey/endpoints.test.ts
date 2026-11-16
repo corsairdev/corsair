@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	bulkResponseList,
 	collector,
@@ -820,6 +821,108 @@ describe('surveymonkey webhooks, users and folders', () => {
 		mockFetch(jsonResponse({ total: 0 }));
 		await expect(endpoints.surveys.list(ctx, {})).rejects.toThrow(
 			/no data array/,
+		);
+	});
+});
+
+describe('surveymonkey single-resource reads and the remaining writes', () => {
+	it('reads one question', async () => {
+		mockFetch(jsonResponse(question));
+		const result = await endpoints.questions.get(ctx, {
+			survey_id: '1234',
+			page_id: '5678',
+			question_id: '9012',
+		});
+		expect(lastCall().init.method).toBe('GET');
+		expect(pathname()).toBe('/v3/surveys/1234/pages/5678/questions/9012');
+		expect(result.id).toBe(question.id);
+	});
+
+	it('reads one collector', async () => {
+		mockFetch(jsonResponse(collector));
+		const result = await endpoints.collectors.get(ctx, {
+			collector_id: '1234',
+		});
+		expect(pathname()).toBe('/v3/collectors/1234');
+		expect(result.id).toBe(collector.id);
+	});
+
+	it('reads one message', async () => {
+		mockFetch(jsonResponse(message));
+		const result = await endpoints.messages.get(ctx, {
+			collector_id: '1234',
+			message_id: '2345',
+		});
+		expect(pathname()).toBe('/v3/collectors/1234/messages/2345');
+		expect(result.id).toBe(message.id);
+	});
+
+	it('patches a message with the writable body fields', async () => {
+		mockFetch(jsonResponse(message));
+		await endpoints.messages.update(ctx, {
+			collector_id: '1234',
+			message_id: '2345',
+			subject: 'A quick question',
+			body_html: '<p>[SurveyLink]</p>',
+		});
+		expect(lastCall().init.method).toBe('PATCH');
+		expect(pathname()).toBe('/v3/collectors/1234/messages/2345');
+		expect(sentBody()).toEqual({
+			subject: 'A quick question',
+			body_html: '<p>[SurveyLink]</p>',
+		});
+	});
+
+	it('reads one contact list', async () => {
+		mockFetch(jsonResponse(contactList));
+		const result = await endpoints.contactLists.get(ctx, {
+			contact_list_id: '1234',
+		});
+		expect(pathname()).toBe('/v3/contact_lists/1234');
+		expect(result.id).toBe(contactList.id);
+	});
+
+	it('reads one contact', async () => {
+		mockFetch(jsonResponse(contact));
+		const result = await endpoints.contacts.get(ctx, { contact_id: '1234' });
+		expect(pathname()).toBe('/v3/contacts/1234');
+		expect(result.id).toBe(contact.id);
+	});
+
+	it('deletes a contact and reports its id', async () => {
+		mockFetch(jsonResponse({}));
+		const result = await endpoints.contacts.delete(ctx, { contact_id: '1234' });
+		expect(lastCall().init.method).toBe('DELETE');
+		expect(pathname()).toBe('/v3/contacts/1234');
+		expect(result).toMatchObject({ contact_id: '1234' });
+	});
+
+	it("passes core's ApiError through without the sent body", async () => {
+		mockFetch(
+			jsonResponse(
+				{
+					error: {
+						id: '1020',
+						name: 'Bad Request',
+						message: 'Invalid email',
+						http_status_code: 400,
+					},
+				},
+				{ status: 400 },
+			),
+		);
+		const error = await endpoints.contacts
+			.create(ctx, {
+				first_name: 'John',
+				last_name: 'Doe',
+				email: 'john@example.com',
+			})
+			.catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(400);
+		expect((error as ApiError).message).toMatch(/Invalid email/);
+		expect(JSON.stringify((error as ApiError).request)).not.toContain(
+			'john@example.com',
 		);
 	});
 });
