@@ -559,9 +559,10 @@ export const JotformEndpointOutputSchemas = {
 	// unknown because cloned form returns newly created form details
 	'forms.clone': createJotformEnvelope(z.record(z.string(), z.unknown())),
 	'forms.getFiles': createJotformEnvelope(z.array(JotformFileSchema)),
-	// unknown because form questions dictionary is keyed by question ID (e.g. "1", "2")
+	// unknown because form questions dictionary is keyed by question ID (e.g. "1", "2").
+	// Live API: a form without questions returns `[]`.
 	'forms.getQuestions': createJotformEnvelope(
-		z.record(z.string(), z.unknown()),
+		z.union([z.record(z.string(), z.unknown()), z.array(z.unknown())]),
 	),
 	// unknown because single question returns the specific question configuration properties
 	'forms.getQuestion': createJotformEnvelope(

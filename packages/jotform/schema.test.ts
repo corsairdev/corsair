@@ -266,6 +266,18 @@ describe('Jotform live response shapes', () => {
 		).toBe(true);
 	});
 
+	it('forms.getQuestions: the qid-keyed map, or [] for a form without questions', () => {
+		const schema = JotformEndpointOutputSchemas['forms.getQuestions'];
+		expect(schema.safeParse(envelope([])).success).toBe(true);
+		expect(
+			schema.safeParse(
+				envelope({
+					'1': { qid: '1', type: 'control_head', text: 'corsair-plugin-test' },
+				}),
+			).success,
+		).toBe(true);
+	});
+
 	it('forms.createQuestions: a list of the added questions', () => {
 		const schema = JotformEndpointOutputSchemas['forms.createQuestions'];
 		expect(
