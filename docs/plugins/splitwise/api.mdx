@@ -832,7 +832,7 @@ await corsair.splitwise.api.expenses.update({ expense_id: 51023, description: 'B
 |------|------|----------|-------------|
 | `description` | `string` | No | A short description of the expense |
 | `cost` | `number` | No | Total cost of the expense, e.g. 25.5 |
-| `details` | `string` | No | Free-text notes |
+| `details` | `string \| null` | No | Free-text notes; null clears them |
 | `date` | `string` | No | ISO 8601 date and time the expense took place, e.g. "2026-05-02T13:00:00Z" |
 | `currency_code` | `string` | No | Currency code from `currencies.list`; defaults to the group currency |
 | `category_id` | `number` | No | A subcategory ID from `categories.list`; a parent category is rejected |
@@ -1367,7 +1367,7 @@ await corsair.splitwise.api.groups.create({ name: 'Housemates 2026', group_type:
 | `simplify_by_default` | `boolean` | No | Turn on simplify debts |
 | `users` | `object[]` | No | Members to add besides the current user, who is added automatically |
 
-Members are sent as `users__<index>__<property>` keys. A member needs either `user_id`, or `first_name` and `email`.
+Members are sent as `users__<index>__<property>` keys. A member needs either `user_id` or `email`; add `first_name` and `last_name` for someone without an account.
 
 <AccordionGroup>
 <Accordion title="users full type">
