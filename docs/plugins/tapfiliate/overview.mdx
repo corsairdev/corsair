@@ -18,7 +18,7 @@ Things to know before you call:
 - **An incomplete address is dropped silently.** Tapfiliate keeps an address only when `address`, `postal_code`, `city` and `country.code` are all present. The plugin requires them together.
 - **Approval defaults to yes.** `programs.addAffiliate` approves unless you send `approved: false` for disapproved or `approved: null` for pending, and it ignores the program's auto-approve setting.
 - **Coupon updates are three-way.** In `programs.updateAffiliate`, `coupon: null` removes the coupon, a string replaces it, and leaving the field out changes nothing.
-- **Deletes.** A 204 answers with no body, so the delete endpoints report `{ success: true }`. `payments.cancel` is a DELETE route but only cancels the payment, and `customers.cancel` stops recurring commissions; both can be undone, unlike the real deletes.
+- **Deletes.** A 204 answers with no body, so the delete endpoints report `{ success: true }`. `payments.cancel` is a DELETE route that cancels the payment (the affiliate balance goes back up by its amount, and there is no undo). `customers.cancel` stops recurring commissions and `customers.uncancel` restores them.
 - **Paging is by page number.** Lists return 25 items per page and put the next page in the `Link` header, which the plugin cannot read with the body, so pass `page` yourself and keep requesting until a page comes back short.
 - **Rate limits and plans.** Limits range from 10 to 1500 requests per window per key and endpoint. A 429 carries no `Retry-After`; the plugin retries three times with backoff. Click routes need the click-report feature, and affiliate groups need a plan that includes them, or they answer 403.
 
