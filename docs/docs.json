@@ -4525,14 +4525,6 @@
                 ]
               },
               {
-                "group": "Telnyx",
-                "pages": [
-                  "plugins/telnyx/overview",
-                  "plugins/telnyx/api",
-                  "plugins/telnyx/database"
-                ]
-              },
-              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
@@ -4565,6 +4557,14 @@
                   "plugins/telegram/api",
                   "plugins/telegram/database",
                   "plugins/telegram/webhooks"
+                ]
+              },
+              {
+                "group": "Telnyx",
+                "pages": [
+                  "plugins/telnyx/overview",
+                  "plugins/telnyx/api",
+                  "plugins/telnyx/database"
                 ]
               },
               {

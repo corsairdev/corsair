@@ -27,8 +27,6 @@ await corsair.telnyx.api.availablePhoneNumbers.list({ countryCode: 'US', localit
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `countryCode` | `string` | Yes | Two-letter country code to search in, e.g. "US". |
-| `pageNumber` | `number` | No | Page of results, starting at 1. |
-| `pageSize` | `number` | No | Results per page, from 1 to 250. |
 | `locality` | `string` | No | A city to search in. |
 | `administrativeArea` | `string` | No | A state or province to search in. |
 | `nationalDestinationCode` | `string` | No | An area code to search in. |
@@ -53,7 +51,10 @@ countryCode is required; every other filter, limit included, travels as a filter
 {
   phone_number?: string | null,
   record_type?: string | null,
-  region_information?: Record<string, string>[] | null,
+  region_information?: {
+    region_type?: string | null,
+    region_name?: string | null
+  }[] | null,
   cost_information?: {
     upfront_cost?: string | null,
     monthly_cost?: string | null,
@@ -415,7 +416,7 @@ await corsair.telnyx.api.callControlApplications.update({ applicationId: '129338
 
 Place an outbound call through a call control application, which dials the number and bills per minute
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.telnyx.api.calls.create({ connection_id: '1293384261075731500', to: '+13125550002', from: '+13125550001' });
@@ -466,7 +467,10 @@ connection_id is the call control application ID, and the call bills per minute 
   answered_at?: string | null,
   ended_at?: string | null,
   recording_id?: string | null,
-  client_state?: string | null
+  client_state?: string | null,
+  call_duration?: number | null,
+  start_time?: string | null,
+  end_time?: string | null
 }
 ```
 </Accordion>
@@ -522,7 +526,10 @@ await corsair.telnyx.api.calls.get({ callControlId: 'v3:abc123' });
   answered_at?: string | null,
   ended_at?: string | null,
   recording_id?: string | null,
-  client_state?: string | null
+  client_state?: string | null,
+  call_duration?: number | null,
+  start_time?: string | null,
+  end_time?: string | null
 }
 ```
 </Accordion>
@@ -538,7 +545,7 @@ await corsair.telnyx.api.calls.get({ callControlId: 'v3:abc123' });
 
 Hang up an active call, ending it for both legs
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.telnyx.api.calls.hangup({ callControlId: 'v3:abc123' });
@@ -579,7 +586,7 @@ await corsair.telnyx.api.calls.hangup({ callControlId: 'v3:abc123' });
 
 Read text aloud on an active call using text to speech
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.telnyx.api.calls.speak({ callControlId: 'v3:abc123', payload: 'Hello, this is a test', voice: 'female', language: 'en-US' });
@@ -591,12 +598,12 @@ await corsair.telnyx.api.calls.speak({ callControlId: 'v3:abc123', payload: 'Hel
 |------|------|----------|-------------|
 | `callControlId` | `string` | Yes | The call_control_id to speak on. |
 | `payload` | `string` | Yes | The text to read aloud. |
-| `voice` | `string` | No | The voice to use. |
+| `voice` | `string` | Yes | The voice to use, e.g. "female", "male" or a provider voice such as "Telnyx.KokoroTTS.af". |
 | `language` | `string` | No | The language of the payload, e.g. "en-US". |
 | `loop` | `number` | No | — |
 | `stop` | `string` | No | — |
 
-payload is required; voice and language control the synthesis.
+payload and voice are required; language is optional.
 
 
 
@@ -627,7 +634,7 @@ payload is required; voice and language control the synthesis.
 
 `messages.delete`
 
-Delete a message record from the messaging log; the message itself was already delivered or failed
+Cancel a scheduled message before Telnyx sends it; a message that already went out cannot be cancelled
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -639,7 +646,9 @@ await corsair.telnyx.api.messages.delete({ messageId: '40385f64-5717-4562-b3fc-2
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `messageId` | `string` | Yes | The message ID. |
+| `messageId` | `string` | Yes | The ID of the scheduled message to cancel. |
+
+Cancels a scheduled message that has not been sent yet; answers with the bare message, not { data }.
 
 
 
@@ -647,51 +656,82 @@ await corsair.telnyx.api.messages.delete({ messageId: '40385f64-5717-4562-b3fc-2
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `record_type` | `string \| null` | No | — |
+| `direction` | `string \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `messaging_profile_id` | `string \| null` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `to` | `object[] \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `num_chars` | `number \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `media` | `object[] \| null` | No | — |
+| `webhook_url` | `string \| null` | No | — |
+| `encoding` | `string \| null` | No | — |
+| `parts` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `cost` | `object \| null` | No | — |
+| `received_at` | `string \| null` | No | — |
+| `sent_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="from full type">
 
 ```ts
 {
-  record_type?: string | null,
-  direction?: string | null,
-  id: string,
-  type?: string | null,
-  messaging_profile_id?: string | null,
-  organization_id?: string | null,
-  from?: {
-    phone_number?: string | null,
-    carrier?: string | null,
-    line_type?: string | null
-  } | null,
-  to?: {
-    phone_number?: string | null,
-    status?: string | null,
-    carrier?: string | null,
-    line_type?: string | null
-  }[] | null,
-  text?: string | null,
-  num_chars?: number | null,
-  subject?: string | null,
-  media?: Record<string, string>[] | null,
-  webhook_url?: string | null,
-  encoding?: string | null,
-  parts?: number | null,
-  tags?: string[] | null,
-  cost?: {
-    amount?: string | null,
-    currency?: string | null
-  } | null,
-  received_at?: string | null,
-  sent_at?: string | null,
-  completed_at?: string | null,
-  errors?: {
-    code?: string | null,
-    title?: string | null,
-    detail?: string | null
-  }[] | null
-}
+  phone_number?: string | null,
+  carrier?: string | null,
+  line_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="to full type">
+
+```ts
+{
+  phone_number?: string | null,
+  status?: string | null,
+  carrier?: string | null,
+  line_type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null,
+  sha256?: string | null,
+  size?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="cost full type">
+
+```ts
+{
+  amount?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  code?: string | null,
+  title?: string | null,
+  detail?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -751,7 +791,12 @@ await corsair.telnyx.api.messages.get({ messageId: '40385f64-5717-4562-b3fc-2c96
   text?: string | null,
   num_chars?: number | null,
   subject?: string | null,
-  media?: Record<string, string>[] | null,
+  media?: {
+    url?: string | null,
+    content_type?: string | null,
+    sha256?: string | null,
+    size?: number | null
+  }[] | null,
   webhook_url?: string | null,
   encoding?: string | null,
   parts?: number | null,
@@ -783,7 +828,7 @@ await corsair.telnyx.api.messages.get({ messageId: '40385f64-5717-4562-b3fc-2c96
 
 Send an SMS or MMS from a Telnyx number, charging the account per part; text or at least one media URL is required
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.telnyx.api.messages.send({ from: '+13125550001', to: '+13125550002', text: 'Hello from Telnyx' });
@@ -839,7 +884,12 @@ Charges the account per part; send from, or a messaging_profile_id so the number
   text?: string | null,
   num_chars?: number | null,
   subject?: string | null,
-  media?: Record<string, string>[] | null,
+  media?: {
+    url?: string | null,
+    content_type?: string | null,
+    sha256?: string | null,
+    size?: number | null
+  }[] | null,
   webhook_url?: string | null,
   encoding?: string | null,
   parts?: number | null,
@@ -876,7 +926,7 @@ Create a messaging profile, which groups numbers and sets where inbound messages
 **Risk:** `write`
 
 ```ts
-await corsair.telnyx.api.messagingProfiles.create({ name: 'Primary profile', webhook_url: 'https://example.com/webhooks/telnyx' });
+await corsair.telnyx.api.messagingProfiles.create({ name: 'Primary profile', whitelisted_destinations: ['US'], webhook_url: 'https://example.com/webhooks/telnyx' });
 ```
 
 **Input**
@@ -887,7 +937,9 @@ await corsair.telnyx.api.messagingProfiles.create({ name: 'Primary profile', web
 | `enabled` | `boolean` | No | — |
 | `webhook_url` | `string` | No | Where inbound messages for the profile are delivered. |
 | `webhook_failover_url` | `string` | No | — |
-| `whitelisted_destinations` | `string[]` | No | Two-letter country codes the profile may send to. |
+| `whitelisted_destinations` | `string[]` | Yes | Two-letter country codes the profile may send to, e.g. ["US"]. Telnyx requires it. |
+
+whitelisted_destinations is required, e.g. ["US"].
 
 
 
@@ -1225,15 +1277,15 @@ Releases the number permanently; it cannot be recovered.
   id: string,
   record_type?: string | null,
   phone_number?: string | null,
-  country_code?: string | null,
+  country_iso_alpha2?: string | null,
   status?: string | null,
   connection_id?: string | null,
   connection_name?: string | null,
-  connection_type?: string | null,
+  customer_reference?: string | null,
   messaging_profile_id?: string | null,
   messaging_profile_name?: string | null,
   billing_group_id?: string | null,
-  number_type?: string | null,
+  phone_number_type?: string | null,
   emergency_enabled?: boolean | null,
   emergency_address_id?: string | null,
   external_pin?: string | null,
@@ -1284,15 +1336,15 @@ await corsair.telnyx.api.phoneNumbers.get({ phoneNumberId: '1293384261075731499'
   id: string,
   record_type?: string | null,
   phone_number?: string | null,
-  country_code?: string | null,
+  country_iso_alpha2?: string | null,
   status?: string | null,
   connection_id?: string | null,
   connection_name?: string | null,
-  connection_type?: string | null,
+  customer_reference?: string | null,
   messaging_profile_id?: string | null,
   messaging_profile_name?: string | null,
   billing_group_id?: string | null,
-  number_type?: string | null,
+  phone_number_type?: string | null,
   emergency_enabled?: boolean | null,
   emergency_address_id?: string | null,
   external_pin?: string | null,
@@ -1346,15 +1398,15 @@ await corsair.telnyx.api.phoneNumbers.list({ pageSize: 25 });
   id: string,
   record_type?: string | null,
   phone_number?: string | null,
-  country_code?: string | null,
+  country_iso_alpha2?: string | null,
   status?: string | null,
   connection_id?: string | null,
   connection_name?: string | null,
-  connection_type?: string | null,
+  customer_reference?: string | null,
   messaging_profile_id?: string | null,
   messaging_profile_name?: string | null,
   billing_group_id?: string | null,
-  number_type?: string | null,
+  phone_number_type?: string | null,
   emergency_enabled?: boolean | null,
   emergency_address_id?: string | null,
   external_pin?: string | null,
@@ -1387,12 +1439,12 @@ await corsair.telnyx.api.phoneNumbers.list({ pageSize: 25 });
 
 `phoneNumbers.update`
 
-Attach a number to a call control or messaging application, set its emergency address, or retag it
+Attach a number to a call control application or other connection, or change its tags, billing group or customer reference
 
 **Risk:** `write`
 
 ```ts
-await corsair.telnyx.api.phoneNumbers.update({ phoneNumberId: '1293384261075731499', messaging_profile_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+await corsair.telnyx.api.phoneNumbers.update({ phoneNumberId: '1293384261075731499', connection_id: '1293384261075731500', tags: ['support'] });
 ```
 
 **Input**
@@ -1400,11 +1452,11 @@ await corsair.telnyx.api.phoneNumbers.update({ phoneNumberId: '12933842610757314
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `phoneNumberId` | `string` | Yes | The phone number record to change. |
-| `connection_id` | `string \| null` | No | The call control or messaging application to attach the number to. |
-| `messaging_profile_id` | `string \| null` | No | The messaging profile to attach the number to. |
-| `billing_group_id` | `string \| null` | No | — |
-| `emergency_enabled` | `boolean` | No | — |
-| `emergency_address_id` | `string \| null` | No | — |
+| `connection_id` | `string` | No | The call control application or other connection to attach the number to. |
+| `billing_group_id` | `string` | No | — |
+| `customer_reference` | `string` | No | — |
+| `external_pin` | `string` | No | — |
+| `hd_voice_enabled` | `boolean` | No | — |
 | `tags` | `string[]` | No | — |
 
 
@@ -1423,15 +1475,15 @@ await corsair.telnyx.api.phoneNumbers.update({ phoneNumberId: '12933842610757314
   id: string,
   record_type?: string | null,
   phone_number?: string | null,
-  country_code?: string | null,
+  country_iso_alpha2?: string | null,
   status?: string | null,
   connection_id?: string | null,
   connection_name?: string | null,
-  connection_type?: string | null,
+  customer_reference?: string | null,
   messaging_profile_id?: string | null,
   messaging_profile_name?: string | null,
   billing_group_id?: string | null,
-  number_type?: string | null,
+  phone_number_type?: string | null,
   emergency_enabled?: boolean | null,
   emergency_address_id?: string | null,
   external_pin?: string | null,
