@@ -533,9 +533,9 @@ Answers `{ data }` of contact lists on the account, 50 a page by default.
 
 `contactLists.merge`
 
-Move every contact from this list into another. The source list is left empty, so this effectively undoes it
+Copy every contact from list_id into this list. list_id keeps its contacts
 
-**Risk:** `destructive` · **Irreversible**
+**Risk:** `write`
 
 ```ts
 await corsair.surveymonkey.api.contactLists.merge({ contact_list_id: '1234', list_id: '5678' });
@@ -548,7 +548,7 @@ await corsair.surveymonkey.api.contactLists.merge({ contact_list_id: '1234', lis
 | `contact_list_id` | `string` | Yes | — |
 | `list_id` | `string` | Yes | — |
 
-Moves every contact from this list into `list_id` and answers 200 with no body, so the plugin reports `{ source_list_id, target_list_id, merged: true }`. **The source list is left empty**, and nothing moves it back.
+Copies every contact from `list_id` into the list in the URL (`contact_list_id`) and answers that list, `{ id, name, href }`. The plugin adds `source_list_id` and `target_list_id`. `list_id` keeps its contacts.
 
 
 
@@ -556,9 +556,11 @@ Moves every contact from this list into `list_id` and answers 200 with no body, 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
 | `source_list_id` | `string` | Yes | — |
 | `target_list_id` | `string` | Yes | — |
-| `merged` | `true` | Yes | — |
 
 
 
@@ -644,7 +646,7 @@ Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. `up
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `succeeded` | `object[] \| null` | No | — |
-| `invalid` | `object[] \| null` | No | — |
+| `invalids` | `any[] \| null` | No | — |
 | `existing` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -660,14 +662,6 @@ Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. `up
   status?: string | null,
   href?: string | null,
   custom_fields?: Record<string, string> | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="invalid full type">
-
-```ts
-{
 }[] | null
 ```
 </Accordion>
@@ -1135,7 +1129,7 @@ Draft an invite or reminder for an email collector. Nothing is sent until send i
 **Risk:** `write`
 
 ```ts
-await corsair.surveymonkey.api.messages.create({ collector_id: '1234', type: 'invite', subject: 'Please take our survey', body: 'It takes two minutes.' });
+await corsair.surveymonkey.api.messages.create({ collector_id: '1234', type: 'invite', subject: 'Please take our survey', body_text: 'It takes two minutes: [SurveyLink] [OptOutLink] [PrivacyLink] [FooterLink]' });
 ```
 
 **Input**
@@ -1145,11 +1139,12 @@ await corsair.surveymonkey.api.messages.create({ collector_id: '1234', type: 'in
 | `collector_id` | `string` | Yes | — |
 | `type` | `invite \| reminder \| thank_you` | No | — |
 | `subject` | `string` | Yes | — |
-| `body` | `string` | No | — |
+| `body_text` | `string` | No | — |
+| `body_html` | `string` | No | — |
 | `from_collector_id` | `string` | No | — |
 | `from_message_id` | `string` | No | — |
 
-Answers the drafted message. `type` is `invite` for the first send, `reminder` to chase non-responders, and `thank_you` for the follow-up note. **Nothing is sent**: a message needs recipients and then `messages.send`.
+Answers the drafted message. `type` is `invite` for the first send, `reminder` to chase non-responders, and `thank_you` for the follow-up note. **Nothing is sent**: a message needs recipients and then `messages.send`. The body goes in `body_text` (or `body_html`, which wins) and must include `[SurveyLink]`, `[OptOutLink]`, `[PrivacyLink]` and `[FooterLink]`.
 
 
 
@@ -1288,7 +1283,7 @@ Answers `{ data }` of the collector's messages.
 
 Send a message to every recipient on it. This mails real people, so check the recipients first
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.surveymonkey.api.messages.send({ collector_id: '1234', message_id: '2345' });
@@ -1302,7 +1297,7 @@ await corsair.surveymonkey.api.messages.send({ collector_id: '1234', message_id:
 | `message_id` | `string` | Yes | — |
 | `scheduled_date` | `string` | No | — |
 
-Sends the message to every recipient on it. **This mails real people**, so list the recipients first. `scheduled_date` defers the send instead of sending now.
+Sends the message to every recipient on it. **This mails real people**, so list the recipients first. `scheduled_date` defers the send instead of sending now. The answer is the scheduled message (`is_scheduled`, `recipients`, `type`), which has no `id`.
 
 
 
@@ -1310,15 +1305,13 @@ Sends the message to every recipient on it. **This mails real people**, so list 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `status` | `string \| null` | No | — |
-| `type` | `string \| null` | No | — |
-| `subject` | `string \| null` | No | — |
+| `is_scheduled` | `boolean \| null` | No | — |
+| `scheduled_date` | `string \| null` | No | — |
 | `body` | `string \| null` | No | — |
-| `is_branding_enabled` | `boolean \| null` | No | — |
-| `date_created` | `string \| null` | No | — |
-| `date_modified` | `string \| null` | No | — |
-| `href` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `recipients` | `(string \| number)[] \| null` | No | — |
+| `recipient_status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 
 
 
@@ -1344,7 +1337,8 @@ await corsair.surveymonkey.api.messages.update({ collector_id: '1234', message_i
 | `message_id` | `string` | Yes | — |
 | `type` | `invite \| reminder \| thank_you` | No | — |
 | `subject` | `string` | No | — |
-| `body` | `string` | No | — |
+| `body_text` | `string` | No | — |
+| `body_html` | `string` | No | — |
 
 Sends PATCH. A change is only possible before the message is sent.
 
@@ -1722,7 +1716,12 @@ Answers the created question. **`family` and `subtype` are required** and decide
 {
   choices?: {
     text?: string,
-    position?: number
+    position?: number,
+    weight?: number,
+    image?: {
+    },
+    quiz_options?: {
+    }
   }[],
   rows?: {
   }[],
@@ -2059,7 +2058,10 @@ Sends PATCH, so only the fields you pass change. `visible: false` hides the ques
     id?: string,
     text?: string,
     position?: number,
-    visible?: boolean
+    visible?: boolean,
+    weight?: number,
+    quiz_options?: {
+    }
   }[],
   rows?: {
   }[],
@@ -2174,7 +2176,7 @@ Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. A r
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `succeeded` | `object[] \| null` | No | — |
-| `invalid` | `object[] \| null` | No | — |
+| `invalids` | `any[] \| null` | No | — |
 | `existing` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -2189,14 +2191,6 @@ Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. A r
   href?: string | null,
   survey_response_status?: string | null,
   mail_status?: string | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="invalid full type">
-
-```ts
-{
 }[] | null
 ```
 </Accordion>
@@ -2763,7 +2757,7 @@ await corsair.surveymonkey.api.responses.listBulk({ survey_id: '1234', per_page:
 | `page_ids` | `string` | No | — |
 | `question_ids` | `string` | No | — |
 
-Answers `{ data }` with each response's pages, questions and answers. `per_page` goes up to 1000. `simple: true` drops the page and question structure and keeps the answers flat, which is cheaper and easier to walk. `collector_ids`, `page_ids` and `question_ids` narrow what comes back.
+Answers `{ data }` with each response's pages, questions and answers. `per_page` goes up to 100. `simple: true` adds the question and answer text alongside the ids. `collector_ids`, `page_ids` and `question_ids` narrow what comes back.
 
 
 
@@ -3114,7 +3108,7 @@ await corsair.surveymonkey.api.surveys.list({ per_page: 50, sort_by: 'date_modif
 | `start_modified_at` | `string` | No | — |
 | `end_modified_at` | `string` | No | — |
 
-Answers `{ data, page, per_page, total, links }`. `sort_by` takes `title`, `date_modified` or `date_created`, and `sort_order` is `ASC` or `DESC`. `include` accepts `-response_count` to add the count, and `folder_id`, `title` and the two modification dates narrow the list.
+Answers `{ data, page, per_page, total, links }`. `sort_by` takes `title`, `date_modified` or `date_created`, and `sort_order` is `ASC` or `DESC`. `include` takes a comma-separated list such as `response_count,date_created` to add those fields, and `folder_id`, `title` and the two modification dates narrow the list.
 
 
 
@@ -3400,7 +3394,7 @@ Answers `{ data }` of surveys, each a template. `language` and `category` narrow
 
 Replace a survey wholesale. Fields left out reset to their defaults, so prefer update
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.surveymonkey.api.surveys.replace({ survey_id: '1234', title: 'Customer feedback' });
@@ -3582,7 +3576,7 @@ await corsair.surveymonkey.api.users.getMe({});
 
 **Input:** _empty object_
 
-Answers the account the token belongs to, with its `account_type`. This is the cheapest way to confirm a connection works. A `premier` account or better is needed for the response detail routes.
+Answers the account the token belongs to, with its `account_type`. This is the cheapest way to confirm a connection works. The plan decides how many responses the API returns.
 
 
 **Output**

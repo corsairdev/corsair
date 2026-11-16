@@ -6,17 +6,17 @@ recommendedAuth: oauth_2
 overviewNote: |
   **SurveyMonkey authenticates with an OAuth 2.0 access token.** Register an app at developer.surveymonkey.com, then either run the flow this plugin declares (`oauth_2`) or paste a private app's access token from its settings page as `surveymonkey({ key })`. A token only reaches the account that authorized it.
 
-  Every account starts on `https://api.surveymonkey.com/v3`, but the token exchange returns an `access_url` per account and the vendor says an account may live on another datacenter. Pass `surveymonkey({ apiHost })` or store it as `api_host` when it differs. Only a `surveymonkey.com` host is accepted, so a stored value cannot redirect the token.
+  Every account starts on `https://api.surveymonkey.com/v3`, but the token exchange returns an `access_url` per account and the vendor says an account may live on another datacenter. The EU datacenter is `api.eu.surveymonkey.com` and the Canadian one is `api.surveymonkey.ca`. Pass `surveymonkey({ apiHost })` or store it as `api_host` when it differs. Only a `surveymonkey.com` or `surveymonkey.ca` host is accepted, so a stored value cannot redirect the token.
 
   Things to know before you call:
 
   - **Every id is a string**, even when it looks numeric, and every list answers `{ data, page, per_page, total, links }`. Read `links.next` to page.
-  - **`responses.list` returns ids and links only.** Use `responses.listBulk` for the answers, up to 1000 a page, and `responses.get` or `responses.getDetails` for one.
+  - **`responses.list` returns ids and links only.** Use `responses.listBulk` for the answers, up to 100 a page, and `responses.get` or `responses.getDetails` for one.
   - **`responses.create` hangs off a collector**, not a survey, because a collector owns the response link.
   - **A question needs `family` and `subtype`**, which decide the question type, and at least one heading, which is the question text.
   - **`messages.create` only drafts a message.** `messages.send` is the call that mails every recipient on it.
   - **A contact needs both names**, plus an email or a phone number. The list filter takes `active`, `optout` or `bounced`.
-  - **SurveyMonkey sends `Sm-Signature`**, a base64 HMAC-SHA1 over the raw body keyed by `clientId&clientSecret`. Set both to verify a delivery; without them the plugin cannot check one.
+  - **The plugin does not receive webhook deliveries yet.** `webhooks.*` manages subscriptions. SurveyMonkey signs each delivery with `Sm-Signature`, a base64 HMAC-SHA1 over the raw body keyed by `clientId&clientSecret`; the package exports `verifySurveymonkeySignature` for checking one in your own receiver.
   - **A draft or private app is limited to 120 requests a minute and 500 a day**, reset at midnight GMT.
 examples:
   read:
@@ -97,7 +97,7 @@ apiExamples:
   messages.list:
     call: "{ collector_id: '1234' }"
   messages.create:
-    call: "{ collector_id: '1234', type: 'invite', subject: 'Please take our survey', body: 'It takes two minutes.' }"
+    call: "{ collector_id: '1234', type: 'invite', subject: 'Please take our survey', body_text: 'It takes two minutes: [SurveyLink] [OptOutLink] [PrivacyLink] [FooterLink]' }"
   messages.get:
     call: "{ collector_id: '1234', message_id: '2345' }"
   messages.update:
@@ -158,7 +158,7 @@ apiExamples:
     call: "{ title: 'Customer research' }"
 apiNotes:
   surveys.list: |
-    Answers `{ data, page, per_page, total, links }`. `sort_by` takes `title`, `date_modified` or `date_created`, and `sort_order` is `ASC` or `DESC`. `include` accepts `-response_count` to add the count, and `folder_id`, `title` and the two modification dates narrow the list.
+    Answers `{ data, page, per_page, total, links }`. `sort_by` takes `title`, `date_modified` or `date_created`, and `sort_order` is `ASC` or `DESC`. `include` takes a comma-separated list such as `response_count,date_created` to add those fields, and `folder_id`, `title` and the two modification dates narrow the list.
   surveys.create: |
     Answers the survey with an empty page list. `from_template_id` copies a template, and `from_survey_id` copies an existing survey; without either the survey is empty and needs a page and a question before it can record a response.
   surveys.get: |
@@ -200,7 +200,7 @@ apiNotes:
   responses.list: |
     Answers `{ data }` where each entry is **only an id and a link**. Use `responses.listBulk` for the answers. `status` takes `completed`, `partial`, `overquota` or `disqualified`.
   responses.listBulk: |
-    Answers `{ data }` with each response's pages, questions and answers. `per_page` goes up to 1000. `simple: true` drops the page and question structure and keeps the answers flat, which is cheaper and easier to walk. `collector_ids`, `page_ids` and `question_ids` narrow what comes back.
+    Answers `{ data }` with each response's pages, questions and answers. `per_page` goes up to 100. `simple: true` adds the question and answer text alongside the ids. `collector_ids`, `page_ids` and `question_ids` narrow what comes back.
   responses.get: |
     Answers one response with its pages, questions and answers. Each answer carries a `choice_id`, `row_id`, `col_id` or `other_id`, which you map to text with `surveys.getDetails`.
   responses.getDetails: |
@@ -224,13 +224,13 @@ apiNotes:
   messages.list: |
     Answers `{ data }` of the collector's messages.
   messages.create: |
-    Answers the drafted message. `type` is `invite` for the first send, `reminder` to chase non-responders, and `thank_you` for the follow-up note. **Nothing is sent**: a message needs recipients and then `messages.send`.
+    Answers the drafted message. `type` is `invite` for the first send, `reminder` to chase non-responders, and `thank_you` for the follow-up note. **Nothing is sent**: a message needs recipients and then `messages.send`. The body goes in `body_text` (or `body_html`, which wins) and must include `[SurveyLink]`, `[OptOutLink]`, `[PrivacyLink]` and `[FooterLink]`.
   messages.get: |
     Answers one message subject and body.
   messages.update: |
     Sends PATCH. A change is only possible before the message is sent.
   messages.send: |
-    Sends the message to every recipient on it. **This mails real people**, so list the recipients first. `scheduled_date` defers the send instead of sending now.
+    Sends the message to every recipient on it. **This mails real people**, so list the recipients first. `scheduled_date` defers the send instead of sending now. The answer is the scheduled message (`is_scheduled`, `recipients`, `type`), which has no `id`.
   recipients.list: |
     Answers `{ data }` with each recipient's `mail_status` and `survey_response_status`, which is how you tell who has answered.
   recipients.create: |
@@ -250,7 +250,7 @@ apiNotes:
   contactLists.copy: |
     Answers the new list. `name` defaults to a copy of the original name.
   contactLists.merge: |
-    Moves every contact from this list into `list_id` and answers 200 with no body, so the plugin reports `{ source_list_id, target_list_id, merged: true }`. **The source list is left empty**, and nothing moves it back.
+    Copies every contact from `list_id` into the list in the URL (`contact_list_id`) and answers that list, `{ id, name, href }`. The plugin adds `source_list_id` and `target_list_id`. `list_id` keeps its contacts.
   contacts.list: |
     Answers `{ data }`. `status` takes `active`, `optout` or `bounced`. `sort_by` and `search_by` take a field name, or a custom field number as `1` through `6`.
   contacts.create: |
@@ -278,7 +278,7 @@ apiNotes:
   webhooks.delete: |
     Answers 200 with an empty body and reports `{ webhook_id, deleted: true }`. The URL stops receiving events.
   users.getMe: |
-    Answers the account the token belongs to, with its `account_type`. This is the cheapest way to confirm a connection works. A `premier` account or better is needed for the response detail routes.
+    Answers the account the token belongs to, with its `account_type`. This is the cheapest way to confirm a connection works. The plan decides how many responses the API returns.
   folders.list: |
     Answers `{ data }` of survey folders.
   folders.create: |

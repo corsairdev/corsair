@@ -8,17 +8,17 @@ Use **SurveyMonkey** through Corsair: one client, typed API calls.
 
 **SurveyMonkey authenticates with an OAuth 2.0 access token.** Register an app at developer.surveymonkey.com, then either run the flow this plugin declares (`oauth_2`) or paste a private app's access token from its settings page as `surveymonkey({ key })`. A token only reaches the account that authorized it.
 
-Every account starts on `https://api.surveymonkey.com/v3`, but the token exchange returns an `access_url` per account and the vendor says an account may live on another datacenter. Pass `surveymonkey({ apiHost })` or store it as `api_host` when it differs. Only a `surveymonkey.com` host is accepted, so a stored value cannot redirect the token.
+Every account starts on `https://api.surveymonkey.com/v3`, but the token exchange returns an `access_url` per account and the vendor says an account may live on another datacenter. The EU datacenter is `api.eu.surveymonkey.com` and the Canadian one is `api.surveymonkey.ca`. Pass `surveymonkey({ apiHost })` or store it as `api_host` when it differs. Only a `surveymonkey.com` or `surveymonkey.ca` host is accepted, so a stored value cannot redirect the token.
 
 Things to know before you call:
 
 - **Every id is a string**, even when it looks numeric, and every list answers `{ data, page, per_page, total, links }`. Read `links.next` to page.
-- **`responses.list` returns ids and links only.** Use `responses.listBulk` for the answers, up to 1000 a page, and `responses.get` or `responses.getDetails` for one.
+- **`responses.list` returns ids and links only.** Use `responses.listBulk` for the answers, up to 100 a page, and `responses.get` or `responses.getDetails` for one.
 - **`responses.create` hangs off a collector**, not a survey, because a collector owns the response link.
 - **A question needs `family` and `subtype`**, which decide the question type, and at least one heading, which is the question text.
 - **`messages.create` only drafts a message.** `messages.send` is the call that mails every recipient on it.
 - **A contact needs both names**, plus an email or a phone number. The list filter takes `active`, `optout` or `bounced`.
-- **SurveyMonkey sends `Sm-Signature`**, a base64 HMAC-SHA1 over the raw body keyed by `clientId&clientSecret`. Set both to verify a delivery; without them the plugin cannot check one.
+- **The plugin does not receive webhook deliveries yet.** `webhooks.*` manages subscriptions. SurveyMonkey signs each delivery with `Sm-Signature`, a base64 HMAC-SHA1 over the raw body keyed by `clientId&clientSecret`; the package exports `verifySurveymonkeySignature` for checking one in your own receiver.
 - **A draft or private app is limited to 120 requests a minute and 500 a day**, reset at midnight GMT.
 
 **What you get:**
