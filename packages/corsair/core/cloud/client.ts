@@ -171,7 +171,7 @@ export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 							}
 							if (key === 'accounts') {
 								return {
-									list: () => {
+									list: async () => {
 										throw new Error(
 											'accounts.list is not supported in cloud mode yet',
 										);

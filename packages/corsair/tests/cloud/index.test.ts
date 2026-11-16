@@ -203,9 +203,9 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		expect(bodies[0]).toMatchObject({ account: 'a@x.com' });
 		expect(bodies[1]).toMatchObject({ account: 'a@x.com' });
 		expect(bodies[2]).not.toHaveProperty('account');
-		expect(() =>
+		await expect(
 			(corsair.withTenant('acme') as any).slack.accounts.list(),
-		).toThrow(/not supported in cloud mode/);
+		).rejects.toThrow(/not supported in cloud mode/);
 	});
 
 	it('multi-tenant connectionStatus.get() throws without a tenantId', () => {

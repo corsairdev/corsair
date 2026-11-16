@@ -245,8 +245,11 @@ export async function listTenants(
 			.orderBy('a.created_at', 'asc')
 			.orderBy('a.id', 'asc')
 			.execute();
+		const summaries = await Promise.all(
+			rows.map((r) => tenantAccount(internal, r)),
+		);
 
-		for (const r of rows) {
+		for (const [i, r] of rows.entries()) {
 			const tenantId = r.tenant_id;
 			if (!tenantId) continue;
 			let t = tenants.get(tenantId);
@@ -255,7 +258,7 @@ export async function listTenants(
 				tenants.set(tenantId, t);
 			}
 			const hasCredentials = !!r.dek;
-			t.accounts.push(await tenantAccount(internal, r));
+			t.accounts.push(summaries[i]!);
 			if (hasCredentials && !t.connectedPlugins.includes(r.integrationName)) {
 				t.connectedPlugins.push(r.integrationName);
 			}
