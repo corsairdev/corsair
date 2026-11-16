@@ -125,7 +125,7 @@ Read a contest entry time series, by platform
 **Risk:** `read`
 
 ```ts
-await corsair.toneden.api.attachments.entries({ attachment_id: 9100 });
+await corsair.toneden.api.attachments.entries({ attachment_id: 9100, start_date: '2026-05-01', aggregate_interval: 'day' });
 ```
 
 **Input**
@@ -133,8 +133,8 @@ await corsair.toneden.api.attachments.entries({ attachment_id: 9100 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `attachment_id` | `number` | Yes | — |
-| `start` | `string` | No | — |
-| `end` | `string` | No | — |
+| `start_date` | `string` | No | Earliest date to include; ToneDen defaults to the attachment creation |
+| `aggregate_interval` | `day \| hour \| week` | No | One data point per day (default), hour or week |
 
 
 
@@ -184,8 +184,6 @@ await corsair.toneden.api.attachments.entriesTotals({ attachment_id: 9100 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `attachment_id` | `number` | Yes | — |
-| `start` | `string` | No | — |
-| `end` | `string` | No | — |
 
 
 
@@ -270,59 +268,6 @@ await corsair.toneden.api.attachments.get({ attachment_id: 9100 });
 
 ---
 
-### list
-
-`attachments.list`
-
-List contests and social unlocks
-
-**Risk:** `read`
-
-```ts
-await corsair.toneden.api.attachments.list({ limit: 25 });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `offset` | `number` | No | — |
-| `limit` | `number` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `attachments` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="attachments full type">
-
-```ts
-{
-  id?: number | null,
-  owner_id?: number | null,
-  type?: string | null,
-  actions?: {
-  }[] | null,
-  artwork_url?: string | null,
-  title?: string | null,
-  link_path?: string | null,
-  is_private?: boolean | null,
-  is_hidden?: boolean | null,
-  secret_token?: string | null,
-  message?: string | null
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ### listForUser
 
 `attachments.listForUser`
@@ -332,7 +277,7 @@ List one user's contests and social unlocks
 **Risk:** `read`
 
 ```ts
-await corsair.toneden.api.attachments.listForUser({ user_id: 1 });
+await corsair.toneden.api.attachments.listForUser({ user_id: 1, type: 'unlock' });
 ```
 
 **Input**
@@ -340,6 +285,7 @@ await corsair.toneden.api.attachments.listForUser({ user_id: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_id` | `number` | Yes | — |
+| `type` | `unlock \| contest` | Yes | Which kind of attachment to list; ToneDen requires it |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -394,8 +340,6 @@ await corsair.toneden.api.attachments.unlockPlatforms({ attachment_id: 9100 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `attachment_id` | `number` | Yes | — |
-| `start` | `string` | No | — |
-| `end` | `string` | No | — |
 
 
 
@@ -445,8 +389,8 @@ await corsair.toneden.api.attachments.unlocks({ attachment_id: 9100 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `attachment_id` | `number` | Yes | — |
-| `start` | `string` | No | — |
-| `end` | `string` | No | — |
+| `start_date` | `string` | No | Earliest date to include; ToneDen defaults to the attachment creation |
+| `aggregate_interval` | `day \| hour \| week` | No | One data point per day (default), hour or week |
 
 
 
@@ -496,8 +440,6 @@ await corsair.toneden.api.attachments.unlocksTotals({ attachment_id: 9100 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `attachment_id` | `number` | Yes | — |
-| `start` | `string` | No | — |
-| `end` | `string` | No | — |
 
 
 
@@ -608,7 +550,7 @@ await corsair.toneden.api.attachments.update({ attachment_id: 9100, title: 'Win 
 
 Create an ad campaign on Facebook or Google; creating one can start spend, so review the body before calling
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.toneden.api.campaigns.create({ title: 'Spring tour', target_type: 'link', target: 'https://toneden.io/ada/new-single' });
@@ -890,7 +832,7 @@ await corsair.toneden.api.campaigns.list({ user_id: 1 });
 
 Change an ad campaign; only the given fields are sent
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.toneden.api.campaigns.update({ campaign_id: 7788, status: 'paused' });
@@ -1260,7 +1202,7 @@ Read one link's performance over a date window
 **Risk:** `read`
 
 ```ts
-await corsair.toneden.api.links.insights({ link_id: 48213, start: '2026-05-01', end: '2026-05-31' });
+await corsair.toneden.api.links.insights({ link_id: 48213, metric: 'clicks', start_date: '2026-05-01', end_date: '2026-05-31' });
 ```
 
 **Input**
@@ -1268,8 +1210,14 @@ await corsair.toneden.api.links.insights({ link_id: 48213, start: '2026-05-01', 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `link_id` | `number` | Yes | — |
-| `start` | `string` | No | ISO 8601 date |
-| `end` | `string` | No | ISO 8601 date |
+| `metric` | `clicks \| clickthroughs \| rsvps` | Yes | Which action to count; `rsvps` only works on livestream links |
+| `start_date` | `string` | No | ISO 8601 date; only actions after it are counted |
+| `end_date` | `string` | No | ISO 8601 date; only actions before it are counted |
+| `aggregate_interval` | `day \| hour \| week` | No | — |
+| `aggregate_geo` | `city \| country \| region` | No | — |
+| `aggregate_by_referrer` | `boolean` | No | — |
+| `aggregate_by_service` | `boolean` | No | — |
+| `for_distinct_fans` | `boolean` | No | Count one action per fan |
 
 
 
@@ -1343,87 +1291,6 @@ await corsair.toneden.api.links.insightsOverview({ link_id: 48213 });
 ```ts
 {
 }[] | null
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### list
-
-`links.list`
-
-List links, optionally filtered by target type, with offset paging
-
-**Risk:** `read`
-
-```ts
-await corsair.toneden.api.links.list({ target_type: 'music', limit: 25 });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `target_type` | `string` | No | Only links of this target type |
-| `offset` | `number` | No | — |
-| `limit` | `number` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `links` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="links full type">
-
-```ts
-{
-  id?: number | null,
-  title?: string | null,
-  user_id?: number | null,
-  target_type?: string | null,
-  target_url?: string | null,
-  custom_domain?: string | null,
-  subdomain?: string | null,
-  shortened_path?: string | null,
-  isrc?: string | null,
-  upc?: string | null,
-  click_count?: number | null,
-  clickthrough_count?: number | null,
-  show_socials?: boolean | null,
-  skip_landing_page?: boolean | null,
-  sort_services_by_clickthroughs?: boolean | null,
-  use_saved_service?: boolean | null,
-  affiliate_codes?: {
-  }[] | null,
-  pixels?: {
-  }[] | null,
-  services?: {
-  }[] | null,
-  social_settings?: {
-  } | null,
-  header?: string | null,
-  metadata_title?: string | null,
-  metadata_description?: string | null,
-  metadata_image_url?: string | null,
-  author?: string | null,
-  bg_color?: string | null,
-  bg_url?: string | null,
-  image_url?: string | null,
-  preview_url?: string | null,
-  autoplay_preview?: boolean | null,
-  button_color?: string | null,
-  call_to_action?: string | null,
-  date?: string | null,
-  location?: string | null,
-  price?: string | null
-}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1699,7 +1566,7 @@ Upload offline conversions for a user
 **Risk:** `write`
 
 ```ts
-await corsair.toneden.api.offlineConversions.upload({ user_id: 1 });
+await corsair.toneden.api.offlineConversions.upload({ user_id: 1, events: [{ user: { email: 'fan@example.com' }, event: 'Purchase', timestamp: 1779000000, value: 25 }] });
 ```
 
 **Input**
@@ -1707,6 +1574,32 @@ await corsair.toneden.api.offlineConversions.upload({ user_id: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_id` | `number` | Yes | — |
+| `events` | `object[]` | Yes | The conversion events; sent as the request body array |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  user: {
+    email?: string,
+    phone?: string,
+    id?: string,
+    city?: string,
+    state?: string,
+    country?: string,
+    zip?: string,
+    gender?: m | f,
+    first_name?: string,
+    last_name?: string
+  },
+  event: ViewContent | Search | AddToCart | AddToWishlist | InitiateCheckout | AddPaymentInfo | Purchase | Lead,
+  timestamp: number,
+  value?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1735,7 +1628,7 @@ await corsair.toneden.api.offlineConversions.upload({ user_id: 1 });
 
 Create a playbook campaign from a template
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.toneden.api.playbooks.create({ title: 'Album rollout', template_id: 12 });
@@ -1871,7 +1764,7 @@ await corsair.toneden.api.playbooks.get({ campaign_id: 9900 });
 
 Change a playbook campaign title or archive state
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.toneden.api.playbooks.update({ campaign_id: 9900, is_archived: true });
@@ -2023,7 +1916,7 @@ Add or remove people in a user list
 **Risk:** `write`
 
 ```ts
-await corsair.toneden.api.userLists.updateContacts({ list_id: 55, add: ['a@acme.com'] });
+await corsair.toneden.api.userLists.updateContacts({ list_id: 55, add: [{ email: 'a@acme.com' }] });
 ```
 
 **Input**
@@ -2031,8 +1924,46 @@ await corsair.toneden.api.userLists.updateContacts({ list_id: 55, add: ['a@acme.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `list_id` | `number` | Yes | — |
-| `add` | `string[]` | No | — |
-| `remove` | `string[]` | No | — |
+| `add` | `object[]` | No | — |
+| `remove` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="add full type">
+
+```ts
+{
+  email?: string,
+  phone?: string,
+  id?: string,
+  city?: string,
+  state?: string,
+  country?: string,
+  zip?: string,
+  gender?: m | f,
+  first_name?: string,
+  last_name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="remove full type">
+
+```ts
+{
+  email?: string,
+  phone?: string,
+  id?: string,
+  city?: string,
+  state?: string,
+  country?: string,
+  zip?: string,
+  gender?: m | f,
+  first_name?: string,
+  last_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2064,14 +1995,14 @@ Read a user profile
 **Risk:** `read`
 
 ```ts
-await corsair.toneden.api.users.get({ user_id: 1 });
+await corsair.toneden.api.users.get({ user_id: 'me' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user_id` | `number` | Yes | — |
+| `user_id` | `number \| me` | Yes | A user ID, or 'me' for the connected user |
 
 
 

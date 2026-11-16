@@ -10,17 +10,19 @@ ToneDen issues a user access token through an OAuth 2.0 authorization-code flow 
 
 Things to know:
 
-- **Every route is scoped to a user.** Campaigns and user lists take `user_id` in the path, and links and attachments can be listed per user. Find your own ID with `users.get` once connected.
+- **Every route is scoped to a user.** Campaigns and user lists take `user_id` in the path, and links and attachments are listed per user (`links.listForUser`, `attachments.listForUser` with a `type` of `unlock` or `contest`). Call `users.get` with `user_id: 'me'` to read the connected user and its ID.
 - **A taken path is a successful call.** `links.validPath` answers 200 with `valid: false` and a reason, so check the flag rather than catching an error.
 - **Writes send only what you pass.** ToneDen documents no required body field, so an update with no field is rejected here rather than sending an empty body that changes nothing.
-- **Creating a campaign can start spend.** `campaigns.create` creates a real campaign on Facebook or Google. Review the body before calling it.
+- **Campaign writes can spend money.** `campaigns.create` creates a real campaign on Facebook or Google, and a campaign or playbook update can change its budget or status, so `campaigns.create`, `campaigns.update`, `playbooks.create` and `playbooks.update` are `destructive`. Review the body before calling them.
+- **Link insights need a metric.** `links.insights` takes `metric` (`clicks`, `clickthroughs` or `rsvps`) and the window as `start_date` and `end_date`.
+- **Errors.** HTTP failures are core's `ApiError`; `describeToneDenError` reads the message out of its body.
 - **Ad campaigns need a linked ad account.** A campaign write also needs the ad account, creative and targeting fields ToneDen documents; the plugin forwards whatever you send without inventing defaults.
 - **User lists need ToneDen approval.** The custom-audience endpoints say to contact support for access.
 - **No webhooks.** ToneDen posts no events, so performance is read through the insights routes.
 
 **What you get:**
 
-- 38 typed API operations
+- 36 typed API operations
 
 ## Setup
 
@@ -123,7 +125,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.toneden.api.links.list({ limit: 25 });
+await tenant.toneden.api.links.listForUser({ user_id: 1, limit: 25 });
 ```
 
 
