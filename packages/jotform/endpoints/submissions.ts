@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformEndpointRequest } from '../client';
+import {
+	FORM_URLENCODED,
+	makeJotformEndpointRequest,
+	nestSubmissionKeys,
+	toJotformFormBody,
+} from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -36,7 +41,13 @@ export const update: JotformEndpoints['submissions.update'] = async (
 		ctx,
 		`/submission/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
-		{ method: 'POST', body: parsedInput.submission },
+		{
+			method: 'POST',
+			body: toJotformFormBody({
+				submission: nestSubmissionKeys(parsedInput.submission),
+			}),
+			contentType: FORM_URLENCODED,
+		},
 	);
 	const parsed =
 		JotformEndpointOutputSchemas['submissions.update'].parse(response);

@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformEndpointRequest } from '../client';
+import {
+	FORM_URLENCODED,
+	makeJotformEndpointRequest,
+	nestSubmissionKeys,
+	toJotformFormBody,
+} from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -177,7 +182,8 @@ export const updateSettings: JotformEndpoints['user.updateSettings'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: parsedInput,
+			body: toJotformFormBody(parsedInput),
+			contentType: FORM_URLENCODED,
 		},
 	);
 	const parsed =

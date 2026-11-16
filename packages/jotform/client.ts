@@ -48,6 +48,65 @@ export type JotformRequestOptions = {
 	contentType?: string;
 };
 
+export const FORM_URLENCODED = 'application/x-www-form-urlencoded';
+
+/**
+ * Jotform's POST endpoints read PHP-style form fields, not JSON:
+ * `{ submission: { 3: 'Ann', 4: { first: 'Ann' } } }` becomes
+ * `submission[3]=Ann&submission[4][first]=Ann`, and arrays use indexes
+ * (`questions[0][type]=control_textbox`). A `3_first` key inside a
+ * submission becomes `[3][first]`, as the official SDKs send it.
+ */
+// unknown because each endpoint's fields were already validated by its input schema.
+export function toJotformFormBody(fields: Record<string, unknown>): string {
+	const params = new URLSearchParams();
+	// unknown because field values nest arbitrarily (question settings, answers).
+	const add = (key: string, value: unknown) => {
+		if (value === undefined || value === null) return;
+		if (Array.isArray(value)) {
+			value.forEach((item, index) => add(`${key}[${index}]`, item));
+			return;
+		}
+		if (typeof value === 'object') {
+			for (const [childKey, child] of Object.entries(value)) {
+				add(`${key}[${childKey}]`, child);
+			}
+			return;
+		}
+		params.append(key, String(value));
+	};
+	for (const [key, value] of Object.entries(fields)) add(key, value);
+	return params.toString();
+}
+
+/** Splits `3_first` answer keys into `{ 3: { first } }`, matching the official SDKs. */
+// unknown because answers are keyed by question ID with dynamic values.
+export function nestSubmissionKeys(
+	submission: Record<string, unknown>,
+): Record<string, unknown> {
+	// unknown because answers are keyed by question ID with dynamic values.
+	const nested: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(submission)) {
+		const match = /^(\d+)_(.+)$/.exec(key);
+		if (!match) {
+			nested[key] = value;
+			continue;
+		}
+		const [, qid, sub] = match as unknown as [string, string, string];
+		const existing = nested[qid];
+		// unknown because the parent answer holds the other sub-fields of this question.
+		const group: Record<string, unknown> =
+			typeof existing === 'object' &&
+			existing !== null &&
+			!Array.isArray(existing)
+				? (existing as Record<string, unknown>)
+				: {};
+		group[sub] = value;
+		nested[qid] = group;
+	}
+	return nested;
+}
+
 // unknown because endpoint responses remain untrusted until their output schema validates them.
 export function makeJotformEndpointRequest(
 	context: { options: { baseUrl?: string } },

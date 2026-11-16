@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JotformEndpoints } from '..';
-import { makeJotformEndpointRequest } from '../client';
+import {
+	FORM_URLENCODED,
+	makeJotformEndpointRequest,
+	nestSubmissionKeys,
+	toJotformFormBody,
+} from '../client';
 import {
 	JotformEndpointInputSchemas,
 	JotformEndpointOutputSchemas,
@@ -28,7 +33,8 @@ export const create: JotformEndpoints['forms.create'] = async (ctx, input) => {
 	const parsedInput = JotformEndpointInputSchemas['forms.create'].parse(input);
 	const response = await makeJotformEndpointRequest(ctx, '/form', ctx.key, {
 		method: 'POST',
-		body: parsedInput,
+		body: toJotformFormBody(parsedInput),
+		contentType: FORM_URLENCODED,
 	});
 	const parsed = JotformEndpointOutputSchemas['forms.create'].parse(response);
 	await logEventFromContext(
@@ -181,7 +187,11 @@ export const createQuestion: JotformEndpoints['forms.createQuestion'] = async (
 		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/questions`,
 		ctx.key,
-		{ method: 'POST', body: parsedInput.question },
+		{
+			method: 'POST',
+			body: toJotformFormBody({ question: parsedInput.question }),
+			contentType: FORM_URLENCODED,
+		},
 	);
 	const parsed =
 		JotformEndpointOutputSchemas['forms.createQuestion'].parse(response);
@@ -202,7 +212,7 @@ export const createQuestions: JotformEndpoints['forms.createQuestions'] =
 			ctx,
 			`/form/${encodeURIComponent(parsedInput.id)}/questions`,
 			ctx.key,
-			{ method: 'PUT', body: parsedInput.questions },
+			{ method: 'PUT', body: { questions: parsedInput.questions } },
 		);
 		const parsed =
 			JotformEndpointOutputSchemas['forms.createQuestions'].parse(response);
@@ -225,7 +235,11 @@ export const updateQuestion: JotformEndpoints['forms.updateQuestion'] = async (
 		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/question/${encodeURIComponent(parsedInput.qid)}`,
 		ctx.key,
-		{ method: 'POST', body: parsedInput.question },
+		{
+			method: 'POST',
+			body: toJotformFormBody({ question: parsedInput.question }),
+			contentType: FORM_URLENCODED,
+		},
 	);
 	const parsed =
 		JotformEndpointOutputSchemas['forms.updateQuestion'].parse(response);
@@ -317,7 +331,11 @@ export const setProperties: JotformEndpoints['forms.setProperties'] = async (
 		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/properties`,
 		ctx.key,
-		{ method: 'POST', body: parsedInput.properties },
+		{
+			method: 'POST',
+			body: toJotformFormBody({ properties: parsedInput.properties }),
+			contentType: FORM_URLENCODED,
+		},
 	);
 	const parsed =
 		JotformEndpointOutputSchemas['forms.setProperties'].parse(response);
@@ -371,7 +389,11 @@ export const createReport: JotformEndpoints['forms.createReport'] = async (
 		ctx,
 		`/form/${encodeURIComponent(parsedInput.id)}/reports`,
 		ctx.key,
-		{ method: 'POST', body },
+		{
+			method: 'POST',
+			body: toJotformFormBody(body),
+			contentType: FORM_URLENCODED,
+		},
 	);
 	const parsed =
 		JotformEndpointOutputSchemas['forms.createReport'].parse(response);
@@ -424,7 +446,13 @@ export const createSubmission: JotformEndpoints['forms.createSubmission'] =
 			ctx,
 			`/form/${encodeURIComponent(parsedInput.id)}/submissions`,
 			ctx.key,
-			{ method: 'POST', body: parsedInput.submission },
+			{
+				method: 'POST',
+				body: toJotformFormBody({
+					submission: nestSubmissionKeys(parsedInput.submission),
+				}),
+				contentType: FORM_URLENCODED,
+			},
 		);
 		const parsed =
 			JotformEndpointOutputSchemas['forms.createSubmission'].parse(response);

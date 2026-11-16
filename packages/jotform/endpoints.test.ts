@@ -196,7 +196,8 @@ describe('User Endpoints', () => {
 		await User.updateSettings(ctx, { company: 'ACME Corp' });
 		expect(mockedRequest).toHaveBeenCalledWith('/user/settings', ctx.key, {
 			method: 'POST',
-			body: { company: 'ACME Corp' },
+			body: 'company=ACME+Corp',
+			contentType: 'application/x-www-form-urlencoded',
 		});
 	});
 
@@ -386,7 +387,8 @@ describe('Forms Endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith('/form', ctx.key, {
 			method: 'POST',
-			body: { properties: { title: 'New Form' } },
+			body: 'properties%5Btitle%5D=New+Form',
+			contentType: 'application/x-www-form-urlencoded',
 		});
 
 		await Forms.createForms(ctx, {
@@ -444,7 +446,8 @@ describe('Forms Endpoints', () => {
 			ctx.key,
 			{
 				method: 'POST',
-				body: { type: 'control_textbox', text: 'Email' },
+				body: 'question%5Btype%5D=control_textbox&question%5Btext%5D=Email',
+				contentType: 'application/x-www-form-urlencoded',
 			},
 		);
 
@@ -457,7 +460,7 @@ describe('Forms Endpoints', () => {
 			ctx.key,
 			{
 				method: 'PUT',
-				body: [{ type: 'control_textbox', text: 'Phone' }],
+				body: { questions: [{ type: 'control_textbox', text: 'Phone' }] },
 			},
 		);
 
@@ -471,7 +474,8 @@ describe('Forms Endpoints', () => {
 			ctx.key,
 			{
 				method: 'POST',
-				body: { text: 'Your Name' },
+				body: 'question%5Btext%5D=Your+Name',
+				contentType: 'application/x-www-form-urlencoded',
 			},
 		);
 
@@ -523,7 +527,8 @@ describe('Forms Endpoints', () => {
 			ctx.key,
 			{
 				method: 'POST',
-				body: { formWidth: '700' },
+				body: 'properties%5BformWidth%5D=700',
+				contentType: 'application/x-www-form-urlencoded',
 			},
 		);
 	});
@@ -557,7 +562,8 @@ describe('Forms Endpoints', () => {
 			ctx.key,
 			{
 				method: 'POST',
-				body: { title: 'Excel Report', list_type: 'excel' },
+				body: 'title=Excel+Report&list_type=excel',
+				contentType: 'application/x-www-form-urlencoded',
 			},
 		);
 	});
@@ -593,7 +599,8 @@ describe('Forms Endpoints', () => {
 			ctx.key,
 			{
 				method: 'POST',
-				body: { '1': 'John Doe' },
+				body: 'submission%5B1%5D=John+Doe',
+				contentType: 'application/x-www-form-urlencoded',
 			},
 		);
 
@@ -636,7 +643,8 @@ describe('Submissions, Reports, Folders, Labels, and System Endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith('/submission/sub-999', ctx.key, {
 			method: 'POST',
-			body: { '1': 'Updated' },
+			body: 'submission%5B1%5D=Updated',
+			contentType: 'application/x-www-form-urlencoded',
 		});
 
 		mockedRequest.mockResolvedValueOnce({
@@ -827,5 +835,51 @@ describe('Submissions, Reports, Folders, Labels, and System Endpoints', () => {
 		);
 		expect(err).toBeInstanceOf(ZodError);
 		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+});
+
+describe('Jotform form-encoded POST bodies', () => {
+	it('nests answers and split question keys the way Jotform reads them', async () => {
+		mockedRequest.mockResolvedValueOnce({
+			responseCode: 200,
+			message: 'success',
+			content: {
+				submissionID: '1',
+				URL: 'https://www.jotform.com/submission/1',
+			},
+		});
+		await Forms.createSubmission(ctx, {
+			id: 'form-123',
+			submission: {
+				'3': 'Ann',
+				'4': { first: 'Ann', last: 'Lee' },
+				'5_city': 'Oslo',
+			},
+		});
+		const body = mockedRequest.mock.calls[0]?.[2]?.body;
+		expect(typeof body).toBe('string');
+		expect(new URLSearchParams(String(body)).toString()).toBe(
+			new URLSearchParams([
+				['submission[3]', 'Ann'],
+				['submission[4][first]', 'Ann'],
+				['submission[4][last]', 'Lee'],
+				['submission[5][city]', 'Oslo'],
+			]).toString(),
+		);
+	});
+
+	it('indexes array fields in forms.create', async () => {
+		mockedRequest.mockResolvedValueOnce({
+			responseCode: 200,
+			message: 'success',
+			content: { id: '1' },
+		});
+		await Forms.create(ctx, {
+			questions: [{ type: 'control_textbox', text: 'Name' }],
+		});
+		const body = String(mockedRequest.mock.calls[0]?.[2]?.body);
+		expect(decodeURIComponent(body)).toBe(
+			'questions[0][type]=control_textbox&questions[0][text]=Name',
+		);
 	});
 });
