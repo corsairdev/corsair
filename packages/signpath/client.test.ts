@@ -1,35 +1,5 @@
 import util from 'node:util';
-import { describeSignpathError, SignpathAPIError, segment } from './client';
-
-describe('describeSignpathError', () => {
-	it('prefers detail over title and prefixes the status', () => {
-		expect(
-			describeSignpathError(
-				400,
-				{ title: 'Bad Request', detail: "Project 'a' exists." },
-				'fallback',
-			),
-		).toBe("SignPath 400: Project 'a' exists.");
-	});
-
-	it('falls back to title when detail is absent', () => {
-		expect(describeSignpathError(403, { title: 'Forbidden' }, 'f')).toBe(
-			'SignPath 403: Forbidden',
-		);
-	});
-
-	it('uses the fallback for a non-JSON body', () => {
-		expect(describeSignpathError(502, '<html>Bad gateway</html>', 'oops')).toBe(
-			'SignPath 502: oops',
-		);
-	});
-
-	it('does not prefix when there is no status', () => {
-		expect(describeSignpathError(undefined, { detail: 'boom' }, 'f')).toBe(
-			'boom',
-		);
-	});
-});
+import { SignpathAPIError, segment } from './client';
 
 describe('SignpathAPIError', () => {
 	it('reads the trace id from the problem body', () => {

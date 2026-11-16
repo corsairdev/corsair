@@ -1,8 +1,17 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SignpathAPIError } from './client';
 
+// HTTP failures arrive as core's ApiError; SignpathAPIError only wraps
+// transport failures, which carry no status.
 function statusOf(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.status;
 	return error instanceof SignpathAPIError ? error.status : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	return error instanceof SignpathAPIError ? error.method : undefined;
 }
 
 /**
@@ -16,7 +25,9 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof SignpathAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError || error instanceof SignpathAPIError
+					? error.retryAfter
+					: undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -51,9 +62,7 @@ export const errorHandlers = {
 	// submit or approval may already have been recorded.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SignpathAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

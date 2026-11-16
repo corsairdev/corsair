@@ -32,9 +32,9 @@ const SIGNPATH_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * SignPath answers every failure with RFC 7807 `application/problem+json`:
- * `{ type, title, status, detail, traceId }`. `detail` is the message worth
- * showing; `title` is the generic reason phrase.
+ * A transport failure (timeout, DNS, reset) before SignPath answered. HTTP
+ * errors stay core's ApiError, whose `body` is SignPath's RFC 7807
+ * `application/problem+json`: `{ type, title, status, detail, traceId }`.
  */
 export class SignpathAPIError extends Error {
 	readonly status?: number;
@@ -88,19 +88,6 @@ function readString(
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
-export function describeSignpathError(
-	status: number | undefined,
-	body: unknown, // unknown: see SignpathAPIError, the body can be anything
-	fallback: string,
-): string {
-	const record = asRecord(body);
-	// `detail` carries the specific reason ("Project 'x' already exists"),
-	// `title` only the reason phrase, so detail wins when both are present.
-	const text =
-		readString(record, 'detail') ?? readString(record, 'title') ?? fallback;
-	return status === undefined ? text : `SignPath ${status}: ${text}`;
-}
-
 export type SignpathQuery = Record<
 	string,
 	string | number | boolean | readonly string[] | undefined
@@ -118,6 +105,8 @@ export type SignpathRequest = {
 	mediaType?: string;
 	/** Accept header, for the routes that answer XML or PEM rather than JSON. */
 	accept?: string;
+	/** Return this response header instead of the body (e.g. `Location`). */
+	responseHeader?: string;
 };
 
 /** Encodes one path segment. */
@@ -130,7 +119,16 @@ export function segment(value: string | number): string {
 // does not fetch. unknown: the endpoint's output schema narrows it.
 export async function makeSignpathRequest(
 	apiKey: string,
-	{ method, path, query, body, formData, mediaType, accept }: SignpathRequest,
+	{
+		method,
+		path,
+		query,
+		body,
+		formData,
+		mediaType,
+		accept,
+		responseHeader,
+	}: SignpathRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: SIGNPATH_API_BASE,
@@ -150,6 +148,7 @@ export async function makeSignpathRequest(
 		query,
 		body,
 		formData,
+		responseHeader,
 		// A multipart body must leave Content-Type unset so fetch adds the
 		// boundary; only an explicit JSON/XML media type is worth sending.
 		mediaType:
@@ -162,21 +161,10 @@ export async function makeSignpathRequest(
 			rateLimitConfig: SIGNPATH_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause is deliberately not attached. ApiError carries the request,
-			// including the Authorization header, so `util.inspect(error)` on a
-			// wrapped cause would print the token. The fields below are everything
-			// a caller and the replay gate need.
-			throw new SignpathAPIError(
-				describeSignpathError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method: error.request.method,
-				},
-			);
-		}
+		// Core's ApiError goes through unchanged (plugin rule R8): its status and
+		// retryAfter are what the error handlers and core match on. The token sits
+		// in the config headers, not in `error.request`, so the error holds none.
+		if (error instanceof ApiError) throw error;
 		// A transport failure never held a body or headers, so its cause is safe
 		// to keep, and it is what tells a retry that nothing reached SignPath.
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.

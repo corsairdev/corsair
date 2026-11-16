@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SignpathAPIError } from './client';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 
@@ -6,28 +7,43 @@ import { errorHandlers as builtinHandlers } from './error-handlers';
 // context argument), so widen once here rather than at each call site.
 const errorHandlers: CorsairErrorHandler = builtinHandlers;
 
+// HTTP failures reach the handlers as core's ApiError, as the client throws them.
 function build(options: {
-	status?: number;
-	method?: string;
+	status: number;
+	method?: 'GET' | 'POST';
 	retryAfter?: number;
 }) {
-	return new SignpathAPIError(`SignPath ${options.status}`, {
-		status: options.status,
-		method: options.method,
-		retryAfter: options.retryAfter,
-	});
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: '/v1/org/Projects' },
+		{
+			url: 'https://app.signpath.io/Api/v1/org/Projects',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { title: 'error' },
+		},
+		`SignPath ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
-// The handler map is a Partial on the CorsairErrorHandler type.
+const context = (error: Error) => ({
+	pluginId: 'signpath',
+	operation: 'test',
+	input: {},
+	originalError: error,
+});
+
+// Picks the handler the way core does (first match in key order) and checks it
+// is the expected one, so a broken matcher fails the test.
 async function run(name: keyof typeof errorHandlers, error: Error) {
+	const selected = Object.entries(errorHandlers).find(([, entry]) =>
+		entry?.match(error, context(error)),
+	);
+	expect(selected?.[0]).toBe(name);
 	const entry = errorHandlers[name];
 	if (!entry) throw new Error(`missing handler ${name}`);
-	return entry.handler(error, {
-		pluginId: 'signpath',
-		operation: 'test',
-		input: {},
-		originalError: error,
-	});
+	return entry.handler(error, context(error));
 }
 
 describe('signpath error handlers', () => {
@@ -118,11 +134,9 @@ describe('signpath error handlers', () => {
 	});
 });
 
-describe('signpath error classification', () => {
-	it('reads auth and permission errors from the status', () => {
-		expect(build({ status: 401 }).isAuthError).toBe(true);
-		expect(build({ status: 401 }).isPermissionError).toBe(false);
-		expect(build({ status: 403 }).isPermissionError).toBe(true);
-		expect(build({ status: 400 }).isAuthError).toBe(false);
+describe('signpath transport errors', () => {
+	it('falls through to DEFAULT without a status', async () => {
+		const error = new SignpathAPIError('fetch failed', { method: 'GET' });
+		await expect(run('DEFAULT', error)).resolves.toEqual({ maxRetries: 0 });
 	});
 });
