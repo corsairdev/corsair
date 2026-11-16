@@ -81,7 +81,10 @@ export const create: SplitwiseEndpoints['groupsCreate'] = async (ctx, input) =>
 				...flattenGroupUsers(parsed.users ?? []),
 			},
 		}),
-		{ log: (parsed) => ({ name: parsed.name }) },
+		{
+			// The group name is free text, so only the member count is logged.
+			log: (parsed) => ({ members: parsed.users?.length ?? 0 }),
+		},
 	);
 
 export const remove: SplitwiseEndpoints['groupsDelete'] = async (ctx, input) =>

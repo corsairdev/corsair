@@ -180,6 +180,13 @@ describe('groups', () => {
 			users__0__email: 'grace@example.com',
 			users__1__user_id: 491923,
 		});
+		// The group name is free text, so only the member count is logged.
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'splitwise.groups.create',
+			{ members: 2 },
+			'completed',
+		);
 	});
 
 	it('groups.create rejects a member with a name but no email', async () => {
@@ -220,7 +227,7 @@ describe('groups', () => {
 			path: '/api/v3.0/delete_group/321',
 			method: 'POST',
 		});
-		expect(result.success).toBe(true);
+		expect(result).toMatchObject({ success: true });
 	});
 
 	it('groups.delete throws when Splitwise answers 200 with success false', async () => {
@@ -389,6 +396,25 @@ describe('friends', () => {
 		});
 	});
 
+	it('friends.delete accepts the documented { success: true, errors: [] }', async () => {
+		respond({ success: true, errors: [] });
+
+		const result = await invoke(FriendsEndpoints.delete, { friend_id: 491923 });
+
+		expect(result).toMatchObject({ success: true });
+	});
+
+	it('friends.delete reports the failure map on success: false', async () => {
+		respond({
+			success: false,
+			errors: { base: ['There was an issue deleting that friendship'] },
+		});
+
+		await expect(
+			invoke(FriendsEndpoints.delete, { friend_id: 491923 }),
+		).rejects.toThrow('There was an issue deleting that friendship');
+	});
+
 	it('friends.delete POSTs delete_friend/{id}', async () => {
 		respond(success);
 
@@ -509,6 +535,39 @@ describe('expenses', () => {
 				users: [
 					{ user_id: 270896089, paid_share: 25, owed_share: 10 },
 					{ user_id: 491923, paid_share: 0, owed_share: 10 },
+				],
+			}),
+		);
+
+		expect((error as Error).name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('expenses.create refuses sub-cent shares that would round off the cost', async () => {
+		// 0.125 + 0.125 = 0.25, but each share would be sent as "0.13".
+		const error = await captureError(
+			invoke(ExpensesEndpoints.create, {
+				description: 'Gum',
+				cost: 0.25,
+				users: [
+					{ user_id: 270896089, paid_share: 0.25, owed_share: 0.125 },
+					{ user_id: 491923, paid_share: 0, owed_share: 0.125 },
+				],
+			}),
+		);
+
+		expect((error as Error).name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('expenses.update refuses sub-cent shares too', async () => {
+		const error = await captureError(
+			invoke(ExpensesEndpoints.update, {
+				expense_id: 51023,
+				cost: 0.25,
+				users: [
+					{ user_id: 270896089, paid_share: 0.25, owed_share: 0.125 },
+					{ user_id: 491923, paid_share: 0, owed_share: 0.125 },
 				],
 			}),
 		);

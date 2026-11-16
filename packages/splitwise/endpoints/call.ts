@@ -47,11 +47,17 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 
 /** Reads the `success` flag every conditional-write route returns. */
 export function requireSuccess(
-	result: { success: boolean; errors?: Record<string, string[]> | null },
+	result: {
+		success: boolean;
+		errors?: Record<string, string[]> | string[] | null;
+	},
 	action: string,
 ): void {
 	if (result.success) return;
-	const detail = Object.entries(result.errors ?? {})
+	const errors = Array.isArray(result.errors)
+		? { base: result.errors }
+		: (result.errors ?? {});
+	const detail = Object.entries(errors)
 		.flatMap(([field, messages]) =>
 			messages.map((entry) => `${field}: ${entry}`),
 		)
@@ -60,7 +66,7 @@ export function requireSuccess(
 		detail
 			? `Splitwise did not ${action}: ${detail}`
 			: `Splitwise did not ${action}`,
-		result.errors ?? {},
+		errors,
 	);
 }
 

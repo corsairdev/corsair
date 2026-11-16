@@ -347,10 +347,13 @@ const CreateGroupOutputSchema = z.object({ group: GroupSchema }).loose();
 export type CreateGroupOutput = z.output<typeof CreateGroupOutputSchema>;
 
 /** Routes that answer `{ success }` and may also carry an `errors` map. */
+// Splitwise documents a successful delete as `{ success: true, errors: [] }`
+// and a failure as `{ success: false, errors: { base: [...] } }`, so `errors`
+// is read as either an array or the field map.
 const SuccessOutputSchema = z
 	.object({
 		success: z.boolean(),
-		errors: WriteErrorsSchema.nullish(),
+		errors: z.union([WriteErrorsSchema, z.array(z.string())]).nullish(),
 	})
 	.loose();
 export type SuccessOutput = z.output<typeof SuccessOutputSchema>;
@@ -483,14 +486,30 @@ const RepeatIntervalSchema = z.enum([
 	'yearly',
 ]);
 
+/** Whole cents of an amount that has at most two decimal places. */
+function toCents(value: number): number {
+	return Math.round(value * 100);
+}
+
+/**
+ * Money goes to Splitwise as a two-decimal string, so an amount with more
+ * decimals would be rounded on the way and could break the shares-equal-cost
+ * check. Such amounts are refused instead.
+ */
+const MoneyAmount = z
+	.number()
+	.refine((value) => Math.abs(value * 100 - toCents(value)) < 1e-6, {
+		message: 'Use at most two decimal places',
+	});
+
 const ExpenseShareSchema = z
 	.object({
 		user_id: z.number().int().positive().optional(),
 		first_name: z.string().min(1).optional(),
 		last_name: z.string().min(1).optional(),
 		email: z.email().optional(),
-		paid_share: z.number().min(0).describe('What this user paid, e.g. 25.5'),
-		owed_share: z.number().min(0).describe('What this user owes, e.g. 13.55'),
+		paid_share: MoneyAmount.min(0).describe('What this user paid, e.g. 25.5'),
+		owed_share: MoneyAmount.min(0).describe('What this user owes, e.g. 13.55'),
 	})
 	.superRefine((value, ctx) => {
 		// Splitwise identifies a share by `user_id`, or by the person's full name
@@ -515,7 +534,7 @@ const ExpenseShareSchema = z
  */
 const ExpenseFields = {
 	description: z.string().min(1).describe('A short description of the expense'),
-	cost: z.number().describe('Total cost of the expense, e.g. 25.5'),
+	cost: MoneyAmount.describe('Total cost of the expense, e.g. 25.5'),
 	details: z.string().optional().describe('Free-text notes'),
 	date: z.iso
 		.datetime()
@@ -640,26 +659,26 @@ const CreateExpenseInputSchema = z
 		}
 		// A share list that does not add up to the cost is a data error the API
 		// answers with a 400, and the user's own balance silently absorbs it.
+		// Compared in whole cents, the same amounts the request will carry.
 		const paid = value.users.reduce(
-			(total, share) => total + share.paid_share,
+			(total, share) => total + toCents(share.paid_share),
 			0,
 		);
 		const owed = value.users.reduce(
-			(total, share) => total + share.owed_share,
+			(total, share) => total + toCents(share.owed_share),
 			0,
 		);
-		const tolerance = 0.005;
-		if (Math.abs(paid - value.cost) > tolerance) {
+		if (paid !== toCents(value.cost)) {
 			ctx.addIssue({
 				code: 'custom',
-				message: `The paid shares add up to ${paid}, not the cost of ${value.cost}`,
+				message: `The paid shares add up to ${paid / 100}, not the cost of ${value.cost}`,
 				path: ['users'],
 			});
 		}
-		if (Math.abs(owed - value.cost) > tolerance) {
+		if (owed !== toCents(value.cost)) {
 			ctx.addIssue({
 				code: 'custom',
-				message: `The owed shares add up to ${owed}, not the cost of ${value.cost}`,
+				message: `The owed shares add up to ${owed / 100}, not the cost of ${value.cost}`,
 				path: ['users'],
 			});
 		}
@@ -703,21 +722,17 @@ const UpdateExpenseInputSchema = z
 			return;
 		}
 		const paid = value.users.reduce(
-			(total, share) => total + share.paid_share,
+			(total, share) => total + toCents(share.paid_share),
 			0,
 		);
 		const owed = value.users.reduce(
-			(total, share) => total + share.owed_share,
+			(total, share) => total + toCents(share.owed_share),
 			0,
 		);
-		const tolerance = 0.005;
-		if (
-			Math.abs(paid - cost) > tolerance ||
-			Math.abs(owed - cost) > tolerance
-		) {
+		if (paid !== toCents(cost) || owed !== toCents(cost)) {
 			ctx.addIssue({
 				code: 'custom',
-				message: `The shares add up to paid ${paid} and owed ${owed}, not the cost of ${cost}`,
+				message: `The shares add up to paid ${paid / 100} and owed ${owed / 100}, not the cost of ${cost}`,
 				path: ['users'],
 			});
 		}
