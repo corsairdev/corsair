@@ -229,6 +229,10 @@
     "from": "https://media.brand.dev/3a625850-b311-4774-af07-fdc97f5c6b96.svg",
     "note": "found with the context.dev Brand API for geoapify.com"
   },
+  "giftup": {
+    "from": "https://media.brand.dev/26fd6213-641e-4830-a940-9ff3acf6980d.svg",
+    "note": "found with the context.dev Brand API for giftup.app"
+  },
   "github": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/github.svg"
   },
@@ -237,6 +241,10 @@
   },
   "gladia": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/gladia.svg"
+  },
+  "gleap": {
+    "from": "https://media.brand.dev/5d89b105-20d6-49f1-a7da-aab4efc80df8.svg",
+    "note": "found with the context.dev Brand API for gleap.io"
   },
   "gmail": {
     "from": "https://svgl.app/library/gmail.svg"
@@ -342,6 +350,10 @@
   "monday": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/monday.svg"
   },
+  "motion": {
+    "from": "https://media.brand.dev/1c6611c2-f27a-4408-93a2-d0880388cfb7.svg",
+    "note": "found with the context.dev Brand API for usemotion.com"
+  },
   "nanonets": {
     "from": "https://media.brand.dev/549cc934-c570-47ce-99fb-2ac226c2a33d.svg",
     "note": "found with the context.dev Brand API for nanonets.com"
@@ -386,6 +398,10 @@
   },
   "perplexityai": {
     "from": "https://svgl.app/library/perplexity.svg"
+  },
+  "polygon": {
+    "from": "https://media.brand.dev/e41a6d48-ea91-4124-9a31-b4840f398e69.svg",
+    "note": "found with the context.dev Brand API for polygon.technology"
   },
   "posthog": {
     "from": "https://svgl.app/library/posthog.svg"
