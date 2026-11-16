@@ -156,10 +156,10 @@ export async function makeKalshiRequest<T>(
 			rateLimitConfig: NO_HTTP_RETRIES,
 		});
 	} catch (error) {
+		// Core's ApiError goes through unchanged (PLUGIN_PR_RULES R8): its status,
+		// retryAfter and type are what core and the error handlers read.
 		if (error instanceof ApiError) {
-			throw new KalshiAPIError(error.message, String(error.status), {
-				cause: error,
-			});
+			throw error;
 		}
 		if (error instanceof Error) {
 			throw new KalshiAPIError(error.message, undefined, { cause: error });

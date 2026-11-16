@@ -2,7 +2,6 @@ import crypto from 'node:crypto';
 import { ApiError } from 'corsair/http';
 import {
 	KALSHI_API_BASES,
-	KalshiAPIError,
 	makeKalshiRequest,
 	parseKalshiCredentials,
 	serializeKalshiCredentials,
@@ -169,25 +168,24 @@ describe('makeKalshiRequest', () => {
 		expect(first).not.toBe(second);
 	});
 
-	it('wraps an ApiError and keeps its status for the 429 handler', async () => {
-		mockRequest.mockRejectedValueOnce(
-			new ApiError(
-				{ method: 'GET', url: '/exchange/status' },
-				{
-					url: 'u',
-					status: 429,
-					statusText: 'Too Many Requests',
-					body: { error: 'too many requests' },
-				} as never,
-				'Too Many Requests',
-			),
+	it('lets an ApiError through unchanged, status and all, for the 429 handler', async () => {
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/exchange/status' },
+			{
+				url: 'u',
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: 'too many requests' },
+			} as never,
+			'Too Many Requests',
 		);
+		mockRequest.mockRejectedValueOnce(apiError);
 
 		const error = await makeKalshiRequest('/exchange/status', credentials())
-			// unknown: a rejection can carry any value; the next line checks its type.
+			// unknown: a rejection can carry any value; the next line checks it.
 			.catch((e: unknown) => e);
-		expect(error).toBeInstanceOf(KalshiAPIError);
-		expect((error as KalshiAPIError).status).toBe(429);
+		expect(error).toBe(apiError);
+		expect((error as { status: number }).status).toBe(429);
 	});
 });
 
