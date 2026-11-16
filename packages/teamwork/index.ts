@@ -2282,7 +2282,7 @@ const teamworkEndpointMeta = {
 		description: 'Get all Reminders on a Task',
 	},
 	v1_post_tasks_id_reminders_json: {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a Reminder on a Task',
 	},
 	v1_put_taskreminders_id_json: {
@@ -2319,7 +2319,7 @@ const teamworkEndpointMeta = {
 	},
 	v1_get_people_json: { riskLevel: 'read', description: 'Get All People' },
 	v1_post_people_json: {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Creates a new User Account',
 	},
 	v1_get_calendarevents_eventid_availablepeople_json: {
@@ -2774,7 +2774,7 @@ const teamworkEndpointMeta = {
 		description: 'Get most recent Update',
 	},
 	v1_post_projects_projectid_update_json: {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a Project Update',
 	},
 	v1_put_projects_updates_updateid_json: {
@@ -2857,7 +2857,7 @@ const teamworkEndpointMeta = {
 		description: 'Delete a team by id',
 	},
 	v1_put_teams_id_people_json: {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add or replace members of a team',
 	},
 	v1_get_projects_id_teams_json: {
@@ -3402,7 +3402,7 @@ const teamworkEndpointMeta = {
 		description: 'Get the parent project for a specific task.',
 	},
 	v3_post_projects_api_v3_tasks_taskid_reminders_json: {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add task reminder',
 	},
 	v3_delete_projects_api_v3_tasks_taskid_reminders_reminderid_json: {

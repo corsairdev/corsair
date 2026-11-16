@@ -290,6 +290,23 @@ describe('documented operation routes', () => {
 		).toBe('destructive');
 	});
 
+	it('marks operations that email or notify people, or replace a member list, destructive', () => {
+		const plugin = teamwork({ siteName: 'teamwork-test' });
+		for (const id of [
+			// Sends an account invitation unless sendInvite is false.
+			'v1_post_people_json',
+			// Notifies the people in notifyIds.
+			'v1_post_projects_projectid_update_json',
+			// Reminders email, text or notify a person at the set time.
+			'v1_post_tasks_id_reminders_json',
+			'v3_post_projects_api_v3_tasks_taskid_reminders_json',
+			// action defaults to "replace", which drops every other member.
+			'v1_put_teams_id_people_json',
+		] as const) {
+			expect(plugin.endpointMeta?.[id]?.riskLevel).toBe('destructive');
+		}
+	});
+
 	it('supports direct API-key use without stored tenant metadata when overridden', async () => {
 		await expect(
 			resolveTeamworkSiteName('single-site', undefined),
