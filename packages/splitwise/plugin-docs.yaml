@@ -86,7 +86,7 @@ apiExamples:
 apiNotes:
   users.get: 'Splitwise only answers for people you share a group or an expense with; anyone else is a 403.'
   users.update: 'The ID travels in the path, so it cannot also be changed through the body.'
-  groups.create: 'Members are sent as `users__<index>__<property>` keys. A member needs either `user_id`, or `first_name` and `email`.'
+  groups.create: 'Members are sent as `users__<index>__<property>` keys. A member needs either `user_id` or `email`; add `first_name` and `last_name` for someone without an account.'
   groups.delete: 'Deletes the group and every expense in it. The group can be restored with `groups.undelete`.'
   groups.undelete: 'This route reports `errors` as an array of strings rather than the map every other write uses.'
   groups.removeUser: 'Splitwise refuses while the user has a non-zero balance.'

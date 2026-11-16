@@ -65,7 +65,7 @@ export function flattenShares(
 function expenseBody(parsed: {
 	description?: string;
 	cost?: number;
-	details?: string;
+	details?: string | null;
 	date?: string;
 	currency_code?: string;
 	category_id?: number;
@@ -79,8 +79,8 @@ function expenseBody(parsed: {
 		paid_share: number;
 		owed_share: number;
 	}[];
-}): Record<string, string | number | boolean> {
-	const body: Record<string, string | number | boolean> = {};
+}): Record<string, string | number | boolean | null> {
+	const body: Record<string, string | number | boolean | null> = {};
 	// Splitwise documents `cost` as a decimal string, not a number.
 	if (parsed.description !== undefined) body.description = parsed.description;
 	if (parsed.cost !== undefined) body.cost = toMoneyString(parsed.cost);

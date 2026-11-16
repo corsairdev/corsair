@@ -309,17 +309,14 @@ const GroupUserSchema = z
 		email: z.email().optional(),
 	})
 	.superRefine((value, ctx) => {
-		// Splitwise accepts either a known user's ID or a new person's name and
-		// email; a name without an email cannot be added.
-		if (value.user_id === undefined) {
-			if (!value.first_name || !value.email) {
-				ctx.addIssue({
-					code: 'custom',
-					message:
-						'A group member needs either `user_id`, or `first_name` and `email`',
-					path: ['user_id'],
-				});
-			}
+		// Splitwise identifies a member by ID or by email; a name alone cannot
+		// be added. A new person's name travels with the email when given.
+		if (value.user_id === undefined && !value.email) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'A group member needs either `user_id` or `email`',
+				path: ['user_id'],
+			});
 		}
 	});
 export type GroupUserInput = z.input<typeof GroupUserSchema>;
@@ -566,6 +563,12 @@ const EditableExpenseFields = {
 	...ExpenseFields,
 	description: ExpenseFields.description.optional(),
 	cost: ExpenseFields.cost.optional(),
+	// Splitwise documents `details` on update as string or null; null clears it.
+	details: z
+		.string()
+		.nullable()
+		.optional()
+		.describe('Free-text notes; null clears them'),
 };
 
 const ListExpensesInputSchema = z.object({
@@ -671,14 +674,14 @@ const CreateExpenseInputSchema = z
 		if (paid !== toCents(value.cost)) {
 			ctx.addIssue({
 				code: 'custom',
-				message: `The paid shares add up to ${paid / 100}, not the cost of ${value.cost}`,
+				message: 'The paid shares do not add up to the cost',
 				path: ['users'],
 			});
 		}
 		if (owed !== toCents(value.cost)) {
 			ctx.addIssue({
 				code: 'custom',
-				message: `The owed shares add up to ${owed / 100}, not the cost of ${value.cost}`,
+				message: 'The owed shares do not add up to the cost',
 				path: ['users'],
 			});
 		}
@@ -732,7 +735,7 @@ const UpdateExpenseInputSchema = z
 		if (paid !== toCents(cost) || owed !== toCents(cost)) {
 			ctx.addIssue({
 				code: 'custom',
-				message: `The shares add up to paid ${paid / 100} and owed ${owed / 100}, not the cost of ${cost}`,
+				message: 'The paid and owed shares must each add up to the cost',
 				path: ['users'],
 			});
 		}

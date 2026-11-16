@@ -201,6 +201,47 @@ describe('groups', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('groups.create accepts a member given only by email', async () => {
+		respond({ group });
+
+		await invoke(GroupsEndpoints.create, {
+			name: 'Housemates',
+			users: [{ email: 'grace@example.com' }],
+		});
+
+		expect(lastRequest().body).toEqual({
+			name: 'Housemates',
+			users__0__email: 'grace@example.com',
+		});
+	});
+
+	it('expenses.update sends details: null to clear the notes', async () => {
+		respond(expenseCreated);
+
+		await invoke(ExpensesEndpoints.update, {
+			expense_id: 51023,
+			details: null,
+		});
+
+		expect(lastRequest().body).toEqual({ details: null });
+	});
+
+	it('keeps amounts out of the share-check error', async () => {
+		const error = await captureError(
+			invoke(ExpensesEndpoints.create, {
+				description: 'Brunch',
+				cost: 25,
+				users: [
+					{ user_id: 270896089, paid_share: 25, owed_share: 10 },
+					{ user_id: 491923, paid_share: 0, owed_share: 10 },
+				],
+			}),
+		);
+
+		expect((error as Error).message).not.toContain('20');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('groups.create accepts a member given only by user_id', async () => {
 		respond({ group });
 
