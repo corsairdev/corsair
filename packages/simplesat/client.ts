@@ -152,9 +152,14 @@ export async function makeSimplesatRequest(
  * that can be an email address. The record segment is replaced with a marker.
  */
 export function maskPath(url: string): string {
-	return (url.split('?')[0] ?? url).replace(
-		/(\/api\/v1\/(?:customers|answers|responses|team-members))\/(?!search(?:$|\/)|bulk(?:$|\/)|create-or-update(?:$|\/))[^/]+/,
-		'$1/[identifier]',
+	return (
+		(url.split('?')[0] ?? url)
+			// A survey is addressed by its token, which works like a credential.
+			.replace(/(\/api\/v1\/surveys)\/[^/]+(\/email)/, '$1/[token]$2')
+			.replace(
+				/(\/api\/v1\/(?:customers|answers|responses|team-members))\/(?!search(?:$|\/)|bulk(?:$|\/)|create-or-update(?:$|\/))[^/]+/,
+				'$1/[identifier]',
+			)
 	);
 }
 

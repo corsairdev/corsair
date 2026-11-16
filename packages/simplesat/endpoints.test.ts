@@ -499,6 +499,25 @@ describe('client error handling', () => {
 		);
 	});
 
+	it('masks the survey token when a survey email fails', async () => {
+		respond(notFoundProblem, 404);
+
+		const error = await invoke(Surveys.email, {
+			survey_token: 'secret-survey-token',
+			customer: { email: 'jane@acme.com' },
+		}).catch(
+			// unknown: a rejection reason has no static type; narrowed below.
+			(caught: UnknownJson) => caught,
+		);
+
+		const text = JSON.stringify(error);
+		expect(text).not.toContain('secret-survey-token');
+		expect(text).not.toContain('jane@acme.com');
+		expect((error as ApiError).request.url).toBe(
+			'/api/v1/surveys/[token]/email',
+		);
+	});
+
 	it('encodes a path segment', () => {
 		expect(segment('a/b')).toBe('a%2Fb');
 	});
@@ -520,7 +539,7 @@ describe('page links', () => {
 		});
 
 		await expect(invoke(Customers.list, {})).rejects.toThrow(
-			/api.simplesat.io/,
+			/api\.simplesat\.io/,
 		);
 	});
 });
