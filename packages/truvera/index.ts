@@ -262,7 +262,7 @@ const truveraEndpointMeta = {
 		description: 'List the DIDs the account controls',
 	},
 	'dids.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a DID with its keys, optionally with a DIDComm service endpoint',
 	},
@@ -334,7 +334,7 @@ const truveraEndpointMeta = {
 		description: 'Unrevoke a credential, which restores it as valid',
 	},
 	'schemas.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a JSON credential schema that a credential type and subject follow',
 	},
@@ -353,7 +353,7 @@ const truveraEndpointMeta = {
 			'Delete a schema; credentials already issued against it stay valid',
 	},
 	'registries.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a revocation registry',
 	},
 	'registries.list': {

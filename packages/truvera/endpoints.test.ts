@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { TruveraEndpointOutputSchemas } from './endpoints/types';
 import {
 	createdDid,
+	createdSchema,
 	credentialMetadata,
 	deleted,
 	didDocument,
@@ -71,9 +72,18 @@ describe('output schemas keep the provider field names', () => {
 	});
 
 	it('parses a schema with its properties and required list', () => {
-		const parsed = TruveraEndpointOutputSchemas.createSchema.parse(schema);
+		const parsed = TruveraEndpointOutputSchemas.getSchema.parse(schema);
 		expect(parsed.required).toEqual(['name']);
 		expect(parsed.additionalProperties).toBe(false);
+	});
+
+	it('parses the create answer: the job id and the new schema', () => {
+		const parsed =
+			TruveraEndpointOutputSchemas.createSchema.parse(createdSchema);
+		expect(parsed.id).toBe('0');
+		expect(parsed.data).toMatchObject({
+			schema: { name: 'corsair-plugin-test' },
+		});
 	});
 
 	it('parses a registry in the live shape', () => {

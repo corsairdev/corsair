@@ -119,8 +119,11 @@ describe('truvera plugin definition', () => {
 			'credentials.revoke',
 			'credentials.unrevoke',
 			'registries.revoke',
+			'dids.create',
+			'schemas.create',
+			'registries.create',
 		] as const) {
-			// Issuing signs a permanent credential (and can email the holder);
+			// On-chain creates use the paid transaction allowance. Issuing signs a permanent credential (and can email the holder);
 			// revoking makes every verifier reject it.
 			expect(meta[name]?.riskLevel).toBe('destructive');
 		}
