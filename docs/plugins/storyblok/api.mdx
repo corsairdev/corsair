@@ -687,7 +687,7 @@ await corsair.storyblok.api.datasourceEntries.list({ datasource_id: 777 });
 | `page` | `number` | No | Page number, from 1. |
 | `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
 | `datasource_id` | `number` | No | Only entries of this datasource. |
-| `dimension` | `number \| string` | No | The numeric id of a dimension; entries then carry that dimension_value. |
+| `dimension` | `number \| string` | No | The numeric id of a dimension; entries then carry that dimension_value. Send it with datasource_id: Storyblok only resolves dimension values within one datasource. |
 
 
 

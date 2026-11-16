@@ -25,7 +25,7 @@ Things to know before you write:
 - **Webhook actions come from the API.** `webhooks.listActions` reads the accepted action names rather than hardcoding them, because Storyblok adds events over time.
 - **Paging totals are in headers.** Storyblok reports `total` and `per_page` as response headers, which this client cannot return alongside the body, so page until an array comes back short or empty.
 - **Some writes answer 204.** Updating a tag, a datasource entry or an asset, and deleting a tag, a datasource or a datasource entry, return no body. Those updates return what was sent; those deletes return `{ id, deleted: true }`.
-- **Releases need an Enterprise plan.** On other plans `releases.create` answers 422.
+- **Releases need an enterprise plan** (Premium or Elite). On Starter, Growth and Growth Plus, the trial included, the release routes answer 422 "This feature is available on Enterprise plans".
 - **Rate limits are plan-based**, 3 requests per second on Starter and 6 on paid plans, with a 429 to back off on.
 
 **What you get:**
