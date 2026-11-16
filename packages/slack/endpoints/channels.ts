@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeSlackRequest } from '../client';
 import type { SlackBoundEndpoints, SlackEndpoints } from '../index';
 import type { SlackEndpointOutputs } from './types';
+import { userKey } from './user-key';
 
 export const archive: SlackEndpoints['channelsArchive'] = async (
 	ctx,
@@ -151,13 +152,33 @@ export const list: SlackEndpoints['channelsList'] = async (ctx, input) => {
 	return result;
 };
 
+export const listMine: SlackEndpoints['channelsListMine'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeSlackRequest<
+		SlackEndpointOutputs['channelsListMine']
+	>('users.conversations', await userKey(ctx), {
+		method: 'GET',
+		query: input,
+	});
+
+	await logEventFromContext(
+		ctx,
+		'slack.channels.listMine',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
 export const getHistory: SlackEndpoints['channelsGetHistory'] = async (
 	ctx,
 	input,
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['channelsGetHistory']
-	>('conversations.history', ctx.key, {
+	>('conversations.history', await userKey(ctx), {
 		method: 'GET',
 		query: {
 			channel: input.channel,
@@ -407,7 +428,7 @@ export const getReplies: SlackEndpoints['channelsGetReplies'] = async (
 ) => {
 	const result = await makeSlackRequest<
 		SlackEndpointOutputs['channelsGetReplies']
-	>('conversations.replies', ctx.key, {
+	>('conversations.replies', await userKey(ctx), {
 		method: 'GET',
 		query: input,
 	});

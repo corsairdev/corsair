@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeSlackRequest } from '../client';
 import type { SlackEndpoints } from '../index';
 import type { SlackEndpointOutputs } from './types';
+import { userKey } from './user-key';
 
 export const postMessage: SlackEndpoints['postMessage'] = async (
 	ctx,
@@ -153,7 +154,7 @@ export const getPermalink: SlackEndpoints['messagesGetPermalink'] = async (
 export const search: SlackEndpoints['messagesSearch'] = async (ctx, input) => {
 	const result = await makeSlackRequest<SlackEndpointOutputs['messagesSearch']>(
 		'search.messages',
-		ctx.key,
+		await userKey(ctx),
 		{
 			method: 'GET',
 			query: input,
