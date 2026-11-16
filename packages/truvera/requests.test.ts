@@ -74,6 +74,20 @@ describe('dids', () => {
 		expect(result).toHaveLength(1);
 	});
 
+	it('lists page with offset and limit', async () => {
+		for (const [endpoint, path] of [
+			[DidsEndpoints.list, '/dids'],
+			[ProfilesEndpoints.list, '/profiles'],
+			[SchemasEndpoints.list, '/schemas'],
+			[RegistriesEndpoints.list, '/registries'],
+		] as const) {
+			respond([]);
+			await invoke(endpoint, { offset: 64, limit: 10 });
+			expect(lastRequest().path).toBe(path);
+			expect(lastRequest().params).toEqual({ offset: '64', limit: '10' });
+		}
+	});
+
 	it('dids.create POSTs the camelCase body', async () => {
 		respond(createdDid);
 
@@ -184,6 +198,15 @@ describe('profiles', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('profiles.delete accepts the documented empty 200', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+
+		await expect(
+			invoke(ProfilesEndpoints.delete, { did: DID }),
+		).resolves.toBeUndefined();
+		expect(lastRequest().method).toBe('DELETE');
+	});
+
 	it('profiles.delete DELETEs the profile', async () => {
 		respond(deleted);
 
@@ -245,6 +268,23 @@ describe('credentials', () => {
 
 		expect((error as Error).name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('credentials.issue accepts array claims and a holder DID in the subject for distribution', async () => {
+		respond(signedCredential);
+
+		await invoke(CredentialsEndpoints.issue, {
+			credential: {
+				issuer: DID,
+				subject: { id: 'did:key:z6MkHolder', skills: ['TypeScript', 'Go'] },
+			},
+			distribute: true,
+		});
+
+		const body = lastRequest().body as {
+			credential: { subject: { skills: string[] } };
+		};
+		expect(body.credential.subject.skills).toEqual(['TypeScript', 'Go']);
 	});
 
 	it('credentials.issue accepts persist with a password', async () => {

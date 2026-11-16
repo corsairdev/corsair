@@ -304,7 +304,7 @@ const truveraEndpointMeta = {
 		description: 'Delete a profile; the DID itself remains',
 	},
 	'credentials.issue': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Issue and sign a verifiable credential, optionally distributing it to a holder, persisting it, or making it revocable',
 	},
@@ -325,12 +325,12 @@ const truveraEndpointMeta = {
 			'Delete a credential metadata record; this does not revoke the credential',
 	},
 	'credentials.revoke': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Revoke a credential, which makes every verification of it fail',
 	},
 	'credentials.unrevoke': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Unrevoke a credential, which restores it as valid',
 	},
 	'schemas.create': {
@@ -371,7 +371,7 @@ const truveraEndpointMeta = {
 			'Delete a revocation registry, which removes every credential status it held',
 	},
 	'registries.revoke': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Revoke or unrevoke several credentials in one registry in one call',
 	},

@@ -202,11 +202,30 @@ export type JobOutput = z.output<typeof JobSchema>;
 /** A delete answers 200 with an empty object. */
 const DeleteResultSchema = z.object({}).loose();
 
+// The spec documents a profile delete as a 200 with no body, which core hands
+// back as undefined; any body that does arrive must still be an object.
+const DeleteProfileResultSchema = z.union([
+	z.object({}).loose(),
+	z.undefined(),
+]);
+
+/** Truvera pages its lists with offset and limit (64 by default). */
+const PagingShape = {
+	offset: z.number().int().min(0).optional().describe('Default 0'),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(64)
+		.optional()
+		.describe('Default and maximum 64'),
+} as const;
+
 // ---------------------------------------------------------------------------
 // dids
 // ---------------------------------------------------------------------------
 
-const ListDidsInputSchema = z.object({});
+const ListDidsInputSchema = z.object({ ...PagingShape });
 export type ListDidsInput = z.input<typeof ListDidsInputSchema>;
 
 const DidListSchema = z.array(z.union([z.string(), DidDocumentSchema]));
@@ -261,7 +280,7 @@ export type DidMetadataOutput = z.output<typeof DidMetadataOutputSchema>;
 // profiles
 // ---------------------------------------------------------------------------
 
-const ListProfilesInputSchema = z.object({});
+const ListProfilesInputSchema = z.object({ ...PagingShape });
 export type ListProfilesInput = z.input<typeof ListProfilesInputSchema>;
 
 const ProfileListSchema = z.array(ProfileSchema);
@@ -303,30 +322,11 @@ const IssueCredentialInputSchema = z
 						'JSON-LD context; generated from the properties when omitted',
 					),
 				type: z.array(z.string()).optional(),
+				// Claim values are any JSON value, arrays included.
 				subject: z
 					.union([
-						z.record(
-							z.string(),
-							z.union([
-								z.string(),
-								z.number(),
-								z.boolean(),
-								z.null(),
-								z.object({}).loose(),
-							]),
-						),
-						z.array(
-							z.record(
-								z.string(),
-								z.union([
-									z.string(),
-									z.number(),
-									z.boolean(),
-									z.null(),
-									z.object({}).loose(),
-								]),
-							),
-						),
+						z.record(z.string(), JsonSchemaValueSchema),
+						z.array(z.record(z.string(), JsonSchemaValueSchema)),
 					])
 					.optional()
 					.describe('One subject, or an array for several'),
@@ -385,15 +385,23 @@ const IssueCredentialInputSchema = z
 				path: ['password'],
 			});
 		}
-		// Distribution needs somewhere to send it.
+		// Distribution needs somewhere to send it: an email, a DID, or the
+		// holder DID in `credentialSubject.id`, which Truvera documents for DID
+		// distribution.
+		const subjects = value.credential.subject;
+		const subjectHasDid = (
+			Array.isArray(subjects) ? subjects : subjects ? [subjects] : []
+		).some((entry) => typeof entry.id === 'string' && entry.id.length > 0);
 		if (
 			value.distribute === true &&
 			value.recipient_email === undefined &&
-			value.recipient_did === undefined
+			value.recipient_did === undefined &&
+			!subjectHasDid
 		) {
 			ctx.addIssue({
 				code: 'custom',
-				message: '`distribute` needs `recipient_email` or `recipient_did`',
+				message:
+					'`distribute` needs `recipient_email`, `recipient_did` or a holder DID in `credential.subject.id`',
 				path: ['recipient_email'],
 			});
 		}
@@ -456,7 +464,7 @@ const CreateSchemaInputSchema = z.object({
 });
 export type CreateSchemaInput = z.input<typeof CreateSchemaInputSchema>;
 
-const ListSchemasInputSchema = z.object({});
+const ListSchemasInputSchema = z.object({ ...PagingShape });
 export type ListSchemasInput = z.input<typeof ListSchemasInputSchema>;
 
 const SchemaListSchema = z.array(SchemaSchema);
@@ -480,7 +488,7 @@ const CreateRegistryInputSchema = z.object({
 });
 export type CreateRegistryInput = z.input<typeof CreateRegistryInputSchema>;
 
-const ListRegistriesInputSchema = z.object({});
+const ListRegistriesInputSchema = z.object({ ...PagingShape });
 export type ListRegistriesInput = z.input<typeof ListRegistriesInputSchema>;
 
 const RegistryListSchema = z.array(RegistrySchema);
@@ -564,7 +572,7 @@ export type TruveraEndpointOutputs = {
 	createProfile: ProfileOutput;
 	getProfile: ProfileOutput;
 	updateProfile: ProfileOutput;
-	deleteProfile: z.output<typeof DeleteResultSchema>;
+	deleteProfile: z.output<typeof DeleteProfileResultSchema>;
 	issueCredential: VerifiableCredentialOutput;
 	listCredentials: z.output<typeof CredentialListSchema>;
 	getCredential: CredentialMetadataOutput;
@@ -626,7 +634,7 @@ export const TruveraEndpointOutputSchemas = {
 	createProfile: ProfileSchema,
 	getProfile: ProfileSchema,
 	updateProfile: ProfileSchema,
-	deleteProfile: DeleteResultSchema,
+	deleteProfile: DeleteProfileResultSchema,
 	issueCredential: VerifiableCredentialSchema,
 	listCredentials: CredentialListSchema,
 	getCredential: CredentialMetadataSchema,

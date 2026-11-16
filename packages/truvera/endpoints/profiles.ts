@@ -15,7 +15,11 @@ export const list: TruveraEndpoints['profilesList'] = async (ctx, input) =>
 			output: TruveraEndpointOutputSchemas.listProfiles,
 		},
 		input,
-		() => ({ method: 'GET', path: 'profiles' }),
+		(parsed) => ({
+			method: 'GET',
+			path: 'profiles',
+			query: { offset: parsed.offset, limit: parsed.limit },
+		}),
 		{ log: (_parsed, result) => ({ profiles: result.length }) },
 	);
 

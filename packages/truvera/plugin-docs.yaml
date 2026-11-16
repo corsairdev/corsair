@@ -3,14 +3,17 @@ description: 'Create DIDs, issue and revoke verifiable credentials, manage schem
 domain: truvera.io
 recommendedAuth: api_key
 overviewNote: |
-  Create an API key in Truvera Workspace. Switch to test mode first to get an unlimited key, then swap it for a production key when the flow works. The key travels as a Bearer token against `https://api.truvera.io`; the sandbox host `https://api-testnet.truvera.io` uses test data.
+  Create an API key in Truvera Workspace. The key travels as a Bearer token. A production key works against `https://api.truvera.io`, the default. A test-mode key only works against the sandbox host `https://api-testnet.truvera.io`, which uses test data: pass `sandbox: true` when you create the plugin (`truvera({ sandbox: true })`) to send every call there.
 
   Things to know:
 
   - **Issuing signs a real credential.** A credential cannot be edited after it is issued, only revoked and replaced. Issue onto the testnet until the schema, the subject fields and the revocation link are right.
   - **The issuer must be a DID you control.** Truvera rejects a signing request whose `credential.issuer` belongs to another account, which the input schema cannot know, so it surfaces as a 400 with the field path in the error.
   - **Persisting needs a password.** `persist: true` stores an encrypted copy and requires `password`; the plugin checks this before sending. Persisting a credential holding personal data has regulatory consequences.
-  - **Distribution needs a recipient.** `distribute: true` needs `recipient_email` or `recipient_did`, which the plugin also checks first.
+  - **Distribution needs a recipient.** `distribute: true` needs `recipient_email`, `recipient_did`, or the holder DID in `credential.subject.id`, which the plugin also checks first. Email distribution sends the holder an email.
+  - **Issuing and revoking are destructive.** `credentials.issue` signs a permanent credential and can email the holder; `credentials.revoke`, `credentials.unrevoke` and `registries.revoke` change what every verifier sees.
+  - **Lists page by offset.** `dids.list`, `profiles.list`, `schemas.list` and `registries.list` take `offset` and `limit` (at most 64).
+  - **Errors.** HTTP failures are core's `ApiError`. `truveraErrorDetails(error)` reads the field errors, and an API key Truvera echoes back in a 401 is masked.
   - **Revoking is not deleting.** `credentials.revoke` makes every verification of that credential fail. `credentials.delete` only removes the metadata record and leaves the credential valid, so revoke before deleting.
   - **Deleting a registry is permanent.** `registries.delete` removes the status of every credential in it, so revocations recorded there are lost.
   - **A 402 is the plan limit.** The account's transaction allowance is used up; nothing is charged and no retry helps.
@@ -33,6 +36,7 @@ examples:
         subject:
           id: did:key:z6MkqBcwvYurNSSqyBkxavv4fkaq2iu3v3YGMbdyfa4bVNxD
           name: A. Holder
+      distribute: true
       revocable: true
 apiExamples:
   dids.list: {}

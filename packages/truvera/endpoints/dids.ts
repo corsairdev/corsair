@@ -15,7 +15,11 @@ export const list: TruveraEndpoints['didsList'] = async (ctx, input) =>
 			output: TruveraEndpointOutputSchemas.listDids,
 		},
 		input,
-		() => ({ method: 'GET', path: 'dids' }),
+		(parsed) => ({
+			method: 'GET',
+			path: 'dids',
+			query: { offset: parsed.offset, limit: parsed.limit },
+		}),
 		{ log: (_parsed, result) => ({ dids: result.length }) },
 	);
 

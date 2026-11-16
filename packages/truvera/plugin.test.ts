@@ -112,7 +112,7 @@ describe('truvera plugin definition', () => {
 		}
 	});
 
-	it('marks revocation and issuance as writes, not reads', () => {
+	it('marks issuance and revocation destructive (R8)', () => {
 		const meta = plugin.endpointMeta ?? {};
 		for (const name of [
 			'credentials.issue',
@@ -120,7 +120,9 @@ describe('truvera plugin definition', () => {
 			'credentials.unrevoke',
 			'registries.revoke',
 		] as const) {
-			expect(meta[name]?.riskLevel).toBe('write');
+			// Issuing signs a permanent credential (and can email the holder);
+			// revoking makes every verifier reject it.
+			expect(meta[name]?.riskLevel).toBe('destructive');
 		}
 	});
 

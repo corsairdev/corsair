@@ -39,7 +39,11 @@ export const list: TruveraEndpoints['registriesList'] = async (ctx, input) =>
 			output: TruveraEndpointOutputSchemas.listRegistries,
 		},
 		input,
-		() => ({ method: 'GET', path: 'registries' }),
+		(parsed) => ({
+			method: 'GET',
+			path: 'registries',
+			query: { offset: parsed.offset, limit: parsed.limit },
+		}),
 		{ log: (_parsed, result) => ({ registries: result.length }) },
 	);
 
