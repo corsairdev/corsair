@@ -66,6 +66,7 @@ export const create: ToneDenEndpoints['attachmentsCreate'] = async (
 		(parsed) => ({
 			method: 'POST',
 			path: 'attachments',
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, []),
 		}),
 		{ log: (parsed) => ({ type: parsed.type }) },
@@ -86,6 +87,7 @@ export const update: ToneDenEndpoints['attachmentsUpdate'] = async (
 		(parsed) => ({
 			method: 'PUT',
 			path: `attachments/${segment(parsed.attachment_id)}`,
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, ['attachment_id']),
 		}),
 		{ log: (parsed) => ({ attachment_id: parsed.attachment_id }) },

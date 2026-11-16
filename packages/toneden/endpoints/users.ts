@@ -32,6 +32,7 @@ export const update: ToneDenEndpoints['usersUpdate'] = async (ctx, input) =>
 			method: 'PUT',
 			path: `users/${segment(parsed.user_id)}`,
 			// The email is never logged, so it is never in a log body either.
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, ['user_id']),
 		}),
 		{ log: (parsed) => ({ user_id: parsed.user_id }) },

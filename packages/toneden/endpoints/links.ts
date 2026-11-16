@@ -60,6 +60,7 @@ export const create: ToneDenEndpoints['linksCreate'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'POST',
 			path: 'links',
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, []),
 		}),
 		{ log: (parsed) => ({ target_type: parsed.target_type }) },
@@ -77,6 +78,7 @@ export const update: ToneDenEndpoints['linksUpdate'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'PUT',
 			path: `links/${segment(parsed.link_id)}`,
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, ['link_id']),
 		}),
 		{ log: (parsed) => ({ link_id: parsed.link_id }) },

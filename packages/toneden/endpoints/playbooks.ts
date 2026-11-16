@@ -34,6 +34,7 @@ export const create: ToneDenEndpoints['playbooksCreate'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'POST',
 			path: 'playbooks/campaigns',
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, []),
 		}),
 		{ log: (parsed) => ({ template_id: parsed.template_id }) },
@@ -51,6 +52,7 @@ export const update: ToneDenEndpoints['playbooksUpdate'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'PUT',
 			path: `playbooks/campaigns/${segment(parsed.campaign_id)}`,
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, ['campaign_id']),
 		}),
 		{ log: (parsed) => ({ campaign_id: parsed.campaign_id }) },

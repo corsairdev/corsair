@@ -95,6 +95,7 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
 }
 
+// unknown: each endpoint parses the answer with its own output schema.
 export async function makeToneDenRequest(
 	accessToken: string,
 	{ method, path, query, body }: ToneDenRequest,
@@ -119,6 +120,7 @@ export async function makeToneDenRequest(
 	};
 
 	try {
+		// unknown: see above; the caller's output schema types the body.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: TONEDEN_RATE_LIMIT_CONFIG,
 		});

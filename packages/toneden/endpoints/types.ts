@@ -204,6 +204,7 @@ const LinkWriteFields = {
 	affiliate_codes: z.array(z.object({}).loose()).optional(),
 	pixels: z.array(z.object({}).loose()).optional(),
 	services: z.array(z.object({}).loose()).optional(),
+	// unknown: ToneDen documents social settings as a free-form object per service.
 	social_settings: z.record(z.string(), z.unknown()).optional(),
 	header: z.string().optional(),
 	metadata_title: z.string().optional(),
@@ -250,6 +251,27 @@ export type GetLinkInput = z.input<typeof GetLinkInputSchema>;
 
 const CreateLinkInputSchema = z.object(LinkWriteFields);
 export type CreateLinkInput = z.input<typeof CreateLinkInputSchema>;
+
+/**
+ * An update whose only key is `campaign_id` would send an empty body that
+ * changes nothing, so it is refused like the other updates.
+ */
+function requireChange(
+	// unknown: the loose write schemas pass through any provider field.
+	value: Record<string, unknown>,
+	ctx: z.RefinementCtx,
+): void {
+	const changed = Object.entries(value).some(
+		([key, entry]) => key !== 'campaign_id' && entry !== undefined,
+	);
+	if (!changed) {
+		ctx.addIssue({
+			code: 'custom',
+			message: 'Pass at least one field to change',
+			path: ['campaign_id'],
+		});
+	}
+}
 
 const UpdateLinkInputSchema = z
 	.object({ link_id: z.number().int().positive(), ...LinkWriteFields })
@@ -658,7 +680,7 @@ export const ToneDenEndpointInputSchemas = {
 	createCampaign: CampaignWriteSchema,
 	updateCampaign: CampaignWriteSchema.extend({
 		campaign_id: z.number().int().positive(),
-	}),
+	}).superRefine(requireChange),
 	deleteCampaign: CampaignIdInputSchema,
 	campaignInsights: CampaignIdInputSchema,
 	campaignCreativeInsights: CampaignIdInputSchema,
@@ -670,7 +692,7 @@ export const ToneDenEndpointInputSchemas = {
 	createPlaybookCampaign: PlaybookWriteSchema,
 	updatePlaybookCampaign: PlaybookWriteSchema.extend({
 		campaign_id: z.number().int().positive(),
-	}),
+	}).superRefine(requireChange),
 	deletePlaybookCampaign: PlaybookIdInputSchema,
 	getUser: UserIdInputSchema,
 	updateUser: UpdateUserInputSchema,

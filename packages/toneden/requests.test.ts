@@ -553,6 +553,19 @@ describe('user lists and offline conversions', () => {
 	});
 });
 
+describe('empty updates', () => {
+	it('campaigns.update and playbooks.update refuse a call with nothing to change', async () => {
+		for (const endpoint of [
+			CampaignsEndpoints.update,
+			PlaybooksEndpoints.update,
+		]) {
+			const error = await captureError(invoke(endpoint, { campaign_id: 9900 }));
+			expect((error as Error).name).toBe('ZodError');
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
 describe('playbooks and users', () => {
 	it('playbooks.get GETs one campaign', async () => {
 		respond(playbookEnvelope);

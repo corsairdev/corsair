@@ -56,6 +56,7 @@ export const create: ToneDenEndpoints['campaignsCreate'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'POST',
 			path: 'advertising/campaigns',
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, []),
 		}),
 		{ log: (parsed) => ({ target_type: parsed.target_type }) },
@@ -73,6 +74,7 @@ export const update: ToneDenEndpoints['campaignsUpdate'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'PUT',
 			path: `advertising/campaigns/${segment(parsed.campaign_id)}`,
+			// unknown: the input schema validated every value; writeBody only copies them.
 			body: writeBody(parsed as Record<string, unknown>, ['campaign_id']),
 		}),
 		{ log: (parsed) => ({ campaign_id: parsed.campaign_id }) },
@@ -190,6 +192,7 @@ export const updateUserListContacts: ToneDenEndpoints['userListsUpdateContacts']
 			(parsed) => ({
 				method: 'POST',
 				path: `advertising/userLists/${segment(parsed.list_id)}/contacts`,
+				// unknown: the input schema validated every value; writeBody only copies them.
 				body: writeBody(parsed as Record<string, unknown>, ['list_id']),
 			}),
 			{

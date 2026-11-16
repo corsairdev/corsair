@@ -42,6 +42,8 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
  * Strips the identifier a write carries in the path so it never lands in the
  * body, and drops the unset fields so an update sends only what changed.
  */
+// unknown: the values come from an input schema that already validated them;
+// this only copies the keys that are set and are not path parameters.
 export function writeBody(
 	parsed: Record<string, unknown>,
 	pathKeys: readonly string[],
