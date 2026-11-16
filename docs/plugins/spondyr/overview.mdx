@@ -1,0 +1,146 @@
+---
+title: "Spondyr plugin"
+sidebarTitle: "Overview"
+description: "Generate and deliver template-driven correspondence, and manage the templates, recipients, conditions and search filters behind it."
+---
+
+Use **Spondyr** through Corsair: one client, typed API calls.
+
+Spondyr needs two credentials: the Subscription APIKey and the Application Token. Both are on your subscription and application records in the Spondyr dashboard. Set the API key as the plugin key and pass the Application Token as `applicationToken` in the plugin options, or store both on the account. The plugin sends them as `APIKey` and `ApplicationToken` headers.
+
+Things to know before you send:
+
+- **A 200 can mean the request failed.** Spondyr reports most failures with `APIStatus: "ERROR"` inside a normal response. The plugin throws `SpondyrOperationError` in that case, so a resolved promise means the request was accepted.
+- **Generate then deliver.** `correspondence.send` with `is_generate_only: true` generates the document without delivering it. `correspondence.deliver` then sends it, optionally to extra recipients.
+- **Status codes.** `SUBMITTED` and `MATCH` mean work is still in progress, `FINISH` and `FINISHPART` are terminal, and `NOMATCH` means no template matched the event. Poll `correspondence.status` with the `reference_id` that `send` returned.
+- **Templates come from uploaded content.** Call `templates.uploadContent` with the base64 file first, then pass its `reference_id` to `templates.create`. One upload can attach to a single template.
+- **Placeholders merge transaction data.** A Recipient's address fields and a Search Filter's tag may hold `{FieldName}` tokens that Spondyr fills from the transaction data.
+- **Errors are text.** A wrong credential arrives as a plain 400 with the reason in `ErrorMessage`, the same status a bad field gets. The plugin reads the message to tell them apart.
+- **No webhooks.** Spondyr calls a status callback URI you configure on the application, which this plugin does not receive. Poll `correspondence.status` or `batch.status` instead.
+
+**What you get:**
+
+- 38 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/spondyr better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/spondyr better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/spondyr better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/spondyr better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { spondyr } from '@corsair-dev/spondyr';
+
+export const corsair = createCorsair({
+	plugins: [
+		spondyr(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Spondyr API key before the first call: `pnpm corsair setup --plugin=spondyr --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+spondyr()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'spondyr',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the Transaction Types on the subscription**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.spondyr.api.transactionTypes.list({});
+```
+
+
+**Generate a document and hold it for review**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.spondyr.api.correspondence.send({
+	event_type: 'OrderPlaced',
+	is_generate_only: true,
+	data: {
+		OrderNumber: 12345,
+		Customer: { FirstName: 'John', LastName: 'Doe', Email: 'john@acme.com' },
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/spondyr/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/spondyr/api">
+    Every `spondyr.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
