@@ -293,9 +293,10 @@ const companyBody = {
 };
 
 /**
- * A company create can also create its first contact. `role`, `first_name`,
+ * A company create can also create its first contact. `first_name`,
  * `last_name` and `email` are required inside it when
- * `create_primary_contact_if_not_exists` is set.
+ * `create_primary_contact_if_not_exists` is set; `role`, when sent, takes the
+ * same values as a contact's.
  */
 const primaryContactBody = z
 	.object({
@@ -303,7 +304,7 @@ const primaryContactBody = z
 			.boolean()
 			.optional()
 			.describe('Create the contact when no contact has this email yet.'),
-		role: z.string().optional(),
+		role: CompanyRoleSchema.optional(),
 		name_prefix: z.string().nullish(),
 		first_name: z.string().optional(),
 		last_name: z.string().optional(),

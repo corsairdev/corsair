@@ -8,7 +8,8 @@ import {
 /**
  * The body is a bare array of subscribers, not an envelope. The answer is one
  * result per subscriber, and its top-level `success` is true only when every one
- * worked, so a partial failure is visible in the per-item flags.
+ * worked. A partial failure therefore throws SuitedashAPIError; its `body.data`
+ * holds the per-subscriber results (emails masked).
  */
 export const subscribe: SuitedashEndpoints['marketingSubscribe'] = (
 	ctx,
@@ -28,9 +29,7 @@ export const subscribe: SuitedashEndpoints['marketingSubscribe'] = (
 			body: subscribers,
 		}),
 		{
-			log: (parsed, result) => ({
-				submitted: parsed.subscribers.length,
-				failed: result.data.filter((entry) => entry.success === false).length,
-			}),
+			// Only a full success returns, so the count of submitted is the count.
+			log: (parsed) => ({ submitted: parsed.subscribers.length }),
 		},
 	);

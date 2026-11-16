@@ -43,7 +43,7 @@ apiExamples:
   companies.create:
     call: "{ name: 'Microsoft', role: 'Client', website: 'https://www.microsoft.com' }"
   companies.update:
-    call: "{ identifier: 'e2c43cd3-eb1c-4269-a184-ffd9d26d6ef8', name: 'Microsoft Corporation', role: 'Client' }"
+    call: "{ identifier: 'e2c43cd3-eb1c-4269-a184-ffd9d26d6ef8', name: 'Microsoft Corporation' }"
   companies.meta: {}
   contacts.list:
     call: "{ createdMin: '2026-01-01T00:00:00+00:00' }"

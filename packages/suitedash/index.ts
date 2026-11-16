@@ -267,7 +267,7 @@ export const suitedashEndpointMeta = {
 	'marketing.subscribe': {
 		riskLevel: 'destructive',
 		description:
-			'Subscribe contacts to marketing audiences, which can start the emails those audiences send. The answer carries one result per subscriber, and a partial failure is reported there',
+			'Subscribe contacts to marketing audiences, which can start the emails those audiences send. A partial failure throws, with the per-subscriber results on the error body',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof suitedashEndpointsNested

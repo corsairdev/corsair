@@ -22,7 +22,7 @@ pnpm add @corsair-dev/suitedash
 | `contacts.list` | `suitedash.api.contacts.list` | `read` | List contacts with filters for when they were created, an order, and whether to include the meta block |
 | `contacts.meta` | `suitedash.api.contacts.meta` | `read` | Read the meta attributes of the contact custom fields, which is where the uuid keys a write uses come from |
 | `contacts.update` | `suitedash.api.contacts.update` | `destructive` | Change a contact's details, addresses, tags or custom fields, optionally sending the portal welcome email |
-| `marketing.subscribe` | `suitedash.api.marketing.subscribe` | `destructive` | Subscribe contacts to marketing audiences, which can start the emails those audiences send. The answer carries one result per subscriber, and a partial failure is reported there |
+| `marketing.subscribe` | `suitedash.api.marketing.subscribe` | `destructive` | Subscribe contacts to marketing audiences, which can start the emails those audiences send. A partial failure throws, with the per-subscriber results on the error body |
 | `projects.get` | `suitedash.api.projects.get` | `read` | Find one project by uid, exact name, a name fragment, or the most recent one, with its clients, team and custom fields |
 | `projects.list` | `suitedash.api.projects.list` | `read` | List projects with filters for when they were created, an order, and whether to include the meta block |
 | `projects.meta` | `suitedash.api.projects.meta` | `read` | Read the meta attributes of the project custom fields |

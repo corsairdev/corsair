@@ -64,7 +64,7 @@ Set primaryContact.create_primary_contact_if_not_exists to create the first cont
 ```ts
 {
   create_primary_contact_if_not_exists?: boolean,
-  role?: string,
+  role?: Lead | Client | Prospect,
   name_prefix?: string | null,
   first_name?: string,
   last_name?: string,
@@ -428,7 +428,7 @@ Change a company's details, phones, address, tags or custom fields. Only the fie
 **Risk:** `write`
 
 ```ts
-await corsair.suitedash.api.companies.update({ identifier: 'e2c43cd3-eb1c-4269-a184-ffd9d26d6ef8', name: 'Microsoft Corporation', role: 'Client' });
+await corsair.suitedash.api.companies.update({ identifier: 'e2c43cd3-eb1c-4269-a184-ffd9d26d6ef8', name: 'Microsoft Corporation' });
 ```
 
 **Input**
@@ -1080,7 +1080,7 @@ await corsair.suitedash.api.contacts.update({ identifier: 'aa454efd-4074-3926-a3
 
 `marketing.subscribe`
 
-Subscribe contacts to marketing audiences, which can start the emails those audiences send. The answer carries one result per subscriber, and a partial failure is reported there
+Subscribe contacts to marketing audiences, which can start the emails those audiences send. A partial failure throws, with the per-subscriber results on the error body
 
 **Risk:** `destructive`
 
