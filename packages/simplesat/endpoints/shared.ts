@@ -57,6 +57,28 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 }
 
 /**
+ * A page link is a URL on api.simplesat.io or null on the last page. Anything
+ * else is refused: a wrong type would read as "no more pages", and a link to
+ * another host would carry the token off-host if followed.
+ */
+function pageLink(
+	value: UnknownJson, // unknown: the raw `next` or `previous` field
+	name: string,
+): string | null {
+	if (value === null || value === undefined) return null;
+	if (typeof value !== 'string') {
+		throw new Error(`Simplesat sent a ${typeof value} as the ${name} link.`);
+	}
+	const path = parseNextLink(value);
+	if (path === null) {
+		throw new Error(
+			`Simplesat sent a ${name} link that is not on api.simplesat.io.`,
+		);
+	}
+	return path;
+}
+
+/**
  * Turns a list answer into the shape the output schema declares: the page links
  * become paths, and the resource array is renamed to `results` so one shape
  * covers every list route.
@@ -79,12 +101,10 @@ export function pageShape<PageOutput>(
 			`Expected a ${key} array from Simplesat, which answers lists with { next, previous, count, ${key} }.`,
 		);
 	}
-	const next = record?.next;
-	const previous = record?.previous;
 	const count = record?.count;
 	const shaped: UnknownJson = {
-		next: typeof next === 'string' ? parseNextLink(next) : null,
-		previous: typeof previous === 'string' ? parseNextLink(previous) : null,
+		next: pageLink(record?.next, 'next'),
+		previous: pageLink(record?.previous, 'previous'),
 		count: typeof count === 'number' ? count : null,
 		results: items,
 	};

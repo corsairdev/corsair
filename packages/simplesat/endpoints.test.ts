@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { SimplesatAPIError, segment } from './client';
+import { ApiError } from 'corsair/http';
+import { isSimplesatAuthError, segment } from './client';
 import {
 	Answers,
 	Customers,
@@ -442,11 +443,11 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect(error).toBeInstanceOf(SimplesatAPIError);
-		const failure = error as SimplesatAPIError;
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
 		expect(failure.status).toBe(403);
-		expect(failure.detail).toBe('Invalid Token.');
-		expect(failure.isAuthError).toBe(true);
+		expect(failure.body).toMatchObject({ detail: 'Invalid Token.' });
+		expect(isSimplesatAuthError(failure)).toBe(true);
 		expect(failure.message).toContain('Invalid Token.');
 		expect(util.inspect(error)).not.toContain(API_KEY);
 		expect(failure.message).not.toContain(API_KEY);
@@ -460,9 +461,9 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		const failure = error as SimplesatAPIError;
-		expect(failure.isNotFound).toBe(true);
-		expect(failure.isAuthError).toBe(false);
+		const failure = error as ApiError;
+		expect(failure.status).toBe(404);
+		expect(isSimplesatAuthError(failure)).toBe(false);
 	});
 
 	it('reads the field map from a 400', async () => {
@@ -475,12 +476,51 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		const failure = error as SimplesatAPIError;
-		expect(failure.fieldErrors).toEqual(validationProblem);
+		const failure = error as ApiError;
+		expect(failure.body).toEqual(validationProblem);
 		expect(failure.message).toContain('customers: This field is required.');
+		// The request body (customer data) is not kept on the error.
+		expect(failure.request.body).toBeUndefined();
+	});
+
+	it('masks a customer addressed by email in the error', async () => {
+		respond(notFoundProblem, 404);
+
+		const error = await invoke(Customers.get, {
+			customer_id: 'jane@acme.com',
+		}).catch(
+			// unknown: a rejection reason has no static type; narrowed below.
+			(caught: UnknownJson) => caught,
+		);
+
+		expect(JSON.stringify(error)).not.toContain('jane');
+		expect((error as ApiError).request.url).toBe(
+			'/api/v1/customers/[identifier]',
+		);
 	});
 
 	it('encodes a path segment', () => {
 		expect(segment('a/b')).toBe('a%2Fb');
+	});
+});
+
+describe('page links', () => {
+	it('refuses a next link that is not a string', async () => {
+		respond({ customers: [], next: 42, previous: null, count: 1 });
+
+		await expect(invoke(Customers.list, {})).rejects.toThrow(/next link/);
+	});
+
+	it('refuses a next link on another host', async () => {
+		respond({
+			customers: [],
+			next: 'https://evil.example/api/v1/customers?page=2',
+			previous: null,
+			count: 1,
+		});
+
+		await expect(invoke(Customers.list, {})).rejects.toThrow(
+			/api.simplesat.io/,
+		);
 	});
 });

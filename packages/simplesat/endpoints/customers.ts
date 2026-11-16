@@ -65,7 +65,8 @@ export const get: SimplesatEndpoints['customersGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/api/v1/customers/${segment(customer_id)}`,
 		}),
-		{ log: ({ customer_id }) => ({ customerId: customer_id }) },
+		// The id can be an external id such as an email, so the uid is logged.
+		{ log: (_, result) => ({ customerId: result.id ?? undefined }) },
 	);
 
 export const create: SimplesatEndpoints['customersCreate'] = (ctx, input) =>
@@ -95,7 +96,8 @@ export const update: SimplesatEndpoints['customersUpdate'] = (ctx, input) =>
 			path: `/api/v1/customers/${segment(customer_id)}`,
 			body,
 		}),
-		{ log: ({ customer_id }) => ({ customerId: customer_id }) },
+		// The id can be an external id such as an email, so the uid is logged.
+		{ log: (_, result) => ({ customerId: result.id ?? undefined }) },
 	);
 
 /**

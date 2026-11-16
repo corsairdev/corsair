@@ -74,5 +74,5 @@ apiNotes:
   surveys.email: 'Takes the survey_token from surveys.list, not the numeric survey id, and schedules a real email to the customer.'
   answers.search: 'A POST because it takes a filter list and date range, but its next links are followed with a GET.'
   responses.create: 'Creates a response or updates the one that already matches it. `created` backdates it, which is how a survey answered elsewhere is imported.'
-  customers.list: 'Pass the path from a previous page as next. Every list answers { next, previous, count, results }, and next is a same-host path the plugin checks before use.'
+  customers.list: 'Pass the path from a previous page as `next`. Every list answers `{ next, previous, count, results }`, and `next` is a same-host path the plugin checks before use.'
   questions.list: 'Filter by survey_id, or by metric such as csat, to see the questions behind a survey.'

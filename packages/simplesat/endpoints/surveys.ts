@@ -43,7 +43,7 @@ export const list: SimplesatEndpoints['surveysList'] = (ctx, input) =>
 
 /**
  * Sends the survey to one customer by email. This notifies a real person, so it
- * is a write, and the survey is identified by its token rather than its id.
+ * is destructive (R8), and the survey is identified by its token, not its id.
  */
 export const email: SimplesatEndpoints['surveysEmail'] = (ctx, input) =>
 	call(
@@ -60,9 +60,7 @@ export const email: SimplesatEndpoints['surveysEmail'] = (ctx, input) =>
 			body: { customer },
 		}),
 		{
-			log: ({ survey_token }, result) => ({
-				surveyToken: survey_token,
-				detail: result.detail ?? undefined,
-			}),
+			// The survey token is a credential-like link id; it stays out.
+			log: (_, result) => ({ detail: result.detail ?? undefined }),
 		},
 	);
