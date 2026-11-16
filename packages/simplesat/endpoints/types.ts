@@ -250,7 +250,9 @@ export type CustomersCreateResponse = z.infer<
 >;
 
 const CustomerIdInputSchema = z.object({
-	customer_id: z.string().describe('The Simplesat id, or an external id.'),
+	customer_id: z
+		.string()
+		.describe('The Simplesat customer id. An external id answers 404.'),
 });
 
 export type CustomerIdInput = z.infer<typeof CustomerIdInputSchema>;
@@ -260,7 +262,7 @@ const CustomersGetResponseSchema = CustomerSchema;
 export type CustomersGetResponse = z.infer<typeof CustomersGetResponseSchema>;
 
 const CustomersUpdateInputSchema = z.object({
-	customer_id: z.string(),
+	customer_id: z.string().describe('The Simplesat customer id.'),
 	...customerBody,
 });
 

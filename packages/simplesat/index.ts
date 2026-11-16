@@ -196,7 +196,7 @@ export const simplesatEndpointMeta = {
 	'customers.get': {
 		riskLevel: 'read',
 		description:
-			'Read one customer by their Simplesat id or external id, with their tags and custom attributes',
+			'Read one customer by their Simplesat id, with their tags and custom attributes',
 	},
 	'customers.create': {
 		riskLevel: 'write',
@@ -206,7 +206,7 @@ export const simplesatEndpointMeta = {
 	'customers.update': {
 		riskLevel: 'write',
 		description:
-			'Update one customer by their Simplesat id or external id, replacing the fields sent',
+			'Update one customer by their Simplesat id, replacing the fields sent',
 	},
 	'customers.bulk': {
 		riskLevel: 'write',
