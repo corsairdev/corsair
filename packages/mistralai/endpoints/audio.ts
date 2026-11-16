@@ -10,12 +10,15 @@ export const speech: MistralAiEndpoints['audioSpeech'] = async (
 	rawInput,
 ) => {
 	const input = MistralAiEndpointInputSchemas.audioSpeech.parse(rawInput);
-	// Checked only: malformed base64 is refused before anything is sent.
-	if (input.ref_audio) decodeBase64(input.ref_audio, 'ref_audio');
+	// Malformed base64 is refused before anything is sent; a data: URL prefix
+	// or URL-safe alphabet goes out as plain standard base64, as Mistral expects.
+	const ref_audio = input.ref_audio
+		? Buffer.from(decodeBase64(input.ref_audio, 'ref_audio')).toString('base64')
+		: undefined;
 	// With stream off Mistral answers JSON: { audio_data } in base64.
 	return callMistralAi(ctx, '/v1/audio/speech', {
 		method: 'POST',
-		body: { ...input, stream: false },
+		body: { ...input, ...(ref_audio ? { ref_audio } : {}), stream: false },
 		output: MistralAiEndpointOutputSchemas.audioSpeech,
 		event: 'audio.speech',
 		logged: {

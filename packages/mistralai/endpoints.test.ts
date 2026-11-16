@@ -823,6 +823,24 @@ describe('Mistral AI input checks', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('sends a data: URL voice sample or reference audio as plain base64', async () => {
+		fetchMock
+			.mockResolvedValueOnce(jsonResponse(voice))
+			.mockResolvedValueOnce(jsonResponse({ audio_data: hello }));
+		await client.corsair.mistralai.api.voices.create({
+			name: 'Narrator',
+			sample_audio: `data:audio/wav;base64,${hello}`,
+		});
+		await client.corsair.mistralai.api.audio.speech({
+			input: 'hi',
+			ref_audio: `data:audio/wav;base64,${hello}`,
+		});
+		const sent = (i: number) =>
+			JSON.parse(String((fetchMock.mock.calls[i]?.[1] as RequestInit).body));
+		expect(sent(0).sample_audio).toBe(hello);
+		expect(sent(1).ref_audio).toBe(hello);
+	});
+
 	it('refuses a voice sample or reference audio that is not base64 before calling Mistral', async () => {
 		await expect(
 			client.corsair.mistralai.api.voices.create({
