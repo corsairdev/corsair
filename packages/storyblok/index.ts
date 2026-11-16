@@ -434,7 +434,7 @@ export const storyblokEndpointMeta = {
 	'components.update': {
 		riskLevel: 'write',
 		description:
-			"Replace a component's field schema. Existing content is not migrated, so a removed field loses its data",
+			"Replace a component's field schema. Existing content is not migrated: a removed field's values stay in stories, hidden, until a migration removes them",
 	},
 	'components.delete': {
 		riskLevel: 'destructive',

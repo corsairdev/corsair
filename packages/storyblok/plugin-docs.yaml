@@ -17,7 +17,7 @@ overviewNote: |
   - **Publishing is a GET.** `stories.publish` and `stories.unpublish` are served as GETs but change published state, so both are writes here. A retry of either repeats the state change.
   - **`stories.list` omits content.** The list route returns stories without their `content` field. Pass `with_summary` for a summary, or read the story with `stories.get`.
   - **`content` is the schema's own JSON.** A story's content is one object per component field, with a `component` key naming the content type. The plugin passes it through untyped rather than guessing at a shape that depends on each project's components.
-  - **Components are field schemas.** Editing a component changes the shape every story of that type is parsed against, and a removed field loses its stored data.
+  - **Components are field schemas.** Editing a component changes the shape every story of that type is parsed against, and a removed field's values stay in existing stories, hidden from the editor, until a migration removes them.
   - **Asset writes are metadata only.** `assets.update` changes alt text, title, copyright, focus point, privacy and the publish window. Uploading new bytes uses a separate signed-upload flow that this plugin does not wrap.
   - **Webhook actions come from the API.** `webhooks.listActions` reads the accepted action names rather than hardcoding them, because Storyblok adds events over time.
   - **Paging totals are in headers.** Storyblok reports `total` and `per_page` as response headers, which this client cannot return alongside the body, so page until an array comes back short or empty.
@@ -126,5 +126,5 @@ apiNotes:
   stories.unpublish: 'Served as a GET, but it stops the Content Delivery API serving the story.'
   assets.update: 'Metadata only: alt text, title, copyright, focus point, privacy and the publish window. Uploading new bytes is a separate signed-upload flow that is not wrapped.'
   webhooks.listActions: 'Reads the accepted action names from Storyblok rather than hardcoding them, so a new event needs no plugin change.'
-  components.update: 'Replacing a component''s schema changes the shape every story of that type is parsed against, and a removed field loses its stored data.'
+  components.update: 'Replacing a component''s schema changes the shape every story of that type is parsed against, and a removed field''s values stay in existing stories, hidden from the editor, until a migration removes them.'
   stories.list: 'This route returns stories without their content; use with_summary for a summary or stories.get for the full story. Storyblok reports total and per_page in response headers, which this client cannot return with the body, so page until an array comes back short or empty.'

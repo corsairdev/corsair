@@ -20,7 +20,7 @@ pnpm add @corsair-dev/storyblok
 | `components.create` | `storyblok.api.components.create` | `write` | Create a component, which is the field schema a content type uses. Its name is the key content references |
 | `components.delete` | `storyblok.api.components.delete` | `destructive` | Delete a component. Content that uses it can no longer render, and this cannot be undone |
 | `components.list` | `storyblok.api.components.list` | `read` | List the components that define content types, with their field schemas |
-| `components.update` | `storyblok.api.components.update` | `write` | Replace a component's field schema. Existing content is not migrated, so a removed field loses its data |
+| `components.update` | `storyblok.api.components.update` | `write` | Replace a component's field schema. Existing content is not migrated: a removed field's values stay in stories, hidden, until a migration removes them |
 | `datasourceEntries.create` | `storyblok.api.datasourceEntries.create` | `write` | Add an entry to a datasource |
 | `datasourceEntries.delete` | `storyblok.api.datasourceEntries.delete` | `destructive` | Delete a datasource entry; content using that option loses it |
 | `datasourceEntries.get` | `storyblok.api.datasourceEntries.get` | `read` | Read one datasource entry with its name, value and position |

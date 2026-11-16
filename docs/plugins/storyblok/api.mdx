@@ -91,8 +91,8 @@ await corsair.storyblok.api.assets.delete({ asset_id: 900 });
   created_at?: string | null,
   updated_at?: string | null,
   deleted_at?: string | null,
-  file?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null
+  file?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -152,8 +152,8 @@ await corsair.storyblok.api.assets.get({ asset_id: 900 });
   created_at?: string | null,
   updated_at?: string | null,
   deleted_at?: string | null,
-  file?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null
+  file?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -216,8 +216,8 @@ await corsair.storyblok.api.assets.list({ search: 'logo' });
   created_at?: string | null,
   updated_at?: string | null,
   deleted_at?: string | null,
-  file?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null
+  file?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -287,8 +287,8 @@ Metadata only: alt text, title, copyright, focus point, privacy and the publish 
   created_at?: string | null,
   updated_at?: string | null,
   deleted_at?: string | null,
-  file?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null
+  file?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -318,7 +318,7 @@ await corsair.storyblok.api.components.create({ name: 'page', display_name: 'Pag
 |------|------|----------|-------------|
 | `name` | `string` | Yes | The technical name, which content uses as its component key. |
 | `display_name` | `string \| null` | No | — |
-| `schema` | `Record<string, unknown>` | Yes | Field name to its definition, such as &#123; title: &#123; type: "text" &#125; &#125;. |
+| `schema` | `Record<string, any>` | Yes | Field name to its definition, such as &#123; title: &#123; type: "text" &#125; &#125;. |
 | `is_root` | `boolean` | No | — |
 | `is_nestable` | `boolean` | No | — |
 | `preview_field` | `string \| null` | No | — |
@@ -344,7 +344,7 @@ await corsair.storyblok.api.components.create({ name: 'page', display_name: 'Pag
   name?: string | null,
   display_name?: string | null,
   real_name?: string | null,
-  schema?: Record<string, unknown> | null,
+  schema?: Record<string, any> | null,
   image?: string | null,
   preview_field?: string | null,
   preview_tmpl?: string | null,
@@ -399,7 +399,7 @@ await corsair.storyblok.api.components.delete({ component_id: 12345 });
   name?: string | null,
   display_name?: string | null,
   real_name?: string | null,
-  schema?: Record<string, unknown> | null,
+  schema?: Record<string, any> | null,
   image?: string | null,
   preview_field?: string | null,
   preview_tmpl?: string | null,
@@ -456,7 +456,7 @@ await corsair.storyblok.api.components.list({});
   name?: string | null,
   display_name?: string | null,
   real_name?: string | null,
-  schema?: Record<string, unknown> | null,
+  schema?: Record<string, any> | null,
   image?: string | null,
   preview_field?: string | null,
   preview_tmpl?: string | null,
@@ -480,7 +480,7 @@ await corsair.storyblok.api.components.list({});
 
 `components.update`
 
-Replace a component's field schema. Existing content is not migrated, so a removed field loses its data
+Replace a component's field schema. Existing content is not migrated: a removed field's values stay in stories, hidden, until a migration removes them
 
 **Risk:** `write`
 
@@ -495,7 +495,7 @@ await corsair.storyblok.api.components.update({ component_id: 12345, name: 'page
 | `component_id` | `number` | Yes | A Storyblok numeric id. |
 | `name` | `string` | Yes | The technical name, which content uses as its component key. |
 | `display_name` | `string \| null` | No | — |
-| `schema` | `Record<string, unknown>` | Yes | Field name to its definition, such as &#123; title: &#123; type: "text" &#125; &#125;. |
+| `schema` | `Record<string, any>` | Yes | Field name to its definition, such as &#123; title: &#123; type: "text" &#125; &#125;. |
 | `is_root` | `boolean` | No | — |
 | `is_nestable` | `boolean` | No | — |
 | `preview_field` | `string \| null` | No | — |
@@ -504,7 +504,7 @@ await corsair.storyblok.api.components.update({ component_id: 12345, name: 'page
 | `color` | `string \| null` | No | — |
 | `component_group_uuid` | `string \| null` | No | — |
 
-Replacing a component's schema changes the shape every story of that type is parsed against, and a removed field loses its stored data.
+Replacing a component's schema changes the shape every story of that type is parsed against, and a removed field's values stay in existing stories, hidden from the editor, until a migration removes them.
 
 
 
@@ -523,7 +523,7 @@ Replacing a component's schema changes the shape every story of that type is par
   name?: string | null,
   display_name?: string | null,
   real_name?: string | null,
-  schema?: Record<string, unknown> | null,
+  schema?: Record<string, any> | null,
   image?: string | null,
   preview_field?: string | null,
   preview_tmpl?: string | null,
@@ -750,7 +750,8 @@ await corsair.storyblok.api.datasourceEntries.update({ datasource_entry_id: 888,
 | `name` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
 | `datasource_id` | `number` | Yes | The datasource this entry belongs to. |
-| `dimension_id` | `number` | No | — |
+| `dimension_value` | `string` | No | The value for the dimension named by dimension_id. |
+| `dimension_id` | `number` | No | The dimension whose value dimension_value sets. |
 
 
 
@@ -816,7 +817,7 @@ await corsair.storyblok.api.datasources.create({ name: 'Countries', slug: 'count
   id?: number | null,
   name?: string | null,
   slug?: string | null,
-  dimensions?: Record<string, unknown>[] | null,
+  dimensions?: Record<string, any>[] | null,
   created_at?: string | null,
   updated_at?: string | null
 }
@@ -862,7 +863,7 @@ await corsair.storyblok.api.datasources.delete({ datasource_id: 777 });
   id?: number | null,
   name?: string | null,
   slug?: string | null,
-  dimensions?: Record<string, unknown>[] | null,
+  dimensions?: Record<string, any>[] | null,
   created_at?: string | null,
   updated_at?: string | null
 }
@@ -908,7 +909,7 @@ await corsair.storyblok.api.datasources.get({ datasource_id: 777 });
   id?: number | null,
   name?: string | null,
   slug?: string | null,
-  dimensions?: Record<string, unknown>[] | null,
+  dimensions?: Record<string, any>[] | null,
   created_at?: string | null,
   updated_at?: string | null
 }
@@ -955,7 +956,7 @@ await corsair.storyblok.api.datasources.list({});
   id?: number | null,
   name?: string | null,
   slug?: string | null,
-  dimensions?: Record<string, unknown>[] | null,
+  dimensions?: Record<string, any>[] | null,
   created_at?: string | null,
   updated_at?: string | null
 }[]
@@ -1003,7 +1004,7 @@ await corsair.storyblok.api.datasources.update({ datasource_id: 777, name: 'Coun
   id?: number | null,
   name?: string | null,
   slug?: string | null,
-  dimensions?: Record<string, unknown>[] | null,
+  dimensions?: Record<string, any>[] | null,
   created_at?: string | null,
   updated_at?: string | null
 }
@@ -1323,9 +1324,9 @@ await corsair.storyblok.api.spaces.get({});
   trial?: boolean | null,
   default_root?: string | null,
   created_at?: string | null,
-  limits?: Record<string, unknown> | null,
-  options?: Record<string, unknown> | null,
-  environments?: Record<string, unknown>[] | null
+  limits?: Record<string, any> | null,
+  options?: Record<string, any> | null,
+  environments?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -1381,9 +1382,9 @@ await corsair.storyblok.api.spaces.list({ per_page: 100 });
   trial?: boolean | null,
   default_root?: string | null,
   created_at?: string | null,
-  limits?: Record<string, unknown> | null,
-  options?: Record<string, unknown> | null,
-  environments?: Record<string, unknown>[] | null
+  limits?: Record<string, any> | null,
+  options?: Record<string, any> | null,
+  environments?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -1413,12 +1414,12 @@ await corsair.storyblok.api.stories.create({ name: 'Home', slug: 'home', content
 |------|------|----------|-------------|
 | `name` | `string` | Yes | The story name, which the UI shows. |
 | `slug` | `string` | Yes | The URL segment. Storyblok derives full_slug from this and the parent. |
-| `content` | `Record<string, unknown>` | Yes | One object per component field, keyed by the component name, with a component key naming the content type. |
+| `content` | `Record<string, any>` | Yes | One object per component field, keyed by the component name, with a component key naming the content type. |
 | `parent_id` | `number \| null` | No | — |
 | `group_id` | `string \| null` | No | — |
 | `is_startpage` | `boolean` | No | — |
 | `disable_fe_editor` | `boolean` | No | — |
-| `meta_data` | `Record<string, unknown> \| null` | No | — |
+| `meta_data` | `Record<string, any> \| null` | No | — |
 | `tag_list` | `string[] \| null` | No | — |
 | `publish` | `boolean` | No | Publish in the same call rather than leaving a draft. |
 | `release_id` | `number` | No | Group the story in this release instead of publishing it. |
@@ -1459,17 +1460,17 @@ Storyblok requires both content and slug. content is the schema's own JSON: one 
   tag_list?: string[] | null,
   release_ids?: number[] | null,
   position?: number | null,
-  content?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null,
-  alternates?: Record<string, unknown>[] | null,
-  breadcrumbs?: Record<string, unknown>[] | null,
-  translated_slugs?: Record<string, unknown>[] | null,
-  localized_paths?: Record<string, unknown>[] | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
   default_root?: string | null,
   disable_fe_editor?: boolean | null,
-  preview_token?: Record<string, unknown> | null,
-  stage?: Record<string, unknown> | null,
-  last_author?: Record<string, unknown> | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
   last_author_id?: number | null
 }
 ```
@@ -1532,17 +1533,17 @@ await corsair.storyblok.api.stories.delete({ story_id: 369689 });
   tag_list?: string[] | null,
   release_ids?: number[] | null,
   position?: number | null,
-  content?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null,
-  alternates?: Record<string, unknown>[] | null,
-  breadcrumbs?: Record<string, unknown>[] | null,
-  translated_slugs?: Record<string, unknown>[] | null,
-  localized_paths?: Record<string, unknown>[] | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
   default_root?: string | null,
   disable_fe_editor?: boolean | null,
-  preview_token?: Record<string, unknown> | null,
-  stage?: Record<string, unknown> | null,
-  last_author?: Record<string, unknown> | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
   last_author_id?: number | null
 }
 ```
@@ -1605,17 +1606,17 @@ await corsair.storyblok.api.stories.get({ story_id: 369689 });
   tag_list?: string[] | null,
   release_ids?: number[] | null,
   position?: number | null,
-  content?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null,
-  alternates?: Record<string, unknown>[] | null,
-  breadcrumbs?: Record<string, unknown>[] | null,
-  translated_slugs?: Record<string, unknown>[] | null,
-  localized_paths?: Record<string, unknown>[] | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
   default_root?: string | null,
   disable_fe_editor?: boolean | null,
-  preview_token?: Record<string, unknown> | null,
-  stage?: Record<string, unknown> | null,
-  last_author?: Record<string, unknown> | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
   last_author_id?: number | null
 }
 ```
@@ -1697,17 +1698,17 @@ This route returns stories without their content; use with_summary for a summary
   tag_list?: string[] | null,
   release_ids?: number[] | null,
   position?: number | null,
-  content?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null,
-  alternates?: Record<string, unknown>[] | null,
-  breadcrumbs?: Record<string, unknown>[] | null,
-  translated_slugs?: Record<string, unknown>[] | null,
-  localized_paths?: Record<string, unknown>[] | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
   default_root?: string | null,
   disable_fe_editor?: boolean | null,
-  preview_token?: Record<string, unknown> | null,
-  stage?: Record<string, unknown> | null,
-  last_author?: Record<string, unknown> | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
   last_author_id?: number | null
 }[]
 ```
@@ -1773,17 +1774,17 @@ Served as a GET, but it changes published state, so it is a write here and a ret
   tag_list?: string[] | null,
   release_ids?: number[] | null,
   position?: number | null,
-  content?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null,
-  alternates?: Record<string, unknown>[] | null,
-  breadcrumbs?: Record<string, unknown>[] | null,
-  translated_slugs?: Record<string, unknown>[] | null,
-  localized_paths?: Record<string, unknown>[] | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
   default_root?: string | null,
   disable_fe_editor?: boolean | null,
-  preview_token?: Record<string, unknown> | null,
-  stage?: Record<string, unknown> | null,
-  last_author?: Record<string, unknown> | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
   last_author_id?: number | null
 }
 ```
@@ -1848,17 +1849,17 @@ Served as a GET, but it stops the Content Delivery API serving the story.
   tag_list?: string[] | null,
   release_ids?: number[] | null,
   position?: number | null,
-  content?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null,
-  alternates?: Record<string, unknown>[] | null,
-  breadcrumbs?: Record<string, unknown>[] | null,
-  translated_slugs?: Record<string, unknown>[] | null,
-  localized_paths?: Record<string, unknown>[] | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
   default_root?: string | null,
   disable_fe_editor?: boolean | null,
-  preview_token?: Record<string, unknown> | null,
-  stage?: Record<string, unknown> | null,
-  last_author?: Record<string, unknown> | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
   last_author_id?: number | null
 }
 ```
@@ -1888,12 +1889,12 @@ await corsair.storyblok.api.stories.update({ story_id: 369689, name: 'Home', slu
 | `story_id` | `number` | Yes | A Storyblok numeric id. |
 | `name` | `string` | Yes | The story name, which the UI shows. |
 | `slug` | `string` | Yes | The URL segment. Storyblok derives full_slug from this and the parent. |
-| `content` | `Record<string, unknown>` | Yes | One object per component field, keyed by the component name, with a component key naming the content type. |
+| `content` | `Record<string, any>` | Yes | One object per component field, keyed by the component name, with a component key naming the content type. |
 | `parent_id` | `number \| null` | No | — |
 | `group_id` | `string \| null` | No | — |
 | `is_startpage` | `boolean` | No | — |
 | `disable_fe_editor` | `boolean` | No | — |
-| `meta_data` | `Record<string, unknown> \| null` | No | — |
+| `meta_data` | `Record<string, any> \| null` | No | — |
 | `tag_list` | `string[] \| null` | No | — |
 | `publish` | `boolean` | No | — |
 | `release_id` | `number` | No | — |
@@ -1934,17 +1935,17 @@ await corsair.storyblok.api.stories.update({ story_id: 369689, name: 'Home', slu
   tag_list?: string[] | null,
   release_ids?: number[] | null,
   position?: number | null,
-  content?: Record<string, unknown> | null,
-  meta_data?: Record<string, unknown> | null,
-  alternates?: Record<string, unknown>[] | null,
-  breadcrumbs?: Record<string, unknown>[] | null,
-  translated_slugs?: Record<string, unknown>[] | null,
-  localized_paths?: Record<string, unknown>[] | null,
+  content?: Record<string, any> | null,
+  meta_data?: Record<string, any> | null,
+  alternates?: Record<string, any>[] | null,
+  breadcrumbs?: Record<string, any>[] | null,
+  translated_slugs?: Record<string, any>[] | null,
+  localized_paths?: Record<string, any>[] | null,
   default_root?: string | null,
   disable_fe_editor?: boolean | null,
-  preview_token?: Record<string, unknown> | null,
-  stage?: Record<string, unknown> | null,
-  last_author?: Record<string, unknown> | null,
+  preview_token?: Record<string, any> | null,
+  stage?: Record<string, any> | null,
+  last_author?: Record<string, any> | null,
   last_author_id?: number | null
 }
 ```
