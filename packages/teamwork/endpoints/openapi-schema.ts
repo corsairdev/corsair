@@ -74,12 +74,31 @@ function schemaFromOpenApi(
 		// Open enums and loose V1 scalars: a value Teamwork adds later must not fail a read.
 		schema = looseScalar;
 	} else if (Array.isArray(value.enum)) {
-		const values = value.enum;
-		// `unknown` is necessary because enum values may use any JSON scalar type.
-		schema = z.custom<unknown>((candidate: unknown) =>
-			// `unknown` is necessary because the candidate is untrusted until matched against the enum.
-			values.some((allowed: unknown) => Object.is(allowed, candidate)),
+		// zod enums and literals rather than a custom check, so get_schema and the docs show the allowed values.
+		const values: unknown[] = value.enum;
+		const strings = values.filter(
+			(allowed): allowed is string => typeof allowed === 'string',
 		);
+		if (strings.length > 0 && strings.length === values.length) {
+			schema = z.enum(strings as [string, ...string[]]);
+		} else {
+			const literals = values
+				.filter(
+					(allowed): allowed is number | boolean | null =>
+						allowed === null ||
+						typeof allowed === 'number' ||
+						typeof allowed === 'boolean',
+				)
+				.map((allowed) => z.literal(allowed));
+			const stringLiterals =
+				strings.length > 0 ? [z.enum(strings as [string, ...string[]])] : [];
+			const [first, ...rest] = [...stringLiterals, ...literals];
+			schema = first
+				? rest.length > 0
+					? z.union([first, ...rest])
+					: first
+				: z.never();
+		}
 	} else if (Array.isArray(value.allOf)) {
 		// `unknown` is necessary because allOf members are arbitrary OpenAPI schema objects.
 		const members = value.allOf.map((member: unknown) =>
@@ -99,10 +118,13 @@ function schemaFromOpenApi(
 		const choices: z.ZodType[] = choicesInput.map((choice: unknown) =>
 			schemaFromOpenApi(choice, definitions, mode, cache),
 		);
-		// `unknown` is necessary because union candidates are untrusted JSON values.
-		schema = z.custom<unknown>((candidate: unknown) =>
-			choices.some((choice) => choice.safeParse(candidate).success),
-		);
+		// A zod union passes when any member does, the same as anyOf, and get_schema can render it.
+		const [first, ...rest] = choices;
+		schema = first
+			? rest.length > 0
+				? z.union([first, ...rest])
+				: first
+			: z.never();
 	} else if (type === 'string') {
 		let stringSchema = z.string();
 		if (strictRequests && typeof value.minLength === 'number') {
