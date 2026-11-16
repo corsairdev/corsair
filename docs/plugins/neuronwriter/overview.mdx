@@ -1,0 +1,154 @@
+---
+title: "NEURONwriter plugin"
+sidebarTitle: "Overview"
+description: "List NEURONwriter projects, start and poll content analyses, read their target word count, terms, questions and SERP competitors, and read, import or score article content."
+---
+
+Use **NEURONwriter** through Corsair: one client, typed API calls.
+
+The API needs a Gold plan or higher. Copy the key from your profile, under the "Neuron API access" tab. Every request is a POST to `https://app.neuronwriter.com/neuron-api/0.5/writer/{method}` with the key in the `X-API-KEY` header.
+
+The workflow is two calls, and they behave differently:
+
+- **`analysis.start` queues work; it does not return results.** It answers a query id and three URLs, and takes about a minute before the recommendations exist.
+- **`analysis.get` is the poll.** It answers `{ status }` alone while the analysis is `waiting` or `in progress`, and adds `metrics`, `terms`, `terms_txt`, `ideas` and `competitors` only once `status` is `ready`. So the response type has those fields optional, and a caller branches on the status rather than assuming they are there.
+
+What costs money and what does not:
+
+- **`analysis.start` spends one Content Writer analysis** from the account's monthly limit, the same as creating one in the app. At the Gold plan's 75 analyses, the API and the app share that total.
+- **`analysis.get` spends nothing.** Polling it as often as needed is free.
+- **`content.import` saves a revision; `content.evaluate` does not.** Both take the same body and return the same shape. Use evaluate to score a draft, then import once it is ready, and the revision history stays clean.
+
+What to know when sizing and shaping a request:
+
+- **`competitors_mode` changes the SERP sample.** The default `top10` analyses the ten top results, `top30` the thirty, and `top-intent` up to ten pages matching the dominant intent.
+- **A query and a project are different ids.** The project id is in the project URL, and the query id comes back from `analysis.start` or `queries.list`.
+- **`queries.list` filters by tags with AND.** Every tag sent has to be on the query, and one string behaves the same as a list of one.
+- **Import takes HTML or a URL, never both.** When importing from a URL, `id` and `class` select the container to read.
+
+Errors are thin: a bad or inactive key is the only documented failure, a 401 with `{ "error": "..." }`. The auth check runs before routing, so a bad key hides whether a method exists.
+
+**What you get:**
+
+- 7 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/neuronwriter better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/neuronwriter better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/neuronwriter better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/neuronwriter better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { neuronwriter } from '@corsair-dev/neuronwriter';
+
+export const corsair = createCorsair({
+	plugins: [
+		neuronwriter(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the NEURONwriter API key before the first call: `pnpm corsair setup --plugin=neuronwriter --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+neuronwriter()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'neuronwriter',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the account's projects**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.neuronwriter.api.projects.list({});
+```
+
+
+**Queue an analysis for one keyword**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.neuronwriter.api.analysis.start({
+	project: 'c2fe46bce8019bff',
+	keyword: 'trail running shoes',
+	engine: 'google.co.uk',
+	language: 'English',
+});
+```
+
+
+See the full list on the [API](/plugins/neuronwriter/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/neuronwriter/api">
+    Every `neuronwriter.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
