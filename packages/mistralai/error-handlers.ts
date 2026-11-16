@@ -28,16 +28,15 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// 503: the service did not take the request. 408 on a read: nothing
-	// changed. A write that timed out (408) may still have run and billed, so
-	// it is not retried.
+	// 503 or 408 on a read: nothing changed, so it is safe to ask again. A
+	// write that failed this way may still have run and billed, so it is not
+	// retried (PLUGIN_PR_RULES R8: 5xx retries are for reads only).
 	TIMEOUT_ERROR: {
-		/** True for a 503, and for a 408 only on a GET. */
+		/** True for a 503 or a 408 on a GET. */
 		match: (error: Error) => {
 			const status = statusOf(error);
-			if (status === 503) return true;
 			return (
-				status === 408 &&
+				(status === 503 || status === 408) &&
 				error instanceof MistralAiAPIError &&
 				error.method === 'GET'
 			);

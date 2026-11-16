@@ -114,22 +114,32 @@ describe('Mistral AI error handling through createCorsair', () => {
 		});
 	});
 
-	it('retries a 503 on a write: the service did not take the request', async () => {
+	it('retries a 503 on a read', async () => {
 		await withClient(async ({ corsair }) => {
 			jest.useFakeTimers();
 			fetchMock
 				.mockResolvedValueOnce(jsonResponse({ message: 'overloaded' }, 503))
-				.mockResolvedValueOnce(
-					jsonResponse({ id: 'x', model: 'm', choices: [] }),
-				);
+				.mockResolvedValueOnce(jsonResponse(modelList));
 
-			const pending = corsair.mistralai.api.chat.complete({
-				model: 'mistral-small-latest',
-				messages: [{ role: 'user', content: 'hi' }],
-			});
+			const pending = corsair.mistralai.api.models.list({});
 			await jest.advanceTimersByTimeAsync(1_000);
-			await expect(pending).resolves.toMatchObject({ id: 'x' });
+			await expect(pending).resolves.toEqual(modelList);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
+		});
+	});
+
+	it('does not retry a 503 on a write, which may already have run and billed', async () => {
+		await withClient(async ({ corsair }) => {
+			fetchMock.mockResolvedValueOnce(
+				jsonResponse({ message: 'overloaded' }, 503),
+			);
+			await expect(
+				corsair.mistralai.api.chat.complete({
+					model: 'mistral-small-latest',
+					messages: [{ role: 'user', content: 'hi' }],
+				}),
+			).rejects.toMatchObject({ status: 503 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		});
 	});
 
