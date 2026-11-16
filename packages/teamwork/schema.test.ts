@@ -1,6 +1,5 @@
 import {
 	teamworkInputSchemas,
-	teamworkOutputSchemaFor,
 	teamworkOutputSchemas,
 } from './endpoints/openapi-schema';
 import type { TeamworkEndpointInputs } from './endpoints/operation-types';
@@ -85,26 +84,99 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		);
 	});
 
-	it('allows project response fields omitted by fields[projects] selection', () => {
-		const operation = teamworkOperations.find(
-			(item) => item.id === 'v3_get_projects_api_v3_projects_json',
-		);
-		if (!operation) throw new Error('Projects list operation is missing');
-		const response = sampleValue(
-			operation.response,
-			teamworkDefinitions[operation.version] ?? {},
-		);
-		if (!isRecord(response) || !Array.isArray(response.projects)) {
-			throw new Error('Projects response fixture is malformed');
-		}
-		response.projects = [{ id: 1 }];
-		const schema = teamworkOutputSchemaFor(operation, {
-			'fields[projects]': ['id'],
-		});
-		expect(schema.safeParse(response).success).toBe(true);
-		expect(schema.safeParse({ ...response, projects: [{}] }).success).toBe(
-			false,
-		);
+	// Trimmed from the live run on a Teamwork trial site (11-16). Each one failed the spec-built schema.
+	it.each([
+		[
+			'v3_get_projects_api_v3_projects_projectid_json',
+			{
+				project: {
+					id: 1470497,
+					name: 'corsair-plugin-test',
+					status: 'active',
+					type: 'normal',
+					startAt: null,
+					endAt: null,
+					category: null,
+					categoryId: null,
+					completedAt: null,
+					completedBy: null,
+					archivedAt: null,
+					archivedBy: null,
+					tagIds: null,
+					customFieldValueIds: null,
+					timeBudget: null,
+				},
+			},
+		],
+		[
+			'v3_get_projects_api_v3_tasks_taskid_json',
+			{
+				task: {
+					id: 51453032,
+					name: 'corsair-plugin-test task',
+					status: 'new',
+					priority: 'high',
+					tasklistId: 4073104,
+					crmDealIds: null,
+					parentTask: null,
+					capacities: null,
+					assigneeCompanyIds: null,
+					assigneeTeamIds: null,
+					assigneeJobRoleIds: null,
+					deletedAt: null,
+				},
+			},
+		],
+		[
+			'v3_get_projects_api_v3_me_json',
+			{ person: { id: 753865, firstName: 'Corsair', createdBy: null } },
+		],
+		[
+			'v2_get_projects_api_v2_tasks_taskid_json',
+			{
+				STATUS: 'OK',
+				task: {
+					id: 51453032,
+					crmDealIds: null,
+					teamsFollowingChanges: null,
+					companiesFollowingComments: null,
+				},
+			},
+		],
+		[
+			'v1_get_projects_id_json',
+			{
+				STATUS: 'OK',
+				project: {
+					id: '1470497',
+					name: 'corsair-plugin-test',
+					'harvest-timers-enabled': false,
+					integrations: { xero: { connected: false } },
+				},
+			},
+		],
+		[
+			'v1_get_tasklists_id_json',
+			{ STATUS: 'OK', 'todo-list': { id: '4073104', tasks: null } },
+		],
+		// Sparse fieldsets leave out every unselected field, on any resource.
+		[
+			'v3_get_projects_api_v3_tasks_json',
+			{ tasks: [{ id: 51453032 }], meta: { page: { hasMore: false } } },
+		],
+	])('%s parses a real response with nulls and loose V1 types', (id, body) => {
+		const parsed = teamworkOutputSchemas[id]?.safeParse(body);
+		expect(parsed?.success).toBe(true);
+		// Unknown fields stay in the result rather than being dropped.
+		expect(parsed?.data).toEqual(body);
+	});
+
+	it('still rejects a response that is not the documented top-level shape', () => {
+		const schema =
+			teamworkOutputSchemas['v3_get_projects_api_v3_projects_projectid_json'];
+		expect(schema?.safeParse(null).success).toBe(false);
+		expect(schema?.safeParse('<!DOCTYPE html>').success).toBe(false);
+		expect(schema?.safeParse({ project: 'not an object' }).success).toBe(false);
 	});
 
 	it('validates documented numeric maps without allowing unrelated body fields', () => {

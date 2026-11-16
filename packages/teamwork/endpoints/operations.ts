@@ -3,10 +3,7 @@ import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
 import { makeTeamworkRequest } from '../client';
 import type { TeamworkContext } from '../index';
-import {
-	teamworkInputSchemas,
-	teamworkOutputSchemaFor,
-} from './openapi-schema';
+import { teamworkInputSchemas, teamworkOutputSchemas } from './openapi-schema';
 import type {
 	TeamworkEndpointInputs,
 	TeamworkEndpointOutputs,
@@ -76,7 +73,8 @@ export function createTeamworkOperationEndpoint<Id extends TeamworkOperationId>(
 	const operation = findOperation(id);
 	return async (ctx, input) => {
 		const inputSchema = teamworkInputSchemas[id];
-		const outputSchema = teamworkOutputSchemaFor(operation, input.query ?? {});
+		// Every response field is optional, so sparse `fields[...]` selections parse too.
+		const outputSchema = teamworkOutputSchemas[id];
 		if (!inputSchema || !outputSchema) {
 			throw new Error('Teamwork operation schema is unavailable');
 		}

@@ -13,13 +13,28 @@ function isRecord(value: unknown): value is OpenApiDocument {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+/**
+ * `request` keeps the published contract strict. `response` and `v1Response`
+ * parse what Teamwork really sends: the live run on 11-16 got null for most
+ * unset V3 fields the spec types as string, number, object or array, and V1
+ * booleans where the spec says string. So in a response every field is
+ * optional and nullable, enums are open and min/max limits are dropped;
+ * `v1Response` also accepts any JSON scalar where the spec names one.
+ */
+type SchemaMode = 'request' | 'response' | 'v1Response';
+
+// A JSON scalar of any type, for V1 response fields whose published type doesn't match the wire.
+const looseScalar = z.union([z.string(), z.number(), z.boolean()]);
+
 // `unknown` is necessary because schema conversion starts with untrusted provider JSON.
 function schemaFromOpenApi(
 	value: unknown,
 	definitions: Record<string, TeamworkOpenApiSchema>,
-	strictRequests: boolean,
+	mode: SchemaMode,
 	cache: Map<string, z.ZodType>,
 ): z.ZodType {
+	const strictRequests = mode === 'request';
+	const looseScalars = mode === 'v1Response';
 	if (!isRecord(value)) {
 		// `unknown` is necessary because the provider omitted a schema for this JSON value.
 		return z.unknown();
@@ -28,21 +43,33 @@ function schemaFromOpenApi(
 	const reference = value.$ref;
 	if (typeof reference === 'string') {
 		const name = reference.replace(/^#\/definitions\//, '');
-		const cacheKey = `${strictRequests ? 'request' : 'response'}:${name}`;
+		const cacheKey = `${mode}:${name}`;
 		const existing = cache.get(cacheKey);
 		if (existing) return existing;
 		const lazySchema = z.lazy(() =>
-			schemaFromOpenApi(definitions[name], definitions, strictRequests, cache),
+			schemaFromOpenApi(definitions[name], definitions, mode, cache),
 		);
 		cache.set(cacheKey, lazySchema);
 		return lazySchema;
 	}
 
-	const nullable = value.nullable === true || value['x-nullable'] === true;
+	const nullable =
+		!strictRequests || value.nullable === true || value['x-nullable'] === true;
 	const type = value.type;
 	let schema: z.ZodType;
 
-	if (Array.isArray(value.enum)) {
+	if (
+		!strictRequests &&
+		(Array.isArray(value.enum) ||
+			(looseScalars &&
+				(type === 'string' ||
+					type === 'integer' ||
+					type === 'number' ||
+					type === 'boolean')))
+	) {
+		// Open enums and loose V1 scalars: a value Teamwork adds later must not fail a read.
+		schema = looseScalar;
+	} else if (Array.isArray(value.enum)) {
 		const values = value.enum;
 		// `unknown` is necessary because enum values may use any JSON scalar type.
 		schema = z.custom<unknown>((candidate: unknown) =>
@@ -52,7 +79,7 @@ function schemaFromOpenApi(
 	} else if (Array.isArray(value.allOf)) {
 		// `unknown` is necessary because allOf members are arbitrary OpenAPI schema objects.
 		const members = value.allOf.map((member: unknown) =>
-			schemaFromOpenApi(member, definitions, strictRequests, cache),
+			schemaFromOpenApi(member, definitions, mode, cache),
 		);
 		// `unknown` is necessary because candidates are provider response/request JSON values.
 		schema = z.custom<unknown>((candidate: unknown) =>
@@ -66,7 +93,7 @@ function schemaFromOpenApi(
 				? value.anyOf
 				: [];
 		const choices: z.ZodType[] = choicesInput.map((choice: unknown) =>
-			schemaFromOpenApi(choice, definitions, strictRequests, cache),
+			schemaFromOpenApi(choice, definitions, mode, cache),
 		);
 		// `unknown` is necessary because union candidates are untrusted JSON values.
 		schema = z.custom<unknown>((candidate: unknown) =>
@@ -74,32 +101,29 @@ function schemaFromOpenApi(
 		);
 	} else if (type === 'string') {
 		let stringSchema = z.string();
-		if (typeof value.minLength === 'number') {
+		if (strictRequests && typeof value.minLength === 'number') {
 			stringSchema = stringSchema.min(value.minLength);
 		}
-		if (typeof value.maxLength === 'number') {
+		if (strictRequests && typeof value.maxLength === 'number') {
 			stringSchema = stringSchema.max(value.maxLength);
 		}
 		schema = stringSchema;
 	} else if (type === 'integer' || type === 'number') {
 		let numberSchema = z.number();
-		if (type === 'integer') numberSchema = numberSchema.int();
-		if (typeof value.minimum === 'number') {
+		if (strictRequests && type === 'integer') {
+			numberSchema = numberSchema.int();
+		}
+		if (strictRequests && typeof value.minimum === 'number') {
 			numberSchema = numberSchema.min(value.minimum);
 		}
-		if (typeof value.maximum === 'number') {
+		if (strictRequests && typeof value.maximum === 'number') {
 			numberSchema = numberSchema.max(value.maximum);
 		}
 		schema = numberSchema;
 	} else if (type === 'boolean') {
 		schema = z.boolean();
 	} else if (type === 'array') {
-		const itemSchema = schemaFromOpenApi(
-			value.items,
-			definitions,
-			strictRequests,
-			cache,
-		);
+		const itemSchema = schemaFromOpenApi(value.items, definitions, mode, cache);
 		schema = z.array(itemSchema);
 	} else if (type === 'object' || isRecord(value.properties)) {
 		const properties = isRecord(value.properties) ? value.properties : {};
@@ -114,27 +138,23 @@ function schemaFromOpenApi(
 			const propertySchema = schemaFromOpenApi(
 				property,
 				definitions,
-				strictRequests,
+				mode,
 				cache,
 			);
-			shape[name] = requiredNames.includes(name)
-				? propertySchema
-				: propertySchema.optional();
+			shape[name] =
+				strictRequests && requiredNames.includes(name)
+					? propertySchema
+					: propertySchema.optional();
 		}
 		const objectSchema = z.object(shape);
 		if (isRecord(value.additionalProperties)) {
 			schema = objectSchema.catchall(
-				schemaFromOpenApi(
-					value.additionalProperties,
-					definitions,
-					strictRequests,
-					cache,
-				),
+				schemaFromOpenApi(value.additionalProperties, definitions, mode, cache),
 			);
 		} else if (strictRequests && value.additionalProperties === true) {
 			// `unknown` is necessary because OpenAPI explicitly permits arbitrary JSON map values here.
 			schema = objectSchema.catchall(z.unknown());
-		} else if (strictRequests || value.additionalProperties === false) {
+		} else if (strictRequests) {
 			schema = objectSchema.strict();
 		} else {
 			// OpenAPI defaults additionalProperties to true for response objects, so preserve provider extensions.
@@ -163,7 +183,12 @@ function parameterSchema(
 		minLength: parameter.minLength,
 		maxLength: parameter.maxLength,
 	};
-	return schemaFromOpenApi(parameterDocument, definitions, true, new Map());
+	return schemaFromOpenApi(
+		parameterDocument,
+		definitions,
+		'request',
+		new Map(),
+	);
 }
 
 const v3TaskRequestOperationIds = new Set([
@@ -281,7 +306,7 @@ function createInputSchema(
 		const bodySchema = schemaFromOpenApi(
 			operation.body,
 			definitions,
-			true,
+			'request',
 			new Map(),
 		);
 		inputShape.body = operation.bodyRequired
@@ -289,6 +314,28 @@ function createInputSchema(
 			: bodySchema.optional();
 	}
 	return z.object(inputShape).strict();
+}
+
+// The documented top-level response stays non-null: a null or empty body is still malformed.
+function responseSchema(
+	operation: TeamworkOperationDefinition,
+	cache: Map<string, z.ZodType>,
+): z.ZodType {
+	const definitions = teamworkDefinitions[operation.version] ?? {};
+	// `unknown` is necessary because the response document is provider OpenAPI JSON.
+	let document: unknown = operation.response;
+	while (isRecord(document) && typeof document.$ref === 'string') {
+		document = definitions[document.$ref.replace(/^#\/definitions\//, '')];
+	}
+	const schema = schemaFromOpenApi(
+		document,
+		definitions,
+		operation.version === 'v1' ? 'v1Response' : 'response',
+		cache,
+	);
+	return schema instanceof z.ZodNullable
+		? (schema.unwrap() as z.ZodType)
+		: schema;
 }
 
 const schemaCache = new Map<string, z.ZodType>();
@@ -303,51 +350,8 @@ export const teamworkOutputSchemas = Object.fromEntries(
 		operation.id,
 		operation.response === null
 			? z.undefined()
-			: schemaFromOpenApi(
-					operation.response,
-					teamworkDefinitions[operation.version] ?? {},
-					false,
-					schemaCache,
-				),
+			: responseSchema(operation, schemaCache),
 	]),
 );
-
-export function teamworkOutputSchemaFor(
-	operation: TeamworkOperationDefinition,
-	// `unknown` is necessary because this shared helper accepts query maps from operations with different parameter types.
-	query: Record<string, unknown>,
-): z.ZodType {
-	const selectedProjectFields = query['fields[projects]'];
-	if (
-		!Array.isArray(selectedProjectFields) ||
-		selectedProjectFields.length === 0
-	) {
-		return teamworkOutputSchemas[operation.id] ?? z.never();
-	}
-	const baseDefinitions = teamworkDefinitions[operation.version] ?? {};
-	const projectSchema = baseDefinitions['view.ProjectV205'];
-	if (!isRecord(projectSchema)) {
-		return teamworkOutputSchemas[operation.id] ?? z.never();
-	}
-	const properties = projectSchema.properties;
-	if (!isRecord(properties))
-		return teamworkOutputSchemas[operation.id] ?? z.never();
-	const selectedFields = selectedProjectFields.filter(
-		(name): name is string => typeof name === 'string' && name in properties,
-	);
-	if (selectedFields.length === 0) {
-		return teamworkOutputSchemas[operation.id] ?? z.never();
-	}
-	const definitions = {
-		...baseDefinitions,
-		'view.ProjectV205': {
-			...projectSchema,
-			required: selectedFields,
-		},
-	};
-	return operation.response === null
-		? z.undefined()
-		: schemaFromOpenApi(operation.response, definitions, false, new Map());
-}
 
 export type { TeamworkOperationDefinition };

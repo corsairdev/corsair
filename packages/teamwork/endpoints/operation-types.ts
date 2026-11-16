@@ -383,9 +383,29 @@ export type { TeamworkV3Inputs, TeamworkV3Outputs };
 export type TeamworkEndpointInputs = TeamworkV1Inputs &
 	TeamworkV2Inputs &
 	TeamworkV3Inputs;
-export type TeamworkEndpointOutputs = TeamworkV1Outputs &
-	TeamworkV2Outputs &
-	TeamworkV3Outputs;
+/**
+ * What a response really holds. The live run on 11-16 got null for unset
+ * fields the spec types as values, and V1 booleans where the spec says string.
+ * So every response field is optional and nullable, enum fields are plain
+ * strings, and V1 scalars may be any JSON scalar (see the runtime schemas).
+ */
+type TeamworkResponse<T> = T extends Array<infer Item>
+	? Array<TeamworkResponse<Item>>
+	: T extends object
+		? { [Key in keyof T]?: TeamworkResponse<T[Key]> | null }
+		: (T extends string ? string : T) | null;
+type TeamworkV1Response<T> = T extends Array<infer Item>
+	? Array<TeamworkV1Response<Item>>
+	: T extends object
+		? { [Key in keyof T]?: TeamworkV1Response<T[Key]> | null }
+		: string | number | boolean | null;
+export type TeamworkEndpointOutputs = {
+	[Id in keyof TeamworkV1Outputs]: TeamworkV1Response<TeamworkV1Outputs[Id]>;
+} & {
+	[Id in keyof TeamworkV2Outputs]: TeamworkResponse<TeamworkV2Outputs[Id]>;
+} & {
+	[Id in keyof TeamworkV3Outputs]: TeamworkResponse<TeamworkV3Outputs[Id]>;
+};
 export type TeamworkEndpointInput = TeamworkEndpointInputs[TeamworkOperationId];
 export type TeamworkEndpointOutput =
 	TeamworkEndpointOutputs[TeamworkOperationId];
