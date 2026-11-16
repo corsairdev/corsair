@@ -1,9 +1,10 @@
+import { AuthMissingError } from 'corsair/core';
 import { makeSimlaComRequest } from './client';
 import { SIMLACOM_OPERATION_IDS } from './endpoints/operation-io-types';
 import { createSimlaComOperationEndpoint } from './endpoints/shared';
 import { getSimlaComOperation, SIMLACOM_OPERATIONS } from './endpoints/types';
 import type { SimlaComContext, SimlaComPluginOptions } from './index';
-import { simlacom } from './index';
+import { simlaComAuthConfig, simlacom } from './index';
 
 function sampleValue(schema: {
 	type?: string | readonly string[];
@@ -44,6 +45,8 @@ describe('documented operation transport', () => {
 				set_api_key: async () => undefined,
 				get_webhook_signature: async () => null,
 				set_webhook_signature: async () => undefined,
+				get_subdomain: async () => 'demo',
+				set_subdomain: async () => undefined,
 			},
 		};
 		const invalidInput = { path: { undocumented: true } };
@@ -191,5 +194,80 @@ describe('documented operation transport', () => {
 		};
 		const plugin = simlacom({ subdomain: 'demo', hooks });
 		expect(plugin.hooks).toBe(hooks);
+	});
+
+	it('keyBuilder needs the stored subdomain, so Hub offers a connect link without it', async () => {
+		const plugin = simlacom();
+		const keys = (subdomain: string | null) => ({
+			get_api_key: async () => 'stored-key',
+			get_subdomain: async () => subdomain,
+		});
+		const keyBuilder = plugin.keyBuilder;
+		if (!keyBuilder) throw new Error('keyBuilder missing');
+		const build = (subdomain: string | null) =>
+			keyBuilder(
+				// The key manager is partial here; only the two getters are read.
+				{ authType: 'api_key', keys: keys(subdomain) } as never,
+				'endpoint',
+			);
+
+		await expect(build('north-shop')).resolves.toBe('stored-key');
+		await expect(build('https://north-shop.simla.com/')).resolves.toBe(
+			'stored-key',
+		);
+		await expect(build(null)).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(build('attacker.example')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		expect(simlaComAuthConfig.api_key.account).toEqual(['subdomain']);
+		const codeKeyBuilder = simlacom({
+			key: 'code-key',
+			subdomain: 'demo',
+		}).keyBuilder;
+		await expect(
+			codeKeyBuilder?.({ authType: 'api_key' } as never, 'endpoint'),
+		).resolves.toBe('code-key');
+	});
+
+	it('calls the host stored with the connection when no subdomain option is set', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ success: true, versions: ['5.0'] }), {
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
+		const context = {
+			endpoints: {},
+			db: {},
+			$getAccountId: async () => 'test-account',
+			key: 'stored-key',
+			options: {},
+			keys: { get_subdomain: async () => 'stored-shop' },
+		} as unknown as SimlaComContext;
+
+		await createSimlaComOperationEndpoint('api.apiVersions.get')(context, {});
+
+		expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+			'https://stored-shop.simla.com/api/api-versions',
+		);
+	});
+
+	it('marks the SMS-sending and billed operations destructive and leaves out update-scopes', () => {
+		const plugin = simlacom();
+		const risk = (id: string) =>
+			(plugin.endpointMeta as Record<string, { riskLevel: string }>)[id]
+				?.riskLevel;
+		expect(risk('loyalty.accountByIdActivate.post')).toBe('destructive');
+		expect(risk('integration.integrationModulesByCodeEdit.post')).toBe(
+			'destructive',
+		);
+		expect(risk('notifications.send.post')).toBe('destructive');
+		for (const operation of SIMLACOM_OPERATIONS) {
+			expect(risk(operation.id)).toBe(operation.risk);
+		}
+		expect(
+			SIMLACOM_OPERATIONS.some((operation) =>
+				operation.route.includes('update-scopes'),
+			),
+		).toBe(false);
 	});
 });

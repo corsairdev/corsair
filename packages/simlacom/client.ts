@@ -20,13 +20,93 @@ export type SimlaComBinaryOutput = {
 	base64: string;
 };
 
+const SUBDOMAIN_LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
+/**
+ * The account label from what a person types into the connect form: `acme`,
+ * `acme.simla.com` or the full `https://acme.simla.com/` URL. Anything that
+ * names another host returns undefined, so the key is only ever sent to
+ * `*.simla.com`.
+ */
+export function normalizeSimlaComSubdomain(value: string): string | undefined {
+	const host = value
+		.trim()
+		.toLowerCase()
+		.replace(/^https:\/\//, '')
+		.replace(/\/.*$/, '')
+		.replace(/\.simla\.com$/, '');
+	return SUBDOMAIN_LABEL.test(host) ? host : undefined;
+}
+
+export function isValidSimlaComSubdomain(value: string): boolean {
+	return normalizeSimlaComSubdomain(value) !== undefined;
+}
+
 function resolveHost(subdomain: string | undefined): string {
-	if (!subdomain || !/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(subdomain)) {
-		throw new Error(
-			'Simla.com requires a valid instance subdomain; configure the plugin `subdomain` option.',
+	const label = subdomain ? normalizeSimlaComSubdomain(subdomain) : undefined;
+	if (!label) {
+		throw new AuthMissingError(
+			'simlacom',
+			'api_key',
+			'Simla.com subdomain is missing or invalid: connect the account with its subdomain (acme for https://acme.simla.com) or set the subdomain option.',
 		);
 	}
-	return `https://${subdomain}.simla.com`;
+	return `https://${label}.simla.com`;
+}
+
+/**
+ * Simla.com is a PHP API: a list only arrives whole as `ids[]=1&ids[]=2`
+ * (`ids=1&ids=2` is refused with 400). Most documented list parameters already
+ * end in `[]`; this adds it to the few that don't, and to lists nested in an
+ * object filter.
+ */
+// Query values are validated JSON of any shape; each level is narrowed here.
+export function simlaComQuery(
+	query: Record<string, unknown>,
+): Record<
+	string,
+	string | number | boolean | Array<string | number | boolean>
+> {
+	const out: Record<
+		string,
+		string | number | boolean | Array<string | number | boolean>
+	> = {};
+	// Nested filter values have no fixed shape; recursion narrows each one.
+	const add = (name: string, value: unknown): void => {
+		if (value === undefined || value === null) return;
+		if (Array.isArray(value)) {
+			const key = name.endsWith('[]') ? name : `${name}[]`;
+			const scalars: Array<string | number | boolean> = [];
+			for (const item of value) {
+				if (
+					typeof item === 'string' ||
+					typeof item === 'number' ||
+					typeof item === 'boolean'
+				) {
+					scalars.push(item);
+				} else if (item !== null && item !== undefined) {
+					scalars.push(JSON.stringify(item));
+				}
+			}
+			out[key] = scalars;
+			return;
+		}
+		if (isRecord(value)) {
+			for (const [key, item] of Object.entries(value)) {
+				add(`${name}[${key}]`, item);
+			}
+			return;
+		}
+		if (
+			typeof value === 'string' ||
+			typeof value === 'number' ||
+			typeof value === 'boolean'
+		) {
+			out[name] = value;
+		}
+	};
+	for (const [name, value] of Object.entries(query)) add(name, value);
+	return out;
 }
 
 // Request and response values stay unknown until operation-specific Zod schemas narrow them.
@@ -157,13 +237,49 @@ function safeApiError(
 	);
 }
 
+/**
+ * Simla.com explains a refusal in `errorMsg` (and per-field `errors`), for
+ * example "Telephony not enabled" or "Unexpected value for parameter". Those are
+ * kept so a caller can fix the request; every other body field is dropped.
+ */
+// The error body is untrusted provider JSON; only the two documented fields are read.
+function providerErrorDetails(body: unknown): {
+	errorMsg?: string;
+	errors?: JsonErrors;
+} {
+	if (!isRecord(body)) return {};
+	const details: { errorMsg?: string; errors?: JsonErrors } = {};
+	if (typeof body.errorMsg === 'string') {
+		details.errorMsg = body.errorMsg.slice(0, 500);
+	}
+	const errors = body.errors;
+	if (
+		Array.isArray(errors) &&
+		errors.every((item) => typeof item === 'string')
+	) {
+		details.errors = errors.slice(0, 20).map((item) => item.slice(0, 300));
+	} else if (isRecord(errors)) {
+		const fields: Record<string, string> = {};
+		for (const [field, message] of Object.entries(errors).slice(0, 20)) {
+			if (typeof message === 'string') fields[field] = message.slice(0, 300);
+		}
+		details.errors = fields;
+	}
+	return details;
+}
+
+type JsonErrors = string[] | Record<string, string>;
+
 export function sanitizeSimlaComApiError(error: ApiError): ApiError {
 	const parsedUrl = new URL(error.url);
 	const pathPrefix = parsedUrl.pathname.startsWith('/api/v5/')
 		? '/api/v5/'
 		: '/';
 	const safeUrl = `${parsedUrl.origin}${pathPrefix}${error.request.url.replace(/^\/+/, '')}`;
-	const safeMessage = `Simla.com request failed with HTTP ${error.status}.`;
+	const details = providerErrorDetails(error.body);
+	const safeMessage = details.errorMsg
+		? `Simla.com request failed with HTTP ${error.status}: ${details.errorMsg}`
+		: `Simla.com request failed with HTTP ${error.status}.`;
 	const requestOptions: ApiRequestOptions = {
 		...error.request,
 		path: undefined,
@@ -186,9 +302,7 @@ export function sanitizeSimlaComApiError(error: ApiError): ApiError {
 			writable: true,
 		},
 		body: {
-			value: {
-				message: 'Simla.com request failed; response details were redacted.',
-			},
+			value: { success: false, ...details },
 			enumerable: true,
 			configurable: true,
 			writable: true,
@@ -209,26 +323,6 @@ export function sanitizeSimlaComApiError(error: ApiError): ApiError {
 	return error;
 }
 
-// Query values vary by provider parameter, so recursion narrows the validated JSON structure at runtime.
-function appendQueryValue(
-	params: URLSearchParams,
-	name: string,
-	value: unknown,
-): void {
-	if (value === undefined || value === null) return;
-	if (Array.isArray(value)) {
-		for (const item of value) appendQueryValue(params, name, item);
-		return;
-	}
-	if (isRecord(value)) {
-		for (const [key, item] of Object.entries(value)) {
-			appendQueryValue(params, `${name}[${key}]`, item);
-		}
-		return;
-	}
-	params.append(name, String(value));
-}
-
 function binaryUrl(
 	operation: SimlaComOperation,
 	host: string,
@@ -247,8 +341,10 @@ function binaryUrl(
 		},
 	);
 	const params = new URLSearchParams();
-	for (const [key, value] of Object.entries(input.query ?? {})) {
-		appendQueryValue(params, key, value);
+	for (const [key, value] of Object.entries(simlaComQuery(input.query ?? {}))) {
+		for (const item of Array.isArray(value) ? value : [value]) {
+			params.append(key, String(item));
+		}
 	}
 	const suffix = params.toString();
 	return `${host}/${operation.versioned ? 'api/v5/' : ''}${path}${suffix ? `?${suffix}` : ''}`;
@@ -276,7 +372,7 @@ export async function makeSimlaComRequest(
 		method: operation.method,
 		url: operation.route,
 		...(input.path ? { path: input.path } : {}),
-		...(input.query ? { query: input.query } : {}),
+		...(input.query ? { query: simlaComQuery(input.query) } : {}),
 	};
 
 	if (operation.request?.mediaType === 'application/octet-stream') {

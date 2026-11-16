@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { isValidSimlaComSubdomain } from './client';
 import {
 	simlaComEndpointMeta,
 	simlaComEndpointSchemas,
@@ -23,7 +24,11 @@ import { SimlaComSchema } from './schema';
 export type SimlaComPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	/** The customer instance subdomain from `https://{subdomain}.simla.com`. */
+	/**
+	 * Overrides the account subdomain stored with the connection: `acme` for
+	 * `https://acme.simla.com` (the full account URL works too). Leave it unset
+	 * when each connection stores its own.
+	 */
 	subdomain?: string;
 	hooks?: InternalSimlaComPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -32,10 +37,14 @@ export type SimlaComPluginOptions = {
 
 export type SimlaComContext = CorsairPluginContext<
 	typeof SimlaComSchema,
-	SimlaComPluginOptions
+	SimlaComPluginOptions,
+	undefined,
+	typeof simlaComAuthConfig
 >;
-export type SimlaComKeyBuilderContext =
-	KeyBuilderContext<SimlaComPluginOptions>;
+export type SimlaComKeyBuilderContext = KeyBuilderContext<
+	SimlaComPluginOptions,
+	typeof simlaComAuthConfig
+>;
 export type SimlaComBoundEndpoints = BindEndpoints<
 	typeof simlaComEndpointsNested
 >;
@@ -46,8 +55,14 @@ const endpointMeta = simlaComEndpointMeta satisfies RequiredPluginEndpointMeta<
 	typeof simlaComEndpointsNested
 >;
 
+/**
+ * Every Simla.com account has its own host, so the subdomain is stored with the
+ * key (the key manager adds `get_subdomain()`) and Hub's connect form asks for it.
+ */
 export const simlaComAuthConfig = {
-	api_key: {},
+	api_key: {
+		account: ['subdomain'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseSimlaComPlugin<T extends SimlaComPluginOptions> = CorsairPlugin<
@@ -56,7 +71,8 @@ export type BaseSimlaComPlugin<T extends SimlaComPluginOptions> = CorsairPlugin<
 	typeof simlaComEndpointsNested,
 	Record<string, never>,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof simlaComAuthConfig
 >;
 
 export type InternalSimlaComPlugin = BaseSimlaComPlugin<SimlaComPluginOptions>;
@@ -83,10 +99,18 @@ export function simlacom<const T extends SimlaComPluginOptions>(
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: SimlaComKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
-			if (options.key) return options.key;
-			if (!ctx.keys) throw new AuthMissingError('simlacom', 'api_key');
-			const apiKey = await ctx.keys.get_api_key();
+			const apiKey = options.key ?? (await ctx.keys?.get_api_key());
 			if (!apiKey) throw new AuthMissingError('simlacom', 'api_key');
+			// A key without its account host reaches nothing. Failing here, not in
+			// the endpoint, lets core hand back a connect link.
+			const subdomain = options.subdomain ?? (await ctx.keys?.get_subdomain());
+			if (!subdomain || !isValidSimlaComSubdomain(subdomain)) {
+				throw new AuthMissingError(
+					'simlacom',
+					'api_key',
+					'Simla.com subdomain is not set: connect the account with its subdomain (acme for https://acme.simla.com) or set the subdomain option.',
+				);
+			}
 			return apiKey;
 		},
 	} satisfies InternalSimlaComPlugin;

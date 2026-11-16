@@ -1,7 +1,12 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, ApiResult, OpenAPIConfig } from 'corsair/http';
 import { ApiError } from 'corsair/http';
-import { makeSimlaComRequest, sanitizeSimlaComApiError } from './client';
+import {
+	makeSimlaComRequest,
+	normalizeSimlaComSubdomain,
+	sanitizeSimlaComApiError,
+	simlaComQuery,
+} from './client';
 import { getSimlaComOperation } from './endpoints/types';
 
 const jsonResponse = (body: object, status = 200): Response =>
@@ -139,9 +144,7 @@ describe('Simla.com transport', () => {
 		if (error instanceof ApiError) {
 			expect(error.message).not.toContain('reader@sample.invalid');
 			expect(error.stack).toContain('catchErrorCodes');
-			expect(error.body).toEqual({
-				message: 'Simla.com request failed; response details were redacted.',
-			});
+			expect(error.body).toEqual({ success: false });
 			expect(error.request.query).toBeUndefined();
 			expect(error.request.path).toBeUndefined();
 			expect(error.url).not.toContain('private-customer-id');
@@ -193,10 +196,97 @@ describe('Simla.com transport', () => {
 		await expect(
 			makeSimlaComRequest(operation, '', 'demo', {}),
 		).rejects.toBeInstanceOf(AuthMissingError);
-		await expect(
-			makeSimlaComRequest(operation, 'key', 'invalid.subdomain', {}),
-		).rejects.toThrow('valid instance subdomain');
+		for (const host of [
+			'invalid.subdomain',
+			'acme.simla.com.attacker.example',
+			'https://attacker.example/acme.simla.com',
+			'http://acme.simla.com',
+		]) {
+			await expect(
+				makeSimlaComRequest(operation, 'key', host, {}),
+			).rejects.toThrow('subdomain is missing or invalid');
+		}
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts the account URL or host a person pastes into the connect form', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(jsonResponse({ success: true, versions: ['5.0'] }));
+		const operation = getSimlaComOperation('api.apiVersions.get');
+
+		for (const value of [
+			'https://North-Shop.simla.com/',
+			'north-shop.simla.com',
+			' north-shop ',
+		]) {
+			await makeSimlaComRequest(operation, 'key', value, {});
+		}
+
+		expect(fetchMock.mock.calls.map(([url]) => String(url))).toEqual(
+			Array(3).fill('https://north-shop.simla.com/api/api-versions'),
+		);
+		expect(normalizeSimlaComSubdomain('acme')).toBe('acme');
+	});
+
+	it('sends list query parameters with the [] suffix PHP needs', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(jsonResponse({ success: true, orders: [] }));
+		const operation = getSimlaComOperation('orders.statuses.get');
+
+		await makeSimlaComRequest(operation, 'key', 'demo', {
+			query: { ids: ['1', '2'], 'externalIds[]': ['a'] },
+		});
+
+		const url = new URL(String(fetchMock.mock.calls[0]?.[0]));
+		expect(url.searchParams.getAll('ids[]')).toEqual(['1', '2']);
+		expect(url.searchParams.getAll('externalIds[]')).toEqual(['a']);
+		expect(url.searchParams.has('ids')).toBe(false);
+		expect(
+			simlaComQuery({
+				filter: { managerIds: [3, 4], name: 'x' },
+				'filter[ids][]': [5],
+			}),
+		).toEqual({
+			'filter[managerIds][]': [3, 4],
+			'filter[name]': 'x',
+			'filter[ids][]': [5],
+		});
+	});
+
+	it("keeps Simla.com's errorMsg and field errors so a caller can fix the request", async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			jsonResponse(
+				{
+					success: false,
+					errorMsg: 'Telephony not enabled',
+					errors: { 'customer[email]': 'This value is not valid.' },
+					customer: { email: 'reader@sample.invalid' },
+				},
+				400,
+			),
+		);
+		const operation = getSimlaComOperation('telephony.calls.get');
+		// `unknown` is necessary because a rejected request can contain any runtime value.
+		const error = await makeSimlaComRequest(operation, 'key', 'demo', {
+			query: { 'filter[phone]': '+12025550123' },
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (error instanceof ApiError) {
+			expect(error.status).toBe(400);
+			expect(error.message).toBe(
+				'Simla.com request failed with HTTP 400: Telephony not enabled',
+			);
+			expect(error.body).toEqual({
+				success: false,
+				errorMsg: 'Telephony not enabled',
+				errors: { 'customer[email]': 'This value is not valid.' },
+			});
+			expect(JSON.stringify(error.body)).not.toContain('reader@');
+			expect(error.url).not.toContain('2025550123');
+		}
 	});
 
 	it('captures Retry-After with the real shared transport', async () => {
