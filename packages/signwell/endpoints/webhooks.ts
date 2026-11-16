@@ -41,9 +41,10 @@ export const create: SignwellEndpoints['webhooksCreate'] = (ctx, input) =>
 		input,
 		(body) => ({ method: 'POST', path: '/v1/hooks', body }),
 		{
-			// The webhook id is what verifies delivery signatures, so a caller
-			// needs it; the URL is not logged because it can carry a secret path.
-			log: (_, result) => ({ webhookId: result.id }),
+			// Nothing identifying is logged: the webhook id is also the HMAC key
+			// that signs deliveries, and the URL can carry a secret path. The
+			// caller gets the id in the response.
+			log: () => ({}),
 		},
 	);
 
@@ -59,6 +60,7 @@ export const remove: SignwellEndpoints['webhooksDelete'] = (ctx, input) =>
 		({ id }) => ({ method: 'DELETE', path: `/v1/hooks/${segment(id)}` }),
 		{
 			shape: (raw, { id }) => deletion(raw, 'webhooks.delete', id),
-			log: ({ id }) => ({ webhookId: id }),
+			// The id is the signing key (see create), so it stays out of the log.
+			log: () => ({}),
 		},
 	);

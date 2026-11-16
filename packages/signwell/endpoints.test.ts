@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { SIGNWELL_API_BASE, SignwellAPIError, segment } from './client';
+import { ApiError } from 'corsair/http';
+import { SIGNWELL_API_BASE, segment } from './client';
 import {
 	Account,
 	ApiApplications,
@@ -205,6 +206,73 @@ describe('documents.create', () => {
 			test_mode: true,
 		});
 		expect(result).toMatchObject({ id: DOCUMENT_ID, test_mode: true });
+	});
+
+	it('keeps SMS recipients, typed field values and dropdown options', async () => {
+		respond(document, 201);
+
+		await invoke(Documents.create, {
+			files: [{ name: 'offer.pdf', file_url: 'https://acme.test/offer.pdf' }],
+			recipients: [
+				{ id: '1', delivery_method: 'sms', phone_number: '+15555550100' },
+			],
+			copied_contacts: [{ email: 'cc@example.com' }],
+			attachment_requests: [{ name: 'ID', recipient_id: '1' }],
+			fields: [
+				[
+					{
+						x: 1,
+						y: 1,
+						page: 1,
+						recipient_id: '1',
+						type: 'checkbox',
+						value: true,
+					},
+					{
+						x: 1,
+						y: 2,
+						page: 1,
+						recipient_id: '1',
+						type: 'dropdown',
+						options: ['Yes', 'No'],
+					},
+					{
+						x: 1,
+						y: 3,
+						page: 1,
+						recipient_id: '1',
+						type: 'text',
+						validation: 'email_address',
+					},
+				],
+			],
+			conditional_rules: [
+				{
+					target_id: 'f1',
+					action_type: 'show',
+					action_field_ids: ['f2'],
+					conditions: [
+						{
+							condition_type: 'any_of',
+							status: 'completed',
+							field_api_ids: ['f1'],
+						},
+					],
+				},
+			],
+			draft: true,
+		});
+
+		const body = lastRequest().body as Record<string, unknown>;
+		expect(body.recipients).toEqual([
+			{ id: '1', delivery_method: 'sms', phone_number: '+15555550100' },
+		]);
+		expect(body.attachment_requests).toEqual([
+			{ name: 'ID', recipient_id: '1' },
+		]);
+		expect(JSON.stringify(body.fields)).toContain('"options":["Yes","No"]');
+		expect(JSON.stringify(body.fields)).toContain('"value":true');
+		expect(body.conditional_rules).toHaveLength(1);
 	});
 
 	it('omits the test-mode header when test_mode is not set', async () => {
@@ -530,11 +598,13 @@ describe('webhooks', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'signwell.webhooks.create',
-			{ webhookId: WEBHOOK_ID },
+			{},
 			'completed',
 		);
+		// The webhook id is the HMAC key that signs deliveries.
 		const logged = JSON.stringify(mockLog.mock.calls);
 		expect(logged).not.toContain('acme.test');
+		expect(logged).not.toContain(WEBHOOK_ID);
 	});
 
 	it('DELETEs the webhook', async () => {
@@ -544,6 +614,7 @@ describe('webhooks', () => {
 
 		expect(lastRequest().path).toBe(`/api/v1/hooks/${WEBHOOK_ID}`);
 		expect(result).toEqual({ id: WEBHOOK_ID, deleted: true });
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain(WEBHOOK_ID);
 	});
 });
 
@@ -636,6 +707,7 @@ describe('bulkSends', () => {
 
 		const sent = lastRequest();
 		expect(sent.path).toBe('/api/v1/bulk_sends/csv_template');
+		expect(sent.query.base64).toBe('true');
 		expect(sent.allQuery.getAll('template_ids[]')).toEqual([
 			TEMPLATE_ID,
 			'd7315111-c671-4b15-8354-c9a19bbaefa1',
@@ -659,7 +731,7 @@ describe('bulkSends', () => {
 });
 
 describe('client error handling', () => {
-	it('describes a 422 from its field errors', async () => {
+	it('names the invalid fields of a 422 without echoing their messages', async () => {
 		respond(validationErrorBody, 422);
 
 		const error = await invoke(Documents.get, { id: DOCUMENT_ID }).catch(
@@ -667,16 +739,13 @@ describe('client error handling', () => {
 			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
 		);
 
-		expect(error).toBeInstanceOf(SignwellAPIError);
-		const failure = error as SignwellAPIError;
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
 		expect(failure.status).toBe(422);
-		expect(failure.fieldErrors).toEqual({
-			recipients: ['Recipient email is required'],
-			'files[0]': ['Either file_url or file_base64 must be present'],
-		});
-		expect(failure.message).toContain(
-			'recipients: Recipient email is required',
+		expect(failure.message).toBe(
+			'SignWell 422: invalid fields: recipients, files[0]',
 		);
+		expect(failure.body).toEqual(validationErrorBody);
 	});
 
 	it('classifies a 401 body code as an auth error', async () => {
@@ -687,9 +756,8 @@ describe('client error handling', () => {
 			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
 		);
 
-		const failure = error as SignwellAPIError;
-		expect(failure.isAuthError).toBe(true);
-		expect(failure.code).toBe('api_key_unauthorized_error');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
 	});
 
 	it('keeps the API key out of util.inspect', async () => {
@@ -703,5 +771,23 @@ describe('client error handling', () => {
 
 		expect(util.inspect(error)).not.toContain(API_KEY);
 		expect((error as Error).message).not.toContain(API_KEY);
+	});
+
+	it('drops the request body, which holds recipient emails', async () => {
+		respond(validationErrorBody, 422);
+
+		const error = await invoke(Documents.create, {
+			files: [{ name: 'a.pdf', file_url: 'https://example.com/a.pdf' }],
+			recipients: [{ id: '1', name: 'Ann', email: 'ann@example.com' }],
+			draft: true,
+		}).catch(
+			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(JSON.stringify((error as ApiError).request)).not.toContain(
+			'ann@example.com',
+		);
+		expect((error as Error).message).not.toContain('ann@example.com');
 	});
 });

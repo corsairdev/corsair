@@ -208,13 +208,17 @@ export const getCompletedPdf: SignwellEndpoints['documentsGetCompletedPdf'] =
 			'documents.getCompletedPdf',
 		);
 
+		const result = Outputs.documentsGetCompletedPdf.parse({
+			file_url: url,
+			document_id: parsed.id,
+		});
 		await logEventFromContext(
 			ctx,
 			'signwell.documents.getCompletedPdf',
 			{ documentId: parsed.id, fileFormat: parsed.file_format ?? 'pdf' },
 			'completed',
 		);
-		return { file_url: url, document_id: parsed.id };
+		return result;
 	};
 
 /** NOM-151 is the Mexican e-signature certificate, available only where enabled. */
@@ -228,13 +232,17 @@ export const getNom151Certificate: SignwellEndpoints['documentsGetNom151Certific
 			'documents.getNom151Certificate',
 		);
 
+		const result = Outputs.documentsGetNom151Certificate.parse({
+			file_url: url,
+			document_id: parsed.id,
+		});
 		await logEventFromContext(
 			ctx,
 			'signwell.documents.getNom151Certificate',
 			{ documentId: parsed.id },
 			'completed',
 		);
-		return { file_url: url, document_id: parsed.id };
+		return result;
 	};
 
 /**

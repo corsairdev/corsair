@@ -104,7 +104,9 @@ export const getCsvTemplate: SignwellEndpoints['bulkSendsGetCsvTemplate'] = (
 			path: '/v1/bulk_sends/csv_template',
 			// SignWell reads the ids as repeated `template_ids[]` parameters, not
 			// as one comma-separated value, which is what an array becomes here.
-			query: { 'template_ids[]': template_ids },
+			// base64=true makes SignWell answer `{ data }` JSON instead of a
+			// file download.
+			query: { 'template_ids[]': template_ids, base64: true },
 		}),
 		{
 			log: ({ template_ids }, result) => ({
