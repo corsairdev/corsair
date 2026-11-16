@@ -19,12 +19,12 @@ pnpm add @corsair-dev/templated
 | `folders.update` | `templated.api.folders.update` | `write` | Rename a folder |
 | `fonts.list` | `templated.api.fonts.list` | `read` | List the fonts on the account, including uploaded ones |
 | `galleryFonts.list` | `templated.api.galleryFonts.list` | `read` | List the base fonts available in the editor |
-| `renders.create` | `templated.api.renders.create` | `write` | Render a template to an image, PDF or video, spending an API credit; layer overrides fill the template |
+| `renders.create` | `templated.api.renders.create` | `destructive` | Render a template to an image, PDF or video, spending an API credit; layer overrides fill the template |
 | `renders.delete` | `templated.api.renders.delete` | `destructive` | Delete a render and its file; the URL stops working and the credit is not refunded |
-| `renders.duplicate` | `templated.api.renders.duplicate` | `write` | Duplicate an existing render with the same template and payload, spending an API credit |
+| `renders.duplicate` | `templated.api.renders.duplicate` | `destructive` | Duplicate an existing render with the same template and payload, spending an API credit |
 | `renders.get` | `templated.api.renders.get` | `read` | Read one render with its URL, dimensions, format and status |
 | `renders.list` | `templated.api.renders.list` | `read` | List every render on the account |
-| `renders.merge` | `templated.api.renders.merge` | `write` | Merge several renders, and any external PDFs, into one PDF and return its hosted URL |
+| `renders.merge` | `templated.api.renders.merge` | `destructive` | Merge several renders, plus external PDFs when given, into one PDF and return its hosted URL |
 | `templates.addTags` | `templated.api.templates.addTags` | `write` | Append tags to a template, keeping the ones it already has |
 | `templates.create` | `templated.api.templates.create` | `write` | Create a template from a list of layers, which renders can then use |
 | `templates.delete` | `templated.api.templates.delete` | `destructive` | Delete a template |

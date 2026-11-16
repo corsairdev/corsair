@@ -53,12 +53,12 @@ const riskLevels = {
 	'folders.update': 'write',
 	'fonts.list': 'read',
 	'galleryFonts.list': 'read',
-	'renders.create': 'write',
+	'renders.create': 'destructive',
 	'renders.delete': 'destructive',
-	'renders.duplicate': 'write',
+	'renders.duplicate': 'destructive',
 	'renders.get': 'read',
 	'renders.list': 'read',
-	'renders.merge': 'write',
+	'renders.merge': 'destructive',
 	'templates.addTags': 'write',
 	'templates.create': 'write',
 	'templates.delete': 'destructive',
@@ -118,11 +118,11 @@ describe('templated plugin definition', () => {
 		}
 	});
 
-	it('treats a render and a duplicate as writes, because both spend a credit', () => {
+	it('marks render, duplicate and merge destructive, because each spends render credits (R8)', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['renders.create']?.riskLevel).toBe('write');
-		expect(meta['renders.duplicate']?.riskLevel).toBe('write');
-		expect(meta['renders.merge']?.riskLevel).toBe('write');
+		expect(meta['renders.create']?.riskLevel).toBe('destructive');
+		expect(meta['renders.duplicate']?.riskLevel).toBe('destructive');
+		expect(meta['renders.merge']?.riskLevel).toBe('destructive');
 	});
 
 	it('registers a schema for every operation, in both directions', () => {
