@@ -287,6 +287,19 @@ describe('geocode endpoints', () => {
 		expect(parsed.searchParams.get('postal-code')).toBeNull();
 	});
 
+	it('sends the country as country-code, which is the name the spec reads', async () => {
+		const { url } = await capture(
+			endpoints.geocode.address,
+			{ address: '48 Greys Avenue, Auckland', country: 'NZ' },
+			geocodeAddress,
+		);
+
+		const parsed = new URL(url);
+		// A `country` parameter is silently ignored by the provider.
+		expect(parsed.searchParams.get('country-code')).toBe('NZ');
+		expect(parsed.searchParams.has('country')).toBe(false);
+	});
+
 	it('rejects a geocode with no address at all', async () => {
 		await expect(
 			endpoints.geocode.address(makeContext() as never, {}),

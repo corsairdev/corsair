@@ -38,7 +38,9 @@ export const address: NeutrinoEndpoints['geocodeAddress'] = (ctx, input) =>
 				city,
 				state,
 				'postal-code': postalCode,
-				country,
+				// The spec names this `country-code`, not `country`; a `country`
+				// parameter is silently ignored and geocodes in the wrong place.
+				'country-code': country,
 				'language-code': languageCode,
 			},
 		}),
