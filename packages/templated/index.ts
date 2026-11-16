@@ -225,12 +225,12 @@ const templatedEndpointMeta = {
 		description: 'Read one render with its URL, dimensions, format and status',
 	},
 	'renders.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render a template to an image, PDF or video, spending an API credit; layer overrides fill the template',
 	},
 	'renders.duplicate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Duplicate an existing render with the same template and payload, spending an API credit',
 	},
@@ -241,7 +241,7 @@ const templatedEndpointMeta = {
 			'Delete a render and its file; the URL stops working and the credit is not refunded',
 	},
 	'renders.merge': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Merge several renders, plus external PDFs when given, into one PDF and return its hosted URL',
 	},
@@ -370,8 +370,6 @@ export function templated<const T extends TemplatedPluginOptions>(
 		},
 	} satisfies InternalTemplatedPlugin;
 }
-
-export { TemplatedAPIError } from './client';
 
 export type {
 	AccountResponse,

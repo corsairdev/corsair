@@ -1,8 +1,10 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TemplatedAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
+// The client passes core's ApiError on (rebuilt only to drop the request
+// payload), so every handler reads its status.
 function statusOf(error: Error): number | undefined {
-	return error instanceof TemplatedAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // Errors arrive as `{ error }` from the auth layer or as
@@ -19,7 +21,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof TemplatedAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -50,9 +52,9 @@ export const errorHandlers = {
 	// pays twice; the same applies to a duplicate or a merge.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TemplatedAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

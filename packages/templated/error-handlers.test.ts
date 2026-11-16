@@ -1,5 +1,5 @@
 import type { ErrorHandler, ErrorMatcher } from 'corsair/core';
-import { TemplatedAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 function apiError(
@@ -7,11 +7,19 @@ function apiError(
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST',
 	retryAfter?: number,
 ) {
-	return new TemplatedAPIError(`Templated ${status}`, {
-		status,
-		method,
-		retryAfter,
-	});
+	// The error core's request() throws, as the client passes it on.
+	return new ApiError(
+		{ method, url: '/render' },
+		{
+			url: 'https://api.templated.io/v1/render',
+			ok: false,
+			status,
+			statusText: 'failed',
+			body: { error: 'failed' },
+		},
+		`Templated ${status}`,
+		{ retryAfter },
+	);
 }
 
 const context = {} as Parameters<ErrorHandler>[1];

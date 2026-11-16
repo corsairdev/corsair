@@ -19,41 +19,6 @@ export const TEMPLATED_API_BASE = 'https://api.templated.io/v1';
  * Both carry the message under `error`, so that one field serves either.
  * https://templated.io/docs
  */
-export class TemplatedAPIError extends Error {
-	readonly status?: number;
-	/** The provider's short label from the framework envelope, e.g. "Not Found". */
-	readonly code?: string;
-	/** The request path the framework envelope names, when present. */
-	readonly path?: string;
-	/** Milliseconds from a Retry-After header, when Templated sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			path?: string;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'TemplatedAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.code = options.code;
-		this.path = options.path;
-	}
-}
-
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads Retry-After into the error. Templated documents no Retry-After.
 const TEMPLATED_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0,
@@ -165,20 +130,37 @@ export async function makeTemplatedRequest(
 			rateLimitConfig: TEMPLATED_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const details = readErrorDetails(error.body);
-			throw new TemplatedAPIError(
-				describeTemplatedError(error.status, error.body, error.message),
-				{ cause: error, code: details.code, path: details.path },
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new TemplatedAPIError(error.message, {
-				cause: error instanceof Error ? error : undefined,
-				method,
-			});
-		}
-		throw new TemplatedAPIError('Unknown Templated error', { method });
+		if (error instanceof ApiError) throw stripRequestData(error);
+		throw error;
 	}
+}
+
+/**
+ * Core's ApiError keeps the request it failed on, including the render
+ * payload (layer text and images, often a client's data) and an upload's file
+ * bytes. This rebuilds it without the body, form data and query, and keeps
+ * what core and the handlers read: status, body, Retry-After and the method.
+ * It is still core's ApiError, with the provider's message.
+ */
+export function stripRequestData(error: ApiError): ApiError {
+	return new ApiError(
+		{
+			method: error.request.method,
+			url: error.request.url.split('?')[0] ?? '',
+		},
+		{
+			url: error.url.split('?')[0] ?? '',
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeTemplatedError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
