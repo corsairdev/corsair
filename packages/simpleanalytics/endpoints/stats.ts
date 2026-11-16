@@ -55,13 +55,11 @@ export const get: SimpleanalyticsEndpoints['statsGet'] = (ctx, input) =>
 			},
 		}),
 		{
-			log: (parsed, result) => ({
-				hostname: parsed.hostname,
-				start: parsed.start,
-				end: parsed.end,
+			// The hostname and traffic numbers are the customer's data, so only
+			// the shape of the request is logged.
+			log: (parsed) => ({
 				fields: parsed.fields.length,
-				pageviews: result.pageviews ?? undefined,
-				visitors: result.visitors ?? undefined,
+				path: parsed.path !== undefined,
 			}),
 		},
 	);

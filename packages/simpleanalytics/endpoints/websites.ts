@@ -45,10 +45,9 @@ export const add: SimpleanalyticsEndpoints['websitesAdd'] = (ctx, input) =>
 			},
 		}),
 		{
-			log: (parsed, result) => ({
-				hostname: result.hostname,
-				// Only whether the API accepted it; a false `ok` already threw
-				// inside makeCheckedRequest, so this is always true here.
+			log: (_parsed, result) => ({
+				// The hostname is the customer's, so it stays out. validDNS says
+				// whether the site's DNS already points at it.
 				validDNS: result.validDNS ?? undefined,
 			}),
 		},

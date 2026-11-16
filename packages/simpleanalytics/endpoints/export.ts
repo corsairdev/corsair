@@ -46,9 +46,6 @@ export const datapoints: SimpleanalyticsEndpoints['exportDatapoints'] = (
 		}),
 		{
 			log: (parsed, result) => ({
-				hostname: parsed.hostname,
-				start: parsed.start,
-				end: parsed.end,
 				type: parsed.type ?? 'pageviews',
 				datapoints: result.datapoints.length,
 			}),
