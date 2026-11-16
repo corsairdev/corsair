@@ -1,7 +1,14 @@
 import { asRecord } from 'corsair/core';
 import type { SwaggerhubEndpoints } from '..';
 import { segment, specPath } from '../client';
-import { bodyOr, call, queryOf, readBareArray, readDefinition } from './call';
+import {
+	bodyOr,
+	call,
+	isEmptyBody,
+	queryOf,
+	readBareArray,
+	readDefinition,
+} from './call';
 import {
 	SwaggerhubEndpointInputSchemas as Inputs,
 	SwaggerhubEndpointOutputSchemas as Outputs,
@@ -358,11 +365,15 @@ export const getDefaultVersion: SwaggerhubEndpoints['apisGetDefaultVersion'] = (
 		{
 			shape: (raw, parsed) => {
 				const record = asRecord(raw);
-				const version = record?.version;
+				if (!record) {
+					throw new Error('SwaggerHub returned an unexpected default version');
+				}
+				// A missing version means none is set; a non-string one fails the
+				// output schema instead of reading as "no default".
 				return {
 					owner: parsed.owner,
 					api: parsed.api,
-					version: typeof version === 'string' ? version : null,
+					version: record.version ?? null,
 				};
 			},
 			log: (parsed, result) => ({
@@ -506,9 +517,16 @@ export const disableNotifications: SwaggerhubEndpoints['apisDisableNotifications
 				// The route answers 200 with no body, so an empty result is the
 				// documented success rather than an unexpected shape.
 				shape: (raw) => {
+					// The documented answer is a bodyless 200. A body that is not an
+					// object, or an `enabled` that is not an array, fails the schema.
+					if (isEmptyBody(raw)) return { enabled: [] };
 					const record = asRecord(raw);
-					const enabled = record?.enabled;
-					return { enabled: Array.isArray(enabled) ? enabled : [] };
+					if (!record) {
+						throw new Error(
+							'SwaggerHub returned an unexpected notification body',
+						);
+					}
+					return { enabled: record.enabled ?? [] };
 				},
 				log: (parsed, result) => ({
 					owner: parsed.owner,

@@ -886,10 +886,42 @@ describe('swaggerhub documented answers', () => {
 		);
 		const error = await endpoints.apis
 			.save(ctx, { owner: 'admin', api: 'example', definition })
+			// unknown: a rejection can be any value; the assertions narrow it.
 			.catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		expect((error as ApiError).status).toBe(409);
 		expect((error as ApiError).message).toMatch(/published API version/);
 		expect((error as ApiError).request.body).toBeUndefined();
+	});
+});
+
+describe('swaggerhub malformed settings answers', () => {
+	it('fails on a non-string default version instead of reporting none', async () => {
+		mockFetch(jsonResponse({ version: 123 }));
+		await expect(
+			endpoints.apis.getDefaultVersion(ctx, { owner: 'admin', api: 'example' }),
+		).rejects.toThrow();
+	});
+
+	it('fails on a non-array enabled list after disabling notifications', async () => {
+		mockFetch(jsonResponse({ enabled: 'USER' }));
+		await expect(
+			endpoints.apis.disableNotifications(ctx, {
+				owner: 'admin',
+				api: 'example',
+			}),
+		).rejects.toThrow();
+	});
+
+	it('types the replies and status on listed comments', async () => {
+		mockFetch(jsonResponse([closableComment]));
+		const listed = await endpoints.comments.list(ctx, {
+			owner: 'admin',
+			api: 'example',
+			version: '1.0.0',
+		});
+		// No cast: list items use the closable comment schema.
+		expect(listed.comments[0]?.status).toBe(closableComment.status);
+		expect(Array.isArray(listed.comments[0]?.replies)).toBe(true);
 	});
 });

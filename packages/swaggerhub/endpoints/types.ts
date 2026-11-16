@@ -666,11 +666,18 @@ export type ApiSettingsSetVisibilityResponse = z.infer<
 const CommentsListInputSchema = z.object(ApiVersionPath);
 export type CommentsListInput = z.input<typeof CommentsListInputSchema>;
 
+const ClosableCommentSchema = CommentSchema.extend({
+	/** `OPEN` or `RESOLVED`; left open so a new status does not fail a read. */
+	status: z.string().nullish(),
+	replies: z.array(CommentSchema).nullish(),
+	range: RangeSchema.nullish(),
+});
+
 const CommentsListResponseSchema = z.object({
 	owner: z.string(),
 	api: z.string(),
 	version: z.string(),
-	comments: z.array(CommentSchema),
+	comments: z.array(ClosableCommentSchema),
 	/** True when the route answered 204, which means no comments exist. */
 	empty: z.boolean().optional(),
 });
@@ -685,11 +692,6 @@ const CommentsCreateInputSchema = z.object({
 export type CommentsCreateInput = z.input<typeof CommentsCreateInputSchema>;
 
 /** The create route answers a `ClosableComment`, which adds replies and status. */
-const ClosableCommentSchema = CommentSchema.extend({
-	status: z.enum(['OPEN', 'RESOLVED']).nullish(),
-	replies: z.array(CommentSchema).nullish(),
-	range: RangeSchema.nullish(),
-});
 
 const CommentsCreateResponseSchema = ClosableCommentSchema;
 

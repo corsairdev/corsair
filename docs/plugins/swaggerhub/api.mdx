@@ -882,7 +882,7 @@ The route documents `replies` as required, so the plugin always sends it, as an 
 | `created` | `string \| null` | No | — |
 | `modified` | `string \| null` | No | — |
 | `body` | `string` | Yes | — |
-| `status` | `OPEN \| RESOLVED \| null` | No | — |
+| `status` | `string \| null` | No | — |
 | `replies` | `object[] \| null` | No | — |
 | `range` | `object \| null` | No | — |
 
@@ -1020,7 +1020,27 @@ Answers a **bare array** of comments. A 204 means the version has none, so the p
   },
   created?: string | null,
   modified?: string | null,
-  body: string
+  body: string,
+  status?: string | null,
+  replies?: {
+    id: string,
+    user: {
+      id?: string | null,
+      email?: string | null,
+      name?: string | null
+    },
+    created?: string | null,
+    modified?: string | null,
+    body: string
+  }[] | null,
+  range?: {
+    startLine?: number,
+    endLine?: number,
+    startColumn?: number,
+    endColumn?: number,
+    startOffset?: number,
+    endOffset?: number
+  } | null
 }[]
 ```
 </Accordion>
@@ -1118,7 +1138,7 @@ Sends PATCH with the new `body`. Answers the updated comment.
 | `created` | `string \| null` | No | — |
 | `modified` | `string \| null` | No | — |
 | `body` | `string` | Yes | — |
-| `status` | `OPEN \| RESOLVED \| null` | No | — |
+| `status` | `string \| null` | No | — |
 | `replies` | `object[] \| null` | No | — |
 | `range` | `object \| null` | No | — |
 

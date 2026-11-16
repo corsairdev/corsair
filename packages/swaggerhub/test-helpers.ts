@@ -93,6 +93,7 @@ export function rawBody(): string {
 	return body;
 }
 
+// unknown: a sent JSON body is arbitrary JSON; each test asserts the fields it expects.
 export function sentBody(): Record<string, unknown> {
 	return JSON.parse(rawBody()) as Record<string, unknown>;
 }
