@@ -510,6 +510,21 @@ export type DownloadOptions = {
 	timeoutMs?: number;
 };
 
+/**
+ * Refuses a byte limit that is not a whole number, 0 or more. A fraction would
+ * size a buffer below the limit and cut a file short, and NaN never compares
+ * as exceeded, so it would switch the limit off.
+ */
+export function checkByteLimit(maxBytes: number | undefined): void {
+	if (
+		maxBytes !== undefined &&
+		!(Number.isSafeInteger(maxBytes) && maxBytes >= 0)
+	)
+		throw new RangeError(
+			`maxBytes must be a whole number of bytes, 0 or more; got ${maxBytes}.`,
+		);
+}
+
 /** The file name a server offers in Content-Disposition, if any. */
 export function filenameFromDisposition(
 	header: string | undefined,
@@ -538,6 +553,7 @@ export async function downloadPublicFile(
 	options: DownloadOptions = {},
 	deps: DownloadDeps = {},
 ): Promise<PublicDownload> {
+	checkByteLimit(options.maxBytes);
 	const maxBytes = options.maxBytes ?? DOWNLOAD_MAX_BYTES;
 	const transport = deps.transport ?? httpTransport;
 	const signal = AbortSignal.timeout(options.timeoutMs ?? DOWNLOAD_TIMEOUT_MS);

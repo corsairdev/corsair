@@ -342,6 +342,37 @@ describe('resolveFileInput', () => {
 		).rejects.toThrow('limit');
 	});
 
+	it('refuses a byte limit that is not a whole number instead of guessing at it', async () => {
+		// A 1.5-byte limit used to size a one-byte buffer and quietly return "a".
+		for (const maxBytes of [
+			1.5,
+			2.9,
+			-1,
+			Number.NaN,
+			Number.POSITIVE_INFINITY,
+		]) {
+			const { deps, asked } = serving({ body: PDF });
+			await expect(
+				resolveFileInput('data:text/plain,ab', { maxBytes }),
+			).rejects.toThrow('maxBytes must be a whole number');
+			await expect(
+				downloadPublicFile(
+					'https://files.example.com/a.pdf',
+					{ maxBytes },
+					deps,
+				),
+			).rejects.toThrow('maxBytes must be a whole number');
+			expect(asked).toEqual([]);
+			expect(() => toFileOutput(PDF, 'application/pdf', { maxBytes })).toThrow(
+				'maxBytes must be a whole number',
+			);
+		}
+		// Zero is a whole number: it allows nothing, and an empty file is refused anyway.
+		await expect(
+			resolveFileInput('data:text/plain,a', { maxBytes: 0 }),
+		).rejects.toThrow(/larger than/);
+	});
+
 	it('percent-decodes a base64 data URL before reading the base64, as fetch does', async () => {
 		// %2Fw%3D%3D is "/w==", which is the single byte 255.
 		const escaped = await resolveFileInput(

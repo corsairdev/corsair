@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import type { DownloadDeps, DownloadOptions } from './public-download';
-import { downloadPublicFile, filenameFromUrl } from './public-download';
+import {
+	checkByteLimit,
+	downloadPublicFile,
+	filenameFromUrl,
+} from './public-download';
 
 /**
  * One shape for a file going into an endpoint and one for a file coming out.
@@ -206,6 +210,7 @@ export async function resolveFileInput(
 	options: ResolveFileOptions = {},
 	deps: DownloadDeps = {},
 ): Promise<ResolvedFile> {
+	checkByteLimit(options.maxBytes);
 	const fallback = options.fallbackName ?? 'file';
 
 	if (isBlob(input)) {
@@ -298,6 +303,7 @@ export function toFileOutput(
 		filename?: string;
 	} = {},
 ): FileOutput {
+	checkByteLimit(options.maxBytes);
 	const base = {
 		contentType:
 			contentType?.split(';')[0]?.trim() || 'application/octet-stream',
