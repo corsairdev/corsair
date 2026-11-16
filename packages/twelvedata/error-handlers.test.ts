@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
 import { TwelveDataAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
@@ -98,6 +99,56 @@ describe('Twelve Data error handlers', () => {
 	it('classifies the live error bodies', () => {
 		expect(classify(apiError(badKey.code))).toBe('AUTH_ERROR');
 		expect(classify(apiError(planLimit.code))).toBe('PERMISSION_ERROR');
+	});
+});
+
+// unknown: the provider's error body is arbitrary JSON.
+function coreError(status: number, body: unknown, retryAfter?: number) {
+	return new ApiError(
+		{ method: 'GET', url: 'quote' },
+		{
+			url: 'https://api.twelvedata.com/quote',
+			ok: false,
+			status,
+			statusText: String(status),
+			body,
+		},
+		String(status),
+		retryAfter === undefined ? undefined : { retryAfter },
+	);
+}
+
+describe('Twelve Data error handlers on core ApiError', () => {
+	it('retries a per-minute 429 and keeps its Retry-After', async () => {
+		const error = coreError(
+			429,
+			{
+				code: 429,
+				message: 'You have run out of API credits for the current minute.',
+			},
+			6000,
+		);
+		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+		expect(await strategy(error)).toEqual({
+			maxRetries: 3,
+			headersRetryAfterMs: 6000,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('does not retry a 429 for the used-up daily credits', async () => {
+		const error = coreError(429, {
+			code: 429,
+			message: 'You have run out of API credits for the day.',
+		});
+		expect(classify(error)).toBe('QUOTA_EXHAUSTED_ERROR');
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+	});
+
+	it('routes 401, 403 and 5xx by status', () => {
+		expect(classify(coreError(401, badKey))).toBe('AUTH_ERROR');
+		expect(classify(coreError(403, planLimit))).toBe('PERMISSION_ERROR');
+		expect(classify(coreError(502, '<html>'))).toBe('SERVER_ERROR');
 	});
 });
 

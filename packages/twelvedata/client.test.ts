@@ -1,4 +1,5 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	assertOk,
 	describeTwelveDataError,
@@ -47,14 +48,15 @@ afterEach(() => {
 });
 
 describe('makeTwelveDataRequest', () => {
-	it('sends the key as the apikey query parameter', async () => {
+	it('sends the key in the Authorization header, never in the URL', async () => {
 		respond({ price: '1' });
 
 		await makeTwelveDataRequest(KEY, { method: 'GET', path: 'price' });
 
 		const sent = lastRequest();
 		expect(sent.url).toContain(`${TWELVEDATA_API_BASE}/price`);
-		expect(sent.params.apikey).toBe(KEY);
+		expect(sent.headers.get('Authorization')).toBe(`apikey ${KEY}`);
+		expect(sent.url).not.toContain(KEY);
 	});
 
 	it('keeps the route parameters alongside the key', async () => {
@@ -70,7 +72,6 @@ describe('makeTwelveDataRequest', () => {
 			symbol: 'AAPL',
 			interval: '1day',
 			outputsize: '30',
-			apikey: KEY,
 		});
 	});
 
@@ -82,10 +83,10 @@ describe('makeTwelveDataRequest', () => {
 			path: 'quote',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(TwelveDataAPIError);
-		expect((error as TwelveDataAPIError).status).toBe(401);
-		expect((error as TwelveDataAPIError).code).toBe(401);
-		expect((error as Error).message).toContain('apikey');
+		// Core's ApiError comes through unchanged, with the provider's body.
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect((error as ApiError).body).toEqual(badKey);
 	});
 
 	it('recognises a 403 as a plan limit', async () => {
@@ -96,7 +97,7 @@ describe('makeTwelveDataRequest', () => {
 			path: 'earnings',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TwelveDataAPIError).isPlanLimit).toBe(true);
+		expect((error as ApiError).status).toBe(403);
 	});
 
 	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
@@ -107,8 +108,8 @@ describe('makeTwelveDataRequest', () => {
 			path: 'quote',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TwelveDataAPIError).retryAfter).toBe(6000);
-		expect((error as TwelveDataAPIError).isRateLimit).toBe(true);
+		expect((error as ApiError).retryAfter).toBe(6000);
+		expect((error as ApiError).status).toBe(429);
 	});
 
 	it('records the method', async () => {
@@ -119,7 +120,7 @@ describe('makeTwelveDataRequest', () => {
 			path: 'quote',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TwelveDataAPIError).method).toBe('GET');
+		expect((error as ApiError).request.method).toBe('GET');
 	});
 
 	it('never puts the key in the message or its inspection', async () => {

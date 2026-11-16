@@ -1,8 +1,30 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { asRecord } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { TwelveDataAPIError } from './client';
 
+/** HTTP failures arrive as core's ApiError; 200-body failures as TwelveDataAPIError. */
 function statusOf(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.status;
 	return error instanceof TwelveDataAPIError ? error.status : undefined;
+}
+
+function retryAfterOf(error: Error): number | undefined {
+	if (error instanceof ApiError || error instanceof TwelveDataAPIError) {
+		return error.retryAfter;
+	}
+	return undefined;
+}
+
+/**
+ * Twelve Data answers 429 both for the per-minute limit and for a used-up daily
+ * credit allowance. Only the message tells them apart, and waiting minutes will
+ * not bring the daily credits back.
+ */
+export function isDailyQuotaExhausted(error: Error): boolean {
+	const body = error instanceof ApiError ? asRecord(error.body) : undefined;
+	const text = `${typeof body?.message === 'string' ? body.message : ''} ${error.message}`;
+	return /for the day|daily (limit|credits|allowance)|per day/i.test(text);
 }
 
 /**
@@ -12,16 +34,18 @@ function statusOf(error: Error): number | undefined {
  * per-minute limit or an exhausted daily allowance.
  */
 export const errorHandlers = {
-	// 429 covers both the per-minute throughput limit and an exhausted daily
-	// allowance. The provider documents waiting in both cases, and `Retry-After`
-	// says how long.
-	RATE_LIMIT_ERROR: {
+	// A 429 for the used-up daily credits: no retry within the day can succeed.
+	QUOTA_EXHAUSTED_ERROR: {
 		match: (error: Error) =>
-			error instanceof TwelveDataAPIError && error.isRateLimit,
+			statusOf(error) === 429 && isDailyQuotaExhausted(error),
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// A 429 for the per-minute throughput limit; `Retry-After` says how long.
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TwelveDataAPIError ? error.retryAfter : undefined,
+			headersRetryAfterMs: retryAfterOf(error),
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -32,8 +56,7 @@ export const errorHandlers = {
 	},
 	// 403: the endpoint needs a higher plan, which the message names.
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			error instanceof TwelveDataAPIError && error.isPlanLimit,
+		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 for an unknown symbol or a bad parameter, 404 for an unknown route, and
@@ -48,8 +71,7 @@ export const errorHandlers = {
 	},
 	// 5xx. Every route is a GET over market data, so a replay is safe.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof TwelveDataAPIError && (statusOf(error) ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

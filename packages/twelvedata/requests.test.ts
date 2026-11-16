@@ -45,13 +45,15 @@ function lastRequest() {
 		path: parsed.pathname,
 		params: Object.fromEntries(parsed.searchParams),
 		method: init.method,
+		auth: new Headers(init.headers).get('Authorization'),
 	};
 }
 
 function expectAuthenticated() {
 	const sent = lastRequest();
 	expect(sent.origin).toBe('https://api.twelvedata.com');
-	expect(sent.params.apikey).toBe('td-test-key');
+	expect(sent.auth).toBe('apikey td-test-key');
+	expect(sent.params.apikey).toBeUndefined();
 }
 
 beforeEach(() => {
@@ -76,7 +78,6 @@ describe('market data', () => {
 		expect(lastRequest().params).toEqual({
 			symbol: 'AAPL',
 			exchange: 'NASDAQ',
-			apikey: 'td-test-key',
 		});
 		expect(result.symbol).toBe('AAPL');
 		// Every price is a decimal string, not a number.
@@ -114,7 +115,6 @@ describe('market data', () => {
 			outputsize: '2',
 			order: 'desc',
 			start_date: '2026-04-30',
-			apikey: 'td-test-key',
 		});
 		expect(result.values).toHaveLength(2);
 		expect(result.status).toBe('ok');
@@ -181,7 +181,6 @@ describe('reference data', () => {
 		expect(lastRequest().params).toEqual({
 			symbol: 'AAPL',
 			country: 'Austria',
-			apikey: 'td-test-key',
 		});
 		expect(result.data).toHaveLength(2);
 	});
@@ -191,7 +190,7 @@ describe('reference data', () => {
 
 		await invoke(ReferenceEndpoints.stocks, {});
 
-		expect(lastRequest().params).toEqual({ apikey: 'td-test-key' });
+		expect(lastRequest().params).toEqual({});
 	});
 
 	it('reference.forexPairs GETs /forex_pairs', async () => {
@@ -283,7 +282,6 @@ describe('indicators', () => {
 			symbol: 'AAPL',
 			interval: '1day',
 			time_period: '14',
-			apikey: 'td-test-key',
 		});
 		expect(result.values?.[0]?.rsi).toBe('62.34189');
 	});
@@ -359,7 +357,6 @@ describe('indicators', () => {
 			time_period: '20',
 			series_type: 'open',
 			outputsize: '100',
-			apikey: 'td-test-key',
 		});
 	});
 });

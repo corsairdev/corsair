@@ -131,13 +131,16 @@ export async function makeTwelveDataRequest(
 		VERSION: '1.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: { Accept: 'application/json' },
+		// The key goes in the Authorization header, which Twelve Data documents
+		// alongside the apikey query parameter. A query key would land in every
+		// URL, including the ones a failed request's ApiError carries.
+		HEADERS: { Accept: 'application/json', Authorization: `apikey ${apiKey}` },
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
-		query: { ...query, apikey: apiKey },
+		query,
 	};
 
 	try {
@@ -145,18 +148,11 @@ export async function makeTwelveDataRequest(
 			rateLimitConfig: TWELVEDATA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof TwelveDataAPIError) throw error;
-		if (error instanceof ApiError) {
-			const described = describeTwelveDataError(
-				error.status,
-				error.body,
-				error.message,
-			);
-			throw new TwelveDataAPIError(described.message, {
-				cause: error,
-				code: described.code,
-				method,
-			});
+		// Core's ApiError goes through unchanged (plugin rules, R8): its status and
+		// retryAfter are what the error handlers read. It holds no key, since the
+		// key travels in a header.
+		if (error instanceof TwelveDataAPIError || error instanceof ApiError) {
+			throw error;
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
