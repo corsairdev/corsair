@@ -74,9 +74,8 @@ export const update: StoryblokEndpoints['datasourceEntriesUpdate'] = (
 		({ datasource_entry_id, dimension_id, ...datasource_entry }) => ({
 			method: 'PUT',
 			path: `/datasource_entries/${segment(datasource_entry_id)}`,
-			body: {
-				datasource_entry: { ...datasource_entry, dimension_id },
-			},
+			// dimension_id sits next to datasource_entry, not inside it.
+			body: { datasource_entry, dimension_id },
 		}),
 		{ log: ({ datasource_entry_id }) => ({ entryId: datasource_entry_id }) },
 	);

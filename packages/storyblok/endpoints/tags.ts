@@ -24,7 +24,7 @@ export const create: StoryblokEndpoints['tagsCreate'] = (ctx, input) =>
 			output: Outputs.tagsCreate,
 		},
 		input,
-		(body) => ({ method: 'POST', path: '/tags', body }),
+		(tag) => ({ method: 'POST', path: '/tags', body: { tag } }),
 		{ log: (_, result) => ({ tagId: result.tag.id ?? undefined }) },
 	);
 

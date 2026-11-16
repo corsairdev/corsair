@@ -550,7 +550,15 @@ export type DatasourceEntriesCreateInput = z.infer<
 const DatasourceEntriesUpdateInputSchema = z.object({
 	datasource_entry_id: RecordId,
 	...datasourceEntryBody,
-	dimension_id: z.number().int().optional(),
+	dimension_value: z
+		.string()
+		.optional()
+		.describe('The value for the dimension named by dimension_id.'),
+	dimension_id: z
+		.number()
+		.int()
+		.optional()
+		.describe('The dimension whose value dimension_value sets.'),
 });
 
 export type DatasourceEntriesUpdateInput = z.infer<

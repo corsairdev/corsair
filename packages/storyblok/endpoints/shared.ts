@@ -30,8 +30,10 @@ export async function resolveSpace(
 ): Promise<StoryblokSpace> {
 	const optionSpace = ctx.options.spaceId;
 	const optionRegion = ctx.options.region;
+	const storedRegion = await ctx.keys?.get_region?.();
+	// The plugin option wins over the stored account value, as for the space.
+	const region = optionRegion ?? pickRegion(storedRegion) ?? 'eu';
 	if (optionSpace !== undefined) {
-		const region = optionRegion ?? 'eu';
 		return {
 			spaceId: optionSpace,
 			region,
@@ -41,7 +43,6 @@ export async function resolveSpace(
 	}
 
 	const stored = await ctx.keys?.get_space_id?.();
-	const storedRegion = await ctx.keys?.get_region?.();
 	if (stored) {
 		const spaceId = Number(stored);
 		if (!Number.isFinite(spaceId)) {
@@ -49,7 +50,6 @@ export async function resolveSpace(
 				`[storyblok:space_id] The stored space_id is not a number: ${stored}`,
 			);
 		}
-		const region = pickRegion(storedRegion) ?? 'eu';
 		return {
 			spaceId,
 			region,

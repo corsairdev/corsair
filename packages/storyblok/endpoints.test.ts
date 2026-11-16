@@ -1,10 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import {
-	STORYBLOK_HOSTS,
-	StoryblokAPIError,
-	segment,
-	spacePath,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { STORYBLOK_HOSTS, segment, spacePath } from './client';
 import {
 	Assets,
 	Components,
@@ -357,8 +353,19 @@ describe('datasourceEntries', () => {
 			name: 'The Netherlands',
 			value: 'nl',
 			datasource_id: 777,
+			dimension_id: 5,
+			dimension_value: 'Nederland',
 		});
 		expect(lastRequest(fetchMock).method).toBe('PUT');
+		expect(lastRequest(fetchMock).body).toEqual({
+			datasource_entry: {
+				name: 'The Netherlands',
+				value: 'nl',
+				datasource_id: 777,
+				dimension_value: 'Nederland',
+			},
+			dimension_id: 5,
+		});
 
 		respond(fetchMock, { datasource_entry: datasourceEntry });
 		await invoke(DatasourceEntries.remove, { datasource_entry_id: 888 });
@@ -375,8 +382,7 @@ describe('tags', () => {
 		respond(fetchMock, { tag });
 		await invoke(Tags.create, { name: 'home', story_id: 369689 });
 		expect(lastRequest(fetchMock).body).toEqual({
-			name: 'home',
-			story_id: 369689,
+			tag: { name: 'home', story_id: 369689 },
 		});
 
 		respond(fetchMock, { tag });
@@ -563,11 +569,9 @@ describe('error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect(error).toBeInstanceOf(StoryblokAPIError);
-		const failure = error as StoryblokAPIError;
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
 		expect(failure.status).toBe(401);
-		expect(failure.reason).toBe('Unauthorized');
-		expect(failure.isAuthError).toBe(true);
 		expect(failure.message).toContain('Unauthorized');
 		expect(util.inspect(error)).not.toContain(API_KEY);
 		expect(failure.message).not.toContain(API_KEY);
@@ -581,9 +585,8 @@ describe('error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		const failure = error as StoryblokAPIError;
-		expect(failure.isNotFound).toBe(true);
-		expect(failure.isAuthError).toBe(false);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(404);
 	});
 });
 
@@ -617,6 +620,24 @@ describe('space resolution', () => {
 		const sent = lastRequest(fetchMock);
 		expect(sent.origin).toBe('https://api-ap.storyblok.com');
 		expect(sent.path).toBe(`/v1/spaces/${SPACE_ID}/stories`);
+	});
+
+	it('prefers the region option over the stored region', async () => {
+		respond(fetchMock, { stories: [] });
+
+		await Stories.list(
+			{
+				key: API_KEY,
+				options: { region: 'us' },
+				keys: {
+					get_space_id: jest.fn().mockResolvedValue(String(SPACE_ID)),
+					get_region: jest.fn().mockResolvedValue(null),
+				},
+			} as never,
+			{} as never,
+		);
+
+		expect(lastRequest(fetchMock).origin).toBe('https://api-us.storyblok.com');
 	});
 
 	it('throws a clear error when no space is configured', async () => {
