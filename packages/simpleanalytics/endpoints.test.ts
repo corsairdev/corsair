@@ -134,11 +134,7 @@ describe('stats.get', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'simpleanalytics.stats.get',
-			expect.objectContaining({
-				hostname: 'simpleanalytics.com',
-				pageviews: 8940,
-				visitors: 6707,
-			}),
+			{ fields: 2, path: false },
 			'completed',
 		);
 	});
@@ -412,7 +408,7 @@ describe('body-reported failures', () => {
 		expect((error as Error).message).toContain('No valid authorization');
 	});
 
-	it('lets core ApiError through on a 400, with the provider message', async () => {
+	it('lets core ApiError through unchanged on a 400', async () => {
 		respond(adminFailure, 400);
 
 		const error = await invoke(Websites.list, {}).catch(
@@ -423,7 +419,7 @@ describe('body-reported failures', () => {
 		expect(error).toBeInstanceOf(ApiError);
 		expect((error as ApiError).status).toBe(400);
 		expect((error as ApiError).request.method).toBe('GET');
-		expect((error as Error).message).toContain(adminFailure.error);
+		expect((error as ApiError).body).toEqual(adminFailure);
 		expect(isAuthFailure(error as Error)).toBe(true);
 	});
 

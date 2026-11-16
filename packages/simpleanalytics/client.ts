@@ -39,7 +39,7 @@ const SIMPLEANALYTICS_RATE_LIMIT_CONFIG: RateLimitConfig = {
  *
  * A call that returns 200 with `ok: false` is a failure, so the client checks
  * the body and throws this error. A non-2xx answer stays core's `ApiError`
- * (with the provider's message), and a request that never reached the API
+ * (the provider's text is on its `body.error`), and a request that never reached the API
  * (DNS, reset, timeout) throws this error with the transport failure as cause.
  */
 export class SimpleanalyticsAPIError extends Error {
@@ -172,33 +172,6 @@ export function isRootPath(path: string | undefined): boolean {
 	return path !== undefined && path.length > 0 && /^\/+$/.test(path);
 }
 
-/**
- * Rebuilds core's ApiError with the provider's own message, keeping status,
- * body, request and rate-limit fields. Core names a 400 only "Bad Request",
- * which hides why Simple Analytics refused the call.
- */
-function withProviderMessage(error: ApiError): ApiError {
-	const reason = failureFromBody(error.body, error.status);
-	if (!reason || reason === error.message) return error;
-	return new ApiError(
-		error.request,
-		{
-			url: error.url,
-			ok: false,
-			status: error.status,
-			statusText: error.statusText,
-			body: error.body,
-		},
-		reason,
-		{
-			retryAfter: error.retryAfter,
-			rateLimitReset: error.rateLimitReset,
-			rateLimitRemaining: error.rateLimitRemaining,
-			rateLimitLimit: error.rateLimitLimit,
-		},
-	);
-}
-
 /** Reads the HTTP status from core's ApiError or this plugin's error. */
 export function statusOf(error: Error): number | undefined {
 	if (error instanceof ApiError || error instanceof SimpleanalyticsAPIError) {
@@ -274,10 +247,10 @@ export async function makeSimpleanalyticsRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Core's ApiError passes through so its status, retryAfter and request
-			// reach core's handlers. Only the message is swapped for the provider's
-			// `error` text, which core leaves out for a 400 ("Bad Request").
-			throw withProviderMessage(error);
+			// Core's ApiError passes through unchanged (R8), so its status,
+			// retryAfter, request and stack reach core's handlers. The provider's
+			// own `error` text stays readable on `error.body`.
+			throw error;
 		}
 		// A transport failure never held a body or headers, so its cause is safe to
 		// keep. DOMException (fetch timeouts) can fail instanceof Error across realms.
