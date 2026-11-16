@@ -10,7 +10,7 @@ overviewNote: |
   Things to know before you query:
 
   - **Stats needs an explicit fields list.** Send at least one field; an empty list falls back to the version 1 response format. Every field is optional in the output because the API returns only what you ask for.
-  - **The plugin always sends a key.** Simple Analytics lets anyone read a public website's page views, visitors and histogram without one, but this plugin needs a stored API key for every operation. When a public site hides its top pages, the `pages` field and page filters need a key with access to that site.
+  - **The plugin always sends a key.** Simple Analytics lets anyone read a public website's page views, visitors and histogram without one, but this plugin needs an API key (stored on the account or passed as `key`) for every operation. When a public site hides its top pages, the `pages` field and page filters need a key with access to that site.
   - **Some filters cost more.** A contains search, `pages=*/app/example-name/*`, needs a key even for a public site, must be the only path pattern, and only accepts the pageviews, visitors and histogram fields. It is rate limited and answers 429 with a `Retry-After`.
   - **Metadata keys differ between APIs.** Stats filters use the bare key, as `metadata.<key>`, without a storage suffix. Export needs the suffix, such as `project_text`, and exports a metadata column only when you name it.
   - **Export returns JSON here.** The route also serves CSV, TSV, NDJSON, Parquet and Avro, but this plugin asks for `json`, because that is the only format it can return intact.
