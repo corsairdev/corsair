@@ -1,10 +1,11 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeTomTomError,
 	makeTomTomRequest,
 	point,
 	TOMTOM_API_BASE,
-	TomTomAPIError,
+	tomTomErrorCode,
 } from './client';
 import { badRequest, legacyError, unauthorized } from './test-fixtures';
 
@@ -78,7 +79,7 @@ describe('makeTomTomRequest', () => {
 		});
 	});
 
-	it('reads the detailedError envelope', async () => {
+	it('lets core ApiError through with the detailedError envelope', async () => {
 		respond(unauthorized, 401);
 
 		const error = await makeTomTomRequest(API_KEY, {
@@ -86,12 +87,12 @@ describe('makeTomTomRequest', () => {
 			path: 'search/2/search/x.json',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(TomTomAPIError);
-		expect((error as TomTomAPIError).status).toBe(401);
-		expect((error as TomTomAPIError).code).toBe('Unauthorized');
-		expect((error as Error).message).toContain(
-			'You are missing valid authentication credentials',
-		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect(tomTomErrorCode((error as ApiError).body)).toBe('Unauthorized');
+		expect(
+			describeTomTomError(401, (error as ApiError).body, 'x').message,
+		).toContain('You are missing valid authentication credentials');
 	});
 
 	it('reads the older { error: { description } } envelope too', async () => {
@@ -102,23 +103,37 @@ describe('makeTomTomRequest', () => {
 			path: 'traffic/services/5/incidentDetails',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TomTomAPIError).code).toBe('Forbidden');
-		expect((error as TomTomAPIError).isPermission).toBe(true);
-		expect((error as Error).message).toContain('not authorized');
+		expect((error as ApiError).status).toBe(403);
+		expect(tomTomErrorCode((error as ApiError).body)).toBe('Forbidden');
+		expect(
+			describeTomTomError(403, (error as ApiError).body, 'x').message,
+		).toContain('not authorized');
 	});
 
-	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
-		respond({ detailedError: { code: 'TooManyRequests' } }, 429, {
-			'Retry-After': '9',
-		});
+	it('lets core retry a 429 three times, honouring Retry-After', async () => {
+		jest.useFakeTimers();
+		try {
+			for (let i = 0; i < 4; i += 1) {
+				respond({ detailedError: { code: 'TooManyRequests' } }, 429, {
+					'Retry-After': '9',
+				});
+			}
 
-		const error = await makeTomTomRequest(API_KEY, {
-			method: 'GET',
-			path: 'search/2/search/x.json',
-		}).catch((caught: unknown) => caught);
+			const pending = makeTomTomRequest(API_KEY, {
+				method: 'GET',
+				path: 'search/2/search/x.json',
+			}).catch((caught: unknown) => caught);
+			await jest.advanceTimersByTimeAsync(8_500);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			await jest.advanceTimersByTimeAsync(30_000);
+			const error = await pending;
 
-		expect((error as TomTomAPIError).retryAfter).toBe(9000);
-		expect((error as TomTomAPIError).isRateLimit).toBe(true);
+			expect(fetchMock).toHaveBeenCalledTimes(4);
+			expect((error as ApiError).status).toBe(429);
+			expect((error as ApiError).retryAfter).toBe(9000);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
 	it('records the method', async () => {
@@ -129,12 +144,12 @@ describe('makeTomTomRequest', () => {
 			path: 'search/2/search/x.json',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TomTomAPIError).method).toBe('GET');
+		expect((error as ApiError).request.method).toBe('GET');
 	});
 
 	it('never puts the key in the message or its inspection', async () => {
-		// `key` is one of the four names ApiError redacts, and this plugin keeps
-		// the cause, so the redaction has to hold.
+		// `key` is one of the names core's ApiError redacts, and the error now
+		// passes through unchanged, so that redaction has to hold.
 		respond(badRequest, 400);
 
 		const error = await makeTomTomRequest(API_KEY, {

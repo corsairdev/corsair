@@ -4,9 +4,9 @@ import { tomtom } from './index';
 import { searchEnvelope, trafficFlow } from './test-fixtures';
 
 /**
- * `requests.test.ts` calls the HTTP client, which is built with `maxRetries: 0`
- * so only `error-handlers.ts` decides what is retried. Every TomTom route is a
- * GET, so every replay here is safe.
+ * Core's request() retries a 429 three times (honouring Retry-After) and the
+ * plugin's handler does not add more; `error-handlers.ts` replays a 5xx. Every
+ * TomTom route is a GET, so every replay here is safe.
  */
 async function createClient() {
 	const testDb = createTestDatabase();

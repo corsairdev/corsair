@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TomTomAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof TomTomAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -18,18 +18,11 @@ function statusOf(error: Error): number | undefined {
  * Every wrapped route is a GET over map data, so replaying any of them is safe.
  */
 export const errorHandlers = {
-	// 429, which can be a per-second burst limit or the daily free quota. The
-	// daily quota resets at midnight, so a retry still helps within the window
-	// only when TomTom says so through Retry-After.
+	// 429: core's request() has already retried it three times, honouring
+	// Retry-After (R8), so the plugin does not retry again.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof TomTomAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TomTomAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401: a missing, wrong or expired key.
 	AUTH_ERROR: {
@@ -39,8 +32,7 @@ export const errorHandlers = {
 	// 403: the key is valid but the plan does not include the product or the
 	// region asked for.
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			error instanceof TomTomAPIError && error.isPermission,
+		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 for a malformed query, 404 for a location or route that does not
@@ -54,8 +46,7 @@ export const errorHandlers = {
 	},
 	// 5xx. Every wrapped route is a GET, so a replay cannot repeat a write.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof TomTomAPIError && (statusOf(error) ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

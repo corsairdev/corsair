@@ -8,62 +8,41 @@ import { ApiError, request } from 'corsair/http';
 
 export const TOMTOM_API_BASE = 'https://api.tomtom.com';
 
-// error-handlers.ts owns retries. The object has to be complete: request.ts
-// replaces its defaults wholesale, so a partial one either skips the
-// rate-limit block or throws reading `headerNames`.
+// Core retries a 429 three times, honouring Retry-After (R8). `resetTime` is
+// left out: a daily-quota reset header would turn into a day-long wait.
 const TOMTOM_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
 
 /**
- * TomTom answers every failure with `{ detailedError: { code, message } }`, and
- * the `code` is a short string such as `Unauthorized`, `BadRequest` or
- * `TooManyRequests`. A few routes use `{ error: { description } }` instead, so
- * both are read.
+ * A request that never reached TomTom (DNS, reset, timeout). HTTP failures are
+ * not wrapped: core's `ApiError` passes through unchanged, so its `status`,
+ * `retryAfter` and `body` (TomTom's `detailedError` envelope) reach core and
+ * the caller. The key travels as the `key` query parameter, which ApiError
+ * redacts.
  */
 export class TomTomAPIError extends Error {
-	readonly status?: number;
-	/** The provider's own code, e.g. `Unauthorized`. */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when TomTom sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, which decides replay safety. */
+	/** The HTTP method of the failed request. */
 	readonly method?: string;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			retryAfter?: number;
-			method?: string;
-		} = {},
+		options: { cause?: Error; method?: string } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'TomTomAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.code = options.code ?? readCode(cause?.body);
+		this.method = options.method;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/**
-	 * A 403 from TomTom is a key that does not cover the product or the region,
-	 * not a transient failure, so it is not retried.
-	 */
-	get isPermission(): boolean {
-		return this.status === 403;
-	}
+/** TomTom's own error code from an ApiError body, e.g. `Unauthorized`. */
+// unknown: the error body is untyped until the nested objects are read.
+export function tomTomErrorCode(body: unknown): string | undefined {
+	return readCode(body);
 }
 
 // unknown: the error body is untyped until the nested objects are read.
@@ -97,7 +76,10 @@ export function describeTomTomError(
 	return { message: label ? `TomTom ${label}: ${text}` : text, code };
 }
 
-export type TomTomQuery = Record<string, string | number | boolean | undefined>;
+export type TomTomQuery = Record<
+	string,
+	string | number | boolean | string[] | undefined
+>;
 
 export type TomTomRequest = {
 	method: 'GET';
@@ -106,8 +88,8 @@ export type TomTomRequest = {
 };
 
 /**
- * TomTom takes the key as the `key` query parameter, which is one of the four
- * names `ApiError` redacts, so the cause is kept: it cannot leak the key.
+ * TomTom takes the key as the `key` query parameter, which `ApiError` redacts,
+ * so core's error passes through unchanged.
  */
 export async function makeTomTomRequest(
 	apiKey: string,
@@ -132,18 +114,8 @@ export async function makeTomTomRequest(
 			rateLimitConfig: TOMTOM_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof TomTomAPIError) throw error;
-		if (error instanceof ApiError) {
-			const described = describeTomTomError(
-				error.status,
-				error.body,
-				error.message,
-			);
-			throw new TomTomAPIError(described.message, {
-				cause: error,
-				code: described.code,
-				method,
-			});
+		if (error instanceof TomTomAPIError || error instanceof ApiError) {
+			throw error;
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
@@ -151,6 +123,67 @@ export async function makeTomTomRequest(
 		}
 		throw new TomTomAPIError('Unknown TomTom error', { method });
 	}
+}
+
+/**
+ * Raster tiles are PNG bytes, which core's `request()` would decode as text and
+ * corrupt, so the tile route is fetched here and returned as base64. A failure
+ * still throws core's `ApiError` (with the key redacted by its URL handling) so
+ * the same handlers apply.
+ */
+export async function fetchTomTomTile(
+	apiKey: string,
+	path: string,
+): Promise<{ content_type: string; base64: string }> {
+	const url = new URL(path, `${TOMTOM_API_BASE}/`);
+	url.searchParams.set('key', apiKey);
+	const requestOptions: ApiRequestOptions = {
+		method: 'GET',
+		url: path,
+		query: { key: apiKey },
+	};
+	let response: Response;
+	try {
+		response = await fetch(url, { headers: { Accept: 'image/png' } });
+	} catch (error) {
+		throw new TomTomAPIError(
+			error instanceof Error ? error.message : 'TomTom tile request failed',
+			{ method: 'GET' },
+		);
+	}
+	if (!response.ok) {
+		const type = response.headers.get('Content-Type') ?? '';
+		const text = await response.text();
+		let body: unknown = text; // unknown: JSON error envelope or plain text
+		if (type.includes('json')) {
+			try {
+				body = JSON.parse(text);
+			} catch {
+				body = text;
+			}
+		}
+		const seconds = Number(response.headers.get('Retry-After'));
+		throw new ApiError(
+			requestOptions,
+			{
+				url: url.toString(),
+				ok: false,
+				status: response.status,
+				statusText: response.statusText,
+				body,
+			},
+			describeTomTomError(response.status, body, response.statusText).message,
+			{
+				retryAfter:
+					Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : undefined,
+			},
+		);
+	}
+	const bytes = Buffer.from(await response.arrayBuffer());
+	return {
+		content_type: response.headers.get('Content-Type') ?? 'image/png',
+		base64: bytes.toString('base64'),
+	};
 }
 
 /** Joins two coordinates as `lat,lon`, which every TomTom path parameter takes. */
