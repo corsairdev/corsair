@@ -111,8 +111,8 @@ export const availableList: TelnyxEndpoints['availablePhoneNumbersList'] =
 					'filter[administrative_area]': parsed.administrativeArea,
 					'filter[national_destination_code]': parsed.nationalDestinationCode,
 					'filter[phone_number_type]': parsed.phoneNumberType,
+					// The route has no page parameters; filter[limit] caps the list.
 					'filter[limit]': parsed.limit,
-					...paging(parsed.pageNumber, parsed.pageSize),
 				},
 			}),
 		);

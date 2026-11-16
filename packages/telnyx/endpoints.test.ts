@@ -9,6 +9,7 @@ import {
 	callControlApplicationsList,
 	callResponse,
 	insufficientBalanceResponse,
+	message,
 	messageResponse,
 	messagingProfileResponse,
 	messagingProfilesList,
@@ -195,15 +196,47 @@ describe('messages.get and messages.delete', () => {
 		expect(result.data.direction).toBe('outbound');
 	});
 
-	it('DELETEs a message and parses the removed record', async () => {
-		respond(messageResponse);
+	it('cancels a scheduled message and parses the bare message it returns', async () => {
+		// Telnyx answers the cancel with the message object, not { data }.
+		respond({
+			...message,
+			to: [{ phone_number: '+13125550002', status: 'queued' }],
+		});
 
 		const result = await invoke(Messages.messagesRemove, {
 			messageId: '40385f64-5717-4562-b3fc-2c963f66afa6',
 		});
 
-		expect(lastRequest()).toMatchObject({ method: 'DELETE' });
-		expect(result.data.text).toBe('Hello from Telnyx');
+		expect(lastRequest()).toMatchObject({
+			method: 'DELETE',
+			path: '/v2/messages/40385f64-5717-4562-b3fc-2c963f66afa6',
+		});
+		expect(result.id).toBe('40385f64-5717-4562-b3fc-2c963f66afa6');
+		expect(result.text).toBe('Hello from Telnyx');
+	});
+
+	it('parses MMS media entries with the nulls Telnyx documents', async () => {
+		respond({
+			data: {
+				...message,
+				type: 'MMS',
+				media: [
+					{
+						url: 'https://example.com/a.png',
+						content_type: null,
+						sha256: null,
+						size: null,
+					},
+				],
+			},
+		});
+
+		const result = await invoke(Messages.messagesGet, {
+			messageId: '40385f64-5717-4562-b3fc-2c963f66afa6',
+		});
+
+		expect(result.data.media?.[0]?.url).toBe('https://example.com/a.png');
+		expect(result.data.media?.[0]?.size).toBeNull();
 	});
 });
 
@@ -242,10 +275,14 @@ describe('messagingProfiles', () => {
 		await invoke(MessagingProfiles.create, {
 			name: 'Primary profile',
 			webhook_url: 'https://example.com/webhooks/telnyx',
+			whitelisted_destinations: ['US'],
 		});
 		expect(lastRequest()).toMatchObject({
 			path: '/v2/messaging_profiles',
 			method: 'POST',
+		});
+		expect(lastRequest().body).toMatchObject({
+			whitelisted_destinations: ['US'],
 		});
 
 		respond(messagingProfileResponse);
@@ -265,6 +302,10 @@ describe('messagingProfiles', () => {
 
 	it('rejects a profile with no name', async () => {
 		await expect(invoke(MessagingProfiles.create, {})).rejects.toThrow();
+		// Telnyx requires whitelisted_destinations on create.
+		await expect(
+			invoke(MessagingProfiles.create, { name: 'No destinations' }),
+		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
@@ -297,12 +338,26 @@ describe('phoneNumbers', () => {
 		respond(phoneNumberResponse);
 		await invoke(PhoneNumbers.update, {
 			phoneNumberId: '1293384261075731499',
-			messaging_profile_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+			connection_id: '1293384261075731500',
+			tags: ['support'],
 		});
 		expect(lastRequest()).toMatchObject({ method: 'PATCH' });
 		expect(lastRequest().body).toEqual({
-			messaging_profile_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+			connection_id: '1293384261075731500',
+			tags: ['support'],
 		});
+	});
+
+	it('refuses fields the number PATCH route does not take', async () => {
+		// The messaging profile is set on /phone_numbers/{id}/messaging, and
+		// emergency settings have their own actions.
+		await expect(
+			invoke(PhoneNumbers.update, {
+				phoneNumberId: '1293384261075731499',
+				messaging_profile_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an update that changes nothing', async () => {
@@ -402,14 +457,14 @@ describe('calls', () => {
 	it('gets a call, hangs it up and speaks on it', async () => {
 		respond(callResponse);
 		await invoke(Calls.callsGet, { callControlId: 'v3:abc123' });
-		expect(lastRequest().path).toBe('/v2/calls/v3:abc123');
+		expect(lastRequest().path).toBe('/v2/calls/v3%3Aabc123');
 
 		respond(callActionResult);
 		const hungUp = await invoke(Calls.callsHangup, {
 			callControlId: 'v3:abc123',
 		});
 		expect(lastRequest()).toMatchObject({
-			path: '/v2/calls/v3:abc123/actions/hangup',
+			path: '/v2/calls/v3%3Aabc123/actions/hangup',
 			method: 'POST',
 		});
 		expect(hungUp.data?.result).toBe('ok');
@@ -422,7 +477,7 @@ describe('calls', () => {
 			language: 'en-US',
 		});
 		expect(lastRequest()).toMatchObject({
-			path: '/v2/calls/v3:abc123/actions/speak',
+			path: '/v2/calls/v3%3Aabc123/actions/speak',
 			method: 'POST',
 		});
 		// The call id belongs in the path, not the body.
@@ -431,6 +486,17 @@ describe('calls', () => {
 			voice: 'female',
 			language: 'en-US',
 		});
+	});
+
+	it('rejects a speak without a voice, which Telnyx requires', async () => {
+		await expect(
+			invoke(Calls.callsSpeak, {
+				callControlId: 'v3:abc123',
+				payload: 'Hello',
+				language: 'en-US',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects a speak with an empty payload', async () => {

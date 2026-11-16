@@ -257,7 +257,7 @@ const telnyxEndpointMeta = {
 	'phoneNumbers.update': {
 		riskLevel: 'write',
 		description:
-			'Attach a number to a call control or messaging application, set its emergency address, or retag it',
+			'Attach a number to a call control application or other connection, or change its tags, billing group or customer reference',
 	},
 	'phoneNumbers.delete': {
 		riskLevel: 'destructive',

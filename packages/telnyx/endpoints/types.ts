@@ -88,7 +88,20 @@ export const MessageSchema = z
 		text: z.string().nullish(),
 		num_chars: z.number().nullish(),
 		subject: z.string().nullish(),
-		media: z.array(z.record(z.string(), z.string())).nullish(),
+		// Telnyx sends content_type, sha256 and size as null until the media
+		// is fetched.
+		media: z
+			.array(
+				z
+					.object({
+						url: z.string().nullish(),
+						content_type: z.string().nullish(),
+						sha256: z.string().nullish(),
+						size: z.number().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
 		webhook_url: z.string().nullish(),
 		encoding: z.string().nullish(),
 		parts: z.number().nullish(),
@@ -198,13 +211,16 @@ export const MessagesGetResponseSchema = record(MessageSchema);
 export type MessagesGetResponse = z.infer<typeof MessagesGetResponseSchema>;
 
 export const MessagesRemoveInputSchema = z.object({
-	messageId: PathIdSchema.describe('The message ID.'),
+	messageId: PathIdSchema.describe(
+		'The ID of the scheduled message to cancel.',
+	),
 });
 
 export type MessagesRemoveInput = z.infer<typeof MessagesRemoveInputSchema>;
 
-// Telnyx answers a message delete with the message record it removed.
-export const MessagesRemoveResponseSchema = record(MessageSchema);
+// DELETE /messages/{id} cancels a scheduled message, and Telnyx answers with
+// the cancelled message itself, not wrapped in `{ data }`.
+export const MessagesRemoveResponseSchema = MessageSchema;
 
 export type MessagesRemoveResponse = z.infer<
 	typeof MessagesRemoveResponseSchema
@@ -285,8 +301,9 @@ export const MessagingProfilesCreateInputSchema = z.object({
 	webhook_failover_url: z.string().optional(),
 	whitelisted_destinations: z
 		.array(z.string())
-		.optional()
-		.describe('Two-letter country codes the profile may send to.'),
+		.describe(
+			'Two-letter country codes the profile may send to, e.g. ["US"]. Telnyx requires it.',
+		),
 });
 
 export type MessagingProfilesCreateInput = z.input<
@@ -345,16 +362,15 @@ export const PhoneNumberSchema = z
 		id: z.string(),
 		record_type: z.string().nullish(),
 		phone_number: z.string().nullish(),
-		country_code: z.string().nullish(),
+		country_iso_alpha2: z.string().nullish(),
 		status: z.string().nullish(),
 		connection_id: z.string().nullish(),
 		connection_name: z.string().nullish(),
-		// 0 for a messaging-only number.
-		connection_type: z.string().nullish(),
+		customer_reference: z.string().nullish(),
 		messaging_profile_id: z.string().nullish(),
 		messaging_profile_name: z.string().nullish(),
 		billing_group_id: z.string().nullish(),
-		number_type: z.string().nullish(),
+		phone_number_type: z.string().nullish(),
 		emergency_enabled: z.boolean().nullish(),
 		emergency_address_id: z.string().nullish(),
 		external_pin: z.string().nullish(),
@@ -398,23 +414,17 @@ export type PhoneNumbersGetResponse = z.infer<
 
 export const PhoneNumbersUpdateInputSchema = z
 	.object({
-		phoneNumberId: PathIdSchema
-			.describe('The phone number record to change.'),
+		phoneNumberId: PathIdSchema.describe('The phone number record to change.'),
 		connection_id: z
 			.string()
-			.nullable()
 			.optional()
 			.describe(
-				'The call control or messaging application to attach the number to.',
+				'The call control application or other connection to attach the number to.',
 			),
-		messaging_profile_id: z
-			.string()
-			.nullable()
-			.optional()
-			.describe('The messaging profile to attach the number to.'),
-		billing_group_id: z.string().nullable().optional(),
-		emergency_enabled: z.boolean().optional(),
-		emergency_address_id: z.string().nullable().optional(),
+		billing_group_id: z.string().optional(),
+		customer_reference: z.string().optional(),
+		external_pin: z.string().optional(),
+		hd_voice_enabled: z.boolean().optional(),
 		tags: z.array(z.string()).optional(),
 	})
 	.refine(
@@ -433,8 +443,7 @@ export type PhoneNumbersUpdateResponse = z.infer<
 >;
 
 export const PhoneNumbersRemoveInputSchema = z.object({
-	phoneNumberId: PathIdSchema
-		.describe('The phone number record to delete.'),
+	phoneNumberId: PathIdSchema.describe('The phone number record to delete.'),
 });
 
 export type PhoneNumbersRemoveInput = z.infer<
@@ -452,8 +461,6 @@ export const AvailablePhoneNumbersListInputSchema = z.object({
 		.string()
 		.length(2)
 		.describe('Two-letter country code to search in, e.g. "US".'),
-	pageNumber: PageNumberSchema,
-	pageSize: PageSizeSchema,
 	locality: z.string().optional().describe('A city to search in.'),
 	administrativeArea: z
 		.string()
@@ -484,7 +491,16 @@ export const AvailablePhoneNumberSchema = z
 	.object({
 		phone_number: z.string().nullish(),
 		record_type: z.string().nullish(),
-		region_information: z.array(z.record(z.string(), z.string())).nullish(),
+		region_information: z
+			.array(
+				z
+					.object({
+						region_type: z.string().nullish(),
+						region_name: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
 		cost_information: z
 			.object({
 				upfront_cost: z.string().nullish(),
@@ -531,6 +547,10 @@ export const CallSchema = z
 		ended_at: z.string().nullish(),
 		recording_id: z.string().nullish(),
 		client_state: z.string().nullish(),
+		// calls.get answers with the duration so far and the start and end.
+		call_duration: z.number().nullish(),
+		start_time: z.string().nullish(),
+		end_time: z.string().nullish(),
 	})
 	.loose();
 
@@ -593,8 +613,12 @@ export type CallsHangupInput = z.infer<typeof CallsHangupInputSchema>;
 export const CallsSpeakInputSchema = z.object({
 	callControlId: PathIdSchema.describe('The call_control_id to speak on.'),
 	payload: z.string().min(1).describe('The text to read aloud.'),
-	// Telnyx requires one of these two.
-	voice: z.string().optional().describe('The voice to use.'),
+	voice: z
+		.string()
+		.min(1)
+		.describe(
+			'The voice to use, e.g. "female", "male" or a provider voice such as "Telnyx.KokoroTTS.af".',
+		),
 	language: z
 		.string()
 		.optional()
@@ -617,7 +641,7 @@ export const CallControlApplicationSchema = z
 		webhook_event_url: z.string().nullish(),
 		webhook_event_failover_url: z.string().nullish(),
 		webhook_api_version: z.string().nullish(),
-		// 0, 1 or a specific timeout in seconds.
+		// "RFC 2833", "Inband" or "SIP INFO".
 		dtmf_type: z.string().nullish(),
 		first_command_timeout: z.boolean().nullish(),
 		first_command_timeout_secs: z.number().nullish(),
@@ -723,8 +747,9 @@ export type CallControlApplicationsUpdateResponse = z.infer<
 >;
 
 export const CallControlApplicationsRemoveInputSchema = z.object({
-	applicationId: PathIdSchema
-		.describe('The call control application to delete.'),
+	applicationId: PathIdSchema.describe(
+		'The call control application to delete.',
+	),
 });
 
 export type CallControlApplicationsRemoveInput = z.infer<

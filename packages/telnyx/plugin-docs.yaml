@@ -10,12 +10,14 @@ overviewNote: |
   - **Sending charges the account.** `messages.send` bills per message part, and `calls.create` bills per minute from the moment the call is answered. There is no sandbox.
   - **A sender is required, in one of two forms.** Send `from` for a phone number or alphanumeric sender ID, or send `messaging_profile_id` and let that profile's number pool pick the sender. The plugin rejects a send with neither.
   - **SMS needs text, MMS needs media.** A send with neither text nor `media_urls` is rejected before the request, because Telnyx refuses it too.
-  - **Paging uses bracketed keys.** `page[number]` and `page[size]` on the messaging profile, number and application lists. `page[size]` runs from 1 to 250. The available-numbers route also takes its filters bracketed, `filter[country_code]` and the rest, and `limit` is one of those filters rather than a top-level value.
-  - **Responses are wrapped.** Every answer is `{ data }`, and a list adds `meta` with `total_pages`, `total_results`, `page_number` and `page_size`.
-  - **Hanging up and speaking are writes.** They change a live call, so a read-only caller cannot reach them. `calls.speak` reads text aloud and needs `payload`; the voice and language are what Telnyx uses to synthesize it.
+  - **Paging uses bracketed keys.** `page[number]` and `page[size]` on the messaging profile, number and application lists. `page[size]` runs from 1 to 250. The available-numbers route has no pages: it takes its filters bracketed, `filter[country_code]` and the rest, and `limit` is one of those filters rather than a top-level value.
+  - **Responses are wrapped.** Every answer is `{ data }`, and a list adds `meta` with `total_pages`, `total_results`, `page_number` and `page_size`. The one exception is `messages.delete`, which answers with the bare message.
+  - **Sends, dials and live-call actions are destructive.** `messages.send`, `calls.create`, `calls.speak` and `calls.hangup` bill the account, reach a person or cannot be undone. `calls.speak` needs `payload` and `voice`; `language` is optional.
+  - **`messages.delete` cancels a scheduled message.** It only works on a message sent with `send_at` that has not gone out yet.
+  - **Number settings.** `phoneNumbers.update` changes the connection, tags, billing group, customer reference and similar fields. Telnyx sets a number's messaging profile and emergency settings on separate routes this plugin does not cover.
   - **Call control application first.** `calls.create` takes a `connection_id`, which is the ID of a call control application. Create one with `callControlApplications.create`, which requires a `webhook_event_url` because Telnyx sends every call event there.
   - **Releasing a number is permanent.** `phoneNumbers.delete` gives the number back to the pool and it cannot be recovered. Deleting a messaging profile detaches its numbers rather than releasing them.
-  - **Error codes.** A failure is `{ errors: [{ code, title, detail }] }`. The plugin keeps every entry and exposes the first code; `20100` is "Insufficient Funds", which no retry fixes.
+  - **Error codes.** A failure is core's `ApiError`, whose body is `{ errors: [{ code, title, detail }] }`; `telnyxErrorDetails(error)` reads the entries. `20100` is "Insufficient Funds", which no retry fixes.
 examples:
   read:
     path: phoneNumbers.list
@@ -41,7 +43,7 @@ apiExamples:
   messagingProfiles.get:
     call: "{ profileId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }"
   messagingProfiles.create:
-    call: "{ name: 'Primary profile', webhook_url: 'https://example.com/webhooks/telnyx' }"
+    call: "{ name: 'Primary profile', whitelisted_destinations: ['US'], webhook_url: 'https://example.com/webhooks/telnyx' }"
   messagingProfiles.update:
     call: "{ profileId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', name: 'Renamed profile' }"
   messagingProfiles.delete:
@@ -51,7 +53,7 @@ apiExamples:
   phoneNumbers.get:
     call: "{ phoneNumberId: '1293384261075731499' }"
   phoneNumbers.update:
-    call: "{ phoneNumberId: '1293384261075731499', messaging_profile_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }"
+    call: "{ phoneNumberId: '1293384261075731499', connection_id: '1293384261075731500', tags: ['support'] }"
   phoneNumbers.delete:
     call: "{ phoneNumberId: '1293384261075731499' }"
   availablePhoneNumbers.list:
@@ -78,7 +80,9 @@ apiNotes:
   'messages.send': 'Charges the account per part; send from, or a messaging_profile_id so the number pool picks the sender; SMS needs text and MMS needs media_urls.'
   'availablePhoneNumbers.list': 'countryCode is required; every other filter, limit included, travels as a filter[..] query key.'
   'calls.create': 'connection_id is the call control application ID, and the call bills per minute once answered.'
-  'calls.speak': 'payload is required; voice and language control the synthesis.'
+  'calls.speak': 'payload and voice are required; language is optional.'
+  'messages.delete': 'Cancels a scheduled message that has not been sent yet; answers with the bare message, not { data }.'
+  'messagingProfiles.create': 'whitelisted_destinations is required, e.g. ["US"].'
   'callControlApplications.create': 'webhook_event_url is required because Telnyx delivers every call event there.'
   'phoneNumbers.delete': 'Releases the number permanently; it cannot be recovered.'
   'messagingProfiles.delete': 'Detaches the profile from its numbers and stops inbound delivery.'
