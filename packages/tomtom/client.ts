@@ -101,8 +101,10 @@ const LOCATION_QUERY = new Set(['bbox', 'point', 'lat', 'lon']);
  * waypoints. Each is replaced by a marker, so the route stays readable.
  */
 const LOCATION_PATHS: [RegExp, string][] = [
+	// Greedy up to the last `.json` before the query, so a search text that
+	// itself contains `.json` is masked whole.
 	[
-		/(search\/2\/(?:search|geocode|reverseGeocode)\/)[^/?#]+?(\.json)/,
+		/(search\/2\/(?:search|geocode|reverseGeocode)\/)[^/?#]+(\.json)(?=$|[?#])/,
 		`$1${REDACTED}$2`,
 	],
 	[/(routing\/1\/calculateRoute\/)[^/?#]+(\/json)/, `$1${REDACTED}$2`],

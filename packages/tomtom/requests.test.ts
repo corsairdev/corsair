@@ -303,6 +303,17 @@ describe('location data in errors', () => {
 		expect(fuzzy.request.query).toMatchObject({ lat: '[REDACTED]' });
 	});
 
+	it('masks a search text that itself contains .json', async () => {
+		respond({ detailedError: { code: 'BadRequest', message: 'no' } }, 400);
+		const error = (await captureError(
+			invoke(SearchEndpoints.fuzzy, { query: 'office.json 123 Main St' }),
+		)) as ApiError;
+
+		expect(error.url).toContain('/search/2/search/[REDACTED].json');
+		expect(JSON.stringify(error)).not.toContain('Main');
+		expect(error.request.url).not.toContain('Main');
+	});
+
 	it('masks the bounding box on a failed incidents read', async () => {
 		respond({ detailedError: { code: 'BadRequest', message: 'no' } }, 400);
 		const error = await captureError(
