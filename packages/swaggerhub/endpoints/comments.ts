@@ -48,6 +48,16 @@ export const list: SwaggerhubEndpoints['commentsList'] = (ctx, input) =>
 		},
 	);
 
+/** A zero-width range at the start of the definition. */
+const LINE_ONE = {
+	startLine: 1,
+	endLine: 1,
+	startColumn: 1,
+	endColumn: 1,
+	startOffset: 0,
+	endOffset: 0,
+};
+
 export const create: SwaggerhubEndpoints['commentsCreate'] = (ctx, input) =>
 	call(
 		ctx,
@@ -64,7 +74,9 @@ export const create: SwaggerhubEndpoints['commentsCreate'] = (ctx, input) =>
 				body,
 				// The route documents `replies` as required, even when it is empty.
 				replies: [],
-				...(range === undefined ? {} : { range }),
+				// Live 11-16: without a `range` (or the deprecated `position`) the
+				// route answers 400, so an unanchored comment goes on line 1.
+				range: range ?? LINE_ONE,
 			},
 		}),
 		{

@@ -172,7 +172,7 @@ apiNotes:
   comments.list: |
     Answers a **bare array** of comments. A 204 means the version has none, so the plugin reports `{ comments: [], empty: true }` rather than failing.
   comments.create: |
-    The route documents `replies` as required, so the plugin always sends it, as an empty array. `range` anchors the comment to a line range and takes all six offsets.
+    The route documents `replies` as required, so the plugin always sends it, as an empty array. `range` anchors the comment to a line range and takes all six offsets. The API refuses a comment without one, so a comment with no `range` goes on line 1.
   comments.update: |
     Sends PATCH with the new `body`. Answers the updated comment.
   comments.delete: |
@@ -198,7 +198,7 @@ apiNotes:
   templates.save: |
     **The definition is the request body.** `version` is optional where the definition carries one.
   templates.delete: |
-    Deletes one template version. The route answers 204, so the plugin reports the ids.
+    Deletes one template version, or the whole template when `version` is left out (the API will not delete a template's only version). The route answers 204, so the plugin reports the ids.
   projects.list: |
     Answers `{ offset, totalCount, projects }`. `order` takes `ASC` or `DESC`.
   projects.get: |
@@ -206,7 +206,7 @@ apiNotes:
   projects.create: |
     The route documents all three collections as required, so the plugin sends an empty array for any left out. Names have to exist in the organisation already.
   projects.update: |
-    Sends PUT, which **replaces** the project. A collection left out is cleared, so the plugin always sends all three.
+    Sends PUT, which **replaces** the project. A collection left out is cleared, so the plugin always sends all three. The PUT also needs `name`; when you leave it out the plugin sends the project id, which is the project's name.
   projects.delete: |
     Deletes the project. The specs it grouped stay on the account. The route answers 204.
   integrations.list: |

@@ -132,7 +132,14 @@ export const update: SwaggerhubEndpoints['projectsUpdate'] = (ctx, input) =>
 		({ owner, projectId, name, description, apis, domains, templates }) => ({
 			method: 'PUT',
 			path: `/projects/${segment(owner)}/${segment(projectId)}`,
-			body: projectBody({ name, description, apis, domains, templates }),
+			// The PUT refuses a body without `name`, and a project's id is its name.
+			body: projectBody({
+				name: name ?? projectId,
+				description,
+				apis,
+				domains,
+				templates,
+			}),
 		}),
 		{
 			// The PUT answers 200 with no body; report the project that was sent.

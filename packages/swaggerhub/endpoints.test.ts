@@ -464,11 +464,42 @@ describe('swaggerhub comments', () => {
 			body: 'This operation needs a summary',
 		});
 
+		// Live 11-16: a comment with neither `range` nor `position` answers 400
+		// "Input does not match expected structure", so it is pinned to line 1.
 		expect(sentBody()).toEqual({
 			body: 'This operation needs a summary',
 			replies: [],
+			range: {
+				startLine: 1,
+				endLine: 1,
+				startColumn: 1,
+				endColumn: 1,
+				startOffset: 0,
+				endOffset: 0,
+			},
 		});
 		expect(result.id).toBe('c1');
+	});
+
+	it('sends the caller range instead of the line-1 default', async () => {
+		mockFetch(jsonResponse(closableComment, { status: 201 }));
+		const range = {
+			startLine: 3,
+			endLine: 3,
+			startColumn: 1,
+			endColumn: 9,
+			startOffset: 40,
+			endOffset: 48,
+		};
+		await endpoints.comments.create(ctx, {
+			owner: 'admin',
+			api: 'example',
+			version: '1.0.0',
+			body: 'Here',
+			range,
+		});
+
+		expect(sentBody()).toEqual({ body: 'Here', replies: [], range });
 	});
 
 	it('updates and deletes a comment', async () => {
@@ -624,6 +655,26 @@ describe('swaggerhub templates', () => {
 	});
 });
 
+describe('swaggerhub templates.delete without a version', () => {
+	it('deletes the whole template', async () => {
+		// Live 11-16: deleting the only version answers 409 "is the only version",
+		// so a template saved once could not be removed without this route.
+		mockFetch(new Response(null, { status: 204 }));
+		await expect(
+			endpoints.templates.delete(ctx, {
+				owner: 'admin',
+				templateId: 'template-1',
+			}),
+		).resolves.toEqual({
+			owner: 'admin',
+			templateId: 'template-1',
+			deleted: true,
+		});
+		expect(lastCall().init.method).toBe('DELETE');
+		expect(pathname()).toBe('/templates/admin/template-1');
+	});
+});
+
 describe('swaggerhub projects', () => {
 	it('lists projects', async () => {
 		mockFetch(jsonResponse(projectsJson));
@@ -679,6 +730,25 @@ describe('swaggerhub projects', () => {
 		expect(pathname()).toBe('/projects/admin/p1');
 		expect(sentBody()).toEqual({
 			name: 'Renamed',
+			apis: [],
+			domains: [],
+			templates: [],
+		});
+	});
+
+	it('keeps the project name when an update leaves it out', async () => {
+		// Live 11-16: a PUT without `name` answers 400 "Project name should have
+		// at least 3 characters". The project id is its name.
+		mockFetch(jsonResponse(project));
+		await endpoints.projects.update(ctx, {
+			owner: 'admin',
+			projectId: 'p1',
+			description: 'New text',
+		});
+
+		expect(sentBody()).toEqual({
+			name: 'p1',
+			description: 'New text',
 			apis: [],
 			domains: [],
 			templates: [],

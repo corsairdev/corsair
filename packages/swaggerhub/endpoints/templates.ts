@@ -113,7 +113,7 @@ export const remove: SwaggerhubEndpoints['templatesDelete'] = (ctx, input) =>
 			shape: (_, parsed) => ({
 				owner: parsed.owner,
 				templateId: parsed.templateId,
-				version: parsed.version,
+				...(parsed.version === undefined ? {} : { version: parsed.version }),
 				deleted: true,
 			}),
 			log: (parsed) => ({

@@ -687,6 +687,7 @@ export type CommentsListResponse = z.infer<typeof CommentsListResponseSchema>;
 const CommentsCreateInputSchema = z.object({
 	...ApiVersionPath,
 	body: z.string().min(1),
+	/** Where the comment sits. Left out, the plugin anchors it to line 1. */
 	range: RangeSchema.optional(),
 });
 export type CommentsCreateInput = z.input<typeof CommentsCreateInputSchema>;
@@ -915,7 +916,11 @@ export type TemplatesSaveResponse = z.infer<typeof TemplatesSaveResponseSchema>;
 const TemplatesDeleteInputSchema = z.object({
 	owner: z.string().min(1),
 	templateId: z.string().min(1),
-	version: z.string().min(1),
+	/**
+	 * The version to delete. Left out, the whole template is deleted; the API
+	 * refuses to delete a template's only version.
+	 */
+	version: z.string().min(1).optional(),
 });
 
 export type TemplatesDeleteInput = z.input<typeof TemplatesDeleteInputSchema>;
@@ -923,7 +928,7 @@ export type TemplatesDeleteInput = z.input<typeof TemplatesDeleteInputSchema>;
 const TemplatesDeleteResponseSchema = z.object({
 	owner: z.string(),
 	templateId: z.string(),
-	version: z.string(),
+	version: z.string().optional(),
 	deleted: z.literal(true),
 });
 

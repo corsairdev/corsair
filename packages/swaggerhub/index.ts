@@ -492,7 +492,8 @@ const swaggerhubEndpointMeta = {
 	'templates.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete one template version. There is no undo',
+		description:
+			'Delete one template version, or the whole template when no version is given. There is no undo',
 	},
 	'projects.list': {
 		riskLevel: 'read',
