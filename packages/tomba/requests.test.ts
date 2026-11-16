@@ -71,6 +71,7 @@ describe('account', () => {
 	it('account.get GETs v1/me', async () => {
 		respond({ data: account });
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(AccountEndpoints.get, {})) as {
 			data: { confirmed?: boolean | null };
 		};
@@ -89,6 +90,7 @@ describe('account', () => {
 			},
 		});
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(AccountEndpoints.get, {})) as {
 			data: Record<string, unknown>;
 		};
@@ -117,6 +119,7 @@ describe('finder', () => {
 			meta: { ...domainSearchLive.meta, total: 681 },
 		});
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(FinderEndpoints.domainSearch, {
 			domain: 'stripe.com',
 			page: 1,
@@ -144,6 +147,7 @@ describe('finder', () => {
 	it('finder.email GETs v1/email-finder with a domain and name', async () => {
 		respond({ data: person });
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(FinderEndpoints.email, {
 			domain: 'stripe.com',
 			first_name: 'Jane',
@@ -270,6 +274,7 @@ describe('verifier', () => {
 	it('verifier.email GETs v1/email-verifier', async () => {
 		respond({ data: verification });
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(VerifierEndpoints.email, {
 			email: 'jane.doe@stripe.com',
 		})) as { data: { email: { status: string; score: number } } };
@@ -295,6 +300,7 @@ describe('verifier', () => {
 	it('verifier.phone GETs v1/phone-validator with the country code', async () => {
 		respond({ data: phoneValidation });
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(VerifierEndpoints.phone, {
 			phone: '4155550132',
 			country_code: 'US',
@@ -318,6 +324,7 @@ describe('company, person and combined', () => {
 	it('company.find GETs v1/companies/find', async () => {
 		respond({ data: company });
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(CompanyEndpoints.find, {
 			domain: 'stripe.com',
 		})) as { data: { name?: string | null } };
@@ -333,6 +340,7 @@ describe('company, person and combined', () => {
 	it('company.search POSTs a plain-language query to v1/reveal/search', async () => {
 		respond(revealLive);
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(CompanyEndpoints.search, {
 			query: 'Fintech companies in France',
 		})) as { data: { companies: unknown[] } };
@@ -378,6 +386,7 @@ describe('company, person and combined', () => {
 	it('combined.find GETs v1/combined/find', async () => {
 		respond({ data: { person: personFindLive.data, company } });
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(CombinedEndpoints.find, {
 			email: 'jane.doe@stripe.com',
 		})) as { data: { person?: unknown; company?: unknown } };
@@ -396,6 +405,7 @@ describe('domain data', () => {
 	it('domain.emailCount GETs v1/email-count with the type filter', async () => {
 		respond({ data: emailCount });
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(DomainEndpoints.emailCount, {
 			domain: 'stripe.com',
 			type: 'personal',
@@ -479,6 +489,7 @@ describe('domain data', () => {
 	it('domain.status GETs v1/domain-status', async () => {
 		respond(domainStatusLive);
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(DomainEndpoints.status, {
 			domain: 'stripe.com',
 		})) as { webmail?: boolean | null; disposable?: boolean | null };
@@ -495,6 +506,7 @@ describe('domain data', () => {
 	it('domain.suggestions GETs v1/domain-suggestions', async () => {
 		respond({ data: [suggestion] });
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(DomainEndpoints.suggestions, {
 			query: 'stripe',
 		})) as { data: unknown[] };
@@ -512,6 +524,7 @@ describe('domain data', () => {
 	it('domain.emailSources GETs v1/email-sources', async () => {
 		respond(emailSourcesLive);
 
+		// unknown: invoke returns the endpoint's output untyped; each test narrows it.
 		const result = (await invoke(DomainEndpoints.emailSources, {
 			email: 'jane.doe@stripe.com',
 		})) as { data: unknown[] };

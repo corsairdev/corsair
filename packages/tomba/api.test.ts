@@ -53,7 +53,8 @@ describeIfKeys('Tomba live API', () => {
 
 	it('reads the rate limits through the output schema', async () => {
 		const parsed = rateLimits.output.parse(await get('rate-limits'));
-		expect(Array.isArray(parsed.data)).toBe(true);
+		// An object keyed by route, such as email-finder.
+		expect(parsed.data?.['email-finder']?.limits).toBeDefined();
 	});
 
 	it('is wired with both credentials it was given', () => {
