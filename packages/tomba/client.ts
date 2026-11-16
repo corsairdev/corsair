@@ -46,6 +46,7 @@ export type TombaCredentials = { apiKey: string; apiSecret: string };
  * Tomba answers a missing key with HTTP 400, so the type matters more than the
  * status.
  */
+// unknown: callers pass whatever a catch block caught; only an ApiError counts.
 export function tombaErrorType(error: unknown): string | undefined {
 	if (!(error instanceof ApiError)) return undefined;
 	const type = asRecord(asRecord(error.body)?.errors)?.type;
@@ -142,12 +143,35 @@ export async function makeTombaRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
+	// unknown: each route's own output schema parses the body.
+	let body: unknown;
 	try {
-		return await request<unknown>(config, requestOptions, {
+		body = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: TOMBA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) throw stripRequestData(error);
 		throw error;
 	}
+	// The find routes answer a miss with HTTP 200 and an `errors` object in
+	// place of `data` (`not_found` 404, `params_invalid` 422). That is the
+	// provider's error, so it is thrown as one, with its own code as status.
+	const errors = asRecord(asRecord(body)?.errors);
+	if (errors && asRecord(body)?.data === undefined) {
+		const status = typeof errors.code === 'number' ? errors.code : 400;
+		throw stripRequestData(
+			new ApiError(
+				requestOptions,
+				{
+					url: `${TOMBA_API_BASE}/${path}`,
+					ok: false,
+					status,
+					statusText: typeof errors.type === 'string' ? errors.type : '',
+					body,
+				},
+				'Tomba error',
+			),
+		);
+	}
+	return body;
 }

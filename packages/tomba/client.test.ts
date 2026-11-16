@@ -204,6 +204,28 @@ describe('makeTombaRequest', () => {
 		expect(isQuotaExhausted((error as ApiError).body)).toBe(true);
 	});
 
+	it('throws the 200 errors body a find route sends for a miss', async () => {
+		respond({
+			errors: {
+				type: 'not_found',
+				message: 'No data for jane@stripe.com',
+				code: 404,
+			},
+		});
+
+		const error = await makeTombaRequest(CREDENTIALS, {
+			method: 'GET',
+			path: 'people/find',
+			query: { email: 'jane@stripe.com' },
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(404);
+		expect(tombaErrorType(error)).toBe('not_found');
+		expect(JSON.stringify(error)).not.toContain('jane@stripe.com');
+		expect((error as Error).message).not.toContain('jane@stripe.com');
+	});
+
 	it('records the method so a non-read is not replayed', async () => {
 		respond({}, 500);
 
