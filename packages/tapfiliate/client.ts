@@ -1,9 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const TAPFILIATE_API_BASE = 'https://api.tapfiliate.com/1.6';
@@ -67,20 +63,6 @@ export class TapfiliateAPIError extends Error {
 		this.traceId = options.traceId;
 	}
 }
-
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads Retry-After into the error. Tapfiliate documents 429 without a
-// Retry-After header: the docs say to wait until X-RateLimit-Reset, which the
-// client cannot read alongside the body, so the handler falls back to a fixed
-// window.
-const TAPFILIATE_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-	isRateLimitError: (status) => status === 429,
-};
 
 type TapfiliateErrorDetails = {
 	message?: string;
@@ -189,22 +171,12 @@ export async function makeTapfiliateRequest(
 	try {
 		// unknown: the response shape is the endpoint's concern; the caller
 		// parses it with its zod output schema.
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: TAPFILIATE_RATE_LIMIT_CONFIG,
-		});
+		// Core's default config retries a 429 three times and reads
+		// X-RateLimit-Reset (a Unix timestamp), which is the wait Tapfiliate
+		// documents; it sends no Retry-After.
+		return await request<unknown>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const details = readErrorDetails(error.body);
-			throw new TapfiliateAPIError(
-				describeTapfiliateError(error.status, error.body, error.message),
-				{
-					cause: error,
-					code: details.code ?? details.errors[0]?.code,
-					errors: details.errors,
-					traceId: details.traceId,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw toTapfiliateApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new TapfiliateAPIError(error.message, {
@@ -214,4 +186,43 @@ export async function makeTapfiliateRequest(
 		}
 		throw new TapfiliateAPIError('Unknown Tapfiliate error', { method });
 	}
+}
+
+/**
+ * Core's `ApiError` goes through (R8): its `status`, `retryAfter` and rate-limit
+ * fields are what core's 429 retry and the error handlers read. It is rebuilt
+ * only to drop the sent body and query, which can hold an affiliate's email
+ * and password or a customer's data, and to carry Tapfiliate's own message.
+ */
+function toTapfiliateApiError(error: ApiError): ApiError {
+	let url = error.url;
+	try {
+		const parsed = new URL(error.url);
+		parsed.search = '';
+		url = parsed.toString();
+	} catch {
+		// A relative or empty url carries no query to drop.
+	}
+	return new ApiError(
+		{
+			...error.request,
+			body: undefined,
+			formData: undefined,
+			query: undefined,
+		},
+		{
+			url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeTapfiliateError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }

@@ -1,17 +1,25 @@
 import type { ErrorHandler, ErrorMatcher } from 'corsair/core';
-import { TapfiliateAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/** Core's HTTP error, the shape an HTTP failure reaches the handlers in. */
 function apiError(
 	status: number,
 	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' = 'POST',
 	retryAfter?: number,
 ) {
-	return new TapfiliateAPIError(`Tapfiliate ${status}`, {
-		status,
-		method,
-		retryAfter,
-	});
+	return new ApiError(
+		{ method, url: '/affiliates/' },
+		{
+			url: 'https://api.tapfiliate.com/1.6/affiliates/',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`Tapfiliate ${status}`,
+		{ retryAfter },
+	);
 }
 
 const context = {} as Parameters<ErrorHandler>[1];
@@ -39,25 +47,13 @@ describe('tapfiliate error handlers', () => {
 		expect(Object.keys(errorHandlers).at(-1)).toBe('DEFAULT');
 	});
 
-	it('retries a 429 and passes a Retry-After through', async () => {
+	it('leaves 429 retries to core and passes a Retry-After through', async () => {
 		await expect(
 			handler('RATE_LIMIT_ERROR')(apiError(429, 'GET', 1500), context),
 		).resolves.toEqual({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs: 1500,
-			retryStrategy: 'exponential_backoff',
 		});
-	});
-
-	it('uses backoff when a 429 carries no Retry-After', async () => {
-		const result = await handler('RATE_LIMIT_ERROR')(
-			apiError(429, 'GET'),
-			context,
-		);
-
-		// Tapfiliate sends no Retry-After; the docs point at X-RateLimit-Reset.
-		expect(result.maxRetries).toBe(3);
-		expect(result.retryStrategy).toBe('exponential_backoff');
 	});
 
 	it('does not retry a refused key', async () => {
