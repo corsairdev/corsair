@@ -337,6 +337,7 @@ describe('Pipedrive request errors', () => {
 				method: 'POST',
 				body: sent,
 			},
+			// `unknown`: a rejection can carry any value; the next lines check it is an ApiError.
 		).catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error).toMatchObject({
