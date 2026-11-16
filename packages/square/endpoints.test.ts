@@ -1490,13 +1490,13 @@ const cases: Case[] = [
 		op: 'customAttributeDefinitions.location.update',
 		input: {
 			key: 'key-1',
-			custom_attribute_definition: {},
+			custom_attribute_definition: { version: 1 },
 		},
 		method: 'PUT',
 		path: '/v2/locations/custom-attribute-definitions/key-1',
 		query: {},
 		body: {
-			custom_attribute_definition: {},
+			custom_attribute_definition: { version: 1 },
 		},
 		reply: {
 			custom_attribute_definition: {
@@ -1511,13 +1511,13 @@ const cases: Case[] = [
 		op: 'customAttributeDefinitions.merchant.update',
 		input: {
 			key: 'key-1',
-			custom_attribute_definition: {},
+			custom_attribute_definition: { version: 1 },
 		},
 		method: 'PUT',
 		path: '/v2/merchants/custom-attribute-definitions/key-1',
 		query: {},
 		body: {
-			custom_attribute_definition: {},
+			custom_attribute_definition: { version: 1 },
 		},
 		reply: {
 			custom_attribute_definition: {
@@ -2404,6 +2404,28 @@ describe('Square request details', () => {
 		});
 	});
 
+	it('asks for the version on location and merchant definition updates, which Square requires', async () => {
+		// Live sandbox (11-16): both answer 400 "Missing required parameter
+		// `version`" without it; the customer one accepts an update without.
+		for (const scope of ['location', 'merchant'] as const) {
+			await expect(
+				api().customAttributeDefinitions[scope].update({
+					key: 'k',
+					custom_attribute_definition: { description: 'd' },
+				} as never),
+			).rejects.toThrow(/version/);
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({ custom_attribute_definition: { key: 'k', version: 2 } }),
+		);
+		await api().customAttributeDefinitions.customer.update({
+			key: 'k',
+			custom_attribute_definition: { description: 'd' },
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
 	it('sends the cursor of a search in the body, where Square reads it', async () => {
 		fetchMock.mockResolvedValueOnce(jsonResponse({ orders: [], cursor: 'N2' }));
 		await api().orders.search({ location_ids: ['L1'], cursor: 'N1', limit: 5 });
@@ -2715,15 +2737,20 @@ describe('Square request details', () => {
 				fetchMock.mockResolvedValueOnce(
 					jsonResponse({ custom_attribute_definition: { key: 'k' } }),
 				);
+				// Location and merchant updates also need the current version.
+				const partial =
+					kind === 'customer'
+						? { description: 'Updated' }
+						: { description: 'Updated', version: 3 };
 				await endpoint(
 					api(),
 					`customAttributeDefinitions.${kind}.update`,
 				)({
 					key: 'k',
-					custom_attribute_definition: { description: 'Updated' },
+					custom_attribute_definition: partial,
 				});
 				expect(jsonBody(sentRequest(fetchMock))).toEqual({
-					custom_attribute_definition: { description: 'Updated' },
+					custom_attribute_definition: partial,
 				});
 			},
 		);

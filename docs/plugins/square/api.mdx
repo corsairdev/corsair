@@ -5185,7 +5185,7 @@ Updates a location-related custom attribute definition for a Square seller accou
 ```ts
 await corsair.square.api.customAttributeDefinitions.location.update({
 	key: '<key>',
-	custom_attribute_definition: {},
+	custom_attribute_definition: { description: '<description>', version: 1 },
 });
 ```
 
@@ -5193,7 +5193,7 @@ await corsair.square.api.customAttributeDefinitions.location.update({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `custom_attribute_definition` | `object` | Yes | The custom attribute definition that contains the fields to update. This endpoint supports sparse updates, so only new or changed fields need to be included in the request. |
+| `custom_attribute_definition` | `object` | Yes | The fields to change (sparse update) plus the current `version` of the definition. |
 | `idempotency_key` | `string \| null` | No | A unique identifier for this request, used to ensure idempotency. For more information, see Idempotency. |
 | `key` | `string` | Yes | The key of the custom attribute definition to update. |
 
@@ -5207,7 +5207,7 @@ await corsair.square.api.customAttributeDefinitions.location.update({
   name?: string | null,
   description?: string | null,
   visibility?: VISIBILITY_HIDDEN | VISIBILITY_READ_ONLY | VISIBILITY_READ_WRITE_VALUES,
-  version?: number,
+  version: number,
   updated_at?: string,
   created_at?: string
 }
@@ -5524,7 +5524,7 @@ Updates a merchant-related custom attribute definition for a Square seller accou
 ```ts
 await corsair.square.api.customAttributeDefinitions.merchant.update({
 	key: '<key>',
-	custom_attribute_definition: {},
+	custom_attribute_definition: { description: '<description>', version: 1 },
 });
 ```
 
@@ -5532,7 +5532,7 @@ await corsair.square.api.customAttributeDefinitions.merchant.update({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `custom_attribute_definition` | `object` | Yes | The custom attribute definition that contains the fields to update. This endpoint supports sparse updates, so only new or changed fields need to be included in the request. |
+| `custom_attribute_definition` | `object` | Yes | The fields to change (sparse update) plus the current `version` of the definition. |
 | `idempotency_key` | `string \| null` | No | A unique identifier for this request, used to ensure idempotency. For more information, see Idempotency. |
 | `key` | `string` | Yes | The key of the custom attribute definition to update. |
 
@@ -5546,7 +5546,7 @@ await corsair.square.api.customAttributeDefinitions.merchant.update({
   name?: string | null,
   description?: string | null,
   visibility?: VISIBILITY_HIDDEN | VISIBILITY_READ_ONLY | VISIBILITY_READ_WRITE_VALUES,
-  version?: number,
+  version: number,
   updated_at?: string,
   created_at?: string
 }

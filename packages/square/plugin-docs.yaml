@@ -369,11 +369,15 @@ apiExamples:
   customAttributeDefinitions.location.update:
     args:
       key: <key>
-      custom_attribute_definition: {}
+      custom_attribute_definition:
+        description: <description>
+        version: 1
   customAttributeDefinitions.merchant.update:
     args:
       key: <key>
-      custom_attribute_definition: {}
+      custom_attribute_definition:
+        description: <description>
+        version: 1
   checkout.updateLocationSettings:
     args:
       location_id: <location id>

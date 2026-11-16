@@ -31,6 +31,7 @@ import {
 	CreatePaymentLinkRequestSchema as InCreatePaymentLinkRequestSchema,
 	CreatePaymentRequestSchema as InCreatePaymentRequestSchema,
 	CreateWebhookSubscriptionRequestSchema as InCreateWebhookSubscriptionRequestSchema,
+	CustomAttributeDefinitionSchema as InCustomAttributeDefinitionSchema,
 	CustomerSortFieldSchema as InCustomerSortFieldSchema,
 	DisputeStateSchema as InDisputeStateSchema,
 	ListPaymentRefundsRequestSortFieldSchema as InListPaymentRefundsRequestSortFieldSchema,
@@ -194,6 +195,20 @@ import {
 // operation name (`paymentsCreate` for `payments.create`). An input is the
 // operation's path parameters, query parameters and request body as one flat
 // object, with Square's own field names.
+
+// Square's spec calls `version` read-only, but the location and merchant
+// definition updates answer 400 "Missing required parameter `version`" without
+// it (live sandbox, 11-16). The customer update accepts one without.
+const versionedDefinitionUpdate = InCustomAttributeDefinitionSchema.extend({
+	version: z
+		.number()
+		.int()
+		.describe(
+			'Required. The current version of the definition, from the matching get or list call. Square rejects the update without it.',
+		),
+}).describe(
+	'The fields to change (sparse update) plus the current `version` of the definition.',
+);
 
 export const SquareEndpointInputSchemas = {
 	disputesAccept: z.object({
@@ -920,12 +935,14 @@ export const SquareEndpointInputSchemas = {
 	}),
 	customAttributeDefinitionsLocationUpdate:
 		InUpdateLocationCustomAttributeDefinitionRequestSchema.extend({
+			custom_attribute_definition: versionedDefinitionUpdate,
 			key: z
 				.string()
 				.describe('The key of the custom attribute definition to update.'),
 		}),
 	customAttributeDefinitionsMerchantUpdate:
 		InUpdateMerchantCustomAttributeDefinitionRequestSchema.extend({
+			custom_attribute_definition: versionedDefinitionUpdate,
 			key: z
 				.string()
 				.describe('The key of the custom attribute definition to update.'),
