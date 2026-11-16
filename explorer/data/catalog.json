@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-15T09:56:35.523Z",
-  "corsairVersion": "0.1.196",
+  "generatedAt": "2026-11-15T16:33:57.805Z",
+  "corsairVersion": "0.1.200",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -3768,6 +3768,20 @@
       }
     },
     {
+      "id": "findymail",
+      "displayName": "Findymail",
+      "description": "Find and verify business contact details, manage prospecting lists and signals, and inspect Findymail usage.",
+      "npmPackageName": "@corsair-dev/findymail",
+      "authTypes": [
+        "api_key"
+      ],
+      "counts": {
+        "api": 36,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "finerworks",
       "displayName": "FinerWorks",
       "description": "Print-on-demand fulfilment - manage images, virtual inventory products, framing options, pricing, shipping rates and orders.",
@@ -4172,6 +4186,36 @@
       }
     },
     {
+      "id": "giftup",
+      "displayName": "Gift Up!",
+      "description": "Digital and physical gift card management, issuance, redemption, orders, and balances.",
+      "npmPackageName": "@corsair-dev/giftup",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 51,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "gigasheet",
+      "displayName": "Gigasheet",
+      "description": "Cloud spreadsheet and big data analytics platform for large datasets, filtering, and exports.",
+      "npmPackageName": "@corsair-dev/gigasheet",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 18,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "giphy",
       "displayName": "GIPHY",
       "description": "The world's largest library of animated GIFs, stickers, and emojis for apps and agents.",
@@ -4219,6 +4263,21 @@
       }
     },
     {
+      "id": "givebutter",
+      "displayName": "Givebutter",
+      "description": "Manage Givebutter fundraising campaigns, supporters, donations, and related fundraising operations.",
+      "npmPackageName": "@corsair-dev/givebutter",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 70,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "gladia",
       "displayName": "Gladia",
       "description": "Speech-to-text API for uploading audio and video, running pre-recorded transcriptions, and managing live transcription sessions.",
@@ -4229,6 +4288,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 9,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "gleap",
+      "displayName": "Gleap",
+      "description": "Customer messaging, ticketing, feedback surveys, user sessions, and team collaboration platform.",
+      "npmPackageName": "@corsair-dev/gleap",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 42,
         "webhooks": 0,
         "db": 0
       }
@@ -5800,6 +5874,21 @@
       }
     },
     {
+      "id": "motion",
+      "displayName": "Motion",
+      "description": "Manage Motion tasks, projects, workspaces, comments, recurring tasks, and custom fields.",
+      "npmPackageName": "@corsair-dev/motion",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 27,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "mrscraper",
       "displayName": "MrScraper",
       "description": "Web scraping and AI extraction across account, scraper, result and analytics APIs, plus synchronous scrape operations.",
@@ -6372,6 +6461,21 @@
       }
     },
     {
+      "id": "polygon",
+      "displayName": "Polygon OMS",
+      "description": "Polygon Open Money Stack (OMS) payments API for moving money between crypto and fiat, with quotes, transfers, wallets, customers and webhooks.",
+      "npmPackageName": "@corsair-dev/polygon",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 21,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "polygonio",
       "displayName": "Polygon.io",
       "description": "US stock market data from Polygon.io (now Massive) - historical aggregates, ticker reference data, snapshots and market status.",
@@ -6402,6 +6506,21 @@
       }
     },
     {
+      "id": "postgrid",
+      "displayName": "PostGrid",
+      "description": "Print and mail API for sending letters, postcards and self mailers, with contact, template and tracker management.",
+      "npmPackageName": "@corsair-dev/postgrid",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 21,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "posthog",
       "displayName": "PostHog",
       "description": "Product analytics platform for event tracking, feature flags, session replay, and experiments.",
@@ -6414,6 +6533,21 @@
         "api": 71,
         "webhooks": 1,
         "db": 1
+      }
+    },
+    {
+      "id": "postiz",
+      "displayName": "Postiz",
+      "description": "Social media scheduling API for publishing, scheduling and managing posts across connected channels.",
+      "npmPackageName": "@corsair-dev/postiz",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 11,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -6493,6 +6627,21 @@
       }
     },
     {
+      "id": "proabono",
+      "displayName": "ProAbono",
+      "description": "Subscription billing API for managing customers, offers, subscriptions, usages, balance lines and invoices.",
+      "npmPackageName": "@corsair-dev/proabono",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 27,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "pushbullet",
       "displayName": "Pushbullet",
       "description": "Notification service for sending pushes between devices, with endpoints for pushes, devices, chats, and the account.",
@@ -6506,6 +6655,21 @@
         "api": 15,
         "webhooks": 0,
         "db": 2
+      }
+    },
+    {
+      "id": "pushover",
+      "displayName": "Pushover",
+      "description": "Send notifications and manage Pushover receipts, groups, glances, licenses, and teams.",
+      "npmPackageName": "@corsair-dev/pushover",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 23,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -7520,6 +7684,21 @@
       }
     },
     {
+      "id": "shortio",
+      "displayName": "Short.io",
+      "description": "Manage branded short links and inspect domains using the Short.io API.",
+      "npmPackageName": "@corsair-dev/shortio",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 13,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "slack",
       "displayName": "Slack",
       "description": "Team messaging platform for channels, direct messages, files, and workplace collaboration.",
@@ -7624,6 +7803,21 @@
         "api": 30,
         "webhooks": 0,
         "db": 6
+      }
+    },
+    {
+      "id": "stackai",
+      "displayName": "StackAI",
+      "description": "Inspect project input and output schemas and manage asynchronous StackAI runs.",
+      "npmPackageName": "@corsair-dev/stackai",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 6,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -8195,6 +8389,22 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 6,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "trustpilot",
+      "displayName": "Trustpilot",
+      "description": "Read Trustpilot business, service review, product review, invitation, consumer profile and Data Solutions API data.",
+      "npmPackageName": "@corsair-dev/trustpilot",
+      "authTypes": [
+        "api_key",
+        "oauth_2"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 53,
         "webhooks": 0,
         "db": 0
       }
@@ -78548,6 +78758,222 @@
       "haystack": "market.searchmarket finage.api.market.searchmarket search symbols within a market read"
     },
     {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list findymail.api.contacts.list get contacts saved read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "excludedDomains.add",
+      "haystack": "excludeddomains.add findymail.api.excludeddomains.add add excluded domains write"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "excludedDomains.list",
+      "haystack": "excludeddomains.list findymail.api.excludeddomains.list get excluded domains read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "excludedDomains.remove",
+      "haystack": "excludeddomains.remove findymail.api.excludeddomains.remove remove excluded domains destructive"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "exclusionLists.create",
+      "haystack": "exclusionlists.create findymail.api.exclusionlists.create create a new exclusion list write"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "exclusionLists.delete",
+      "haystack": "exclusionlists.delete findymail.api.exclusionlists.delete delete an exclusion list destructive"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "exclusionLists.get",
+      "haystack": "exclusionlists.get findymail.api.exclusionlists.get get exclusion list details read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "exclusionLists.list",
+      "haystack": "exclusionlists.list findymail.api.exclusionlists.list get all exclusion lists read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "exclusionLists.update",
+      "haystack": "exclusionlists.update findymail.api.exclusionlists.update update an exclusion list write"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "intellimatch.lookalikes",
+      "haystack": "intellimatch.lookalikes findymail.api.intellimatch.lookalikes search lookalike companies read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "intellimatch.results",
+      "haystack": "intellimatch.results findymail.api.intellimatch.results get results read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "intellimatch.search",
+      "haystack": "intellimatch.search findymail.api.intellimatch.search search leads destructive"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "intellimatch.status",
+      "haystack": "intellimatch.status findymail.api.intellimatch.status get export status read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "lists.create",
+      "haystack": "lists.create findymail.api.lists.create create a new list write"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "lists.delete",
+      "haystack": "lists.delete findymail.api.lists.delete delete a given list destructive"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "lists.list",
+      "haystack": "lists.list findymail.api.lists.list get the list of contact lists read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "lists.replace",
+      "haystack": "lists.replace findymail.api.lists.replace update a contact list write"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "lists.update",
+      "haystack": "lists.update findymail.api.lists.update update a contact list (patch) write"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "monitors.create",
+      "haystack": "monitors.create findymail.api.monitors.create create a monitor destructive"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "monitors.delete",
+      "haystack": "monitors.delete findymail.api.monitors.delete delete a monitor destructive"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "monitors.list",
+      "haystack": "monitors.list findymail.api.monitors.list list monitors read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "monitors.update",
+      "haystack": "monitors.update findymail.api.monitors.update update a monitor write"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "search.businessProfile",
+      "haystack": "search.businessprofile findymail.api.search.businessprofile find from business profile read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "search.company",
+      "haystack": "search.company findymail.api.search.company get company information read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "search.employees",
+      "haystack": "search.employees findymail.api.search.employees find employees read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "search.name",
+      "haystack": "search.name findymail.api.search.name find from name read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "search.phone",
+      "haystack": "search.phone findymail.api.search.phone find phone read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "search.reverseEmail",
+      "haystack": "search.reverseemail findymail.api.search.reverseemail reverse email lookup read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "signals.get",
+      "haystack": "signals.get findymail.api.signals.get get a signal read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "signals.list",
+      "haystack": "signals.list findymail.api.signals.list list signals read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "technologies.lookup",
+      "haystack": "technologies.lookup findymail.api.technologies.lookup lookup technologies by domain read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "technologies.search",
+      "haystack": "technologies.search findymail.api.technologies.search search technologies read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "usage.credits",
+      "haystack": "usage.credits findymail.api.usage.credits get remaining credits read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "usage.summary",
+      "haystack": "usage.summary findymail.api.usage.summary get usage read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "usage.teamSummary",
+      "haystack": "usage.teamsummary findymail.api.usage.teamsummary get team usage read"
+    },
+    {
+      "pluginId": "findymail",
+      "kind": "api",
+      "shortPath": "verification.verify",
+      "haystack": "verification.verify findymail.api.verification.verify verify an email read"
+    },
+    {
       "pluginId": "finerworks",
       "kind": "api",
       "shortPath": "account.getCompanyInfo",
@@ -82568,6 +82994,420 @@
       "haystack": "trash.restore getprospect.api.trash.restore restore from trash. credit cost: none. write"
     },
     {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "company.get",
+      "haystack": "company.get giftup.api.company.get retrieve current company account profile and settings read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.get",
+      "haystack": "giftcards.get giftup.api.giftcards.get retrieve details and remaining balance of a gift card by code read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.list",
+      "haystack": "giftcards.list giftup.api.giftcards.list list gift cards with status, date, order, sku and email filters; returns giftcards with total and hasmore read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.reactivate",
+      "haystack": "giftcards.reactivate giftup.api.giftcards.reactivate reactivate a previously voided gift card write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.redeem",
+      "haystack": "giftcards.redeem giftup.api.giftcards.redeem redeem an amount or units against a gift card balance destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.redeemInFull",
+      "haystack": "giftcards.redeeminfull giftup.api.giftcards.redeeminfull redeem the entire remaining balance of a gift card destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.topUp",
+      "haystack": "giftcards.topup giftup.api.giftcards.topup add currency or units to a gift card balance (issues new spendable value) destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.transferBalances",
+      "haystack": "giftcards.transferbalances giftup.api.giftcards.transferbalances transfer remaining balances from source gift cards to a destination gift card destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.undoRedemption",
+      "haystack": "giftcards.undoredemption giftup.api.giftcards.undoredemption reverse a previous redemption, adding the redeemed balance back to the gift card destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.update",
+      "haystack": "giftcards.update giftup.api.giftcards.update update gift card properties using json patch write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "giftCards.void",
+      "haystack": "giftcards.void giftup.api.giftcards.void void a gift card to prevent further redemptions destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "groups.create",
+      "haystack": "groups.create giftup.api.groups.create create a new item group write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "groups.delete",
+      "haystack": "groups.delete giftup.api.groups.delete delete an item group destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "groups.get",
+      "haystack": "groups.get giftup.api.groups.get retrieve details of an item group by id read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list giftup.api.groups.list list all item groups read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "groups.update",
+      "haystack": "groups.update giftup.api.groups.update update an item group using json patch write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "integrations.getStripeConnection",
+      "haystack": "integrations.getstripeconnection giftup.api.integrations.getstripeconnection get stripe integration connection status and enabled payment methods read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "integrations.updateStripeConnection",
+      "haystack": "integrations.updatestripeconnection giftup.api.integrations.updatestripeconnection change stripe payment settings for the checkout and return the connection test result destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "items.create",
+      "haystack": "items.create giftup.api.items.create create a new gift card item product write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "items.delete",
+      "haystack": "items.delete giftup.api.items.delete delete a gift card item product destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "items.get",
+      "haystack": "items.get giftup.api.items.get retrieve details of an item by id read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "items.list",
+      "haystack": "items.list giftup.api.items.list list gift card items with optional group filter read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "items.update",
+      "haystack": "items.update giftup.api.items.update update item properties using json patch write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "locations.list",
+      "haystack": "locations.list giftup.api.locations.list list all company store locations read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "orders.addNote",
+      "haystack": "orders.addnote giftup.api.orders.addnote add an internal note to an order write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "orders.create",
+      "haystack": "orders.create giftup.api.orders.create create an order and issue its gift cards. live mode charges the gift up fee; recipientdetails makes gift up email the gift card unless disableallemails is true destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "orders.get",
+      "haystack": "orders.get giftup.api.orders.get retrieve details of a specific order by id read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "orders.list",
+      "haystack": "orders.list giftup.api.orders.list list orders filtered by creation date, purchaser email or source; returns orders with total and hasmore read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "orders.markAsPosted",
+      "haystack": "orders.markasposted giftup.api.orders.markasposted mark a postal order as posted and update gift card codes write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "orders.update",
+      "haystack": "orders.update giftup.api.orders.update update order properties using json patch write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "partners.createAccount",
+      "haystack": "partners.createaccount giftup.api.partners.createaccount provision a new gift up account for another business owner (partner api, pre-approved partners only) destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "ping.get",
+      "haystack": "ping.get giftup.api.ping.get test connectivity and authorization with the gift up! api read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "ping.post",
+      "haystack": "ping.post giftup.api.ping.post echo test with the gift up! api returning the posted payload write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "promotions.list",
+      "haystack": "promotions.list giftup.api.promotions.list list all active and scheduled checkout promotions read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "reports.getTransaction",
+      "haystack": "reports.gettransaction giftup.api.reports.gettransaction retrieve a specific ledger report transaction by id read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "reports.listTransactions",
+      "haystack": "reports.listtransactions giftup.api.reports.listtransactions list ledger transactions filtered by date range, event type, user, location or code; returns transactions with total and hasmore read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.deleteArtwork",
+      "haystack": "settings.deleteartwork giftup.api.settings.deleteartwork delete uploaded gift card design artwork by id destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.getCheckout",
+      "haystack": "settings.getcheckout giftup.api.settings.getcheckout get company checkout styling, tips, and service fee settings read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.getEmail",
+      "haystack": "settings.getemail giftup.api.settings.getemail get email branding, sender, and template settings read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.getGiftCard",
+      "haystack": "settings.getgiftcard giftup.api.settings.getgiftcard get gift card barcode, expiry, and terms defaults read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.getShipping",
+      "haystack": "settings.getshipping giftup.api.settings.getshipping get physical shipping and postal delivery options read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.listArtwork",
+      "haystack": "settings.listartwork giftup.api.settings.listartwork list uploaded gift card design artwork read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.updateCheckout",
+      "haystack": "settings.updatecheckout giftup.api.settings.updatecheckout update checkout settings using json patch write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.updateEmail",
+      "haystack": "settings.updateemail giftup.api.settings.updateemail update email settings using json patch write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.updateGiftCard",
+      "haystack": "settings.updategiftcard giftup.api.settings.updategiftcard update gift card settings using json patch write"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "settings.uploadArtwork",
+      "haystack": "settings.uploadartwork giftup.api.settings.uploadartwork upload gift card artwork from a url or data uri; replaceallexistingartwork deletes all existing artwork first destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "users.delete",
+      "haystack": "users.delete giftup.api.users.delete delete a staff user account destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get giftup.api.users.get retrieve user details by id read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "users.invite",
+      "haystack": "users.invite giftup.api.users.invite invite a staff user or administrator destructive"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list giftup.api.users.list list staff users and administrators read"
+    },
+    {
+      "pluginId": "giftup",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update giftup.api.users.update update staff user details using json patch write"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "datasets.delete",
+      "haystack": "datasets.delete gigasheet.api.datasets.delete permanently delete a sheet or folder by handle, optionally deleting child files destructive"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "datasets.get",
+      "haystack": "datasets.get gigasheet.api.datasets.get retrieve metadata, column names, types, and processing status of a dataset read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "datasets.getColumns",
+      "haystack": "datasets.getcolumns gigasheet.api.datasets.getcolumns retrieve column ids, headers, and data types for a given sheet read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "datasets.getOperationStatus",
+      "haystack": "datasets.getoperationstatus gigasheet.api.datasets.getoperationstatus retrieve operation status for an asynchronous dataset task (working, done, error) read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "datasets.list",
+      "haystack": "datasets.list gigasheet.api.datasets.list list files and directories in root library or specified folder handle read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "exports.create",
+      "haystack": "exports.create gigasheet.api.exports.create queue an asynchronous export job with optional aggrid filter and sort state write"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "exports.download",
+      "haystack": "exports.download gigasheet.api.exports.download retrieve a temporary presigned s3 download url for a completed export read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "rows.appendByName",
+      "haystack": "rows.appendbyname gigasheet.api.rows.appendbyname append new records to an existing sheet matching columns by name write"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "rows.deleteRows",
+      "haystack": "rows.deleterows gigasheet.api.rows.deleterows permanently delete specified rows from a dataset by iterator number destructive"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "rows.insertBlankRow",
+      "haystack": "rows.insertblankrow gigasheet.api.rows.insertblankrow insert one or more blank rows with null values at a given row index write"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "upload.direct",
+      "haystack": "upload.direct gigasheet.api.upload.direct upload raw file contents or byte array directly into gigasheet write"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "upload.fromUrl",
+      "haystack": "upload.fromurl gigasheet.api.upload.fromurl upload a dataset into gigasheet from a publicly accessible or presigned url write"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "user.getDetails",
+      "haystack": "user.getdetails gigasheet.api.user.getdetails retrieve detailed account and profile information for the authenticated user read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "user.getEnrichmentCredits",
+      "haystack": "user.getenrichmentcredits gigasheet.api.user.getenrichmentcredits retrieve enrichment credit limit and used credit balance for the authenticated user read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "user.getSpaceUsed",
+      "haystack": "user.getspaceused gigasheet.api.user.getspaceused retrieve total storage space used by the authenticated user in bytes read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "user.whoami",
+      "haystack": "user.whoami gigasheet.api.user.whoami check authentication status and retrieve username of the current request read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "views.get",
+      "haystack": "views.get gigasheet.api.views.get retrieve metadata and client state identifier for a specific saved view read"
+    },
+    {
+      "pluginId": "gigasheet",
+      "kind": "api",
+      "shortPath": "views.list",
+      "haystack": "views.list gigasheet.api.views.list retrieve all saved views and configurations associated with a dataset read"
+    },
+    {
       "pluginId": "giphy",
       "kind": "api",
       "shortPath": "analytics.register",
@@ -84020,6 +84860,426 @@
       "haystack": "push gitlab.webhooks.push a push event from gitlab (git push to repository)"
     },
     {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "activities.create",
+      "haystack": "activities.create givebutter.api.activities.create create a contact activity. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "activities.delete",
+      "haystack": "activities.delete givebutter.api.activities.delete delete a contact activity. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "activities.get",
+      "haystack": "activities.get givebutter.api.activities.get get a contact activity. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "activities.list",
+      "haystack": "activities.list givebutter.api.activities.list list contact activities. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "activities.update",
+      "haystack": "activities.update givebutter.api.activities.update update a contact activity. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "campaigns.create",
+      "haystack": "campaigns.create givebutter.api.campaigns.create create a fundraising campaign. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "campaigns.delete",
+      "haystack": "campaigns.delete givebutter.api.campaigns.delete delete a fundraising campaign. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "campaigns.get",
+      "haystack": "campaigns.get givebutter.api.campaigns.get get a fundraising campaign. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list givebutter.api.campaigns.list list fundraising campaigns. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "campaigns.update",
+      "haystack": "campaigns.update givebutter.api.campaigns.update update a fundraising campaign. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create givebutter.api.contacts.create create a contact. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete givebutter.api.contacts.delete delete a contact. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get givebutter.api.contacts.get get a contact. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list givebutter.api.contacts.list list contacts. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contacts.restore",
+      "haystack": "contacts.restore givebutter.api.contacts.restore restore a deleted contact. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update givebutter.api.contacts.update update a contact. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contactTags.add",
+      "haystack": "contacttags.add givebutter.api.contacttags.add add tags to a contact. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contactTags.remove",
+      "haystack": "contacttags.remove givebutter.api.contacttags.remove remove tags from a contact. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "contactTags.sync",
+      "haystack": "contacttags.sync givebutter.api.contacttags.sync replace all of a contact’s tags; tags not listed are removed. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "discountCodes.create",
+      "haystack": "discountcodes.create givebutter.api.discountcodes.create create a campaign discount code. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "discountCodes.delete",
+      "haystack": "discountcodes.delete givebutter.api.discountcodes.delete delete a campaign discount code. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "discountCodes.get",
+      "haystack": "discountcodes.get givebutter.api.discountcodes.get get a campaign discount code. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "discountCodes.list",
+      "haystack": "discountcodes.list givebutter.api.discountcodes.list list a campaign’s discount codes. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "discountCodes.update",
+      "haystack": "discountcodes.update givebutter.api.discountcodes.update update a campaign discount code. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "funds.create",
+      "haystack": "funds.create givebutter.api.funds.create create a fund. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "funds.delete",
+      "haystack": "funds.delete givebutter.api.funds.delete delete a fund. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "funds.get",
+      "haystack": "funds.get givebutter.api.funds.get get a fund. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "funds.list",
+      "haystack": "funds.list givebutter.api.funds.list list funds. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "funds.update",
+      "haystack": "funds.update givebutter.api.funds.update update a fund. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "householdContacts.add",
+      "haystack": "householdcontacts.add givebutter.api.householdcontacts.add add a contact to a household. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "householdContacts.get",
+      "haystack": "householdcontacts.get givebutter.api.householdcontacts.get get a household contact. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "householdContacts.list",
+      "haystack": "householdcontacts.list givebutter.api.householdcontacts.list list contacts in a household. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "householdContacts.remove",
+      "haystack": "householdcontacts.remove givebutter.api.householdcontacts.remove remove a contact from a household. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "households.create",
+      "haystack": "households.create givebutter.api.households.create create a household. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "households.delete",
+      "haystack": "households.delete givebutter.api.households.delete delete a household. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "households.get",
+      "haystack": "households.get givebutter.api.households.get get a household. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "households.list",
+      "haystack": "households.list givebutter.api.households.list list households. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "households.update",
+      "haystack": "households.update givebutter.api.households.update update a household. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "members.delete",
+      "haystack": "members.delete givebutter.api.members.delete remove a campaign member. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "members.get",
+      "haystack": "members.get givebutter.api.members.get get a campaign member. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "members.list",
+      "haystack": "members.list givebutter.api.members.list list a campaign’s members. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "messages.get",
+      "haystack": "messages.get givebutter.api.messages.get get a message. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "messages.list",
+      "haystack": "messages.list givebutter.api.messages.list list messages. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "payouts.get",
+      "haystack": "payouts.get givebutter.api.payouts.get get a payout. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "payouts.list",
+      "haystack": "payouts.list givebutter.api.payouts.list list payouts. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "plans.get",
+      "haystack": "plans.get givebutter.api.plans.get get a recurring plan. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "plans.list",
+      "haystack": "plans.list givebutter.api.plans.list list recurring plans. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "pledges.get",
+      "haystack": "pledges.get givebutter.api.pledges.get get a pledge. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "pledges.list",
+      "haystack": "pledges.list givebutter.api.pledges.list list pledges. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "sso.account",
+      "haystack": "sso.account givebutter.api.sso.account get the sso account. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "sso.campaign",
+      "haystack": "sso.campaign givebutter.api.sso.campaign get a campaign through the sso api. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "teams.delete",
+      "haystack": "teams.delete givebutter.api.teams.delete remove a campaign team. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "teams.get",
+      "haystack": "teams.get givebutter.api.teams.get get a campaign team. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "teams.list",
+      "haystack": "teams.list givebutter.api.teams.list list a campaign’s teams. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "ticketItems.create",
+      "haystack": "ticketitems.create givebutter.api.ticketitems.create create a campaign ticket item. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "ticketItems.get",
+      "haystack": "ticketitems.get givebutter.api.ticketitems.get get a campaign ticket item. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "ticketItems.list",
+      "haystack": "ticketitems.list givebutter.api.ticketitems.list list a campaign’s ticket items. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "tickets.get",
+      "haystack": "tickets.get givebutter.api.tickets.get get an issued ticket. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "tickets.list",
+      "haystack": "tickets.list givebutter.api.tickets.list list issued tickets. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "transactions.create",
+      "haystack": "transactions.create givebutter.api.transactions.create record an offline transaction (cash, check, etc.). the api has no delete for transactions. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "transactions.get",
+      "haystack": "transactions.get givebutter.api.transactions.get get a transaction. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "transactions.list",
+      "haystack": "transactions.list givebutter.api.transactions.list list transactions. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "transactions.update",
+      "haystack": "transactions.update givebutter.api.transactions.update update a transaction. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "webhooks.activities.get",
+      "haystack": "webhooks.activities.get givebutter.api.webhooks.activities.get get an outbound webhook activity. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "webhooks.activities.list",
+      "haystack": "webhooks.activities.list givebutter.api.webhooks.activities.list list outbound webhook activities. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create givebutter.api.webhooks.create create an outbound webhook registration. write"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete givebutter.api.webhooks.delete delete an outbound webhook registration. destructive"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get givebutter.api.webhooks.get get an outbound webhook registration. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list givebutter.api.webhooks.list list outbound webhook registrations. read"
+    },
+    {
+      "pluginId": "givebutter",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update givebutter.api.webhooks.update update an outbound webhook registration. write"
+    },
+    {
       "pluginId": "gladia",
       "kind": "api",
       "shortPath": "live.deleteSession",
@@ -84072,6 +85332,258 @@
       "kind": "api",
       "shortPath": "upload.audioVideoFile",
       "haystack": "upload.audiovideofile gladia.api.upload.audiovideofile upload an audio or video file for a pre-recorded job write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "boards.create",
+      "haystack": "boards.create gleap.api.boards.create create a new ticket board with custom lanes write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "boards.delete",
+      "haystack": "boards.delete gleap.api.boards.delete delete an empty ticket board destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "boards.list",
+      "haystack": "boards.list gleap.api.boards.list list all ticket boards (ticket types) for a project read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "boards.update",
+      "haystack": "boards.update gleap.api.boards.update update a board configuration write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "companies.createOrUpdate",
+      "haystack": "companies.createorupdate gleap.api.companies.createorupdate create or update a customer company record write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "companies.delete",
+      "haystack": "companies.delete gleap.api.companies.delete delete a customer company record destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "companies.get",
+      "haystack": "companies.get gleap.api.companies.get get company details by company id read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "companies.list",
+      "haystack": "companies.list gleap.api.companies.list list tracked customer companies in a project read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "feedback.rateConversation",
+      "haystack": "feedback.rateconversation gleap.api.feedback.rateconversation rate a conversations api conversation as the customer (csat, integer 0 to 10) write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "feedback.rateMessage",
+      "haystack": "feedback.ratemessage gleap.api.feedback.ratemessage rate a message as the customer: positive or negative (thumbs up or down) write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "feedback.surveysGet",
+      "haystack": "feedback.surveysget gleap.api.feedback.surveysget get details and schema of an engagement survey read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "feedback.surveysList",
+      "haystack": "feedback.surveyslist gleap.api.feedback.surveyslist get all engagement surveys for a project read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "feedback.surveysResponses",
+      "haystack": "feedback.surveysresponses gleap.api.feedback.surveysresponses get submitted responses for a survey read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "feedback.surveysStats",
+      "haystack": "feedback.surveysstats gleap.api.feedback.surveysstats get aggregate survey result statistics and daily counters read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "messages.create",
+      "haystack": "messages.create gleap.api.messages.create create a new message or internal note in a ticket destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "messages.createThread",
+      "haystack": "messages.createthread gleap.api.messages.createthread reply inside a message thread (internal: visible to teammates, never to the customer) destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "messages.delete",
+      "haystack": "messages.delete gleap.api.messages.delete delete a message from a ticket destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "messages.getThread",
+      "haystack": "messages.getthread gleap.api.messages.getthread get thread messages for a specific parent message read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "messages.list",
+      "haystack": "messages.list gleap.api.messages.list find messages in a ticket with filtering and pagination read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "messages.update",
+      "haystack": "messages.update gleap.api.messages.update replace a message's text (gleap overwrites the whole message body) write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "sessions.activities",
+      "haystack": "sessions.activities gleap.api.sessions.activities get timeline activities and events for a session read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "sessions.create",
+      "haystack": "sessions.create gleap.api.sessions.create create a new contact session in a project write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "sessions.delete",
+      "haystack": "sessions.delete gleap.api.sessions.delete delete a contact session and permanently delete every ticket attached to it destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "sessions.get",
+      "haystack": "sessions.get gleap.api.sessions.get get contact session details by session id read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "sessions.getByUserId",
+      "haystack": "sessions.getbyuserid gleap.api.sessions.getbyuserid get a contact session by end-user id read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "sessions.list",
+      "haystack": "sessions.list gleap.api.sessions.list list contact sessions in a project read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "sessions.search",
+      "haystack": "sessions.search gleap.api.sessions.search search for contact sessions by query attributes read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "sessions.update",
+      "haystack": "sessions.update gleap.api.sessions.update update a contact session write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "teams.create",
+      "haystack": "teams.create gleap.api.teams.create create a new team in a project write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "teams.delete",
+      "haystack": "teams.delete gleap.api.teams.delete delete a team from a project destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "teams.list",
+      "haystack": "teams.list gleap.api.teams.list get all teams associated with a project read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "teams.update",
+      "haystack": "teams.update gleap.api.teams.update replace a team's name, assignment method and full member list destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "tickets.counts",
+      "haystack": "tickets.counts gleap.api.tickets.counts get ticket counts grouped by board and status lane read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "tickets.create",
+      "haystack": "tickets.create gleap.api.tickets.create create a new ticket in a project write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "tickets.delete",
+      "haystack": "tickets.delete gleap.api.tickets.delete permanently delete a ticket and its associated data and replies destructive"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "tickets.get",
+      "haystack": "tickets.get gleap.api.tickets.get get a ticket in a project by its id read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "tickets.list",
+      "haystack": "tickets.list gleap.api.tickets.list get all tickets in a project with support for filtering, sorting, and pagination read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "tickets.search",
+      "haystack": "tickets.search gleap.api.tickets.search full-text search over project tickets and comments read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "tickets.update",
+      "haystack": "tickets.update gleap.api.tickets.update update an existing ticket in a project write"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "users.getMe",
+      "haystack": "users.getme gleap.api.users.getme get the currently authenticated user profile read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list gleap.api.users.list get all team members who can access the project read"
+    },
+    {
+      "pluginId": "gleap",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update gleap.api.users.update update the api key owner's own profile (name, job title, availability); gleap ignores the user id write"
     },
     {
       "pluginId": "gmail",
@@ -108080,6 +109592,168 @@
       "haystack": "payments.list moonclerk.api.payments.list list payments read"
     },
     {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "comments.create",
+      "haystack": "comments.create motion.api.comments.create create a comment on a task. destructive"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "comments.list",
+      "haystack": "comments.list motion.api.comments.list list comments on a task. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "customFields.create",
+      "haystack": "customfields.create motion.api.customfields.create create a custom field in a workspace (beta endpoint). write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "customFields.delete",
+      "haystack": "customfields.delete motion.api.customfields.delete delete a custom field from a workspace (beta endpoint). destructive"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "customFields.list",
+      "haystack": "customfields.list motion.api.customfields.list list the custom fields of a workspace (beta endpoint). read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "customFieldValues.addToProject",
+      "haystack": "customfieldvalues.addtoproject motion.api.customfieldvalues.addtoproject set a custom field value on a project (beta endpoint). write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "customFieldValues.addToTask",
+      "haystack": "customfieldvalues.addtotask motion.api.customfieldvalues.addtotask set a custom field value on a task (beta endpoint). write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "customFieldValues.deleteFromProject",
+      "haystack": "customfieldvalues.deletefromproject motion.api.customfieldvalues.deletefromproject delete a custom field value from a project (beta endpoint). destructive"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "customFieldValues.deleteFromTask",
+      "haystack": "customfieldvalues.deletefromtask motion.api.customfieldvalues.deletefromtask delete a custom field value from a task (beta endpoint). destructive"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create motion.api.projects.create create a project. write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get motion.api.projects.get get a project. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list motion.api.projects.list list projects with cursor pagination. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "recurringTasks.create",
+      "haystack": "recurringtasks.create motion.api.recurringtasks.create create a recurring task. write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "recurringTasks.delete",
+      "haystack": "recurringtasks.delete motion.api.recurringtasks.delete delete a recurring task. destructive"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "recurringTasks.list",
+      "haystack": "recurringtasks.list motion.api.recurringtasks.list list recurring tasks for a workspace. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "schedules.list",
+      "haystack": "schedules.list motion.api.schedules.list list the schedules available to the workspace. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "statuses.list",
+      "haystack": "statuses.list motion.api.statuses.list list the statuses of a workspace. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create motion.api.tasks.create create a task. write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "tasks.delete",
+      "haystack": "tasks.delete motion.api.tasks.delete delete a task. destructive"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "tasks.get",
+      "haystack": "tasks.get motion.api.tasks.get get a task. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list motion.api.tasks.list list tasks with optional filters and cursor pagination. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "tasks.move",
+      "haystack": "tasks.move motion.api.tasks.move move a task to another workspace. write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "tasks.unassign",
+      "haystack": "tasks.unassign motion.api.tasks.unassign remove the assignee from a task. write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "tasks.update",
+      "haystack": "tasks.update motion.api.tasks.update update a task. write"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list motion.api.users.list list workspace or team members. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "users.me",
+      "haystack": "users.me motion.api.users.me get the authenticated user. read"
+    },
+    {
+      "pluginId": "motion",
+      "kind": "api",
+      "shortPath": "workspaces.list",
+      "haystack": "workspaces.list motion.api.workspaces.list list workspaces. read"
+    },
+    {
       "pluginId": "mrscraper",
       "kind": "api",
       "shortPath": "account.get",
@@ -115490,6 +117164,132 @@
       "haystack": "test.credentials pointagram.api.test.credentials confirm the api-key and api-user pair and read the organization it belongs to; touches no tenant data read"
     },
     {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "cashLocations.list",
+      "haystack": "cashlocations.list polygon.api.cashlocations.list list the retail cash locations in range, nearest first, with cursor paging read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "customers.create",
+      "haystack": "customers.create polygon.api.customers.create create a customer. individuals need a first and last name; businesses need a legal name and email. identity verification follows the project policy write"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "customers.delete",
+      "haystack": "customers.delete polygon.api.customers.delete delete a customer. oms returns the record in its offboarded state destructive"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get polygon.api.customers.get read one customer with its onboarding status read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "customers.list",
+      "haystack": "customers.list polygon.api.customers.list list customers, filtered by status, email, external id or creation window, with cursor paging read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "customers.update",
+      "haystack": "customers.update polygon.api.customers.update update a customer's details, or request additional endorsements. personal data fields are write-only write"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "networks.list",
+      "haystack": "networks.list polygon.api.networks.list list the networks, rails and assets this project can route, with cursor paging read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "quotes.create",
+      "haystack": "quotes.create polygon.api.quotes.create price a transfer: set the amount on one side and oms calculates the other. nothing moves until a transaction accepts the quote write"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "quotes.get",
+      "haystack": "quotes.get polygon.api.quotes.get read one quote with its status and pricing read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "transactions.create",
+      "haystack": "transactions.create polygon.api.transactions.create accept a quote and move the money. this is the irreversible step: pricing is locked at the quote and the transfer starts as soon as oms accepts it destructive"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "transactions.get",
+      "haystack": "transactions.get polygon.api.transactions.get read one transaction with its status, pricing and transfers read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "transactions.list",
+      "haystack": "transactions.list polygon.api.transactions.list list transactions filtered by status, customer, wallet, precursor or creation window, with cursor paging read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "wallets.balance",
+      "haystack": "wallets.balance polygon.api.wallets.balance read one wallet balance in its asset, with an estimated value. the balance can be negative after a clawback read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "wallets.create",
+      "haystack": "wallets.create polygon.api.wallets.create create a custodial, noncustodial or fiat wallet for a customer. oms has no route to delete a wallet, so a live wallet stays on the customer destructive"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "wallets.get",
+      "haystack": "wallets.get polygon.api.wallets.get read one wallet by id read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "wallets.list",
+      "haystack": "wallets.list polygon.api.wallets.list list wallets, scoped to a customer or type, with balance ordering and cursor paging read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create polygon.api.webhooks.create register a webhook endpoint. the hmac signing key is returned only here, so store it when the call returns write"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete polygon.api.webhooks.delete delete a webhook endpoint. deliveries stop immediately and the signing key is discarded destructive"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get polygon.api.webhooks.get read one webhook endpoint read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list polygon.api.webhooks.list list webhook endpoints with their delivery counts and cursor paging read"
+    },
+    {
+      "pluginId": "polygon",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update polygon.api.webhooks.update change a webhook's url, subscriptions or delivery settings write"
+    },
+    {
       "pluginId": "polygonio",
       "kind": "api",
       "shortPath": "aggregates.bars",
@@ -115824,6 +117624,132 @@
       "kind": "api",
       "shortPath": "webhooks.updateWebhook",
       "haystack": "webhooks.updatewebhook postalytics.api.webhooks.updatewebhook update webhook write"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create postgrid.api.contacts.create create a contact. postgrid corrects and verifies the address, so the stored one may differ from the one sent write"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete postgrid.api.contacts.delete delete a contact. orders already created from it keep their own copy of the address destructive"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get postgrid.api.contacts.get read one contact with its address verification status read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list postgrid.api.contacts.list list contacts, optionally with a plain or structured search, paged by `skip` and `limit` read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "letters.cancel",
+      "haystack": "letters.cancel postgrid.api.letters.cancel cancel a letter while it is still `ready`. after that it is already printing destructive"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "letters.create",
+      "haystack": "letters.create postgrid.api.letters.create print and mail a letter, which costs postage and cannot be recalled once it leaves `ready`. pass `idempotencykey` so a retry prints one letter, not two destructive"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "letters.get",
+      "haystack": "letters.get postgrid.api.letters.get read one letter, optionally with its template expanded inline read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "letters.list",
+      "haystack": "letters.list postgrid.api.letters.list list letters with their status, paged by `skip` and `limit` read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "postcards.cancel",
+      "haystack": "postcards.cancel postgrid.api.postcards.cancel cancel a postcard while it is still `ready` destructive"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "postcards.create",
+      "haystack": "postcards.create postgrid.api.postcards.create print and mail a postcard with a front and a back face, which costs postage and cannot be recalled once printing destructive"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "postcards.get",
+      "haystack": "postcards.get postgrid.api.postcards.get read one postcard, optionally with its template expanded read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "postcards.list",
+      "haystack": "postcards.list postgrid.api.postcards.list list postcards with their status, paged by `skip` and `limit` read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "selfMailers.create",
+      "haystack": "selfmailers.create postgrid.api.selfmailers.create print and mail a folded self mailer with inside and outside panels, which costs postage and cannot be recalled once printing destructive"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "selfMailers.get",
+      "haystack": "selfmailers.get postgrid.api.selfmailers.get read one self mailer, optionally with its template expanded read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "selfMailers.list",
+      "haystack": "selfmailers.list postgrid.api.selfmailers.list list self mailers with their status, paged by `skip` and `limit` read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "templates.create",
+      "haystack": "templates.create postgrid.api.templates.create create a template whose `{{variablename}}` marks are filled from merge variables write"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete postgrid.api.templates.delete delete a template. orders already created from it are unaffected destructive"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get postgrid.api.templates.get read one template and its html read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list postgrid.api.templates.list list print templates, paged by `skip` and `limit` read"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "templates.update",
+      "haystack": "templates.update postgrid.api.templates.update change a template's html, description or metadata write"
+    },
+    {
+      "pluginId": "postgrid",
+      "kind": "api",
+      "shortPath": "trackers.get",
+      "haystack": "trackers.get postgrid.api.trackers.get read one tracker: the purl and qr-code destination an order references, with its visit counts read"
     },
     {
       "pluginId": "posthog",
@@ -116256,6 +118182,72 @@
       "kind": "webhook",
       "shortPath": "events.captured",
       "haystack": "events.captured posthog.webhooks.events.captured a posthog event was captured"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "analytics.platform",
+      "haystack": "analytics.platform postiz.api.analytics.platform read one channel's analytics rows for a period read"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "integrations.findSlot",
+      "haystack": "integrations.findslot postiz.api.integrations.findslot read a channel's next free posting slot read"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "integrations.isConnected",
+      "haystack": "integrations.isconnected postiz.api.integrations.isconnected confirm the api key is valid and the workspace is reachable read"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "integrations.list",
+      "haystack": "integrations.list postiz.api.integrations.list list the connected channels, optionally narrowed to one customer group read"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "media.list",
+      "haystack": "media.list postiz.api.media.list page through the organization's media library, optionally filtered by file name read"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "media.uploadFromUrl",
+      "haystack": "media.uploadfromurl postiz.api.media.uploadfromurl copy a file from a public url into the media library, for use as a post attachment write"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "notifications.list",
+      "haystack": "notifications.list postiz.api.notifications.list page through the organization notifications, newest first read"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "posts.changeStatus",
+      "haystack": "posts.changestatus postiz.api.posts.changestatus move a post between draft and scheduled. scheduling queues it to publish at its stored date to every channel it targets destructive"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "posts.create",
+      "haystack": "posts.create postiz.api.posts.create create a post as a draft, scheduled, or published immediately. a schedule or an immediate post goes out to every listed channel and cannot be recalled by this plugin once published destructive"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "posts.delete",
+      "haystack": "posts.delete postiz.api.posts.delete delete a post, which also deletes every post in its group. a published post stays live on the platform destructive"
+    },
+    {
+      "pluginId": "postiz",
+      "kind": "api",
+      "shortPath": "posts.list",
+      "haystack": "posts.list postiz.api.posts.list list posts in a date window with their state, release url and any platform error read"
     },
     {
       "pluginId": "postman",
@@ -117386,6 +119378,168 @@
       "haystack": "repository.info prismic.api.repository.info read the repository's refs, custom types, languages and tags. document reads use the master ref unless given another one read"
     },
     {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "balanceLines.create",
+      "haystack": "balancelines.create proabono.api.balancelines.create add a balance line, such as a one-off charge or credit in cents, to a customer's next invoice destructive"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "balanceLines.list",
+      "haystack": "balancelines.list proabono.api.balancelines.list list balance lines by customer, segment, feature or subscription, with their totals read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "customers.anonymize",
+      "haystack": "customers.anonymize proabono.api.customers.anonymize erase a customer's personal data. this cannot be undone, and proabono keeps the billing record only as it must destructive"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "customers.create",
+      "haystack": "customers.create proabono.api.customers.create create a customer with your own reference, which subscriptions and usages then identify it by write"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get proabono.api.customers.get read one customer by your reference, with whether it is billable read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "customers.invalidate",
+      "haystack": "customers.invalidate proabono.api.customers.invalidate invalidate a customer: proabono replaces their reference so it can be reused and revokes their portal links. subscriptions, invoices and payment methods stay destructive"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "customers.list",
+      "haystack": "customers.list proabono.api.customers.list list the customers in a segment, one page at a time read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "customers.suspend",
+      "haystack": "customers.suspend proabono.api.customers.suspend suspend a customer without deleting anything, so they can be reactivated write"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "customers.update",
+      "haystack": "customers.update proabono.api.customers.update change a customer's name, email, language, affiliation or metadata. proabono creates and updates on the same route, so an unknown reference creates a customer write"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "features.get",
+      "haystack": "features.get proabono.api.features.get read one feature by its reference read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "features.list",
+      "haystack": "features.list proabono.api.features.list list the features your offers carry read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "invoices.get",
+      "haystack": "invoices.get proabono.api.invoices.get read one invoice with its totals and links read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "invoices.list",
+      "haystack": "invoices.list proabono.api.invoices.list list invoices by customer or subscription, one page at a time read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "offers.get",
+      "haystack": "offers.get proabono.api.offers.get read one offer by its reference read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "offers.list",
+      "haystack": "offers.list proabono.api.offers.list list the offers in a segment, optionally in a customer language and with their upgrade links read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "subscriptions.create",
+      "haystack": "subscriptions.create proabono.api.subscriptions.create subscribe a customer to an offer, which starts billing when the offer is paid and the customer is billable. `trystart: false` creates it without starting so it can be customised first destructive"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "subscriptions.get",
+      "haystack": "subscriptions.get proabono.api.subscriptions.get read one subscription with its state, period, next billing date and features. the docs warn against using this to check whether a user is a subscriber read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "subscriptions.list",
+      "haystack": "subscriptions.list proabono.api.subscriptions.list list subscriptions filtered by customer, offer or segment, one page at a time read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "subscriptions.start",
+      "haystack": "subscriptions.start proabono.api.subscriptions.start start a subscription that was created without starting, which begins billing destructive"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "subscriptions.suspend",
+      "haystack": "subscriptions.suspend proabono.api.subscriptions.suspend suspend a subscription without terminating it write"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "subscriptions.terminate",
+      "haystack": "subscriptions.terminate proabono.api.subscriptions.terminate terminate a subscription, ending it for good; by default at the end of the current period. a later start cannot revive it destructive"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "subscriptions.updateTerm",
+      "haystack": "subscriptions.updateterm proabono.api.subscriptions.updateterm change a subscription's end date write"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "subscriptions.upgrade",
+      "haystack": "subscriptions.upgrade proabono.api.subscriptions.upgrade move a subscription to another offer, which changes what it bills from the next period destructive"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "usages.get",
+      "haystack": "usages.get proabono.api.usages.get read one customer's usage of one feature: on/off, or the included and current quantities read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "usages.increment",
+      "haystack": "usages.increment proabono.api.usages.increment add to a feature’s usage for a customer, which proabono bills when it exceeds the included quantity. a negative increment subtracts, which is how a reversed action is recorded destructive"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "usages.list",
+      "haystack": "usages.list proabono.api.usages.list list feature usages by customer, feature or subscription, one page at a time read"
+    },
+    {
+      "pluginId": "proabono",
+      "kind": "api",
+      "shortPath": "usages.update",
+      "haystack": "usages.update proabono.api.usages.update update up to 50 usages in one call, each by increment, current quantity or on/off destructive"
+    },
+    {
       "pluginId": "pushbullet",
       "kind": "api",
       "shortPath": "chats.create",
@@ -117474,6 +119628,144 @@
       "kind": "api",
       "shortPath": "users.me",
       "haystack": "users.me pushbullet.api.users.me retrieve the account the access token belongs to read"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "apps.limits",
+      "haystack": "apps.limits pushover.api.apps.limits get the monthly message limit and remaining quota read"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "glances.update",
+      "haystack": "glances.update pushover.api.glances.update update a user widget glance write"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "groups.addUser",
+      "haystack": "groups.adduser pushover.api.groups.adduser add a user to a delivery group write"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "groups.create",
+      "haystack": "groups.create pushover.api.groups.create create a delivery group write"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "groups.disableUser",
+      "haystack": "groups.disableuser pushover.api.groups.disableuser disable a delivery group user write"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "groups.enableUser",
+      "haystack": "groups.enableuser pushover.api.groups.enableuser enable a delivery group user write"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "groups.get",
+      "haystack": "groups.get pushover.api.groups.get get a delivery group and its users read"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list pushover.api.groups.list list delivery groups read"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "groups.removeUser",
+      "haystack": "groups.removeuser pushover.api.groups.removeuser remove a user from a delivery group destructive"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "groups.rename",
+      "haystack": "groups.rename pushover.api.groups.rename rename a delivery group write"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "licenses.assign",
+      "haystack": "licenses.assign pushover.api.licenses.assign permanently assign a license credit destructive"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "licenses.get",
+      "haystack": "licenses.get pushover.api.licenses.get get remaining license credits read"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "messages.send",
+      "haystack": "messages.send pushover.api.messages.send send a notification to a user or group destructive"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "receipts.cancel",
+      "haystack": "receipts.cancel pushover.api.receipts.cancel cancel retries for an emergency notification destructive"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "receipts.cancelByTag",
+      "haystack": "receipts.cancelbytag pushover.api.receipts.cancelbytag cancel emergency notification retries by tag destructive"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "receipts.get",
+      "haystack": "receipts.get pushover.api.receipts.get get an emergency notification receipt read"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "sounds.list",
+      "haystack": "sounds.list pushover.api.sounds.list list available notification sounds read"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "subscriptions.migrate",
+      "haystack": "subscriptions.migrate pushover.api.subscriptions.migrate migrate a user key to a subscription key write"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "teams.addUser",
+      "haystack": "teams.adduser pushover.api.teams.adduser invite or add a team user using a team token destructive"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "teams.get",
+      "haystack": "teams.get pushover.api.teams.get get team details using a team token read"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "teams.removeUser",
+      "haystack": "teams.removeuser pushover.api.teams.removeuser remove a team user using a team token destructive"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "teams.revokeInvitation",
+      "haystack": "teams.revokeinvitation pushover.api.teams.revokeinvitation revoke a team invitation using a team token destructive"
+    },
+    {
+      "pluginId": "pushover",
+      "kind": "api",
+      "shortPath": "users.validate",
+      "haystack": "users.validate pushover.api.users.validate validate a user or group and list its devices read"
     },
     {
       "pluginId": "qdrant",
@@ -131192,6 +133484,84 @@
       "haystack": "uploadfiles.post shortcut.api.uploadfiles.post upload files write"
     },
     {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "domains.get",
+      "haystack": "domains.get shortio.api.domains.get get a domain by its id. read"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "domains.list",
+      "haystack": "domains.list shortio.api.domains.list list domains with limit and offset. read"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.archive",
+      "haystack": "links.archive shortio.api.links.archive archive a link. write"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.archiveBulk",
+      "haystack": "links.archivebulk shortio.api.links.archivebulk archive up to 150 links. write"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.create",
+      "haystack": "links.create shortio.api.links.create create a branded short link. write"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.delete",
+      "haystack": "links.delete shortio.api.links.delete delete a link by its id. destructive"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.deleteBulk",
+      "haystack": "links.deletebulk shortio.api.links.deletebulk delete up to 150 links. destructive"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.expand",
+      "haystack": "links.expand shortio.api.links.expand expand a short link by domain and path. read"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.get",
+      "haystack": "links.get shortio.api.links.get get a link by its id. read"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.list",
+      "haystack": "links.list shortio.api.links.list list links for a domain with cursor pagination. read"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.unarchive",
+      "haystack": "links.unarchive shortio.api.links.unarchive unarchive a link. write"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.unarchiveBulk",
+      "haystack": "links.unarchivebulk shortio.api.links.unarchivebulk unarchive up to 150 links. write"
+    },
+    {
+      "pluginId": "shortio",
+      "kind": "api",
+      "shortPath": "links.update",
+      "haystack": "links.update shortio.api.links.update update a link by its id. write"
+    },
+    {
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "admin.conversationsGetTeams",
@@ -133536,6 +135906,42 @@
       "kind": "api",
       "shortPath": "tracks.search",
       "haystack": "tracks.search spotify.api.tracks.search search for tracks read"
+    },
+    {
+      "pluginId": "stackai",
+      "kind": "api",
+      "shortPath": "projects.ioSchema",
+      "haystack": "projects.ioschema stackai.api.projects.ioschema inspect a project version input and output schema. read"
+    },
+    {
+      "pluginId": "stackai",
+      "kind": "api",
+      "shortPath": "runs.cancel",
+      "haystack": "runs.cancel stackai.api.runs.cancel request cancellation of an owned run. it cannot be undone. destructive"
+    },
+    {
+      "pluginId": "stackai",
+      "kind": "api",
+      "shortPath": "runs.get",
+      "haystack": "runs.get stackai.api.runs.get get a run and its current state. read"
+    },
+    {
+      "pluginId": "stackai",
+      "kind": "api",
+      "shortPath": "runs.list",
+      "haystack": "runs.list stackai.api.runs.list list runs using cursor pagination and filters. read"
+    },
+    {
+      "pluginId": "stackai",
+      "kind": "api",
+      "shortPath": "runs.resume",
+      "haystack": "runs.resume stackai.api.runs.resume resume an ask-human paused run. the run continues executing and bills model usage. destructive"
+    },
+    {
+      "pluginId": "stackai",
+      "kind": "api",
+      "shortPath": "runs.start",
+      "haystack": "runs.start stackai.api.runs.start start an asynchronous project run. each run executes the workflow and bills model usage. destructive"
     },
     {
       "pluginId": "stackexchange",
@@ -139236,6 +141642,324 @@
       "kind": "api",
       "shortPath": "locations.nearby",
       "haystack": "locations.nearby tripadvisor.api.locations.nearby find full location representations near an area; filter category hotel to list nearby hotels read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.allReviews",
+      "haystack": "businessunits.allreviews trustpilot.api.businessunits.allreviews page through public business unit reviews without private contact data read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.customerGuarantee",
+      "haystack": "businessunits.customerguarantee trustpilot.api.businessunits.customerguarantee get customer guarantee content for a business unit read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.find",
+      "haystack": "businessunits.find trustpilot.api.businessunits.find find a public business unit by domain name read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.get",
+      "haystack": "businessunits.get trustpilot.api.businessunits.get get a business unit public profile and trustscore read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.headerImage",
+      "haystack": "businessunits.headerimage trustpilot.api.businessunits.headerimage get a business unit profile-header image url read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.listCategories",
+      "haystack": "businessunits.listcategories trustpilot.api.businessunits.listcategories list the categories associated with a business unit read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.logo",
+      "haystack": "businessunits.logo trustpilot.api.businessunits.logo get a business unit or location logo url read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.privateReviews",
+      "haystack": "businessunits.privatereviews trustpilot.api.businessunits.privatereviews list private business unit reviews and customer details read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.profileInfo",
+      "haystack": "businessunits.profileinfo trustpilot.api.businessunits.profileinfo get a business unit company profile and contact details read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.profilePromotion",
+      "haystack": "businessunits.profilepromotion trustpilot.api.businessunits.profilepromotion get a business unit profile promotion and key brand messages read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.promotionBoxImage",
+      "haystack": "businessunits.promotionboximage trustpilot.api.businessunits.promotionboximage get a business unit promotion-box image url read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.publicAll",
+      "haystack": "businessunits.publicall trustpilot.api.businessunits.publicall list public business units with cursor pagination read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.publicPromotionBox",
+      "haystack": "businessunits.publicpromotionbox trustpilot.api.businessunits.publicpromotionbox get public promotion-box content for a business unit read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.reviews",
+      "haystack": "businessunits.reviews trustpilot.api.businessunits.reviews list public reviews for a business unit with filters read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.search",
+      "haystack": "businessunits.search trustpilot.api.businessunits.search search public business units by name or domain read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "businessUnits.webLinks",
+      "haystack": "businessunits.weblinks trustpilot.api.businessunits.weblinks get localized public profile and invitation links for a business unit read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "consumerProfiles.bulk",
+      "haystack": "consumerprofiles.bulk trustpilot.api.consumerprofiles.bulk get multiple consumer profiles in one request read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "consumerProfiles.createDisplayName",
+      "haystack": "consumerprofiles.createdisplayname trustpilot.api.consumerprofiles.createdisplayname create a valid consumer display name from input text read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "consumerProfiles.get",
+      "haystack": "consumerprofiles.get trustpilot.api.consumerprofiles.get get a consumer profile by consumer id read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "consumerProfiles.getWithReviews",
+      "haystack": "consumerprofiles.getwithreviews trustpilot.api.consumerprofiles.getwithreviews get a consumer profile and review count read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "consumerProfiles.validateDisplayName",
+      "haystack": "consumerprofiles.validatedisplayname trustpilot.api.consumerprofiles.validatedisplayname validate a consumer display name read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "consumerProfiles.webLinks",
+      "haystack": "consumerprofiles.weblinks trustpilot.api.consumerprofiles.weblinks get localized links to a consumer profile read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "consumers.reviews",
+      "haystack": "consumers.reviews trustpilot.api.consumers.reviews list reviews written by a trustpilot consumer read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "dataSolutions.businessUnitDetails",
+      "haystack": "datasolutions.businessunitdetails trustpilot.api.datasolutions.businessunitdetails get data solutions business details and review statistics read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "dataSolutions.categories",
+      "haystack": "datasolutions.categories trustpilot.api.datasolutions.categories list data solutions business categories read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "dataSolutions.findBusinessUnits",
+      "haystack": "datasolutions.findbusinessunits trustpilot.api.datasolutions.findbusinessunits find data solutions business units by domain or category read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "dataSolutions.latestReviews",
+      "haystack": "datasolutions.latestreviews trustpilot.api.datasolutions.latestreviews get up to five recent data solutions service reviews read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "dataSolutions.searchBusinessUnits",
+      "haystack": "datasolutions.searchbusinessunits trustpilot.api.datasolutions.searchbusinessunits search data solutions business units by name or domain read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "dataSolutions.serviceReviews",
+      "haystack": "datasolutions.servicereviews trustpilot.api.datasolutions.servicereviews page through data solutions service reviews read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "invitations.link",
+      "haystack": "invitations.link trustpilot.api.invitations.link create a service review invitation link and consume invitation allowance destructive"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "invitations.templates",
+      "haystack": "invitations.templates trustpilot.api.invitations.templates list invitation templates available to a business unit read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.attributeSummaries",
+      "haystack": "productreviews.attributesummaries trustpilot.api.productreviews.attributesummaries get aggregated product attribute ratings for skus read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.batchSummaries",
+      "haystack": "productreviews.batchsummaries trustpilot.api.productreviews.batchsummaries get public product review summaries for several skus read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.createComment",
+      "haystack": "productreviews.createcomment trustpilot.api.productreviews.createcomment publish a business comment on a product review conversation (public, seen by the reviewer) destructive"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.createConversation",
+      "haystack": "productreviews.createconversation trustpilot.api.productreviews.createconversation create a conversation for a product review write"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.getComment",
+      "haystack": "productreviews.getcomment trustpilot.api.productreviews.getcomment get one comment from a product review conversation read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.getConversation",
+      "haystack": "productreviews.getconversation trustpilot.api.productreviews.getconversation get a private product review conversation and comments read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.importedReviews",
+      "haystack": "productreviews.importedreviews trustpilot.api.productreviews.importedreviews list imported product reviews for one or more skus read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.importedSummary",
+      "haystack": "productreviews.importedsummary trustpilot.api.productreviews.importedsummary get rating counts for imported product reviews read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.invitationLink",
+      "haystack": "productreviews.invitationlink trustpilot.api.productreviews.invitationlink create a product review invitation link and consume invitation allowance destructive"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.list",
+      "haystack": "productreviews.list trustpilot.api.productreviews.list list public product reviews by sku or product url read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.privateGet",
+      "haystack": "productreviews.privateget trustpilot.api.productreviews.privateget get one private product review and customer details read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.privateList",
+      "haystack": "productreviews.privatelist trustpilot.api.productreviews.privatelist list private product reviews including customer details read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.publicConversation",
+      "haystack": "productreviews.publicconversation trustpilot.api.productreviews.publicconversation get a public product review conversation and comments read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.summaries",
+      "haystack": "productreviews.summaries trustpilot.api.productreviews.summaries list private product review summaries for a business unit read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.summary",
+      "haystack": "productreviews.summary trustpilot.api.productreviews.summary get product review rating counts and average stars read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "productReviews.updateComment",
+      "haystack": "productreviews.updatecomment trustpilot.api.productreviews.updatecomment replace the text of a published business comment on a product review conversation destructive"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "reviews.get",
+      "haystack": "reviews.get trustpilot.api.reviews.get get the public details of a service review read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "reviews.getPrivate",
+      "haystack": "reviews.getprivate trustpilot.api.reviews.getprivate get private review information including customer data read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "reviews.getTags",
+      "haystack": "reviews.gettags trustpilot.api.reviews.gettags get tags assigned to a service review read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "reviews.latest",
+      "haystack": "reviews.latest trustpilot.api.reviews.latest get the latest service reviews for selected languages read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "reviews.likes",
+      "haystack": "reviews.likes trustpilot.api.reviews.likes list consumers who liked a service review read"
+    },
+    {
+      "pluginId": "trustpilot",
+      "kind": "api",
+      "shortPath": "reviews.webLinks",
+      "haystack": "reviews.weblinks trustpilot.api.reviews.weblinks get localized links to a public service review read"
     },
     {
       "pluginId": "turbotpipes",
