@@ -144,9 +144,9 @@ export async function makeTombaRequest(
 	};
 
 	// unknown: each route's own output schema parses the body.
-	let body: unknown;
+	let answer: unknown;
 	try {
-		body = await request<unknown>(config, requestOptions, {
+		answer = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: TOMBA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
@@ -156,8 +156,8 @@ export async function makeTombaRequest(
 	// The find routes answer a miss with HTTP 200 and an `errors` object in
 	// place of `data` (`not_found` 404, `params_invalid` 422). That is the
 	// provider's error, so it is thrown as one, with its own code as status.
-	const errors = asRecord(asRecord(body)?.errors);
-	if (errors && asRecord(body)?.data === undefined) {
+	const errors = asRecord(asRecord(answer)?.errors);
+	if (errors && asRecord(answer)?.data === undefined) {
 		const status = typeof errors.code === 'number' ? errors.code : 400;
 		throw stripRequestData(
 			new ApiError(
@@ -167,11 +167,11 @@ export async function makeTombaRequest(
 					ok: false,
 					status,
 					statusText: typeof errors.type === 'string' ? errors.type : '',
-					body,
+					body: answer,
 				},
 				'Tomba error',
 			),
 		);
 	}
-	return body;
+	return answer;
 }
