@@ -1045,7 +1045,7 @@ await corsair.superchat.api.conversations.update({ id: 'cv_1aBMS9FKwvSDjljRJI1aZ
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string \| null` | No | — |
+| `status` | `open \| done \| spam \| archived \| snoozed \| null` | No | The values the PATCH route accepts. |
 | `inbox_id` | `string \| null` | No | — |
 | `snoozed_until` | `string \| null` | No | ISO 8601. |
 | `assigned_users` | `string[] \| null` | No | — |
