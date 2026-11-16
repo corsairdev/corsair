@@ -50,31 +50,31 @@ Query up to 10 ASINs per request. Returns exact and broad search volume, PPC bid
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id: string,
-  type: string,
+  id?: string | null,
+  type?: string | null,
   attributes: {
-    country: string,
-    name: string,
-    primary_asin?: string,
+    country?: string | null,
+    name?: string | null,
+    primary_asin?: string | null,
     monthly_trend?: number | null,
     monthly_search_volume_exact?: number | null,
     quarterly_trend?: number | null,
     monthly_search_volume_broad?: number | null,
-    dominant_category?: string,
+    dominant_category?: string | null,
     recommended_promotions?: number | null,
     updated_at?: string | null,
     sp_brand_ad_bid?: number | null,
     ppc_bid_broad?: number | null,
     ppc_bid_exact?: number | null,
-    ease_of_ranking_score?: number,
+    ease_of_ranking_score?: number | null,
     relevancy_score?: number | null,
     organic_product_count?: number | null,
     sponsored_product_count?: number | null,
@@ -88,12 +88,12 @@ Query up to 10 ASINs per request. Returns exact and broad search volume, PPC bid
     relative_organic_position?: number | null,
     relative_sponsored_position?: number | null,
     competitor_organic_rank?: {
-      asin: string,
-      organic_rank: number
+      asin?: string | null,
+      organic_rank?: number | null
     }[] | null,
     competitor_sponsored_rank?: {
-      asin: string,
-      sponsored_rank: number
+      asin?: string | null,
+      sponsored_rank?: number | null
     }[] | null
   }
 }[]
@@ -104,9 +104,9 @@ Query up to 10 ASINs per request. Returns exact and broad search volume, PPC bid
 
 ```ts
 {
-  self?: string,
+  self?: string | null,
   next?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -114,8 +114,8 @@ Query up to 10 ASINs per request. Returns exact and broad search volume, PPC bid
 
 ```ts
 {
-  total_items?: number
-}
+  total_items?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -164,24 +164,24 @@ Pass one or more search phrases in search_terms. Dominant category names vary by
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id: string,
-  type: string,
+  id?: string | null,
+  type?: string | null,
   attributes: {
-    country: string,
-    name: string,
+    country?: string | null,
+    name?: string | null,
     monthly_trend?: number | null,
     monthly_search_volume_exact?: number | null,
     quarterly_trend?: number | null,
     monthly_search_volume_broad?: number | null,
-    dominant_category?: string,
+    dominant_category?: string | null,
     recommended_promotions?: number | null,
     sp_brand_ad_bid?: number | null,
     ppc_bid_broad?: number | null,
@@ -198,9 +198,9 @@ Pass one or more search phrases in search_terms. Dominant category names vary by
 
 ```ts
 {
-  self?: string,
+  self?: string | null,
   next?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -208,8 +208,8 @@ Pass one or more search phrases in search_terms. Dominant category names vary by
 
 ```ts
 {
-  total_items?: number
-}
+  total_items?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -254,12 +254,12 @@ Date ranges must use YYYY-MM-DD format with start date prior to end date.
 
 ```ts
 {
-  id: string,
-  type: string,
+  id?: string | null,
+  type?: string | null,
   attributes: {
-    estimate_start_date: string,
-    estimate_end_date: string,
-    estimated_exact_search_volume: number
+    estimate_start_date?: string | null,
+    estimate_end_date?: string | null,
+    estimated_exact_search_volume?: number | null
   }
 }[]
 ```
@@ -331,31 +331,31 @@ Supports filtering by price, rank, sales, reviews, ratings, seller types (amz/fb
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id: string,
-  type: string,
+  id?: string | null,
+  type?: string | null,
   attributes: {
-    title?: string,
-    price?: number,
-    reviews?: number,
-    category?: string,
-    rating?: number,
-    image_url?: string,
+    title?: string | null,
+    price?: number | null,
+    reviews?: number | null,
+    category?: string | null,
+    rating?: number | null,
+    image_url?: string | null,
     parent_asin?: string | null,
-    is_variant?: boolean,
-    seller_type?: string,
+    is_variant?: boolean | null,
+    seller_type?: string | null,
     breadcrumb_path?: string | null,
-    is_standalone?: boolean,
-    is_parent?: boolean,
-    is_available?: boolean,
-    brand?: string,
+    is_standalone?: boolean | null,
+    is_parent?: boolean | null,
+    is_available?: boolean | null,
+    brand?: string | null,
     product_rank?: number | null,
     weight_value?: number | null,
     weight_unit?: string | null,
@@ -363,31 +363,31 @@ Supports filtering by price, rank, sales, reviews, ratings, seller types (amz/fb
     width_value?: number | null,
     height_value?: number | null,
     dimensions_unit?: string | null,
-    listing_quality_score?: number,
-    number_of_sellers?: number,
-    buy_box_owner?: string,
-    buy_box_owner_seller_id?: string,
+    listing_quality_score?: number | null,
+    number_of_sellers?: number | null,
+    buy_box_owner?: string | null,
+    buy_box_owner_seller_id?: string | null,
     date_first_available?: string | null,
-    date_first_available_is_estimated?: boolean,
-    approximate_30_day_revenue?: number,
-    approximate_30_day_units_sold?: number,
+    date_first_available_is_estimated?: boolean | null,
+    approximate_30_day_revenue?: number | null,
+    approximate_30_day_units_sold?: number | null,
     subcategory_ranks?: {
-      subcategory?: string,
-      rank?: number,
+      subcategory?: string | null,
+      rank?: number | null,
       id?: string | null
-    }[],
+    }[] | null,
     fee_breakdown?: {
-      fba_fee?: number,
-      referral_fee?: number,
-      variable_closing_fee?: number,
-      total_fees?: number
+      fba_fee?: number | null,
+      referral_fee?: number | null,
+      variable_closing_fee?: number | null,
+      total_fees?: number | null
     } | null,
     ean_list?: string[] | null,
     isbn_list?: string[] | null,
     upc_list?: string[] | null,
     gtin_list?: string[] | null,
     variant_reviews?: number | null,
-    updated_at?: string
+    updated_at?: string | null
   }
 }[]
 ```
@@ -397,9 +397,9 @@ Supports filtering by price, rank, sales, reviews, ratings, seller types (amz/fb
 
 ```ts
 {
-  self?: string,
+  self?: string | null,
   next?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -407,8 +407,8 @@ Supports filtering by price, rank, sales, reviews, ratings, seller types (amz/fb
 
 ```ts
 {
-  total_items?: number
-}
+  total_items?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -455,19 +455,19 @@ End date must precede the current UTC date. Returns daily sales estimates and pr
 
 ```ts
 {
-  id: string,
-  type: string,
+  id?: string | null,
+  type?: string | null,
   attributes: {
-    asin: string,
-    is_parent: boolean,
-    is_variant: boolean,
-    is_standalone: boolean,
+    asin?: string | null,
+    is_parent?: boolean | null,
+    is_variant?: boolean | null,
+    is_standalone?: boolean | null,
     parent_asin?: string | null,
-    variants?: string[],
+    variants?: string[] | null,
     data: {
-      date: string,
-      estimated_units_sold: number,
-      last_known_price?: number
+      date?: string | null,
+      estimated_units_sold?: number | null,
+      last_known_price?: number | null
     }[]
   }
 }[]
@@ -515,39 +515,39 @@ Returns organic, sponsored, and combined brand market share and top 3 ASIN click
 
 ```ts
 {
-  id?: string,
-  type: string,
+  id?: string | null,
+  type?: string | null,
   attributes: {
-    estimated_30_day_search_volume: number,
-    exact_suggested_bid_median: number,
-    product_count: number,
-    updated_at: string,
+    estimated_30_day_search_volume?: number | null,
+    exact_suggested_bid_median?: number | null,
+    product_count?: number | null,
+    updated_at?: string | null,
     top_asins_model_start_date?: string | null,
     top_asins_model_end_date?: string | null,
-    brands: {
-      brand: string,
-      combined_products: number,
-      combined_weighted_sov: number,
-      combined_basic_sov: number,
-      combined_average_position: number,
-      combined_average_price?: number,
-      organic_products: number,
-      organic_weighted_sov: number,
-      organic_basic_sov: number,
-      organic_average_position: number,
+    brands?: {
+      brand?: string | null,
+      combined_products?: number | null,
+      combined_weighted_sov?: number | null,
+      combined_basic_sov?: number | null,
+      combined_average_position?: number | null,
+      combined_average_price?: number | null,
+      organic_products?: number | null,
+      organic_weighted_sov?: number | null,
+      organic_basic_sov?: number | null,
+      organic_average_position?: number | null,
       organic_average_price?: number | null,
-      sponsored_products: number,
-      sponsored_weighted_sov: number,
-      sponsored_basic_sov: number,
-      sponsored_average_position: number,
+      sponsored_products?: number | null,
+      sponsored_weighted_sov?: number | null,
+      sponsored_basic_sov?: number | null,
+      sponsored_average_position?: number | null,
       sponsored_average_price?: number | null
-    }[],
+    }[] | null,
     top_asins?: {
-      asin: string,
+      asin?: string | null,
       name?: string | null,
       brand?: string | null,
-      clicks: number,
-      conversions: number,
+      clicks?: number | null,
+      conversions?: number | null,
       conversion_rate?: number | null
     }[] | null
   }
@@ -559,3 +559,4 @@ Returns organic, sponsored, and combined brand market share and top 3 ASIN click
 
 
 ---
+
