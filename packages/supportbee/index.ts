@@ -371,9 +371,9 @@ const supportbeeEndpointMeta = {
 			'List unarchived tickets in last-activity order, filtered by assignee, team, label, requester or date',
 	},
 	'tickets.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Open a ticket for a requester. Works without a token, and an unauthenticated call is capped at 5 tickets an hour per IP',
+			'Open a ticket for a requester, which emails them when notify_requester is set. This plugin always sends the API token',
 	},
 	'tickets.search': {
 		riskLevel: 'read',
@@ -465,7 +465,7 @@ const supportbeeEndpointMeta = {
 		description: 'Read one reply on one ticket',
 	},
 	'replies.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send a reply to the requester. The mail leaves SupportBee, so this reaches the real customer',
 	},
@@ -503,9 +503,9 @@ const supportbeeEndpointMeta = {
 			'List the users and customer groups of the desk, optionally with invited members or roles',
 	},
 	'users.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create a user or a customer group. A group is a user with type customer_group',
+			'Create a user or a customer group. A new agent or admin gets an invitation email; a group is a user with type customer_group',
 	},
 	'users.get': {
 		riskLevel: 'read',

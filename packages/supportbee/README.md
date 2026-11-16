@@ -25,7 +25,7 @@ pnpm add @corsair-dev/supportbee
 | `filters.createConsequence` | `supportbee.api.filters.createConsequence` | `write` | Create the action half of a filter: archive, spam, trash, label or assign |
 | `filters.createRule` | `supportbee.api.filters.createRule` | `write` | Create the matching half of a filter. It does nothing until a filter links it to a consequence |
 | `labels.list` | `supportbee.api.labels.list` | `read` | List the company label names and colours |
-| `replies.create` | `supportbee.api.replies.create` | `write` | Send a reply to the requester. The mail leaves SupportBee, so this reaches the real customer |
+| `replies.create` | `supportbee.api.replies.create` | `destructive` | Send a reply to the requester. The mail leaves SupportBee, so this reaches the real customer |
 | `replies.get` | `supportbee.api.replies.get` | `read` | Read one reply on one ticket |
 | `replies.list` | `supportbee.api.replies.list` | `read` | List the replies on one ticket |
 | `reports.avgFirstResponseTime` | `supportbee.api.reports.avgFirstResponseTime` | `read` | Daily average first-response time, as string data points with timestamps |
@@ -41,7 +41,7 @@ pnpm add @corsair-dev/supportbee
 | `tickets.assignTeam` | `supportbee.api.tickets.assignTeam` | `write` | Assign a ticket to a team. Reassigning to another team clears the user assignee |
 | `tickets.assignUser` | `supportbee.api.tickets.assignUser` | `write` | Assign a ticket to a user. If the ticket is already assigned to a team, the user must be a member of it |
 | `tickets.audit` | `supportbee.api.tickets.audit` | `read` | Read the audit trail of one ticket, oldest action first |
-| `tickets.create` | `supportbee.api.tickets.create` | `write` | Open a ticket for a requester. Works without a token, and an unauthenticated call is capped at 5 tickets an hour per IP |
+| `tickets.create` | `supportbee.api.tickets.create` | `destructive` | Open a ticket for a requester, which emails them when notify_requester is set. This plugin always sends the API token |
 | `tickets.delete` | `supportbee.api.tickets.delete` | `destructive` | Delete a trashed ticket for good. Only an admin can delete, and only a ticket already in the trash |
 | `tickets.get` | `supportbee.api.tickets.get` | `read` | Read one ticket with its requester, content and assignment |
 | `tickets.list` | `supportbee.api.tickets.list` | `read` | List unarchived tickets in last-activity order, filtered by assignee, team, label, requester or date |
@@ -57,7 +57,7 @@ pnpm add @corsair-dev/supportbee
 | `tickets.unmarkSpam` | `supportbee.api.tickets.unmarkSpam` | `write` | Clear the spam flag from a ticket |
 | `tickets.untrash` | `supportbee.api.tickets.untrash` | `write` | Restore a trashed ticket |
 | `users.addMember` | `supportbee.api.users.addMember` | `write` | Add a user to a customer group |
-| `users.create` | `supportbee.api.users.create` | `write` | Create a user or a customer group. A group is a user with type customer_group |
+| `users.create` | `supportbee.api.users.create` | `destructive` | Create a user or a customer group. A new agent or admin gets an invitation email; a group is a user with type customer_group |
 | `users.get` | `supportbee.api.users.get` | `read` | Read one user or customer group |
 | `users.list` | `supportbee.api.users.list` | `read` | List the users and customer groups of the desk, optionally with invited members or roles |
 | `users.listMembers` | `supportbee.api.users.listMembers` | `read` | List the members of a customer group |

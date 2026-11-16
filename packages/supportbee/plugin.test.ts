@@ -163,10 +163,13 @@ describe('supportbee plugin definition', () => {
 		expect(meta['tickets.trash']?.riskLevel).toBe('write');
 	});
 
-	it('says that a reply reaches a real customer', () => {
-		// Sending a message is `write`, like every other send in the catalog, so
-		// the description is where an agent learns that it leaves the building.
-		expect(meta['replies.create']?.riskLevel).toBe('write');
+	it('marks the operations that email people destructive', () => {
+		// R8: a reply, a ticket that can notify its requester, and a new agent's
+		// invitation all reach a real person.
+		for (const name of ['replies.create', 'tickets.create', 'users.create']) {
+			expect(meta[name]?.riskLevel).toBe('destructive');
+		}
+		expect(meta['replies.create']?.description).toMatch(/real customer/);
 		expect(meta['replies.create']?.description).toMatch(/real customer/);
 		expect(meta['comments.create']?.description).toMatch(/requester is not/);
 	});

@@ -37,7 +37,7 @@ apiNotes:
   tickets.list: |
     Answers `{ tickets, total, current_page, per_page, total_pages }`, 15 a page in last-activity order. Only unarchived tickets are returned unless `archived` sets another scope. `sort_by` takes `last_activity_at` or `created_at`, and `requester_emails` takes a comma-separated list. `total_only: true` returns the count and no tickets.
   tickets.create: |
-    Wraps the payload in `ticket` and answers the created ticket. This route works **without a token**, and an unauthenticated call is capped at 5 tickets an hour per IP, so a token raises it to 8 a minute. `content` takes `text`, `html` or both, plus `attachment_ids` from `attachments.create`. `notify_requester: true` sends a copy and suppresses the auto-response.
+    Wraps the payload in `ticket` and answers the created ticket. SupportBee also accepts this route without a token, but this plugin always sends the account's token, so the 8-a-minute token limit applies. `content` takes `text`, `html` or both, plus `attachment_ids` from `attachments.create`. `notify_requester: true` sends a copy and suppresses the auto-response.
   tickets.search: |
     The parameter is **`query`**, not `q`. Answers the same wrapper as the list route. `spam` and `trash` widen the search to those scopes, and a blank query is rejected before the request is sent.
   tickets.get: |
