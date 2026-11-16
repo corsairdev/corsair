@@ -321,12 +321,24 @@ describe('nasdaq error reporting', () => {
 		expect(String(error)).toContain('403');
 	});
 
-	it('does not leak the API key into the error message', async () => {
-		const error = await capture(endpoints.databases.list, {}, unknownKey, {
+	it('removes the key Nasdaq echoes back, from the message and the body', async () => {
+		// Nasdaq echoes the submitted key inside quandl_error.message, which is
+		// how a leaked key reaches a log line.
+		const echoed = {
+			quandl_error: {
+				code: 'QEAx01',
+				message:
+					'We could not recognize your API key: test-key. Please check your API key.',
+			},
+		};
+		const error = await capture(endpoints.databases.list, {}, echoed, {
 			status: 400,
 		}).catch((caught: unknown) => caught);
 
 		expect(String(error)).not.toContain('test-key');
+		expect(String(error)).toContain('[REDACTED]');
+		// The body is sanitized too, because core does not redact ApiError.body.
+		expect(JSON.stringify(asRecord(error)?.body)).not.toContain('test-key');
 	});
 });
 

@@ -1,31 +1,63 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { NasdaqAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
-// Nasdaq answers a bad key with a 400 QEAx01 body, not a 401, and its gateway
-// answers a blocked route with a 403 HTML page. The handlers separate those two
-// because one is fixable by the caller and the other is not.
+/**
+ * Nasdaq answers a bad key with a 400 QEAx01 body, not a 401, and its gateway
+ * answers a blocked route with a 403 HTML page. Both arrive as core's
+ * `ApiError`, so the handlers classify on its status and the `quandl_error.code`
+ * the client left in the sanitized body.
+ */
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+// unknown: the sanitized body is the provider's envelope; read field by field.
+function codeOf(error: Error): string | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	const body = error.body as { quandl_error?: { code?: unknown } } | undefined;
+	const code = body?.quandl_error?.code;
+	return typeof code === 'string' ? code : undefined;
+}
+
+/** A 403 with no `quandl_error` came from the gateway, not the API. */
+function isBlocked(error: Error): boolean {
+	return statusOf(error) === 403 && codeOf(error) === undefined;
+}
+
+const QEAx07_WAIT_MS = 30_000;
+
 export const errorHandlers = {
-	// QEAx07 asks for a 30-second wait and QEAx06 is the daily cap. Only the
-	// 30-second one can succeed on a retry; the daily cap cannot.
+	// QEAx07 asks for a 30-second wait, so the retry uses that window rather
+	// than a short backoff that would burn both attempts inside it. QEAx06 is
+	// the daily cap, which no retry clears.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof NasdaqAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof NasdaqAPIError && error.code === 'QEAx07' ? 2 : 0,
-			retryStrategy: 'linear_4s' as const,
-		}),
+		match: (error: Error) => {
+			const code = codeOf(error);
+			return statusOf(error) === 429 || code === 'QEAx06' || code === 'QEAx07';
+		},
+		handler: async (error: Error) => {
+			if (codeOf(error) !== 'QEAx07') return { maxRetries: 0 };
+			return {
+				maxRetries: 2,
+				// A real Retry-After still wins over this fallback.
+				headersRetryAfterMs: QEAx07_WAIT_MS,
+				retryStrategy: 'linear_4s' as const,
+			};
+		},
 	},
 	// QEAx01 is an unknown key and QEPx04 a missing one. Neither retries.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof NasdaqAPIError && error.isAuthError,
+		match: (error: Error) => {
+			const code = codeOf(error);
+			return code === 'QEAx01' || code === 'QEPx04' || statusOf(error) === 401;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// The gateway answered 403 with no JSON at all. Retrying the same way gets
-	// the same block, so this is reported rather than retried.
+	// the same block, so this is reported rather than retried. It sits before
+	// VALIDATION_ERROR, whose 403 branch would otherwise catch it first.
 	BLOCKED_ERROR: {
-		match: (error: Error) => error instanceof NasdaqAPIError && error.blocked,
+		match: (error: Error) => isBlocked(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// QESx06 is an expired cursor, which needs a fresh first page rather than a
@@ -33,20 +65,14 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			if (error.name === 'ZodError') return true;
-			return (
-				error instanceof NasdaqAPIError &&
-				!error.blocked &&
-				(error.status === 400 || error.status === 404)
-			);
+			const status = statusOf(error);
+			return status === 400 || status === 404;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Every wrapped route is a GET, so a 5xx can be replayed safely.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof NasdaqAPIError &&
-			!error.blocked &&
-			(error.status ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

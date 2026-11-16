@@ -48,51 +48,73 @@ function readQuandlMessage(body: unknown): string | undefined {
  *   the `/datasets/` time-series routes requested without a browser User-Agent.
  *   That is a block, not an auth failure, and the two read identically to a
  *   caller that only looks at the status.
+ *
+ * An HTTP failure stays core's `ApiError` (see `sanitizeApiError`), so its
+ * status, Retry-After and rate-limit fields reach core and the handlers. This
+ * class covers only a transport failure, which never had a response.
  */
 export class NasdaqAPIError extends Error {
-	readonly status?: number;
-	/** Nasdaq's own code, e.g. `QEAx01`. */
-	readonly code?: string;
-	/** True when a gateway blocked the request before it reached the API. */
-	readonly blocked: boolean;
 	readonly method?: string;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			blocked?: boolean;
-			method?: string;
-		} = {},
+		options: { cause?: Error; method?: string } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'NasdaqAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.blocked = options.blocked ?? false;
 		this.method = options.method;
 	}
+}
 
-	/**
-	 * True for the daily and per-interval call limits, which reset on their own.
-	 * `QEAx06` is the Tables daily limit and `QEAx07` asks for a 30-second wait.
-	 */
-	get isRateLimit(): boolean {
-		return (
-			this.status === 429 || this.code === 'QEAx06' || this.code === 'QEAx07'
-		);
-	}
+/**
+ * Rebuilds Nasdaq's HTTP error as a core `ApiError` with the key removed.
+ *
+ * Nasdaq echoes the submitted key in `quandl_error.message`, and core redacts
+ * the request URL and query but not `ApiError.body`. So the body is replaced
+ * with a `quandl_error` envelope whose message has the key stripped, and the
+ * sent query is dropped.
+ */
+function sanitizeApiError(error: ApiError, apiKey: string): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const code = readQuandlCode(error.body);
+	const message = readQuandlMessage(error.body);
+	const envelope =
+		code === undefined && message === undefined
+			? undefined
+			: {
+					quandl_error: {
+						code,
+						message:
+							message === undefined ? undefined : withoutKey(message, apiKey),
+					},
+				};
+	return new ApiError(
+		{ ...request, url: request.url.split('?')[0] ?? request.url },
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: envelope,
+		},
+		describeNasdaqError(error.status, error.body, error.message, apiKey),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
 
-	/** True when Nasdaq rejected the key rather than the query. */
-	get isAuthError(): boolean {
-		return (
-			this.code === 'QEAx01' ||
-			this.code === 'QEPx04' ||
-			(!this.blocked && this.status === 401)
-		);
-	}
+/** Removes the submitted key from provider text, wherever it appears. */
+function withoutKey(text: string, apiKey: string): string {
+	return apiKey.length > 0 ? text.split(apiKey).join('[REDACTED]') : text;
 }
 
 // unknown: see NasdaqAPIError.
@@ -100,6 +122,7 @@ export function describeNasdaqError(
 	status: number | undefined,
 	body: unknown,
 	fallback: string,
+	apiKey = '',
 ): string {
 	// A 403 with no JSON body is the gateway's HTML page, not the API.
 	if (status === 403 && readQuandlCode(body) === undefined) {
@@ -114,7 +137,8 @@ export function describeNasdaqError(
 			: fallback);
 	const code = readQuandlCode(body);
 	const label = [status, code].filter((part) => part !== undefined).join(' ');
-	return label ? `Nasdaq ${label}: ${text}` : text;
+	const summary = label ? `Nasdaq ${label}: ${text}` : text;
+	return withoutKey(summary, apiKey);
 }
 
 export type NasdaqQuery = Record<string, string | number | boolean | undefined>;
@@ -150,22 +174,10 @@ export async function makeNasdaqRequest(
 			rateLimitConfig: NASDAQ_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// api_key is on ApiError's redaction list, so error.message and
-			// error.url never carry it; the cause is dropped anyway.
-			throw new NasdaqAPIError(
-				describeNasdaqError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					code: readQuandlCode(error.body),
-					blocked:
-						error.status === 403 && readQuandlCode(error.body) === undefined,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error, apiKey);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
+			// A transport failure never had a response body, so its cause is safe.
 			throw new NasdaqAPIError(error.message, { cause: error, method });
 		}
 		throw new NasdaqAPIError('Unknown Nasdaq error', { method });

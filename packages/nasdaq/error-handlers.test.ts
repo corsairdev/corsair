@@ -1,4 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { NasdaqAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -23,24 +24,40 @@ async function strategy(error: Error) {
 	});
 }
 
+/**
+ * Builds the core `ApiError` the client produces: the status, and a sanitized
+ * body carrying Nasdaq's own code.
+ * unknown: the provider's error envelope; each case passes its own shape.
+ */
 function apiError(
 	status: number,
 	code?: string,
-	options: { blocked?: boolean } = {},
-) {
-	return new NasdaqAPIError(`Nasdaq ${status}: failed`, {
-		status,
-		code,
-		...options,
-	});
+	options: { retryAfter?: number } = {},
+): ApiError {
+	const body =
+		code === undefined ? undefined : { quandl_error: { code, message: 'x' } };
+	return new ApiError(
+		{ method: 'GET', url: '/datatables/NDAQ/RTAT10.json' },
+		{
+			url: 'https://data.nasdaq.com/api/v3/datatables/NDAQ/RTAT10.json',
+			ok: false,
+			status,
+			statusText: 'error',
+			body,
+		},
+		'Nasdaq failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('nasdaq error handlers', () => {
-	it('retries QEAx07, which asks for a 30-second wait', async () => {
-		const error = apiError(429, 'QEAx07');
+	it('retries QEAx07 after the 30 seconds it asks for', async () => {
+		const error = apiError(429, 'QEAx07', { retryAfter: 2000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
+			// The documented 30-second window, not a 4-second backoff.
+			headersRetryAfterMs: 30_000,
 			retryStrategy: 'linear_4s',
 		});
 	});
@@ -48,10 +65,7 @@ describe('nasdaq error handlers', () => {
 	it('does not retry QEAx06, the daily cap', async () => {
 		const error = apiError(403, 'QEAx06');
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 0,
-			retryStrategy: 'linear_4s',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('treats QEAx01 as a key problem', async () => {
@@ -61,12 +75,12 @@ describe('nasdaq error handlers', () => {
 	});
 
 	it('treats QEPx04 as a missing key', async () => {
-		const error = apiError(403, 'QEPx04');
-		expect(classify(error)).toBe('AUTH_ERROR');
+		expect(classify(apiError(403, 'QEPx04'))).toBe('AUTH_ERROR');
 	});
 
 	it('classifies a gateway 403 as blocked rather than auth', async () => {
-		const error = apiError(403, undefined, { blocked: true });
+		// No quandl_error in the body is the Incapsula page, not the API.
+		const error = apiError(403);
 		expect(classify(error)).toBe('BLOCKED_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
@@ -92,13 +106,8 @@ describe('nasdaq error handlers', () => {
 		});
 	});
 
-	it('does not replay a blocked request on 5xx', async () => {
-		const error = apiError(503, undefined, { blocked: true });
-		expect(classify(error)).not.toBe('SERVER_ERROR');
-	});
-
 	it('falls back to DEFAULT for a transport failure', () => {
-		expect(classify(new Error('socket hang up'))).toBe('DEFAULT');
+		expect(classify(new NasdaqAPIError('socket hang up'))).toBe('DEFAULT');
 	});
 });
 
@@ -120,12 +129,12 @@ describe('mergeErrorHandlers', () => {
 	it('runs a caller handler for a status no builtin covers', () => {
 		const custom = {
 			match: (error: Error) =>
-				error instanceof NasdaqAPIError && error.status === 502,
+				error instanceof ApiError && error.status === 502,
 			handler: async () => ({ maxRetries: 9 }),
 		};
 		const merged = mergeErrorHandlers(errorHandlers, { CUSTOM: custom });
 
-		const failure = new NasdaqAPIError('bad gateway', { status: 502 });
+		const failure = apiError(502);
 		const firstMatch = Object.entries(merged).find(([, entry]) =>
 			entry?.match?.(failure, {
 				pluginId: 'nasdaq',
