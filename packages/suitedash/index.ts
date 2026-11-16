@@ -208,7 +208,7 @@ export const suitedashEndpointMeta = {
 	'companies.update': {
 		riskLevel: 'write',
 		description:
-			"Change a company's details, tags, category, custom fields, communities or worlds. Only the fields sent change",
+			"Change a company's details, phones, address, tags or custom fields. Only the fields sent change",
 	},
 	'companies.meta': {
 		riskLevel: 'read',
@@ -226,12 +226,12 @@ export const suitedashEndpointMeta = {
 			'Read one contact by uid or email, with their roles, phones, addresses and custom fields',
 	},
 	'contacts.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create a contact. First name, last name, email and role are required, and the role decides portal access',
+			'Create a contact. First name, last name, email and role are required, and the role decides portal access. send_welcome_email sends the portal invitation',
 	},
 	'contacts.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Change a contact's details, addresses, tags or custom fields, optionally sending the portal welcome email",
 	},
@@ -265,9 +265,9 @@ export const suitedashEndpointMeta = {
 			'List the worlds on the account, which is a Power-up and answers a bare array rather than the CRM list envelope',
 	},
 	'marketing.subscribe': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Subscribe contacts to marketing audiences. The answer carries one result per subscriber, and a partial failure is reported there',
+			'Subscribe contacts to marketing audiences, which can start the emails those audiences send. The answer carries one result per subscriber, and a partial failure is reported there',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof suitedashEndpointsNested
@@ -310,17 +310,19 @@ export function suitedash<const T extends SuitedashPluginOptions>(
 		endpointSchemas: suitedashEndpointSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
+		// Core hands an endpoint one key string, so the Public ID and the Secret
+		// Key travel in it as JSON. A missing one throws AuthMissingError here,
+		// which is what makes Corsair offer a connect link.
 		keyBuilder: async (ctx: SuitedashKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint' || ctx.authType !== 'api_key') {
+				throw new AuthMissingError('suitedash', ctx.authType ?? 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+			const publicId = options.key ?? (await ctx.keys.get_api_key());
+			const secretKey = options.secretKey ?? (await ctx.keys.get_secret_key());
+			if (!publicId || !secretKey) {
+				throw new AuthMissingError('suitedash', 'api_key');
 			}
-
-			throw new AuthMissingError('suitedash', ctx.authType ?? 'api_key');
+			return JSON.stringify({ publicId, secretKey });
 		},
 	} satisfies InternalSuitedashPlugin;
 }

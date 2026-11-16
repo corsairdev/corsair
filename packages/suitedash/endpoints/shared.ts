@@ -3,27 +3,36 @@ import type { z } from 'zod';
 import type { SuitedashContext } from '..';
 import { makeSuitedashRequest } from '../client';
 import type { UnknownJson } from '../json';
+import { isJsonObject } from '../json';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
- * SuiteDash needs both credentials on every call. `key` carries the public id
- * and the secret key is a second account field, because there is no single-token
- * form.
+ * SuiteDash needs both credentials on every call. The key builder packs the
+ * Public ID and the Secret Key into `ctx.key` as JSON, because core hands the
+ * endpoint one key string and there is no single-token form.
  */
-export async function resolveCredentials(
-	ctx: SuitedashContext,
-): Promise<{ publicId: string; secretKey: string }> {
-	const secretKey =
-		ctx.options.secretKey ?? (await ctx.keys?.get_secret_key?.());
-	if (!secretKey) {
+export function resolveCredentials(ctx: SuitedashContext): {
+	publicId: string;
+	secretKey: string;
+} {
+	let parsed: UnknownJson;
+	try {
+		parsed = JSON.parse(ctx.key);
+	} catch {
+		parsed = undefined;
+	}
+	const record = isJsonObject(parsed) ? parsed : undefined;
+	const publicId = record?.publicId;
+	const secretKey = record?.secretKey;
+	if (typeof publicId !== 'string' || typeof secretKey !== 'string') {
 		throw new AuthMissingError(
 			'suitedash',
 			'api_key',
 			'[auth-missing:suitedash:secret_key] SuiteDash needs both a Public ID and a Secret Key. Store the Secret Key as secret_key on the account, or pass secretKey.',
 		);
 	}
-	return { publicId: ctx.key, secretKey };
+	return { publicId, secretKey };
 }
 
 /**
@@ -46,7 +55,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const credentials = await resolveCredentials(ctx);
+	const credentials = resolveCredentials(ctx);
 	const { method, path, query, body } = toRequest(parsed);
 	const raw = await makeSuitedashRequest(credentials, {
 		method,

@@ -3,14 +3,23 @@ import type { SuitedashKeyBuilderContext } from './index';
 import { suitedash, suitedashEndpointSchemas } from './index';
 
 /** The key builder only reads authType and keys. */
-function keyContext(apiKey: string | null) {
+function keyContext(
+	apiKey: string | null,
+	secretKey: string | null = 'stored-secret',
+) {
 	return {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
-		keys: { get_api_key: jest.fn().mockResolvedValue(apiKey) },
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue(apiKey),
+			get_secret_key: jest.fn().mockResolvedValue(secretKey),
+		},
 	};
 }
+
+const packed = (publicId: string, secretKey: string) =>
+	JSON.stringify({ publicId, secretKey });
 
 function buildKey(
 	plugin: ReturnType<typeof suitedash>,
@@ -122,24 +131,33 @@ describe('suitedash plugin definition', () => {
 });
 
 describe('suitedash key builder', () => {
-	it('prefers an explicit key option', async () => {
+	it('prefers explicit key and secret options', async () => {
 		const ctx = keyContext('stored-key');
 
-		await expect(buildKey(suitedash({ key: 'option-key' }), ctx)).resolves.toBe(
-			'option-key',
-		);
+		await expect(
+			buildKey(
+				suitedash({ key: 'option-key', secretKey: 'option-secret' }),
+				ctx,
+			),
+		).resolves.toBe(packed('option-key', 'option-secret'));
 		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
 	});
 
-	it('reads the stored API key', async () => {
+	it('packs the stored Public ID and Secret Key', async () => {
 		await expect(buildKey(suitedash(), keyContext('stored-key'))).resolves.toBe(
-			'stored-key',
+			packed('stored-key', 'stored-secret'),
 		);
 	});
 
 	it('throws AuthMissingError when no API key is stored', async () => {
 		await expect(
 			buildKey(suitedash(), keyContext(null)),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError when no secret key is stored, so Corsair offers a connect link', async () => {
+		await expect(
+			buildKey(suitedash(), keyContext('stored-key', null)),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
