@@ -1,4 +1,4 @@
-import { asRecord } from 'corsair/core';
+import { asRecord, logEventFromContext } from 'corsair/core';
 import type { SurveymonkeyEndpoints } from '..';
 import { makeSurveymonkeyRequest, segment } from '../client';
 import { call, listBody, queryOf, resolveBase, unwrapList } from './call';
@@ -117,8 +117,24 @@ export const update: SurveymonkeyEndpoints['webhooksUpdate'] = async (
 	input,
 ) => {
 	const parsed = Inputs.webhooksUpdate.parse(input ?? {});
-	const objectIds =
-		parsed.object_ids ?? (await currentObjectIds(ctx, parsed.webhook_id));
+	let objectIds = parsed.object_ids;
+	if (objectIds === undefined) {
+		try {
+			objectIds = await currentObjectIds(ctx, parsed.webhook_id);
+		} catch (error) {
+			// Same failed event `call` records, so a failed read shows in the history.
+			await logEventFromContext(
+				ctx,
+				'surveymonkey.webhooks.update',
+				{
+					failed: true,
+					error: error instanceof Error ? error.message : String(error),
+				},
+				'failed',
+			).catch(() => undefined);
+			throw error;
+		}
+	}
 	return call(
 		ctx,
 		{

@@ -292,7 +292,7 @@ await corsair.surveymonkey.api.collectors.update({ collector_id: '1234', status:
 | `redirect_type` | `url \| close \| loop` | No | — |
 | `password` | `string` | No | — |
 
-Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones. **`status` is the field that opens or closes it**, and `type` cannot be changed.
+Sends PATCH, so only the fields you pass change. **`status` is the field that opens or closes it**, and `type` cannot be changed.
 
 
 
@@ -963,7 +963,7 @@ await corsair.surveymonkey.api.contacts.update({ contact_id: '1234', last_name: 
 | `phone_number` | `string` | No | — |
 | `custom_fields` | `Record<string, string>` | No | — |
 
-Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones. `custom_fields` replaces the whole map.
+Sends PATCH, so only the fields you pass change. `custom_fields` replaces the whole map.
 
 
 
@@ -1669,7 +1669,7 @@ await corsair.surveymonkey.api.pages.update({ survey_id: '1234', page_id: '5678'
 | `description` | `string` | No | — |
 | `position` | `number` | No | — |
 
-Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones. `position` reorders the page within the survey.
+Sends PATCH, so only the fields you pass change. `position` reorders the page within the survey.
 
 
 
@@ -2131,7 +2131,7 @@ await corsair.surveymonkey.api.questions.update({ survey_id: '1234', page_id: '5
 | `visible` | `boolean` | No | — |
 | `answers` | `object` | No | — |
 
-Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones. `visible: false` hides the question without deleting it, and the answers already recorded stay.
+Sends PATCH, so only the fields you pass change. `visible: false` hides the question without deleting it, and the answers already recorded stay.
 
 <AccordionGroup>
 <Accordion title="headings full type">
