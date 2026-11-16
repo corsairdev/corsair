@@ -168,7 +168,11 @@ export class AccountSelectionError extends Error {
 	}
 }
 
-function parseConfig(config: AccountConfig): Record<string, string> {
+// Field names come from each plugin's authConfig at runtime, so this matches
+// encryptConfig/decryptConfig's open map. Typed per-plugin config: #2572.
+type SealedFields = Record<string, string>;
+
+function parseConfig(config: AccountConfig): SealedFields {
 	if (typeof config === 'string') {
 		try {
 			return JSON.parse(config);
@@ -176,7 +180,7 @@ function parseConfig(config: AccountConfig): Record<string, string> {
 			return {};
 		}
 	}
-	return (config as Record<string, string> | null) ?? {};
+	return (config as SealedFields | null) ?? {};
 }
 
 const toAccount = (r: {
@@ -400,7 +404,7 @@ export async function upsertAccount(i: {
 
 async function sealIdentity(
 	dek: string,
-	existing: Record<string, string>,
+	existing: SealedFields,
 	identity: AccountIdentity,
 ) {
 	const { account_label: _stale, ...kept } = existing;
