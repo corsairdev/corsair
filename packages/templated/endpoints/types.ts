@@ -35,8 +35,16 @@ export const LayerOverrideSchema = z.record(
 	z.unknown(),
 );
 
-export const RenderIdSchema = z.string().min(1).describe('The render ID.');
-export const TemplateIdSchema = z.string().min(1).describe('The template ID.');
+// An id goes into the path encoded, but `.` and `..` survive encoding and
+// fetch resolves them as dot segments, which would change the route.
+const PathId = z
+	.string()
+	.min(1)
+	.refine((value) => value !== '.' && value !== '..', 'Not a valid id.');
+
+export const RenderIdSchema = PathId.describe('The render ID.');
+export const TemplateIdSchema = PathId.describe('The template ID.');
+export const FolderIdSchema = PathId;
 
 // ── render ────────────────────────────────────────────────────────────────
 
@@ -509,14 +517,14 @@ export const FoldersCreateInputSchema = z.object({
 export type FoldersCreateInput = z.infer<typeof FoldersCreateInputSchema>;
 
 export const FoldersUpdateInputSchema = z.object({
-	folderId: z.string().min(1).describe('The folder to rename.'),
+	folderId: FolderIdSchema.describe('The folder to rename.'),
 	name: z.string().min(1).describe('The new folder name.'),
 });
 
 export type FoldersUpdateInput = z.infer<typeof FoldersUpdateInputSchema>;
 
 export const FoldersRemoveInputSchema = z.object({
-	folderId: z.string().min(1).describe('The folder to delete.'),
+	folderId: FolderIdSchema.describe('The folder to delete.'),
 });
 
 export type FoldersRemoveInput = z.infer<typeof FoldersRemoveInputSchema>;

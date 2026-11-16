@@ -569,6 +569,13 @@ describe('error handling', () => {
 		);
 	});
 
+	it('rejects a dot-segment id before sending', async () => {
+		await expect(
+			invoke(Renders.rendersRemove, { renderId: '..' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('encodes ids so a crafted one cannot reach another route', async () => {
 		respond(render);
 
