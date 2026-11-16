@@ -28,7 +28,7 @@ apiExamples:
   videos.create:
     call: "{ name: 'Product tour', url: 'https://youtu.be/abc123' }"
   videos.updateSource:
-    call: "{ video_id: 'MTM1NzgzNQ==', url: 'https://cdn.example.com/new.mp4' }"
+    call: "{ video_id: 1357835, url: 'https://cdn.example.com/new.mp4' }"
   videos.delete:
     call: "{ video_ids: [1234, 5678] }"
   videos.listTop:
