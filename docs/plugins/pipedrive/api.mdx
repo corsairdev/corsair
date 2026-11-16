@@ -14,9 +14,9 @@ description: "API reference for the Pipedrive plugin in Corsair: every `pipedriv
 
 `activities.create`
 
-Create a calendar activity
+Create a calendar activity; attendees get an email invitation when calendar sync is on
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pipedrive.api.activities.create({ subject: 'Follow up', type: 'call' });
@@ -46,7 +46,7 @@ await corsair.pipedrive.api.activities.create({ subject: 'Follow up', type: 'cal
 | `outcome` | `number \| null` | No | — |
 | `note` | `string` | No | — |
 
-OAuth requires activities:full. All request properties are optional in the v2 schema. Use participants to set the person; the response data is an activity object. The documented API token cost is 5 tokens.
+OAuth requires activities:full. All request properties are optional in the v2 schema. Use participants to set the person; the response data is an activity object. When the owner has calendar sync on, Pipedrive emails an invitation to every attendee, so this operation needs approval. The documented API token cost is 5 tokens.
 
 <AccordionGroup>
 <Accordion title="location full type">
@@ -98,35 +98,35 @@ OAuth requires activities:full. All request properties are optional in the v2 sc
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  subject?: string,
-  type?: string,
-  owner_id?: number,
-  creator_user_id?: number,
-  is_deleted?: boolean,
-  add_time?: string,
-  update_time?: string,
+  id?: number | null,
+  subject?: string | null,
+  type?: string | null,
+  owner_id?: number | null,
+  creator_user_id?: number | null,
+  is_deleted?: boolean | null,
+  add_time?: string | null,
+  update_time?: string | null,
   deal_id?: number | null,
   lead_id?: string | null,
   person_id?: number | null,
   org_id?: number | null,
   project_id?: number | null,
-  due_date?: string,
+  due_date?: string | null,
   due_time?: string | null,
   duration?: string | null,
-  busy?: boolean,
-  done?: boolean,
+  busy?: boolean | null,
+  done?: boolean | null,
   marked_as_done_time?: string | null,
   location?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -138,25 +138,25 @@ OAuth requires activities:full. All request properties are optional in the v2 sc
     postal_code?: string | null
   } | null,
   participants?: {
-    person_id?: number,
-    primary?: boolean
-  }[],
+    person_id?: number | null,
+    primary?: boolean | null
+  }[] | null,
   attendees?: {
-    email?: string,
-    name?: string,
-    status?: string,
-    is_organizer?: boolean,
-    person_id?: number,
-    user_id?: number
-  }[],
-  conference_meeting_client?: string,
-  conference_meeting_url?: string,
-  conference_meeting_id?: string,
-  public_description?: string,
-  priority?: number,
+    email?: string | null,
+    name?: string | null,
+    status?: string | null,
+    is_organizer?: boolean | null,
+    person_id?: number | null,
+    user_id?: number | null
+  }[] | null,
+  conference_meeting_client?: string | null,
+  conference_meeting_url?: string | null,
+  conference_meeting_id?: string | null,
+  public_description?: string | null,
+  priority?: number | null,
   outcome?: number | null,
-  note?: string
-}
+  note?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -191,16 +191,16 @@ OAuth requires activities:full. Deletion marks an activity deleted; Pipedrive pe
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number
-}
+  id?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -236,35 +236,35 @@ OAuth requires activities:read or activities:full. include_fields currently acce
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  subject?: string,
-  type?: string,
-  owner_id?: number,
-  creator_user_id?: number,
-  is_deleted?: boolean,
-  add_time?: string,
-  update_time?: string,
+  id?: number | null,
+  subject?: string | null,
+  type?: string | null,
+  owner_id?: number | null,
+  creator_user_id?: number | null,
+  is_deleted?: boolean | null,
+  add_time?: string | null,
+  update_time?: string | null,
   deal_id?: number | null,
   lead_id?: string | null,
   person_id?: number | null,
   org_id?: number | null,
   project_id?: number | null,
-  due_date?: string,
+  due_date?: string | null,
   due_time?: string | null,
   duration?: string | null,
-  busy?: boolean,
-  done?: boolean,
+  busy?: boolean | null,
+  done?: boolean | null,
   marked_as_done_time?: string | null,
   location?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -276,25 +276,25 @@ OAuth requires activities:read or activities:full. include_fields currently acce
     postal_code?: string | null
   } | null,
   participants?: {
-    person_id?: number,
-    primary?: boolean
-  }[],
+    person_id?: number | null,
+    primary?: boolean | null
+  }[] | null,
   attendees?: {
-    email?: string,
-    name?: string,
-    status?: string,
-    is_organizer?: boolean,
-    person_id?: number,
-    user_id?: number
-  }[],
-  conference_meeting_client?: string,
-  conference_meeting_url?: string,
-  conference_meeting_id?: string,
-  public_description?: string,
-  priority?: number,
+    email?: string | null,
+    name?: string | null,
+    status?: string | null,
+    is_organizer?: boolean | null,
+    person_id?: number | null,
+    user_id?: number | null
+  }[] | null,
+  conference_meeting_client?: string | null,
+  conference_meeting_url?: string | null,
+  conference_meeting_id?: string | null,
+  public_description?: string | null,
+  priority?: number | null,
   outcome?: number | null,
-  note?: string
-}
+  note?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -343,36 +343,36 @@ OAuth requires activities:read or activities:full. The limit is 1–500; use the
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  subject?: string,
-  type?: string,
-  owner_id?: number,
-  creator_user_id?: number,
-  is_deleted?: boolean,
-  add_time?: string,
-  update_time?: string,
+  id?: number | null,
+  subject?: string | null,
+  type?: string | null,
+  owner_id?: number | null,
+  creator_user_id?: number | null,
+  is_deleted?: boolean | null,
+  add_time?: string | null,
+  update_time?: string | null,
   deal_id?: number | null,
   lead_id?: string | null,
   person_id?: number | null,
   org_id?: number | null,
   project_id?: number | null,
-  due_date?: string,
+  due_date?: string | null,
   due_time?: string | null,
   duration?: string | null,
-  busy?: boolean,
-  done?: boolean,
+  busy?: boolean | null,
+  done?: boolean | null,
   marked_as_done_time?: string | null,
   location?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -384,25 +384,25 @@ OAuth requires activities:read or activities:full. The limit is 1–500; use the
     postal_code?: string | null
   } | null,
   participants?: {
-    person_id?: number,
-    primary?: boolean
-  }[],
+    person_id?: number | null,
+    primary?: boolean | null
+  }[] | null,
   attendees?: {
-    email?: string,
-    name?: string,
-    status?: string,
-    is_organizer?: boolean,
-    person_id?: number,
-    user_id?: number
-  }[],
-  conference_meeting_client?: string,
-  conference_meeting_url?: string,
-  conference_meeting_id?: string,
-  public_description?: string,
-  priority?: number,
+    email?: string | null,
+    name?: string | null,
+    status?: string | null,
+    is_organizer?: boolean | null,
+    person_id?: number | null,
+    user_id?: number | null
+  }[] | null,
+  conference_meeting_client?: string | null,
+  conference_meeting_url?: string | null,
+  conference_meeting_id?: string | null,
+  public_description?: string | null,
+  priority?: number | null,
   outcome?: number | null,
-  note?: string
-}[]
+  note?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -411,7 +411,7 @@ OAuth requires activities:read or activities:full. The limit is 1–500; use the
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -424,9 +424,9 @@ OAuth requires activities:read or activities:full. The limit is 1–500; use the
 
 `activities.update`
 
-Update a calendar activity
+Update a calendar activity; attendees get updated invitations when calendar sync is on
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pipedrive.api.activities.update({ id: 1, done: true });
@@ -457,7 +457,7 @@ await corsair.pipedrive.api.activities.update({ id: 1, done: true });
 | `outcome` | `number \| null` | No | — |
 | `note` | `string` | No | — |
 
-OAuth requires activities:full. The path ID is supplied as the input id and omitted from the JSON body. The documented API token cost is 5 tokens.
+OAuth requires activities:full. The path ID is supplied as the input id and omitted from the JSON body. With calendar sync on, changed guests, time or place email updated invitations or cancellations to attendees. The documented API token cost is 5 tokens.
 
 <AccordionGroup>
 <Accordion title="location full type">
@@ -509,35 +509,35 @@ OAuth requires activities:full. The path ID is supplied as the input id and omit
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  subject?: string,
-  type?: string,
-  owner_id?: number,
-  creator_user_id?: number,
-  is_deleted?: boolean,
-  add_time?: string,
-  update_time?: string,
+  id?: number | null,
+  subject?: string | null,
+  type?: string | null,
+  owner_id?: number | null,
+  creator_user_id?: number | null,
+  is_deleted?: boolean | null,
+  add_time?: string | null,
+  update_time?: string | null,
   deal_id?: number | null,
   lead_id?: string | null,
   person_id?: number | null,
   org_id?: number | null,
   project_id?: number | null,
-  due_date?: string,
+  due_date?: string | null,
   due_time?: string | null,
   duration?: string | null,
-  busy?: boolean,
-  done?: boolean,
+  busy?: boolean | null,
+  done?: boolean | null,
   marked_as_done_time?: string | null,
   location?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -549,25 +549,25 @@ OAuth requires activities:full. The path ID is supplied as the input id and omit
     postal_code?: string | null
   } | null,
   participants?: {
-    person_id?: number,
-    primary?: boolean
-  }[],
+    person_id?: number | null,
+    primary?: boolean | null
+  }[] | null,
   attendees?: {
-    email?: string,
-    name?: string,
-    status?: string,
-    is_organizer?: boolean,
-    person_id?: number,
-    user_id?: number
-  }[],
-  conference_meeting_client?: string,
-  conference_meeting_url?: string,
-  conference_meeting_id?: string,
-  public_description?: string,
-  priority?: number,
+    email?: string | null,
+    name?: string | null,
+    status?: string | null,
+    is_organizer?: boolean | null,
+    person_id?: number | null,
+    user_id?: number | null
+  }[] | null,
+  conference_meeting_client?: string | null,
+  conference_meeting_url?: string | null,
+  conference_meeting_id?: string | null,
+  public_description?: string | null,
+  priority?: number | null,
   outcome?: number | null,
-  note?: string
-}
+  note?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -626,38 +626,38 @@ API-token authentication is sent using Pipedrive's documented x-api-token header
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  owner_id?: number,
+  id?: number | null,
+  title?: string | null,
+  owner_id?: number | null,
   person_id?: number | null,
   org_id?: number | null,
-  pipeline_id?: number,
-  stage_id?: number,
-  value?: number,
-  currency?: string,
-  add_time?: string,
+  pipeline_id?: number | null,
+  stage_id?: number | null,
+  value?: number | null,
+  currency?: string | null,
+  add_time?: string | null,
   update_time?: string | null,
   stage_change_time?: string | null,
-  is_deleted?: boolean,
-  is_archived?: boolean,
-  status?: string,
+  is_deleted?: boolean | null,
+  is_archived?: boolean | null,
+  status?: string | null,
   probability?: number | null,
   lost_reason?: string | null,
-  visible_to?: number,
+  visible_to?: number | null,
   close_time?: string | null,
   won_time?: string | null,
   lost_time?: string | null,
   expected_close_date?: string | null,
-  label_ids?: number[],
-  origin?: string,
+  label_ids?: number[] | null,
+  origin?: string | null,
   origin_id?: string | null,
   channel?: number | null,
   channel_id?: string | null,
@@ -665,8 +665,8 @@ API-token authentication is sent using Pipedrive's documented x-api-token header
   arr?: number | null,
   mrr?: number | null,
   acv?: number | null,
-  custom_fields?: Record<string, any>
-}
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -701,16 +701,16 @@ OAuth requires the deals:full scope. The documented API token cost is 3 tokens.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number
-}
+  id?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -749,38 +749,38 @@ OAuth requires the deals:read or deals:full scope. The documented API token cost
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  owner_id?: number,
+  id?: number | null,
+  title?: string | null,
+  owner_id?: number | null,
   person_id?: number | null,
   org_id?: number | null,
-  pipeline_id?: number,
-  stage_id?: number,
-  value?: number,
-  currency?: string,
-  add_time?: string,
+  pipeline_id?: number | null,
+  stage_id?: number | null,
+  value?: number | null,
+  currency?: string | null,
+  add_time?: string | null,
   update_time?: string | null,
   stage_change_time?: string | null,
-  is_deleted?: boolean,
-  is_archived?: boolean,
-  status?: string,
+  is_deleted?: boolean | null,
+  is_archived?: boolean | null,
+  status?: string | null,
   probability?: number | null,
   lost_reason?: string | null,
-  visible_to?: number,
+  visible_to?: number | null,
   close_time?: string | null,
   won_time?: string | null,
   lost_time?: string | null,
   expected_close_date?: string | null,
-  label_ids?: number[],
-  origin?: string,
+  label_ids?: number[] | null,
+  origin?: string | null,
   origin_id?: string | null,
   channel?: number | null,
   channel_id?: string | null,
@@ -788,8 +788,8 @@ OAuth requires the deals:read or deals:full scope. The documented API token cost
   arr?: number | null,
   mrr?: number | null,
   acv?: number | null,
-  custom_fields?: Record<string, any>
-}
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -841,39 +841,39 @@ The list operation forwards Pipedrive's opaque cursor and returns additional_dat
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  owner_id?: number,
+  id?: number | null,
+  title?: string | null,
+  owner_id?: number | null,
   person_id?: number | null,
   org_id?: number | null,
-  pipeline_id?: number,
-  stage_id?: number,
-  value?: number,
-  currency?: string,
-  add_time?: string,
+  pipeline_id?: number | null,
+  stage_id?: number | null,
+  value?: number | null,
+  currency?: string | null,
+  add_time?: string | null,
   update_time?: string | null,
   stage_change_time?: string | null,
-  is_deleted?: boolean,
-  is_archived?: boolean,
-  status?: string,
+  is_deleted?: boolean | null,
+  is_archived?: boolean | null,
+  status?: string | null,
   probability?: number | null,
   lost_reason?: string | null,
-  visible_to?: number,
+  visible_to?: number | null,
   close_time?: string | null,
   won_time?: string | null,
   lost_time?: string | null,
   expected_close_date?: string | null,
-  label_ids?: number[],
-  origin?: string,
+  label_ids?: number[] | null,
+  origin?: string | null,
   origin_id?: string | null,
   channel?: number | null,
   channel_id?: string | null,
@@ -881,8 +881,8 @@ The list operation forwards Pipedrive's opaque cursor and returns additional_dat
   arr?: number | null,
   mrr?: number | null,
   acv?: number | null,
-  custom_fields?: Record<string, any>
-}[]
+  custom_fields?: Record<string, any> | null
+}[] | null
 ```
 </Accordion>
 
@@ -891,7 +891,7 @@ The list operation forwards Pipedrive's opaque cursor and returns additional_dat
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -950,38 +950,38 @@ OAuth requires the deals:full scope. The documented API token cost is 5 tokens.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  owner_id?: number,
+  id?: number | null,
+  title?: string | null,
+  owner_id?: number | null,
   person_id?: number | null,
   org_id?: number | null,
-  pipeline_id?: number,
-  stage_id?: number,
-  value?: number,
-  currency?: string,
-  add_time?: string,
+  pipeline_id?: number | null,
+  stage_id?: number | null,
+  value?: number | null,
+  currency?: string | null,
+  add_time?: string | null,
   update_time?: string | null,
   stage_change_time?: string | null,
-  is_deleted?: boolean,
-  is_archived?: boolean,
-  status?: string,
+  is_deleted?: boolean | null,
+  is_archived?: boolean | null,
+  status?: string | null,
   probability?: number | null,
   lost_reason?: string | null,
-  visible_to?: number,
+  visible_to?: number | null,
   close_time?: string | null,
   won_time?: string | null,
   lost_time?: string | null,
   expected_close_date?: string | null,
-  label_ids?: number[],
-  origin?: string,
+  label_ids?: number[] | null,
+  origin?: string | null,
   origin_id?: string | null,
   channel?: number | null,
   channel_id?: string | null,
@@ -989,8 +989,8 @@ OAuth requires the deals:full scope. The documented API token cost is 5 tokens.
   arr?: number | null,
   mrr?: number | null,
   acv?: number | null,
-  custom_fields?: Record<string, any>
-}
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1058,23 +1058,23 @@ OAuth requires contacts:full. Organization custom_fields values are arbitrary JS
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  owner_id?: number,
-  add_time?: string,
+  id?: number | null,
+  name?: string | null,
+  owner_id?: number | null,
+  add_time?: string | null,
   update_time?: string | null,
-  is_deleted?: boolean,
-  visible_to?: number,
+  is_deleted?: boolean | null,
+  visible_to?: number | null,
   address?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -1085,14 +1085,14 @@ OAuth requires contacts:full. Organization custom_fields values are arbitrary JS
     subpremise?: string | null,
     postal_code?: string | null
   } | null,
-  label_ids?: number[],
+  label_ids?: number[] | null,
   website?: string | null,
   linkedin?: string | null,
   industry?: number | null,
   annual_revenue?: number | null,
   employee_count?: number | null,
-  custom_fields?: Record<string, any>
-}
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1127,16 +1127,16 @@ OAuth requires contacts:full. Deletion marks the organization deleted; Pipedrive
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number
-}
+  id?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1175,23 +1175,23 @@ OAuth requires contacts:read or contacts:full. The documented API token cost is 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  owner_id?: number,
-  add_time?: string,
+  id?: number | null,
+  name?: string | null,
+  owner_id?: number | null,
+  add_time?: string | null,
   update_time?: string | null,
-  is_deleted?: boolean,
-  visible_to?: number,
+  is_deleted?: boolean | null,
+  visible_to?: number | null,
   address?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -1202,14 +1202,14 @@ OAuth requires contacts:read or contacts:full. The documented API token cost is 
     subpremise?: string | null,
     postal_code?: string | null
   } | null,
-  label_ids?: number[],
+  label_ids?: number[] | null,
   website?: string | null,
   linkedin?: string | null,
   industry?: number | null,
   annual_revenue?: number | null,
   employee_count?: number | null,
-  custom_fields?: Record<string, any>
-}
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1256,24 +1256,24 @@ OAuth requires contacts:read or contacts:full. List arrays are comma-separated; 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  owner_id?: number,
-  add_time?: string,
+  id?: number | null,
+  name?: string | null,
+  owner_id?: number | null,
+  add_time?: string | null,
   update_time?: string | null,
-  is_deleted?: boolean,
-  visible_to?: number,
+  is_deleted?: boolean | null,
+  visible_to?: number | null,
   address?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -1284,14 +1284,14 @@ OAuth requires contacts:read or contacts:full. List arrays are comma-separated; 
     subpremise?: string | null,
     postal_code?: string | null
   } | null,
-  label_ids?: number[],
+  label_ids?: number[] | null,
   website?: string | null,
   linkedin?: string | null,
   industry?: number | null,
   annual_revenue?: number | null,
   employee_count?: number | null,
-  custom_fields?: Record<string, any>
-}[]
+  custom_fields?: Record<string, any> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1300,7 +1300,7 @@ OAuth requires contacts:read or contacts:full. List arrays are comma-separated; 
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1366,23 +1366,23 @@ OAuth requires contacts:full. Organization custom_fields values are arbitrary JS
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  owner_id?: number,
-  add_time?: string,
+  id?: number | null,
+  name?: string | null,
+  owner_id?: number | null,
+  add_time?: string | null,
   update_time?: string | null,
-  is_deleted?: boolean,
-  visible_to?: number,
+  is_deleted?: boolean | null,
+  visible_to?: number | null,
   address?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -1393,14 +1393,14 @@ OAuth requires contacts:full. Organization custom_fields values are arbitrary JS
     subpremise?: string | null,
     postal_code?: string | null
   } | null,
-  label_ids?: number[],
+  label_ids?: number[] | null,
   website?: string | null,
   linkedin?: string | null,
   industry?: number | null,
   annual_revenue?: number | null,
   employee_count?: number | null,
-  custom_fields?: Record<string, any>
-}
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1504,38 +1504,38 @@ OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_t
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  first_name?: string,
-  last_name?: string,
-  owner_id?: number,
-  org_id?: number,
-  add_time?: string,
+  id?: number | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  owner_id?: number | null,
+  org_id?: number | null,
+  add_time?: string | null,
   update_time?: string | null,
   emails?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
   phones?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
-  is_deleted?: boolean,
-  visible_to?: number,
-  label_ids?: number[],
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
+  is_deleted?: boolean | null,
+  visible_to?: number | null,
+  label_ids?: number[] | null,
   picture_id?: number | null,
   postal_address?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -1546,16 +1546,16 @@ OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_t
     subpremise?: string | null,
     postal_code?: string | null
   } | null,
-  notes?: string,
+  notes?: string | null,
   im?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
-  birthday?: string,
-  job_title?: string,
-  custom_fields?: Record<string, any>
-}
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
+  birthday?: string | null,
+  job_title?: string | null,
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1590,16 +1590,16 @@ OAuth requires contacts:full. The documented API token cost is 3 tokens.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number
-}
+  id?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1638,38 +1638,38 @@ OAuth requires contacts:read or contacts:full. The documented API token cost is 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  first_name?: string,
-  last_name?: string,
-  owner_id?: number,
-  org_id?: number,
-  add_time?: string,
+  id?: number | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  owner_id?: number | null,
+  org_id?: number | null,
+  add_time?: string | null,
   update_time?: string | null,
   emails?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
   phones?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
-  is_deleted?: boolean,
-  visible_to?: number,
-  label_ids?: number[],
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
+  is_deleted?: boolean | null,
+  visible_to?: number | null,
+  label_ids?: number[] | null,
   picture_id?: number | null,
   postal_address?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -1680,16 +1680,16 @@ OAuth requires contacts:read or contacts:full. The documented API token cost is 
     subpremise?: string | null,
     postal_code?: string | null
   } | null,
-  notes?: string,
+  notes?: string | null,
   im?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
-  birthday?: string,
-  job_title?: string,
-  custom_fields?: Record<string, any>
-}
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
+  birthday?: string | null,
+  job_title?: string | null,
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1738,39 +1738,39 @@ OAuth requires contacts:read or contacts:full. List arrays are comma-separated; 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  first_name?: string,
-  last_name?: string,
-  owner_id?: number,
-  org_id?: number,
-  add_time?: string,
+  id?: number | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  owner_id?: number | null,
+  org_id?: number | null,
+  add_time?: string | null,
   update_time?: string | null,
   emails?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
   phones?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
-  is_deleted?: boolean,
-  visible_to?: number,
-  label_ids?: number[],
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
+  is_deleted?: boolean | null,
+  visible_to?: number | null,
+  label_ids?: number[] | null,
   picture_id?: number | null,
   postal_address?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -1781,16 +1781,16 @@ OAuth requires contacts:read or contacts:full. List arrays are comma-separated; 
     subpremise?: string | null,
     postal_code?: string | null
   } | null,
-  notes?: string,
+  notes?: string | null,
   im?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
-  birthday?: string,
-  job_title?: string,
-  custom_fields?: Record<string, any>
-}[]
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
+  birthday?: string | null,
+  job_title?: string | null,
+  custom_fields?: Record<string, any> | null
+}[] | null
 ```
 </Accordion>
 
@@ -1799,7 +1799,7 @@ OAuth requires contacts:read or contacts:full. List arrays are comma-separated; 
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1901,38 +1901,38 @@ OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_t
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  first_name?: string,
-  last_name?: string,
-  owner_id?: number,
-  org_id?: number,
-  add_time?: string,
+  id?: number | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  owner_id?: number | null,
+  org_id?: number | null,
+  add_time?: string | null,
   update_time?: string | null,
   emails?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
   phones?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
-  is_deleted?: boolean,
-  visible_to?: number,
-  label_ids?: number[],
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
+  is_deleted?: boolean | null,
+  visible_to?: number | null,
+  label_ids?: number[] | null,
   picture_id?: number | null,
   postal_address?: {
-    value?: string,
+    value?: string | null,
     country?: string | null,
     admin_area_level_1?: string | null,
     admin_area_level_2?: string | null,
@@ -1943,16 +1943,16 @@ OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_t
     subpremise?: string | null,
     postal_code?: string | null
   } | null,
-  notes?: string,
+  notes?: string | null,
   im?: {
-    value?: string,
-    primary?: boolean,
-    label?: string
-  }[],
-  birthday?: string,
-  job_title?: string,
-  custom_fields?: Record<string, any>
-}
+    value?: string | null,
+    primary?: boolean | null,
+    label?: string | null
+  }[] | null,
+  birthday?: string | null,
+  job_title?: string | null,
+  custom_fields?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2016,40 +2016,40 @@ OAuth requires products:full. name is required and cannot be empty; prices requi
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  code?: string,
-  unit?: string,
-  tax?: number,
-  is_deleted?: boolean,
-  is_linkable?: boolean,
-  visible_to?: 1 | 3 | 5 | 7,
-  owner_id?: number,
-  add_time?: string,
-  update_time?: string,
-  description?: string,
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  unit?: string | null,
+  tax?: number | null,
+  is_deleted?: boolean | null,
+  is_linkable?: boolean | null,
+  visible_to?: 1 | 3 | 5 | 7 | null,
+  owner_id?: number | null,
+  add_time?: string | null,
+  update_time?: string | null,
+  description?: string | null,
   category?: string | null,
-  custom_fields?: Record<string, any>,
-  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
-  billing_frequency_cycles?: number | null,
+  custom_fields?: Record<string, any> | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null,
+  billing_frequency_cycles?: number | null | null,
   prices?: {
-    price?: number,
-    cost?: number,
+    price?: number | null,
+    cost?: number | null,
     product_id?: number | null,
-    product_variation_id?: number,
+    product_variation_id?: number | null,
     currency?: string | null,
     direct_cost?: number | null,
-    notes?: string
-  }[]
-}
+    notes?: string | null
+  }[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2084,16 +2084,16 @@ OAuth requires products:full. Deletion marks the product deleted; Pipedrive perm
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number
-}
+  id?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2120,7 +2120,7 @@ await corsair.pipedrive.api.products.duplicate({ id: 1 });
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 
-OAuth requires products:full. This creates a duplicate including all variations, prices, and custom fields using POST /products/{id}/duplicate, with no request body. The documented API token cost is 5 tokens.
+OAuth requires products:full. This creates a duplicate including all variations, prices, and custom fields using POST /products/{id}/duplicate with an empty JSON body. The documented API token cost is 5 tokens.
 
 
 
@@ -2128,40 +2128,40 @@ OAuth requires products:full. This creates a duplicate including all variations,
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  code?: string,
-  unit?: string,
-  tax?: number,
-  is_deleted?: boolean,
-  is_linkable?: boolean,
-  visible_to?: 1 | 3 | 5 | 7,
-  owner_id?: number,
-  add_time?: string,
-  update_time?: string,
-  description?: string,
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  unit?: string | null,
+  tax?: number | null,
+  is_deleted?: boolean | null,
+  is_linkable?: boolean | null,
+  visible_to?: 1 | 3 | 5 | 7 | null,
+  owner_id?: number | null,
+  add_time?: string | null,
+  update_time?: string | null,
+  description?: string | null,
   category?: string | null,
-  custom_fields?: Record<string, any>,
-  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
-  billing_frequency_cycles?: number | null,
+  custom_fields?: Record<string, any> | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null,
+  billing_frequency_cycles?: number | null | null,
   prices?: {
-    price?: number,
-    cost?: number,
+    price?: number | null,
+    cost?: number | null,
     product_id?: number | null,
-    product_variation_id?: number,
+    product_variation_id?: number | null,
     currency?: string | null,
     direct_cost?: number | null,
-    notes?: string
-  }[]
-}
+    notes?: string | null
+  }[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2198,20 +2198,20 @@ OAuth requires products:read or products:full. The maximum page size is 500; pas
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  action?: string,
-  actor_user_id?: number,
-  follower_user_id?: number,
-  time?: string
-}[]
+  action?: string | null,
+  actor_user_id?: number | null,
+  follower_user_id?: number | null,
+  time?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -2220,7 +2220,7 @@ OAuth requires products:read or products:full. The maximum page size is 500; pas
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2264,8 +2264,8 @@ OAuth requires products:full. The request body requires the user_id of the user 
 
 ```ts
 {
-  user_id?: number,
-  add_time?: string
+  user_id?: number | null,
+  add_time?: string | null
 }
 ```
 </Accordion>
@@ -2302,16 +2302,16 @@ OAuth requires products:full. follower_id identifies the following user in the p
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  user_id?: number
-}
+  user_id?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2348,18 +2348,18 @@ OAuth requires products:read or products:full. The maximum page size is 500; pas
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  user_id?: number,
-  add_time?: string
-}[]
+  user_id?: number | null,
+  add_time?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -2368,7 +2368,7 @@ OAuth requires products:read or products:full. The maximum page size is 500; pas
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2403,40 +2403,40 @@ OAuth requires products:read or products:full. The documented API token cost is 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  code?: string,
-  unit?: string,
-  tax?: number,
-  is_deleted?: boolean,
-  is_linkable?: boolean,
-  visible_to?: 1 | 3 | 5 | 7,
-  owner_id?: number,
-  add_time?: string,
-  update_time?: string,
-  description?: string,
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  unit?: string | null,
+  tax?: number | null,
+  is_deleted?: boolean | null,
+  is_linkable?: boolean | null,
+  visible_to?: 1 | 3 | 5 | 7 | null,
+  owner_id?: number | null,
+  add_time?: string | null,
+  update_time?: string | null,
+  description?: string | null,
   category?: string | null,
-  custom_fields?: Record<string, any>,
-  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
-  billing_frequency_cycles?: number | null,
+  custom_fields?: Record<string, any> | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null,
+  billing_frequency_cycles?: number | null | null,
   prices?: {
-    price?: number,
-    cost?: number,
+    price?: number | null,
+    cost?: number | null,
     product_id?: number | null,
-    product_variation_id?: number,
+    product_variation_id?: number | null,
     currency?: string | null,
     direct_cost?: number | null,
-    notes?: string
-  }[]
-}
+    notes?: string | null
+  }[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2471,16 +2471,16 @@ OAuth requires products:full. This deletes the product's image. The documented A
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number
-}
+  id?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2523,13 +2523,13 @@ OAuth requires products:read or products:full. The response is image metadata an
 
 ```ts
 {
-  id?: number,
-  product_id?: number,
-  company_id?: string,
-  public_url?: string,
-  add_time?: string,
-  mime_type?: string,
-  name?: string
+  id?: number | null,
+  product_id?: number | null,
+  company_id?: string | null,
+  public_url?: string | null,
+  add_time?: string | null,
+  mime_type?: string | null,
+  name?: string | null
 }
 ```
 </Accordion>
@@ -2557,8 +2557,9 @@ await corsair.pipedrive.api.products.images.update({ id: 1, data: new Blob([awai
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `data` | `custom` | Yes | — |
+| `file_name` | `string` | No | — |
 
-OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes; no portable binary literal is provided. The documented API token cost is 20 tokens.
+OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it image.<type> from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens.
 
 
 
@@ -2574,13 +2575,13 @@ OAuth requires products:full. In this example, file is an existing runtime File 
 
 ```ts
 {
-  id?: number,
-  product_id?: number,
-  company_id?: string,
-  public_url?: string,
-  add_time?: string,
-  mime_type?: string,
-  name?: string
+  id?: number | null,
+  product_id?: number | null,
+  company_id?: string | null,
+  public_url?: string | null,
+  add_time?: string | null,
+  mime_type?: string | null,
+  name?: string | null
 }
 ```
 </Accordion>
@@ -2608,8 +2609,9 @@ await corsair.pipedrive.api.products.images.upload({ id: 1, data: new Blob([awai
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `data` | `custom` | Yes | — |
+| `file_name` | `string` | No | — |
 
-OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes; no portable binary literal is provided. The documented API token cost is 20 tokens.
+OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it image.<type> from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens.
 
 
 
@@ -2625,13 +2627,13 @@ OAuth requires products:full. In this example, file is an existing runtime File 
 
 ```ts
 {
-  id?: number,
-  product_id?: number,
-  company_id?: string,
-  public_url?: string,
-  add_time?: string,
-  mime_type?: string,
-  name?: string
+  id?: number | null,
+  product_id?: number | null,
+  company_id?: string | null,
+  public_url?: string | null,
+  add_time?: string | null,
+  mime_type?: string | null,
+  name?: string | null
 }
 ```
 </Accordion>
@@ -2675,41 +2677,41 @@ OAuth requires products:read or products:full. The maximum page size is 500; pas
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  code?: string,
-  unit?: string,
-  tax?: number,
-  is_deleted?: boolean,
-  is_linkable?: boolean,
-  visible_to?: 1 | 3 | 5 | 7,
-  owner_id?: number,
-  add_time?: string,
-  update_time?: string,
-  description?: string,
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  unit?: string | null,
+  tax?: number | null,
+  is_deleted?: boolean | null,
+  is_linkable?: boolean | null,
+  visible_to?: 1 | 3 | 5 | 7 | null,
+  owner_id?: number | null,
+  add_time?: string | null,
+  update_time?: string | null,
+  description?: string | null,
   category?: string | null,
-  custom_fields?: Record<string, any>,
-  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
-  billing_frequency_cycles?: number | null,
+  custom_fields?: Record<string, any> | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null,
+  billing_frequency_cycles?: number | null | null,
   prices?: {
-    price?: number,
-    cost?: number,
+    price?: number | null,
+    cost?: number | null,
     product_id?: number | null,
-    product_variation_id?: number,
+    product_variation_id?: number | null,
     currency?: string | null,
     direct_cost?: number | null,
-    notes?: string
-  }[]
-}[]
+    notes?: string | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 
@@ -2718,7 +2720,7 @@ OAuth requires products:read or products:full. The maximum page size is 500; pas
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2758,9 +2760,9 @@ OAuth accepts products:read, products:full, or search:read. term is 2–100 char
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2768,20 +2770,20 @@ OAuth accepts products:read, products:full, or search:read. term is 2–100 char
 ```ts
 {
   items?: {
-    result_score?: number,
+    result_score?: number | null,
     item?: {
-      id?: number,
-      type?: string,
-      name?: string,
+      id?: number | null,
+      type?: string | null,
+      name?: string | null,
       code?: string | null,
-      visible_to?: number,
+      visible_to?: number | null,
       owner?: {
-        id?: number
-      },
-      custom_fields?: string[]
-    }
-  }[]
-}
+        id?: number | null
+      } | null,
+      custom_fields?: string[] | null
+    } | null
+  }[] | null
+} | null
 ```
 </Accordion>
 
@@ -2790,7 +2792,7 @@ OAuth accepts products:read, products:full, or search:read. term is 2–100 char
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2853,40 +2855,40 @@ OAuth requires products:full. This is a partial PATCH; prices require price and 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  code?: string,
-  unit?: string,
-  tax?: number,
-  is_deleted?: boolean,
-  is_linkable?: boolean,
-  visible_to?: 1 | 3 | 5 | 7,
-  owner_id?: number,
-  add_time?: string,
-  update_time?: string,
-  description?: string,
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  unit?: string | null,
+  tax?: number | null,
+  is_deleted?: boolean | null,
+  is_linkable?: boolean | null,
+  visible_to?: 1 | 3 | 5 | 7 | null,
+  owner_id?: number | null,
+  add_time?: string | null,
+  update_time?: string | null,
+  description?: string | null,
   category?: string | null,
-  custom_fields?: Record<string, any>,
-  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly,
-  billing_frequency_cycles?: number | null,
+  custom_fields?: Record<string, any> | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null,
+  billing_frequency_cycles?: number | null | null,
   prices?: {
-    price?: number,
-    cost?: number,
+    price?: number | null,
+    cost?: number | null,
     product_id?: number | null,
-    product_variation_id?: number,
+    product_variation_id?: number | null,
     currency?: string | null,
     direct_cost?: number | null,
-    notes?: string
-  }[]
-}
+    notes?: string | null
+  }[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2938,27 +2940,27 @@ OAuth requires products:full. name is required and limited to 255 characters; ea
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  product_id?: number,
+  id?: number | null,
+  name?: string | null,
+  product_id?: number | null,
   prices?: {
-    price?: number,
-    cost?: number,
+    price?: number | null,
+    cost?: number | null,
     product_id?: number | null,
-    product_variation_id?: number,
+    product_variation_id?: number | null,
     currency?: string | null,
     direct_cost?: number | null,
-    notes?: string
-  }[]
-}
+    notes?: string | null
+  }[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2994,16 +2996,16 @@ OAuth requires products:full. This removes the specified product variation. The 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number
-}
+  id?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3040,28 +3042,28 @@ OAuth requires products:read or products:full. The maximum page size is 500; pas
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  product_id?: number,
+  id?: number | null,
+  name?: string | null,
+  product_id?: number | null,
   prices?: {
-    price?: number,
-    cost?: number,
+    price?: number | null,
+    cost?: number | null,
     product_id?: number | null,
-    product_variation_id?: number,
+    product_variation_id?: number | null,
     currency?: string | null,
     direct_cost?: number | null,
-    notes?: string
-  }[]
-}[]
+    notes?: string | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 
@@ -3070,7 +3072,7 @@ OAuth requires products:read or products:full. The maximum page size is 500; pas
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3123,27 +3125,27 @@ OAuth requires products:full. The parent product ID and product_variation_id are
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  product_id?: number,
+  id?: number | null,
+  name?: string | null,
+  product_id?: number | null,
   prices?: {
-    price?: number,
-    cost?: number,
+    price?: number | null,
+    cost?: number | null,
     product_id?: number | null,
-    product_variation_id?: number,
+    product_variation_id?: number | null,
     currency?: string | null,
     direct_cost?: number | null,
-    notes?: string
-  }[]
-}
+    notes?: string | null
+  }[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3190,8 +3192,8 @@ OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 | `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -3199,22 +3201,22 @@ OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. 
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  creator_id?: number,
+  id?: number | null,
+  title?: string | null,
+  creator_id?: number | null,
   description?: string | null,
-  project_id?: number,
-  is_done?: boolean,
-  is_milestone?: boolean,
+  project_id?: number | null,
+  is_done?: boolean | null,
+  is_milestone?: boolean | null,
   due_date?: string | null,
   start_date?: string | null,
   parent_task_id?: number | null,
-  assignee_ids?: number[],
+  assignee_ids?: number[] | null,
   priority?: number | null,
-  add_time?: string,
-  update_time?: string,
+  add_time?: string | null,
+  update_time?: string | null,
   marked_as_done_time?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3257,8 +3259,8 @@ OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 | `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -3266,8 +3268,8 @@ OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. 
 
 ```ts
 {
-  id?: number
-}
+  id?: number | null
+} | null
 ```
 </Accordion>
 
@@ -3310,8 +3312,8 @@ OAuth requires projects:read or projects:full. The Tasks endpoints are marked be
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 | `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -3319,22 +3321,22 @@ OAuth requires projects:read or projects:full. The Tasks endpoints are marked be
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  creator_id?: number,
+  id?: number | null,
+  title?: string | null,
+  creator_id?: number | null,
   description?: string | null,
-  project_id?: number,
-  is_done?: boolean,
-  is_milestone?: boolean,
+  project_id?: number | null,
+  is_done?: boolean | null,
+  is_milestone?: boolean | null,
   due_date?: string | null,
   start_date?: string | null,
   parent_task_id?: number | null,
-  assignee_ids?: number[],
+  assignee_ids?: number[] | null,
   priority?: number | null,
-  add_time?: string,
-  update_time?: string,
+  add_time?: string | null,
+  update_time?: string | null,
   marked_as_done_time?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3383,31 +3385,31 @@ OAuth requires projects:read or projects:full. The Tasks endpoints are marked be
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object[]` | No | — |
-| `additional_data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  creator_id?: number,
+  id?: number | null,
+  title?: string | null,
+  creator_id?: number | null,
   description?: string | null,
-  project_id?: number,
-  is_done?: boolean,
-  is_milestone?: boolean,
+  project_id?: number | null,
+  is_done?: boolean | null,
+  is_milestone?: boolean | null,
   due_date?: string | null,
   start_date?: string | null,
   parent_task_id?: number | null,
-  assignee_ids?: number[],
+  assignee_ids?: number[] | null,
   priority?: number | null,
-  add_time?: string,
-  update_time?: string,
+  add_time?: string | null,
+  update_time?: string | null,
   marked_as_done_time?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -3416,7 +3418,7 @@ OAuth requires projects:read or projects:full. The Tasks endpoints are marked be
 ```ts
 {
   next_cursor?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3462,8 +3464,8 @@ OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `data` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
 | `additional_data` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -3471,22 +3473,22 @@ OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. 
 
 ```ts
 {
-  id?: number,
-  title?: string,
-  creator_id?: number,
+  id?: number | null,
+  title?: string | null,
+  creator_id?: number | null,
   description?: string | null,
-  project_id?: number,
-  is_done?: boolean,
-  is_milestone?: boolean,
+  project_id?: number | null,
+  is_done?: boolean | null,
+  is_milestone?: boolean | null,
   due_date?: string | null,
   start_date?: string | null,
   parent_task_id?: number | null,
-  assignee_ids?: number[],
+  assignee_ids?: number[] | null,
   priority?: number | null,
-  add_time?: string,
-  update_time?: string,
+  add_time?: string | null,
+  update_time?: string | null,
   marked_as_done_time?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3502,3 +3504,4 @@ OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. 
 
 
 ---
+
