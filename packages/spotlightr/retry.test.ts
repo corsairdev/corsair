@@ -1,7 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { spotlightr } from './index';
-import { videoList, videoMetrics } from './test-fixtures';
+import { videoMetrics, videosPage } from './test-fixtures';
 
 /**
  * `requests.test.ts` calls the HTTP client, which is built with `maxRetries: 0`
@@ -53,11 +53,11 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({}, 429, { 'Retry-After': '1' });
-			respond(videoList);
+			respond(videosPage());
 
 			const result = await corsair.spotlightr.api.videos.list({});
 
-			expect(result).toHaveLength(2);
+			expect(result.videos.data).toHaveLength(2);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
@@ -151,13 +151,13 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({}, 429, { 'Retry-After': '2' });
-			respond(videoList);
+			respond(videosPage());
 
 			const pending = corsair.spotlightr.api.videos.list({});
 			await jest.advanceTimersByTimeAsync(1500);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			await jest.advanceTimersByTimeAsync(600);
-			await expect(pending).resolves.toHaveLength(2);
+			expect((await pending).videos.data).toHaveLength(2);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
@@ -170,13 +170,13 @@ describe('retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({}, 429);
-			respond(videoList);
+			respond(videosPage());
 
 			const pending = corsair.spotlightr.api.videos.list({});
 			await jest.advanceTimersByTimeAsync(900);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			await jest.advanceTimersByTimeAsync(200);
-			await expect(pending).resolves.toHaveLength(2);
+			expect((await pending).videos.data).toHaveLength(2);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();

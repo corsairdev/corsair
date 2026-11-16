@@ -31,7 +31,7 @@ describeIfKey('Spotlightr live API', () => {
 
 	it('lists videos through the output schema', async () => {
 		const parsed = videos.output.parse(await get('api/videos'));
-		expect(Array.isArray(parsed)).toBe(true);
+		expect(Array.isArray(parsed.videos.data)).toBe(true);
 	});
 
 	it('lists projects through the output schema', async () => {

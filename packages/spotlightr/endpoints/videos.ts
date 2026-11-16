@@ -1,5 +1,5 @@
 import type { SpotlightrEndpoints } from '..';
-import { call, flag, idList } from './call';
+import { call, flag } from './call';
 import {
 	SpotlightrEndpointInputSchemas,
 	SpotlightrEndpointOutputSchemas,
@@ -20,9 +20,10 @@ export const list: SpotlightrEndpoints['videosList'] = async (ctx, input) =>
 			query: {
 				videoID: parsed.video_id,
 				videoGroup: parsed.video_group,
+				page: parsed.page,
 			},
 		}),
-		{ log: (_parsed, result) => ({ videos: result.length }) },
+		{ log: (_parsed, result) => ({ videos: result.videos.data.length }) },
 	);
 
 export const create: SpotlightrEndpoints['videosCreate'] = async (ctx, input) =>
@@ -53,13 +54,15 @@ export const create: SpotlightrEndpoints['videosCreate'] = async (ctx, input) =>
 					flag(parsed.create) === undefined
 						? undefined
 						: String(flag(parsed.create)),
-				playerSettings: parsed.player_settings,
+				playerSettings:
+					parsed.player_settings === undefined
+						? undefined
+						: String(parsed.player_settings),
 			};
 			return { method: 'POST', path: 'api/createVideo', formData };
 		},
 		{
 			log: (parsed) => ({
-				name: parsed.name,
 				has_file: parsed.file !== undefined,
 				video_group: parsed.video_group,
 			}),
@@ -98,10 +101,11 @@ export const remove: SpotlightrEndpoints['videosDelete'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'POST',
 			path: 'api/deleteVideo',
-			// The reference documents `IDs` as an array such as `[1234,5678]`;
-			// `getFormData` would send an array as repeated fields, so it is sent
-			// as one comma-separated value instead.
-			formData: { IDs: idList(parsed.video_ids) },
+			// The reference documents `IDs` as an array such as `[1234,5678]`.
+			// Live (11-16), a comma-separated `IDs` answered an HTML 500 and
+			// repeated `IDs[]` fields deleted the video, so each id is its own
+			// `IDs[]` field.
+			formData: { 'IDs[]': parsed.video_ids.map(String) },
 		}),
 		{ log: (parsed) => ({ videos: parsed.video_ids.length }) },
 	);
@@ -163,12 +167,13 @@ export const views: SpotlightrEndpoints['videosViews'] = async (ctx, input) =>
 				customViewerID: parsed.custom_viewer_id,
 				onlyWatched: flag(parsed.only_watched),
 				allViews: flag(parsed.all_views),
+				page: parsed.page,
 			},
 		}),
 		{
 			log: (parsed, result) => ({
 				video_id: parsed.video_id,
-				views: result.length,
+				views: result.data.length,
 			}),
 		},
 	);

@@ -25,6 +25,29 @@ export const video = {
 
 export const videoList = [video, { ...video, id: 1357836, name: 'Onboarding' }];
 
+/**
+ * `GET api/videos` as the live API answers it (11-16, trimmed): a Laravel page
+ * object under `videos`. The page URLs carry the request's vooKey.
+ */
+export function videosPage(
+	data: object[] = videoList,
+	nextPageUrl: string | null = null,
+) {
+	return {
+		videos: {
+			total: data.length,
+			per_page: 1000,
+			current_page: 1,
+			last_page: 1,
+			next_page_url: nextPageUrl,
+			prev_page_url: null,
+			from: data.length ? 1 : null,
+			to: data.length || null,
+			data,
+		},
+	};
+}
+
 export const group = { id: 42, name: 'Marketing' };
 export const groupList = [group];
 
@@ -40,6 +63,23 @@ export const view = {
 };
 
 export const viewList = [view, { ...view, id: 9002, percentWatched: 4 }];
+
+/** `GET api/views/getViews` as the live API answers it (11-16, trimmed). */
+export const viewsPage = {
+	total: 2,
+	per_page: 30,
+	current_page: 1,
+	last_page: 1,
+	next_page_url: null,
+	prev_page_url: null,
+	from: 1,
+	to: 2,
+	data: viewList,
+	summary: { totalTime: 0 },
+};
+
+/** `POST groups` answers the new project's id as a bare number (live, 11-16). */
+export const createdGroupId = 71898;
 
 export const domain = { domain: 'acme.com' };
 export const domainList = [domain];

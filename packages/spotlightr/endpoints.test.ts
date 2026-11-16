@@ -9,7 +9,8 @@ import {
 	video,
 	videoList,
 	videoMetrics,
-	viewList,
+	videosPage,
+	viewsPage,
 } from './test-fixtures';
 
 describe('output schemas keep the provider field names', () => {
@@ -22,18 +23,27 @@ describe('output schemas keep the provider field names', () => {
 		expect(parsed).not.toHaveProperty('completionRate');
 	});
 
-	it('parses a video list whose ids are numbers', () => {
-		const parsed = SpotlightrEndpointOutputSchemas.listVideos.parse(videoList);
-		expect(parsed).toHaveLength(2);
-		expect(parsed[0]?.name).toBe('Product tour');
-		expect(parsed[0]?.videoGroup).toBe(42);
+	it('parses the paged video list the live API returns', () => {
+		const parsed = SpotlightrEndpointOutputSchemas.listVideos.parse(
+			videosPage(),
+		);
+		expect(parsed.videos.data).toHaveLength(2);
+		expect(parsed.videos.data[0]?.name).toBe('Product tour');
+		expect(parsed.videos.data[0]?.videoGroup).toBe(42);
+		expect(parsed.videos.per_page).toBe(1000);
+	});
+
+	it('rejects a bare array for the video list, which the API never sends', () => {
+		expect(() =>
+			SpotlightrEndpointOutputSchemas.listVideos.parse(videoList),
+		).toThrow();
 	});
 
 	it('parses a video whose id arrived as a string', () => {
-		const parsed = SpotlightrEndpointOutputSchemas.listVideos.parse([
-			{ ...video, id: '1357835' },
-		]);
-		expect(parsed[0]?.id).toBe('1357835');
+		const parsed = SpotlightrEndpointOutputSchemas.listVideos.parse(
+			videosPage([{ ...video, id: '1357835' }]),
+		);
+		expect(parsed.videos.data[0]?.id).toBe('1357835');
 	});
 
 	it('parses a project list', () => {
@@ -41,16 +51,30 @@ describe('output schemas keep the provider field names', () => {
 		expect(parsed[0]?.name).toBe('Marketing');
 	});
 
-	it('parses a view list with percentWatched', () => {
-		const parsed = SpotlightrEndpointOutputSchemas.listViews.parse(viewList);
-		expect(parsed[0]?.percentWatched).toBe(62);
-		expect(parsed[1]?.percentWatched).toBe(4);
+	it('parses the paged view list with percentWatched and summary', () => {
+		const parsed = SpotlightrEndpointOutputSchemas.listViews.parse(viewsPage);
+		expect(parsed.data[0]?.percentWatched).toBe(62);
+		expect(parsed.data[1]?.percentWatched).toBe(4);
+		expect(parsed.summary?.totalTime).toBe(0);
+	});
+
+	it('accepts the bare id projects.create returns', () => {
+		expect(SpotlightrEndpointOutputSchemas.createGroup.parse(71898)).toBe(
+			71898,
+		);
 	});
 
 	it('parses the top videos list with the same video schema', () => {
 		const parsed =
 			SpotlightrEndpointOutputSchemas.listTopVideos.parse(videoList);
 		expect(parsed).toHaveLength(2);
+	});
+
+	it('parses the bare-string domain list the live API returns', () => {
+		const parsed = SpotlightrEndpointOutputSchemas.listDomains.parse([
+			'corsair-plugin-test.corsair.dev',
+		]);
+		expect(parsed).toEqual(['corsair-plugin-test.corsair.dev']);
 	});
 
 	it('parses a domain list', () => {
@@ -127,10 +151,10 @@ describe('wrong-shaped bodies fail loudly', () => {
 		).toThrow(z.ZodError);
 	});
 
-	it('rejects a write answer that is a bare number', () => {
-		expect(() => SpotlightrEndpointOutputSchemas.createVideo.parse(42)).toThrow(
-			z.ZodError,
-		);
+	it('rejects a write answer that is a boolean', () => {
+		expect(() =>
+			SpotlightrEndpointOutputSchemas.createVideo.parse(true),
+		).toThrow(z.ZodError);
 	});
 
 	it('rejects a view list whose element is a string', () => {

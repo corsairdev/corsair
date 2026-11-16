@@ -17,7 +17,8 @@ import {
 	video,
 	videoList,
 	videoMetrics,
-	viewList,
+	videosPage,
+	viewsPage,
 } from './test-fixtures';
 import { captureError, invoke } from './test-helpers';
 
@@ -67,31 +68,56 @@ afterEach(() => {
 
 describe('videos', () => {
 	it('videos.list GETs api/videos with no filter', async () => {
-		respond(videoList);
+		respond(videosPage());
 
-		const result = (await invoke(VideosEndpoints.list, {})) as unknown[];
+		const result = (await invoke(VideosEndpoints.list, {})) as {
+			videos: { data: unknown[] };
+		};
 
 		expectAuthenticated();
 		expect(lastRequest()).toMatchObject({
 			path: '/api/videos',
 			method: 'GET',
 		});
-		expect(result).toHaveLength(2);
+		expect(result.videos.data).toHaveLength(2);
 	});
 
-	it('videos.list sends videoID and videoGroup when asked', async () => {
-		respond([video]);
+	it('videos.list sends the numeric videoID, videoGroup and page', async () => {
+		respond(videosPage([video]));
 
 		await invoke(VideosEndpoints.list, {
-			video_id: 'MTM1NzgzNQ==',
+			video_id: 1357835,
 			video_group: 42,
+			page: 2,
 		});
 
 		expect(lastRequest().query).toEqual({
-			videoID: 'MTM1NzgzNQ==',
+			videoID: '1357835',
 			videoGroup: '42',
+			page: '2',
 			vooKey: 'sl-test-key',
 		});
+	});
+
+	it('videos.list rejects a base64 watch-URL id, which matches no video', async () => {
+		await expect(
+			invoke(VideosEndpoints.list, { video_id: 'MTM1NzgzNQ==' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('masks the vooKey the page URLs echo back', async () => {
+		respond(
+			videosPage(
+				[video],
+				'https://api.spotlightr.com/api/videos?vooKey=sl-test-key&page=2',
+			),
+		);
+
+		const result = await invoke(VideosEndpoints.list, {});
+
+		expect(JSON.stringify(result)).not.toContain('sl-test-key');
+		expect(JSON.stringify(result)).toContain('vooKey=[REDACTED]&page=2');
 	});
 
 	it('videos.create posts a multipart body with the link', async () => {
@@ -165,9 +191,11 @@ describe('videos', () => {
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/api/deleteVideo');
 		expect(lastRequest().method).toBe('POST');
-		// The reference shows `[1234,5678]`; repeated form fields would leave the
-		// server reading only the first.
-		expect(formField('IDs')).toBe('1234,5678');
+		// A comma-separated IDs field answered an HTML 500 live (11-16); repeated
+		// `IDs[]` fields are what the API accepts.
+		const body = lastRequest().body as FormData;
+		expect(body.getAll('IDs[]')).toEqual(['1234', '5678']);
+		expect(body.get('IDs')).toBeNull();
 	});
 
 	it('videos.delete rejects an empty id list', async () => {
@@ -214,14 +242,16 @@ describe('videos', () => {
 	});
 
 	it('videos.views GETs getViews with the viewer filter', async () => {
-		respond(viewList);
+		respond(viewsPage);
 
-		const result = (await invoke(VideosEndpoints.views, {
-			video_id: '1357835',
-			custom_viewer_id: 'jane@acme.com',
-			only_watched: true,
-			all_views: false,
-		})) as unknown[];
+		const result = (
+			(await invoke(VideosEndpoints.views, {
+				video_id: '1357835',
+				custom_viewer_id: 'jane@acme.com',
+				only_watched: true,
+				all_views: false,
+			})) as { data: unknown[] }
+		).data;
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/api/views/getViews');

@@ -48,8 +48,3 @@ export function flag(value: boolean | undefined): 1 | 0 | undefined {
 	if (value === undefined) return undefined;
 	return value ? 1 : 0;
 }
-
-/** Renders a list as the comma-separated string `deleteVideo` expects. */
-export function idList(values: readonly (number | string)[]): string {
-	return values.join(',');
-}

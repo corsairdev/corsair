@@ -7,10 +7,43 @@ import { z } from 'zod';
  * return without inventing fields:
  *
  * - the metrics route is typed from a real response, field for field;
- * - every list route returns a bare array of objects, typed `.loose()` so the
- *   fields Spotlightr sends pass through;
- * - a write returns a URL string or an object, which is typed as a union.
+ * - `api/videos` and `getViews` answer a Laravel page object (`total`,
+ *   `current_page`, `last_page`, `data`, ...), checked live on 11-16; the
+ *   other list routes return a bare array of objects. Records are `.loose()`
+ *   so the fields Spotlightr sends pass through;
+ * - a write returns a URL string, a bare id, an object or an empty body,
+ *   which is typed as a union.
+ *
+ * Video ids are the numeric ids the API returns (`2051234`), not the base64
+ * form in watch URLs (`MjA1MTIzNA==`): a base64 id matches no video.
  */
+
+/** A numeric video id; numeric strings are accepted as well. */
+const VideoId = z
+	.union([z.number().int(), z.string().regex(/^\d+$/)])
+	.describe(
+		'Numeric video ID, as videos.list returns it (the base64 ID in a watch URL is its encoded form and is not accepted)',
+	);
+
+/** The paging fields Spotlightr's Laravel page objects carry. */
+const pageFields = {
+	total: z.number().nullish(),
+	per_page: z.union([z.number(), z.string()]).nullish(),
+	current_page: z.number().nullish(),
+	last_page: z.number().nullish(),
+	from: z.number().nullish(),
+	to: z.number().nullish(),
+	// The page URLs carry the request's vooKey; the client masks it.
+	next_page_url: z.string().nullish(),
+	prev_page_url: z.string().nullish(),
+};
+
+const Page = z
+	.number()
+	.int()
+	.min(1)
+	.optional()
+	.describe('Page number, from 1; see last_page in the answer');
 
 /** The one documented response body, copied from a live answer. */
 const VideoMetricsSchema = z
@@ -53,11 +86,15 @@ const ViewSchema = z
 	.loose();
 export type ViewOutput = z.output<typeof ViewSchema>;
 
-const DomainSchema = z
-	.object({
-		domain: z.string().nullish(),
-	})
-	.loose();
+/** `api/user/domain` answers bare strings (live, 11-16); objects are kept too. */
+const DomainSchema = z.union([
+	z.string(),
+	z
+		.object({
+			domain: z.string().nullish(),
+		})
+		.loose(),
+]);
 
 const StudentSchema = z
 	.object({
@@ -80,8 +117,13 @@ const AccessSchema = z
  */
 const WriteResultSchema = z.union([
 	z.string(),
+	// projects.create answers the new project's id as a bare number.
+	z.number(),
 	z.object({}).loose(),
 	z.array(z.object({}).loose()),
+	// updateSettings answers an empty body.
+	z.null(),
+	z.undefined(),
 ]);
 export type WriteResultOutput = z.output<typeof WriteResultSchema>;
 
@@ -94,19 +136,22 @@ const BoolFlagSchema = z
 // ---------------------------------------------------------------------------
 
 const ListVideosInputSchema = z.object({
-	video_id: z
-		.string()
-		.optional()
-		.describe('Only this video; the ID is the base64 value from the watch URL'),
+	video_id: VideoId.optional().describe('Only this video (numeric ID)'),
 	video_group: z
 		.number()
 		.int()
 		.optional()
 		.describe('Only videos in this project'),
+	page: Page,
 });
 export type ListVideosInput = z.input<typeof ListVideosInputSchema>;
 
-const VideosOutputSchema = z.array(VideoSchema);
+/** `api/videos` answers `{ videos: { total, per_page: 1000, ..., data } }`. */
+const VideosOutputSchema = z
+	.object({
+		videos: z.object({ ...pageFields, data: z.array(VideoSchema) }).loose(),
+	})
+	.loose();
 export type VideosOutput = z.output<typeof VideosOutputSchema>;
 
 const CreateVideoInputSchema = z
@@ -141,12 +186,9 @@ const CreateVideoInputSchema = z
 			.boolean()
 			.optional()
 			.describe('true confirms the write; false is a dry run'),
-		player_settings: z
-			.string()
-			.optional()
-			.describe(
-				"Another of your videos' base64 ID to copy player settings from",
-			),
+		player_settings: VideoId.optional().describe(
+			"Another of your videos' numeric ID to copy player settings from",
+		),
 	})
 	.superRefine((value, ctx) => {
 		// The reference requires `URL` unless a file is sent.
@@ -163,7 +205,9 @@ export type CreateVideoInput = z.input<typeof CreateVideoInputSchema>;
 const CreateVideoOutputSchema = WriteResultSchema;
 
 const VideoSourceInputSchema = z.object({
-	video_id: z.string().min(1).describe('Video source to be replaced'),
+	video_id: VideoId.describe(
+		'Numeric ID of the video whose source is replaced',
+	),
 	url: z.string().min(1).describe('New URL for the source'),
 });
 export type VideoSourceInput = z.input<typeof VideoSourceInputSchema>;
@@ -195,25 +239,33 @@ export type TopVideosInput = z.input<typeof TopVideosInputSchema>;
 const TopVideosOutputSchema = z.array(VideoSchema);
 
 const MetricsInputSchema = z.object({
-	video_id: z.string().min(1).describe('Video ID'),
+	video_id: VideoId,
 });
 export type MetricsInput = z.input<typeof MetricsInputSchema>;
 
 const ViewsInputSchema = z.object({
-	video_id: z.string().min(1),
+	video_id: VideoId,
 	custom_viewer_id: z
 		.string()
 		.optional()
 		.describe('ID or email of a known viewer'),
 	only_watched: z.boolean().optional().describe('Only views past 1% watched'),
 	all_views: z.boolean().optional().describe('Skip pagination'),
+	page: Page.describe('Page number, from 1; 30 views a page'),
 });
 export type ViewsInput = z.input<typeof ViewsInputSchema>;
 
-const ViewsOutputSchema = z.array(ViewSchema);
+/** `getViews` answers a page object with a `summary` beside the rows. */
+const ViewsOutputSchema = z
+	.object({
+		...pageFields,
+		data: z.array(ViewSchema),
+		summary: z.object({ totalTime: z.number().nullish() }).loose().nullish(),
+	})
+	.loose();
 
 const PlayerSettingsInputSchema = z.object({
-	video_id: z.string().min(1).describe('Base64-decoded video ID'),
+	video_id: VideoId,
 	settings: z
 		.record(
 			z.string(),
