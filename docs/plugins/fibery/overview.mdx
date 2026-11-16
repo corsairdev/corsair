@@ -1,0 +1,151 @@
+---
+title: "Fibery plugin"
+sidebarTitle: "Overview"
+description: "Manage Fibery workspace schema, entities, documents, files, views, and paginated change history through the documented HTTP APIs."
+---
+
+Use **Fibery** through Corsair: one client, typed API calls.
+
+Set workspaceUrl to the HTTPS origin of the Fibery workspace (such as https://acme.fibery.io). Static API tokens use Authorization: Token; OAuth access tokens use Authorization: Bearer. Fibery documents limits of 3 requests per second per token and 7 per second per workspace. Register an OAuth app in the target workspace; its scopes are openid and offline, and its token endpoint uses HTTP Basic client authentication. Corsair refreshes expired OAuth access tokens using the documented refresh grant. Entity-query pagination uses the documented fibery/id cursor pattern; history uses nextPage.sinceItem. Webhook administration, API-token lifecycle endpoints, and URL-based file import are intentionally not exposed.
+
+**What you get:**
+
+- 31 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/fibery better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/fibery better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/fibery better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/fibery better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { fibery } from '@corsair-dev/fibery';
+
+export const corsair = createCorsair({
+	plugins: [
+		fibery({
+			workspaceUrl: 'https://acme.fibery.io',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Fibery API key before the first call: `pnpm corsair setup --plugin=fibery --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+Replace the sample workspaceUrl with your Fibery workspace's HTTPS origin.
+
+```ts
+fibery({
+	workspaceUrl: 'https://acme.fibery.io',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Fibery OAuth app.
+
+Replace the sample workspaceUrl with your Fibery workspace's HTTPS origin.
+
+```ts
+fibery({
+	workspaceUrl: 'https://acme.fibery.io',
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'fibery',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a collaborative document**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fibery.api.document.get({ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532' });
+```
+
+
+**Update a collaborative document**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fibery.api.document.update({ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', content: 'Sample document text' });
+```
+
+
+See the full list on the [API](/plugins/fibery/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/fibery/api">
+    Every `fibery.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

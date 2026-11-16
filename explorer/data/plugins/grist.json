@@ -1,0 +1,2157 @@
+{
+  "id": "grist",
+  "displayName": "Grist",
+  "description": "Relational spreadsheet-database platform combining the flexibility of a spreadsheet with the robustness of a relational database.",
+  "npmPackageName": "@corsair-dev/grist",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 71,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "base_url"]
+    }
+  ],
+  "api": [
+    {
+      "path": "grist.api.attachments.get",
+      "shortPath": "attachments.get",
+      "description": "Get metadata for a specific attachment in a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachmentId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeUploaded",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.attachments.getTransferStatus",
+      "shortPath": "attachments.getTransferStatus",
+      "description": "Get current attachment transfer status for an external store",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "grist.api.attachments.list",
+      "shortPath": "attachments.list",
+      "description": "List metadata for attachments stored in a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: number, fields: { fileName?: string, fileSize?: number, timeUploaded?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.attachments.removeUnused",
+      "shortPath": "attachments.removeUnused",
+      "description": "Delete unused attachments from a document",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiredOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.attachments.updateUsed",
+      "shortPath": "attachments.updateUsed",
+      "description": "Update attachment usage tracking in a document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.attachments.verifyFiles",
+      "shortPath": "attachments.verifyFiles",
+      "description": "Verify attachment file integrity for a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.columns.add",
+      "shortPath": "columns.add",
+      "description": "Add new columns to a table in a document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ id?: string, fields: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.columns.delete",
+      "shortPath": "columns.delete",
+      "description": "Delete a column from a table",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "colId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.columns.list",
+      "shortPath": "columns.list",
+      "description": "List columns and metadata for a table",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ id: string, fields: Record<string, any> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.columns.replace",
+      "shortPath": "columns.replace",
+      "description": "Add or update column definitions in a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ id?: string, fields: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.columns.update",
+      "shortPath": "columns.update",
+      "description": "Modify column configurations or labels in a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ id: string, fields: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.copy",
+      "shortPath": "docs.copy",
+      "description": "Copy a document to a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "documentName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asTemplate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "grist.api.docs.create",
+      "shortPath": "docs.create",
+      "description": "Create a new Grist document or copy from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "documentName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceDocumentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asTemplate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "grist.api.docs.createInWorkspace",
+      "shortPath": "docs.createInWorkspace",
+      "description": "Create an empty document inside a specific workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isPinned",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "grist.api.docs.delete",
+      "shortPath": "docs.delete",
+      "description": "Permanently delete a document",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.fork",
+      "shortPath": "docs.fork",
+      "description": "Fork a document into a new unsaved document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forkId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urlId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.docs.get",
+      "shortPath": "docs.get",
+      "description": "Describe document metadata and containing workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "owners | editors | viewers | members | guests | string | null"
+          },
+          {
+            "key": "isPinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "urlId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id: number, name: string, access?: owners | editors | viewers | members | guests | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.docs.listAccess",
+      "shortPath": "docs.listAccess",
+      "description": "List users with access permissions to a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxInheritedRole",
+            "optional": true,
+            "type": "owners | editors | viewers | members | guests | string | null"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, name: string, email?: string, access?: owners | editors | viewers | members | guests | string | null, parentAccess?: owners | editors | viewers | members | guests | string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.docs.listSnapshots",
+      "shortPath": "docs.listSnapshots",
+      "description": "List historical snapshots of a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "raw",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshots",
+            "optional": false,
+            "type": "{ snapshotId: string, lastModified: string, docId: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.docs.modifyAccess",
+      "shortPath": "docs.modifyAccess",
+      "description": "Change user access permissions for a document; sharing with a new email address sends that person an invitation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxInheritedRole",
+            "optional": true,
+            "type": "owners | editors | viewers | null"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "Record<string, owners | editors | viewers | members | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.move",
+      "shortPath": "docs.move",
+      "description": "Move a document to a different workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.pin",
+      "shortPath": "docs.pin",
+      "description": "Pin a document for quick access",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.remove",
+      "shortPath": "docs.remove",
+      "description": "Move a document to the trash",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.removeSnapshots",
+      "shortPath": "docs.removeSnapshots",
+      "description": "Remove historical snapshots of a document",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "snapshotIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.unpin",
+      "shortPath": "docs.unpin",
+      "description": "Unpin a document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.unremove",
+      "shortPath": "docs.unremove",
+      "description": "Restore a document from the trash",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.docs.update",
+      "shortPath": "docs.update",
+      "description": "Modify document metadata such as name or pin status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPinned",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.orgs.delete",
+      "shortPath": "orgs.delete",
+      "description": "Delete an organization by ID and confirmed name",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.orgs.get",
+      "shortPath": "orgs.get",
+      "description": "Describe details of a specific organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: number, name: string, picture?: string | null, email?: string } | null"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "owners | editors | viewers | members | guests | string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.orgs.getUsage",
+      "shortPath": "orgs.getUsage",
+      "description": "Get organization resource and storage usage summary",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "grist.api.orgs.list",
+      "shortPath": "orgs.list",
+      "description": "List organizations accessible to the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, domain?: string | null, owner?: { id: number, name: string, picture?: string | null, email?: string } | null, access?: owners | editors | viewers | members | guests | string | null, createdAt?: string, updatedAt?: string }[]"
+      }
+    },
+    {
+      "path": "grist.api.orgs.listAccess",
+      "shortPath": "orgs.listAccess",
+      "description": "List users with access permissions to an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, name: string, email?: string, access?: owners | editors | viewers | members | guests | string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.orgs.modifyAccess",
+      "shortPath": "orgs.modifyAccess",
+      "description": "Change user access roles for an organization; sharing with a new email address sends that person an invitation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "Record<string, owners | editors | viewers | members | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.orgs.update",
+      "shortPath": "orgs.update",
+      "description": "Modify organization metadata such as its name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.profile.get",
+      "shortPath": "profile.get",
+      "description": "Get current authenticated user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "picture",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.profile.updateLocale",
+      "shortPath": "profile.updateLocale",
+      "description": "Update user locale preference",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.profile.updateName",
+      "shortPath": "profile.updateName",
+      "description": "Update user display name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.records.add",
+      "shortPath": "records.add",
+      "description": "Add new records with field values to a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noparse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ fields: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Delete records by record IDs from a table",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordIds",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.records.list",
+      "shortPath": "records.list",
+      "description": "Fetch records from a table with filtering and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cellFormat",
+            "optional": true,
+            "type": "normal | typed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: number, fields: Record<string, any>, errors?: Record<string, any> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.records.replace",
+      "shortPath": "records.replace",
+      "description": "Add or update records matching require criteria (upsert)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noparse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "onmany",
+            "optional": true,
+            "type": "first | none | all"
+          },
+          {
+            "key": "noadd",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "noupdate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_empty_require",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ require: Record<string, any>, fields?: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.records.update",
+      "shortPath": "records.update",
+      "description": "Modify existing records by record ID in a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noparse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: number, fields: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.serviceAccounts.create",
+      "shortPath": "serviceAccounts.create",
+      "description": "Create a new service account with an API key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "login",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasValidKey",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.serviceAccounts.delete",
+      "shortPath": "serviceAccounts.delete",
+      "description": "Delete a service account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "saId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.serviceAccounts.deleteApiKey",
+      "shortPath": "serviceAccounts.deleteApiKey",
+      "description": "Delete a service account API key",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "saId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.serviceAccounts.get",
+      "shortPath": "serviceAccounts.get",
+      "description": "Get service account details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "saId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "login",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasValidKey",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.serviceAccounts.list",
+      "shortPath": "serviceAccounts.list",
+      "description": "List all service accounts owned by the user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, login: string, label?: string | null, description?: string | null, expiresAt?: string | null, hasValidKey?: boolean }[]"
+      }
+    },
+    {
+      "path": "grist.api.serviceAccounts.regenerateApiKey",
+      "shortPath": "serviceAccounts.regenerateApiKey",
+      "description": "Generate a new API key for a service account; the previous key stops working",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "saId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "login",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasValidKey",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.serviceAccounts.update",
+      "shortPath": "serviceAccounts.update",
+      "description": "Modify service account name or label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "saId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.session.getActive",
+      "shortPath": "session.getActive",
+      "description": "Get active session details and current organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, name: string, picture?: string | null, email?: string }"
+          },
+          {
+            "key": "org",
+            "optional": true,
+            "type": "{ id: number, name: string, domain?: string | null, owner?: { id: number, name: string, picture?: string | null, email?: string } | null, access?: owners | editors | viewers | members | guests | string | null, createdAt?: string, updatedAt?: string } | null"
+          },
+          {
+            "key": "orgError",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.session.getAll",
+      "shortPath": "session.getAll",
+      "description": "Get all logged-in session accounts and organizations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: number, name: string, picture?: string | null, email?: string }[]"
+          },
+          {
+            "key": "orgs",
+            "optional": true,
+            "type": "{ id: number, name: string, domain?: string | null, owner?: { id: number, name: string, picture?: string | null, email?: string } | null, access?: owners | editors | viewers | members | guests | string | null, createdAt?: string, updatedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.sql.query",
+      "shortPath": "sql.query",
+      "description": "Execute a read-only SQL query with parameters against a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "(string | number | boolean | null)[]"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statement",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ fields: Record<string, any> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.sql.queryGet",
+      "shortPath": "sql.queryGet",
+      "description": "Execute a simple read-only SQL query via GET against a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statement",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ fields: Record<string, any> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.tables.create",
+      "shortPath": "tables.create",
+      "description": "Add new tables and their column definitions to a document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ id?: string, columns: { id?: string, fields?: Record<string, any> }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.tables.list",
+      "shortPath": "tables.list",
+      "description": "List tables within a Grist document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ id: string, fields: { tableRef?: number, onDemand?: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.tables.update",
+      "shortPath": "tables.update",
+      "description": "Modify table identifiers or on-demand loading settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ id: string, fields: { tableId?: string, onDemand?: boolean } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get details of a specific document template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "owners | editors | viewers | members | guests | string | null"
+          },
+          {
+            "key": "isPinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "urlId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id: number, name: string, access?: owners | editors | viewers | members | guests | string | null, org?: { id: number, name: string, domain?: string | null, owner?: { id: number, name: string, picture?: string | null, email?: string } | null, access?: owners | editors | viewers | members | guests | string | null, createdAt?: string, updatedAt?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List available document templates from the catalog",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, access?: owners | editors | viewers | members | guests | string | null, docs?: { id: string, name: string, access?: owners | editors | viewers | members | guests | string | null, isPinned?: boolean, urlId?: string | null }[], orgDomain?: string }[]"
+      }
+    },
+    {
+      "path": "grist.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a user from Grist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.users.disable",
+      "shortPath": "users.disable",
+      "description": "Disable a user account in Grist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.users.enable",
+      "shortPath": "users.enable",
+      "description": "Enable a previously disabled user account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.widgets.list",
+      "shortPath": "widgets.list",
+      "description": "List available custom widgets from the gallery",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, url?: string, widgetId?: string }[]"
+      }
+    },
+    {
+      "path": "grist.api.workspaces.create",
+      "shortPath": "workspaces.create",
+      "description": "Create a new empty workspace in an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number"
+      }
+    },
+    {
+      "path": "grist.api.workspaces.delete",
+      "shortPath": "workspaces.delete",
+      "description": "Permanently delete a workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "Describe a workspace and its documents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "owners | editors | viewers | members | guests | string | null"
+          },
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "{ id: string, name: string, access?: owners | editors | viewers | members | guests | string | null, isPinned?: boolean, urlId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List workspaces and their documents within an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, access?: owners | editors | viewers | members | guests | string | null, docs?: { id: string, name: string, access?: owners | editors | viewers | members | guests | string | null, isPinned?: boolean, urlId?: string | null }[] }[]"
+      }
+    },
+    {
+      "path": "grist.api.workspaces.listAccess",
+      "shortPath": "workspaces.listAccess",
+      "description": "List users with access permissions to a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxInheritedRole",
+            "optional": true,
+            "type": "owners | editors | viewers | members | guests | string | null"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, name: string, email?: string, access?: owners | editors | viewers | members | guests | string | null, parentAccess?: owners | editors | viewers | members | guests | string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "grist.api.workspaces.modifyAccess",
+      "shortPath": "workspaces.modifyAccess",
+      "description": "Change user access permissions for a workspace; sharing with a new email address sends that person an invitation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "maxInheritedRole",
+            "optional": true,
+            "type": "owners | editors | viewers | null"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "Record<string, owners | editors | viewers | members | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.workspaces.remove",
+      "shortPath": "workspaces.remove",
+      "description": "Move a workspace to the trash",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.workspaces.unremove",
+      "shortPath": "workspaces.unremove",
+      "description": "Restore a workspace from the trash",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "grist.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Modify workspace name or settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
