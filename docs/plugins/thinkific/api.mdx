@@ -14,9 +14,9 @@ description: "API reference for the Thinkific plugin in Corsair: every `thinkifi
 
 `bundles.createEnrollment`
 
-Create an Enrollment in a Bundle of Courses
+Create an Enrollment in a Bundle of Courses (Thinkific can email the learner)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thinkific.api.bundles.createEnrollment({ path: {"id":1}, body: {"user_id":1} });
@@ -1887,9 +1887,9 @@ await corsair.thinkific.api.customProfileFields.list({ query: {"page":1,"limit":
 
 `enrollments.create`
 
-Create enrollment
+Create enrollment (Thinkific can email the learner)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.thinkific.api.enrollments.create({ body: {"course_id":1,"user_id":1} });
@@ -4563,3 +4563,4 @@ await corsair.thinkific.api.users.update({ path: {"id":"sample"}, body: {"first_
 
 
 ---
+
