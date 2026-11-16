@@ -4743,27 +4743,19 @@
                 ]
               },
               {
+                "group": "Twelve Data",
+                "pages": [
+                  "plugins/twelvedata/overview",
+                  "plugins/twelvedata/api",
+                  "plugins/twelvedata/database"
+                ]
+              },
+              {
                 "group": "TwentyOne Risk",
                 "pages": [
                   "plugins/twentyonerisk/overview",
                   "plugins/twentyonerisk/api",
                   "plugins/twentyonerisk/database"
-                ]
-              },
-              {
-                "group": "Twelve Data",
-                "pages": [
-                  "plugins/twelvedata/overview",
-                  "plugins/twelvedata/api",
-                  "plugins/twelvedata/database"
-                ]
-              },
-              {
-                "group": "Twelve Data",
-                "pages": [
-                  "plugins/twelvedata/overview",
-                  "plugins/twelvedata/api",
-                  "plugins/twelvedata/database"
                 ]
               },
               {
