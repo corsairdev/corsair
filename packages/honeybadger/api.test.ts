@@ -37,7 +37,10 @@ describe('honeybadger live smoke', () => {
 
 	const plugin = honeybadger({ key: TOKEN });
 	const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
-	const schemas = plugin.endpointSchemas as Record<string, { output: { parse: (value: unknown) => unknown } }>;
+	const schemas = plugin.endpointSchemas as Record<
+		string,
+		{ output: { parse: (value: unknown) => unknown } }
+	>;
 
 	/**
 	 * Parses a live answer through the operation's own output schema, which is
