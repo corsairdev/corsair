@@ -314,7 +314,7 @@ describe('datasourceEntries', () => {
 
 		await invoke(DatasourceEntries.list, {
 			datasource_id: 777,
-			dimension: 'nl',
+			dimension: 456,
 		});
 
 		expect(lastRequest(fetchMock).path).toBe(
@@ -322,7 +322,7 @@ describe('datasourceEntries', () => {
 		);
 		expect(lastRequest(fetchMock).query).toEqual({
 			datasource_id: '777',
-			dimension: 'nl',
+			dimension: '456',
 		});
 	});
 
@@ -560,6 +560,28 @@ describe('releases', () => {
 });
 
 describe('error handling', () => {
+	it('drops the query from the error URL, since it can hold search text', async () => {
+		respond(fetchMock, { error: 'Unauthorized' }, 401);
+
+		const error = await invoke(Stories.list, {
+			text_search: 'alice@example.com',
+		}).catch(
+			// unknown: a rejection reason has no static type; narrowed below.
+			(caught: UnknownJson) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(JSON.stringify(error)).not.toContain('alice');
+		expect((error as ApiError).url).not.toContain('alice');
+	});
+
+	it('refuses a dot-only id instead of resolving it to the parent path', async () => {
+		await expect(invoke(Tags.remove, { tag_id: '..' })).rejects.toThrow(
+			/cannot be/,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('reads a 401 body and keeps the token out of util.inspect', async () => {
 		respond(fetchMock, authProblem, 401);
 		const util = await import('node:util');

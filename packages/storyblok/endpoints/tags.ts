@@ -42,7 +42,8 @@ export const update: StoryblokEndpoints['tagsUpdate'] = (ctx, input) =>
 			path: `/tags/${segment(tag_id)}`,
 			body: { tag: { name } },
 		}),
-		{ log: ({ tag_id }) => ({ tagId: tag_id }) },
+		// The tag id is the tag's name, free text that can hold personal data.
+		{ log: () => ({}) },
 	);
 
 export const remove: StoryblokEndpoints['tagsDelete'] = (ctx, input) =>
@@ -55,5 +56,6 @@ export const remove: StoryblokEndpoints['tagsDelete'] = (ctx, input) =>
 		},
 		input,
 		({ tag_id }) => ({ method: 'DELETE', path: `/tags/${segment(tag_id)}` }),
-		{ log: ({ tag_id }) => ({ tagId: tag_id }) },
+		// The tag id is the tag's name, free text that can hold personal data.
+		{ log: () => ({}) },
 	);

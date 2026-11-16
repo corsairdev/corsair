@@ -135,7 +135,13 @@ export type StoryblokRequest = {
 
 /** Encodes one path segment. */
 export function segment(value: string | number): string {
-	return encodeURIComponent(String(value));
+	const text = String(value);
+	// URL parsing resolves `.` and `..` even when encoded, so `/tags/..` would
+	// become the space itself; refuse them rather than send a request.
+	if (text === '.' || text === '..') {
+		throw new Error(`A Storyblok id cannot be "${text}".`);
+	}
+	return encodeURIComponent(text);
 }
 
 // unknown: callers parse the body with the endpoint's zod output schema, and the
@@ -179,7 +185,8 @@ export async function makeStoryblokRequest(
 			throw new ApiError(
 				{ method: error.request.method, url: error.request.url },
 				{
-					url: error.url,
+					// The query can hold search text such as an email address.
+					url: error.url.split('?')[0] ?? error.url,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
