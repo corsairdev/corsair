@@ -354,9 +354,8 @@ export const TemplatesCreateInputSchema = z.object({
 		.describe(
 			'The layers that make up a single-page template, each with `layer` and `type`.',
 		),
-	description: z.string().optional(),
-	folderId: z.string().optional(),
-	tags: z.array(z.string()).optional(),
+	// The create route documents no description, folder or tags, and a live
+	// create with `tags` came back with none; use templates.addTags after.
 });
 
 export type TemplatesCreateInput = z.input<typeof TemplatesCreateInputSchema>;
