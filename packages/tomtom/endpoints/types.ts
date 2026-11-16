@@ -64,8 +64,9 @@ const SearchResultSchema = z
 export type SearchResultOutput = z.output<typeof SearchResultSchema>;
 
 /**
- * The search envelope. `summary` carries the paging counters; `numResults` is
- * the total available, not the size of this page.
+ * The search envelope. `summary` carries the paging counters: `totalResults`
+ * is the total available, `numResults` the size of this page (live, 11-16:
+ * 5 and 100 for limit 5).
  */
 const SearchEnvelopeSchema = z
 	.object({

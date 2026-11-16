@@ -33,7 +33,7 @@ export const fuzzySearch: TomTomEndpoints['searchFuzzy'] = async (ctx, input) =>
 			log: (parsed, result) => ({
 				limit: parsed.limit ?? 10,
 				results: result.results.length,
-				total: result.summary?.numResults ?? undefined,
+				total: result.summary?.totalResults ?? undefined,
 			}),
 		},
 	);
