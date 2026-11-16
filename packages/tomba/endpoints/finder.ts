@@ -96,7 +96,9 @@ export const linkedinFinder: TombaEndpoints['finderLinkedin'] = async (
 		}),
 		{
 			log: (_parsed, result) => ({
-				found: result.data.email !== null && result.data.email !== undefined,
+				found: Array.isArray(result.data)
+					? result.data.some((entry) => Boolean(entry.email))
+					: Boolean(result.data.email),
 			}),
 		},
 	);

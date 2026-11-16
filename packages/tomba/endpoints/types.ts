@@ -536,7 +536,10 @@ const LinkedinFinderInputSchema = z.object({
 });
 export type LinkedinFinderInput = z.input<typeof LinkedinFinderInputSchema>;
 
-const LinkedinFinderOutputSchema = DataEnvelope(PersonSchema);
+// With `full`, every stored address comes back as an array.
+const LinkedinFinderOutputSchema = DataEnvelope(
+	z.union([PersonSchema, z.array(PersonSchema)]),
+);
 
 const AuthorFinderInputSchema = z.object({
 	url: z.string().min(1).describe('URL of the article'),
@@ -717,7 +720,10 @@ export type TechnologyInput = z.input<typeof TechnologyInputSchema>;
 const TechnologyOutputSchema = z
 	.object({
 		domain: z.string().nullish(),
-		data: z.array(TechnologySchema),
+		data: z
+			.array(TechnologySchema)
+			.nullish()
+			.describe('null when Tomba has no technology data for the domain'),
 	})
 	.loose();
 

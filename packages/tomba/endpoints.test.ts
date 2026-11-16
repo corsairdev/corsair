@@ -186,6 +186,22 @@ describe('the shapes the live API returned (11-16)', () => {
 		expect(() => TombaEndpointOutputSchemas[name].parse(body)).not.toThrow();
 	});
 
+	it('accepts the array a LinkedIn lookup returns with full=true', () => {
+		const parsed = TombaEndpointOutputSchemas.linkedinFinder.parse({
+			data: [person, { ...person, email: 'j.doe@stripe.com' }],
+		});
+		expect(Array.isArray(parsed.data) && parsed.data).toHaveLength(2);
+	});
+
+	it('accepts technology data of null for a domain with none', () => {
+		expect(() =>
+			TombaEndpointOutputSchemas.technology.parse({
+				domain: 'example.org',
+				data: null,
+			}),
+		).not.toThrow();
+	});
+
 	it('reads rate limits as an object keyed by route', () => {
 		const parsed = TombaEndpointOutputSchemas.rateLimits.parse(rateLimitsLive);
 		expect(parsed.data?.['email-finder']?.limits?.daily).toBe(5);

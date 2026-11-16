@@ -37,7 +37,7 @@ pnpm add @corsair-dev/tomba
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: API key plus API secret. Tomba needs both on every request: store the key as the account's `api_key` and the secret as its `api_secret` (or pass `key` and `apiSecret` to `tomba()`). Corsair prompts your tenant for them on first use.
 
 ## Webhooks
 
