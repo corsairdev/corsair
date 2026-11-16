@@ -129,7 +129,15 @@ const ContactCreateSchema = ContactFieldsSchema.superRefine(
 	},
 );
 
+// FreeAgent sends decimals as strings ("50.0") and may add enum values, so
+// responses read numbers and enums loosely; inputs above stay strict.
+const DecimalSchema = z.union([z.string(), z.number()]);
+
 const ContactSchema = ContactFieldsSchema.extend({
+	default_payment_terms_in_days: DecimalSchema.nullable().optional(),
+	charge_sales_tax: z.string().nullable().optional(),
+	status: z.string().nullable().optional(),
+	cis_deduction_rate: z.string().nullable().optional(),
 	url: z.string().url().optional(),
 	active_projects_count: z.number().optional(),
 	direct_debit_mandate_state: z.string().optional(),
@@ -166,6 +174,18 @@ const ProjectCreateSchema = ProjectFieldsSchema.extend({
 });
 
 const ProjectSchema = ProjectFieldsSchema.extend({
+	// A URL, or the contact object when the list asks for nested: true.
+	contact: z.union([z.string(), z.object({}).passthrough()]).optional(),
+	name: z.string().optional(),
+	status: z.string().optional(),
+	currency: z.string().optional(),
+	budget_units: z.string().optional(),
+	budget: DecimalSchema.nullable().optional(),
+	hours_per_day: DecimalSchema.nullable().optional(),
+	normal_billing_rate: DecimalSchema.nullable().optional(),
+	billing_period: z.string().nullable().optional(),
+	starts_on: z.string().nullable().optional(),
+	ends_on: z.string().nullable().optional(),
 	url: z.string().url().optional(),
 	contact_name: z.string().optional(),
 	is_deletable: z.boolean().optional(),
@@ -207,6 +227,22 @@ const InvoiceItemInputSchema = z
 		project: z.string().url().optional(),
 	})
 	.strict();
+
+// On update, an existing line is matched by its id (the last part of its url);
+// `_destroy: 1` with the id removes it. New lines use the create shape.
+const InvoiceItemUpdateInputSchema = z.union([
+	InvoiceItemInputSchema.extend({
+		id: z.union([z.string().min(1), z.number().int()]),
+		description: z.string().optional(),
+	}).strict(),
+	z
+		.object({
+			id: z.union([z.string().min(1), z.number().int()]),
+			_destroy: z.literal(1),
+		})
+		.strict(),
+	InvoiceItemInputSchema,
+]);
 
 const InvoiceItemResponseSchema = z
 	.object({
@@ -277,6 +313,12 @@ const InvoiceCreateSchema = InvoiceFieldsSchema.extend({
 
 const InvoiceSchema = InvoiceFieldsSchema.omit({ invoice_items: true })
 	.extend({
+		dated_on: z.string().optional(),
+		due_on: z.string().nullable().optional(),
+		payment_terms_in_days: DecimalSchema.nullable().optional(),
+		cis_deduction_rate: DecimalSchema.nullable().optional(),
+		discount_percent: DecimalSchema.nullable().optional(),
+		ec_status: z.string().nullable().optional(),
 		invoice_items: z.array(InvoiceItemResponseSchema).optional(),
 		url: z.string().url().optional(),
 		status: z.string().optional(),
@@ -444,7 +486,12 @@ export const FreeAgentEndpointInputSchemas = {
 	invoicesGet: z.object({ id: z.string().min(1) }).strict(),
 	invoicesCreate: z.object({ invoice: InvoiceCreateSchema }).strict(),
 	invoicesUpdate: z
-		.object({ id: z.string().min(1), invoice: InvoiceFieldsSchema })
+		.object({
+			id: z.string().min(1),
+			invoice: InvoiceFieldsSchema.extend({
+				invoice_items: z.array(InvoiceItemUpdateInputSchema).optional(),
+			}),
+		})
 		.strict(),
 	invoicesDelete: z.object({ id: z.string().min(1) }).strict(),
 	invoicesMarkSent: z.object({ id: z.string().min(1) }).strict(),
@@ -564,8 +611,9 @@ export const FreeAgentEndpointOutputSchemas = {
 	invoicesTimeline: z
 		.object({ invoice_timeline_items: z.array(InvoiceTimelineItemSchema) })
 		.passthrough(),
+	// `{}` when the company has no default text set.
 	invoicesDefaultAdditionalTextGet: z
-		.object({ default_additional_text: z.string() })
+		.object({ default_additional_text: z.string().optional() })
 		.passthrough(),
 	invoicesDefaultAdditionalTextUpdate: z
 		.object({ default_additional_text: z.string() })
