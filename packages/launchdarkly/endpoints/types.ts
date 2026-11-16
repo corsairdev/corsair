@@ -116,7 +116,8 @@ export const PrerequisiteSchema = z
 export const MigrationSettingsSchema = z
 	.object({
 		contextKind: z.string().optional(),
-		stageCount: z.enum(['2', '4', '6']),
+		// An integer: the API answers 'Unable to parse JSON' to "6" (checked live 11-16).
+		stageCount: z.union([z.literal(2), z.literal(4), z.literal(6)]),
 	})
 	.strict();
 

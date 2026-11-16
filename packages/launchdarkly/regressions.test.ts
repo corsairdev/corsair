@@ -1,6 +1,7 @@
-import { makeLaunchDarklyRequest } from './client';
+import { makeLaunchDarklyRequest, RATE_LIMIT_CONFIG } from './client';
 import {
 	ContextsGetOutputSchema,
+	FeatureFlagsCreateInputSchema,
 	TeamsGetOutputSchema,
 } from './endpoints/types';
 import { launchdarklyEndpointMeta } from './index';
@@ -52,10 +53,26 @@ describe('LaunchDarkly live-run regressions', () => {
 		}
 	});
 
+	it('reads X-Ratelimit-Reset for the retry delay', () => {
+		expect(RATE_LIMIT_CONFIG.headerNames.resetTime).toBe('x-ratelimit-reset');
+	});
+
+	it('takes the migration stage count as a number', () => {
+		const parsed = FeatureFlagsCreateInputSchema.safeParse({
+			projectKey: 'default',
+			key: 'migration-flag',
+			name: 'Migration flag',
+			purpose: 'migration',
+			migrationSettings: { stageCount: 6, contextKind: 'user' },
+		});
+		expect(parsed.success).toBe(true);
+	});
+
 	it('masks the key when header validation quotes it', async () => {
 		const failure = await makeLaunchDarklyRequest(
 			'/api/v2/projects',
 			'api-unit-test\nkey',
+			// `unknown` because a rejection can carry any value; the assertions below narrow it.
 		).catch((caught: unknown) => caught);
 		expect(failure).toBeInstanceOf(Error);
 		expect(String((failure as Error).message)).not.toContain('api-unit-test');

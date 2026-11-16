@@ -24,7 +24,9 @@ export const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	maxRetries: 0,
 	initialRetryDelay: 0,
 	backoffMultiplier: 1,
-	headerNames: { retryAfter: 'retry-after' },
+	// LaunchDarkly sends Retry-After only on IP limits; global and route limits carry
+	// X-Ratelimit-Reset (epoch milliseconds) instead.
+	headerNames: { retryAfter: 'retry-after', resetTime: 'x-ratelimit-reset' },
 };
 
 export const PUBLIC_ENDPOINTS = new Set(['root.get']);
