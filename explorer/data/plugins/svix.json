@@ -1,0 +1,3420 @@
+{
+  "id": "svix",
+  "displayName": "Svix",
+  "description": "Manage Svix webhook applications, endpoints, event types, messages, delivery attempts, and operational webhook endpoints.",
+  "npmPackageName": "@corsair-dev/svix",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 61,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "svix.api.applications.create",
+      "shortPath": "applications.create",
+      "description": "Create Application",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get_if_exists",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, throttleRate?: number | null, uid?: string | null, metadata?: Record<string, string> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.applications.delete",
+      "shortPath": "applications.delete",
+      "description": "Delete Application",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.applications.get",
+      "shortPath": "applications.get",
+      "description": "Get Application",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.applications.list",
+      "shortPath": "applications.list",
+      "description": "List Applications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exclude_apps_with_no_endpoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_apps_with_disabled_endpoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_apps_with_svix_play_endpoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ascending | descending | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uid?: string | null, name: string, throttleRate?: number | null, id: string, createdAt: string, updatedAt: string, metadata: Record<string, string> }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.applications.patch",
+      "shortPath": "applications.patch",
+      "description": "Patch Application",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name?: string, throttleRate?: number | null, uid?: string | null, metadata?: Record<string, string> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.applications.upsert",
+      "shortPath": "applications.upsert",
+      "description": "Upsert Application",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, throttleRate?: number | null, uid?: string | null, metadata?: Record<string, string> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.attempts.expungeContent",
+      "shortPath": "attempts.expungeContent",
+      "description": "Delete attempt response body",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "msg_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "attempt_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.attempts.get",
+      "shortPath": "attempts.get",
+      "description": "Get Attempt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "msg_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "attempt_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "expanded_statuses",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "responseStatusCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "responseDurationMs",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "0 | 1 | 2 | 3 | 4 | number"
+          },
+          {
+            "key": "statusText",
+            "optional": false,
+            "type": "success | pending | fail | sending | canceled | string"
+          },
+          {
+            "key": "triggerType",
+            "optional": false,
+            "type": "0 | 1 | number"
+          },
+          {
+            "key": "msgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endpointId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "{ eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, id: string, timestamp: string, tags?: string[] | null, deliverAt?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.attempts.listAttemptedDestinations",
+      "shortPath": "attempts.listAttemptedDestinations",
+      "description": "List Attempted Destinations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "msg_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: 0 | 1 | 2 | 3 | 4 | number, statusText: success | pending | fail | sending | canceled | string, nextAttempt?: string | null, url: string, description: string, throttleRate?: number | null, uid?: string | null, disabled?: boolean, eventTypes?: string[] | null, channels?: string[] | null, createdAt: string, updatedAt: string, expiry?: string | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.attempts.listAttemptedMessages",
+      "shortPath": "attempts.listAttemptedMessages",
+      "description": "List Attempted Messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3 | 4 | null"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "with_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expanded_statuses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ status: 0 | 1 | 2 | 3 | 4 | number, statusText: success | pending | fail | sending | canceled | string, nextAttempt?: string | null, eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, id: string, timestamp: string, tags?: string[] | null, deliverAt?: string | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.attempts.listByEndpoint",
+      "shortPath": "attempts.listByEndpoint",
+      "description": "List Attempts By Endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3 | 4 | null"
+          },
+          {
+            "key": "status_code_class",
+            "optional": true,
+            "type": "0 | 100 | 200 | 300 | 400 | 500 | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "with_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_msg",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expanded_statuses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ url: string, response: string, responseStatusCode: number, responseDurationMs: number, status: 0 | 1 | 2 | 3 | 4 | number, statusText: success | pending | fail | sending | canceled | string, triggerType: 0 | 1 | number, msgId: string, endpointId: string, id: string, timestamp: string, msg?: { eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, id: string, timestamp: string, tags?: string[] | null, deliverAt?: string | null } | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.attempts.listByMsg",
+      "shortPath": "attempts.listByMsg",
+      "description": "List Attempts By Msg",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3 | 4 | null"
+          },
+          {
+            "key": "status_code_class",
+            "optional": true,
+            "type": "0 | 100 | 200 | 300 | 400 | 500 | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "with_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expanded_statuses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "msg_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ url: string, response: string, responseStatusCode: number, responseDurationMs: number, status: 0 | 1 | 2 | 3 | 4 | number, statusText: success | pending | fail | sending | canceled | string, triggerType: 0 | 1 | number, msgId: string, endpointId: string, id: string, timestamp: string, msg?: { eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, id: string, timestamp: string, tags?: string[] | null, deliverAt?: string | null } | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.attempts.resend",
+      "shortPath": "attempts.resend",
+      "description": "Resend Webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "msg_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "svix.api.endpoints.bulkReplay",
+      "shortPath": "endpoints.bulkReplay",
+      "description": "Bulk Replay Messages",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ since: string, until?: string | null, eventTypes?: string[] | null, channel?: string | null, tag?: string | null, status?: 0 | 1 | 2 | 3 | 4 | null, statusCodeClass?: 0 | 100 | 200 | 300 | 400 | 500 | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | finished | failed | string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "endpoint.replay | endpoint.recover | application.stats | message.broadcast | sdk.generate | event-type.aggregate | application.purge_content | endpoint.bulk-replay | string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.create",
+      "shortPath": "endpoints.create",
+      "description": "Create Endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ url: string, description?: string, throttleRate?: number | null, uid?: string | null, disabled?: boolean, eventTypes?: string[] | null, channels?: string[] | null, secret?: string | null, metadata?: Record<string, string>, headers?: Record<string, string> | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.delete",
+      "shortPath": "endpoints.delete",
+      "description": "Delete Endpoint",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.endpoints.get",
+      "shortPath": "endpoints.get",
+      "description": "Get Endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.getAttemptStats",
+      "shortPath": "endpoints.getAttemptStats",
+      "description": "Endpoint Attempt Stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fail",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "canceled",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.getHeaders",
+      "shortPath": "endpoints.getHeaders",
+      "description": "Get Endpoint Headers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "sensitive",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.getSecret",
+      "shortPath": "endpoints.getSecret",
+      "description": "Get Endpoint Secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.getStats",
+      "shortPath": "endpoints.getStats",
+      "description": "Endpoint Stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pending",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sending",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fail",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "canceled",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.list",
+      "shortPath": "endpoints.list",
+      "description": "List Endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ascending | descending | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, metadata: Record<string, string>, url: string, description: string, throttleRate?: number | null, uid?: string | null, disabled?: boolean, eventTypes?: string[] | null, channels?: string[] | null, createdAt: string, updatedAt: string, expiry?: string | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.mcpEventsSubscribe",
+      "shortPath": "endpoints.mcpEventsSubscribe",
+      "description": "Subscribe to MCP Events",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, arguments?: Record<string, any>, delivery: { mode: webhook, url: string, secret: string }, ttlMs?: number | null, secretGracePeriodSeconds?: number | null, challengeMode?: challenge-response | echo, channels?: string[] | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endpointId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "refreshBefore",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.mcpEventsUnsubscribe",
+      "shortPath": "endpoints.mcpEventsUnsubscribe",
+      "description": "Unsubscribe from MCP Events",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, arguments?: Record<string, any>, delivery: { mode: webhook, url: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.endpoints.patch",
+      "shortPath": "endpoints.patch",
+      "description": "Patch Endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ description?: string, throttleRate?: number | null, uid?: string | null, url?: string, disabled?: boolean, eventTypes?: string[] | null, channels?: string[] | null, metadata?: Record<string, string> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.patchHeaders",
+      "shortPath": "endpoints.patchHeaders",
+      "description": "Patch Endpoint Headers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ headers: Record<string, string | null>, deleteHeaders?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.endpoints.recover",
+      "shortPath": "endpoints.recover",
+      "description": "Recover Failed Webhooks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ since: string, until?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | finished | failed | string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "endpoint.replay | endpoint.recover | application.stats | message.broadcast | sdk.generate | event-type.aggregate | application.purge_content | endpoint.bulk-replay | string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.replayMissing",
+      "shortPath": "endpoints.replayMissing",
+      "description": "Replay Missing Webhooks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ since: string, until?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | finished | failed | string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "endpoint.replay | endpoint.recover | application.stats | message.broadcast | sdk.generate | event-type.aggregate | application.purge_content | endpoint.bulk-replay | string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.rotateSecret",
+      "shortPath": "endpoints.rotateSecret",
+      "description": "Rotate Endpoint Secret",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ key?: string | null, gracePeriodSeconds?: number | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.sendExample",
+      "shortPath": "endpoints.sendExample",
+      "description": "Send Event Type Example Message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ eventType: string, exampleIndex?: number, payload?: Record<string, any> | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "deliverAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.setHeaders",
+      "shortPath": "endpoints.setHeaders",
+      "description": "Set Endpoint Headers",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ headers: Record<string, string> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.endpoints.transformationGet",
+      "shortPath": "endpoints.transformationGet",
+      "description": "Get Endpoint Transformation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.endpoints.transformationPatch",
+      "shortPath": "endpoints.transformationPatch",
+      "description": "Patch Endpoint Transformation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ code?: string | null, enabled?: boolean, variables?: Record<string, string> | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.endpoints.upsert",
+      "shortPath": "endpoints.upsert",
+      "description": "Upsert Endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ url: string, description?: string, throttleRate?: number | null, uid?: string | null, disabled?: boolean, eventTypes?: string[] | null, channels?: string[] | null, metadata?: Record<string, string> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.eventTypes.create",
+      "shortPath": "eventTypes.create",
+      "description": "Create Event Type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, description: string, descriptionTranslations?: Record<string, string> | null, archived?: boolean, deprecated?: boolean, schemas?: Record<string, any> | null, groupName?: string | null, featureFlags?: string[] | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "descriptionTranslations",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deprecated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "schemas",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "featureFlags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "featureFlag",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.eventTypes.delete",
+      "shortPath": "eventTypes.delete",
+      "description": "Delete Event Type",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type_name",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "expunge",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.eventTypes.get",
+      "shortPath": "eventTypes.get",
+      "description": "Get Event Type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type_name",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "descriptionTranslations",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deprecated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "schemas",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "featureFlags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "featureFlag",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.eventTypes.importOpenapi",
+      "shortPath": "eventTypes.importOpenapi",
+      "description": "Event Type Import From Openapi",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ dryRun?: boolean, replaceAll?: boolean, spec?: Record<string, any> | null, specRaw?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ modified: string[], to_modify?: { name: string, description: string, schemas?: Record<string, any> | null, deprecated: boolean, groupName?: string | null, featureFlags?: string[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.eventTypes.list",
+      "shortPath": "eventTypes.list",
+      "description": "List Event Types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ascending | descending | null"
+          },
+          {
+            "key": "include_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archive_status",
+            "optional": true,
+            "type": "active | archived | all | null"
+          },
+          {
+            "key": "with_content",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, description: string, descriptionTranslations?: Record<string, string> | null, archived?: boolean, deprecated: boolean, schemas?: Record<string, any> | null, createdAt: string, updatedAt: string, groupName?: string | null, featureFlags?: string[] | null, featureFlag?: string | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.eventTypes.patch",
+      "shortPath": "eventTypes.patch",
+      "description": "Patch Event Type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type_name",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ description?: string, descriptionTranslations?: Record<string, string> | null, archived?: boolean, deprecated?: boolean, schemas?: Record<string, any> | null, featureFlags?: string[] | null, groupName?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "descriptionTranslations",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deprecated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "schemas",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "featureFlags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "featureFlag",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.eventTypes.upsert",
+      "shortPath": "eventTypes.upsert",
+      "description": "Upsert Event Type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type_name",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ description: string, descriptionTranslations?: Record<string, string> | null, archived?: boolean, deprecated?: boolean, schemas?: Record<string, any> | null, featureFlags?: string[] | null, groupName?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "descriptionTranslations",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deprecated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "schemas",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "featureFlags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "featureFlag",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.bulkExpungeContent",
+      "shortPath": "messages.bulkExpungeContent",
+      "description": "Expunge a set of message payloads",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ ids?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "Record<string, expunged | not-found | string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Create Message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "with_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, application?: { name: string, throttleRate?: number | null, uid?: string | null, metadata?: Record<string, string> } | null, tags?: string[] | null, transformationsParams?: Record<string, any> | null, deliverAt?: string | null, payloadRetentionPeriod?: number | null, payloadRetentionHours?: number | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "deliverAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.createBatch",
+      "shortPath": "messages.createBatch",
+      "description": "Quickly Create a Batch of Messages",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ messages: { eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, tags?: string[] | null, transformationsParams?: Record<string, any> | null, deliverAt?: string | null, payloadRetentionPeriod?: number | null, payloadRetentionHours?: number | null }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "svix.api.messages.expungeAllContents",
+      "shortPath": "messages.expungeAllContents",
+      "description": "Expunge all message contents for an application",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "running | finished | failed | string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "endpoint.replay | endpoint.recover | application.stats | message.broadcast | sdk.generate | event-type.aggregate | application.purge_content | endpoint.bulk-replay | string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.expungeContent",
+      "shortPath": "messages.expungeContent",
+      "description": "Expunge one message payload",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "msg_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get Message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "msg_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "with_content",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "deliverAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List Messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "with_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, id: string, timestamp: string, tags?: string[] | null, deliverAt?: string | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.pollerConsumerPoll",
+      "shortPath": "messages.pollerConsumerPoll",
+      "description": "Poller Consumer Poll",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "sink_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "consumer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ headers?: Record<string, string> | null, eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, id: string, timestamp: string, tags?: string[] | null, deliverAt?: string | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.pollerConsumerSeek",
+      "shortPath": "messages.pollerConsumerSeek",
+      "description": "Poller Consumer Seek",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "sink_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "consumer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ after: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.pollerPoll",
+      "shortPath": "messages.pollerPoll",
+      "description": "Poller Poll",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "sink_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ headers?: Record<string, string> | null, eventId?: string | null, eventType: string, payload: Record<string, any>, channels?: string[] | null, id: string, timestamp: string, tags?: string[] | null, deliverAt?: string | null }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.messages.precheck",
+      "shortPath": "messages.precheck",
+      "description": "Create Message Precheck",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ eventType: string, channels?: string[] | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.create",
+      "shortPath": "operationalWebhooks.create",
+      "description": "Create Operational Webhook Endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ url: string, description?: string, throttleRate?: number | null, uid?: string | null, disabled?: boolean, eventTypes?: string[] | null, secret?: string | null, metadata?: Record<string, string>, headers?: Record<string, string> | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.delete",
+      "shortPath": "operationalWebhooks.delete",
+      "description": "Delete Operational Webhook Endpoint",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.get",
+      "shortPath": "operationalWebhooks.get",
+      "description": "Get Operational Webhook Endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.getHeaders",
+      "shortPath": "operationalWebhooks.getHeaders",
+      "description": "Get Operational Webhook Endpoint Headers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "sensitive",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.getSecret",
+      "shortPath": "operationalWebhooks.getSecret",
+      "description": "Get Operational Webhook Endpoint Secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.list",
+      "shortPath": "operationalWebhooks.list",
+      "description": "List Operational Webhook Endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ascending | descending | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, url: string, description: string, throttleRate?: number | null, uid?: string | null, disabled?: boolean, eventTypes?: string[] | null, createdAt: string, updatedAt: string, metadata: Record<string, string> }[]"
+          },
+          {
+            "key": "iterator",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "prevIterator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.rotateSecret",
+      "shortPath": "operationalWebhooks.rotateSecret",
+      "description": "Rotate Operational Webhook Endpoint Secret",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ key?: string | null, gracePeriodSeconds?: number | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.setHeaders",
+      "shortPath": "operationalWebhooks.setHeaders",
+      "description": "Set Operational Webhook Endpoint Headers",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ headers: Record<string, string> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "svix.api.operationalWebhooks.upsert",
+      "shortPath": "operationalWebhooks.upsert",
+      "description": "Upsert Operational Webhook Endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string & string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ url: string, description?: string, throttleRate?: number | null, uid?: string | null, disabled?: boolean, eventTypes?: string[] | null, metadata?: Record<string, string> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "throttleRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

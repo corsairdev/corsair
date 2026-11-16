@@ -1,0 +1,1445 @@
+{
+  "id": "postmark",
+  "displayName": "Postmark",
+  "description": "Transactional email API for sending single and batch messages, managing templates and streams, and reading delivery statistics.",
+  "npmPackageName": "@corsair-dev/postmark",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "postmark.api.bounces.activate",
+      "shortPath": "bounces.activate",
+      "description": "Reactivate an address Postmark deactivated after a bounce. A hard bounce that cannot be reactivated reports so",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The bounce id whose address should be reactivated."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Bounce",
+            "optional": true,
+            "type": "{ ID?: number | null, Type?: string | null, TypeCode?: number | null, Name?: string | null, Tag?: string | null, MessageID?: string | null, Description?: string | null, Details?: string | null, Email?: string | null, BouncedAt?: string | null, DumpAvailable?: boolean | null, Inactive?: boolean | null, CanActivate?: boolean | null, Subject?: string | null, ServerID?: number | null, MessageStream?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.bounces.delivery",
+      "shortPath": "bounces.delivery",
+      "description": "Read delivery statistics broken down by bounce type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "InactiveMails",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Bounces",
+            "optional": true,
+            "type": "{ Type?: string | null, Name?: string | null, Count?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.bounces.get",
+      "shortPath": "bounces.get",
+      "description": "Read one bounce by its numeric id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric bounce id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Type",
+            "optional": true,
+            "type": "string | null",
+            "description": "The bounce type, such as `HardBounce`."
+          },
+          {
+            "key": "TypeCode",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "MessageID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Details",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "BouncedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DumpAvailable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Inactive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "CanActivate",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ServerID",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "MessageStream",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.bounces.list",
+      "shortPath": "bounces.list",
+      "description": "List bounces filtered by type, address, tag, message or date window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number",
+            "description": "How many bounces to return, at most 500. Defaults to 100."
+          },
+          {
+            "key": "Offset",
+            "optional": true,
+            "type": "number",
+            "description": "How many to skip. Defaults to 0."
+          },
+          {
+            "key": "Type",
+            "optional": true,
+            "type": "string",
+            "description": "Only this bounce type, such as `HardBounce`."
+          },
+          {
+            "key": "Inactive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "EmailFilter",
+            "optional": true,
+            "type": "string",
+            "description": "Only this address."
+          },
+          {
+            "key": "Tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only bounces carrying this tag."
+          },
+          {
+            "key": "MessageID",
+            "optional": true,
+            "type": "string",
+            "description": "Only the bounce for this message."
+          },
+          {
+            "key": "FromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive start, as YYYY-MM-DD."
+          },
+          {
+            "key": "ToDate",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive end, as YYYY-MM-DD."
+          },
+          {
+            "key": "MessageStream",
+            "optional": true,
+            "type": "string",
+            "description": "Only this stream."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TotalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Bounces",
+            "optional": false,
+            "type": "{ ID?: number | null, Type?: string | null, TypeCode?: number | null, Name?: string | null, Tag?: string | null, MessageID?: string | null, Description?: string | null, Details?: string | null, Email?: string | null, BouncedAt?: string | null, DumpAvailable?: boolean | null, Inactive?: boolean | null, CanActivate?: boolean | null, Subject?: string | null, ServerID?: number | null, MessageStream?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.email.send",
+      "shortPath": "email.send",
+      "description": "Send one transactional email. This delivers a real message and cannot be recalled once Postmark accepts it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "From",
+            "optional": false,
+            "type": "string",
+            "description": "The sender. The address needs a confirmed Sender Signature or a verified domain."
+          },
+          {
+            "key": "To",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated addresses. `To`, `Cc` and `Bcc` together allow 50, and each address is at most 254 characters."
+          },
+          {
+            "key": "Cc",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated addresses. `To`, `Cc` and `Bcc` together allow 50, and each address is at most 254 characters."
+          },
+          {
+            "key": "Bcc",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated addresses. `To`, `Cc` and `Bcc` together allow 50, and each address is at most 254 characters."
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string",
+            "description": "Max 2000 characters."
+          },
+          {
+            "key": "Tag",
+            "optional": true,
+            "type": "string",
+            "description": "Categorises the message for statistics."
+          },
+          {
+            "key": "HtmlBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TextBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ReplyTo",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated addresses. `To`, `Cc` and `Bcc` together allow 50, and each address is at most 254 characters."
+          },
+          {
+            "key": "Headers",
+            "optional": true,
+            "type": "{ Name: string, Value: string }[]",
+            "description": "Custom headers to include."
+          },
+          {
+            "key": "TrackOpens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "TrackLinks",
+            "optional": true,
+            "type": "None | HtmlAndText | HtmlOnly | TextOnly",
+            "description": "Which bodies get their links rewritten for tracking."
+          },
+          {
+            "key": "Attachments",
+            "optional": true,
+            "type": "{ Name: string, Content: string, ContentType: string, ContentID?: string }[]"
+          },
+          {
+            "key": "Metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "MessageStream",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the `outbound` transactional stream."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ To?: string | null, SubmittedAt?: string | null, MessageID?: string | null, ErrorCode?: number | null, Message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.email.sendBatch",
+      "shortPath": "email.sendBatch",
+      "description": "Send up to 500 emails in one request. The response is a per-message result list, and a 200 does not mean every message was sent",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Messages",
+            "optional": false,
+            "type": "{ From: string, To: string, Cc?: string, Bcc?: string, Subject?: string, Tag?: string, HtmlBody?: string, TextBody?: string, ReplyTo?: string, Headers?: { Name: string, Value: string }[], TrackOpens?: boolean, TrackLinks?: None | HtmlAndText | HtmlOnly | TextOnly, Attachments?: { Name: string, Content: string, ContentType: string, ContentID?: string }[], Metadata?: Record<string, string>, MessageStream?: string }[]",
+            "description": "Up to 500 messages, which is the API limit per request."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ To?: string | null, SubmittedAt?: string | null, MessageID?: string | null, ErrorCode?: number | null, Message?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.server.get",
+      "shortPath": "server.get",
+      "description": "Read this server's settings, including its delivery type and whether SMTP is on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SmtpApiActivated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "RawEmailEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DeliveryType",
+            "optional": true,
+            "type": "string | null",
+            "description": "`Live` or `Sandbox`. It cannot change after creation."
+          },
+          {
+            "key": "ServerLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "InboundAddress",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "InboundHookUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "BounceHookUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OpenHookUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DeliveryHookUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PostFirstOpenOnly",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "InboundDomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "InboundHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "InboundSpamThreshold",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TrackOpens",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "TrackLinks",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.server.update",
+      "shortPath": "server.update",
+      "description": "Change server settings such as tracking, hook URLs and the inbound spam threshold",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Color",
+            "optional": true,
+            "type": "Purple | Blue | Turquoise | Green | Red | Yellow | Grey | Orange"
+          },
+          {
+            "key": "SmtpApiActivated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "RawEmailEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "TrackOpens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "TrackLinks",
+            "optional": true,
+            "type": "None | HtmlAndText | HtmlOnly | TextOnly"
+          },
+          {
+            "key": "InboundHookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BounceHookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OpenHookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DeliveryHookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PostFirstOpenOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "InboundDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "InboundSpamThreshold",
+            "optional": true,
+            "type": "number",
+            "description": "A spam threshold between 0 and 30."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SmtpApiActivated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "RawEmailEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DeliveryType",
+            "optional": true,
+            "type": "string | null",
+            "description": "`Live` or `Sandbox`. It cannot change after creation."
+          },
+          {
+            "key": "ServerLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "InboundAddress",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "InboundHookUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "BounceHookUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OpenHookUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DeliveryHookUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PostFirstOpenOnly",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "InboundDomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "InboundHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "InboundSpamThreshold",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TrackOpens",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "TrackLinks",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.stats.overview",
+      "shortPath": "stats.overview",
+      "description": "Read the outbound overview: sends, opens, clicks, bounces and spam complaints with their rates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages with this tag."
+          },
+          {
+            "key": "FromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive start, as YYYY-MM-DD. It cannot be older than a year."
+          },
+          {
+            "key": "ToDate",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive end, as YYYY-MM-DD."
+          },
+          {
+            "key": "MessageStream",
+            "optional": true,
+            "type": "string",
+            "description": "Only this stream."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Sent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Bounced",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "SMTPApiErrors",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "BounceRate",
+            "optional": true,
+            "type": "number | null",
+            "description": "A percentage of Sent."
+          },
+          {
+            "key": "SpamComplaints",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "SpamComplaintsRate",
+            "optional": true,
+            "type": "number | null",
+            "description": "A percentage of Sent."
+          },
+          {
+            "key": "Opens",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UniqueOpens",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Tracked",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "WithLinkTracking",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "WithOpenTracking",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TotalTrackedLinksSent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UniqueLinksClicked",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TotalClicks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "WithClientRecorded",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "WithPlatformRecorded",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "WithReadTimeRecorded",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.stats.sends",
+      "shortPath": "stats.sends",
+      "description": "Read the daily sent count over a date window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages with this tag."
+          },
+          {
+            "key": "FromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive start, as YYYY-MM-DD. It cannot be older than a year."
+          },
+          {
+            "key": "ToDate",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive end, as YYYY-MM-DD."
+          },
+          {
+            "key": "MessageStream",
+            "optional": true,
+            "type": "string",
+            "description": "Only this stream."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Sent",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total across the window."
+          },
+          {
+            "key": "Days",
+            "optional": false,
+            "type": "{ Date?: string | null, Sent?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.streams.archive",
+      "shortPath": "streams.archive",
+      "description": "Archive a message stream, after which it can no longer send. The default transactional and inbound streams cannot be archived",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The stream id to archive."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ServerID",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "ExpectedPurgeDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "The stream is deleted on this date unless it is restored."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.streams.get",
+      "shortPath": "streams.get",
+      "description": "Read one message stream",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The stream id, such as `outbound`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "MessageStreamType",
+            "optional": true,
+            "type": "string | null",
+            "description": "`Transactional`, `Inbound` or `Broadcasts`."
+          },
+          {
+            "key": "CreatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ArchivedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ExpectedPurgeDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SubscriptionManagementConfiguration",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.streams.list",
+      "shortPath": "streams.list",
+      "description": "List the message streams on this server",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "MessageStreamType",
+            "optional": true,
+            "type": "All | Transactional | Inbound | Broadcasts",
+            "description": "Only streams of this kind. Defaults to `All`."
+          },
+          {
+            "key": "IncludeArchivedStreams",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include archived streams. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "MessageStreams",
+            "optional": false,
+            "type": "{ ID?: string | null, Name?: string | null, Description?: string | null, MessageStreamType?: string | null, CreatedAt?: string | null, UpdatedAt?: string | null, ArchivedAt?: string | null, ExpectedPurgeDate?: string | null, SubscriptionManagementConfiguration?: {} | null }[]"
+          },
+          {
+            "key": "TotalCount",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a standard or layout template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HtmlBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TextBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Alias",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier: letters, digits, and `.`, `-`, `_`, starting with a letter."
+          },
+          {
+            "key": "TemplateType",
+            "optional": true,
+            "type": "Standard | Layout"
+          },
+          {
+            "key": "LayoutTemplate",
+            "optional": true,
+            "type": "string",
+            "description": "The layout alias a standard template should use."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TemplateId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "HtmlBody",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TextBody",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AssociatedServerId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TemplateType",
+            "optional": true,
+            "type": "string | null",
+            "description": "`Standard` or `Layout`."
+          },
+          {
+            "key": "LayoutTemplate",
+            "optional": true,
+            "type": "string | null",
+            "description": "The layout alias a standard template uses, if any."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a template. Sends already made with it are unaffected, but it cannot be restored",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idOrAlias",
+            "optional": false,
+            "type": "string",
+            "description": "The numeric template id or its alias."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template by id or alias",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idOrAlias",
+            "optional": false,
+            "type": "string",
+            "description": "The numeric template id or its alias."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TemplateId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "HtmlBody",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TextBody",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AssociatedServerId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TemplateType",
+            "optional": true,
+            "type": "string | null",
+            "description": "`Standard` or `Layout`."
+          },
+          {
+            "key": "LayoutTemplate",
+            "optional": true,
+            "type": "string | null",
+            "description": "The layout alias a standard template uses, if any."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List the templates on this server, paged by `Count` and `Offset`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Count",
+            "optional": true,
+            "type": "number",
+            "description": "How many templates to return, at most 500. Defaults to 100."
+          },
+          {
+            "key": "Offset",
+            "optional": true,
+            "type": "number",
+            "description": "How many to skip. Defaults to 0."
+          },
+          {
+            "key": "TemplateType",
+            "optional": true,
+            "type": "Standard | Layout",
+            "description": "Only templates of this kind."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TotalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Templates",
+            "optional": false,
+            "type": "{ TemplateId?: number | null, Name?: string | null, Subject?: string | null, HtmlBody?: string | null, TextBody?: string | null, AssociatedServerId?: number | null, Active?: boolean | null, Alias?: string | null, TemplateType?: string | null, LayoutTemplate?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Change a template's name, subject, bodies or alias",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idOrAlias",
+            "optional": false,
+            "type": "string",
+            "description": "The numeric template id or its alias."
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HtmlBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TextBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TemplateType",
+            "optional": true,
+            "type": "Standard | Layout"
+          },
+          {
+            "key": "LayoutTemplate",
+            "optional": true,
+            "type": "string",
+            "description": "The layout alias to use. An empty string removes the layout."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TemplateId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "HtmlBody",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TextBody",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AssociatedServerId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "Alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TemplateType",
+            "optional": true,
+            "type": "string | null",
+            "description": "`Standard` or `Layout`."
+          },
+          {
+            "key": "LayoutTemplate",
+            "optional": true,
+            "type": "string | null",
+            "description": "The layout alias a standard template uses, if any."
+          }
+        ]
+      }
+    },
+    {
+      "path": "postmark.api.templates.validate",
+      "shortPath": "templates.validate",
+      "description": "Render a template against a model and report whether its subject and bodies are valid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HtmlBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TextBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TestRenderModel",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "The model to render the template content against."
+          },
+          {
+            "key": "InlineCssForHtmlTestRender",
+            "optional": true,
+            "type": "boolean",
+            "description": "Inline style blocks into the rendered HTML test output. Postmark defaults to true."
+          },
+          {
+            "key": "TemplateType",
+            "optional": true,
+            "type": "Standard | Layout",
+            "description": "Validate as a `Standard` or a `Layout` template. Postmark defaults to `Standard`."
+          },
+          {
+            "key": "LayoutTemplate",
+            "optional": true,
+            "type": "string",
+            "description": "The layout alias to validate a standard template with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "AllContentIsValid",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when both bodies and the subject rendered correctly."
+          },
+          {
+            "key": "HtmlBody",
+            "optional": true,
+            "type": "{ ContentIsValid?: boolean | null, RenderErrors?: JsonValue[] | null, ValidationErrors?: JsonValue[] | null, RenderedContent?: string | null } | null"
+          },
+          {
+            "key": "TextBody",
+            "optional": true,
+            "type": "{ ContentIsValid?: boolean | null, RenderErrors?: JsonValue[] | null, ValidationErrors?: JsonValue[] | null, RenderedContent?: string | null } | null"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "{ ContentIsValid?: boolean | null, RenderErrors?: JsonValue[] | null, ValidationErrors?: JsonValue[] | null, RenderedContent?: string | null } | null"
+          },
+          {
+            "key": "SuggestedTemplateModel",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "A model with every key the template content references."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
