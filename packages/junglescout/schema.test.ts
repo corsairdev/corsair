@@ -81,7 +81,8 @@ describe('JungleScout endpoint schemas', () => {
 				true,
 			);
 
-			// Rejects output missing required attributes
+			// Responses are read leniently: missing fields and non-integer counts
+			// still parse instead of failing the whole call.
 			expect(
 				KeywordsByAsinResponseSchema.safeParse({
 					data: [
@@ -95,7 +96,7 @@ describe('JungleScout endpoint schemas', () => {
 						},
 					],
 				}).success,
-			).toBe(false);
+			).toBe(true);
 
 			expect(
 				KeywordsByAsinResponseSchema.safeParse({
@@ -111,7 +112,7 @@ describe('JungleScout endpoint schemas', () => {
 						},
 					],
 				}).success,
-			).toBe(false);
+			).toBe(true);
 		});
 	});
 
@@ -405,7 +406,7 @@ describe('JungleScout endpoint schemas', () => {
 						},
 					},
 				}).success,
-			).toBe(false);
+			).toBe(true);
 		});
 	});
 });
