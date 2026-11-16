@@ -27,7 +27,14 @@ export const create: TruveraEndpoints['registriesCreate'] = async (
 				...(parsed.policy === undefined ? {} : { policy: parsed.policy }),
 			},
 		}),
-		{ log: (parsed, result) => ({ registry_id: result.id ?? parsed.type }) },
+		{
+			// `id` is the job; the new registry's own id is `data.id`.
+			log: (_parsed, result) => ({
+				registry_id:
+					typeof result.data?.id === 'string' ? result.data.id : undefined,
+				job_id: result.id ?? undefined,
+			}),
+		},
 	);
 
 export const list: TruveraEndpoints['registriesList'] = async (ctx, input) =>

@@ -172,6 +172,19 @@ describe('profiles', () => {
 		expect(lastRequest().body).toEqual({ did: DID, name: 'Acme Issuer' });
 	});
 
+	it('profiles.get GETs one profile by DID', async () => {
+		respond(profile);
+
+		const result = (await invoke(ProfilesEndpoints.get, { did: DID })) as {
+			did?: string | null;
+		};
+
+		expectAuthenticated();
+		expect(lastRequest().method).toBe('GET');
+		expect(decodeURIComponent(lastRequest().path)).toBe(`/profiles/${DID}`);
+		expect(result.did).toBe(profile.did);
+	});
+
 	it('profiles.create and update refuse a call without a name', async () => {
 		// Live: "did and name properties are required".
 		for (const endpoint of [
@@ -470,6 +483,21 @@ describe('registries', () => {
 		// `id` is the job; the registry id is `data.id`.
 		expect(result.id).toBe('75841');
 		expect(result.data?.id).toBe(registry.id);
+	});
+
+	it('registries.get GETs one registry in the live shape', async () => {
+		respond(registry);
+
+		const result = (await invoke(RegistriesEndpoints.get, {
+			registry_id: registry.id,
+		})) as { registry_type?: string | null };
+
+		expectAuthenticated();
+		expect(lastRequest()).toMatchObject({
+			method: 'GET',
+			path: `/registries/${registry.id}`,
+		});
+		expect(result.registry_type).toBe('StatusList2021Entry');
 	});
 
 	it('registries.list GETs the registry list', async () => {

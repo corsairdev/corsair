@@ -163,6 +163,8 @@ export async function makeTruveraRequest(
 	apiKey: string,
 	{ method, path, query, body }: TruveraRequest,
 	options: { sandbox?: boolean } = {},
+	// unknown: response shapes vary by operation; callers validate them with
+	// their own output schemas.
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: options.sandbox ? TRUVERA_SANDBOX_API_BASE : TRUVERA_API_BASE,
@@ -184,6 +186,7 @@ export async function makeTruveraRequest(
 	};
 
 	try {
+		// unknown: see the return type above.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: TRUVERA_RATE_LIMIT_CONFIG,
 		});
