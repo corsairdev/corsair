@@ -487,7 +487,8 @@ export function teltel<const T extends TeltelPluginOptions>(
 	} satisfies InternalTeltelPlugin;
 }
 
-export { TeltelAPIError } from './client';
+export type { TeltelErrorDetails } from './client';
+export { teltelErrorDetails } from './client';
 
 export type {
 	CallCreateInput,

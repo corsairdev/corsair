@@ -1,5 +1,5 @@
 import type { ErrorHandler, ErrorMatcher } from 'corsair/core';
-import { TeltelAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 function apiError(
@@ -7,11 +7,18 @@ function apiError(
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE' = 'POST',
 	retryAfter?: number,
 ) {
-	return new TeltelAPIError(`TelTEL ${status}`, {
-		status,
-		method,
-		retryAfter,
-	});
+	return new ApiError(
+		{ method, url: '/account/balance' },
+		{
+			url: 'https://api.teltel.io/v2/account/balance',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`TelTEL ${status}`,
+		{ retryAfter },
+	);
 }
 
 const context = {} as Parameters<ErrorHandler>[1];
@@ -62,13 +69,11 @@ describe('teltel error handlers', () => {
 		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('retries a 429 and passes a Retry-After through', async () => {
-		await expect(
-			handler('RATE_LIMIT_ERROR')(apiError(429, 'GET', 1500), context),
-		).resolves.toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 1500,
-			retryStrategy: 'exponential_backoff',
+	it('leaves 429 retries to core, which already retried', async () => {
+		const error = apiError(429, 'GET', 1500);
+		expect(match('RATE_LIMIT_ERROR')(error)).toBe(true);
+		await expect(handler('RATE_LIMIT_ERROR')(error, context)).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 

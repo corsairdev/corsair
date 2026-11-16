@@ -8,73 +8,19 @@ import { ApiError, request } from 'corsair/http';
 
 export const TELTEL_API_BASE = 'https://api.teltel.io/v2';
 
-/**
- * TelTEL answers failures as `{ errors: [{ code, title, detail }] }`, and the
- * two statuses mean different things:
- *
- * - **401** means no credential was sent at all.
- * - **403** means a credential was sent and refused, or the key's role does not
- *   cover the route.
- *
- * The error keeps both readings so a handler can tell a missing key from a
- * rejected one without re-deriving it.
- * https://apidoc.teltel.io
- */
-export class TeltelAPIError extends Error {
-	readonly status?: number;
-	/** TelTEL's code from the first error entry, e.g. "40300". */
-	readonly code?: string;
-	/** Every error entry, each with its code, title and detail. */
-	readonly errors: Array<{ code?: string; title?: string; detail?: string }>;
-	/** Milliseconds from a Retry-After header, when TelTEL sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			errors?: Array<{ code?: string; title?: string; detail?: string }>;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'TeltelAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.code = options.code;
-		this.errors = options.errors ?? [];
-	}
-
-	/** True when no credential reached the API at all. */
-	get isMissingKey(): boolean {
-		return this.status === 401;
-	}
-
-	/** True when a credential was sent and refused, or the role is too small. */
-	get isRefusedKey(): boolean {
-		return this.status === 403;
-	}
-}
-
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads Retry-After into the error. TelTEL documents no Retry-After.
+// Core's request() retries a 429 three times and honours Retry-After, so the
+// 429 handler in error-handlers.ts does not retry again. TelTEL documents no
+// Retry-After.
 const TELTEL_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 	isRateLimitError: (status) => status === 429,
 };
 
-type TeltelErrorDetails = {
+export type TeltelErrorDetails = {
 	errors: Array<{ code?: string; title?: string; detail?: string }>;
 };
 
@@ -101,17 +47,47 @@ function readErrorDetails(body: unknown): TeltelErrorDetails {
 	return { errors };
 }
 
-// unknown: same open error body as readErrorDetails.
-export function describeTeltelError(
-	status: number | undefined,
-	body: unknown,
-	fallback: string,
-): string {
-	const details = readErrorDetails(body);
-	const first = details.errors[0];
-	const text = first?.title ?? first?.detail ?? fallback;
-	const label = [status, first?.code].filter((p) => p !== undefined).join(' ');
-	return label ? `TelTEL ${label}: ${text}` : text;
+/**
+ * TelTEL answers failures as `{ errors: [{ code, title, detail }] }`. A 401
+ * means no credential was sent and a 403 that one was sent and refused, or
+ * that the key's role or plan does not cover the route. Errors stay core's
+ * ApiError; this reads the entries from one, or returns undefined otherwise.
+ * https://apidoc.teltel.io
+ */
+export function teltelErrorDetails(
+	// unknown: any thrown value; only core's ApiError has a body to read.
+	error: unknown,
+): TeltelErrorDetails | undefined {
+	return error instanceof ApiError ? readErrorDetails(error.body) : undefined;
+}
+
+/**
+ * Core's ApiError keeps the request it failed on, body included, and a send
+ * or contact body holds phone numbers and message text. This rebuilds the
+ * same ApiError without the request body. Status, retryAfter and TelTEL's
+ * response body stay as they were.
+ */
+function withoutRequestBody(error: ApiError): ApiError {
+	if (error.request.body === undefined) return error;
+	const stripped = new ApiError(
+		{ ...error.request, body: undefined },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	stripped.stack = error.stack;
+	return stripped;
 }
 
 export type TeltelQuery = Record<string, string | number | boolean | undefined>;
@@ -159,24 +135,9 @@ export async function makeTeltelRequest(
 			rateLimitConfig: TELTEL_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const details = readErrorDetails(error.body);
-			throw new TeltelAPIError(
-				describeTeltelError(error.status, error.body, error.message),
-				{
-					cause: error,
-					code: details.errors[0]?.code,
-					errors: details.errors,
-				},
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new TeltelAPIError(error.message, {
-				cause: error instanceof Error ? error : undefined,
-				method,
-			});
-		}
-		throw new TeltelAPIError('Unknown TelTEL error', { method });
+		// Core's ApiError goes through as an ApiError (plugin rules R8), only
+		// without the request body it carried.
+		if (error instanceof ApiError) throw withoutRequestBody(error);
+		throw error;
 	}
 }

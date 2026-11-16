@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { TeltelAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { teltelErrorDetails } from './client';
 import { Campaigns, Contacts, Numbers, Sms } from './endpoints';
 import {
 	badRequestResponse,
@@ -92,14 +93,14 @@ function expectAuthenticated() {
  * A promise can reject with any value, so this is the one place the reason is
  * treated as untyped before it is narrowed.
  */
-async function rejection(promise: Promise<unknown>): Promise<TeltelAPIError> {
+async function rejection(promise: Promise<unknown>): Promise<ApiError> {
 	const caught = await promise.then(
 		() => undefined,
 		// unknown: a rejection reason has no static type.
 		(caught: unknown) => caught,
 	);
-	expect(caught).toBeInstanceOf(TeltelAPIError);
-	return caught as TeltelAPIError;
+	expect(caught).toBeInstanceOf(ApiError);
+	return caught as ApiError;
 }
 
 beforeEach(() => {
@@ -596,15 +597,13 @@ describe('error handling', () => {
 	it('separates a missing key from a refused one', async () => {
 		respond(unauthenticatedResponse, 401);
 		const missing = await rejection(invoke(Sms.accountBalance, {}));
-		expect(missing.isMissingKey).toBe(true);
-		expect(missing.isRefusedKey).toBe(false);
-		expect(missing.code).toBe('40100');
+		expect(missing.status).toBe(401);
+		expect(teltelErrorDetails(missing)?.errors[0]?.code).toBe('40100');
 
 		respond(forbiddenResponse, 403);
 		const refused = await rejection(invoke(Sms.accountBalance, {}));
-		expect(refused.isMissingKey).toBe(false);
-		expect(refused.isRefusedKey).toBe(true);
-		expect(refused.code).toBe('40300');
+		expect(refused.status).toBe(403);
+		expect(teltelErrorDetails(refused)?.errors[0]?.code).toBe('40300');
 	});
 
 	it('parses a 400 with the detail', async () => {
@@ -619,7 +618,10 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(400);
-		expect(error.message).toContain('Bad request.');
+		expect(teltelErrorDetails(error)?.errors[0]?.title).toContain('Bad request.');
+		// The phone numbers and text in the send body stay off the error.
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('37126118199');
 	});
 
 	it('never leaks the key through the error', async () => {

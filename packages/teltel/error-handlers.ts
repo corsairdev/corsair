@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TeltelAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof TeltelAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -14,24 +14,19 @@ function statusOf(error: Error): number | undefined {
 export const errorHandlers = {
 	// No key reached the API: configure one.
 	MISSING_AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof TeltelAPIError && error.isMissingKey,
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A key was sent and refused, or its role is too small for this route.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof TeltelAPIError && error.isRefusedKey,
+		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// Core's request() already retried a 429 three times, so it is not
+	// replayed again here.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TeltelAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 invalid input, 404 unknown record, 422 rejected fields.
 	VALIDATION_ERROR: {
@@ -55,9 +50,9 @@ export const errorHandlers = {
 	// repeated campaign action restarts a campaign that was already running.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TeltelAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
