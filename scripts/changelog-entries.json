@@ -6509,5 +6509,21 @@
         "title": "Accept the numeric counters the live API returns"
       }
     ]
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/elorus",
+    "dir": "packages/elorus",
+    "name": "Elorus",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2543,
+        "title": "Accept the responses the live API returns"
+      }
+    ]
   }
 ]
