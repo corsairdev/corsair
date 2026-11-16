@@ -7,11 +7,11 @@ overviewNote: |
 
   Things to know before you call:
 
-  - **At least one tracking reference.** `conversions.create`, `customers.create` and `clicks.create` attribute a record through a coupon, click ID, referral code, asset ID or tracking ID. The plugin rejects a call with none of them before sending, and rejects `source_id` without `asset_id`.
+  - **Tracking references differ per operation.** `customers.create` needs one of coupon, click ID, referral code, asset ID or tracking ID, and `source_id` only goes with `asset_id`. `conversions.create` takes the same references, or `customer_id` alone when it matches an existing customer in a recurring program (Tapfiliate answers 400 otherwise). `clicks.create` names the affiliate with `referral_code` (a `source_id` beside it overrides the code's source) or with `asset_id` plus `source_id`; a coupon, click ID or tracking ID doesn't identify a click. The plugin checks these before sending.
   - **Ranking when several are sent.** Tapfiliate uses only the highest-precedence reference: coupon, then click ID, then referral code, then asset ID with source ID, then tracking ID.
   - **A conversion creates commissions.** `conversions.create` creates the regular commission and any MLM level commissions. If you pass `commissions`, their `sub_amount`s must add up to `amount`, and you get one commission per entry instead of the program's default.
   - **Converting an amount does not move the commission.** `conversions.update` changes `amount` only. Commission amounts change when the call also sends `recalculate_commissions: true`, which travels as a query flag.
-  - **A generated password is shown once.** `affiliates.create` returns `password` when you did not supply one. It is the only way into the new account, so store it.
+  - **Creating an affiliate may answer no body.** The reference documents a 200 with no body, so `affiliates.create` then reports `{ created: true, email }` and the id comes from `affiliates.list`. When Tapfiliate does return the affiliate with a generated `password`, store it: it is the only way into the new account.
   - **An incomplete address is dropped silently.** Tapfiliate keeps an address only when `address`, `postal_code`, `city` and `country.code` are all present. The plugin requires them together.
   - **Approval defaults to yes.** `programs.addAffiliate` approves unless you send `approved: false` for disapproved or `approved: null` for pending, and it ignores the program's auto-approve setting.
   - **Coupon updates are three-way.** In `programs.updateAffiliate`, `coupon: null` removes the coupon, a string replaces it, and leaving the field out changes nothing.
