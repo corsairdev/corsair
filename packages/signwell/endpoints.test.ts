@@ -798,6 +798,31 @@ describe('client error handling', () => {
 		expect(failure.body).toEqual(validationErrorBody);
 	});
 
+	it('reports the document-level message of a 409 errors.base', async () => {
+		// Real body from a live run: updateRecipients on a draft document.
+		const conflict = {
+			errors: {
+				base: [
+					"Document in 'draft' status cannot have recipients managed. Only sent, viewed, pending, or bounced documents are eligible.",
+				],
+			},
+		};
+		respond(conflict, 409);
+
+		const error = await invoke(Documents.updateRecipients, {
+			id: DOCUMENT_ID,
+			recipients: [{ id: 'r1', name: 'Ann', email: 'ann@example.com' }],
+		}).catch(
+			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(409);
+		expect((error as Error).message).toBe(
+			"SignWell 409: Document in 'draft' status cannot have recipients managed. Only sent, viewed, pending, or bounced documents are eligible.",
+		);
+	});
+
 	it('classifies a 401 body code as an auth error', async () => {
 		respond(authErrorBody, 401);
 

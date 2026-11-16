@@ -129,10 +129,20 @@ export function describeSignwellError(
 	// A 422 has no message of its own. Only the field names go in the message:
 	// SignWell's per-field messages can echo the submitted value (an email, a
 	// phone number). The full errors object stays on the error's `body`.
+	// `errors.base` is the exception: it describes the document, not a value
+	// (a 409 on a draft says only sent documents can have recipients managed).
+	const base = fieldErrors?.base;
+	const baseText =
+		Array.isArray(base) && base.every((entry) => typeof entry === 'string')
+			? base.join(' ')
+			: undefined;
 	const text =
 		readString(record, 'error') ??
 		readString(meta, 'message') ??
 		readString(record, 'message') ??
+		(baseText && Object.keys(fieldErrors ?? {}).length === 1
+			? baseText
+			: undefined) ??
 		(fieldErrors && Object.keys(fieldErrors).length > 0
 			? `invalid fields: ${Object.keys(fieldErrors).join(', ')}`
 			: fallback);

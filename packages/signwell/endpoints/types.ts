@@ -919,7 +919,9 @@ const DocumentsUpdateRecipientsInputSchema = z.object({
 			}),
 		)
 		.min(1)
-		.describe('Only recipients who have not started signing can be updated.'),
+		.describe(
+			'Only on a sent document (sent, viewed, pending or bounced; a draft answers 409), and only recipients who have not started signing.',
+		),
 });
 
 export type DocumentsUpdateRecipientsInput = z.infer<
