@@ -80,14 +80,17 @@ export const create: SupportbeeEndpoints['filtersCreate'] = (ctx, input) =>
 		({ rule_id, consequence_id }) => ({
 			method: 'POST',
 			path: '/filters',
-			body: { rule_id, consequence_id },
+			// The docs show the ids at the top level, but the live API answers 500
+			// to that and creates the filter only when they sit under `filter`.
+			body: { filter: { rule_id, consequence_id } },
 		}),
 		{
-			// The route documents 201 with no body, so the ids are reported back
-			// rather than read from a reply that may not carry them.
-			shape: (_, parsed) => ({
+			// The ids are reported back from the input; the filter id comes from
+			// the `{ filter }` body the live API answers with, when present.
+			shape: (raw, parsed) => ({
 				rule_id: parsed.rule_id,
 				consequence_id: parsed.consequence_id,
+				filter_id: filterIdOf(raw),
 				created: true,
 			}),
 			log: (parsed) => ({
@@ -96,3 +99,15 @@ export const create: SupportbeeEndpoints['filtersCreate'] = (ctx, input) =>
 			}),
 		},
 	);
+
+/** The id from a `{ filter: { id } }` body, or undefined for any other body. */
+function filterIdOf(
+	raw: unknown, // unknown: the create body, which the docs say is empty
+): string | undefined {
+	if (!raw || typeof raw !== 'object' || !('filter' in raw)) return undefined;
+	const filter = raw.filter;
+	if (!filter || typeof filter !== 'object' || !('id' in filter)) {
+		return undefined;
+	}
+	return typeof filter.id === 'string' ? filter.id : undefined;
+}
