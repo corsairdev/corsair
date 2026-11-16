@@ -271,7 +271,8 @@ export async function makeSupportbeeRequest(
 			throw new ApiError(
 				{ method: error.request.method, url: error.request.url },
 				{
-					url: error.url,
+					// The query can hold search text such as a customer's email.
+					url: error.url.split('?')[0] ?? error.url,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,

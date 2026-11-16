@@ -61,6 +61,19 @@ describe('supportbee event fields', () => {
 	});
 });
 
+describe('supportbee error URLs', () => {
+	it('drops the query, which can hold the search text', async () => {
+		mockFetch(jsonResponse({ error: 'Unauthorized' }, { status: 401 }));
+		const error = await endpoints.tickets
+			.search(ctx, { query: 'bob@example.com' })
+			.catch(
+				(caught: unknown) => caught, // unknown: rejection reason, checked by text
+			);
+
+		expect(JSON.stringify(error)).not.toContain('bob@example.com');
+	});
+});
+
 describe('supportbee ticket counts', () => {
 	it('returns the total alone when total_only is set', async () => {
 		mockFetch(jsonResponse({ total: 42 }));
