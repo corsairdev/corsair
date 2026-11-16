@@ -1772,7 +1772,7 @@ await corsair.signwell.api.documents.updateRecipients({ id: 'a692e1ce-9929-4541-
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `recipients` | `object[]` | Yes | Only recipients who have not started signing can be updated. |
+| `recipients` | `object[]` | Yes | Only on a sent document (sent, viewed, pending or bounced; a draft answers 409), and only recipients who have not started signing. |
 
 Use the recipient ids from documents.get, not the ids you supplied at creation.
 
