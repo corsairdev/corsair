@@ -33,7 +33,8 @@ export const get: SuitedashEndpoints['contactsGet'] = (ctx, input) =>
 			path: `/contact/${segment(identifier)}`,
 			query: { meta },
 		}),
-		{ log: ({ identifier }) => ({ contactId: identifier }) },
+		// The identifier may be an email address, so only the uid is logged.
+		{ log: (_, result) => ({ contactUid: result.data.uid ?? undefined }) },
 	);
 
 export const create: SuitedashEndpoints['contactsCreate'] = (ctx, input) =>
@@ -63,7 +64,8 @@ export const update: SuitedashEndpoints['contactsUpdate'] = (ctx, input) =>
 			path: `/contact/${segment(identifier)}`,
 			body,
 		}),
-		{ log: ({ identifier }) => ({ contactId: identifier }) },
+		// The identifier may be an email address, so only the uid is logged.
+		{ log: (_, result) => ({ contactUid: result.data.uid ?? undefined }) },
 	);
 
 export const meta: SuitedashEndpoints['contactsMeta'] = (ctx, input) =>
@@ -76,5 +78,5 @@ export const meta: SuitedashEndpoints['contactsMeta'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/contact/meta' }),
-		{ log: (_, result) => ({ count: result.data.length }) },
+		{ log: (_, result) => ({ count: Object.keys(result).length }) },
 	);

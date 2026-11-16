@@ -18,7 +18,7 @@ overviewNote: |
   - **Custom fields need the account's own keys.** Every write that touches `public_custom_fields`, `private_custom_fields` or `target_custom_fields` uses keys that are uuids unique to the account. Read them from `companies.meta`, `contacts.meta` or `projects.meta` first.
   - **Custom fields read as an array.** A response sends `public_custom_fields` as an array, usually empty, even though the spec types it as an object. The output accepts both.
   - **A company's `role` decides portal access.** `Lead`, `Client` or `Prospect`, and the same three values on a contact. The write example below omits it because the docs generator cannot render an enum in example arguments; see the API reference for the accepted values.
-  - **A contact create needs four fields.** First name, last name, email and role are all required by the spec, and a company create can add its first contact via `primaryContact` with `create_primary`.
+  - **A contact create needs four fields.** First name, last name, email and role are all required by the spec, and a company create can add its first contact via `primaryContact` with `create_primary_contact_if_not_exists`.
   - **Paging.** Lists report `meta.pagination` with `totalItems`, `totalPages` and a `nextPage` URL. Pass `page` to advance. The `meta` flag controls whether that block and the custom field definitions come back at all.
   - **Marketing subscribe is all-or-nothing at the top.** The answer carries one result per subscriber, and its top-level `success` is true only when every one worked.
 examples:
@@ -72,4 +72,4 @@ apiNotes:
   companies.update: 'Custom fields are keyed by uuid. A response sends them as an array, but a write sends an object keyed by field uuid.'
   marketing.subscribe: 'The body is a bare array. The answer carries one result per subscriber and its top-level success is true only when every one worked, so a partial failure throws rather than looking like success.'
   contacts.create: 'First name, last name, email and role are all required by the spec, and role decides what the client portal shows them.'
-  companies.create: 'Set primaryContact.create_primary to create the first contact in the same call; first_name, last_name and email are then required inside it.'
+  companies.create: 'Set primaryContact.create_primary_contact_if_not_exists to create the first contact in the same call; first_name, last_name and email are then required inside it.'

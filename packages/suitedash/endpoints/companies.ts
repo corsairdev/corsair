@@ -33,7 +33,8 @@ export const get: SuitedashEndpoints['companiesGet'] = (ctx, input) =>
 			path: `/company/${segment(identifier)}`,
 			query: { meta },
 		}),
-		{ log: ({ identifier }) => ({ companyId: identifier }) },
+		// The identifier may be a name, so only the uid is logged.
+		{ log: (_, result) => ({ companyUid: result.data.uid ?? undefined }) },
 	);
 
 export const create: SuitedashEndpoints['companiesCreate'] = (ctx, input) =>
@@ -63,7 +64,8 @@ export const update: SuitedashEndpoints['companiesUpdate'] = (ctx, input) =>
 			path: `/company/${segment(identifier)}`,
 			body,
 		}),
-		{ log: ({ identifier }) => ({ companyId: identifier }) },
+		// The identifier may be a name, so only the uid is logged.
+		{ log: (_, result) => ({ companyUid: result.data.uid ?? undefined }) },
 	);
 
 /**
@@ -80,5 +82,5 @@ export const meta: SuitedashEndpoints['companiesMeta'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/company/meta' }),
-		{ log: (_, result) => ({ count: result.data.length }) },
+		{ log: (_, result) => ({ count: Object.keys(result).length }) },
 	);

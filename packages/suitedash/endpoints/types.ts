@@ -294,11 +294,15 @@ const companyBody = {
 
 /**
  * A company create can also create its first contact. `role`, `first_name`,
- * `last_name` and `email` are required inside it when `create_primary` is set.
+ * `last_name` and `email` are required inside it when
+ * `create_primary_contact_if_not_exists` is set.
  */
 const primaryContactBody = z
 	.object({
-		create_primary: z.boolean().optional(),
+		create_primary_contact_if_not_exists: z
+			.boolean()
+			.optional()
+			.describe('Create the contact when no contact has this email yet.'),
 		role: z.string().optional(),
 		name_prefix: z.string().nullish(),
 		first_name: z.string().optional(),
@@ -307,7 +311,7 @@ const primaryContactBody = z
 		phone: z.string().nullish(),
 	})
 	.superRefine((value, ctx) => {
-		if (!value.create_primary) return;
+		if (!value.create_primary_contact_if_not_exists) return;
 		// The spec marks these required only when a contact is being created, so
 		// a missing one would be a 422 after the company already exists.
 		for (const field of ['first_name', 'last_name', 'email'] as const) {
@@ -315,7 +319,7 @@ const primaryContactBody = z
 				ctx.addIssue({
 					code: 'custom',
 					path: [field],
-					message: `${field} is required when create_primary is set.`,
+					message: `${field} is required when create_primary_contact_if_not_exists is set.`,
 				});
 			}
 		}
@@ -376,9 +380,11 @@ export type CompaniesMetaInput = z.infer<typeof CompaniesMetaInputSchema>;
  * The meta routes answer an array of attribute maps, and the map keys are the
  * account's own field uuids, so there is no fixed shape to type.
  */
-const MetaResponseSchema = oneOf(
-	z.array(z.unknown()), // unknown: uuid-keyed attribute maps, per account
-);
+/**
+ * The `meta` routes answer a bare object keyed by attribute name, with no
+ * envelope (spec: `{ "{attributeName}": MetaAttribute }`; live 11-16 the same).
+ */
+const MetaResponseSchema = z.record(z.string(), MetaAttributeSchema);
 
 export type MetaResponse = z.infer<typeof MetaResponseSchema>;
 

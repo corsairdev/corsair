@@ -35,7 +35,13 @@ export const get: SuitedashEndpoints['projectsGet'] = (ctx, input) =>
 			path: `/project/${segment(type)}/${segment(identifier)}`,
 			query: { meta },
 		}),
-		{ log: ({ type, identifier }) => ({ lookup: type, identifier }) },
+		// A name lookup can hold a client's name, so only the uid is logged.
+		{
+			log: ({ type }, result) => ({
+				lookup: type,
+				projectUid: result.data.uid ?? undefined,
+			}),
+		},
 	);
 
 export const update: SuitedashEndpoints['projectsUpdate'] = (ctx, input) =>
@@ -52,7 +58,13 @@ export const update: SuitedashEndpoints['projectsUpdate'] = (ctx, input) =>
 			path: `/project/${segment(type)}/${segment(identifier)}`,
 			body,
 		}),
-		{ log: ({ type, identifier }) => ({ lookup: type, identifier }) },
+		// A name lookup can hold a client's name, so only the uid is logged.
+		{
+			log: ({ type }, result) => ({
+				lookup: type,
+				projectUid: result.data.uid ?? undefined,
+			}),
+		},
 	);
 
 export const meta: SuitedashEndpoints['projectsMeta'] = (ctx, input) =>
@@ -65,5 +77,5 @@ export const meta: SuitedashEndpoints['projectsMeta'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/project/meta' }),
-		{ log: (_, result) => ({ count: result.data.length }) },
+		{ log: (_, result) => ({ count: Object.keys(result).length }) },
 	);
