@@ -4250,7 +4250,10 @@ export const UpdateCustomerRequestSchema = z.object({
 		.optional(),
 	address: AddressSchema.describe(
 		'The physical address associated with the customer profile. Only new or changed fields are required in the request.',
-	).optional(),
+	)
+		// null removes the saved value (Square: "To remove a field, specify null").
+		.nullable()
+		.optional(),
 	phone_number: z
 		.string()
 		.nullable()
@@ -4284,7 +4287,9 @@ export const UpdateCustomerRequestSchema = z.object({
 		.optional(),
 	tax_ids: CustomerTaxIdsSchema.describe(
 		'The tax ID associated with the customer profile. This field is available only for customers of sellers in EU countries or the United Kingdom.',
-	).optional(),
+	)
+		.nullable()
+		.optional(),
 });
 
 export const UpdateCustomerCustomAttributeDefinitionRequestSchema = z.object({

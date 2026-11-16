@@ -2389,6 +2389,21 @@ describe('Square request details', () => {
 		});
 	});
 
+	it('clears a customer address or tax id with null, as Square documents', async () => {
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({ customer: { id: 'C1', given_name: 'Ada' } }),
+		);
+		await api().customers.update({
+			customer_id: 'C1',
+			address: null,
+			tax_ids: null,
+		});
+		expect(jsonBody(sentRequest(fetchMock))).toEqual({
+			address: null,
+			tax_ids: null,
+		});
+	});
+
 	it('sends the cursor of a search in the body, where Square reads it', async () => {
 		fetchMock.mockResolvedValueOnce(jsonResponse({ orders: [], cursor: 'N2' }));
 		await api().orders.search({ location_ids: ['L1'], cursor: 'N1', limit: 5 });
