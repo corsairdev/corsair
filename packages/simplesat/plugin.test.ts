@@ -74,9 +74,11 @@ describe('simplesat plugin definition', () => {
 		}
 	});
 
-	it('marks the survey email a write, because it notifies a real person', () => {
+	it('marks the survey email destructive, because it notifies a real person (R8)', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['surveys.email' as keyof typeof meta]?.riskLevel).toBe('write');
+		expect(meta['surveys.email' as keyof typeof meta]?.riskLevel).toBe(
+			'destructive',
+		);
 	});
 
 	it('has input and output schemas for every endpoint', () => {

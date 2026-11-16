@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SimplesatAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isSimplesatAuthError } from './client';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 import type { JsonObject } from './json';
 
@@ -13,12 +14,19 @@ function build(options: {
 	retryAfter?: number;
 	body?: JsonObject;
 }) {
-	return new SimplesatAPIError(`Simplesat ${options.status}`, {
-		status: options.status,
-		method: options.method,
-		retryAfter: options.retryAfter,
-		body: options.body,
-	});
+	// The error core's request() throws, as the client passes it on.
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/api/v1/surveys' },
+		{
+			url: 'https://api.simplesat.io/api/v1/surveys',
+			ok: false,
+			status: options.status ?? 500,
+			statusText: 'failed',
+			body: options.body ?? {},
+		},
+		`Simplesat ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 const context = (error: Error) => ({
@@ -133,8 +141,8 @@ describe('simplesat error handlers', () => {
 
 describe('simplesat error classification', () => {
 	it('reads not-found separately from auth', () => {
-		expect(build({ status: 404 }).isNotFound).toBe(true);
-		expect(build({ status: 404 }).isAuthError).toBe(false);
-		expect(build({ status: 403 }).isAuthError).toBe(true);
+		expect(build({ status: 404 }).status).toBe(404);
+		expect(isSimplesatAuthError(build({ status: 404 }))).toBe(false);
+		expect(isSimplesatAuthError(build({ status: 403 }))).toBe(true);
 	});
 });

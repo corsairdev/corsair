@@ -1,8 +1,10 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SimplesatAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isSimplesatAuthError } from './client';
 
+// The client passes core's ApiError on (rebuilt only to drop request data).
 function statusOf(error: Error): number | undefined {
-	return error instanceof SimplesatAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -21,7 +23,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof SimplesatAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -29,7 +31,7 @@ export const errorHandlers = {
 	// needs. Simplesat uses 403 for all three, so both carry the same meaning.
 	AUTH_ERROR: {
 		match: (error: Error) =>
-			error instanceof SimplesatAPIError && error.isAuthError,
+			error instanceof ApiError && isSimplesatAuthError(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404: no such customer, response, answer or team member. 400: a field
@@ -47,9 +49,9 @@ export const errorHandlers = {
 	// replace an existing response.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SimplesatAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

@@ -228,7 +228,7 @@ export const simplesatEndpointMeta = {
 			'List the surveys on the account with their metric, type and survey_token',
 	},
 	'surveys.email': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send a survey to one customer by email. This notifies a real person, and the survey is identified by its token',
 	},
@@ -325,8 +325,6 @@ export function simplesat<const T extends SimplesatPluginOptions>(
 		},
 	} satisfies InternalSimplesatPlugin;
 }
-
-export { SimplesatAPIError } from './client';
 
 export type {
 	AnswersSearchInput,

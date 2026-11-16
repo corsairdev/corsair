@@ -22,74 +22,19 @@ const SIMPLESAT_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * Simplesat's failures come in two shapes:
- *
- * - `{ "detail": "Invalid Token." }` for auth, a missing record, and a
- *   malformed request.
- * - `{ "field": ["This field is required."] }` for a 400 that names fields,
- *   which is what `customers/bulk` and `responses/create-or-update` answer.
- *
- * **A bad key answers 403, not 401.** The API answers `403 Invalid Token.` for
- * a missing or unrecognised token on every route, so a 403 here is an auth problem
- * rather than a permission one, which is the opposite of most providers.
- *
- * Contract: https://developer.simplesat.io/api
+ * True when the key is missing, unrecognised or lacks the route's scope.
+ * Simplesat answers all three with 403 (`Invalid Token.`), so a 401 or 403,
+ * or a detail naming the token, counts.
  */
-export class SimplesatAPIError extends Error {
-	readonly status?: number;
-	/** The single message from `detail`, when the API sent that shape. */
-	readonly detail?: string;
-	/** Field name to messages, from a 400 that names fields. */
-	readonly fieldErrors?: Record<string, string[]>;
-	/** Milliseconds from a Retry-After header, when one was sent. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-	// An error body is one of the shapes above, but a proxy can answer HTML or
-	// nothing at all.
-	readonly body?: UnknownJson; // unknown: see the note above
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			body?: UnknownJson; // unknown: same open error body as the field above
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'SimplesatAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		const record = asRecord(this.body);
-		this.detail = readString(record, 'detail');
-		this.fieldErrors = readFieldErrors(this.body);
-	}
-
-	/**
-	 * True when the key is missing, unrecognised or lacks a route's scope.
-	 * Simplesat answers 403 for all of those, so a 401 is included in case it
-	 * ever starts using one.
-	 */
-	get isAuthError(): boolean {
-		if (this.status === 401 || this.status === 403) return true;
-		const detail = this.detail?.toLowerCase() ?? '';
-		return (
-			detail.includes('invalid token') ||
-			detail.includes('no api key') ||
-			detail.includes('not authenticated')
-		);
-	}
-
-	/** True when the record was not found, which Simplesat reports as a 404. */
-	get isNotFound(): boolean {
-		return this.status === 404;
-	}
+export function isSimplesatAuthError(error: ApiError): boolean {
+	if (error.status === 401 || error.status === 403) return true;
+	const detail =
+		readString(asRecord(error.body), 'detail')?.toLowerCase() ?? '';
+	return (
+		detail.includes('invalid token') ||
+		detail.includes('no api key') ||
+		detail.includes('not authenticated')
+	);
 }
 
 // The record is an untyped error body; read one field at a time.
@@ -197,25 +142,44 @@ export async function makeSimplesatRequest(
 			rateLimitConfig: SIMPLESAT_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including the X-Simplesat-Token header, so `util.inspect(error)`
-			// would print the key.
-			throw new SimplesatAPIError(
-				describeSimplesatError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method: error.request.method,
-				},
-			);
-		}
-		// A transport failure never held a body or headers, so its cause is safe to
-		// keep. DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new SimplesatAPIError(error.message, { cause: error, method });
-		}
-		throw new SimplesatAPIError('Unknown Simplesat error', { method });
+		if (error instanceof ApiError) throw stripRequestData(error);
+		throw error;
 	}
+}
+
+/**
+ * A record is addressed in the path by id, and a customer by an external id
+ * that can be an email address. The record segment is replaced with a marker.
+ */
+export function maskPath(url: string): string {
+	return (url.split('?')[0] ?? url).replace(
+		/(\/api\/v1\/(?:customers|answers|responses|team-members))\/(?!search(?:$|\/)|bulk(?:$|\/)|create-or-update(?:$|\/))[^/]+/,
+		'$1/[identifier]',
+	);
+}
+
+/**
+ * Core's ApiError keeps the request it failed on: the customer or response
+ * body (names, emails, comments), the query and the record id in the path.
+ * This rebuilds it without them and keeps what core and the handlers read:
+ * status, body, Retry-After and the method. It is still core's ApiError.
+ */
+export function stripRequestData(error: ApiError): ApiError {
+	return new ApiError(
+		{ method: error.request.method, url: maskPath(error.request.url) },
+		{
+			url: maskPath(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeSimplesatError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
