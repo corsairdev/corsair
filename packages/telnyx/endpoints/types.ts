@@ -623,7 +623,10 @@ export const CallsSpeakInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('The language of the payload, e.g. "en-US".'),
-	loop: z.number().int().min(1).optional(),
+	loop: z
+		.union([z.number().int().min(1), z.literal('infinity')])
+		.optional()
+		.describe('How many times to play the text, or "infinity" to repeat it.'),
 	stop: z.string().optional(),
 });
 

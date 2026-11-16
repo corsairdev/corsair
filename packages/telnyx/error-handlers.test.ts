@@ -47,12 +47,30 @@ describe('telnyx error handlers', () => {
 		expect(Object.keys(errorHandlers).at(-1)).toBe('DEFAULT');
 	});
 
-	it('leaves 429 retries to core, which already retried with Retry-After', async () => {
+	it('retries a 429 and passes a Retry-After through', async () => {
 		const error = apiError(429, 'GET', 2000);
 		expect(match('RATE_LIMIT_ERROR')(error)).toBe(true);
 		await expect(handler('RATE_LIMIT_ERROR')(error, context)).resolves.toEqual({
-			maxRetries: 0,
+			maxRetries: 3,
+			headersRetryAfterMs: 2000,
+			retryStrategy: 'exponential_backoff',
 		});
+	});
+
+	it('never retries a 429 for an exhausted daily spend limit (40333)', async () => {
+		const error = apiError(429, 'POST', undefined, '40333');
+		expect(match('SPEND_LIMIT_ERROR')(error)).toBe(true);
+		await expect(handler('SPEND_LIMIT_ERROR')(error, context)).resolves.toEqual(
+			{
+				maxRetries: 0,
+			},
+		);
+		// It sits before RATE_LIMIT_ERROR, so core picks it first.
+		const names = Object.keys(errorHandlers);
+		expect(names.indexOf('SPEND_LIMIT_ERROR')).toBeLessThan(
+			names.indexOf('RATE_LIMIT_ERROR'),
+		);
+		expect(match('SPEND_LIMIT_ERROR')(apiError(429, 'GET'))).toBe(false);
 	});
 
 	it('does not retry a refused key', async () => {

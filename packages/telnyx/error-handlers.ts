@@ -8,11 +8,25 @@ function statusOf(error: Error): number | undefined {
 
 // Error bodies are `{ errors: [{ code, title, detail }] }`.
 export const errorHandlers = {
-	// Core's request() already retried a 429 three times with Retry-After, so
-	// it is not replayed again here.
+	// A 429 with code 40333 means the messaging profile's daily spend limit is
+	// used up; no retry before tomorrow can succeed.
+	SPEND_LIMIT_ERROR: {
+		match: (error: Error) =>
+			statusOf(error) === 429 &&
+			telnyxErrorDetails(error)?.errors.some((e) => e.code === '40333') ===
+				true,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// Any other 429 is throughput. The client makes one attempt (see client.ts),
+	// so the retries and the Retry-After wait happen here.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (error: Error) => ({
+			maxRetries: 3,
+			headersRetryAfterMs:
+				error instanceof ApiError ? error.retryAfter : undefined,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,

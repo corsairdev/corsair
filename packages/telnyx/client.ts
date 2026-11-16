@@ -8,11 +8,13 @@ import { ApiError, request } from 'corsair/http';
 
 export const TELNYX_API_BASE = 'https://api.telnyx.com/v2';
 
-// Core's request() retries a 429 three times and honours Retry-After, so the
-// 429 handler in error-handlers.ts does not retry again.
+// Core's request() would retry every 429 before the plugin sees it, including
+// a 429 with code 40333, which means a messaging profile's daily spend limit is
+// used up. So core makes one attempt and error-handlers.ts retries a 429
+// itself, skipping 40333 (plugin rules R8).
 const TELNYX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },

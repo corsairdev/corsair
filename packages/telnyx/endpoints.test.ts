@@ -488,6 +488,19 @@ describe('calls', () => {
 		});
 	});
 
+	it('sends loop "infinity" as Telnyx documents it', async () => {
+		respond(callActionResult);
+
+		await invoke(Calls.callsSpeak, {
+			callControlId: 'v3:abc123',
+			payload: 'Hold music',
+			voice: 'female',
+			loop: 'infinity',
+		});
+
+		expect(lastRequest().body).toMatchObject({ loop: 'infinity' });
+	});
+
 	it('rejects a speak without a voice, which Telnyx requires', async () => {
 		await expect(
 			invoke(Calls.callsSpeak, {

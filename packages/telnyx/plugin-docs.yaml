@@ -81,7 +81,7 @@ apiNotes:
   'availablePhoneNumbers.list': 'countryCode is required; every other filter, limit included, travels as a filter[..] query key.'
   'calls.create': 'connection_id is the call control application ID, and the call bills per minute once answered.'
   'calls.speak': 'payload and voice are required; language is optional.'
-  'messages.delete': 'Cancels a scheduled message that has not been sent yet; answers with the bare message, not { data }.'
+  'messages.delete': 'Cancels a scheduled message that has not been sent yet; answers with the bare message, not wrapped in data.'
   'messagingProfiles.create': 'whitelisted_destinations is required, e.g. ["US"].'
   'callControlApplications.create': 'webhook_event_url is required because Telnyx delivers every call event there.'
   'phoneNumbers.delete': 'Releases the number permanently; it cannot be recovered.'

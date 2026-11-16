@@ -4,9 +4,9 @@ import { telnyx } from './index';
 import { messageResponse, messagingProfilesList } from './test-fixtures';
 
 /**
- * Core's request() retries a 429 three times with Retry-After, and the
- * plugin's 429 handler does not add more. This file goes through
- * `createCorsair` to prove both layers together.
+ * The client makes one attempt and the plugin's 429 handler retries, so a
+ * 429 for an exhausted daily spend limit (40333) is not retried. This file
+ * goes through `createCorsair` to prove that layer runs.
  *
  * Reads replay after a 5xx, writes never do: a repeated message send charges a
  * second message, and a repeated dial places a second call.
@@ -73,7 +73,7 @@ describe('rate-limit retries through createCorsair', () => {
 	it('gives up after the builtin retry budget', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			// Core retries a 429 three times, so 4 attempts in total.
+			// The handler allows 3 retries, so 4 attempts in total.
 			for (let i = 0; i < 4; i += 1) {
 				respond({ errors: [{ title: 'Too many requests' }] }, 429);
 			}
@@ -108,6 +108,29 @@ describe('fake-timer delay pinning', () => {
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			jest.useRealTimers();
+			testDb.cleanup();
+		}
+	}, 30_000);
+});
+
+describe('spend-limit 429', () => {
+	it('does not retry a 429 that reports the daily spend limit', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond(
+				{ errors: [{ code: '40333', title: 'Daily spend limit reached' }] },
+				429,
+			);
+
+			await expect(
+				corsair.telnyx.api.messages.send({
+					to: '+13125550002',
+					from: '+13125550001',
+					text: 'Hello',
+				}),
+			).rejects.toMatchObject({ status: 429 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
 			testDb.cleanup();
 		}
 	}, 30_000);
