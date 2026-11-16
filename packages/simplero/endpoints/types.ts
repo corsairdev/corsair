@@ -122,6 +122,9 @@ export type SimpleroCustomer = z.infer<typeof CustomerSchema>;
 
 const ListSchema = z
 	.object({
+		// The integer id the get and update routes take in the path; the spec's
+		// schema omits it, but `after` paging and the path parameter imply it.
+		id: RecordId.nullish(),
 		token: z.string().nullish(),
 		name: z.string().nullish(),
 		internal_name: z.string().nullish(),
@@ -140,6 +143,9 @@ export type SimpleroList = z.infer<typeof ListSchema>;
 
 const TagSchema = z
 	.object({
+		// The integer id the get and update routes take in the path; the spec's
+		// schema omits it, but `after` paging and the path parameter imply it.
+		id: RecordId.nullish(),
 		token: z.string().nullish(),
 		name: z.string().nullish(),
 		description: z.string().nullish(),
@@ -157,6 +163,9 @@ export type SimpleroTag = z.infer<typeof TagSchema>;
 
 const ProductSchema = z
 	.object({
+		// The integer id the get and update routes take in the path; the spec's
+		// schema omits it, but `after` paging and the path parameter imply it.
+		id: RecordId.nullish(),
 		token: z.string().nullish(),
 		name: z.string().nullish(),
 		internal_name: z.string().nullish(),
@@ -178,6 +187,9 @@ export type SimpleroProduct = z.infer<typeof ProductSchema>;
 
 const PurchaseSchema = z
 	.object({
+		// The integer id the get and update routes take in the path; the spec's
+		// schema omits it, but `after` paging and the path parameter imply it.
+		id: RecordId.nullish(),
 		token: z.string().nullish(),
 		customer_id: z.number().nullish(),
 		product_id: z.number().nullish(),
@@ -201,6 +213,9 @@ export type SimpleroPurchase = z.infer<typeof PurchaseSchema>;
 
 const SubscriptionSchema = z
 	.object({
+		// The integer id the get and update routes take in the path; the spec's
+		// schema omits it, but `after` paging and the path parameter imply it.
+		id: RecordId.nullish(),
 		token: z.string().nullish(),
 		list_id: z.number().nullish(),
 		customer_id: z.number().nullish(),
@@ -390,11 +405,16 @@ export type CustomerTagActionInput = z.infer<
 
 const CustomerAdjustLeadScoreInputSchema = z.object({
 	id: RecordId,
-	value: z
+	amount: z
 		.number()
+		.int()
 		.describe(
-			'Added to the stored score, unlike customers.update which replaces it.',
+			'Added to the stored score (negative to subtract), unlike customers.update which replaces it.',
 		),
+	explanation: z
+		.string()
+		.optional()
+		.describe("Why the score changed, shown in the contact's history."),
 });
 
 export type CustomerAdjustLeadScoreInput = z.infer<

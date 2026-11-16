@@ -40,6 +40,7 @@ export const customer = {
 };
 
 export const list = {
+	id: 31,
 	token: 'list_abc',
 	name: 'Newsletter',
 	internal_name: 'newsletter',
@@ -54,6 +55,7 @@ export const list = {
 };
 
 export const tag = {
+	id: 5,
 	token: 'tag_abc',
 	name: 'VIP',
 	description: 'High value',
@@ -67,6 +69,7 @@ export const tag = {
 };
 
 export const product = {
+	id: 77,
 	token: 'prod_abc',
 	name: 'Course',
 	internal_name: 'course',

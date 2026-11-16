@@ -116,10 +116,12 @@ export const adjustLeadScore: SimpleroEndpoints['customersAdjustLeadScore'] = (
 			output: Outputs.customersAdjustLeadScore,
 		},
 		input,
-		({ id, value }) => ({
+		// The spec's body is `{ amount, explanation }`.
+		({ id, amount, explanation }) => ({
 			method: 'POST',
 			path: `/api/v2/customers/${segment(id)}/actions/adjust_lead_score`,
-			body: { value },
+			body: { amount, explanation },
 		}),
-		{ log: ({ id, value }) => ({ customerId: id, value }) },
+		// The score change is customer data, so only the id is logged.
+		{ log: ({ id }) => ({ customerId: id }) },
 	);

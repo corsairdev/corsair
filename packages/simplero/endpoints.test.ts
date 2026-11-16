@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { SimpleroAPIError, segment } from './client';
+import { ApiError } from 'corsair/http';
+import { SIMPLERO_USER_AGENT, segment } from './client';
 import {
 	Customers,
 	Lists,
@@ -74,7 +75,10 @@ function expectAuthenticated() {
 	expect(sent.headers.get('x-api-key')).toBe(API_KEY);
 	expect(sent.headers.get('authorization')).toBeNull();
 	// The spec asks for an identifying User-Agent.
-	expect(sent.headers.get('user-agent')).toContain('Corsair');
+	// The spec's form is `App (contact email)`; Simplero refuses one without
+	// an email with 400 "Incorrect User-Agent".
+	expect(sent.headers.get('user-agent')).toBe(SIMPLERO_USER_AGENT);
+	expect(SIMPLERO_USER_AGENT).toMatch(/^Corsair \([^@\s]+@[^)\s]+\)$/);
 }
 
 beforeEach(() => {
@@ -222,22 +226,31 @@ describe('customers', () => {
 		expect(lastRequest().path).toBe('/api/v2/customers/12/actions/remove_tag');
 	});
 
-	it('adjusts the lead score by the given value', async () => {
+	it('adjusts the lead score with the spec body { amount, explanation }', async () => {
 		respond({ data: actionOk });
 
-		await invoke(Customers.adjustLeadScore, { id: 12, value: -2 });
+		await invoke(Customers.adjustLeadScore, {
+			id: 12,
+			amount: -2,
+			explanation: 'bounced',
+		});
 
 		const sent = lastRequest();
 		expect(sent.path).toBe('/api/v2/customers/12/actions/adjust_lead_score');
-		expect(sent.body).toEqual({ value: -2 });
+		expect(sent.body).toEqual({ amount: -2, explanation: 'bounced' });
 	});
 });
 
 describe('lists', () => {
 	it('lists, gets, creates and updates', async () => {
 		respond({ data: [list], pagination });
-		expect(await invoke(Lists.list, {})).toMatchObject({ data: [list] });
+		const listed = (await invoke(Lists.list, {})) as { data: { id: number }[] };
+		expect(listed).toMatchObject({ data: [list] });
 		expect(lastRequest().path).toBe('/api/v2/lists');
+		// The typed id is what lists.get takes in its path.
+		respond({ data: list });
+		await invoke(Lists.get, { id: listed.data[0]?.id });
+		expect(lastRequest().path).toBe('/api/v2/lists/31');
 
 		respond({ data: list });
 		await invoke(Lists.get, { id: 7 });
@@ -405,11 +418,10 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect(error).toBeInstanceOf(SimpleroAPIError);
-		const failure = error as SimpleroAPIError;
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
 		expect(failure.status).toBe(401);
-		expect(failure.reason).toBe('Bad API key');
-		expect(failure.isAuthError).toBe(true);
+		expect(failure.body).toEqual(authProblem);
 		expect(failure.message).toContain('Bad API key');
 		expect(util.inspect(error)).not.toContain(API_KEY);
 		expect(failure.message).not.toContain(API_KEY);
@@ -426,16 +438,14 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		const failure = error as SimpleroAPIError;
-		expect(failure.errors).toEqual(validationProblem.errors);
+		const failure = error as ApiError;
+		expect(failure).toBeInstanceOf(ApiError);
+		expect(failure.body).toEqual(validationProblem);
 		expect(failure.message).toContain('Email is invalid');
 		expect(failure.message).toContain('Lead score must be a number');
-	});
-
-	it('classifies a 403 as a permission error', () => {
-		expect(new SimpleroAPIError('x', { status: 403 }).isPermissionError).toBe(
-			true,
-		);
+		// The sent contact (email, names) stays off the error.
+		expect(failure.request.body).toBeUndefined();
+		expect(JSON.stringify(failure)).not.toContain('not-an-email');
 	});
 
 	it('encodes a path segment', () => {
