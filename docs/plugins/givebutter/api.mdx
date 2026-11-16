@@ -1,0 +1,3408 @@
+---
+title: "Givebutter API reference"
+sidebarTitle: "API"
+description: "API reference for the Givebutter plugin in Corsair: every `givebutter.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activities
+
+### create
+
+`activities.create`
+
+Create a contact activity.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.activities.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `type` | `email \| meeting \| note \| phone_call \| sms \| completed_task \| volunteer_activity` | Yes | — |
+| `note` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `occurred_at` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`activities.delete`
+
+Delete a contact activity.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.activities.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `activity` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`activities.get`
+
+Get a contact activity.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.activities.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `activity` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`activities.list`
+
+List contact activities.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.activities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `type` | `email \| meeting \| note \| phone_call \| sms \| completed_task \| volunteer_activity` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  type?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`activities.update`
+
+Update a contact activity.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.activities.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `activity` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create a fundraising campaign.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.campaigns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `general \| collect \| fundraise \| event` | Yes | — |
+| `title` | `string` | Yes | — |
+| `subtitle` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `goal` | `number \| null` | No | — |
+| `end_at` | `string \| null` | No | — |
+| `slug` | `string` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `currency` | `USD` | No | — |
+| `settings` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  name: string,
+  value?: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `code` | `string \| null` | No | — |
+| `account_id` | `string \| number` | No | — |
+| `event_id` | `string \| number \| null` | No | — |
+| `type` | `string` | No | — |
+| `title` | `string` | No | — |
+| `subtitle` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `slug` | `string` | No | — |
+| `url` | `string` | No | — |
+| `goal` | `number \| null` | No | — |
+| `raised` | `number \| string` | No | — |
+| `donors` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `cover` | `string \| object \| null` | No | — |
+| `status` | `string` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `end_at` | `string \| null` | No | — |
+| `settings` | `object[] \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="cover full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete a fundraising campaign.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.campaigns.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Get a fundraising campaign.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.campaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `code` | `string \| null` | No | — |
+| `account_id` | `string \| number` | No | — |
+| `event_id` | `string \| number \| null` | No | — |
+| `type` | `string` | No | — |
+| `title` | `string` | No | — |
+| `subtitle` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `slug` | `string` | No | — |
+| `url` | `string` | No | — |
+| `goal` | `number \| null` | No | — |
+| `raised` | `number \| string` | No | — |
+| `donors` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `cover` | `string \| object \| null` | No | — |
+| `status` | `string` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `end_at` | `string \| null` | No | — |
+| `settings` | `object[] \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="cover full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List fundraising campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.campaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  code?: string | null,
+  account_id?: string | number,
+  event_id?: string | number | null,
+  type?: string,
+  title?: string,
+  subtitle?: string | null,
+  description?: string | null,
+  slug?: string,
+  url?: string,
+  goal?: number | null,
+  raised?: number | string,
+  donors?: number,
+  currency?: string,
+  cover?: string | {
+  } | null,
+  status?: string,
+  timezone?: string | null,
+  end_at?: string | null,
+  settings?: {
+  }[] | null,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number,
+  unfiltered_total: number | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update a fundraising campaign.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.campaigns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `published` | `boolean` | No | — |
+| `public` | `boolean` | No | — |
+| `short_code` | `string \| null` | No | — |
+| `beneficiary_id` | `number \| null` | No | — |
+| `default_appeal_id` | `number \| null` | No | — |
+| `cover` | `object` | No | — |
+| `type` | `general \| collect \| fundraise \| event` | No | — |
+| `title` | `string` | No | — |
+| `subtitle` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `goal` | `number \| null` | No | — |
+| `end_at` | `string \| null` | No | — |
+| `slug` | `string` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `currency` | `USD` | No | — |
+| `settings` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="cover full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  name: string,
+  value?: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `code` | `string \| null` | No | — |
+| `account_id` | `string \| number` | No | — |
+| `event_id` | `string \| number \| null` | No | — |
+| `type` | `string` | No | — |
+| `title` | `string` | No | — |
+| `subtitle` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `slug` | `string` | No | — |
+| `url` | `string` | No | — |
+| `goal` | `number \| null` | No | — |
+| `raised` | `number \| string` | No | — |
+| `donors` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `cover` | `string \| object \| null` | No | — |
+| `status` | `string` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `end_at` | `string \| null` | No | — |
+| `settings` | `object[] \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="cover full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `middle_name` | `string \| null` | No | — |
+| `preferred_name` | `string \| null` | No | — |
+| `gender` | `male \| female \| other` | No | — |
+| `pronouns` | `string \| null` | No | — |
+| `suffix` | `string \| null` | No | — |
+| `prefix` | `string \| null` | No | — |
+| `type` | `individual \| company` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `employer` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `twitter_url` | `string \| null` | No | — |
+| `linkedin_url` | `string \| null` | No | — |
+| `facebook_url` | `string \| null` | No | — |
+| `tiktok_url` | `string \| null` | No | — |
+| `instagram_url` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `contact_since` | `string \| null` | No | — |
+| `dob` | `string` | No | — |
+| `custom_fields` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `primary_email` | `string \| null` | No | — |
+| `primary_phone` | `string \| null` | No | — |
+| `address_1` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `zipcode` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `primary_address_1` | `string \| null` | No | — |
+| `primary_address_2` | `string \| null` | No | — |
+| `primary_city` | `string \| null` | No | — |
+| `primary_state` | `string \| null` | No | — |
+| `primary_zipcode` | `string \| null` | No | — |
+| `primary_country` | `string \| null` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `phones` | `string[] \| null` | No | — |
+| `email_subscription` | `boolean \| null` | No | — |
+| `phone_subscription` | `boolean \| null` | No | — |
+| `address_subscription` | `boolean \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `force_create` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `type` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `primary_email` | `string \| null` | No | — |
+| `primary_phone` | `string \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `type` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `primary_email` | `string \| null` | No | — |
+| `primary_phone` | `string \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `individual \| company` | No | — |
+| `createdAfter` | `string \| null` | No | — |
+| `createdBefore` | `string \| null` | No | — |
+| `updatedAfter` | `string \| null` | No | — |
+| `updatedBefore` | `string \| null` | No | — |
+| `totalContributionsMin` | `number \| null` | No | — |
+| `totalContributionsMax` | `number \| null` | No | — |
+| `recurringContributionsMin` | `number \| null` | No | — |
+| `recurringContributionsMax` | `number \| null` | No | — |
+| `tags` | `string \| null` | No | — |
+| `sortBy` | `name_or_company \| primary_email \| point_of_contact \| created_at \| total_contributions \| recurring_contributions \| last_donation_amount \| null` | No | — |
+| `sortByDesc` | `name_or_company \| primary_email \| point_of_contact \| created_at \| total_contributions \| recurring_contributions \| last_donation_amount \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `primaryEmail` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  external_id?: string | null,
+  type?: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  primary_email?: string | null,
+  primary_phone?: string | null,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restore
+
+`contacts.restore`
+
+Restore a deleted contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.contacts.restore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `type` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `primary_email` | `string \| null` | No | — |
+| `primary_phone` | `string \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `middle_name` | `string \| null` | No | — |
+| `preferred_name` | `string \| null` | No | — |
+| `gender` | `male \| female \| other` | No | — |
+| `pronouns` | `string \| null` | No | — |
+| `suffix` | `string \| null` | No | — |
+| `prefix` | `string \| null` | No | — |
+| `type` | `individual \| company` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `employer` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `twitter_url` | `string \| null` | No | — |
+| `linkedin_url` | `string \| null` | No | — |
+| `facebook_url` | `string \| null` | No | — |
+| `tiktok_url` | `string \| null` | No | — |
+| `instagram_url` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `contact_since` | `string \| null` | No | — |
+| `dob` | `string` | No | — |
+| `custom_fields` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `website_url` | `string \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `email_opt_in` | `boolean \| null` | No | — |
+| `sms_opt_in` | `boolean \| null` | No | — |
+| `address_subscription` | `boolean \| null` | No | — |
+| `remove_emails` | `string[] \| null` | No | — |
+| `remove_phones` | `string[] \| null` | No | — |
+| `remove_address_ids` | `number[] \| null` | No | — |
+| `emails` | `object[] \| null` | No | — |
+| `phones` | `object[] \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `type` | `string` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `primary_email` | `string \| null` | No | — |
+| `primary_phone` | `string \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Contact Tags
+
+### add
+
+`contactTags.add`
+
+Add tags to a contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.contactTags.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### remove
+
+`contactTags.remove`
+
+Remove tags from a contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.contactTags.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### sync
+
+`contactTags.sync`
+
+Replace all of a contact’s tags; tags not listed are removed.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.contactTags.sync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string \| number` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Discount Codes
+
+### create
+
+`discountCodes.create`
+
+Create a campaign discount code.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.discountCodes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `type` | `percentage \| fixed` | Yes | — |
+| `active` | `boolean` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `code` | `string` | Yes | — |
+| `items` | `string[] \| null` | No | — |
+| `include_future` | `boolean` | No | — |
+| `uses` | `number \| null` | No | — |
+| `starts_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`discountCodes.delete`
+
+Delete a campaign discount code.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.discountCodes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `discountCode` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`discountCodes.get`
+
+Get a campaign discount code.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.discountCodes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `discountCode` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`discountCodes.list`
+
+List a campaign’s discount codes.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.discountCodes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`discountCodes.update`
+
+Update a campaign discount code.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.discountCodes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `discountCode` | `string \| number` | Yes | — |
+| `type` | `percentage \| fixed` | No | — |
+| `active` | `boolean` | No | — |
+| `amount` | `number` | Yes | — |
+| `code` | `string` | No | — |
+| `items` | `string[] \| null` | No | — |
+| `include_future` | `boolean` | No | — |
+| `uses` | `number \| null` | No | — |
+| `starts_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Funds
+
+### create
+
+`funds.create`
+
+Create a fund.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.funds.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `code` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`funds.delete`
+
+Delete a fund.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.funds.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fund` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`funds.get`
+
+Get a fund.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.funds.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fund` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`funds.list`
+
+List funds.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.funds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number | null,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`funds.update`
+
+Update a fund.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.funds.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fund` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `code` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+## Household Contacts
+
+### add
+
+`householdContacts.add`
+
+Add a contact to a household.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.householdContacts.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `household` | `string \| number` | Yes | — |
+| `contact_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`householdContacts.get`
+
+Get a household contact.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.householdContacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `household` | `string \| number` | Yes | — |
+| `contact` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`householdContacts.list`
+
+List contacts in a household.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.householdContacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `household` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`householdContacts.remove`
+
+Remove a contact from a household.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.householdContacts.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `household` | `string \| number` | Yes | — |
+| `contact` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+## Households
+
+### create
+
+`households.create`
+
+Create a household.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.households.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `head_contact_id` | `number \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `envelope_name` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`households.delete`
+
+Delete a household.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.households.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `household` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`households.get`
+
+Get a household.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.households.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `household` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`households.list`
+
+List households.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.households.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headContactId` | `string` | No | — |
+| `contacts` | `string` | No | — |
+| `query` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortByDesc` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`households.update`
+
+Update a household.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.households.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `household` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `head_contact_id` | `number \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `envelope_name` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+## Members
+
+### delete
+
+`members.delete`
+
+Remove a campaign member.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.members.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `member` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`members.get`
+
+Get a campaign member.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `member` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`members.list`
+
+List a campaign’s members.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+  }[],
+  links: {
+    first: string | null,
+    last: string | null,
+    prev: string | null,
+    next: string | null
+  },
+  meta: {
+    current_page: number,
+    from: number | null,
+    last_page: number,
+    links: {
+      url: string | null,
+      label: string,
+      active: boolean
+    }[],
+    path: string | null,
+    per_page: number,
+    to: number | null,
+    total: number
+  }
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messages
+
+### get
+
+`messages.get`
+
+Get a message.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `status` | `string` | No | — |
+| `channel` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  status?: string,
+  channel?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payouts
+
+### get
+
+`payouts.get`
+
+Get a payout.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.payouts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payout` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `amount` | `number \| string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`payouts.list`
+
+List payouts.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.payouts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  amount?: number | string,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Plans
+
+### get
+
+`plans.get`
+
+Get a recurring plan.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.plans.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan` | `string \| number` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `amount` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `contact_id` | `string \| number \| null` | No | — |
+| `amount` | `number \| string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `frequency` | `string \| null` | No | — |
+| `next_bill_date` | `string \| null` | No | — |
+| `canceled_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`plans.list`
+
+List recurring plans.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.plans.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `string \| null` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  contact_id?: string | number | null,
+  amount?: number | string | null,
+  status?: string | null,
+  frequency?: string | null,
+  next_bill_date?: string | null,
+  canceled_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pledges
+
+### get
+
+`pledges.get`
+
+Get a pledge.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.pledges.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pledge` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `status` | `string` | No | — |
+| `amount` | `number \| string` | No | — |
+
+
+
+---
+
+### list
+
+`pledges.list`
+
+List pledges.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.pledges.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  status?: string,
+  amount?: number | string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sso
+
+### account
+
+`sso.account`
+
+Get the SSO account.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.sso.account({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+
+
+
+---
+
+### campaign
+
+`sso.campaign`
+
+Get a campaign through the SSO API.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.sso.campaign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Teams
+
+### delete
+
+`teams.delete`
+
+Remove a campaign team.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.teams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `team` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`teams.get`
+
+Get a campaign team.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `team` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`teams.list`
+
+List a campaign’s teams.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ticket Items
+
+### create
+
+`ticketItems.create`
+
+Create a campaign ticket item.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.ticketItems.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `total_quantity` | `number \| null` | No | — |
+| `subtype` | `physical \| digital \| hybrid \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `retail_price` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `bundle_only` | `boolean \| null` | No | — |
+| `hide_remaining` | `boolean \| null` | No | — |
+| `scope` | `registrant \| event \| null` | No | — |
+| `bundles` | `string[] \| null` | No | — |
+| `custom_fields` | `string[] \| null` | No | — |
+| `pictures` | `string[] \| null` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`ticketItems.get`
+
+Get a campaign ticket item.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.ticketItems.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `ticketId` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`ticketItems.list`
+
+List a campaign’s ticket items.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.ticketItems.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tickets
+
+### get
+
+`tickets.get`
+
+Get an issued ticket.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.tickets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`tickets.list`
+
+List issued tickets.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.tickets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### create
+
+`transactions.create`
+
+Record an offline transaction (cash, check, etc.). The API has no delete for transactions.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.transactions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_code` | `string \| null` | No | — |
+| `campaign_title` | `string` | No | — |
+| `campaign_team_id` | `number \| null` | No | — |
+| `team_member_id` | `number \| null` | No | — |
+| `contact_id` | `number \| null` | No | — |
+| `contact_external_id` | `string \| null` | No | — |
+| `fund_code` | `string \| null` | No | — |
+| `mark_deposited` | `boolean \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `acknowledged_at` | `string \| null` | No | — |
+| `external_label` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `contact_contact_since` | `string \| null` | No | — |
+| `fee_covered` | `string \| null` | No | — |
+| `platform_fee` | `string \| null` | No | — |
+| `processing_fee` | `string \| null` | No | — |
+| `check_number` | `string \| null` | No | — |
+| `check_deposited_at` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `internal_note` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `address_1` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `zipcode` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `dedication_type` | `in_memory_of \| in_honor_of` | No | — |
+| `dedication_name` | `string \| null` | No | — |
+| `dedication_recipient_name` | `string \| null` | No | — |
+| `dedication_recipient_email` | `string \| null` | No | — |
+| `giving_space_message` | `string \| null` | No | — |
+| `appeal_code` | `string \| null` | No | — |
+| `appeal_name` | `string \| null` | No | — |
+| `appeal_status` | `string \| null` | No | — |
+| `method` | `ach \| card \| cash \| check \| digital_wallet \| donor_advised_fund \| paypal \| venmo \| cashapp \| terminal \| stock \| in-kind \| property \| other \| none` | Yes | — |
+| `transacted_at` | `string` | Yes | — |
+| `amount` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `amount` | `number \| string` | No | — |
+| `currency` | `string` | No | — |
+| `status` | `string` | No | — |
+| `method` | `string` | No | — |
+| `transacted_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`transactions.get`
+
+Get a transaction.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.transactions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `amount` | `number \| string` | No | — |
+| `currency` | `string` | No | — |
+| `status` | `string` | No | — |
+| `method` | `string` | No | — |
+| `transacted_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+List transactions.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.transactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactedAfter` | `string \| null` | No | — |
+| `transactedBefore` | `string \| null` | No | — |
+| `createdAfter` | `string \| null` | No | — |
+| `createdBefore` | `string \| null` | No | — |
+| `updatedAfter` | `string \| null` | No | — |
+| `updatedBefore` | `string \| null` | No | — |
+| `checkDepositedAfter` | `string \| null` | No | — |
+| `checkDepositedBefore` | `string \| null` | No | — |
+| `contacts` | `string \| null` | No | — |
+| `method` | `string \| null` | No | — |
+| `scope` | `all \| benefiting \| chapters \| null` | No | — |
+| `sortBy` | `amount \| transacted_at \| created_at \| contact_name \| null` | No | — |
+| `sortByDesc` | `amount \| transacted_at \| created_at \| contact_name \| null` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  amount?: number | string,
+  currency?: string,
+  status?: string,
+  method?: string,
+  transacted_at?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number,
+  unfiltered_total: number | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transactions.update`
+
+Update a transaction.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.transactions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction` | `string \| number` | Yes | — |
+| `transaction_id` | `string` | No | — |
+| `internal_note` | `string \| null` | No | — |
+| `check_number` | `string \| null` | No | — |
+| `check_deposited_at` | `string \| null` | No | — |
+| `custom_fields` | `string[]` | No | — |
+| `team_id` | `string` | No | — |
+| `campaign_member_id` | `string` | No | — |
+| `fund_id` | `string` | No | — |
+| `campaign_id` | `string` | No | — |
+| `method` | `string` | No | — |
+| `transacted_at` | `string` | No | — |
+| `appeal_id` | `string` | No | — |
+| `offline_payment_received` | `string` | No | — |
+| `dedication` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dedication full type">
+
+```ts
+{
+  type: in_memory_of | in_honor_of,
+  name: string,
+  recipient_name: string | null,
+  recipient_email: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `amount` | `number \| string` | No | — |
+| `currency` | `string` | No | — |
+| `status` | `string` | No | — |
+| `method` | `string` | No | — |
+| `transacted_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### activities.get
+
+`webhooks.activities.get`
+
+Get an outbound webhook activity.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.webhooks.activities.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string \| number` | Yes | — |
+| `activity` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### activities.list
+
+`webhooks.activities.list`
+
+List outbound webhook activities.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.webhooks.activities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`webhooks.create`
+
+Create an outbound webhook registration.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `event` | `campaign.created \| campaign.updated \| ticket.created \| transaction.succeeded \| contact.created \| plan.canceled \| plan.created \| plan.failed \| plan.paused \| plan.resumed \| plan.updated \| refund.created` | No | — |
+| `events` | `(campaign.created \| campaign.updated \| ticket.created \| transaction.succeeded \| contact.created \| plan.canceled \| plan.created \| plan.failed \| plan.paused \| plan.resumed \| plan.updated \| refund.created)[]` | No | — |
+| `name` | `string \| null` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete an outbound webhook registration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.givebutter.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get an outbound webhook registration.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List outbound webhook registrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.givebutter.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  url?: string,
+  enabled?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first: string | null,
+  last: string | null,
+  prev: string | null,
+  next: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from: number | null,
+  last_page: number,
+  links: {
+    url: string | null,
+    label: string,
+    active: boolean
+  }[],
+  path: string | null,
+  per_page: number,
+  to: number | null,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update an outbound webhook registration.
+
+**Risk:** `write`
+
+```ts
+await corsair.givebutter.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string \| number` | Yes | — |
+| `url` | `string` | Yes | — |
+| `events` | `(campaign.created \| campaign.updated \| ticket.created \| transaction.succeeded \| contact.created \| plan.canceled \| plan.created \| plan.failed \| plan.paused \| plan.resumed \| plan.updated \| refund.created)[]` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+---
+
