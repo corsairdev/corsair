@@ -883,6 +883,16 @@ describe('Mistral AI input checks', () => {
 		});
 		expect(out).toMatchObject({ brand_new_field: { nested: 1 } });
 	});
+
+	it('reads a batch job whose status Mistral added after this plugin', async () => {
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({ ...batchJob, status: 'PAUSED' }),
+		);
+		const out = await client.corsair.mistralai.api.batch.get({
+			job_id: JOB_ID,
+		});
+		expect(out.status).toBe('PAUSED');
+	});
 });
 
 type History = MistralAiEndpointInputs['chatComplete']['messages'];

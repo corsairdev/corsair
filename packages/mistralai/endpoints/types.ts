@@ -741,7 +741,8 @@ const BatchJobSchema = z
 		),
 		// unknown: inline results, each shaped like the endpoint's own response.
 		outputs: z.array(z.record(z.string(), z.unknown())).nullish(),
-		status: BatchJobStatusSchema,
+		// Known statuses, or any string: a status Mistral adds must not fail a read.
+		status: z.union([BatchJobStatusSchema, z.string()]),
 		created_at: z.number().int(),
 		total_requests: z.number().int(),
 		completed_requests: z.number().int(),

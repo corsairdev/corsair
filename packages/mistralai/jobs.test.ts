@@ -68,9 +68,13 @@ describe('Mistral AI jobs', () => {
 	it.each(jobs)(
 		'%s places every status batch.get can report',
 		(_op, { job }) => {
+			// The output takes the known statuses or any other string, so a
+			// status Mistral adds later does not fail batch.get.
 			const status = shapeOf(job.status.op)[job.status.statusPath];
-			expect(status).toBeInstanceOf(z.ZodEnum);
-			const values = (status as z.ZodEnum).options.map(String);
+			expect(status).toBeInstanceOf(z.ZodUnion);
+			const known = (status as z.ZodUnion).options[0];
+			expect(known).toBeInstanceOf(z.ZodEnum);
+			const values = (known as z.ZodEnum).options.map(String);
 			expect(values).toEqual([...BATCH_JOB_STATUSES]);
 
 			const placed = [...PENDING, ...job.status.done, ...job.status.failed];
