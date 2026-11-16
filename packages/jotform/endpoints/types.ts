@@ -217,6 +217,22 @@ export const JotformPlanSchema = z
 	})
 	.passthrough();
 
+// ── Path Segments ────────────────────────────────────────────────────────────
+
+// encodeURIComponent leaves `.` and `..` alone, so an id of `..` would walk up
+// the URL path (`/form/123/question/..` is `/form/123`). Ids never take that form.
+const PathIdSchema = z
+	.string()
+	.min(1)
+	.refine((value) => value !== '.' && value !== '..', {
+		message: 'Not a valid id',
+	});
+
+// Jotform question ids are integers.
+const QuestionIdSchema = z
+	.string()
+	.regex(/^\d+$/, { message: 'Question ids are numeric, such as "3"' });
+
 // ── Operation Input & Output Schemas ────────────────────────────────────────
 
 export const JotformEndpointInputSchemas = {
@@ -263,7 +279,7 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'user.getSettingByKey': z
 		.object({
-			key: z.string().min(1),
+			key: PathIdSchema,
 		})
 		.strict(),
 	'user.getSubusers': z.object({}).strict(),
@@ -279,7 +295,7 @@ export const JotformEndpointInputSchemas = {
 	// ── Forms ──
 	'forms.get': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'forms.create': z
@@ -300,40 +316,40 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'forms.delete': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'forms.clone': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'forms.getFiles': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'forms.getQuestions': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'forms.getQuestion': z
 		.object({
-			id: z.string().min(1),
-			qid: z.string().min(1),
+			id: PathIdSchema,
+			qid: QuestionIdSchema,
 		})
 		.strict(),
 	'forms.createQuestion': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			// unknown because single question properties vary across question types (radio, text, date, etc.)
 			question: z.record(z.string(), z.unknown()),
 		})
 		.strict(),
 	'forms.createQuestions': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			// unknown because batch questions payload can be an array or map of question definitions
 			questions: z.union([
 				z.array(z.record(z.string(), z.unknown())),
@@ -343,44 +359,44 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'forms.updateQuestion': z
 		.object({
-			id: z.string().min(1),
-			qid: z.string().min(1),
+			id: PathIdSchema,
+			qid: QuestionIdSchema,
 			// unknown because edited question properties vary by question type
 			question: z.record(z.string(), z.unknown()),
 		})
 		.strict(),
 	'forms.deleteQuestion': z
 		.object({
-			id: z.string().min(1),
-			qid: z.string().min(1),
+			id: PathIdSchema,
+			qid: QuestionIdSchema,
 		})
 		.strict(),
 	'forms.getProperties': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'forms.getProperty': z
 		.object({
-			id: z.string().min(1),
-			key: z.string().min(1),
+			id: PathIdSchema,
+			key: PathIdSchema,
 		})
 		.strict(),
 	'forms.setProperties': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			// unknown because form properties are extensible configuration options
 			properties: z.record(z.string(), z.unknown()),
 		})
 		.strict(),
 	'forms.getReports': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'forms.createReport': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			title: z.string().min(1),
 			list_type: z.string().min(1),
 			fields: z.string().optional(),
@@ -388,7 +404,7 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'forms.getSubmissions': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			offset: z.number().int().nonnegative().optional(),
 			limit: z.number().int().positive().max(1000).optional(),
 			filter: z.string().optional(),
@@ -397,14 +413,14 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'forms.createSubmission': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			// unknown because submission field answers are keyed by question ID with dynamic response values
 			submission: z.record(z.string(), z.unknown()),
 		})
 		.strict(),
 	'forms.createSubmissions': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			// unknown because each submission in the batch contains dynamic question field answers
 			submissions: z.array(z.record(z.string(), z.unknown())),
 		})
@@ -413,38 +429,38 @@ export const JotformEndpointInputSchemas = {
 	// ── Submissions ──
 	'submissions.get': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'submissions.update': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			// unknown because edited submission data is keyed by question ID with dynamic answer values
 			submission: z.record(z.string(), z.unknown()),
 		})
 		.strict(),
 	'submissions.delete': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 
 	// ── Reports ──
 	'reports.get': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'reports.delete': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 
 	// ── Folders ──
 	'folders.get': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'folders.create': z
@@ -456,7 +472,7 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'folders.update': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			name: z.string().optional(),
 			color: z.string().optional(),
 			parent: z.string().optional(),
@@ -465,14 +481,14 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'folders.delete': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 
 	// ── Labels ──
 	'labels.get': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'labels.create': z
@@ -484,7 +500,7 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'labels.update': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			name: z.string().optional(),
 			color: z.string().optional(),
 			parent: z.string().optional(),
@@ -492,12 +508,12 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'labels.delete': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 		})
 		.strict(),
 	'labels.getResources': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			offset: z.number().int().nonnegative().optional(),
 			limit: z.number().int().positive().max(1000).optional(),
 			orderby: z.string().optional(),
@@ -506,7 +522,7 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'labels.addResources': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			resources: z.array(
 				z.object({
 					id: z.string(),
@@ -517,7 +533,7 @@ export const JotformEndpointInputSchemas = {
 		.strict(),
 	'labels.removeResources': z
 		.object({
-			id: z.string().min(1),
+			id: PathIdSchema,
 			resources: z.array(
 				z.object({
 					id: z.string(),
@@ -530,7 +546,7 @@ export const JotformEndpointInputSchemas = {
 	// ── System ──
 	'system.getPlan': z
 		.object({
-			planName: z.string().min(1),
+			planName: PathIdSchema,
 		})
 		.strict(),
 } as const;

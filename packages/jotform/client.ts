@@ -92,7 +92,8 @@ export function nestSubmissionKeys(
 			nested[key] = value;
 			continue;
 		}
-		const [, qid, sub] = match as unknown as [string, string, string];
+		const [, qid, sub] = match;
+		if (qid === undefined || sub === undefined) continue;
 		const existing = nested[qid];
 		// unknown because the parent answer holds the other sub-fields of this question.
 		const group: Record<string, unknown> =

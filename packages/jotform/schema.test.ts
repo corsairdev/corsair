@@ -212,3 +212,16 @@ describe('Jotform risk levels (R8)', () => {
 		expect(parsed.success).toBe(true);
 	});
 });
+
+describe('Jotform path segments', () => {
+	it('rejects dot segments and non-numeric question ids before any request', () => {
+		const del = JotformEndpointInputSchemas['forms.deleteQuestion'];
+		expect(del.safeParse({ id: '123456789', qid: '..' }).success).toBe(false);
+		expect(del.safeParse({ id: '..', qid: '3' }).success).toBe(false);
+		expect(del.safeParse({ id: '123456789', qid: '3' }).success).toBe(true);
+		expect(
+			JotformEndpointInputSchemas['submissions.delete'].safeParse({ id: '.' })
+				.success,
+		).toBe(false);
+	});
+});
