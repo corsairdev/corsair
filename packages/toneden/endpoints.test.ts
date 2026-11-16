@@ -70,7 +70,7 @@ describe('output schemas keep the provider field names', () => {
 				attachmentsEnvelope,
 			);
 		expect(parsed.attachments[0]?.type).toBe('contest');
-		expect(parsed.attachments[0]?.actions).toHaveLength(1);
+		expect(parsed.attachments[0]?.actions).toBe(0);
 	});
 
 	it('parses one attachment', () => {

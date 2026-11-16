@@ -553,6 +553,23 @@ describe('user lists and offline conversions', () => {
 	});
 });
 
+describe('documented field types', () => {
+	it('links.update sends affiliate codes as an object and social settings as a list', async () => {
+		respond(linkEnvelope);
+
+		await invoke(LinksEndpoints.update, {
+			link_id: 48213,
+			affiliate_codes: { itunes: 'at-123' },
+			social_settings: [],
+		});
+
+		expect(lastRequest().body).toEqual({
+			affiliate_codes: { itunes: 'at-123' },
+			social_settings: [],
+		});
+	});
+});
+
 describe('empty updates', () => {
 	it('campaigns.update and playbooks.update refuse a call with nothing to change', async () => {
 		for (const endpoint of [

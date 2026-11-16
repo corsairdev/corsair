@@ -29,10 +29,12 @@ const LinkSchema = z
 		skip_landing_page: z.boolean().nullish(),
 		sort_services_by_clickthroughs: z.boolean().nullish(),
 		use_saved_service: z.boolean().nullish(),
-		affiliate_codes: z.array(z.object({}).loose()).nullish(),
+		// The spec types these as an object keyed by store (itunes, amazon).
+		affiliate_codes: z.record(z.string(), z.string().nullish()).nullish(),
 		pixels: z.array(z.object({}).loose()).nullish(),
 		services: z.array(z.object({}).loose()).nullish(),
-		social_settings: z.object({}).loose().nullish(),
+		// The spec types these as a list of social profile links.
+		social_settings: z.array(z.object({}).loose()).nullish(),
 		header: z.string().nullish(),
 		metadata_title: z.string().nullish(),
 		metadata_description: z.string().nullish(),
@@ -57,7 +59,8 @@ const AttachmentSchema = z
 		id: z.number().nullish(),
 		owner_id: z.number().nullish(),
 		type: z.string().nullish().describe('contest or unlock'),
-		actions: z.array(z.object({}).loose()).nullish(),
+		// The approximate count of unlocks or entries (spec: integer).
+		actions: z.number().nullish(),
 		artwork_url: z.string().nullish(),
 		title: z.string().nullish(),
 		link_path: z.string().nullish(),
@@ -201,11 +204,16 @@ const LinkWriteFields = {
 	skip_landing_page: z.boolean().optional(),
 	sort_services_by_clickthroughs: z.boolean().optional(),
 	use_saved_service: z.boolean().optional(),
-	affiliate_codes: z.array(z.object({}).loose()).optional(),
+	affiliate_codes: z
+		.record(z.string(), z.string())
+		.optional()
+		.describe('Affiliate codes by store, e.g. { itunes, amazon }'),
 	pixels: z.array(z.object({}).loose()).optional(),
 	services: z.array(z.object({}).loose()).optional(),
-	// unknown: ToneDen documents social settings as a free-form object per service.
-	social_settings: z.record(z.string(), z.unknown()).optional(),
+	social_settings: z
+		.array(z.object({}).loose())
+		.optional()
+		.describe('Social profile links shown on the landing page'),
 	header: z.string().optional(),
 	metadata_title: z.string().optional(),
 	metadata_description: z.string().optional(),
@@ -231,7 +239,7 @@ const AttachmentWriteFields = {
 	is_private: z.boolean().optional(),
 	is_hidden: z.boolean().optional(),
 	message: z.string().optional(),
-	actions: z.array(z.object({}).loose()).optional(),
+	actions: z.number().int().min(0).optional(),
 };
 
 // ---------------------------------------------------------------------------
