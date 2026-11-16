@@ -23,7 +23,7 @@ const SUPERSAAS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 /**
  * A request that never reached SuperSaaS (DNS, reset, timeout). HTTP failures
- * are not wrapped: core's `ApiError` passes through (see `withoutSentBody`), so
+ * are not wrapped: core's `ApiError` passes through (see `withoutRequestData`), so
  * its `status`, `retryAfter`, `request` and `body` reach core and the caller.
  *
  * SuperSaaS authenticates with **HTTP Basic**, where the username is the account
@@ -45,18 +45,55 @@ export class SupersaasAPIError extends Error {
 }
 
 /**
- * Core's ApiError keeps the request it was built from, body included, and a
- * SuperSaaS body is a user or booking: names, emails, addresses, passwords.
- * This rebuilds the same ApiError without the sent body; status, method, URL,
- * response body and rate-limit fields are kept.
+ * Query values that carry a person's details: `user` is a login name (often an
+ * email) on the agenda read and booking filters.
  */
-function withoutSentBody(error: ApiError): ApiError {
-	if (error.request.body === undefined) return error;
-	const { body: _sentBody, ...request } = error.request;
+const PERSONAL_QUERY = new Set(['user']);
+const REDACTED = '[REDACTED]';
+
+function maskUrl(value: string): string {
+	const at = value.indexOf('?');
+	if (at === -1) return value;
+	const params = value
+		.slice(at + 1)
+		.split('&')
+		.map((pair) => {
+			const raw = pair.split('=')[0] ?? '';
+			return PERSONAL_QUERY.has(raw) ? `${raw}=${REDACTED}` : pair;
+		});
+	return `${value.slice(0, at)}?${params.join('&')}`;
+}
+
+/**
+ * Core's ApiError passes through unchanged unless the request carried personal
+ * data: a sent body (users and bookings hold names, emails, addresses,
+ * passwords) or a `user` query value. Only then is it rebuilt, with the body
+ * dropped and that value masked in `request.query` and both URLs; status,
+ * message, response body and rate-limit fields are kept. This is the one
+ * rebuild the plugin rules allow: stripping echoed request data.
+ */
+function withoutRequestData(error: ApiError): ApiError {
+	const { body: sentBody, query, ...request } = error.request;
+	const personalQuery = Object.keys(query ?? {}).some((key) =>
+		PERSONAL_QUERY.has(key),
+	);
+	if (sentBody === undefined && !personalQuery) return error;
+	const maskedQuery = query
+		? Object.fromEntries(
+				Object.entries(query).map(([key, value]) => [
+					key,
+					PERSONAL_QUERY.has(key) ? REDACTED : value,
+				]),
+			)
+		: undefined;
 	return new ApiError(
-		request,
 		{
-			url: error.url,
+			...request,
+			url: maskUrl(error.request.url),
+			...(maskedQuery ? { query: maskedQuery } : {}),
+		},
+		{
+			url: maskUrl(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -141,7 +178,7 @@ export async function makeSupersaasRequest(
 			rateLimitConfig: SUPERSAAS_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) throw withoutSentBody(error);
+		if (error instanceof ApiError) throw withoutRequestData(error);
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new SupersaasAPIError(error.message, { cause: error, method });
 		}

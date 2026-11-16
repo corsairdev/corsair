@@ -110,13 +110,20 @@ export function updated(
  * A create answers 201 with an empty body and the new record's URL in the
  * `Location` header, such as `https://www.supersaas.com/api/bookings/1234.json`.
  * The client asks core for that header, so `raw` is the URL; the id is its last
- * path segment. A missing or unreadable header is an error, not a success.
+ * path segment. A missing or unreadable header is an error, not a success: core
+ * falls back to the body when the header is absent, so `raw` must be an
+ * absolute `.../api/<records>/<id>` URL. The documented 201 body is empty, so
+ * there is no body to validate beside the header.
  */
 export function created(
 	raw: UnknownJson, // unknown: the Location header the client asked for
 ): { created: true; id: string; location: string } {
 	const location = typeof raw === 'string' ? raw.trim() : '';
-	const match = location.match(/\/([^/?#]+?)(?:\.(?:json|xml))?(?:[?#].*)?$/);
+	// Core hands back the body when the header is missing, so only an absolute
+	// URL to an API record counts: an HTML page or a stray text body does not.
+	const match = location.match(
+		/^https?:\/\/[^/\s]+\/api\/[a-z_]+\/([^/?#\s]+?)(?:\.(?:json|xml))?(?:[?#]\S*)?$/,
+	);
 	const id = match?.[1] ? decodeURIComponent(match[1]) : undefined;
 	if (!location || !id) {
 		throw new Error(

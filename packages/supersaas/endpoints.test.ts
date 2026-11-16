@@ -3,6 +3,11 @@ import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { jsonPath, segment } from './client';
 import { Bookings, Schedules, Slots, Users } from './endpoints';
+import type {
+	BookingsListResponse,
+	SupersaasScheduleRead,
+	SupersaasUser,
+} from './endpoints/types';
 import type { UnknownJson } from './json';
 import {
 	booking,
@@ -122,6 +127,18 @@ describe('users', () => {
 		);
 	});
 
+	it('gets one user by id with Basic auth', async () => {
+		respond(fetchMock, user);
+
+		const result = (await invoke(Users.get, {
+			id: '15294233',
+		})) as SupersaasUser;
+
+		expectBasicAuthAndJson();
+		expect(lastRequest(fetchMock).path).toBe('/api/users/15294233.json');
+		expect(result.id).toBe(15294233);
+	});
+
 	it('refuses a 201 without a Location header instead of inventing success', async () => {
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 201 }));
 
@@ -129,6 +146,22 @@ describe('users', () => {
 			invoke(Users.create, { name: 'jane@example.com' }),
 		).rejects.toThrow(/Location/);
 	});
+
+	it.each([
+		['an HTML page', '<html><body>failed</body></html>', 'text/html'],
+		['a relative path', '/slots/123', 'text/plain'],
+	])(
+		'refuses a 201 whose body (%s) stands in for a missing Location',
+		async (_label, body, type) => {
+			fetchMock.mockResolvedValueOnce(
+				new Response(body, { status: 201, headers: { 'Content-Type': type } }),
+			);
+
+			await expect(
+				invoke(Users.create, { name: 'jane@example.com' }),
+			).rejects.toThrow(/Location/);
+		},
+	);
 
 	it('creates under a caller-supplied key', async () => {
 		respondCreated('https://www.supersaas.com/api/users/15294241.json');
@@ -194,7 +227,7 @@ describe('bookings', () => {
 			start: '2026-12-01 00:00',
 			finish: '2026-12-03 00:00',
 			limit: 10,
-		})) as unknown[];
+		})) as BookingsListResponse;
 
 		expect(lastRequest(fetchMock)).toMatchObject({
 			path: '/api/bookings.json',
@@ -376,7 +409,7 @@ describe('schedules', () => {
 			schedule_id: 858436,
 			limit: 5,
 			offset: 5,
-		})) as { bookings: unknown[] };
+		})) as SupersaasScheduleRead;
 
 		expect(lastRequest(fetchMock)).toMatchObject({
 			path: '/api/changes/858436.json',
@@ -391,7 +424,7 @@ describe('schedules', () => {
 		const result = (await invoke(Schedules.range, {
 			schedule_id: 858436,
 			from: '2026-12-01 00:00',
-		})) as { slots: unknown[] };
+		})) as SupersaasScheduleRead;
 
 		expect(lastRequest(fetchMock).path).toBe('/api/range/858436.json');
 		expect(result.slots).toHaveLength(1);
@@ -447,6 +480,40 @@ describe('client error handling', () => {
 		expect(text).not.toContain('hunter2-secret');
 		expect(text).not.toContain('jane@example.com');
 		expect(text).not.toContain(API_KEY);
+	});
+});
+
+describe('agenda errors', () => {
+	it('masks the user login name on a failed agenda read', async () => {
+		respond(
+			fetchMock,
+			{ errors: [{ status: '404', title: 'Not found' }] },
+			404,
+		);
+
+		const error = (await caught(
+			invoke(Schedules.agenda, { schedule_id: 1, user: 'jane@example.com' }),
+		)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(404);
+		const text = `${JSON.stringify(error)} ${error.url} ${error.request.url}`;
+		expect(text).not.toContain('jane');
+	});
+
+	it('passes a read error with no personal data through unchanged', async () => {
+		respond(
+			fetchMock,
+			{ errors: [{ status: '404', title: 'Not found' }] },
+			404,
+		);
+
+		const error = (await caught(
+			invoke(Bookings.get, { schedule_id: 1, booking_id: 2 }),
+		)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.message).toBe('Not Found');
 	});
 });
 
