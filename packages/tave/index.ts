@@ -319,7 +319,8 @@ const taveEndpointMeta = {
 	},
 	'payments.update': {
 		riskLevel: 'write',
-		description: "Change a payment's amount, status, memo or method",
+		description:
+			"Change a payment's status, memo, method or payer; the amount is read-only, so record a new payment instead",
 	},
 	'payments.delete': {
 		riskLevel: 'destructive',
