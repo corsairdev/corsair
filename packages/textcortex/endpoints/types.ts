@@ -79,14 +79,21 @@ export const CapabilitiesInputSchema = z.object({});
 export type CapabilitiesInput = z.infer<typeof CapabilitiesInputSchema>;
 
 /**
- * The docs describe this as the enabled features for the key. Its shape is not
- * pinned down beyond that, so every field is optional and the object is loose.
+ * The features enabled for the key, grouped by API family: `openai_compatible`
+ * (e.g. `chat_completions.create`, `images.generations`) and `textcortex`
+ * (e.g. `api_platform.image_generation`). Each group holds nested objects of
+ * flags and settings, so the groups stay open records.
  */
+// unknown: nested feature objects of booleans, strings and nulls whose keys
+// TextCortex adds to over time.
+const CapabilityGroupSchema = z.record(z.string(), z.unknown());
+
 export const CapabilitiesResponseSchema = z
 	.object({
-		// TextCortex documents this as the features enabled for the key, so each
-		// entry is a flag rather than an open value.
-		capabilities: z.record(z.string(), z.boolean()).nullish(),
+		object: z.string().nullish(),
+		api_version: z.string().nullish(),
+		openai_compatible: CapabilityGroupSchema.nullish(),
+		textcortex: CapabilityGroupSchema.nullish(),
 	})
 	.loose();
 
@@ -108,7 +115,7 @@ export const ChatMessageSchema = z
 
 export type ChatMessageInput = z.input<typeof ChatMessageSchema>;
 
-export const ChatCompletionsInputSchema = z.object({
+export const ChatCompletionsInputSchema = z.strictObject({
 	model: ModelIdSchema,
 	messages: z
 		.array(ChatMessageSchema)
@@ -167,7 +174,9 @@ export type ChatCompletionsInput = z.input<typeof ChatCompletionsInputSchema>;
 export const ChatMessageOutputSchema = z
 	.object({
 		role: z.string().nullish(),
-		content: z.string().nullish(),
+		// The spec allows a string or an array of content parts.
+		// unknown: content parts are open objects (text, refusal, audio, ...).
+		content: z.union([z.string(), z.array(z.unknown())]).nullish(),
 	})
 	.loose();
 
@@ -208,7 +217,7 @@ export type ChatCompletionsResponse = z.infer<
 
 // ── responses ─────────────────────────────────────────────────────────────
 
-export const ResponsesInputSchema = z.object({
+export const ResponsesInputSchema = z.strictObject({
 	model: ModelIdSchema,
 	input: z.string().min(1).describe('The prompt or conversation text.'),
 	instructions: z
@@ -265,26 +274,24 @@ export type ResponsesResponse = z.infer<typeof ResponsesResponseSchema>;
 
 // ── images ────────────────────────────────────────────────────────────────
 
-export const ImagesCreateInputSchema = z.object({
+export const ImagesCreateInputSchema = z.strictObject({
 	prompt: z.string().min(1).describe('What the image should show.'),
 	model: z
 		.string()
 		.optional()
 		.describe('An image model ID. The API picks its default when omitted.'),
 	n: z
-		.number()
-		.int()
-		.min(1)
+		.literal(1)
 		.optional()
-		.describe('How many images to generate.'),
+		.describe('How many images to generate. TextCortex accepts only 1.'),
 	size: z
 		.string()
 		.optional()
 		.describe('The output size as "WIDTHxHEIGHT", e.g. "1024x1024".'),
 	response_format: z
-		.enum(['url', 'b64_json'])
+		.literal('url')
 		.optional()
-		.describe('Whether to return a URL or base64 JSON.'),
+		.describe('TextCortex returns a URL only; base64 is not offered.'),
 });
 
 export type ImagesCreateInput = z.input<typeof ImagesCreateInputSchema>;
@@ -292,8 +299,11 @@ export type ImagesCreateInput = z.input<typeof ImagesCreateInputSchema>;
 export const GeneratedImageSchema = z
 	.object({
 		url: z.string().nullish(),
-		// Present when response_format is b64_json.
-		b64_json: z.string().nullish(),
+		image_id: z.string().nullish(),
+		model: z.string().nullish(),
+		file_type: z.string().nullish(),
+		width: z.number().nullish(),
+		height: z.number().nullish(),
 		revised_prompt: z.string().nullish(),
 	})
 	.loose();
@@ -309,29 +319,54 @@ export type ImagesCreateResponse = z.infer<typeof ImagesCreateResponseSchema>;
 
 // ── web search ────────────────────────────────────────────────────────────
 
-export const WebSearchInputSchema = z.object({
-	query: z.string().min(1).describe('What to search for.'),
-	max_results: z
+export const WebSearchInputSchema = z.strictObject({
+	query: z.string().min(1).max(1000).describe('What to search for.'),
+	limit: z
 		.number()
 		.int()
 		.min(1)
+		.max(10)
 		.optional()
-		.describe('Cap the number of results.'),
+		.describe('How many results to return, 1 to 10; TextCortex defaults to 5.'),
+	website: z
+		.string()
+		.min(1)
+		.max(512)
+		.optional()
+		.describe('Only return results from this website, e.g. "example.com".'),
 });
 
 export type WebSearchInput = z.infer<typeof WebSearchInputSchema>;
 
 export const WebSearchResultSchema = z
 	.object({
-		title: z.string().nullish(),
+		object: z.string().nullish(),
 		url: z.string().nullish(),
 		snippet: z.string().nullish(),
+		score: z.number().nullish(),
+		published_at: z.string().nullish(),
 	})
 	.loose();
 
 export const WebSearchResponseSchema = z
 	.object({
-		results: z.array(WebSearchResultSchema),
+		object: z.string().nullish(),
+		query: z.string().nullish(),
+		website: z.string().nullish(),
+		limit: z.number().nullish(),
+		data: z.array(WebSearchResultSchema),
+		usage: z
+			.object({
+				billing: z.string().nullish(),
+				cost: z.number().nullish(),
+				currency: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		meta: z
+			.object({ filtered_result_count: z.number().nullish() })
+			.loose()
+			.nullish(),
 	})
 	.loose();
 

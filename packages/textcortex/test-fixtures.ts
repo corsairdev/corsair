@@ -24,7 +24,14 @@ export const balanceResponse = {
 };
 
 export const capabilitiesResponse = {
-	capabilities: { chat: true, images: true, web_search: false },
+	object: 'capabilities',
+	api_version: 'v1',
+	openai_compatible: {
+		balance: { retrieve: true },
+		chat_completions: { create: true, stream: true },
+		images: { generations: true },
+	},
+	textcortex: { api_platform: { agent_execution: {} } },
 };
 
 export const chatResponse = {
@@ -58,24 +65,38 @@ export const responsesResponse = {
 	usage: { input_tokens: 10, output_tokens: 5, total_tokens: 15 },
 };
 
+// Shapes from TextCortex's OpenAPI document (api.textcortex.com/v1/openapi.json).
 export const imagesResponse = {
 	created: 1700000000,
 	data: [
 		{
 			url: 'https://cdn.textcortex.com/img/1.png',
+			image_id: 'img_1',
+			model: 'flux-2',
+			file_type: 'png',
+			width: 1024,
+			height: 1024,
 			revised_prompt: 'A red bicycle on a white background',
 		},
 	],
 };
 
 export const webSearchResponse = {
-	results: [
+	object: 'web_search',
+	query: 'textcortex api',
+	website: null,
+	limit: 5,
+	data: [
 		{
-			title: 'Example',
+			object: 'web_search_result',
 			url: 'https://example.com',
 			snippet: 'An example result.',
+			score: 0.82,
+			published_at: null,
 		},
 	],
+	usage: { billing: 'api_credits', cost: 0.01, currency: 'eur' },
+	meta: { filtered_result_count: 0 },
 };
 
 // A missing key: TextCortex's own route answers a service error shape.
