@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // Response objects are `.loose()` so a field Reducto adds later still reaches
@@ -367,7 +368,15 @@ export const ListJobsInputSchema = z.object({
 	limit: z.number().int().min(1).max(500).optional(),
 });
 
+// What a caller passes: a link to the file or its base64, since an agent holds
+// no bytes. A Blob or File still works from TypeScript.
 export const UploadInputSchema = z.object({
+	file: z.union([FileInputSchema, z.instanceof(Blob)]),
+	extension: z.string().nullable().optional(),
+});
+
+// What is sent: the file itself, as the multipart body needs it.
+export const UploadRequestSchema = z.object({
 	file: z.instanceof(Blob),
 	extension: z.string().nullable().optional(),
 });
