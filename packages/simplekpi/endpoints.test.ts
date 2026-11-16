@@ -322,6 +322,18 @@ describe('breakdownItems', () => {
 		expect(result).toEqual([breakdownItem]);
 	});
 
+	it('reads an id sent as a numeric string, which the spec allows', async () => {
+		respond({ ...breakdownItem, id: '77', breakdown_id: '12' });
+
+		const result = (await invoke(BreakdownItems.get, { id: 77 })) as {
+			id: number;
+			breakdown_id: number;
+		};
+
+		expect(result.id).toBe(77);
+		expect(result.breakdown_id).toBe(12);
+	});
+
 	it('creates, reads, updates and deletes', async () => {
 		respond(breakdownItem, 201);
 		await invoke(BreakdownItems.create, { name: 'EMEA', breakdown_id: 12 });

@@ -57,12 +57,25 @@ const FrequencyIdSchema = z
  * against the account even though the contract does not mark them mandatory,
  * so a create without real ids fails with a 400.
  */
+/**
+ * The OpenAPI document types every integer in a response as `integer|string`.
+ * Live answers sent numbers (11-16), but a numeric string is accepted too and
+ * read as a number, so an id can always go straight back into a request.
+ */
+const IntOrNumericString = z.union([
+	z.number().int(),
+	z
+		.string()
+		.regex(/^-?\d+$/)
+		.transform(Number),
+]);
+
 const KpiSchema = z
 	.object({
-		id: z.number().int(),
-		category_id: z.number().int().nullish(),
-		icon_id: z.number().int().nullish(),
-		unit_id: z.number().int().nullish(),
+		id: IntOrNumericString,
+		category_id: IntOrNumericString.nullish(),
+		icon_id: IntOrNumericString.nullish(),
+		unit_id: IntOrNumericString.nullish(),
 		frequency_id: FrequencyIdSchema.nullish(),
 		name: z.string().nullish(),
 		description: z.string().nullish(),
@@ -73,7 +86,7 @@ const KpiSchema = z
 			.boolean()
 			.nullish()
 			.describe('Calculated KPIs take no entries through the API.'),
-		sort_order: z.number().int().nullish(),
+		sort_order: IntOrNumericString.nullish(),
 		is_active: z.boolean().nullish(),
 		created_at: Timestamp.nullish(),
 		updated_at: Timestamp.nullish(),
@@ -84,9 +97,9 @@ export type SimplekpiKpi = z.infer<typeof KpiSchema>;
 
 const KpiCategorySchema = z
 	.object({
-		id: z.number().int(),
+		id: IntOrNumericString,
 		name: z.string().nullish(),
-		sort_order: z.number().int().nullish(),
+		sort_order: IntOrNumericString.nullish(),
 		created_at: Timestamp.nullish(),
 		updated_at: Timestamp.nullish(),
 	})
@@ -96,21 +109,17 @@ export type SimplekpiKpiCategory = z.infer<typeof KpiCategorySchema>;
 
 const BreakdownItemSchema = z
 	.object({
-		id: z.number().int(),
+		id: IntOrNumericString,
 		name: z.string().nullish(),
-		breakdown_id: z
-			.number()
-			.int()
-			.nullish()
-			.describe('Null when the item combines more than one breakdown.'),
-		user_id: z
-			.number()
-			.int()
-			.nullish()
-			.describe('Set for a People breakdown item, null for every other kind.'),
+		breakdown_id: IntOrNumericString.nullish().describe(
+			'Null when the item combines more than one breakdown.',
+		),
+		user_id: IntOrNumericString.nullish().describe(
+			'Set for a People breakdown item, null for every other kind.',
+		),
 		is_system: z.boolean().nullish(),
 		is_archived: z.boolean().nullish(),
-		sort_order: z.number().int().nullish(),
+		sort_order: IntOrNumericString.nullish(),
 		created_at: Timestamp.nullish(),
 		updated_at: Timestamp.nullish(),
 	})
@@ -120,10 +129,10 @@ export type SimplekpiBreakdownItem = z.infer<typeof BreakdownItemSchema>;
 
 const KpiEntrySchema = z
 	.object({
-		id: z.number().int(),
-		user_id: z.number().int().nullish(),
-		source_id: z.number().int().nullish(),
-		kpi_id: z.number().int().nullish(),
+		id: IntOrNumericString,
+		user_id: IntOrNumericString.nullish(),
+		source_id: IntOrNumericString.nullish(),
+		kpi_id: IntOrNumericString.nullish(),
 		entry_date: Timestamp.nullish(),
 		actual: z.number().nullish(),
 		target: z.number().nullish(),
@@ -143,8 +152,8 @@ export type SimplekpiKpiEntry = z.infer<typeof KpiEntrySchema>;
 const NothingStoredSchema = z
 	.object({
 		stored: z.literal(false),
-		source_id: z.number().int().nullish(),
-		kpi_id: z.number().int().nullish(),
+		source_id: IntOrNumericString.nullish(),
+		kpi_id: IntOrNumericString.nullish(),
 		entry_date: z.string().nullish(),
 		detail: z.string().nullish(),
 	})
@@ -169,8 +178,8 @@ export type KpiEntryWriteResponse = SimplekpiKpiEntryWriteResponse;
  */
 const KpiEntryBatchResponseSchema = z
 	.object({
-		rows_added: z.number().int(),
-		rows_rejected: z.number().int(),
+		rows_added: IntOrNumericString,
+		rows_rejected: IntOrNumericString,
 	})
 	.loose();
 
@@ -190,7 +199,7 @@ export type SimplekpiKpiFrequency = z.infer<typeof KpiFrequencySchema>;
 
 const KpiIconSchema = z
 	.object({
-		id: z.number().int(),
+		id: IntOrNumericString,
 		name: z.string().nullish(),
 	})
 	.loose();
@@ -199,7 +208,7 @@ export type SimplekpiKpiIcon = z.infer<typeof KpiIconSchema>;
 
 const KpiUnitSchema = z
 	.object({
-		id: z.number().int(),
+		id: IntOrNumericString,
 		name: z.string().nullish(),
 		entry_format: z.string().nullish(),
 		display_format: z.string().nullish(),
@@ -213,10 +222,10 @@ export type SimplekpiKpiUnit = z.infer<typeof KpiUnitSchema>;
 
 const ReportRowSchema = z
 	.object({
-		kpi_id: z.number().int(),
+		kpi_id: IntOrNumericString,
 		kpi_name: z.string().nullish(),
 		kpi_description: z.string().nullish(),
-		item_id: z.number().int().nullish(),
+		item_id: IntOrNumericString.nullish(),
 		item_name: z.string().nullish(),
 		period_id: z.string().nullish(),
 		period: z.string().nullish(),
@@ -236,7 +245,7 @@ export type SimplekpiReportRow = z.infer<typeof ReportRowSchema>;
 
 const UserSchema = z
 	.object({
-		id: z.number().int(),
+		id: IntOrNumericString,
 		user_type: z.string().nullish(),
 		user_status_id: z.string().nullish(),
 		first_name: z.string().nullish(),

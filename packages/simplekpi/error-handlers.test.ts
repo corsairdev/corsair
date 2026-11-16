@@ -65,6 +65,7 @@ describe('simplekpi error handlers', () => {
 	});
 
 	it.each([400, 404, 409])('does not retry a %i', async (status) => {
+		expect(matches('VALIDATION_ERROR', build({ status }))).toBe(true);
 		await expect(run('VALIDATION_ERROR', build({ status }))).resolves.toEqual({
 			maxRetries: 0,
 		});
@@ -74,12 +75,16 @@ describe('simplekpi error handlers', () => {
 		const zodError = new Error('invalid input');
 		zodError.name = 'ZodError';
 
+		expect(matches('VALIDATION_ERROR', zodError)).toBe(true);
 		await expect(run('VALIDATION_ERROR', zodError)).resolves.toEqual({
 			maxRetries: 0,
 		});
 	});
 
 	it('replays a 5xx on a read', async () => {
+		expect(matches('SERVER_ERROR', build({ status: 500, method: 'GET' }))).toBe(
+			true,
+		);
 		await expect(
 			run('SERVER_ERROR', build({ status: 500, method: 'GET' })),
 		).resolves.toEqual({

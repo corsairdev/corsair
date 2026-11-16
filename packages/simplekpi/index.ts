@@ -402,7 +402,7 @@ export const simplekpiEndpointMeta = {
 	'breakdownItems.list': {
 		riskLevel: 'read',
 		description:
-			'List the breakdown items a KPI can be broken down by, optionally only those under one breakdown',
+			'List the breakdown items a KPI can be broken down by, a page at a time; the API has no breakdown filter, so filter on breakdown_id across the pages',
 	},
 	'breakdownItems.create': {
 		riskLevel: 'write',
@@ -423,7 +423,7 @@ export const simplekpiEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a breakdown item, which removes that slice from the KPIs that use it; this cannot be undone',
+			'Delete a breakdown item. SimpleKPI answers 204 but keeps the item archived (is_archived true) rather than removing it',
 	},
 	'kpiEntries.list': {
 		riskLevel: 'read',

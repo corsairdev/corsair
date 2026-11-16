@@ -37,13 +37,13 @@ await corsair.simplekpi.api.breakdownItems.create({ name: 'EMEA', breakdown_id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
-| `breakdown_id` | `number \| null` | No | Null when the item combines more than one breakdown. |
-| `user_id` | `number \| null` | No | Set for a People breakdown item, null for every other kind. |
+| `breakdown_id` | `number \| string \| null` | No | Null when the item combines more than one breakdown. |
+| `user_id` | `number \| string \| null` | No | Set for a People breakdown item, null for every other kind. |
 | `is_system` | `boolean \| null` | No | — |
 | `is_archived` | `boolean \| null` | No | — |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -55,7 +55,7 @@ await corsair.simplekpi.api.breakdownItems.create({ name: 'EMEA', breakdown_id: 
 
 `breakdownItems.delete`
 
-Delete a breakdown item, which removes that slice from the KPIs that use it; this cannot be undone
+Delete a breakdown item. SimpleKPI answers 204 but keeps the item archived (is_archived true) rather than removing it
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -108,13 +108,13 @@ await corsair.simplekpi.api.breakdownItems.get({ id: 77 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
-| `breakdown_id` | `number \| null` | No | Null when the item combines more than one breakdown. |
-| `user_id` | `number \| null` | No | Set for a People breakdown item, null for every other kind. |
+| `breakdown_id` | `number \| string \| null` | No | Null when the item combines more than one breakdown. |
+| `user_id` | `number \| string \| null` | No | Set for a People breakdown item, null for every other kind. |
 | `is_system` | `boolean \| null` | No | — |
 | `is_archived` | `boolean \| null` | No | — |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -126,7 +126,7 @@ await corsair.simplekpi.api.breakdownItems.get({ id: 77 });
 
 `breakdownItems.list`
 
-List the breakdown items a KPI can be broken down by, optionally only those under one breakdown
+List the breakdown items a KPI can be broken down by, a page at a time; the API has no breakdown filter, so filter on breakdown_id across the pages
 
 **Risk:** `read`
 
@@ -152,13 +152,13 @@ The API has no breakdown filter, so page through the items and filter on `breakd
 
 ```ts
 {
-  id: number,
+  id: number | string,
   name?: string | null,
-  breakdown_id?: number | null,
-  user_id?: number | null,
+  breakdown_id?: number | string | null,
+  user_id?: number | string | null,
   is_system?: boolean | null,
   is_archived?: boolean | null,
-  sort_order?: number | null,
+  sort_order?: number | string | null,
   created_at?: string | null,
   updated_at?: string | null
 }[]
@@ -197,13 +197,13 @@ await corsair.simplekpi.api.breakdownItems.update({ id: 77, name: 'EMEA North' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
-| `breakdown_id` | `number \| null` | No | Null when the item combines more than one breakdown. |
-| `user_id` | `number \| null` | No | Set for a People breakdown item, null for every other kind. |
+| `breakdown_id` | `number \| string \| null` | No | Null when the item combines more than one breakdown. |
+| `user_id` | `number \| string \| null` | No | Set for a People breakdown item, null for every other kind. |
 | `is_system` | `boolean \| null` | No | — |
 | `is_archived` | `boolean \| null` | No | — |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -238,9 +238,9 @@ await corsair.simplekpi.api.kpiCategories.create({ name: 'Sales' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -303,9 +303,9 @@ await corsair.simplekpi.api.kpiCategories.get({ id: 5478 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -347,10 +347,10 @@ await corsair.simplekpi.api.kpiCategories.kpis.create({ category_id: 5478, name:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `category_id` | `number \| null` | No | — |
-| `icon_id` | `number \| null` | No | — |
-| `unit_id` | `number \| null` | No | — |
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
 | `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
@@ -358,7 +358,7 @@ await corsair.simplekpi.api.kpiCategories.kpis.create({ category_id: 5478, name:
 | `value_direction` | `U \| D \| N \| null` | No | — |
 | `aggregate_function` | `SUM \| AVG \| null` | No | — |
 | `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `is_active` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
@@ -426,10 +426,10 @@ A KPI under a different category answers 404, which is how the API keeps a calle
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `category_id` | `number \| null` | No | — |
-| `icon_id` | `number \| null` | No | — |
-| `unit_id` | `number \| null` | No | — |
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
 | `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
@@ -437,7 +437,7 @@ A KPI under a different category answers 404, which is how the API keeps a calle
 | `value_direction` | `U \| D \| N \| null` | No | — |
 | `aggregate_function` | `SUM \| AVG \| null` | No | — |
 | `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `is_active` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
@@ -475,10 +475,10 @@ await corsair.simplekpi.api.kpiCategories.kpis.list({ category_id: 5478 });
 
 ```ts
 {
-  id: number,
-  category_id?: number | null,
-  icon_id?: number | null,
-  unit_id?: number | null,
+  id: number | string,
+  category_id?: number | string | null,
+  icon_id?: number | string | null,
+  unit_id?: number | string | null,
   frequency_id?: string | null,
   name?: string | null,
   description?: string | null,
@@ -486,7 +486,7 @@ await corsair.simplekpi.api.kpiCategories.kpis.list({ category_id: 5478 });
   value_direction?: U | D | N | null,
   aggregate_function?: SUM | AVG | null,
   is_calculated?: boolean | null,
-  sort_order?: number | null,
+  sort_order?: number | string | null,
   is_active?: boolean | null,
   created_at?: string | null,
   updated_at?: string | null
@@ -533,10 +533,10 @@ await corsair.simplekpi.api.kpiCategories.kpis.update({ category_id: 5478, id: 1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `category_id` | `number \| null` | No | — |
-| `icon_id` | `number \| null` | No | — |
-| `unit_id` | `number \| null` | No | — |
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
 | `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
@@ -544,7 +544,7 @@ await corsair.simplekpi.api.kpiCategories.kpis.update({ category_id: 5478, id: 1
 | `value_direction` | `U \| D \| N \| null` | No | — |
 | `aggregate_function` | `SUM \| AVG \| null` | No | — |
 | `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `is_active` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
@@ -581,9 +581,9 @@ await corsair.simplekpi.api.kpiCategories.list({});
 
 ```ts
 {
-  id: number,
+  id: number | string,
   name?: string | null,
-  sort_order?: number | null,
+  sort_order?: number | string | null,
   created_at?: string | null,
   updated_at?: string | null
 }[]
@@ -620,9 +620,9 @@ await corsair.simplekpi.api.kpiCategories.update({ id: 5478, name: 'Revenue' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -672,10 +672,10 @@ An upsert on kpi_id, source_id and entry_date. A write with every value empty an
 
 ```ts
 {
-  id: number,
-  user_id?: number | null,
-  source_id?: number | null,
-  kpi_id?: number | null,
+  id: number | string,
+  user_id?: number | string | null,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
   entry_date?: string | null,
   actual?: number | null,
   target?: number | null,
@@ -684,8 +684,8 @@ An upsert on kpi_id, source_id and entry_date. A write with every value empty an
   updated_at?: string | null
 } | {
   stored: false,
-  source_id?: number | null,
-  kpi_id?: number | null,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
   entry_date?: string | null,
   detail?: string | null
 }
@@ -747,8 +747,8 @@ The route answers 200 even when every row was rejected, so rows_added is the sig
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rows_added` | `number` | Yes | — |
-| `rows_rejected` | `number` | Yes | — |
+| `rows_added` | `number \| string` | Yes | — |
+| `rows_rejected` | `number \| string` | Yes | — |
 
 
 
@@ -809,10 +809,10 @@ await corsair.simplekpi.api.kpiEntries.get({ id: 987654 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `user_id` | `number \| null` | No | — |
-| `source_id` | `number \| null` | No | — |
-| `kpi_id` | `number \| null` | No | — |
+| `id` | `number \| string` | Yes | — |
+| `user_id` | `number \| string \| null` | No | — |
+| `source_id` | `number \| string \| null` | No | — |
+| `kpi_id` | `number \| string \| null` | No | — |
 | `entry_date` | `string \| null` | No | ISO 8601. |
 | `actual` | `number \| null` | No | — |
 | `target` | `number \| null` | No | — |
@@ -859,10 +859,10 @@ All filters are optional, but narrow by kpiId and a date range or the response g
 
 ```ts
 {
-  id: number,
-  user_id?: number | null,
-  source_id?: number | null,
-  kpi_id?: number | null,
+  id: number | string,
+  user_id?: number | string | null,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
   entry_date?: string | null,
   actual?: number | null,
   target?: number | null,
@@ -916,10 +916,10 @@ await corsair.simplekpi.api.kpiEntries.update({ id: 987654, kpi_id: 1234, entry_
 
 ```ts
 {
-  id: number,
-  user_id?: number | null,
-  source_id?: number | null,
-  kpi_id?: number | null,
+  id: number | string,
+  user_id?: number | string | null,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
   entry_date?: string | null,
   actual?: number | null,
   target?: number | null,
@@ -928,8 +928,8 @@ await corsair.simplekpi.api.kpiEntries.update({ id: 987654, kpi_id: 1234, entry_
   updated_at?: string | null
 } | {
   stored: false,
-  source_id?: number | null,
-  kpi_id?: number | null,
+  source_id?: number | string | null,
+  kpi_id?: number | string | null,
   entry_date?: string | null,
   detail?: string | null
 }
@@ -1031,7 +1031,7 @@ await corsair.simplekpi.api.kpiIcons.get({ id: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
 
 
@@ -1060,7 +1060,7 @@ await corsair.simplekpi.api.kpiIcons.list({});
 
 ```ts
 {
-  id: number,
+  id: number | string,
   name?: string | null
 }[]
 ```
@@ -1108,10 +1108,10 @@ icon_id and unit_id must be real ids: the contract does not mark them mandatory,
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `category_id` | `number \| null` | No | — |
-| `icon_id` | `number \| null` | No | — |
-| `unit_id` | `number \| null` | No | — |
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
 | `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
@@ -1119,7 +1119,7 @@ icon_id and unit_id must be real ids: the contract does not mark them mandatory,
 | `value_direction` | `U \| D \| N \| null` | No | — |
 | `aggregate_function` | `SUM \| AVG \| null` | No | — |
 | `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `is_active` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
@@ -1183,10 +1183,10 @@ await corsair.simplekpi.api.kpis.get({ id: 1234 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `category_id` | `number \| null` | No | — |
-| `icon_id` | `number \| null` | No | — |
-| `unit_id` | `number \| null` | No | — |
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
 | `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
@@ -1194,7 +1194,7 @@ await corsair.simplekpi.api.kpis.get({ id: 1234 });
 | `value_direction` | `U \| D \| N \| null` | No | — |
 | `aggregate_function` | `SUM \| AVG \| null` | No | — |
 | `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `is_active` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
@@ -1231,10 +1231,10 @@ await corsair.simplekpi.api.kpis.list({ page: 1, rows: 100 });
 
 ```ts
 {
-  id: number,
-  category_id?: number | null,
-  icon_id?: number | null,
-  unit_id?: number | null,
+  id: number | string,
+  category_id?: number | string | null,
+  icon_id?: number | string | null,
+  unit_id?: number | string | null,
   frequency_id?: string | null,
   name?: string | null,
   description?: string | null,
@@ -1242,7 +1242,7 @@ await corsair.simplekpi.api.kpis.list({ page: 1, rows: 100 });
   value_direction?: U | D | N | null,
   aggregate_function?: SUM | AVG | null,
   is_calculated?: boolean | null,
-  sort_order?: number | null,
+  sort_order?: number | string | null,
   is_active?: boolean | null,
   created_at?: string | null,
   updated_at?: string | null
@@ -1291,10 +1291,10 @@ PUT replaces the whole object. A field left out is reset to its default, not kep
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
-| `category_id` | `number \| null` | No | — |
-| `icon_id` | `number \| null` | No | — |
-| `unit_id` | `number \| null` | No | — |
+| `id` | `number \| string` | Yes | — |
+| `category_id` | `number \| string \| null` | No | — |
+| `icon_id` | `number \| string \| null` | No | — |
+| `unit_id` | `number \| string \| null` | No | — |
 | `frequency_id` | `string \| null` | No | A frequency id from kpiFrequencies: D daily, W weekly, M monthly, Q quarterly, Y yearly. Case sensitive. |
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
@@ -1302,7 +1302,7 @@ PUT replaces the whole object. A field left out is reset to its default, not kep
 | `value_direction` | `U \| D \| N \| null` | No | — |
 | `aggregate_function` | `SUM \| AVG \| null` | No | — |
 | `is_calculated` | `boolean \| null` | No | Calculated KPIs take no entries through the API. |
-| `sort_order` | `number \| null` | No | — |
+| `sort_order` | `number \| string \| null` | No | — |
 | `is_active` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
@@ -1342,7 +1342,7 @@ Both formats use digits and # as placeholders, with comma grouping and one decim
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
 | `entry_format` | `string \| null` | No | — |
 | `display_format` | `string \| null` | No | — |
@@ -1409,7 +1409,7 @@ await corsair.simplekpi.api.kpiUnits.get({ id: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
 | `entry_format` | `string \| null` | No | — |
 | `display_format` | `string \| null` | No | — |
@@ -1449,7 +1449,7 @@ await corsair.simplekpi.api.kpiUnits.list({});
 
 ```ts
 {
-  id: number,
+  id: number | string,
   name?: string | null,
   entry_format?: string | null,
   display_format?: string | null,
@@ -1492,7 +1492,7 @@ await corsair.simplekpi.api.kpiUnits.update({ id: 123, name: 'Pounds', entry_for
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `name` | `string \| null` | No | — |
 | `entry_format` | `string \| null` | No | — |
 | `display_format` | `string \| null` | No | — |
@@ -1539,10 +1539,10 @@ The kpiIDs filter is sent as a comma separated list, which is how this one route
 
 ```ts
 {
-  kpi_id: number,
+  kpi_id: number | string,
   kpi_name?: string | null,
   kpi_description?: string | null,
-  item_id?: number | null,
+  item_id?: number | string | null,
   item_name?: string | null,
   period_id?: string | null,
   period?: string | null,
@@ -1589,7 +1589,7 @@ await corsair.simplekpi.api.users.get({ id: 12 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | Yes | — |
+| `id` | `number \| string` | Yes | — |
 | `user_type` | `string \| null` | No | — |
 | `user_status_id` | `string \| null` | No | — |
 | `first_name` | `string \| null` | No | — |
@@ -1632,7 +1632,7 @@ Read-only: there is no users:write scope, and people are added and changed in th
 
 ```ts
 {
-  id: number,
+  id: number | string,
   user_type?: string | null,
   user_status_id?: string | null,
   first_name?: string | null,
