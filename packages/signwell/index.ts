@@ -404,24 +404,24 @@ export const signwellEndpointMeta = {
 			'Read one document with its recipients, status, embedded links and metadata',
 	},
 	'documents.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a document from one or more files and send it for signature unless draft is true; this notifies real recipients',
 	},
 	'documents.createFromTemplate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a document from one or several templates, filling each placeholder with a recipient, and send it unless draft is true',
 	},
 	'documents.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send a draft document to its recipients, optionally changing its subject, message and reminders first',
 	},
 	'documents.updateRecipients': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Change the name or email of recipients on a document that has been sent; only recipients who have not started signing',
+			'Change the name or email of recipients on a document that has been sent, which emails the updated recipients; only recipients who have not started signing',
 	},
 	'documents.updateAuthentication': {
 		riskLevel: 'write',
@@ -429,7 +429,7 @@ export const signwellEndpointMeta = {
 			'Change or add passcodes for recipients on a sent document; only recipients who have not started signing',
 	},
 	'documents.sendReminder': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Remind recipients who have not signed yet, either everyone or a named list, through their own delivery method',
 	},
@@ -512,7 +512,7 @@ export const signwellEndpointMeta = {
 			"List the documents a bulk send created, page by page, with each document's recipients and status",
 	},
 	'bulkSends.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a bulk send from a CSV of recipient rows against one or more templates; each row becomes a document and is sent',
 	},
@@ -561,15 +561,21 @@ export function signwell<const T extends SignwellPluginOptions>(
 		endpointSchemas: signwellEndpointSchemas,
 		webhookSchemas: signwellWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			// SignWell posts one envelope for every event, so any delivery that
-			// carries an `event.type` belongs to this plugin.
+			// SignWell posts one envelope for every event: `event` with a type,
+			// a time and the HMAC `hash`. Requiring all three keeps another
+			// provider's `{ event: { type } }` deliveries from matching here.
 			const body =
 				typeof request.body === 'string'
 					? safeParseJson(request.body)
 					: request.body;
 			if (!isJsonObject(body)) return false;
 			const event = body.event;
-			return isJsonObject(event) && typeof event.type === 'string';
+			return (
+				isJsonObject(event) &&
+				typeof event.type === 'string' &&
+				typeof event.hash === 'string' &&
+				event.time !== undefined
+			);
 		},
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: SignwellKeyBuilderContext, source) => {

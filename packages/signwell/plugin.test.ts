@@ -80,6 +80,20 @@ describe('signwell plugin definition', () => {
 		}
 	});
 
+	it('marks every operation that notifies recipients destructive', () => {
+		const meta = plugin.endpointMeta ?? {};
+		for (const name of [
+			'documents.create',
+			'documents.createFromTemplate',
+			'documents.send',
+			'documents.sendReminder',
+			'documents.updateRecipients',
+			'bulkSends.create',
+		]) {
+			expect(meta[name as keyof typeof meta]?.riskLevel).toBe('destructive');
+		}
+	});
+
 	it('marks every delete irreversible and destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const deletes = Object.entries(meta)
@@ -140,20 +154,32 @@ describe('signwell plugin definition', () => {
 		]);
 	});
 
-	it('matches a delivery carrying event.type', () => {
+	it('matches a SignWell envelope with type, time and hash', () => {
 		expect(
 			plugin.pluginWebhookMatcher?.({
 				headers: {},
-				body: { event: { type: 'document_signed' }, data: {} },
+				body: {
+					event: { type: 'document_signed', time: 1700000000, hash: 'abc' },
+					data: {},
+				},
 			} as never),
 		).toBe(true);
+		// Another provider's `{ event: { type } }` delivery is not SignWell's.
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: {},
+				body: { event: { type: 'invoice.paid' }, data: {} },
+			} as never),
+		).toBe(false);
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
 		expect(
 			plugin.pluginWebhookMatcher?.({
 				headers: {},
-				body: JSON.stringify({ event: { type: 'document_sent' } }),
+				body: JSON.stringify({
+					event: { type: 'document_sent', time: 1700000000, hash: 'abc' },
+				}),
 			} as never),
 		).toBe(true);
 		expect(
