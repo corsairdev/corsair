@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { normalizeThinkificSubdomain } from './client';
 import {
 	thinkificEndpointMeta as generatedThinkificEndpointMeta,
 	thinkificEndpointSchemas as generatedThinkificEndpointSchemas,
@@ -23,9 +24,13 @@ import type {
 import { errorHandlers } from './error-handlers';
 import { ThinkificSchema } from './schema';
 
+/**
+ * The site subdomain (`acme` for `acme.thinkific.com`) is an account field, so Hub asks for it
+ * next to the API key and the key manager generates `get_subdomain()` for it.
+ */
 export const thinkificAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: ['subdomain'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -112,10 +117,18 @@ export function thinkific<const T extends ThinkificPluginOptions>(
 		keyBuilder: async (ctx: ThinkificKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 
-			const subdomain = await ctx.keys.get_tenant_external_id();
 			const apiKey = options.key ?? (await ctx.keys.get_api_key());
-			if (!subdomain || !apiKey) {
+			if (!apiKey) {
 				throw new AuthMissingError('thinkific', 'api_key');
+			}
+			// A key without a subdomain can't reach any site. Failing here, not in the endpoint,
+			// lets core hand back a connect link.
+			if (!normalizeThinkificSubdomain(await ctx.keys.get_subdomain())) {
+				throw new AuthMissingError(
+					'thinkific',
+					'api_key',
+					'Thinkific subdomain is not set: connect the account with its site subdomain (acme for acme.thinkific.com).',
+				);
 			}
 			return apiKey;
 		},

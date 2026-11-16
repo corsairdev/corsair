@@ -27,6 +27,58 @@ export type ThinkificQuery = Record<
 	string | number | boolean | undefined
 >;
 
+/**
+ * Turns what a user may paste for the site (`acme`, `acme.thinkific.com`,
+ * `https://acme.thinkific.com/`) into the bare subdomain the `X-Auth-Subdomain` header takes.
+ * The API host is fixed, so the value only selects the site and never becomes a URL.
+ */
+export function normalizeThinkificSubdomain(
+	value: string | null | undefined,
+): string | undefined {
+	const trimmed = value
+		?.trim()
+		.toLowerCase()
+		.replace(/^https?:\/\//, '')
+		.replace(/\/.*$/, '')
+		.replace(/\.thinkific\.com$/, '');
+	return trimmed || undefined;
+}
+
+/**
+ * Thinkific answers errors with `{ error: "..." }` or `{ errors: { field: ["message"] } }`. The
+ * text names fields and rules, not submitted values, so it is kept for the caller to act on.
+ */
+function thinkificErrorText(
+	// `unknown` because the error body is untrusted provider JSON.
+	body: unknown,
+): string | undefined {
+	if (typeof body !== 'object' || body === null) return undefined;
+	const record = body as { error?: unknown; errors?: unknown };
+	const describe = (
+		// `unknown` because error values can be strings, arrays or nested objects.
+		value: unknown,
+	): string | undefined => {
+		if (typeof value === 'string') return value;
+		if (Array.isArray(value)) {
+			const parts = value.map(describe).filter(Boolean);
+			return parts.length ? parts.join('; ') : undefined;
+		}
+		if (typeof value === 'object' && value !== null) {
+			const parts = Object.entries(value).map(([field, detail]) => {
+				const text = describe(detail);
+				return text ? `${field} ${text}` : field;
+			});
+			return parts.length ? parts.join('; ') : undefined;
+		}
+		return undefined;
+	};
+	const text = describe(record.error) ?? describe(record.errors);
+	// Email addresses are masked in case a message quotes the submitted value.
+	return text
+		? text.replace(/[^\s@;:,"']+@[^\s@;:,"']+/g, '[email]').slice(0, 500)
+		: undefined;
+}
+
 // `unknown` because the provider response remains untrusted until the operation output schema parses it.
 export async function makeThinkificRequest(
 	endpoint: string,
@@ -42,7 +94,8 @@ export async function makeThinkificRequest(
 	if (!apiKey) {
 		throw new AuthMissingError('thinkific', 'api_key');
 	}
-	if (!subdomain?.trim()) {
+	const site = normalizeThinkificSubdomain(subdomain);
+	if (!site) {
 		throw new AuthMissingError('thinkific', 'api_key');
 	}
 
@@ -54,7 +107,7 @@ export async function makeThinkificRequest(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			'X-Auth-API-Key': apiKey,
-			'X-Auth-Subdomain': subdomain.trim(),
+			'X-Auth-Subdomain': site,
 		},
 	};
 
@@ -91,11 +144,14 @@ export async function makeThinkificRequest(
 				statusText: error.statusText,
 				body: undefined,
 			};
+			const providerText = thinkificErrorText(error.body);
 
 			throw new ApiError(
 				sanitizedRequest,
 				sanitizedResponse,
-				`Thinkific API request failed with status ${error.status}`,
+				providerText
+					? `Thinkific API request failed with status ${error.status}: ${providerText}`
+					: `Thinkific API request failed with status ${error.status}`,
 				{
 					retryAfter: error.retryAfter,
 					rateLimitReset: error.rateLimitReset,

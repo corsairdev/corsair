@@ -3,11 +3,13 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { ThinkificHttpMethod, ThinkificQuery } from '../client';
 import { makeThinkificRequest } from '../client';
+import type { ThinkificResponse } from './responses';
+import { parseThinkificResponse } from './responses';
 
 export type ThinkificOperationContext = EventLoggingContext & {
 	key: string;
 	keys: {
-		get_tenant_external_id: () => Promise<string | null | undefined>;
+		get_subdomain: () => Promise<string | null | undefined>;
 	};
 };
 
@@ -23,8 +25,8 @@ export type ThinkificOperationRequest = {
 export async function runThinkificOperation<OutputSchema extends z.ZodType>(
 	ctx: ThinkificOperationContext,
 	options: ThinkificOperationRequest & { outputSchema: OutputSchema },
-): Promise<z.output<OutputSchema>> {
-	const subdomain = await ctx.keys.get_tenant_external_id();
+): Promise<ThinkificResponse<z.output<OutputSchema>>> {
+	const subdomain = await ctx.keys.get_subdomain();
 	if (!subdomain) {
 		throw new AuthMissingError('thinkific', 'api_key');
 	}
@@ -40,7 +42,11 @@ export async function runThinkificOperation<OutputSchema extends z.ZodType>(
 			body: options.body,
 		},
 	);
-	const parsedResponse = options.outputSchema.parse(response);
+	const parsedResponse = parseThinkificResponse<z.output<OutputSchema>>(
+		options.operation,
+		options.outputSchema,
+		response,
+	);
 	await logEventFromContext(
 		ctx,
 		`thinkific.${options.operation}`,

@@ -1,4 +1,5 @@
 import type { z } from 'zod';
+import type { ThinkificResponse } from './responses';
 import type {
 	ThinkificOperationInputSchemas,
 	ThinkificOperationOutputSchemas,
@@ -15,9 +16,10 @@ export type ThinkificOperationInputs = {
 	>;
 };
 
+/** What each operation returns: the documented shape, parsed leniently (see responses.ts). */
 export type ThinkificOperationOutputs = {
-	[K in keyof typeof ThinkificOperationOutputSchemas]: z.output<
-		(typeof ThinkificOperationOutputSchemas)[K]
+	[K in keyof typeof ThinkificOperationOutputSchemas]: ThinkificResponse<
+		z.output<(typeof ThinkificOperationOutputSchemas)[K]>
 	>;
 };
 

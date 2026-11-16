@@ -10,7 +10,7 @@ pnpm add @corsair-dev/thinkific
 
 ## Authentication
 
-Configure the Thinkific API key and the site's subdomain. The plugin sends the documented `X-Auth-API-Key` and `X-Auth-Subdomain` headers to `https://api.thinkific.com/api/public/v1`. Corsair stores the site subdomain as the account's `tenant_external_id`; the API key is resolved through `ctx.key`. API keys require a Thinkific plan with API access.
+Configure the Thinkific API key and the site's subdomain. The plugin sends the documented `X-Auth-API-Key` and `X-Auth-Subdomain` headers to `https://api.thinkific.com/api/public/v1`. Corsair stores the site subdomain (`acme` for `acme.thinkific.com`) as the account's `subdomain` field; the API key is resolved through `ctx.key`. API keys require a Thinkific plan with API access.
 
 ## Operations
 
@@ -96,7 +96,8 @@ The operation arguments are strict and grouped as `{ path, query, body }` accord
 
 - Collection routes accept the documented `page` and `limit` query parameters when present in the OpenAPI operation. Thinkific's REST guide states a default limit of 25 and maximum of 250. Collection responses use `items` and `meta.pagination`.
 - Thinkific documents a limit of 120 requests per minute per site and at most 10 concurrent requests. HTTP 429 responses may include `RateLimit-Reset` as an epoch time; Corsair's shared transport honors this reset header and retries 429s. Other errors and writes are not retried automatically by this plugin.
-- Request objects reject undocumented fields; successful response bodies are checked against the OpenAPI v1 response schemas. Error messages are sanitized so request bodies, query values, email addresses, and credentials are not copied into thrown errors or logs.
+- Request objects reject undocumented fields. Successful responses are parsed with a lenient copy of the OpenAPI v1 response schemas: Thinkific sends `null` for unset fields (`next_page`, `completed_at`, `avatar_url`), decimals as strings and fields the export does not list, none of which fail a call. Error messages keep Thinkific's own error text (field names and rules) and drop request bodies, query values and credentials.
+- Creating an enrollment (`enrollments.create`, `bundles.createEnrollment`) and creating a user can email the learner, so those operations are `destructive` and need approval.
 - Thinkific's published OpenAPI component for `/product_publish_requests` incorrectly points list items to `PromotionResponse`; this plugin uses the documented `ProductPublishRequest` shape, which is also the response schema of the detail route.
 
 ## Scope and exclusions

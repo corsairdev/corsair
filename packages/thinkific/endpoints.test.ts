@@ -6,7 +6,7 @@ import { thinkificEndpointOperations } from './test-fixtures';
 const endpointContext = {
 	key: 'unit-test-api-key',
 	keys: {
-		get_tenant_external_id: async () => 'unit-test-school',
+		get_subdomain: async () => 'unit-test-school',
 	},
 	$getAccountId: async () => 'unit-test-account',
 };
