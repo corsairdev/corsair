@@ -82,7 +82,8 @@ const TeamSchema = z
 	.object({
 		id: z.number().int().nullish(),
 		name: z.string().nullish(),
-		picture: ThumbnailSchema.nullish(),
+		// SupportBee documents a team picture as an array of sizes.
+		picture: z.union([z.array(ThumbnailSchema), ThumbnailSchema]).nullish(),
 	})
 	.loose();
 
@@ -303,10 +304,12 @@ const TicketsListInputSchema = z.object({
 
 export type TicketsListInput = z.input<typeof TicketsListInputSchema>;
 
+/** With total_only, SupportBee answers only `{ total }` and no tickets. */
 const TicketsListResponseSchema = z
 	.object({
 		...pagingFields,
-		tickets: z.array(TicketSchema),
+		tickets: z.array(TicketSchema).optional(),
+		total: z.number().int().nullish(),
 	})
 	.loose();
 

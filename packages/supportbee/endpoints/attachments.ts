@@ -47,9 +47,7 @@ export const create: SupportbeeEndpoints['attachmentsCreate'] = (ctx, input) =>
 			return { method: 'POST', path: '/attachments', form };
 		},
 		{
-			log: (parsed, result) => ({
-				filename: parsed.filename,
-				attachmentId: result.id ?? undefined,
-			}),
+			// The filename can name a person or a document, so only the id is logged.
+			log: (_, result) => ({ attachmentId: result.id ?? undefined }),
 		},
 	);

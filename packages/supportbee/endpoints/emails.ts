@@ -47,8 +47,8 @@ export const create: SupportbeeEndpoints['emailsCreate'] = (ctx, input) =>
 			},
 		}),
 		{
-			log: (parsed, result) => ({
-				email: parsed.email,
+			// The address is personal data, so only the id is logged.
+			log: (_, result) => ({
 				forwardingAddressId: result.forwarding_address.id ?? undefined,
 			}),
 		},

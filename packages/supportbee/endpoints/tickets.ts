@@ -53,11 +53,17 @@ export const list: SupportbeeEndpoints['ticketsList'] = (ctx, input) =>
 			}),
 		}),
 		{
-			shape: (raw) => ({
-				...unwrapObject(raw, 'ticket list'),
-				tickets: unwrapList(raw, 'tickets', 'ticket list'),
+			// total_only answers just `{ total }`, with no tickets array.
+			shape: (raw, { total_only }) =>
+				total_only
+					? unwrapObject(raw, 'ticket count')
+					: {
+							...unwrapObject(raw, 'ticket list'),
+							tickets: unwrapList(raw, 'tickets', 'ticket list'),
+						},
+			log: (_, result) => ({
+				count: result.tickets?.length ?? result.total ?? undefined,
 			}),
-			log: (_, result) => ({ count: result.tickets.length }),
 		},
 	);
 
@@ -121,10 +127,8 @@ export const search: SupportbeeEndpoints['ticketsSearch'] = (ctx, input) =>
 				...unwrapObject(raw, 'ticket search'),
 				tickets: unwrapList(raw, 'tickets', 'ticket search'),
 			}),
-			log: (parsed, result) => ({
-				query: parsed.query,
-				count: result.tickets.length,
-			}),
+			// The query often holds a customer's email, so only the count is logged.
+			log: (_, result) => ({ count: result.tickets.length }),
 		},
 	);
 
