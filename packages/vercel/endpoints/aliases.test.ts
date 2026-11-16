@@ -256,12 +256,10 @@ describe('deleteAlias by hostname', () => {
 				teamId: undefined,
 			},
 		);
-		expect(request).toHaveBeenNthCalledWith(
-			2,
-			'/v2/aliases/www.example.com',
-			ctx,
-			{ method: 'DELETE', teamId: undefined },
-		);
+		expect(request).toHaveBeenNthCalledWith(2, '/v2/aliases/als_9', ctx, {
+			method: 'DELETE',
+			teamId: undefined,
+		});
 		expect(remove).toHaveBeenCalledWith('als_9');
 		expect(result.deleted).toBe(true);
 	});

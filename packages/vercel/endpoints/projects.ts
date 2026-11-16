@@ -121,8 +121,10 @@ export const deleteProject = defineEndpoint({
 			);
 			projectId = typeof found?.id === 'string' ? found.id : undefined;
 		}
+		// Delete by the resolved id, so a rename between the lookup and the
+		// delete can't point the name at a different project.
 		await makeAuthenticatedVercelRequest(
-			`/v9/projects/${seg(input.idOrName)}`,
+			`/v9/projects/${seg(projectId ?? input.idOrName)}`,
 			ctx,
 			{ method: 'DELETE', teamId: input.teamId },
 		);

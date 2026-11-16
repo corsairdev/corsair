@@ -171,7 +171,7 @@ describe('projects', () => {
 		expect(request).toHaveBeenNthCalledWith(1, '/v9/projects/site', ctx, {
 			teamId: undefined,
 		});
-		expect(request).toHaveBeenNthCalledWith(2, '/v9/projects/site', ctx, {
+		expect(request).toHaveBeenNthCalledWith(2, '/v9/projects/prj_9', ctx, {
 			method: 'DELETE',
 			teamId: undefined,
 		});

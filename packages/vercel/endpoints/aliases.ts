@@ -133,8 +133,10 @@ export const deleteAlias = defineEndpoint({
 			uid = typeof found?.uid === 'string' ? found.uid : undefined;
 		}
 		// Raw response; status is checked with typeof before it is returned.
+		// Delete by the resolved uid, so a hostname reassigned between the
+		// lookup and the delete can't remove a different alias.
 		const result = await makeAuthenticatedVercelRequest<{ status?: unknown }>(
-			`/v2/aliases/${seg(input.aliasId)}`,
+			`/v2/aliases/${seg(uid ?? input.aliasId)}`,
 			ctx,
 			{ method: 'DELETE', teamId: input.teamId },
 		);
