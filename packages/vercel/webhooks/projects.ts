@@ -1,4 +1,4 @@
-import type { CorsairWebhook } from 'corsair/core';
+import type { CorsairWebhook, WebhookRequest } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { VercelContext } from '../index';
 import type { VercelWebhookOutputs } from './types';
@@ -11,7 +11,7 @@ import {
 export const projectHandlers = {
 	projectCreated: {
 		match: createVercelMatch('project.created'),
-		handler: async (ctx: VercelContext, request: any) => {
+		handler: async (ctx: VercelContext, request: WebhookRequest<unknown>) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
 				return {
@@ -20,9 +20,7 @@ export const projectHandlers = {
 					error: 'Invalid Vercel signature',
 				};
 			}
-			const event = ProjectCreatedEventSchema.parse(
-				request.body || request.payload || request,
-			);
+			const event = ProjectCreatedEventSchema.parse(request.payload);
 
 			if (ctx.db.projects) {
 				await ctx.db.projects.upsertByEntityId(event.payload.project.id, {
