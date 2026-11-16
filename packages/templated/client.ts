@@ -104,6 +104,9 @@ export async function makeTemplatedRequest(
 		CREDENTIALS: 'omit',
 		// Templated reads the key from a bearer header.
 		TOKEN: apiKey,
+		// Renders run synchronously; an mp4 of up to 90 s can take minutes, and
+		// core's default is 20 s. An aborted render is not retried (DEFAULT).
+		TIMEOUT: 300_000,
 		HEADERS: { Accept: 'application/json' },
 	};
 
