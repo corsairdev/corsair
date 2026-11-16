@@ -1,8 +1,19 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SwaggerhubAPIError } from './client';
 
+/** HTTP failures arrive as core's `ApiError`; network failures as `SwaggerhubAPIError`. */
 function statusOf(error: Error): number | undefined {
-	return error instanceof SwaggerhubAPIError ? error.status : undefined;
+	if (error instanceof ApiError || error instanceof SwaggerhubAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request?.method;
+	if (error instanceof SwaggerhubAPIError) return error.method;
+	return undefined;
 }
 
 /**
@@ -17,26 +28,30 @@ function statusOf(error: Error): number | undefined {
  * timed out may have committed.
  */
 export const errorHandlers = {
+	// Core's request() already retries a 429 three times and honours
+	// Retry-After (R8), so the handler does not retry again.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs:
-				error instanceof SwaggerhubAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
+				error instanceof ApiError || error instanceof SwaggerhubAPIError
+					? error.retryAfter
+					: undefined,
 		}),
 	},
 	// 401 is a wrong key; 403 is a permission or a plan limit, which a retry
 	// cannot change.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SwaggerhubAPIError && error.isAuthError,
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status === 401 || status === 403;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404 is an owner, API or version that does not exist. It is terminal.
 	NOT_FOUND_ERROR: {
-		match: (error: Error) =>
-			error instanceof SwaggerhubAPIError && error.isNotFound,
+		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 is a definition or parameter SwaggerHub rejected, and 415 is a media
@@ -44,24 +59,21 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			if (error.name === 'ZodError') return true;
-			if (!(error instanceof SwaggerhubAPIError)) return false;
-			return error.isValidation || error.isUnsupportedMedia;
+			const status = statusOf(error);
+			return status === 400 || status === 415;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 409 is a name that already exists or a published version that cannot be
 	// overwritten. Sending the same request again answers the same conflict.
 	CONFLICT_ERROR: {
-		match: (error: Error) =>
-			error instanceof SwaggerhubAPIError && error.isConflict,
+		match: (error: Error) => statusOf(error) === 409,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A 5xx may have reached the registry, so only reads are replayed.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SwaggerhubAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

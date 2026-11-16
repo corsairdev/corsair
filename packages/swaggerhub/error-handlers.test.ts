@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SwaggerhubAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -22,19 +23,44 @@ function entry(name: keyof CorsairErrorHandler) {
 	return found;
 }
 
+/** Core's HTTP error, the shape an HTTP failure reaches the handlers in. */
+function apiError(status: number, method: 'GET' | 'POST' = 'GET'): ApiError {
+	return new ApiError(
+		{ method, url: '/apis/acme/petstore' },
+		{
+			url: 'https://api.swaggerhub.com/apis/acme/petstore',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`HTTP ${status}`,
+		{ retryAfter: status === 429 ? 1500 : undefined },
+	);
+}
+
 describe('swaggerhub error handling', () => {
-	it('retries a 429 with the Retry-After the registry sent', async () => {
-		const error = new SwaggerhubAPIError('rate limited', {
-			status: 429,
-			retryAfter: 1500,
-		});
+	it('leaves 429 retries to core, which already retried three times', async () => {
+		const error = apiError(429);
 
 		expect(entry('RATE_LIMIT_ERROR').match(error, context)).toBe(true);
 		expect(await entry('RATE_LIMIT_ERROR').handler(error, context)).toEqual({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs: 1500,
-			retryStrategy: 'exponential_backoff',
 		});
+	});
+
+	it("classifies core's ApiError by status", () => {
+		expect(entry('AUTH_ERROR').match(apiError(401), context)).toBe(true);
+		expect(entry('NOT_FOUND_ERROR').match(apiError(404), context)).toBe(true);
+		expect(entry('VALIDATION_ERROR').match(apiError(415), context)).toBe(true);
+		expect(entry('CONFLICT_ERROR').match(apiError(409), context)).toBe(true);
+		expect(entry('SERVER_ERROR').match(apiError(503, 'GET'), context)).toBe(
+			true,
+		);
+		expect(entry('SERVER_ERROR').match(apiError(503, 'POST'), context)).toBe(
+			false,
+		);
 	});
 
 	it('does not retry an auth failure', async () => {
