@@ -778,15 +778,63 @@ describe('compose.preview', () => {
 			{
 				channel: 'linkedin',
 				connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f',
-				leadId: lead.lead.id,
+				identity: 'dana-okafor',
+				prompt: 'Mention the Rotterdam hub and ask for a short call.',
 			},
 			composed,
 		);
 
 		expect(url).toBe('https://needle.app/api/v1/compose');
 		// Only POST /compose is wrapped; nothing here sends a message.
-		expect(sentBody(init).channel).toBe('linkedin');
+		const body = sentBody(init);
+		expect(body.channel).toBe('linkedin');
+		// Needle requires identity and prompt on every compose call.
+		expect(body.identity).toBe('dana-okafor');
+		expect(body.prompt).toContain('Rotterdam');
 		expect(asRecord(result)?.text).toContain('Northwind');
+	});
+
+	it('rejects a compose without an identity or a prompt', async () => {
+		await expect(
+			endpoints.compose.preview(
+				makeContext() as never,
+				{
+					channel: 'linkedin',
+					connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f',
+				} as never,
+			),
+		).rejects.toThrow();
+	});
+
+	it('sends the context sources the provider accepts', async () => {
+		const { init } = await capture(
+			endpoints.compose.preview,
+			{
+				channel: 'linkedin',
+				connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f',
+				identity: 'dana-okafor',
+				prompt: 'Short and warm.',
+				context: ['profile', 'posts'],
+				maxChars: 300,
+			},
+			composed,
+		);
+
+		const body = sentBody(init);
+		expect(body.context).toEqual(['profile', 'posts']);
+		expect(body.maxChars).toBe(300);
+	});
+
+	it('rejects a context source the provider does not offer', async () => {
+		await expect(
+			endpoints.compose.preview(makeContext() as never, {
+				channel: 'linkedin',
+				connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f',
+				identity: 'dana-okafor',
+				prompt: 'Hi',
+				context: ['everything' as never],
+			}),
+		).rejects.toThrow();
 	});
 });
 

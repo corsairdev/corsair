@@ -866,21 +866,44 @@ export type PlacesSearchResponse = z.infer<typeof PlacesSearchResponseSchema>;
 
 // ── compose.preview ───────────────────────────────────────────────────────
 
+export const NEEDLE_COMPOSE_CONTEXTS = [
+	'profile',
+	'posts',
+	'conversation',
+	'lead_properties',
+] as const;
+
 const ComposeInputSchema = z.object({
 	channel: ChannelSchema,
 	connectedAccountId: UuidSchema.describe(
 		'The connected account the message would be sent from.',
 	),
-	leadId: UuidSchema.optional(),
-	instructions: z.string().optional(),
+	identity: z
+		.string()
+		.min(1)
+		.describe(
+			'Who the message is for: a LinkedIn identifier, path, URL or user id, or an Instagram username, handle or URL.',
+		),
+	prompt: z
+		.string()
+		.min(1)
+		.describe('What the message should say, in plain instructions.'),
 	context: z
-		.object({
-			notes: z.string().optional(),
-			offer: z.string().optional(),
-		})
-		.loose()
+		.array(z.enum(NEEDLE_COMPOSE_CONTEXTS))
 		.optional()
-		.describe('Extra hints for the composer, such as the offer to mention.'),
+		.describe(
+			'What the composer may read. Defaults at the provider to conversation only.',
+		),
+	maxChars: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('An upper bound on the message length.'),
+	leadProperties: z
+		.record(z.string(), z.string())
+		.optional()
+		.describe('Facts about the lead the composer may use.'),
 });
 
 export type ComposeInput = z.input<typeof ComposeInputSchema>;
