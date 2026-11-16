@@ -32473,7 +32473,7 @@ await corsair.elorus.api.v12.projects_create({
 {
   member: string | number,
   manager?: boolean | null,
-  hourly_rate: string,
+  hourly_rate?: string | null,
   cost_per_hour?: string | null
 }[] | null
 ```
@@ -33634,7 +33634,7 @@ await corsair.elorus.api.v12.projects_update({
 {
   member: string | number,
   manager?: boolean | null,
-  hourly_rate: string,
+  hourly_rate?: string | null,
   cost_per_hour?: string | null
 }[] | null
 ```

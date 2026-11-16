@@ -216,6 +216,34 @@ describe('Elorus responses as the live API returns them', () => {
 		expect(result.billable_hours).toBe(1002000);
 	});
 
+	it('accepts a project create answer whose member has no hourly rate', async () => {
+		mockFetch({
+			id: '3671500000000000501',
+			name: 'Website redesign',
+			billing_method: 'task_rate',
+			hourly_rate: null,
+			members: [
+				{
+					member: USER,
+					manager: true,
+					hourly_rate: null,
+					cost_per_hour: '34.00',
+				},
+			],
+			active: true,
+			organization: ORGANIZATION,
+		});
+		const result = await ElorusEndpoints.v12.projects_create(context, {
+			body: {
+				name: 'Website redesign',
+				client: '3671500000000000502',
+				members: [{ member: 1, hourly_rate: '0.00' }],
+				tasks: [],
+			},
+		});
+		expect(result.members?.[0]?.hourly_rate).toBeNull();
+	});
+
 	it('reads a v1.1 project whose members carry boolean managers', async () => {
 		mockFetch({
 			id: '3671500000000000501',

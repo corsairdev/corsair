@@ -8811,7 +8811,8 @@ const v12Def_ProjectMemberNestedCreateUpdateResponse = z
 	.object({
 		member: ElorusIdReferenceSchema,
 		manager: z.boolean().nullable().optional(),
-		hourly_rate: z.string(),
+		// Null for a member with no rate of their own, as in project reads.
+		hourly_rate: z.string().nullable().optional(),
 		cost_per_hour: z.string().nullable().optional(),
 	})
 	.strict();
