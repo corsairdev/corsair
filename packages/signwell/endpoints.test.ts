@@ -263,6 +263,7 @@ describe('documents.create', () => {
 			draft: true,
 		});
 
+		// unknown: the sent JSON body; each field is checked by value below.
 		const body = lastRequest().body as Record<string, unknown>;
 		expect(body.recipients).toEqual([
 			{ id: '1', delivery_method: 'sms', phone_number: '+15555550100' },
@@ -273,6 +274,27 @@ describe('documents.create', () => {
 		expect(JSON.stringify(body.fields)).toContain('"options":["Yes","No"]');
 		expect(JSON.stringify(body.fields)).toContain('"value":true');
 		expect(body.conditional_rules).toHaveLength(1);
+	});
+
+	it('keeps passcode delivery on recipients', async () => {
+		respond(document, 201);
+
+		await invoke(Documents.create, {
+			files: [{ name: 'offer.pdf', file_url: 'https://acme.test/offer.pdf' }],
+			recipients: [
+				{
+					id: '1',
+					email: 'jane@example.com',
+					passcode: '1234',
+					passcode_delivery: { enabled: true },
+				},
+			],
+			draft: true,
+		});
+
+		expect(lastRequest().body).toMatchObject({
+			recipients: [{ passcode_delivery: { enabled: true } }],
+		});
 	});
 
 	it('omits the test-mode header when test_mode is not set', async () => {
@@ -325,6 +347,22 @@ describe('documents.createFromTemplate', () => {
 		expect(lastRequest().body).toEqual({
 			template_id: TEMPLATE_ID,
 			recipients: [{ id: '1', name: 'Jane Doe', email: 'jane@example.com' }],
+		});
+	});
+
+	it('keeps appended files and embedded email settings', async () => {
+		respond(document, 201);
+
+		await invoke(Documents.createFromTemplate, {
+			template_id: TEMPLATE_ID,
+			embedded_signing: true,
+			recipients: [{ id: '1', email: 'jane@example.com', send_email: true }],
+			files: [{ name: 'terms.pdf', file_url: 'https://acme.test/terms.pdf' }],
+		});
+
+		expect(lastRequest().body).toMatchObject({
+			recipients: [{ send_email: true }],
+			files: [{ name: 'terms.pdf', file_url: 'https://acme.test/terms.pdf' }],
 		});
 	});
 
@@ -615,6 +653,18 @@ describe('webhooks', () => {
 		expect(lastRequest().path).toBe(`/api/v1/hooks/${WEBHOOK_ID}`);
 		expect(result).toEqual({ id: WEBHOOK_ID, deleted: true });
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain(WEBHOOK_ID);
+	});
+
+	it('keeps the webhook id, a signing key, out of a failed delete', async () => {
+		respond({ message: 'Not found' }, 404);
+		const util = await import('node:util');
+
+		const error = await invoke(Webhooks.remove, { id: WEBHOOK_ID }).catch(
+			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(util.inspect(error)).not.toContain(WEBHOOK_ID);
 	});
 });
 

@@ -48,6 +48,16 @@ const DocumentFileSchema = z
 		}
 	});
 
+/** SignWell emails the passcode to the signer when this is enabled. */
+const PasscodeDeliverySchema = z.object({
+	enabled: z.boolean().optional(),
+	methods: z.array(z.enum(['email'])).optional(),
+	expire_after_access: z
+		.boolean()
+		.optional()
+		.describe('Clear the passcode after the signer authenticates.'),
+});
+
 const RecipientSchema = z.object({
 	id: z
 		.string()
@@ -105,6 +115,7 @@ const RecipientSchema = z.object({
 		.describe(
 			'The signer must enter this before opening the document. SignWell generates one itself on 21 CFR Part 11 documents, so a passcode here returns a 422 there.',
 		),
+	passcode_delivery: PasscodeDeliverySchema.optional(),
 });
 
 const PlaceholderSchema = z.object({
@@ -112,6 +123,7 @@ const PlaceholderSchema = z.object({
 	name: z.string().min(1),
 	preassigned_recipient_name: z.string().optional(),
 	preassigned_recipient_email: Email.optional(),
+	passcode_delivery: PasscodeDeliverySchema.optional(),
 });
 
 const CopiedContactSchema = z.object({
@@ -773,6 +785,14 @@ const DocumentsCreateFromTemplateInputSchema = z
 					subject: z.string().optional(),
 					message: z.string().optional(),
 					passcode: z.string().optional(),
+					passcode_delivery: PasscodeDeliverySchema.optional(),
+					send_email: z
+						.boolean()
+						.optional()
+						.describe(
+							'With embedded signing, true still emails this recipient; SignWell defaults it to false there.',
+						),
+					send_email_delay: z.number().int().optional(),
 					delivery_method: z.enum(['email', 'sms', 'email_and_sms']).optional(),
 				}),
 			)
@@ -793,6 +813,12 @@ const DocumentsCreateFromTemplateInputSchema = z
 		allow_reassign: z.boolean().optional(),
 		language: z.string().optional(),
 		labels: z.array(LabelSchema).optional(),
+		files: z
+			.array(DocumentFileSchema)
+			.optional()
+			.describe(
+				"Files appended after the template's own files; each takes file_url or file_base64.",
+			),
 		template_fields: z
 			.array(
 				z.object({
