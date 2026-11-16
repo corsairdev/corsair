@@ -167,9 +167,12 @@ describe('endpoints', () => {
 		await expect(
 			// Cast past the type: the point is that the schema refuses a missing
 			// upstream url at runtime for a caller passing untyped input.
-			endpointsNested.endpoints.create(makeContext() as never, {
-				description: 'No url',
-			} as never),
+			endpointsNested.endpoints.create(
+				makeContext() as never,
+				{
+					description: 'No url',
+				} as never,
+			),
 		).rejects.toThrow();
 	});
 
