@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { SuperchatAPIError, segment } from './client';
+import { ApiError } from 'corsair/http';
+import { segment } from './client';
 import {
 	Channels,
 	ContactLists,
@@ -108,13 +109,13 @@ describe('contacts', () => {
 			first_name: 'Jane',
 			last_name: 'Smith',
 			gender: 'diverse',
-			handles: [{ type: 'mail', value: 'jane@example.com' }],
+			handles: [{ id: null, type: 'mail', value: 'jane@example.com' }],
 		});
 
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('POST');
 		expect(sent.body).toMatchObject({
-			handles: [{ type: 'mail', value: 'jane@example.com' }],
+			handles: [{ id: null, type: 'mail', value: 'jane@example.com' }],
 		});
 	});
 
@@ -239,8 +240,8 @@ describe('contactLists', () => {
 		});
 	});
 
-	it('deletes a list and returns it as it was', async () => {
-		respond(fetchMock, contactList);
+	it('deletes a list and returns the id Superchat answers', async () => {
+		respond(fetchMock, { id: contactList.id });
 
 		const result = await invoke(ContactLists.remove, { contactListId: 'cl_1' });
 
@@ -251,15 +252,19 @@ describe('contactLists', () => {
 		expect(result).toMatchObject({ id: contactList.id });
 	});
 
-	it('lists the lists a contact belongs to, a bare array', async () => {
-		respond(fetchMock, [contactList]);
+	it('pages the lists a contact belongs to', async () => {
+		respond(fetchMock, contactListsPage);
 
-		const result = await invoke(ContactLists.forContact, { contactId: 'ct_1' });
+		const result = await invoke(ContactLists.forContact, {
+			contactId: 'ct_1',
+			after: 'cl_0',
+			limit: 10,
+		});
 
-		expect(lastRequest(fetchMock).path).toBe(
-			'/v1.0/contacts/ct_1/contact-lists',
-		);
-		expect(result).toEqual([contactList]);
+		const sent = lastRequest(fetchMock);
+		expect(sent.path).toBe('/v1.0/contacts/ct_1/contact-lists');
+		expect(sent.query).toMatchObject({ after: 'cl_0', limit: '10' });
+		expect(result).toMatchObject({ results: [contactList] });
 	});
 
 	it('adds a contact with the list id in the body, not the path', async () => {
@@ -339,11 +344,19 @@ describe('conversations', () => {
 	it('lists the messages in a conversation', async () => {
 		respond(fetchMock, messagesPage);
 
-		const result = await invoke(Conversations.messages, { id: 'cv_1' });
+		const result = await invoke(Conversations.messages, {
+			id: 'cv_1',
+			after: 'ms_0',
+			limit: 50,
+		});
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/v1.0/conversations/cv_1/messages',
 		);
+		expect(lastRequest(fetchMock).query).toMatchObject({
+			after: 'ms_0',
+			limit: '50',
+		});
 		expect(result).toMatchObject({ results: [message] });
 	});
 });
@@ -437,11 +450,9 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect(error).toBeInstanceOf(SuperchatAPIError);
-		const failure = error as SuperchatAPIError;
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
 		expect(failure.status).toBe(401);
-		expect(failure.code).toBe('MethodNotAllowedException');
-		expect(failure.isAuthError).toBe(true);
 		// Both the localised message and the code are kept, with the code leading.
 		expect(failure.message).toContain('MethodNotAllowedException');
 		expect(failure.message).toContain('Methode nicht erlaubt');
@@ -457,13 +468,8 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		const failure = error as SuperchatAPIError;
-		expect(failure.isAuthError).toBe(true);
-		expect(failure.isNotFound).toBe(false);
-	});
-
-	it('classifies a 404 as not found', () => {
-		expect(new SuperchatAPIError('x', { status: 404 }).isNotFound).toBe(true);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(403);
 	});
 
 	it('encodes a path segment', () => {

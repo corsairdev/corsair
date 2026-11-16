@@ -130,6 +130,11 @@ const ContactListSchema = z
 
 export type SuperchatContactList = z.infer<typeof ContactListSchema>;
 
+/** A contact-list delete answers only the removed list's id. */
+const DeletedContactListSchema = z.object({ id: z.string() }).loose();
+
+export type DeletedContactList = z.infer<typeof DeletedContactListSchema>;
+
 const ConversationSchema = z
 	.object({
 		id: z.string(),
@@ -169,7 +174,14 @@ const MessageSchema = z
 			.object({ type: z.string().nullish(), body: z.string().nullish() })
 			.loose()
 			.nullish(),
-		to: z.array(z.unknown()).nullish(), // unknown: receiver shape
+		// Outbound messages list their receivers; inbound ones name the
+		// receiving channel as one object.
+		to: z
+			.union([
+				z.array(z.unknown()), // unknown: receiver shape varies by channel
+				z.object({ channel_id: z.string().nullish() }).loose(),
+			])
+			.nullish(),
 		from: z.unknown().nullish(), // unknown: sender shape
 		created_at: Timestamp.nullish(),
 		updated_at: Timestamp.nullish(),
@@ -221,16 +233,25 @@ export type ContactsListResponse = z.infer<typeof ContactsListResponseSchema>;
 const contactHandleBody = z.object({
 	id: z
 		.string()
-		.nullish()
-		.describe('An existing handle id, or null to create a new handle.'),
+		.nullable()
+		.describe(
+			'Required: an existing handle id, or null to create a new handle.',
+		),
 	type: z.enum(['mail', 'phone']).describe('How the handle is used.'),
 	value: z.string().min(1).describe('The email address or phone number.'),
 });
 
+// The create route lists first_name, last_name and gender as required, each
+// accepting null, so the keys must be present.
 const contactBody = {
-	first_name: z.string().nullish(),
-	last_name: z.string().nullish(),
-	gender: ContactGenderSchema.nullish(),
+	first_name: z
+		.string()
+		.nullable()
+		.describe('Required; the value may be null.'),
+	last_name: z.string().nullable().describe('Required; the value may be null.'),
+	gender: ContactGenderSchema.nullable().describe(
+		'Required; the value may be null.',
+	),
 	custom_attributes: z.array(ContactAttributeSchema).nullish(),
 };
 
@@ -379,16 +400,15 @@ export type ContactListMembershipRemoveInput = z.infer<
 	typeof ContactListMembershipRemoveInputSchema
 >;
 
-const ContactListsForContactInputSchema = z.object({
-	contactId: z.string().min(1),
-});
+const ContactListsForContactInputSchema = z
+	.object({ contactId: z.string().min(1), ...paging })
+	.superRefine(requireOneCursor);
 
 export type ContactListsForContactInput = z.infer<
 	typeof ContactListsForContactInputSchema
 >;
 
-/** This route answers a bare array of lists rather than the paged envelope. */
-const ContactListsForContactResponseSchema = z.array(ContactListSchema);
+const ContactListsForContactResponseSchema = pageOf(ContactListSchema);
 
 export type ContactListsForContactResponse = z.infer<
 	typeof ContactListsForContactResponseSchema
@@ -415,6 +435,15 @@ const ConversationTargetSchema = z.object({
 });
 
 export type ConversationTargetInput = z.infer<typeof ConversationTargetSchema>;
+
+/** Messages page like every list, 20 per page by default. */
+const ConversationMessagesInputSchema = z
+	.object({ ...ConversationTargetSchema.shape, ...paging })
+	.superRefine(requireOneCursor);
+
+export type ConversationMessagesInput = z.infer<
+	typeof ConversationMessagesInputSchema
+>;
 
 const ConversationsGetResponseSchema = ConversationSchema;
 
@@ -577,7 +606,7 @@ export type SuperchatEndpointInputs = {
 	conversationsList: ConversationsListInput;
 	conversationsGet: ConversationTargetInput;
 	conversationsUpdate: ConversationsUpdateInput;
-	conversationsMessages: ConversationTargetInput;
+	conversationsMessages: ConversationMessagesInput;
 	messagesSend: MessagesSendInput;
 	messagesGet: MessageTargetInput;
 	channelsList: ChannelsListInput;
@@ -594,7 +623,7 @@ export type SuperchatEndpointOutputs = {
 	contactsSearch: ContactsSearchResponse;
 	contactListsList: ContactListsListResponse;
 	contactListsCreate: SuperchatContactList;
-	contactListsDelete: SuperchatContactList;
+	contactListsDelete: DeletedContactList;
 	contactListsForContact: ContactListsForContactResponse;
 	contactListsAddContact: SuperchatContactList;
 	contactListsRemoveContact: SuperchatContactList;
@@ -628,7 +657,7 @@ export const SuperchatEndpointInputSchemas = {
 	conversationsList: ConversationsListInputSchema,
 	conversationsGet: ConversationTargetSchema,
 	conversationsUpdate: ConversationsUpdateInputSchema,
-	conversationsMessages: ConversationTargetSchema,
+	conversationsMessages: ConversationMessagesInputSchema,
 	messagesSend: MessagesSendInputSchema,
 	messagesGet: MessageTargetSchema,
 	channelsList: ChannelsListInputSchema,
@@ -650,7 +679,7 @@ export const SuperchatEndpointOutputSchemas = {
 	contactsSearch: ContactsSearchResponseSchema,
 	contactListsList: ContactListsListResponseSchema,
 	contactListsCreate: ContactListSchema,
-	contactListsDelete: ContactListSchema,
+	contactListsDelete: DeletedContactListSchema,
 	contactListsForContact: ContactListsForContactResponseSchema,
 	contactListsAddContact: ContactListSchema,
 	contactListsRemoveContact: ContactListSchema,

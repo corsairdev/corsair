@@ -52,7 +52,6 @@ export const remove: SuperchatEndpoints['contactListsDelete'] = (ctx, input) =>
 		{ log: ({ contactListId }) => ({ contactListId }) },
 	);
 
-/** This route answers a bare array of lists rather than the paged envelope. */
 export const forContact: SuperchatEndpoints['contactListsForContact'] = (
 	ctx,
 	input,
@@ -65,11 +64,17 @@ export const forContact: SuperchatEndpoints['contactListsForContact'] = (
 			output: Outputs.contactListsForContact,
 		},
 		input,
-		({ contactId }) => ({
+		({ contactId, ...query }) => ({
 			method: 'GET',
 			path: `/contacts/${segment(contactId)}/contact-lists`,
+			query,
 		}),
-		{ log: ({ contactId }, result) => ({ contactId, count: result.length }) },
+		{
+			log: ({ contactId }, result) => ({
+				contactId,
+				count: result.results.length,
+			}),
+		},
 	);
 
 export const addContact: SuperchatEndpoints['contactListsAddContact'] = (
