@@ -4525,14 +4525,6 @@
                 ]
               },
               {
-                "group": "TelTEL",
-                "pages": [
-                  "plugins/teltel/overview",
-                  "plugins/teltel/api",
-                  "plugins/teltel/database"
-                ]
-              },
-              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
@@ -4565,6 +4557,14 @@
                   "plugins/telegram/api",
                   "plugins/telegram/database",
                   "plugins/telegram/webhooks"
+                ]
+              },
+              {
+                "group": "TelTEL",
+                "pages": [
+                  "plugins/teltel/overview",
+                  "plugins/teltel/api",
+                  "plugins/teltel/database"
                 ]
               },
               {

@@ -29,7 +29,7 @@ await corsair.teltel.api.account.balance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -39,7 +39,7 @@ await corsair.teltel.api.account.balance({});
   credit?: number | null,
   credit_limit?: number | null,
   balance?: number | null
-}[]
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -56,7 +56,7 @@ await corsair.teltel.api.account.balance({});
 
 Place a click-to-call between two numbers, which bills per minute once answered
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.teltel.api.calls.create({ caller_number: '37126111111', destination_number: '37126111112', destination_displayname: 'Support' });
@@ -145,8 +145,18 @@ await corsair.teltel.api.calls.list({ direction: 'outbound', limit: 50 });
   handle_sec?: number | null,
   rate?: number | null,
   cost?: number | null,
-  caller?: Record<string, string> | null,
-  callee?: Record<string, string> | null,
+  caller?: {
+    number?: string | null,
+    type?: string | null,
+    cid?: string | null,
+    dnid?: string | null,
+    user_id?: number | null
+  } | null,
+  callee?: {
+    number?: string | null,
+    type?: string | null,
+    user_id?: number | null
+  } | null,
   extra_prefix?: string | null,
   hangup_by?: string | null,
   hangup_value?: string | null,
@@ -169,7 +179,7 @@ await corsair.teltel.api.calls.list({ direction: 'outbound', limit: 50 });
 
 Start, pause or stop a campaign; start sends to every contact in its groups
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.teltel.api.campaigns.action({ campaignId: 781, action: 'start' });
@@ -197,8 +207,8 @@ start sends to every contact in the campaign groups, pause stops it temporarily 
 
 ```ts
 {
-  status?: number | null,
-  message?: string | null
+  id?: number | null,
+  action?: string | null
 } | null
 ```
 </Accordion>
@@ -431,16 +441,16 @@ await corsair.teltel.api.campaigns.update({ campaignId: 781, title: 'Spring sale
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
+| `meta` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="meta full type">
 
 ```ts
 {
-  status?: number | null,
-  message?: string | null
-} | null
+  deleted?: boolean | null,
+  updated?: boolean | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -485,8 +495,8 @@ await corsair.teltel.api.contactGroups.contacts({ groupId: 5 });
 
 ```ts
 {
-  id: number,
-  group_id?: number | null,
+  id?: number | string | null,
+  group_id?: number | string | null,
   phone?: string | null,
   param_1?: string | null,
   param_2?: string | null,
@@ -821,10 +831,10 @@ await corsair.teltel.api.contacts.createBulk({ contacts: [{ phone: '37121234567'
 
 ```ts
 {
-  id: number
+  id: number | string
 }[] | {
   success?: {
-    id: number
+    id: number | string
   }[] | null,
   errors?: {
     index?: number | null,
@@ -913,8 +923,8 @@ await corsair.teltel.api.contacts.get({ contactId: 981 });
 
 ```ts
 {
-  id: number,
-  group_id?: number | null,
+  id?: number | string | null,
+  group_id?: number | string | null,
   phone?: string | null,
   param_1?: string | null,
   param_2?: string | null,
@@ -966,8 +976,8 @@ await corsair.teltel.api.contacts.list({ group_id: 5 });
 
 ```ts
 {
-  id: number,
-  group_id?: number | null,
+  id?: number | string | null,
+  group_id?: number | string | null,
   phone?: string | null,
   param_1?: string | null,
   param_2?: string | null,
@@ -1196,14 +1206,9 @@ List the countries numbers can be ordered in, with their prefix and SMS support
 await corsair.teltel.api.numberCountries.list({});
 ```
 
-**Input**
+**Input:** _empty object_
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
-| `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
-
+Returns every country in one answer; the route takes no paging.
 
 
 **Output**
@@ -1284,8 +1289,8 @@ await corsair.teltel.api.numbers.get({ numberId: 115 });
   spam_score?: number | null,
   spam_checked_at?: string | null,
   spam_score_details?: string | null,
-  groups?: number[] | null,
-  users?: number[] | null
+  groups?: any[] | null,
+  users?: any[] | null
 }
 ```
 </Accordion>
@@ -1349,8 +1354,8 @@ await corsair.teltel.api.numbers.list({ limit: 50 });
   spam_score?: number | null,
   spam_checked_at?: string | null,
   spam_score_details?: string | null,
-  groups?: number[] | null,
-  users?: number[] | null
+  groups?: any[] | null,
+  users?: any[] | null
 }[]
 ```
 </Accordion>
@@ -1364,12 +1369,12 @@ await corsair.teltel.api.numbers.list({ limit: 50 });
 
 `numbers.update`
 
-Change a number's auto-renew, description or SMS handler
+Change a number's auto-renew or SMS handler URL and email
 
 **Risk:** `write`
 
 ```ts
-await corsair.teltel.api.numbers.update({ numberId: 115, description: 'Sales line' });
+await corsair.teltel.api.numbers.update({ numberId: 115, auto_renew: false });
 ```
 
 **Input**
@@ -1378,11 +1383,10 @@ await corsair.teltel.api.numbers.update({ numberId: 115, description: 'Sales lin
 |------|------|----------|-------------|
 | `numberId` | `number` | Yes | The number to change. |
 | `auto_renew` | `boolean` | No | — |
-| `description` | `string \| null` | No | — |
 | `sms_handler_url` | `string \| null` | No | — |
 | `sms_handler_email` | `string \| null` | No | — |
 
-auto_renew is a boolean in the request; the read route returns it as 0 or 1.
+auto_renew is a boolean in the request; the answer is the updated number, where auto_renew reads 0 or 1.
 
 
 
@@ -1390,15 +1394,35 @@ auto_renew is a boolean in the request; the read route returns it as 0 or 1.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `meta` | `object` | Yes | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  deleted?: boolean | null,
-  updated?: boolean | null
+  id: number,
+  activated?: number | null,
+  iduser?: number | null,
+  country_id?: number | null,
+  country_name?: string | null,
+  did?: string | null,
+  overphone?: string | null,
+  description?: string | null,
+  monthly_price?: number | null,
+  reservation_date?: string | null,
+  release_date?: string | null,
+  next_payment_date?: string | null,
+  month_payed?: number | null,
+  auto_renew?: number | null,
+  sms_support?: number | null,
+  sms_handler_url?: string | null,
+  sms_handler_email?: string | null,
+  spam_score?: number | null,
+  spam_checked_at?: string | null,
+  spam_score_details?: string | null,
+  groups?: any[] | null,
+  users?: any[] | null
 }
 ```
 </Accordion>
@@ -1465,7 +1489,7 @@ await corsair.teltel.api.priceGroups.list({ countryId: 115 });
 
 Send one SMS from a verified number or sender ID, charging the account per part
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.teltel.api.sms.send({ from: '37126118199', to: '37126118198', message: 'Hello from TelTEL' });
@@ -1511,7 +1535,7 @@ Charges the account per part; a numeric sender must be a DID on the account and 
 
 Send many SMS in one call; a partial result answers 207 with the messages that failed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.teltel.api.sms.sendBulk({ messages: [{ from: '37126118199', to: '37126118198', message: 'One' }, { from: '37126118199', to: '37126118197', message: 'Two' }] });
@@ -1621,8 +1645,17 @@ await corsair.teltel.api.smsReports.get({ reportId: 1832256 });
   id: number,
   from?: string | null,
   to?: string | null,
-  country?: Record<string, string> | null,
-  operator?: Record<string, string> | null,
+  country?: {
+    id?: number | null,
+    name?: string | null,
+    iso?: string | null,
+    mcc?: number | null
+  } | null,
+  operator?: {
+    id?: number | null,
+    name?: string | null,
+    mnc?: number | null
+  } | null,
   created_at?: string | null,
   delivered?: string | null,
   multipart?: boolean | null,
@@ -1652,7 +1685,7 @@ List outbound messages with their state, price and delivery details, filtered by
 **Risk:** `read`
 
 ```ts
-await corsair.teltel.api.smsReports.list({ limit: 100, offset: 0, state: 'delivered' });
+await corsair.teltel.api.smsReports.list({ limit: 100, offset: 0, state: 'DONE' });
 ```
 
 **Input**
@@ -1663,13 +1696,13 @@ await corsair.teltel.api.smsReports.list({ limit: 100, offset: 0, state: 'delive
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
 | `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 | `sort` | `string` | No | A field to sort by; prefix it with "-" for descending. |
-| `state` | `string` | No | Only messages in this state. |
+| `state` | `string` | No | Only messages in this state: NEW, PROC, WAIT, DONE, ERROR or CANCEL. |
 | `from` | `string` | No | Only messages from this number. |
 | `to` | `string` | No | Only messages to this number. |
 | `created_at[from]` | `string` | No | Only messages created on or after this timestamp. |
 | `created_at[to]` | `string` | No | Only messages created on or before this timestamp. |
 
-limit runs from 1 to 5000 and defaults to 500; offset skips results.
+limit runs from 1 to 5000 and defaults to 500; offset skips results. state is NEW, PROC, WAIT, DONE, ERROR or CANCEL; filters travel in one filter value.
 
 
 
@@ -1687,8 +1720,17 @@ limit runs from 1 to 5000 and defaults to 500; offset skips results.
   id: number,
   from?: string | null,
   to?: string | null,
-  country?: Record<string, string> | null,
-  operator?: Record<string, string> | null,
+  country?: {
+    id?: number | null,
+    name?: string | null,
+    iso?: string | null,
+    mcc?: number | null
+  } | null,
+  operator?: {
+    id?: number | null,
+    name?: string | null,
+    mnc?: number | null
+  } | null,
   created_at?: string | null,
   delivered?: string | null,
   multipart?: boolean | null,
@@ -1715,7 +1757,7 @@ limit runs from 1 to 5000 and defaults to 500; offset skips results.
 
 `users.list`
 
-List the account users with their login and email
+List the account users with their login and email; their API keys are left out
 
 **Risk:** `read`
 
@@ -1730,6 +1772,8 @@ await corsair.teltel.api.users.list({});
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
 | `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
+
+Each user comes back without the api_key field TelTEL includes.
 
 
 

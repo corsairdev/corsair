@@ -14,9 +14,11 @@ Things to know before you call:
 - **The sender must be verified.** A numeric sender must be a DID on the account, and an alphanumeric sender ID must be 3 to 11 characters. Dynamic sender IDs need to be enabled on the account first.
 - **Every body is wrapped in `data`.** TelTEL refuses an unwrapped request body, so each endpoint builds the wrapper for you. The bulk routes take an array as the `data` value rather than an object.
 - **Bulk sends can partly fail.** `sms.sendBulk` answers 200 with the created IDs, or 207 with a `success` array and an `errors` array. Both parse, so a partial result does not throw. Check `data` for the split on a 207.
-- **401 and 403 mean different things.** A 401 means no credential reached the API. A 403 means one was sent and refused, or the key's role is too small for the route. `TeltelAPIError` exposes `isMissingKey` and `isRefusedKey`.
+- **401 and 403 mean different things.** A 401 means no credential reached the API. A 403 means one was sent and refused, or the account cannot use that section yet (a new account without credit gets 403 on SMS, campaigns and contacts). Errors are core's `ApiError`; `teltelErrorDetails(error)` reads TelTEL's `errors` entries.
+- **Filters go in one `filter` value.** The list inputs (`state`, `from`, `to`, `direction`, the time ranges and so on) become a comma-separated `filter` query value such as `state=DONE,created_at>2024-03-01T00:00:00`. TelTEL ignores filters sent as separate query keys.
+- **Users come without their API keys.** TelTEL's user list includes each user's key; `users.list` drops that field before returning.
 - **Paging is by offset.** `limit` runs from 1 to 5000 and defaults to 500; `offset` skips. A list answer is `{ data: [...] }` with no total count, so keep requesting until a page comes back short.
-- **Deletes and updates answer `meta`.** A delete is `{ meta: { deleted: true } }` and an update is `{ meta: { updated: true } }`. The plugin returns that envelope rather than inventing a `success` flag, and fails a call whose body has no `meta`.
+- **Deletes and most updates answer `meta`.** A delete is `{ meta: { deleted: true } }` and a campaign, contact or group update is `{ meta: { updated: true } }`. The plugin returns that envelope rather than inventing a `success` flag, and fails a call whose body has no `meta`. `numbers.update` is the exception: it answers with the updated number under `data`.
 - **A campaign does not send until it starts.** `campaigns.create` only records the campaign. `campaigns.action` with `start` sends to every contact in the campaign groups, `pause` stops it temporarily and `stop` ends it.
 - **A click-to-call needs both display names.** `calls.create` requires `destination_displayname` alongside the two numbers.
 

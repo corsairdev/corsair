@@ -12,10 +12,10 @@ pnpm add @corsair-dev/teltel
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `account.balance` | `teltel.api.account.balance` | `read` | Read the account balance, its credit limit and any outstanding amount |
-| `calls.create` | `teltel.api.calls.create` | `write` | Place a click-to-call between two numbers, which bills per minute once answered |
+| `account.balance` | `teltel.api.account.balance` | `read` | Read the account balance, its credit limit and the outstanding amount where one is owed |
+| `calls.create` | `teltel.api.calls.create` | `destructive` | Place a click-to-call between two numbers, which bills per minute once answered |
 | `calls.list` | `teltel.api.calls.list` | `read` | List calls with their duration, cost and hangup reason, filtered by direction or start time |
-| `campaigns.action` | `teltel.api.campaigns.action` | `write` | Start, pause or stop a campaign; start sends to every contact in its groups |
+| `campaigns.action` | `teltel.api.campaigns.action` | `destructive` | Start, pause or stop a campaign; start sends to every contact in its groups |
 | `campaigns.create` | `teltel.api.campaigns.create` | `write` | Create an SMS campaign for a set of contact groups; it does not send until `campaigns.action` starts it |
 | `campaigns.delete` | `teltel.api.campaigns.delete` | `destructive` | Delete an SMS campaign and its history |
 | `campaigns.get` | `teltel.api.campaigns.get` | `read` | Read one SMS campaign by ID |
@@ -39,13 +39,13 @@ pnpm add @corsair-dev/teltel
 | `numberCountries.list` | `teltel.api.numberCountries.list` | `read` | List the countries numbers can be ordered in, with their prefix and SMS support |
 | `numbers.get` | `teltel.api.numbers.get` | `read` | Read one DID number by ID |
 | `numbers.list` | `teltel.api.numbers.list` | `read` | List the DID numbers on the account with their renewal date and SMS settings |
-| `numbers.update` | `teltel.api.numbers.update` | `write` | Change a number's auto-renew, description or SMS handler |
+| `numbers.update` | `teltel.api.numbers.update` | `write` | Change a number's auto-renew or SMS handler URL and email |
 | `priceGroups.list` | `teltel.api.priceGroups.list` | `read` | List a country's price groups, whose IDs an order takes |
-| `sms.send` | `teltel.api.sms.send` | `write` | Send one SMS from a verified number or sender ID, charging the account per part |
-| `sms.sendBulk` | `teltel.api.sms.sendBulk` | `write` | Send many SMS in one call; a partial result answers 207 with the messages that failed |
+| `sms.send` | `teltel.api.sms.send` | `destructive` | Send one SMS from a verified number or sender ID, charging the account per part |
+| `sms.sendBulk` | `teltel.api.sms.sendBulk` | `destructive` | Send many SMS in one call; a partial result answers 207 with the messages that failed |
 | `smsReports.get` | `teltel.api.smsReports.get` | `read` | Read one outbound message report by ID |
 | `smsReports.list` | `teltel.api.smsReports.list` | `read` | List outbound messages with their state, price and delivery details, filtered by number or date |
-| `users.list` | `teltel.api.users.list` | `read` | List the account users with their login and email |
+| `users.list` | `teltel.api.users.list` | `read` | List the account users with their login and email; their API keys are left out |
 
 ## Auth
 
