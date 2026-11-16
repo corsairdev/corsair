@@ -24,7 +24,7 @@ await corsair.tomba.api.account.get({});
 
 **Input:** _empty object_
 
-The body also carries `secret_token`; the output schema drops it so it never reaches a caller.
+The /me body also carries the account `secret_token` and an `intercom_user_jwt`; the endpoint drops both before returning.
 
 
 **Output**
@@ -61,7 +61,13 @@ The body also carries `secret_token`; the output schema drops it so it never rea
       available: number,
       used: number
     } | null
-  } | null
+  } | null,
+  credits?: Record<string, {
+    plan?: number | null,
+    used?: number | null,
+    packs?: number | null,
+    remaining?: number | null
+  }> | null
 }
 ```
 </Accordion>
@@ -90,14 +96,23 @@ await corsair.tomba.api.account.rateLimits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[] \| null` | No | — |
+| `data` | `object \| null` | No | Limits and usage keyed by route, such as email-finder |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
-{
-}[] | null
+Record<string, {
+  limits?: {
+    rps?: number | null,
+    rpm?: number | null,
+    daily?: number | null
+  } | null,
+  usage?: {
+    rpm_used?: number | null,
+    daily_used?: number | null
+  } | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -140,56 +155,93 @@ await corsair.tomba.api.combined.find({ email: 'jane.doe@stripe.com' });
 ```ts
 {
   person?: {
+    name?: {
+      fullName?: string | null,
+      givenName?: string | null,
+      familyName?: string | null
+    } | null,
     email?: string | null,
-    first_name?: string | null,
-    last_name?: string | null,
-    full_name?: string | null,
-    company?: string | null,
-    position?: string | null,
-    department?: string | null,
-    country?: string | null,
+    location?: string | null,
     gender?: string | null,
-    linkedin?: string | null,
-    twitter?: string | null,
-    website_url?: string | null,
-    pattern?: string | null,
-    score?: number | null,
-    accept_all?: boolean | null,
-    phone_number?: boolean | null,
-    type?: string | null,
+    geo?: {
+      city?: string | null,
+      state?: string | null,
+      country?: string | null,
+      countryCode?: string | null
+    } | null,
+    bio?: string | null,
+    site?: string | null,
+    avatar?: string | null,
+    employment?: {
+      domain?: string | null,
+      name?: string | null,
+      title?: string | null,
+      role?: string | null,
+      subRole?: string | null,
+      seniority?: string | null
+    } | null,
+    facebook?: {
+      handle?: string | null
+    } | null,
+    github?: {
+      handle?: string | null
+    } | null,
+    twitter?: {
+      handle?: string | null
+    } | null,
+    linkedin?: {
+      handle?: string | null
+    } | null,
     verification?: {
       date?: string | null,
       status?: string | null
     } | null,
-    sources?: {
-      uri?: string | null,
-      website_url?: string | null,
-      extracted_on?: string | null,
-      last_seen_on?: string | null,
-      still_on_page?: boolean | null
-    }[] | null,
-    phone_data?: {
-      carrier?: string | null,
-      country_code?: string | null,
-      e164_format?: string | null,
-      intl_format?: string | null,
-      local_format?: string | null,
-      line_type?: string | null
-    }[] | null
+    phone?: boolean | null
   } | null,
   company?: {
     name?: string | null,
-    website_url?: string | null,
+    legalName?: string | null,
     domain?: string | null,
-    industry?: string | null,
-    country?: string | null,
-    size?: string | null,
-    linkedin?: string | null,
-    twitter?: string | null,
-    facebook?: string | null,
-    revenue?: string | null,
+    domainAliases?: string[] | null,
+    site?: {
+      phoneNumbers?: string[] | null,
+      emailAddresses?: string[] | null
+    } | null,
+    category?: {
+      sector?: string | null,
+      industryGroup?: string | null,
+      industry?: string | null,
+      subIndustry?: string | null,
+      sicCode?: string | null,
+      naicsCode?: string | null
+    } | null,
+    tags?: string[] | null,
     description?: string | null,
-    location?: string | null
+    foundedYear?: number | string | null,
+    location?: string | null,
+    geo?: {
+      city?: string | null,
+      state?: string | null,
+      country?: string | null,
+      countryCode?: string | null
+    } | null,
+    logo?: string | null,
+    facebook?: {
+      handle?: string | null
+    } | null,
+    linkedin?: {
+      handle?: string | null
+    } | null,
+    twitter?: {
+      handle?: string | null
+    } | null,
+    type?: string | null,
+    metrics?: {
+      employees?: number | string | null,
+      annualRevenue?: number | string | null,
+      estimatedAnnualRevenue?: number | string | null
+    } | null,
+    tech?: string[] | null
   } | null
 }
 ```
@@ -234,17 +286,48 @@ await corsair.tomba.api.company.find({ domain: 'stripe.com' });
 ```ts
 {
   name?: string | null,
-  website_url?: string | null,
+  legalName?: string | null,
   domain?: string | null,
-  industry?: string | null,
-  country?: string | null,
-  size?: string | null,
-  linkedin?: string | null,
-  twitter?: string | null,
-  facebook?: string | null,
-  revenue?: string | null,
+  domainAliases?: string[] | null,
+  site?: {
+    phoneNumbers?: string[] | null,
+    emailAddresses?: string[] | null
+  } | null,
+  category?: {
+    sector?: string | null,
+    industryGroup?: string | null,
+    industry?: string | null,
+    subIndustry?: string | null,
+    sicCode?: string | null,
+    naicsCode?: string | null
+  } | null,
+  tags?: string[] | null,
   description?: string | null,
-  location?: string | null
+  foundedYear?: number | string | null,
+  location?: string | null,
+  geo?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    countryCode?: string | null
+  } | null,
+  logo?: string | null,
+  facebook?: {
+    handle?: string | null
+  } | null,
+  linkedin?: {
+    handle?: string | null
+  } | null,
+  twitter?: {
+    handle?: string | null
+  } | null,
+  type?: string | null,
+  metrics?: {
+    employees?: number | string | null,
+    annualRevenue?: number | string | null,
+    estimatedAnnualRevenue?: number | string | null
+  } | null,
+  tech?: string[] | null
 }
 ```
 </Accordion>
@@ -294,26 +377,50 @@ Record<string, {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  name?: string | null,
-  website_url?: string | null,
-  domain?: string | null,
-  industry?: string | null,
-  country?: string | null,
-  size?: string | null,
-  linkedin?: string | null,
-  twitter?: string | null,
-  facebook?: string | null,
-  revenue?: string | null,
-  description?: string | null,
-  location?: string | null
-}[]
+  companies: {
+    name?: string | null,
+    description?: string | null,
+    website_url?: string | null,
+    industry?: string | null,
+    company_size?: string | null,
+    type?: string | null,
+    founded?: number | string | null,
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    street_address?: string | null,
+    postal_code?: string | null,
+    revenue?: number | string | null,
+    total_emails?: number | null,
+    total_similar?: number | null,
+    phone_number?: boolean | null,
+    linkedin_url?: string | null,
+    facebook_url?: string | null,
+    twitter_url?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  page?: number | null,
+  limit?: number | null,
+  pages?: number | null,
+  filters?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -397,18 +504,16 @@ await corsair.tomba.api.domain.emailFormat({ domain: 'stripe.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  domain?: string | null,
   format?: string | null,
-  patterns?: {
-  }[] | null
-}
+  percentage?: number | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -421,21 +526,21 @@ await corsair.tomba.api.domain.emailFormat({ domain: 'stripe.com' });
 
 `domain.emailSources`
 
-Read the public pages Tomba took a domain addresses from
+List the public pages where Tomba found an email address, with first and last seen dates
 
 **Risk:** `read`
 
 ```ts
-await corsair.tomba.api.domain.emailSources({ domain: 'stripe.com' });
+await corsair.tomba.api.domain.emailSources({ email: 'jane.doe@stripe.com' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain` | `string` | Yes | — |
+| `email` | `string` | Yes | The address whose sources to list |
 
-A 429 without `Retry-After` on this route means the count balance is used up, not that you are being throttled.
+Takes one email address and lists up to 20 pages it was found on; an empty list arrives with HTTP 201. A 429 here can mean the sources balance is used up.
 
 
 
@@ -443,14 +548,20 @@ A 429 without `Retry-After` on this route means the count balance is used up, no
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | Sources for the domain |
+| `data` | `object[]` | Yes | Up to 20 pages; empty, with HTTP 201, when there are none |
+| `email` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-}
+  uri?: string | null,
+  website_url?: string | null,
+  extracted_on?: string | null,
+  last_seen_on?: string | null,
+  still_on_page?: boolean | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -483,16 +594,16 @@ await corsair.tomba.api.domain.location({ domain: 'stripe.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  domain?: string | null,
-  location?: Record<string, number> | null
-}
+  name?: string | null,
+  total?: number | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -518,6 +629,8 @@ await corsair.tomba.api.domain.similar({ domain: 'stripe.com' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domain` | `string` | Yes | — |
+| `page` | `number` | No | Default 1 |
+| `limit` | `10 \| 20 \| 50 \| 100 \| 150 \| 200 \| 250` | No | Companies per page, default 10; 1 search credit per 10 |
 
 
 
@@ -525,17 +638,30 @@ await corsair.tomba.api.domain.similar({ domain: 'stripe.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  domain?: string | null,
-  similar?: {
-  }[] | null
-}
+  website_url?: string | null,
+  name?: string | null,
+  industries?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  pageSize?: number | null,
+  current?: number | null,
+  total_pages?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -562,25 +688,17 @@ await corsair.tomba.api.domain.status({ domain: 'stripe.com' });
 |------|------|----------|-------------|
 | `domain` | `string` | Yes | — |
 
+The only route whose answer is not wrapped in `data`: `{ domain, webmail, disposable }`.
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  domain?: string | null,
-  status?: string | null
-}
-```
-</Accordion>
-</AccordionGroup>
+| `domain` | `string \| null` | No | — |
+| `webmail` | `boolean \| null` | No | — |
+| `disposable` | `boolean \| null` | No | — |
 
 
 
@@ -595,14 +713,14 @@ Suggest alternative domains related to a company
 **Risk:** `read`
 
 ```ts
-await corsair.tomba.api.domain.suggestions({ domain: 'stripe.com' });
+await corsair.tomba.api.domain.suggestions({ query: 'stripe' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain` | `string` | Yes | — |
+| `query` | `string` | Yes | Company name or domain to match, such as stripe |
 
 
 
@@ -617,8 +735,9 @@ await corsair.tomba.api.domain.suggestions({ domain: 'stripe.com' });
 
 ```ts
 {
+  name?: string | null,
   domain?: string | null,
-  company?: string | null
+  email_count?: number | null
 }[]
 ```
 </Accordion>
@@ -654,17 +773,25 @@ Not charged, but it needs a positive search balance.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `domain` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | null when Tomba has no technology data for the domain |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  domain?: string | null,
-  technologies?: {
+  slug?: string | null,
+  name?: string | null,
+  icon?: string | null,
+  website?: string | null,
+  description?: string | null,
+  categories?: {
+    id?: number | string | null,
+    slug?: string | null,
+    name?: string | null
   }[] | null
-}
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -791,18 +918,30 @@ await corsair.tomba.api.finder.domainSearch({ domain: 'stripe.com', limit: 50, d
 ```ts
 {
   organization?: {
-    name?: string | null,
     website_url?: string | null,
-    domain?: string | null,
-    industry?: string | null,
-    country?: string | null,
-    size?: string | null,
-    linkedin?: string | null,
-    twitter?: string | null,
-    facebook?: string | null,
-    revenue?: string | null,
+    organization?: string | null,
+    location?: {
+      country?: string | null,
+      city?: string | null,
+      state?: string | null,
+      street_address?: string | null,
+      postal_code?: string | null
+    } | null,
+    social_links?: Record<string, string | null> | null,
+    disposable?: boolean | null,
+    webmail?: boolean | null,
+    phone_number?: boolean | null,
+    industries?: string | null,
+    founded?: number | string | null,
+    company_size?: string | null,
+    company_type?: string | null,
+    revenue?: number | string | null,
+    accept_all?: boolean | null,
     description?: string | null,
-    location?: string | null
+    pattern?: string | null,
+    total_similar?: number | null,
+    keywords?: string[] | null,
+    last_updated?: string | null
   } | null,
   emails: {
     email?: string | null,
@@ -851,9 +990,9 @@ await corsair.tomba.api.finder.domainSearch({ domain: 'stripe.com', limit: 50, d
 ```ts
 {
   total?: number | null,
-  current_page?: number | null,
-  last_page?: number | null,
-  per_page?: number | null
+  pageSize?: number | null,
+  current?: number | null,
+  total_pages?: number | null
 } | null
 ```
 </Accordion>
@@ -1052,7 +1191,7 @@ await corsair.tomba.api.finder.linkedin({ url: 'https://www.linkedin.com/in/jane
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1095,7 +1234,44 @@ await corsair.tomba.api.finder.linkedin({ url: 'https://www.linkedin.com/in/jane
     local_format?: string | null,
     line_type?: string | null
   }[] | null
-}
+} | {
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  company?: string | null,
+  position?: string | null,
+  department?: string | null,
+  country?: string | null,
+  gender?: string | null,
+  linkedin?: string | null,
+  twitter?: string | null,
+  website_url?: string | null,
+  pattern?: string | null,
+  score?: number | null,
+  accept_all?: boolean | null,
+  phone_number?: boolean | null,
+  type?: string | null,
+  verification?: {
+    date?: string | null,
+    status?: string | null
+  } | null,
+  sources?: {
+    uri?: string | null,
+    website_url?: string | null,
+    extracted_on?: string | null,
+    last_seen_on?: string | null,
+    still_on_page?: boolean | null
+  }[] | null,
+  phone_data?: {
+    carrier?: string | null,
+    country_code?: string | null,
+    e164_format?: string | null,
+    intl_format?: string | null,
+    local_format?: string | null,
+    line_type?: string | null
+  }[] | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1134,14 +1310,45 @@ Costs more credits than the other lookups. Pass one of `email`, `domain` or `lin
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | Phone records for the person |
+| `data` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-}
+  email?: string | null,
+  domain?: string | null,
+  valid?: boolean | null,
+  local_format?: string | null,
+  intl_format?: string | null,
+  e164_format?: string | null,
+  rfc3966_format?: string | null,
+  country_code?: string | null,
+  line_type?: string | null,
+  carrier?: string | null,
+  region?: {
+    name?: string | null,
+    code?: string | null
+  } | null,
+  timezones?: string[] | null
+} | {
+  email?: string | null,
+  domain?: string | null,
+  valid?: boolean | null,
+  local_format?: string | null,
+  intl_format?: string | null,
+  e164_format?: string | null,
+  rfc3966_format?: string | null,
+  country_code?: string | null,
+  line_type?: string | null,
+  carrier?: string | null,
+  region?: {
+    name?: string | null,
+    code?: string | null
+  } | null,
+  timezones?: string[] | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1183,42 +1390,48 @@ await corsair.tomba.api.person.find({ email: 'jane.doe@stripe.com' });
 
 ```ts
 {
+  name?: {
+    fullName?: string | null,
+    givenName?: string | null,
+    familyName?: string | null
+  } | null,
   email?: string | null,
-  first_name?: string | null,
-  last_name?: string | null,
-  full_name?: string | null,
-  company?: string | null,
-  position?: string | null,
-  department?: string | null,
-  country?: string | null,
+  location?: string | null,
   gender?: string | null,
-  linkedin?: string | null,
-  twitter?: string | null,
-  website_url?: string | null,
-  pattern?: string | null,
-  score?: number | null,
-  accept_all?: boolean | null,
-  phone_number?: boolean | null,
-  type?: string | null,
+  geo?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    countryCode?: string | null
+  } | null,
+  bio?: string | null,
+  site?: string | null,
+  avatar?: string | null,
+  employment?: {
+    domain?: string | null,
+    name?: string | null,
+    title?: string | null,
+    role?: string | null,
+    subRole?: string | null,
+    seniority?: string | null
+  } | null,
+  facebook?: {
+    handle?: string | null
+  } | null,
+  github?: {
+    handle?: string | null
+  } | null,
+  twitter?: {
+    handle?: string | null
+  } | null,
+  linkedin?: {
+    handle?: string | null
+  } | null,
   verification?: {
     date?: string | null,
     status?: string | null
   } | null,
-  sources?: {
-    uri?: string | null,
-    website_url?: string | null,
-    extracted_on?: string | null,
-    last_seen_on?: string | null,
-    still_on_page?: boolean | null
-  }[] | null,
-  phone_data?: {
-    carrier?: string | null,
-    country_code?: string | null,
-    e164_format?: string | null,
-    intl_format?: string | null,
-    local_format?: string | null,
-    line_type?: string | null
-  }[] | null
+  phone?: boolean | null
 }
 ```
 </Accordion>
@@ -1266,19 +1479,19 @@ The verdict is in `data.email.status` and `data.email.result`; the other fields 
 ```ts
 {
   email: {
-    email: string,
-    status: string,
-    result: string,
-    score: number,
-    regex: boolean,
-    gibberish: boolean,
-    disposable: boolean,
-    accept_all: boolean,
-    block: boolean,
-    greylisted: boolean,
-    mx_check: boolean,
-    smtp_check: boolean,
-    smtp_server: boolean,
+    email?: string | null,
+    status?: string | null,
+    result?: string | null,
+    score?: number | null,
+    regex?: boolean | null,
+    gibberish?: boolean | null,
+    disposable?: boolean | null,
+    accept_all?: boolean | null,
+    block?: boolean | null,
+    greylisted?: boolean | null,
+    mx_check?: boolean | null,
+    smtp_check?: boolean | null,
+    smtp_server?: boolean | null,
     smtp_provider?: string | null,
     mx?: {
       records?: string[] | null
@@ -1319,22 +1532,45 @@ await corsair.tomba.api.verifier.phone({ phone: '+14155550132' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  phone?: string | null,
+  email?: string | null,
+  domain?: string | null,
   valid?: boolean | null,
+  local_format?: string | null,
+  intl_format?: string | null,
+  e164_format?: string | null,
+  rfc3966_format?: string | null,
   country_code?: string | null,
   line_type?: string | null,
   carrier?: string | null,
+  region?: {
+    name?: string | null,
+    code?: string | null
+  } | null,
+  timezones?: string[] | null
+} | {
+  email?: string | null,
+  domain?: string | null,
+  valid?: boolean | null,
+  local_format?: string | null,
+  intl_format?: string | null,
   e164_format?: string | null,
-  international_format?: string | null,
-  local_format?: string | null
-}
+  rfc3966_format?: string | null,
+  country_code?: string | null,
+  line_type?: string | null,
+  carrier?: string | null,
+  region?: {
+    name?: string | null,
+    code?: string | null
+  } | null,
+  timezones?: string[] | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>

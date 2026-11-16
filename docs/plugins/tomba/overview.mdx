@@ -15,7 +15,7 @@ Things to know:
 - **A webmail domain is an error.** A request against `gmail.com` fails with 400 and type `unknown_record`, because Tomba refuses disposable and webmail domains rather than returning nothing.
 - **402 means an empty balance.** Nothing is charged and no retry helps. `finder.phone` costs more than the other lookups.
 - **451 means the person opted out.** Tomba withholds their data permanently at their request, so the call is not retried.
-- **Rate limits name their window.** The 429 message says whether the per-second, per-minute or daily limit was hit, and `Retry-After` says when to retry. A 429 on the count, format, location or source endpoints without `Retry-After` means that balance is used up.
+- **Rate limits name their window.** The 429 message says whether the per-second, per-minute or daily limit was hit, and `Retry-After` says when to retry. A per-second or per-minute 429 is retried up to three times; a used-up daily limit or count/sources balance is not retried. On the Free plan most lookups allow 5 calls a day per route.
 - **Not included.** Bulk jobs, lead management, API key management and scraper campaigns have their own routes and are not part of this plugin.
 
 **What you get:**
