@@ -1,0 +1,65 @@
+displayName: Gigasheet
+description: Cloud spreadsheet and big data analytics platform for large datasets, filtering, and exports.
+apiExamples:
+  user.whoami:
+    args: {}
+  user.getDetails:
+    args: {}
+  user.getSpaceUsed:
+    args: {}
+  user.getEnrichmentCredits:
+    args: {}
+  upload.fromUrl:
+    args:
+      url: https://example.com/data.csv
+      name: Sales_Data_2024
+  upload.direct:
+    args:
+      name: direct_upload.csv
+      contents: SVRFTSxDT1VOWAoxLDEwMAoyLDIwMA==
+  datasets.get:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+  datasets.delete:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+  datasets.getColumns:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+  datasets.list:
+    args: {}
+  datasets.getOperationStatus:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+  rows.appendByName:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+      records:
+        - first_name: Jane
+          last_name: Doe
+          email: jane.doe@example.com
+  rows.insertBlankRow:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+      index: 0
+      num_rows: 1
+  rows.deleteRows:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+      rows:
+        - 1
+        - 2
+  views.list:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+  views.get:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+      view: 1374a9c9_f514_4204_b416_1ac9acacc40e
+  exports.create:
+    args:
+      handle: 6030253a_ffd2_42b5_b1a2_fe914d4e7db7
+      filename: filtered_export.csv
+  exports.download:
+    args:
+      handle: ef52f6f1_2cf6_4eb3_ba3e_2221020ad380
