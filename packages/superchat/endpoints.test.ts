@@ -331,11 +331,18 @@ describe('conversations', () => {
 	it('updates a conversation', async () => {
 		respond(fetchMock, conversation);
 
-		await invoke(Conversations.update, { id: 'cv_1', status: 'closed' });
+		await invoke(Conversations.update, { id: 'cv_1', status: 'done' });
 
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('PATCH');
-		expect(sent.body).toEqual({ status: 'closed' });
+		expect(sent.body).toEqual({ status: 'done' });
+	});
+
+	it('rejects a status the PATCH route does not accept', async () => {
+		await expect(
+			invoke(Conversations.update, { id: 'cv_1', status: 'closed' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects a snooze with no time, which the API refuses', async () => {

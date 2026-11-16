@@ -459,7 +459,10 @@ export type ConversationsGetResponse = z.infer<
 const ConversationsUpdateInputSchema = z
 	.object({
 		id: z.string().min(1),
-		status: z.string().nullish(),
+		status: z
+			.enum(['open', 'done', 'spam', 'archived', 'snoozed'])
+			.nullish()
+			.describe('The values the PATCH route accepts.'),
 		inbox_id: z.string().nullish(),
 		snoozed_until: Timestamp.nullish(),
 		assigned_users: z.array(z.string()).nullish(),
