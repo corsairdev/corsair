@@ -16,13 +16,13 @@ pnpm add @corsair-dev/suitedash
 | `companies.get` | `suitedash.api.companies.get` | `read` | Read one company by uid or exact name, with its category, address, primary contact and custom fields |
 | `companies.list` | `suitedash.api.companies.list` | `read` | List companies with filters for when they were created, an order, and whether to include the paging and custom field meta |
 | `companies.meta` | `suitedash.api.companies.meta` | `read` | Read the meta attributes of the company custom fields, which is where the uuid keys a write uses come from |
-| `companies.update` | `suitedash.api.companies.update` | `write` | Change a company's details, tags, category, custom fields, communities or worlds. Only the fields sent change |
-| `contacts.create` | `suitedash.api.contacts.create` | `write` | Create a contact. First name, last name, email and role are required, and the role decides portal access |
+| `companies.update` | `suitedash.api.companies.update` | `write` | Change a company's details, phones, address, tags or custom fields. Only the fields sent change |
+| `contacts.create` | `suitedash.api.contacts.create` | `destructive` | Create a contact. First name, last name, email and role are required, and the role decides portal access. send_welcome_email sends the portal invitation |
 | `contacts.get` | `suitedash.api.contacts.get` | `read` | Read one contact by uid or email, with their roles, phones, addresses and custom fields |
 | `contacts.list` | `suitedash.api.contacts.list` | `read` | List contacts with filters for when they were created, an order, and whether to include the meta block |
 | `contacts.meta` | `suitedash.api.contacts.meta` | `read` | Read the meta attributes of the contact custom fields, which is where the uuid keys a write uses come from |
-| `contacts.update` | `suitedash.api.contacts.update` | `write` | Change a contact's details, addresses, tags or custom fields, optionally sending the portal welcome email |
-| `marketing.subscribe` | `suitedash.api.marketing.subscribe` | `write` | Subscribe contacts to marketing audiences. The answer carries one result per subscriber, and a partial failure is reported there |
+| `contacts.update` | `suitedash.api.contacts.update` | `destructive` | Change a contact's details, addresses, tags or custom fields, optionally sending the portal welcome email |
+| `marketing.subscribe` | `suitedash.api.marketing.subscribe` | `destructive` | Subscribe contacts to marketing audiences, which can start the emails those audiences send. The answer carries one result per subscriber, and a partial failure is reported there |
 | `projects.get` | `suitedash.api.projects.get` | `read` | Find one project by uid, exact name, a name fragment, or the most recent one, with its clients, team and custom fields |
 | `projects.list` | `suitedash.api.projects.list` | `read` | List projects with filters for when they were created, an order, and whether to include the meta block |
 | `projects.meta` | `suitedash.api.projects.meta` | `read` | Read the meta attributes of the project custom fields |
