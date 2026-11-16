@@ -701,7 +701,7 @@ await corsair.storyblok.api.datasourceEntries.list({ datasource_id: 777 });
 | `page` | `number` | No | Page number, from 1. |
 | `per_page` | `number` | No | Entries per page, up to 1000. Defaults to 25. |
 | `datasource_id` | `number` | No | Only entries of this datasource. |
-| `dimension` | `string` | No | Only entries of this dimension value. |
+| `dimension` | `number \| string` | No | The numeric id of a dimension; entries then carry that dimension_value. |
 
 
 
@@ -1414,7 +1414,7 @@ await corsair.storyblok.api.stories.create({ name: 'Home', slug: 'home', content
 |------|------|----------|-------------|
 | `name` | `string` | Yes | The story name, which the UI shows. |
 | `slug` | `string` | Yes | The URL segment. Storyblok derives full_slug from this and the parent. |
-| `content` | `Record<string, any>` | Yes | One object per component field, keyed by the component name, with a component key naming the content type. |
+| `content` | `Record<string, any>` | Yes | The story content: a component key naming the content type plus that component's fields, keyed by field name, such as &#123; component: "page", title: "Welcome" &#125;. |
 | `parent_id` | `number \| null` | No | — |
 | `group_id` | `string \| null` | No | — |
 | `is_startpage` | `boolean` | No | — |
@@ -1889,7 +1889,7 @@ await corsair.storyblok.api.stories.update({ story_id: 369689, name: 'Home', slu
 | `story_id` | `number` | Yes | A Storyblok numeric id. |
 | `name` | `string` | Yes | The story name, which the UI shows. |
 | `slug` | `string` | Yes | The URL segment. Storyblok derives full_slug from this and the parent. |
-| `content` | `Record<string, any>` | Yes | One object per component field, keyed by the component name, with a component key naming the content type. |
+| `content` | `Record<string, any>` | Yes | The story content: a component key naming the content type plus that component's fields, keyed by field name, such as &#123; component: "page", title: "Welcome" &#125;. |
 | `parent_id` | `number \| null` | No | — |
 | `group_id` | `string \| null` | No | — |
 | `is_startpage` | `boolean` | No | — |
