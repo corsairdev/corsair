@@ -8375,13 +8375,13 @@ await corsair.square.api.customers.update({ customer_id: '<customer id>' });
 | `company_name` | `string \| null` | No | A business name associated with the customer profile. |
 | `nickname` | `string \| null` | No | A nickname for the customer profile. |
 | `email_address` | `string \| null` | No | The email address associated with the customer profile. |
-| `address` | `object` | No | The physical address associated with the customer profile. Only new or changed fields are required in the request. |
+| `address` | `object \| null` | No | The physical address associated with the customer profile. Only new or changed fields are required in the request. |
 | `phone_number` | `string \| null` | No | The phone number associated with the customer profile. The phone number must be valid and can contain 9–16 digits, with an optional `+` prefix and country code. |
 | `reference_id` | `string \| null` | No | An optional second ID used to associate the customer profile with an entity in another system. |
 | `note` | `string \| null` | No | A custom note associated with the customer profile. |
 | `birthday` | `string \| null` | No | The birthday associated with the customer profile, in `YYYY-MM-DD` or `MM-DD` format. For example, specify `1998-09-21` for September 21, 1998, or `09-21` for September 21. |
 | `version` | `number` | No | The current version of the customer profile. |
-| `tax_ids` | `object` | No | The tax ID associated with the customer profile. This field is available only for customers of sellers in EU countries or the United Kingdom. |
+| `tax_ids` | `object \| null` | No | The tax ID associated with the customer profile. This field is available only for customers of sellers in EU countries or the United Kingdom. |
 | `customer_id` | `string` | Yes | The ID of the customer to update. |
 
 <AccordionGroup>
@@ -8403,7 +8403,7 @@ await corsair.square.api.customers.update({ customer_id: '<customer id>' });
   country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
   first_name?: string | null,
   last_name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -8412,7 +8412,7 @@ await corsair.square.api.customers.update({ customer_id: '<customer id>' });
 ```ts
 {
   eu_vat?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
