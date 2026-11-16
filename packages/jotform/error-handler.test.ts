@@ -85,6 +85,15 @@ describe('Jotform errorHandlers', () => {
 		});
 	});
 
+	it('routes an ApiError by status, not by words in its message', () => {
+		const timeout = makeApiError(504, 'rate limit service timed out');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(timeout)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(timeout)).toBe(true);
+		expect(
+			errorHandlers.NOT_FOUND_ERROR.match(makeApiError(500, 'Form not found')),
+		).toBe(false);
+	});
+
 	it('falls back to DEFAULT for unclassified errors', async () => {
 		const genericError = new Error('Unexpected network glitch');
 		expect(errorHandlers.DEFAULT.match(genericError)).toBe(true);

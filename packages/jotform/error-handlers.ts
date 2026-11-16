@@ -18,6 +18,9 @@ function isQuotaExhaustion(value: unknown): boolean {
 	});
 }
 
+// For an ApiError only the HTTP status decides the route: a 504 whose body
+// mentions a rate limit must not be retried like a 429. Message matching is
+// for errors that never reached Jotform.
 export const errorHandlers = {
 	// First match wins: daily quota exhaustion cannot succeed on retry,
 	// so it is handled before generic rate-limit handling.
@@ -32,7 +35,7 @@ export const errorHandlers = {
 	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('too many requests') ||
@@ -51,11 +54,8 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)
-			) {
-				return true;
+			if (error instanceof ApiError) {
+				return error.status === 401 || error.status === 403;
 			}
 			const msg = error.message.toLowerCase();
 			return (
@@ -69,7 +69,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 404) return true;
+			if (error instanceof ApiError) return error.status === 404;
 			const msg = error.message.toLowerCase();
 			return msg.includes('not found');
 		},
@@ -77,11 +77,8 @@ export const errorHandlers = {
 	},
 	BAD_REQUEST_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 400 || error.status === 422)
-			) {
-				return true;
+			if (error instanceof ApiError) {
+				return error.status === 400 || error.status === 422;
 			}
 			const msg = error.message.toLowerCase();
 			return msg.includes('bad request') || msg.includes('invalid request');
@@ -90,12 +87,9 @@ export const errorHandlers = {
 	},
 	SERVER_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				error.status >= 500 &&
-				error.status < 600
-			)
-				return true;
+			if (error instanceof ApiError) {
+				return error.status >= 500 && error.status < 600;
+			}
 			const msg = error.message.toLowerCase();
 			return msg.includes('internal server error') || msg.includes('500');
 		},
