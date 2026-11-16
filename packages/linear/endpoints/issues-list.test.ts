@@ -18,6 +18,7 @@ beforeEach(() => {
 	mockRequest.mockResolvedValue({ data: { issues: { nodes: [] } } });
 });
 
+// The mocked request records its options as unknown; the second argument is the GraphQL body.
 const sent = () =>
 	(
 		mockRequest.mock.calls[0]?.[1] as {
@@ -114,6 +115,7 @@ describe('linear issue rows keep assignee and state', () => {
 		updatedAt: '2026-01-02T00:00:00.000Z',
 	};
 	const upsert = jest.fn();
+	// `never` cast: list/get only read key and db.issues here.
 	const dbCtx = {
 		key: 'k',
 		db: { issues: { upsertByEntityId: upsert } },
@@ -143,6 +145,7 @@ describe('linear issue rows keep assignee and state', () => {
 		await list(dbCtx, {});
 		mockRequest.mockResolvedValue({ data: { issue: null } });
 		await get(dbCtx, { id: 'i1' });
+		// Each recorded call's second argument is the GraphQL body (typed unknown by the mock).
 		const [listQ, getQ] = mockRequest.mock.calls.map((c) =>
 			(c[1] as { body: { query: string } }).body.query.replace(/\s+/g, ' '),
 		);
