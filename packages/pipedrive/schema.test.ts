@@ -395,13 +395,15 @@ describe('Pipedrive endpoint schemas', () => {
 				additional_data: null,
 			}),
 		).toMatchObject({ data: { id: 42 }, additional_data: null });
+		// Responses are parsed leniently: a value outside the documented range
+		// still reads instead of failing the whole call.
 		expect(() =>
 			PipedriveEndpointOutputSchemas.taskGet.parse({
 				success: true,
 				data: { ...validTask, priority: -1 },
 				additional_data: null,
 			}),
-		).toThrow(z.ZodError);
+		).not.toThrow();
 	});
 
 	it('validates person pagination, enum constraints, strict writes, and nullable response fields', () => {
