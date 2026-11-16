@@ -10,7 +10,7 @@ export const list: FreeAgentEndpoints['contactsList'] = async (ctx, input) => {
 	const parsed = FreeAgentEndpointInputSchemas.contactsList.parse(input);
 	const response = await makeFreeAgentPaginatedRequest(
 		'/v2/contacts',
-		ctx.key,
+		ctx,
 		parsed.query ?? {},
 		FreeAgentEndpointOutputSchemas.contactsList.omit({ pagination: true }),
 	);
@@ -31,7 +31,7 @@ export const get: FreeAgentEndpoints['contactsGet'] = async (ctx, input) => {
 	const parsed = FreeAgentEndpointInputSchemas.contactsGet.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/contacts/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 	);
 	return FreeAgentEndpointOutputSchemas.contactsGet.parse(response);
 };
@@ -41,7 +41,7 @@ export const create: FreeAgentEndpoints['contactsCreate'] = async (
 	input,
 ) => {
 	const parsed = FreeAgentEndpointInputSchemas.contactsCreate.parse(input);
-	const response = await makeFreeAgentRequest('/v2/contacts', ctx.key, {
+	const response = await makeFreeAgentRequest('/v2/contacts', ctx, {
 		method: 'POST',
 		body: { contact: parsed.contact },
 	});
@@ -55,7 +55,7 @@ export const update: FreeAgentEndpoints['contactsUpdate'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.contactsUpdate.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/contacts/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 		{ method: 'PUT', body: { contact: parsed.contact } },
 	);
 	return FreeAgentEndpointOutputSchemas.contactsUpdate.parse(response);
@@ -68,7 +68,7 @@ export const remove: FreeAgentEndpoints['contactsDelete'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.contactsDelete.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/contacts/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 		{ method: 'DELETE' },
 	);
 	return FreeAgentEndpointOutputSchemas.contactsDelete.parse(response);

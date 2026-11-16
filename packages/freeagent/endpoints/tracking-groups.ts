@@ -12,7 +12,7 @@ export const list: FreeAgentEndpoints['trackingGroupsList'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.trackingGroupsList.parse(input);
 	const response = await makeFreeAgentPaginatedRequest(
 		'/v2/tracking_groups',
-		ctx.key,
+		ctx,
 		parsed.query ?? {},
 		FreeAgentEndpointOutputSchemas.trackingGroupsList.omit({
 			pagination: true,
@@ -31,7 +31,7 @@ export const get: FreeAgentEndpoints['trackingGroupsGet'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.trackingGroupsGet.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/tracking_groups/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 	);
 	return FreeAgentEndpointOutputSchemas.trackingGroupsGet.parse(response);
 };

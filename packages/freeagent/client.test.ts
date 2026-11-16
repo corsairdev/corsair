@@ -147,4 +147,95 @@ describe('FreeAgent client', () => {
 			fetchMock.mockRestore();
 		}
 	});
+
+	it('sends list requests to the sandbox host when the plugin uses sandbox', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ contacts: [] }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		try {
+			await makeFreeAgentPaginatedRequest(
+				'/v2/contacts',
+				{ key: 'access-token', options: { sandbox: true } },
+				{},
+				z.object({ contacts: z.array(z.unknown()) }).passthrough(),
+			);
+			expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+				'https://api.sandbox.freeagent.com/v2/contacts',
+			);
+		} finally {
+			fetchMock.mockRestore();
+		}
+	});
+
+	it('keeps FreeAgent error messages on failed list requests', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					errors: { error: { message: 'You are not allowed' } },
+				}),
+				{ status: 403, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		try {
+			await expect(
+				makeFreeAgentPaginatedRequest(
+					'/v2/tracking_groups',
+					'access-token',
+					{},
+					z.object({}).passthrough(),
+				),
+			).rejects.toMatchObject({
+				status: 403,
+				body: { errors: { error: { message: 'You are not allowed' } } },
+			});
+		} finally {
+			fetchMock.mockRestore();
+		}
+	});
+
+	it('uses the sandbox host from the endpoint context', async () => {
+		mockedRequest.mockResolvedValue({ company: {} });
+		await makeFreeAgentRequest('/v2/company', {
+			key: 'access-token',
+			options: { sandbox: true },
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ BASE: FREEAGENT_SANDBOX_API_BASE }),
+			expect.anything(),
+		);
+	});
+
+	it('drops the sent body (contact details) from a rejected write', async () => {
+		mockedRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/v2/contacts',
+					body: { contact: { email: 'person@example.com' } },
+				},
+				{
+					url: `${FREEAGENT_API_BASE}/v2/contacts`,
+					ok: false,
+					status: 422,
+					statusText: 'Unprocessable Entity',
+					body: { errors: [{ message: 'Invalid' }] },
+				},
+				'Unprocessable Entity',
+			),
+		);
+		const error = await makeFreeAgentRequest('/v2/contacts', 'access-token', {
+			method: 'POST',
+			body: { contact: { email: 'person@example.com' } },
+		}).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			status: 422,
+			body: { errors: [{ message: 'Invalid' }] },
+		});
+		expect(JSON.stringify(error)).not.toContain('person@example.com');
+		expect((error as ApiError).request.body).toBeUndefined();
+	});
 });

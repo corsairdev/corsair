@@ -8,7 +8,7 @@ import {
 export const get: FreeAgentEndpoints['companyGet'] = async (ctx, input) => {
 	const parsedInput = FreeAgentEndpointInputSchemas.companyGet.parse(input);
 	void parsedInput;
-	const response = await makeFreeAgentRequest('/v2/company', ctx.key);
+	const response = await makeFreeAgentRequest('/v2/company', ctx);
 	return FreeAgentEndpointOutputSchemas.companyGet.parse(response);
 };
 
@@ -17,7 +17,7 @@ export const businessCategories: FreeAgentEndpoints['companyBusinessCategories']
 		FreeAgentEndpointInputSchemas.companyBusinessCategories.parse(input);
 		const response = await makeFreeAgentRequest(
 			'/v2/company/business_categories',
-			ctx.key,
+			ctx,
 		);
 		return FreeAgentEndpointOutputSchemas.companyBusinessCategories.parse(
 			response,
@@ -29,9 +29,6 @@ export const taxTimeline: FreeAgentEndpoints['companyTaxTimeline'] = async (
 	input,
 ) => {
 	FreeAgentEndpointInputSchemas.companyTaxTimeline.parse(input);
-	const response = await makeFreeAgentRequest(
-		'/v2/company/tax_timeline',
-		ctx.key,
-	);
+	const response = await makeFreeAgentRequest('/v2/company/tax_timeline', ctx);
 	return FreeAgentEndpointOutputSchemas.companyTaxTimeline.parse(response);
 };

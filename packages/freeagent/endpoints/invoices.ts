@@ -10,7 +10,7 @@ export const list: FreeAgentEndpoints['invoicesList'] = async (ctx, input) => {
 	const parsed = FreeAgentEndpointInputSchemas.invoicesList.parse(input);
 	const response = await makeFreeAgentPaginatedRequest(
 		'/v2/invoices',
-		ctx.key,
+		ctx,
 		parsed.query ?? {},
 		FreeAgentEndpointOutputSchemas.invoicesList.omit({ pagination: true }),
 	);
@@ -31,7 +31,7 @@ export const get: FreeAgentEndpoints['invoicesGet'] = async (ctx, input) => {
 	const parsed = FreeAgentEndpointInputSchemas.invoicesGet.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesGet.parse(response);
 };
@@ -41,7 +41,7 @@ export const create: FreeAgentEndpoints['invoicesCreate'] = async (
 	input,
 ) => {
 	const parsed = FreeAgentEndpointInputSchemas.invoicesCreate.parse(input);
-	const response = await makeFreeAgentRequest('/v2/invoices', ctx.key, {
+	const response = await makeFreeAgentRequest('/v2/invoices', ctx, {
 		method: 'POST',
 		body: { invoice: parsed.invoice },
 	});
@@ -55,7 +55,7 @@ export const update: FreeAgentEndpoints['invoicesUpdate'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.invoicesUpdate.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 		{ method: 'PUT', body: { invoice: parsed.invoice } },
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesUpdate.parse(response);
@@ -68,7 +68,7 @@ export const remove: FreeAgentEndpoints['invoicesDelete'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.invoicesDelete.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 		{ method: 'DELETE' },
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesDelete.parse(response);
@@ -81,7 +81,7 @@ export const markSent: FreeAgentEndpoints['invoicesMarkSent'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.invoicesMarkSent.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}/transitions/mark_as_sent`,
-		ctx.key,
+		ctx,
 		{ method: 'PUT' },
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesMarkSent.parse(response);
@@ -94,7 +94,7 @@ export const sendEmail: FreeAgentEndpoints['invoicesSendEmail'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.invoicesSendEmail.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}/send_email`,
-		ctx.key,
+		ctx,
 		{ method: 'POST', body: { invoice: { email: parsed.email } } },
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesSendEmail.parse(response);
@@ -107,7 +107,7 @@ export const duplicate: FreeAgentEndpoints['invoicesDuplicate'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.invoicesDuplicate.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}/duplicate`,
-		ctx.key,
+		ctx,
 		{ method: 'POST' },
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesDuplicate.parse(response);
@@ -119,7 +119,7 @@ export const markScheduled: FreeAgentEndpoints['invoicesMarkScheduled'] =
 			FreeAgentEndpointInputSchemas.invoicesMarkScheduled.parse(input);
 		const response = await makeFreeAgentRequest(
 			`/v2/invoices/${encodeURIComponent(parsed.id)}/transitions/mark_as_scheduled`,
-			ctx.key,
+			ctx,
 			{ method: 'PUT' },
 		);
 		return FreeAgentEndpointOutputSchemas.invoicesMarkScheduled.parse(response);
@@ -132,7 +132,7 @@ export const markDraft: FreeAgentEndpoints['invoicesMarkDraft'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.invoicesMarkDraft.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}/transitions/mark_as_draft`,
-		ctx.key,
+		ctx,
 		{ method: 'PUT' },
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesMarkDraft.parse(response);
@@ -144,7 +144,7 @@ export const markCancelled: FreeAgentEndpoints['invoicesMarkCancelled'] =
 			FreeAgentEndpointInputSchemas.invoicesMarkCancelled.parse(input);
 		const response = await makeFreeAgentRequest(
 			`/v2/invoices/${encodeURIComponent(parsed.id)}/transitions/mark_as_cancelled`,
-			ctx.key,
+			ctx,
 			{ method: 'PUT' },
 		);
 		return FreeAgentEndpointOutputSchemas.invoicesMarkCancelled.parse(response);
@@ -157,7 +157,7 @@ export const directDebit: FreeAgentEndpoints['invoicesDirectDebit'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.invoicesDirectDebit.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}/direct_debit`,
-		ctx.key,
+		ctx,
 		{ method: 'POST' },
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesDirectDebit.parse(response);
@@ -168,7 +168,7 @@ export const timeline: FreeAgentEndpoints['invoicesTimeline'] = async (
 	input,
 ) => {
 	FreeAgentEndpointInputSchemas.invoicesTimeline.parse(input);
-	const response = await makeFreeAgentRequest('/v2/invoices/timeline', ctx.key);
+	const response = await makeFreeAgentRequest('/v2/invoices/timeline', ctx);
 	return FreeAgentEndpointOutputSchemas.invoicesTimeline.parse(response);
 };
 
@@ -177,7 +177,7 @@ export const getDefaultAdditionalText: FreeAgentEndpoints['invoicesDefaultAdditi
 		FreeAgentEndpointInputSchemas.invoicesDefaultAdditionalTextGet.parse(input);
 		const response = await makeFreeAgentRequest(
 			'/v2/invoices/default_additional_text',
-			ctx.key,
+			ctx,
 		);
 		return FreeAgentEndpointOutputSchemas.invoicesDefaultAdditionalTextGet.parse(
 			response,
@@ -192,7 +192,7 @@ export const updateDefaultAdditionalText: FreeAgentEndpoints['invoicesDefaultAdd
 			);
 		const response = await makeFreeAgentRequest(
 			'/v2/invoices/default_additional_text',
-			ctx.key,
+			ctx,
 			{
 				method: 'PUT',
 				body: { default_additional_text: parsed.default_additional_text },
@@ -210,7 +210,7 @@ export const deleteDefaultAdditionalText: FreeAgentEndpoints['invoicesDefaultAdd
 		);
 		const response = await makeFreeAgentRequest(
 			'/v2/invoices/default_additional_text',
-			ctx.key,
+			ctx,
 			{ method: 'DELETE' },
 		);
 		return FreeAgentEndpointOutputSchemas.invoicesDefaultAdditionalTextDelete.parse(
@@ -222,7 +222,7 @@ export const pdf: FreeAgentEndpoints['invoicesPdf'] = async (ctx, input) => {
 	const parsed = FreeAgentEndpointInputSchemas.invoicesPdf.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/invoices/${encodeURIComponent(parsed.id)}/pdf`,
-		ctx.key,
+		ctx,
 	);
 	return FreeAgentEndpointOutputSchemas.invoicesPdf.parse(response);
 };
@@ -233,7 +233,7 @@ export const convertToCreditNote: FreeAgentEndpoints['invoicesConvertToCreditNot
 			FreeAgentEndpointInputSchemas.invoicesConvertToCreditNote.parse(input);
 		const response = await makeFreeAgentRequest(
 			`/v2/invoices/${encodeURIComponent(parsed.id)}/transitions/convert_to_credit_note`,
-			ctx.key,
+			ctx,
 			{ method: 'PUT' },
 		);
 		return FreeAgentEndpointOutputSchemas.invoicesConvertToCreditNote.parse(

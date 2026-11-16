@@ -10,7 +10,7 @@ export const list: FreeAgentEndpoints['projectsList'] = async (ctx, input) => {
 	const parsed = FreeAgentEndpointInputSchemas.projectsList.parse(input);
 	const response = await makeFreeAgentPaginatedRequest(
 		'/v2/projects',
-		ctx.key,
+		ctx,
 		parsed.query ?? {},
 		FreeAgentEndpointOutputSchemas.projectsList.omit({ pagination: true }),
 	);
@@ -31,7 +31,7 @@ export const get: FreeAgentEndpoints['projectsGet'] = async (ctx, input) => {
 	const parsed = FreeAgentEndpointInputSchemas.projectsGet.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/projects/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 	);
 	return FreeAgentEndpointOutputSchemas.projectsGet.parse(response);
 };
@@ -41,7 +41,7 @@ export const create: FreeAgentEndpoints['projectsCreate'] = async (
 	input,
 ) => {
 	const parsed = FreeAgentEndpointInputSchemas.projectsCreate.parse(input);
-	const response = await makeFreeAgentRequest('/v2/projects', ctx.key, {
+	const response = await makeFreeAgentRequest('/v2/projects', ctx, {
 		method: 'POST',
 		body: { project: parsed.project },
 	});
@@ -55,7 +55,7 @@ export const update: FreeAgentEndpoints['projectsUpdate'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.projectsUpdate.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/projects/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 		{ method: 'PUT', body: { project: parsed.project } },
 	);
 	return FreeAgentEndpointOutputSchemas.projectsUpdate.parse(response);
@@ -68,7 +68,7 @@ export const remove: FreeAgentEndpoints['projectsDelete'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.projectsDelete.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/projects/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 		{ method: 'DELETE' },
 	);
 	return FreeAgentEndpointOutputSchemas.projectsDelete.parse(response);

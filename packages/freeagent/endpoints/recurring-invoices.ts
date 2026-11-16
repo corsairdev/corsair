@@ -13,7 +13,7 @@ export const list: FreeAgentEndpoints['recurringInvoicesList'] = async (
 		FreeAgentEndpointInputSchemas.recurringInvoicesList.parse(input);
 	const response = await makeFreeAgentPaginatedRequest(
 		'/v2/recurring_invoices',
-		ctx.key,
+		ctx,
 		parsed.query ?? {},
 		FreeAgentEndpointOutputSchemas.recurringInvoicesList.omit({
 			pagination: true,
@@ -33,7 +33,7 @@ export const get: FreeAgentEndpoints['recurringInvoicesGet'] = async (
 		FreeAgentEndpointInputSchemas.recurringInvoicesGet.parse(input);
 	const response = await makeFreeAgentRequest(
 		`/v2/recurring_invoices/${encodeURIComponent(parsed.id)}`,
-		ctx.key,
+		ctx,
 	);
 	return FreeAgentEndpointOutputSchemas.recurringInvoicesGet.parse(response);
 };

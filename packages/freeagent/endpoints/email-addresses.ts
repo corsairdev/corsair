@@ -12,7 +12,7 @@ export const list: FreeAgentEndpoints['emailAddressesList'] = async (
 	const parsed = FreeAgentEndpointInputSchemas.emailAddressesList.parse(input);
 	const response = await makeFreeAgentPaginatedRequest(
 		'/v2/email_addresses',
-		ctx.key,
+		ctx,
 		parsed.query ?? {},
 		FreeAgentEndpointOutputSchemas.emailAddressesList.omit({
 			pagination: true,

@@ -19,9 +19,28 @@ async function waitForRetry(delayMs: number): Promise<void> {
 	await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
 }
 
+/** Endpoint context: the resolved token plus the plugin's sandbox switch. */
+export type FreeAgentAuth = {
+	key: string;
+	options?: { sandbox?: boolean };
+};
+
+function resolveAuth(auth: string | FreeAgentAuth): {
+	accessToken: string;
+	sandbox: boolean | undefined;
+} {
+	return typeof auth === 'string'
+		? { accessToken: auth, sandbox: undefined }
+		: { accessToken: auth.key, sandbox: auth.options?.sandbox };
+}
+
+export function freeAgentApiBase(sandbox: boolean | undefined): string {
+	return sandbox ? FREEAGENT_SANDBOX_API_BASE : FREEAGENT_API_BASE;
+}
+
 export async function makeFreeAgentRequest<T>(
 	endpoint: string,
-	accessToken: string,
+	auth: string | FreeAgentAuth,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 		// `unknown` because resource envelopes vary and endpoint schemas validate returned data.
@@ -30,12 +49,14 @@ export async function makeFreeAgentRequest<T>(
 		sandbox?: boolean;
 	} = {},
 ): Promise<T> {
+	const { accessToken, sandbox: authSandbox } = resolveAuth(auth);
 	if (accessToken.length === 0) {
 		throw new AuthMissingError('freeagent', 'oauth_2');
 	}
-	const { method = 'GET', body, query, sandbox = false } = options;
+	const { method = 'GET', body, query } = options;
+	const sandbox = options.sandbox ?? authSandbox ?? false;
 	const config: OpenAPIConfig = {
-		BASE: sandbox ? FREEAGENT_SANDBOX_API_BASE : FREEAGENT_API_BASE,
+		BASE: freeAgentApiBase(sandbox),
 		VERSION: '2',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -53,19 +74,48 @@ export async function makeFreeAgentRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 		query,
 	};
-	return request<T>(config, requestOptions);
+	try {
+		return await request<T>(config, requestOptions);
+	} catch (error: unknown) {
+		// `unknown`: transport failures may reject with non-Error values.
+		// Core's ApiError keeps the request body; drop it so contact details,
+		// invoice lines and email text don't travel with the error.
+		if (error instanceof ApiError && error.request.body !== undefined) {
+			const { body: _sentBody, ...safeRequest } = error.request;
+			void _sentBody;
+			throw new ApiError(
+				safeRequest,
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
+		}
+		throw error;
+	}
 }
 
 export async function makeFreeAgentPaginatedRequest<T>(
 	endpoint: string,
-	accessToken: string,
+	auth: string | FreeAgentAuth,
 	query: Record<string, string | number | boolean | undefined>,
 	responseSchema: z.ZodType<T>,
 ): Promise<{ data: T; pagination: FreeAgentPaginationHeaders }> {
+	const { accessToken, sandbox } = resolveAuth(auth);
 	if (accessToken.length === 0) {
 		throw new AuthMissingError('freeagent', 'oauth_2');
 	}
-	const url = new URL(endpoint, FREEAGENT_API_BASE);
+	const url = new URL(endpoint, freeAgentApiBase(sandbox));
 	for (const [key, value] of Object.entries(query)) {
 		if (value !== undefined) url.searchParams.set(key, String(value));
 	}
@@ -105,7 +155,17 @@ export async function makeFreeAgentPaginatedRequest<T>(
 			const retryAfter = response.headers.get('Retry-After');
 			const retryAfterSeconds =
 				retryAfter && /^\d+$/.test(retryAfter) ? Number(retryAfter) : undefined;
-			await response.body?.cancel().catch(() => undefined);
+			// `unknown`: FreeAgent's error body is JSON (`{errors: ...}`) or text.
+			const errorBody: unknown = await response
+				.text()
+				.then((text) => {
+					try {
+						return JSON.parse(text);
+					} catch {
+						return text;
+					}
+				})
+				.catch(() => undefined);
 			throw new ApiError(
 				requestOptions,
 				{
@@ -113,7 +173,7 @@ export async function makeFreeAgentPaginatedRequest<T>(
 					ok: false,
 					status: response.status,
 					statusText: response.statusText,
-					body: undefined,
+					body: errorBody,
 				},
 				`FreeAgent API request failed with HTTP ${response.status}`,
 				retryAfterSeconds === undefined
