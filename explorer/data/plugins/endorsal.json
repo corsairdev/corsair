@@ -1,0 +1,857 @@
+{
+  "id": "endorsal",
+  "displayName": "Endorsal",
+  "description": "Manage Endorsal contacts, testimonials, tags, widgets, Wall of Love, and AutoRequest campaigns.",
+  "npmPackageName": "@corsair-dev/endorsal",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 25,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "endorsal.api.autorequests.campaigns.byId.get",
+      "shortPath": "autorequests.campaigns.byId.get",
+      "description": "Retrieve an AutoRequest campaign by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.autorequests.campaigns.get",
+      "shortPath": "autorequests.campaigns.get",
+      "description": "List AutoRequest campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.contacts.byId.delete",
+      "shortPath": "contacts.byId.delete",
+      "description": "Archive a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.contacts.byId.get",
+      "shortPath": "contacts.byId.get",
+      "description": "Retrieve a contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, externalID?: string | null, importedFrom?: string | null, avatar?: string | null, location?: string | null, position?: string | null, company?: string | null, website?: string | null, propertyID?: string | null, customAttributes?: Record<string, JsonValue> | null, activity?: { added?: number | string | null, updated?: number | string | null, lastContacted?: number | string | null, lastOpened?: number | string | null, lastClicked?: number | string | null, lastEmailOpened?: number | string | null, lastEmailClicked?: number | string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.contacts.byId.patch",
+      "shortPath": "contacts.byId.patch",
+      "description": "Update contact fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "List contacts for the configured property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, externalID?: string | null, importedFrom?: string | null, avatar?: string | null, location?: string | null, position?: string | null, company?: string | null, website?: string | null, propertyID?: string | null, customAttributes?: Record<string, JsonValue> | null, activity?: { added?: number | string | null, updated?: number | string | null, lastContacted?: number | string | null, lastOpened?: number | string | null, lastClicked?: number | string | null, lastEmailOpened?: number | string | null, lastEmailClicked?: number | string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.contacts.post",
+      "shortPath": "contacts.post",
+      "description": "Create a contact; with campaignID, enroll it in an AutoRequest campaign that emails the contact. Destructive because that enrollment sends email",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ name?: string, email?: string, phone?: string, avatar?: string, location?: string, position?: string, company?: string, website?: string, externalID?: string, importedFrom?: string, propertyID?: string, customAttributes?: Record<string, JsonValue> }"
+          },
+          {
+            "key": "campaignID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, externalID?: string | null, importedFrom?: string | null, avatar?: string | null, location?: string | null, position?: string | null, company?: string | null, website?: string | null, propertyID?: string | null, customAttributes?: Record<string, JsonValue> | null, activity?: { added?: number | string | null, updated?: number | string | null, lastContacted?: number | string | null, lastOpened?: number | string | null, lastClicked?: number | string | null, lastEmailOpened?: number | string | null, lastEmailClicked?: number | string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.contacts.search.post",
+      "shortPath": "contacts.search.post",
+      "description": "Search contacts with AND-combined match conditions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ field: string, operator: string, value: string | number | null | (string | number)[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ _id?: string, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, externalID?: string | null, importedFrom?: string | null, avatar?: string | null, location?: string | null, position?: string | null, company?: string | null, website?: string | null, propertyID?: string | null, customAttributes?: Record<string, JsonValue> | null, activity?: { added?: number | string | null, updated?: number | string | null, lastContacted?: number | string | null, lastOpened?: number | string | null, lastClicked?: number | string | null, lastEmailOpened?: number | string | null, lastEmailClicked?: number | string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.contacts.testimonials.get",
+      "shortPath": "contacts.testimonials.get",
+      "description": "List testimonials for a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.tags.byId.delete",
+      "shortPath": "tags.byId.delete",
+      "description": "Delete a tag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.tags.byId.get",
+      "shortPath": "tags.byId.get",
+      "description": "Retrieve a tag by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, type?: string | null, propertyID?: string | null, slug?: string | null, description?: string | null, image?: string | null, link?: string | null, sku?: string | null, edited?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.tags.byId.patch",
+      "shortPath": "tags.byId.patch",
+      "description": "Update tag fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "List tags for the configured property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, type?: string | null, propertyID?: string | null, slug?: string | null, description?: string | null, image?: string | null, link?: string | null, sku?: string | null, edited?: number | string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.tags.post",
+      "shortPath": "tags.post",
+      "description": "Create a tag or product tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, type?: string | null, propertyID?: string | null, slug?: string | null, description?: string | null, image?: string | null, link?: string | null, sku?: string | null, edited?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.tags.testimonials.get",
+      "shortPath": "tags.testimonials.get",
+      "description": "List testimonials associated with a tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.testimonials.byId.delete",
+      "shortPath": "testimonials.byId.delete",
+      "description": "Delete a testimonial",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.testimonials.byId.get",
+      "shortPath": "testimonials.byId.get",
+      "description": "Retrieve a testimonial by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.testimonials.byId.patch",
+      "shortPath": "testimonials.byId.patch",
+      "description": "Update testimonial fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.testimonials.byId.tag.post",
+      "shortPath": "testimonials.byId.tag.post",
+      "description": "Add tags to a testimonial",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "({ name: string, type: string, description?: string, image?: string, link?: string, sku?: string } | { _id: string })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.testimonials.get",
+      "shortPath": "testimonials.get",
+      "description": "List testimonials for the configured property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.testimonials.post",
+      "shortPath": "testimonials.post",
+      "description": "Create a testimonial",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "featured",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "added",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.testimonials.search.post",
+      "shortPath": "testimonials.search.post",
+      "description": "Search testimonials with AND-combined match conditions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ field: string, operator: string, value: string | number | null | (string | number)[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "endorsal.api.wallOfLove.get",
+      "shortPath": "wallOfLove.get",
+      "description": "Retrieve a Wall of Love and its testimonials, optionally rendered",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "render",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean, data: { _id?: string, widgetName?: string | null, widgetTheme?: string | null, formID?: string | null, propertyID?: string | JsonValue | null, widgetLayout?: string | null, carouselSettings?: Record<string, JsonValue> | null, gridSettings?: Record<string, JsonValue> | null, source?: string | null, hideTestimonials?: boolean | null, hiddenTestimonials?: string[] | Record<string, JsonValue> | null, onlyShowFeatured?: boolean | null, showSource?: boolean | null, showBranding?: boolean | null, randomize?: boolean | null, showRecency?: boolean | null, widgetTag?: string | null, edited?: number | string | null, testimonials?: { _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }[], settings?: Record<string, JsonValue> | null, truncate?: Record<string, JsonValue> | null } } | string"
+      }
+    },
+    {
+      "path": "endorsal.api.widgets.byId.get",
+      "shortPath": "widgets.byId.get",
+      "description": "Retrieve a widget and its testimonials, optionally rendered",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "render",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean, data: { _id?: string, widgetName?: string | null, widgetTheme?: string | null, formID?: string | null, propertyID?: string | JsonValue | null, widgetLayout?: string | null, carouselSettings?: Record<string, JsonValue> | null, gridSettings?: Record<string, JsonValue> | null, source?: string | null, hideTestimonials?: boolean | null, hiddenTestimonials?: string[] | Record<string, JsonValue> | null, onlyShowFeatured?: boolean | null, showSource?: boolean | null, showBranding?: boolean | null, randomize?: boolean | null, showRecency?: boolean | null, widgetTag?: string | null, edited?: number | string | null, testimonials?: { _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }[] } } | string"
+      }
+    },
+    {
+      "path": "endorsal.api.widgets.get",
+      "shortPath": "widgets.get",
+      "description": "List widgets for the configured property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ _id?: string, widgetName?: string | null, widgetTheme?: string | null, formID?: string | null, propertyID?: string | JsonValue | null, widgetLayout?: string | null, carouselSettings?: Record<string, JsonValue> | null, gridSettings?: Record<string, JsonValue> | null, source?: string | null, hideTestimonials?: boolean | null, hiddenTestimonials?: string[] | Record<string, JsonValue> | null, onlyShowFeatured?: boolean | null, showSource?: boolean | null, showBranding?: boolean | null, randomize?: boolean | null, showRecency?: boolean | null, widgetTag?: string | null, edited?: number | string | null, testimonials?: { _id?: string, name?: string | null, propertyID?: string | null, comments?: string | null, rating?: number | null, avatar?: { url?: string | null, sizes?: { small?: string | null, medium?: string | null, large?: string | null, original?: string | null } | null } | null, email?: string | null, location?: string | null, position?: string | null, company?: string | null, formID?: string | null, added?: number | string | null, approved?: number | null, featured?: number | null, tags?: (string | null)[] | null }[] }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
