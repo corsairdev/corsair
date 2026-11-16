@@ -20,10 +20,10 @@ pnpm add @corsair-dev/kalshi
 | `markets.list` | `kalshi.api.markets.list` | `read` | List markets with filters and cursor pagination |
 | `markets.orderbook` | `kalshi.api.markets.orderbook` | `read` | Get the order book for a market |
 | `markets.trades` | `kalshi.api.markets.trades` | `read` | List recent trades, optionally for one market |
-| `orders.amend` | `kalshi.api.orders.amend` | `write` | Change an existing order's price or size |
-| `orders.batchCreate` | `kalshi.api.orders.batchCreate` | `write` | Place several orders in one request. Spends real money when the environment is production |
-| `orders.cancel` | `kalshi.api.orders.cancel` | `write` | Cancel a resting order's remaining contracts |
-| `orders.create` | `kalshi.api.orders.create` | `write` | Place an order. Spends real money when the environment is production |
+| `orders.amend` | `kalshi.api.orders.amend` | `destructive` | Change an existing order's price or size; a new price can fill at once and spend real money in production |
+| `orders.batchCreate` | `kalshi.api.orders.batchCreate` | `destructive` | Place several orders in one request. Spends real money when the environment is production |
+| `orders.cancel` | `kalshi.api.orders.cancel` | `destructive` | Cancel a resting order's remaining contracts; a cancelled order can't be restored |
+| `orders.create` | `kalshi.api.orders.create` | `destructive` | Place an order. Spends real money when the environment is production |
 | `orders.get` | `kalshi.api.orders.get` | `read` | Get a single order by ID |
 | `orders.list` | `kalshi.api.orders.list` | `read` | List orders, optionally filtered by status or market |
 | `portfolio.balance` | `kalshi.api.portfolio.balance` | `read` | Get the account balance and portfolio value |

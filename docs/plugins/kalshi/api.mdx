@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Kalshi: every `kalshi.api.*` operation with input and output types."
+title: "Kalshi API reference"
+sidebarTitle: "API"
+description: "API reference for the Kalshi plugin in Corsair: every `kalshi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `kalshi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -506,9 +505,9 @@ await corsair.kalshi.api.markets.trades({});
 
 `orders.amend`
 
-Change an existing order's price or size
+Change an existing order's price or size; a new price can fill at once and spend real money in production
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.kalshi.api.orders.amend({ order_id: '<order-id>', ticker: 'KXHIGHNY-26NOV12-T60', side: 'bid', price: '0.5800', count: '10.00' });
@@ -552,7 +551,7 @@ await corsair.kalshi.api.orders.amend({ order_id: '<order-id>', ticker: 'KXHIGHN
 
 Place several orders in one request. Spends real money when the environment is production
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.kalshi.api.orders.batchCreate({ orders: [{ ticker: 'KXHIGHNY-26NOV12-T60', side: 'bid', count: '10.00', price: '0.5600', time_in_force: 'good_till_canceled' }] });
@@ -618,9 +617,9 @@ await corsair.kalshi.api.orders.batchCreate({ orders: [{ ticker: 'KXHIGHNY-26NOV
 
 `orders.cancel`
 
-Cancel a resting order's remaining contracts
+Cancel a resting order's remaining contracts; a cancelled order can't be restored
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.kalshi.api.orders.cancel({ order_id: '<order-id>', market_ticker: 'KXHIGHNY-26NOV12-T60' });
@@ -655,7 +654,7 @@ await corsair.kalshi.api.orders.cancel({ order_id: '<order-id>', market_ticker: 
 
 Place an order. Spends real money when the environment is production
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.kalshi.api.orders.create({ ticker: 'KXHIGHNY-26NOV12-T60', side: 'bid', count: '10.00', price: '0.5600', time_in_force: 'good_till_canceled' });
