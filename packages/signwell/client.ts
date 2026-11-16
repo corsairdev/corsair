@@ -139,6 +139,14 @@ export function describeSignwellError(
 	return status === undefined ? text : `SignWell ${status}: ${text}`;
 }
 
+/**
+ * A webhook's id is also the HMAC key that signs its deliveries, so it is cut
+ * out of the URLs an error carries (`/hooks/<id>`).
+ */
+function redactHookId(url: string): string {
+	return url.replace(/\/hooks\/[^/?#]+/, '/hooks/[redacted]');
+}
+
 export type SignwellQuery = Record<
 	string,
 	string | number | boolean | readonly string[] | undefined
@@ -200,9 +208,9 @@ export async function makeSignwellRequest(
 			// the request body holds recipient emails and phone numbers, and core's
 			// fallback message would print a 422 body that can echo them back.
 			throw new ApiError(
-				{ method: error.request.method, url: error.request.url },
+				{ method: error.request.method, url: redactHookId(error.request.url) },
 				{
-					url: error.url,
+					url: redactHookId(error.url),
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
