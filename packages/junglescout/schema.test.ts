@@ -480,13 +480,8 @@ describe('responses from the OpenAPI examples (developer.junglescout.com v1)', (
 describe('plugin wiring', () => {
 	it('hands caller hooks to core, which reads plugin.hooks', async () => {
 		const { junglescout } = await import('./index');
-		const hooks = {
-			shareOfVoice: {
-				get: { before: async (ctx: never, args: never) => ({ ctx, args }) },
-			},
-		};
-		// `unknown` cast: a minimal hook object stands in for the full typed tree.
-		const plugin = junglescout({ hooks: hooks as unknown as never });
+		const hooks: NonNullable<Parameters<typeof junglescout>[0]>['hooks'] = {};
+		const plugin = junglescout({ hooks });
 		expect(plugin.hooks).toBe(hooks);
 	});
 });

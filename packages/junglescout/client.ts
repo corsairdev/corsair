@@ -60,6 +60,14 @@ export function parseJungleScoutResponse(response: unknown): unknown {
 export function errorSummary(body: unknown): {
 	errors?: Array<{ status?: string; code?: string; title?: string }>;
 } {
+	// Vendor JSON (`application/vnd.api+json`) errors reach us as text.
+	if (typeof body === 'string') {
+		try {
+			return errorSummary(JSON.parse(body));
+		} catch {
+			return {};
+		}
+	}
 	if (typeof body !== 'object' || body === null || !('errors' in body)) {
 		return {};
 	}

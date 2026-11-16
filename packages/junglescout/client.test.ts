@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
+	errorSummary,
 	JUNGLESCOUT_API_BASE,
 	JUNGLESCOUT_RATE_LIMIT_CONFIG,
 	JungleScoutAPIError,
@@ -291,5 +292,27 @@ describe('makeJungleScoutRequest', () => {
 		} finally {
 			fetchMock.mockRestore();
 		}
+	});
+});
+
+describe('errorSummary', () => {
+	it('reads a JSON:API error that arrives as text', () => {
+		expect(
+			errorSummary(
+				JSON.stringify({
+					errors: [
+						{
+							status: '422',
+							code: 'invalid',
+							title: 'Bad filter',
+							detail: 'B0X',
+						},
+					],
+				}),
+			),
+		).toEqual({
+			errors: [{ status: '422', code: 'invalid', title: 'Bad filter' }],
+		});
+		expect(errorSummary('not json')).toEqual({});
 	});
 });
