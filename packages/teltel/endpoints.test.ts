@@ -667,6 +667,19 @@ describe('error handling', () => {
 		expect(JSON.stringify(error)).not.toContain('37126118199');
 	});
 
+	it('masks a phone number in the list filter on the error', async () => {
+		respond(forbiddenResponse, 403);
+
+		const error = await rejection(
+			invoke(Contacts.contactsList, { phone: '37121234567' }),
+		);
+
+		expect(error.request.query).toMatchObject({ filter: '[REDACTED]' });
+		expect(error.url).not.toContain('37121234567');
+		expect(JSON.stringify(error)).not.toContain('37121234567');
+		expect(require('node:util').inspect(error)).not.toContain('37121234567');
+	});
+
 	it('never leaks the key through the error', async () => {
 		respond(forbiddenResponse, 403);
 

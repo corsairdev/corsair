@@ -61,18 +61,42 @@ export function teltelErrorDetails(
 	return error instanceof ApiError ? readErrorDetails(error.body) : undefined;
 }
 
+/** The list filter value can name phone numbers, so it is masked on errors. */
+const FILTER_PARAM = 'filter';
+const REDACTED = '[REDACTED]';
+
+function withoutFilterValue(url: string): string {
+	try {
+		const parsed = new URL(url);
+		if (!parsed.searchParams.has(FILTER_PARAM)) return url;
+		parsed.searchParams.set(FILTER_PARAM, REDACTED);
+		return parsed.toString();
+	} catch {
+		return url;
+	}
+}
+
 /**
- * Core's ApiError keeps the request it failed on, body included, and a send
- * or contact body holds phone numbers and message text. This rebuilds the
- * same ApiError without the request body. Status, retryAfter and TelTEL's
- * response body stay as they were.
+ * Core's ApiError keeps the request it failed on: a send or contact body
+ * holds phone numbers and message text, and a list's `filter` value can hold
+ * a phone number too. This rebuilds the same ApiError with the body dropped
+ * and the filter masked, in the request and in the URL. Status, retryAfter and
+ * TelTEL's response body stay as they were.
  */
-function withoutRequestBody(error: ApiError): ApiError {
-	if (error.request.body === undefined) return error;
+function withoutCustomerData(error: ApiError): ApiError {
+	const filter = error.request.query?.[FILTER_PARAM];
+	if (error.request.body === undefined && filter === undefined) return error;
 	const stripped = new ApiError(
-		{ ...error.request, body: undefined },
 		{
-			url: error.url,
+			...error.request,
+			body: undefined,
+			query:
+				filter === undefined
+					? error.request.query
+					: { ...error.request.query, [FILTER_PARAM]: REDACTED },
+		},
+		{
+			url: withoutFilterValue(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -136,8 +160,8 @@ export async function makeTeltelRequest(
 		});
 	} catch (error) {
 		// Core's ApiError goes through as an ApiError (plugin rules R8), only
-		// without the request body it carried.
-		if (error instanceof ApiError) throw withoutRequestBody(error);
+		// without the customer data it carried.
+		if (error instanceof ApiError) throw withoutCustomerData(error);
 		throw error;
 	}
 }
