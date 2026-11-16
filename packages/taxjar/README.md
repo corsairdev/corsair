@@ -20,17 +20,17 @@ pnpm add @corsair-dev/taxjar
 | `customers.list` | `taxjar.api.customers.list` | `read` | List the customer IDs recorded through the API |
 | `customers.update` | `taxjar.api.customers.update` | `write` | Change a customer's exemption or address |
 | `nexusRegions.list` | `taxjar.api.nexusRegions.list` | `read` | List the regions where the account has sales tax nexus |
-| `orders.create` | `taxjar.api.orders.create` | `write` | Record an order transaction for tax reporting; shipping is required even when it is zero |
+| `orders.create` | `taxjar.api.orders.create` | `destructive` | Record an order transaction for tax reporting; shipping is required even when it is zero |
 | `orders.delete` | `taxjar.api.orders.delete` | `destructive` | Delete an order transaction, which removes it from tax reporting and cannot be undone |
 | `orders.get` | `taxjar.api.orders.get` | `read` | Read one order transaction by its ID |
 | `orders.list` | `taxjar.api.orders.list` | `read` | List the order transaction IDs recorded through the API, by date or date range |
-| `orders.update` | `taxjar.api.orders.update` | `write` | Change an order transaction; a transaction that has been filed may refuse the change |
+| `orders.update` | `taxjar.api.orders.update` | `destructive` | Change an order transaction; a transaction that has been filed may refuse the change |
 | `rates.get` | `taxjar.api.rates.get` | `read` | Read the combined and per-jurisdiction rates for a postal code, with an optional street address for rooftop accuracy |
-| `refunds.create` | `taxjar.api.refunds.create` | `write` | Record a refund transaction, linked to its original order by transaction_reference_id |
+| `refunds.create` | `taxjar.api.refunds.create` | `destructive` | Record a refund transaction, linked to its original order by transaction_reference_id |
 | `refunds.delete` | `taxjar.api.refunds.delete` | `destructive` | Delete a refund transaction, which removes it from tax reporting and cannot be undone |
 | `refunds.get` | `taxjar.api.refunds.get` | `read` | Read one refund transaction by its ID |
 | `refunds.list` | `taxjar.api.refunds.list` | `read` | List the refund transaction IDs recorded through the API, by date or date range |
-| `refunds.update` | `taxjar.api.refunds.update` | `write` | Change a refund transaction |
+| `refunds.update` | `taxjar.api.refunds.update` | `destructive` | Change a refund transaction |
 | `summaryRates.list` | `taxjar.api.summaryRates.list` | `read` | List the minimum and average tax rate per region, for display rather than calculation |
 | `taxes.calculate` | `taxjar.api.taxes.calculate` | `read` | Calculate the tax for an order from an origin and destination, optionally per line item, without recording a transaction |
 
