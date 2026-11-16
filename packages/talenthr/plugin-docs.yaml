@@ -7,7 +7,7 @@ overviewNote: |
 
   Things to know before you call:
 
-  - **A wrong key looks like a missing tenant.** TalentHR answers a refused key with 401 and the body `{"success": false, "error": {"hr_code_key": "not_found_tenancy"}}`. The plugin keeps both readings on `TalentHRAPIError`: `isAuthError` is true for the 401 and `isTenantNotFound` is true when the body names the tenant. Check the status first; a working key on the wrong domain produces the same body.
+  - **A wrong key looks like a missing tenant.** TalentHR answers a refused key with 401 and the body `{"success": false, "error": {"hr_code_key": "not_found_tenancy"}}`. HTTP failures arrive as core's `ApiError`: check `error.status === 401` first, then `error.body.error.hr_code_key` (`not_found_tenancy` when the body names the tenant). A working key on the wrong domain produces the same body.
   - **Every answer is an envelope.** Successful calls are `{ success: true, data }` and the plugin returns `data` alone. The deletes answer `{ success: true }` with no `data`, so their result is that object.
   - **Updates are not partial.** `employees.update` requires `first_name`, `last_name` and `email` on every call, because TalentHR treats the body as the full contact record rather than a patch. Read the employee first and send those three back with the fields you are changing.
   - **Hiring sends email.** `employees.hire` emails the new employee unless you pass `prevent_email: true`.
