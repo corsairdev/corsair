@@ -1,0 +1,266 @@
+---
+title: "Nasdaq Data Link API reference"
+sidebarTitle: "API"
+description: "API reference for the Nasdaq Data Link plugin in Corsair: every `nasdaq.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Databases
+
+### list
+
+`databases.list`
+
+List the database catalogue with each database code, description and dataset count, paged by number
+
+**Risk:** `read`
+
+```ts
+await corsair.nasdaq.api.databases.list({ query: 'economic', per_page: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Only databases whose code or name contains this text. Nasdaq answers the whole catalogue when omitted. |
+| `per_page` | `number` | No | Databases per page. |
+| `page` | `number` | No | 1-based page number. |
+
+The database code from each entry is the first half of a table code.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databases` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="databases full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  database_code?: string | null,
+  description?: string | null,
+  datasets_count?: number | null,
+  downloads?: number | null,
+  premium?: boolean | null,
+  image?: string | null,
+  favorite?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  per_page?: number | null,
+  current_page?: number | null,
+  next_page?: number | null,
+  prev_page?: number | null,
+  total_count?: number | null,
+  total_pages?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tables
+
+### export
+
+`tables.export`
+
+Queue a bulk export of a table and return the signed zip link, valid for 30 minutes; the first call usually reports the file as still being built
+
+**Risk:** `read`
+
+```ts
+await corsair.nasdaq.api.tables.export({ table: 'NDAQ/RTAT10', filters: { 'date.gte': '2024-01-01' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | Yes | The table code, e.g. NDAQ/RTAT10. |
+| `filters` | `Record<string, string \| number \| boolean>` | No | Row filters as column name to value, e.g. &#123; ticker: "AAPL" &#125;. Operators append to the name: `date.gte`, `date.lte`, `ticker.in[]`. Only columns the table marks filterable are accepted. |
+| `columns` | `string[]` | No | Only these columns in the export. |
+
+The first call usually answers Creating with a null link; poll until Fresh. The link expires after 30 minutes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object \| null` | No | — |
+| `datatable` | `object \| null` | No | — |
+| `status` | `string \| null` | No | Fresh, Creating or Regenerating. Nasdaq documents that only Fresh means the link is ready; the nested file.status repeats it. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  link?: string | null,
+  status?: string | null,
+  data_snapshot_time?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="datatable full type">
+
+```ts
+{
+  last_refreshed_time?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metadata
+
+`tables.metadata`
+
+Read a table definition: its columns and types, the columns that can filter a query, its primary key and when it last refreshed
+
+**Risk:** `read`
+
+```ts
+await corsair.nasdaq.api.tables.metadata({ table: 'NDAQ/RTAT10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | Yes | The table code, e.g. NDAQ/RTAT10. |
+
+The filters array lists the only columns that can be used in a query filter.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendor_code` | `string \| null` | No | — |
+| `datatable_code` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `columns` | `object[]` | Yes | — |
+| `filters` | `string[] \| null` | No | — |
+| `primary_key` | `string[] \| null` | No | — |
+| `premium` | `boolean \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `data_version` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  name: string,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  refreshed_at?: string | null,
+  status?: string | null,
+  expected_at?: string | null,
+  update_frequency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data_version full type">
+
+```ts
+{
+  code?: string | null,
+  default?: boolean | null,
+  description?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rows
+
+`tables.rows`
+
+Read one page of rows from a Nasdaq Data Link table, filtered by the columns that table marks filterable; page with the returned cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.nasdaq.api.tables.rows({ table: 'NDAQ/RTAT10', per_page: 100, filters: { 'date.gte': '2024-01-01', ticker: 'AAPL,MSFT' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | Yes | The table code, e.g. NDAQ/RTAT10. |
+| `filters` | `Record<string, string \| number \| boolean>` | No | Row filters as column name to value, e.g. &#123; ticker: "AAPL" &#125;. Operators append to the name: `date.gte`, `date.lte`, `ticker.in[]`. Only columns the table marks filterable are accepted. |
+| `columns` | `string[]` | No | Only these columns, sent as qopts.columns. |
+| `per_page` | `number` | No | Rows per page, up to 10000. Nasdaq returns at most 10000 rows per call whatever this says. |
+| `cursor_id` | `string` | No | The `next_cursor_id` from the previous page. Nasdaq answers 400 QESx06 for an expired cursor. |
+
+Rows are arrays aligned to columns, not objects. Pass next_cursor_id back as cursor_id to reach the next page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `object[]` | Yes | — |
+| `rows` | `(string \| number \| boolean \| null)[][]` | Yes | — |
+| `next_cursor_id` | `string \| null` | No | The cursor for the next page, or null once this is the last page. Nasdaq sends no other paging state. |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  name: string,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
