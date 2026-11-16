@@ -1795,3 +1795,41 @@ describe('Users endpoints', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });
+
+describe('Response enums accept values Hex adds later', () => {
+	it('ProjectRuns.getStatus keeps a run status the spec does not list', async () => {
+		const run = {
+			...validOutputs.projectRunsGetStatus,
+			status: 'QUEUED_FOR_KERNEL',
+			runTrigger: 'WEBHOOK',
+		};
+		mockedRequest.mockResolvedValue(run);
+		const result = await ProjectRuns.getStatus(
+			ctx,
+			validInputs.projectRunsGetStatus,
+		);
+		expect(result.status).toBe('QUEUED_FOR_KERNEL');
+		expect(result.runTrigger).toBe('WEBHOOK');
+	});
+
+	it('Users.list keeps a role the spec does not list', async () => {
+		const listed = validOutputs.usersList;
+		mockedRequest.mockResolvedValue({
+			...listed,
+			values: listed.values.map((user) => ({ ...user, role: 'BILLING_ADMIN' })),
+		});
+		const result = await Users.list(ctx, validInputs.usersList);
+		expect(result.values[0]?.role).toBe('BILLING_ADMIN');
+	});
+
+	it('inputs still reject values outside the enum', async () => {
+		const fn = Suggestions.update as (
+			c: unknown,
+			i: unknown,
+		) => Promise<unknown>;
+		await expect(
+			fn(ctx, { suggestionId: 's1', status: 'ARCHIVED' }),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+});

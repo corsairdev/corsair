@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+/**
+ * Response enums accept values Hex adds later: a new status or type must not
+ * fail the whole response. Input schemas keep strict z.enum.
+ */
+const openEnum = <const T extends readonly [string, ...string[]]>(values: T) =>
+	z.union([z.enum(values), z.string()]);
+
 // Every schema in this file mirrors the official Hex REST API OpenAPI specification
 // (v1.0.0, base URL https://app.hex.tech/api).
 // Reference: https://learn.hex.tech/docs/api-integrations/api/reference
@@ -163,7 +170,7 @@ export const DataConnectionSchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
-		type: z.enum([
+		type: openEnum([
 			'alloydb',
 			'athena',
 			'bigquery',
@@ -193,7 +200,7 @@ export const DataConnectionSchema = z
 			.object({
 				configured: z.boolean(),
 				effective: z.boolean(),
-				overrideReason: z.enum(['USER_SCOPED_OAUTH_RESULTS']).nullable(),
+				overrideReason: openEnum(['USER_SCOPED_OAUTH_RESULTS']).nullable(),
 			})
 			.passthrough(),
 		connectionDetails: z
@@ -490,14 +497,14 @@ export const DataConnectionSchema = z
 					.object({
 						include: z
 							.object({
-								matchType: z.enum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
+								matchType: openEnum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
 								values: z.array(z.string()),
 							})
 							.passthrough()
 							.optional(),
 						exclude: z
 							.object({
-								matchType: z.enum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
+								matchType: openEnum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
 								values: z.array(z.string()),
 							})
 							.passthrough()
@@ -509,14 +516,14 @@ export const DataConnectionSchema = z
 					.object({
 						include: z
 							.object({
-								matchType: z.enum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
+								matchType: openEnum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
 								values: z.array(z.string()),
 							})
 							.passthrough()
 							.optional(),
 						exclude: z
 							.object({
-								matchType: z.enum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
+								matchType: openEnum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
 								values: z.array(z.string()),
 							})
 							.passthrough()
@@ -528,14 +535,14 @@ export const DataConnectionSchema = z
 					.object({
 						include: z
 							.object({
-								matchType: z.enum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
+								matchType: openEnum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
 								values: z.array(z.string()),
 							})
 							.passthrough()
 							.optional(),
 						exclude: z
 							.object({
-								matchType: z.enum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
+								matchType: openEnum(['EXACT', 'PREFIX', 'REGEX', 'SUFFIX']),
 								values: z.array(z.string()),
 							})
 							.passthrough()
@@ -548,7 +555,7 @@ export const DataConnectionSchema = z
 			.optional(),
 		schemaRefreshSchedule: z
 			.object({
-				cadence: z.enum(['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM']),
+				cadence: openEnum(['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM']),
 				enabled: z.boolean(),
 				daily: z
 					.object({
@@ -561,7 +568,7 @@ export const DataConnectionSchema = z
 					.optional(),
 				weekly: z
 					.object({
-						dayOfWeek: z.enum([
+						dayOfWeek: openEnum([
 							'SUNDAY',
 							'MONDAY',
 							'TUESDAY',
@@ -598,7 +605,7 @@ export const DataConnectionSchema = z
 			})
 			.passthrough()
 			.optional(),
-		schemaRefreshAccess: z.enum(['ADMINS', 'USERS_WITH_QUERY_ACCESS']),
+		schemaRefreshAccess: openEnum(['ADMINS', 'USERS_WITH_QUERY_ACCESS']),
 		sharing: z
 			.object({
 				groups: z
@@ -611,16 +618,16 @@ export const DataConnectionSchema = z
 										name: z.string(),
 									})
 									.passthrough(),
-								access: z.enum(['NONE', 'QUERY', 'VIEW_RESULTS']),
+								access: openEnum(['NONE', 'QUERY', 'VIEW_RESULTS']),
 							})
 							.passthrough(),
 					)
 					.optional(),
 				workspace: z
 					.object({
-						members: z.enum(['NONE', 'QUERY', 'VIEW_RESULTS']).optional(),
-						guests: z.enum(['NONE', 'QUERY', 'VIEW_RESULTS']).optional(),
-						public: z.enum(['NONE', 'QUERY', 'VIEW_RESULTS']).optional(),
+						members: openEnum(['NONE', 'QUERY', 'VIEW_RESULTS']).optional(),
+						guests: openEnum(['NONE', 'QUERY', 'VIEW_RESULTS']).optional(),
+						public: openEnum(['NONE', 'QUERY', 'VIEW_RESULTS']).optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -634,7 +641,7 @@ export const DataConnectionBasicSchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
-		type: z.enum([
+		type: openEnum([
 			'alloydb',
 			'athena',
 			'bigquery',
@@ -664,7 +671,7 @@ export const DataConnectionBasicSchema = z
 			.object({
 				configured: z.boolean(),
 				effective: z.boolean(),
-				overrideReason: z.enum(['USER_SCOPED_OAUTH_RESULTS']).nullable(),
+				overrideReason: openEnum(['USER_SCOPED_OAUTH_RESULTS']).nullable(),
 			})
 			.passthrough(),
 	})
@@ -985,7 +992,7 @@ export const DataConnectionSensitivityApiResourceSchema = z
 	.object({
 		configured: z.boolean(),
 		effective: z.boolean(),
-		overrideReason: z.enum(['USER_SCOPED_OAUTH_RESULTS']).nullable(),
+		overrideReason: openEnum(['USER_SCOPED_OAUTH_RESULTS']).nullable(),
 	})
 	.passthrough();
 export type DataConnectionSensitivityApiResource = z.infer<
@@ -1244,7 +1251,7 @@ export const DataConnectionWithSensitiveFieldsApiResourceSchema = z
 	.object({
 		id: DataConnectionIdSchema,
 		name: NameSchema,
-		type: DataConnectionApiTypeSchema,
+		type: z.union([DataConnectionApiTypeSchema, z.string()]),
 		description: z.string().optional(),
 		sensitivity: DataConnectionSensitivityApiResourceSchema,
 		connectionDetails: ReadableConnectionDetailsSchema.nullable(),
@@ -1260,14 +1267,23 @@ export const DataConnectionWithSensitiveFieldsApiResourceSchema = z
 			.passthrough()
 			.optional(),
 		schemaRefreshSchedule: SchemaRefreshScheduleApiResourceSchema.optional(),
-		schemaRefreshAccess: DataConnectionSchemaRefreshAccessSchema,
+		schemaRefreshAccess: z.union([
+			DataConnectionSchemaRefreshAccessSchema,
+			z.string(),
+		]),
 		sharing: z
 			.object({
 				workspace: z
 					.object({
-						public: DataConnectionSharingAccessLevelEnumSchema.optional(),
-						guests: DataConnectionSharingAccessLevelEnumSchema.optional(),
-						members: DataConnectionSharingAccessLevelEnumSchema.optional(),
+						public: z
+							.union([DataConnectionSharingAccessLevelEnumSchema, z.string()])
+							.optional(),
+						guests: z
+							.union([DataConnectionSharingAccessLevelEnumSchema, z.string()])
+							.optional(),
+						members: z
+							.union([DataConnectionSharingAccessLevelEnumSchema, z.string()])
+							.optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -1275,7 +1291,10 @@ export const DataConnectionWithSensitiveFieldsApiResourceSchema = z
 					.array(
 						z
 							.object({
-								access: DataConnectionSharingAccessLevelEnumSchema,
+								access: z.union([
+									DataConnectionSharingAccessLevelEnumSchema,
+									z.string(),
+								]),
 								group: z
 									.object({
 										name: z.string(),
@@ -1718,7 +1737,7 @@ export type EnumValues_typeofSortByEnum_ = z.infer<
 export const SortByEnumSchema = EnumValues_typeofSortByEnum_Schema;
 export type SortByEnum = z.infer<typeof SortByEnumSchema>;
 
-export const EnumValues_typeofProjectTypeApiEnum_Schema = z.enum([
+export const EnumValues_typeofProjectTypeApiEnum_Schema = openEnum([
 	'PROJECT',
 	'COMPONENT',
 ]);
@@ -1743,7 +1762,7 @@ export type ProjectComputeProfileApiResource = z.infer<
 
 export const ScheduleApiResourceSchema = z
 	.object({
-		cadence: ScheduleCadenceApiEnumSchema,
+		cadence: z.union([ScheduleCadenceApiEnumSchema, z.string()]),
 		enabled: z.boolean(),
 		hourly: z
 			.object({
@@ -1765,7 +1784,7 @@ export const ScheduleApiResourceSchema = z
 				timezone: TimezoneDesignatorSchema,
 				minute: z.number().int().min(0).max(59),
 				hour: z.number().int().min(0).max(23),
-				dayOfWeek: DayOfWeekApiEnumSchema,
+				dayOfWeek: z.union([DayOfWeekApiEnumSchema, z.string()]),
 			})
 			.passthrough()
 			.nullable(),
@@ -1811,7 +1830,7 @@ export const SharingResourceSchema = z
 		users: z.array(
 			z
 				.object({
-					access: AccessLevelEnumSchema,
+					access: z.union([AccessLevelEnumSchema, z.string()]),
 					user: z
 						.object({
 							email: z.string(),
@@ -1823,7 +1842,7 @@ export const SharingResourceSchema = z
 		collections: z.array(
 			z
 				.object({
-					access: AccessLevelEnumSchema,
+					access: z.union([AccessLevelEnumSchema, z.string()]),
 					collection: z
 						.object({
 							name: z.string(),
@@ -1835,7 +1854,7 @@ export const SharingResourceSchema = z
 		groups: z.array(
 			z
 				.object({
-					access: AccessLevelEnumSchema,
+					access: z.union([AccessLevelEnumSchema, z.string()]),
 					group: z
 						.object({
 							name: z.string(),
@@ -1846,17 +1865,17 @@ export const SharingResourceSchema = z
 		),
 		workspace: z
 			.object({
-				access: AccessLevelEnumSchema,
+				access: z.union([AccessLevelEnumSchema, z.string()]),
 			})
 			.passthrough(),
 		publicWeb: z
 			.object({
-				access: AccessLevelEnumSchema,
+				access: z.union([AccessLevelEnumSchema, z.string()]),
 			})
 			.passthrough(),
 		support: z
 			.object({
-				access: AccessLevelEnumSchema,
+				access: z.union([AccessLevelEnumSchema, z.string()]),
 			})
 			.passthrough(),
 	})
@@ -1968,7 +1987,7 @@ export const ProjectSharingSchema = z
 							email: z.string(),
 						})
 						.passthrough(),
-					access: z.enum([
+					access: openEnum([
 						'NONE',
 						'APP_ONLY',
 						'CAN_VIEW',
@@ -1986,7 +2005,7 @@ export const ProjectSharingSchema = z
 							name: z.string(),
 						})
 						.passthrough(),
-					access: z.enum([
+					access: openEnum([
 						'NONE',
 						'APP_ONLY',
 						'CAN_VIEW',
@@ -2004,7 +2023,7 @@ export const ProjectSharingSchema = z
 							name: z.string(),
 						})
 						.passthrough(),
-					access: z.enum([
+					access: openEnum([
 						'NONE',
 						'APP_ONLY',
 						'CAN_VIEW',
@@ -2016,7 +2035,7 @@ export const ProjectSharingSchema = z
 		),
 		workspace: z
 			.object({
-				access: z.enum([
+				access: openEnum([
 					'NONE',
 					'APP_ONLY',
 					'CAN_VIEW',
@@ -2027,7 +2046,7 @@ export const ProjectSharingSchema = z
 			.passthrough(),
 		publicWeb: z
 			.object({
-				access: z.enum([
+				access: openEnum([
 					'NONE',
 					'APP_ONLY',
 					'CAN_VIEW',
@@ -2038,7 +2057,7 @@ export const ProjectSharingSchema = z
 			.passthrough(),
 		support: z
 			.object({
-				access: z.enum([
+				access: openEnum([
 					'NONE',
 					'APP_ONLY',
 					'CAN_VIEW',
@@ -2056,7 +2075,7 @@ export const ProjectSchema = z
 		id: z.string(),
 		title: z.string(),
 		description: z.string().nullable(),
-		type: z.enum(['PROJECT', 'COMPONENT']),
+		type: openEnum(['PROJECT', 'COMPONENT']),
 		computeProfile: ProjectComputeProfileSchema,
 		creator: z
 			.object({
@@ -2109,7 +2128,7 @@ export const ProjectSchema = z
 		schedules: z.array(
 			z
 				.object({
-					cadence: z.enum(['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM']),
+					cadence: openEnum(['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM']),
 					enabled: z.boolean(),
 					hourly: z
 						.object({
@@ -2128,7 +2147,7 @@ export const ProjectSchema = z
 						.nullable(),
 					weekly: z
 						.object({
-							dayOfWeek: z.enum([
+							dayOfWeek: openEnum([
 								'SUNDAY',
 								'MONDAY',
 								'TUESDAY',
@@ -2201,12 +2220,12 @@ export type NotificationRecipient = z.infer<typeof NotificationRecipientSchema>;
 
 export const ProjectRunNotificationRecipientSchema = z
 	.object({
-		type: z.enum(['SUCCESS', 'FAILURE', 'ALL']),
+		type: openEnum(['SUCCESS', 'FAILURE', 'ALL']),
 		subject: z.string().optional(),
 		body: z.string().optional(),
-		recipientType: z.enum(['USER', 'GROUP', 'SLACK_CHANNEL']),
+		recipientType: openEnum(['USER', 'GROUP', 'SLACK_CHANNEL']),
 		includeSuccessScreenshot: z.boolean(),
-		screenshotFormat: z.array(z.enum(['png', 'pdf'])).optional(),
+		screenshotFormat: z.array(openEnum(['png', 'pdf'])).optional(),
 		recipient: NotificationRecipientSchema,
 	})
 	.passthrough();
@@ -2229,7 +2248,7 @@ export const ProjectRunSchema = z
 		projectVersion: z.string(),
 		runId: z.string(),
 		runUrl: z.string(),
-		status: z.enum([
+		status: openEnum([
 			'PENDING',
 			'RUNNING',
 			'ERRORED',
@@ -2237,7 +2256,7 @@ export const ProjectRunSchema = z
 			'KILLED',
 			'UNABLE_TO_ALLOCATE_KERNEL',
 		]),
-		runTrigger: z.enum(['API', 'SCHEDULED', 'APP_REFRESH']),
+		runTrigger: openEnum(['API', 'SCHEDULED', 'APP_REFRESH']),
 		startTime: z.string().nullable(),
 		endTime: z.string().nullable(),
 		elapsedTime: z.number().nullable(),
@@ -2438,7 +2457,7 @@ export type SemanticProjectsSyncResponsePayload = z.infer<
 	typeof SemanticProjectsSyncResponsePayloadSchema
 >;
 
-export const ReviewAgentStatusSchema = z.enum([
+export const ReviewAgentStatusSchema = openEnum([
 	'RUNNING',
 	'COMPLETED',
 	'NO_OP',
@@ -2448,7 +2467,7 @@ export type ReviewAgentStatus = z.infer<typeof ReviewAgentStatusSchema>;
 
 export const SuggestionProposedChangeSchema = z
 	.object({
-		updateType: z.enum(['FILE_UPDATE', 'DATA_WAREHOUSE_UPDATE']),
+		updateType: openEnum(['FILE_UPDATE', 'DATA_WAREHOUSE_UPDATE']),
 	})
 	.passthrough();
 export type SuggestionProposedChange = z.infer<
@@ -2460,7 +2479,7 @@ export const SuggestionInspectionSchema = z
 		id: z.string(),
 		title: z.string(),
 		summary: z.string(),
-		status: z.enum([
+		status: openEnum([
 			'OPEN',
 			'COMPLETED',
 			'DISMISSED',
@@ -2473,7 +2492,7 @@ export const SuggestionInspectionSchema = z
 		latestReview: z
 			.object({
 				id: z.string(),
-				status: z.enum(['RUNNING', 'COMPLETED', 'NO_OP', 'FAILED']),
+				status: openEnum(['RUNNING', 'COMPLETED', 'NO_OP', 'FAILED']),
 				startedAt: z.string(),
 			})
 			.passthrough()
@@ -2482,7 +2501,7 @@ export const SuggestionInspectionSchema = z
 			z
 				.object({
 					id: z.string(),
-					sourceType: z.enum([
+					sourceType: openEnum([
 						'THREAD_WARNING',
 						'USER_REPORT',
 						'USER_CONTEXT_EXHAUST',
@@ -2509,7 +2528,7 @@ export const SuggestionInspectionSchema = z
 					warning: z
 						.object({
 							id: z.string(),
-							type: z.enum([
+							type: openEnum([
 								'agent_caveat',
 								'user_doubt',
 								'missing_context',
@@ -2584,7 +2603,7 @@ export const cellsListOutputSchema = z
 				.object({
 					id: z.string(),
 					staticId: z.string(),
-					cellType: z.enum([
+					cellType: openEnum([
 						'CODE',
 						'MARKDOWN',
 						'DISPLAY_TABLE',
@@ -2692,7 +2711,7 @@ export const cellsCreateOutputSchema = z
 	.object({
 		id: z.string(),
 		staticId: z.string(),
-		cellType: z.enum([
+		cellType: openEnum([
 			'CODE',
 			'MARKDOWN',
 			'DISPLAY_TABLE',
@@ -2768,7 +2787,7 @@ export const cellsGetOutputSchema = z
 	.object({
 		id: z.string(),
 		staticId: z.string(),
-		cellType: z.enum([
+		cellType: openEnum([
 			'CODE',
 			'MARKDOWN',
 			'DISPLAY_TABLE',
@@ -2855,7 +2874,7 @@ export const cellsUpdateOutputSchema = z
 	.object({
 		id: z.string(),
 		staticId: z.string(),
-		cellType: z.enum([
+		cellType: openEnum([
 			'CODE',
 			'MARKDOWN',
 			'DISPLAY_TABLE',
@@ -2944,7 +2963,7 @@ export const cellsGetOutputOutputSchema = z
 			.object({
 				id: z.string(),
 				staticId: z.string(),
-				cellType: z.enum([
+				cellType: openEnum([
 					'CODE',
 					'MARKDOWN',
 					'DISPLAY_TABLE',
@@ -2970,11 +2989,11 @@ export const cellsGetOutputOutputSchema = z
 		result: z.union([
 			z
 				.object({
-					type: z.enum(['table']),
+					type: openEnum(['table']),
 					rowLimit: z.number(),
 					rowsReturned: z.number(),
 					totalRows: z.number().nullable(),
-					totalRowsKind: z.enum(['EXACT', 'LOWER_BOUND', 'UNKNOWN']),
+					totalRowsKind: openEnum(['EXACT', 'LOWER_BOUND', 'UNKNOWN']),
 					truncated: z.boolean(),
 					columns: z.array(
 						z
@@ -2989,7 +3008,7 @@ export const cellsGetOutputOutputSchema = z
 				.passthrough(),
 			z
 				.object({
-					type: z.enum(['cell_run_error']),
+					type: openEnum(['cell_run_error']),
 					message: z.string(),
 					traceback: z.string().nullable(),
 				})
@@ -3829,7 +3848,7 @@ export const projectsEditSharingOrgAndPublicOutputSchema = z
 			.array(
 				z
 					.object({
-						type: z.enum(['workspace', 'publicWeb']),
+						type: openEnum(['workspace', 'publicWeb']),
 						reason: z.string(),
 					})
 					.passthrough(),
@@ -3927,7 +3946,7 @@ export const suggestionsListOutputSchema = z
 					id: z.string(),
 					title: z.string(),
 					summary: z.string(),
-					status: z.enum([
+					status: openEnum([
 						'OPEN',
 						'COMPLETED',
 						'DISMISSED',
@@ -3957,7 +3976,7 @@ export const suggestionsGetOutputSchema = z
 		id: z.string(),
 		title: z.string(),
 		summary: z.string(),
-		status: z.enum([
+		status: openEnum([
 			'OPEN',
 			'COMPLETED',
 			'DISMISSED',
@@ -3999,11 +4018,11 @@ export const suggestionsGetOutputSchema = z
 			z
 				.object({
 					id: z.string(),
-					status: z.enum(['NEEDS_REVIEW', 'COMPLETED', 'DISMISSED', 'STALE']),
-					updateType: z.enum(['FILE_UPDATE', 'DATA_WAREHOUSE_UPDATE']),
+					status: openEnum(['NEEDS_REVIEW', 'COMPLETED', 'DISMISSED', 'STALE']),
+					updateType: openEnum(['FILE_UPDATE', 'DATA_WAREHOUSE_UPDATE']),
 					payload: z
 						.object({
-							updateType: z.enum([
+							updateType: openEnum([
 								'CREATE_ORG_GUIDE_FILE',
 								'EDIT_ORG_GUIDE_FILE',
 								'EDIT_WORKSPACE_RULES',
@@ -4072,7 +4091,7 @@ export const suggestionsUpdateOutputSchema = z
 				id: z.string(),
 				title: z.string(),
 				summary: z.string(),
-				status: z.enum([
+				status: openEnum([
 					'OPEN',
 					'COMPLETED',
 					'DISMISSED',
@@ -4108,7 +4127,7 @@ export const suggestionsUpdateChangeOutputSchema = z
 		suggestionUpdate: z
 			.object({
 				id: z.string(),
-				status: z.enum(['NEEDS_REVIEW', 'COMPLETED', 'DISMISSED', 'STALE']),
+				status: openEnum(['NEEDS_REVIEW', 'COMPLETED', 'DISMISSED', 'STALE']),
 				rejectionReason: z.string().nullable(),
 			})
 			.passthrough(),
@@ -4134,7 +4153,7 @@ export const suggestionsTriggerReviewOutputSchema = z
 				id: z.string(),
 				title: z.string(),
 				summary: z.string(),
-				status: z.enum([
+				status: openEnum([
 					'OPEN',
 					'COMPLETED',
 					'DISMISSED',
@@ -4205,7 +4224,7 @@ export const threadsListOutputSchema = z
 								.object({
 									id: z.string(),
 									userFeedback: z.string(),
-									type: z.enum(['THUMBS', 'FLAG']),
+									type: openEnum(['THUMBS', 'FLAG']),
 									selectedReason: z.string().nullable().optional(),
 									userLiked: z.boolean(),
 								})
@@ -4302,7 +4321,7 @@ export const threadsGetOutputSchema = z
 				.object({
 					id: z.string(),
 					userFeedback: z.string(),
-					type: z.enum(['THUMBS', 'FLAG']),
+					type: openEnum(['THUMBS', 'FLAG']),
 					selectedReason: z.string().nullable().optional(),
 					userLiked: z.boolean(),
 				})
@@ -4324,11 +4343,11 @@ export const threadsGetOutputSchema = z
 		updatedAt: z.string(),
 		sensitive: z.boolean(),
 		threadId: z.string(),
-		status: z.enum(['IDLE', 'RUNNING', 'ERROR']),
+		status: openEnum(['IDLE', 'RUNNING', 'ERROR']),
 		url: z.string(),
 		error: z
 			.object({
-				type: z.enum([
+				type: openEnum([
 					'NO_CONTEXT',
 					'BAD_DATA',
 					'AGENT_ERROR',
@@ -4382,13 +4401,13 @@ export const threadsGetOutputSchema = z
 				z.union([
 					z
 						.object({
-							type: z.enum(['text']),
+							type: openEnum(['text']),
 							text: z.string(),
 						})
 						.passthrough(),
 					z
 						.object({
-							type: z.enum(['cell']),
+							type: openEnum(['cell']),
 							id: z.string(),
 							staticId: z.string(),
 							label: z.string().nullable(),
@@ -4396,14 +4415,14 @@ export const threadsGetOutputSchema = z
 						.passthrough(),
 					z
 						.object({
-							type: z.enum(['project']),
+							type: openEnum(['project']),
 							id: z.string(),
 							title: z.string().nullable(),
 						})
 						.passthrough(),
 					z
 						.object({
-							type: z.enum(['task']),
+							type: openEnum(['task']),
 							title: z.string(),
 						})
 						.passthrough(),
@@ -4458,7 +4477,7 @@ export const threadsGetMessagesOutputSchema = z
 		content: z.array(
 			z
 				.object({
-					type: z.enum(['text']),
+					type: openEnum(['text']),
 					text: z.string(),
 					createdAt: z.string(),
 				})
@@ -4492,7 +4511,7 @@ export const usersListOutputSchema = z
 					id: z.string(),
 					name: z.string().nullable(),
 					email: z.string(),
-					role: z.enum([
+					role: openEnum([
 						'ADMIN',
 						'MANAGER',
 						'EDITOR',
@@ -4525,7 +4544,7 @@ export const usersDeactivateOutputSchema = z
 				id: z.string(),
 				name: z.string().nullable(),
 				email: z.string(),
-				role: z.enum([
+				role: openEnum([
 					'ADMIN',
 					'MANAGER',
 					'EDITOR',
@@ -4551,7 +4570,7 @@ export const usersMeOutputSchema = z.union([
 			id: z.string(),
 			name: z.string().nullable(),
 			email: z.string(),
-			role: z.enum([
+			role: openEnum([
 				'ADMIN',
 				'MANAGER',
 				'EDITOR',
