@@ -10,7 +10,7 @@ Create an API key at app.simplesat.io under Settings, then API keys. Give it the
 
 Things to know before you write:
 
-- **A bad key is a 403, not a 401.** Simplesat answers `403 Invalid Token.` for a missing or unrecognised token on every route, so a 403 here is an auth problem rather than a permission one. The plugin treats both as auth failures.
+- **A bad key is a 403, not a 401.** Simplesat answers `403 Invalid Token.` for a missing or unrecognised token on every route, and a valid key that lacks the route's scope gets the same 403. Check the key and its scopes. The plugin treats both as auth failures.
 - **Customer writes are upserts.** `customers.create` and `teamMembers.create` match an existing record on `external_id` or `email` rather than always inserting, so send one of them. The schema rejects a customer with neither, because Simplesat then has nothing to match against.
 - **A bulk write is queued.** `customers.bulk` answers a `request_id` and a message, not the stored records, and the work happens afterwards.
 - **Surveys are identified by token.** `surveys.email` takes the `survey_token` from `surveys.list`, not the numeric survey id.

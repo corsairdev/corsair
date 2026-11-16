@@ -105,7 +105,8 @@ export function pageShape<PageOutput>(
 	const shaped: UnknownJson = {
 		next: pageLink(record?.next, 'next'),
 		previous: pageLink(record?.previous, 'previous'),
-		count: typeof count === 'number' ? count : null,
+		// Passed through, so the output schema rejects a malformed total.
+		count: count ?? null,
 		results: items,
 	};
 	return shaped as PageOutput;

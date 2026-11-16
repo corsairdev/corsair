@@ -537,7 +537,7 @@ Create a response, or update the one that already matches it. `created` backdate
 **Risk:** `write`
 
 ```ts
-await corsair.simplesat.api.responses.create({ survey_id: 1, answers: [{ question_id: 1, choice: '3', comment: 'Very slow!' }], customer: { email: 'tester@simplesat.io' } });
+await corsair.simplesat.api.responses.create({ survey_id: 1, answers: [{ question_id: 1, choice: '3' }], customer: { email: 'tester@simplesat.io' } });
 ```
 
 **Input**
@@ -553,7 +553,7 @@ await corsair.simplesat.api.responses.create({ survey_id: 1, answers: [{ questio
 | `ticket` | `object` | No | — |
 | `customer` | `object` | No | — |
 
-Creates a response or updates the one that already matches it. `created` backdates it, which is how a survey answered elsewhere is imported.
+Creates a response or updates the one that already matches it. `created` backdates it, which is how a survey answered elsewhere is imported. A `comment` sent with a multiple-choice answer is not stored (seen live); put written feedback on the follow-up comment question.
 
 <AccordionGroup>
 <Accordion title="answers full type">
