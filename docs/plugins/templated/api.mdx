@@ -268,7 +268,7 @@ await corsair.templated.api.galleryFonts.list({});
 
 Render a template to an image, PDF or video, spending an API credit; layer overrides fill the template
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.templated.api.renders.create({ template: '306c724a-d138-486a-a601-0b2a9ced52be', format: 'pdf', layers: { 'text-1': { text: 'Hello' } } });
@@ -280,7 +280,7 @@ await corsair.templated.api.renders.create({ template: '306c724a-d138-486a-a601-
 |------|------|----------|-------------|
 | `template` | `string` | No | The template to render. Required unless `templates` is sent. |
 | `templates` | `string[]` | No | Batch render several templates. When present, `template` is ignored and not required. |
-| `layers` | `Record<string, Record<string, string>>` | No | Layer overrides keyed by layer name, each a map of property to value, e.g. `{ "text-1": { "text": "Hello" } }`. |
+| `layers` | `Record<string, Record<string, any>>` | No | Layer overrides keyed by layer name, each a map of property to value, e.g. `{ "text-1": { "text": "Hello" } }`. |
 | `format` | `jpg \| png \| webp \| pdf \| mp4 \| html` | No | The output format. The API defaults it to jpg. |
 | `width` | `number` | No | Custom width in pixels, 100 to 5000. |
 | `height` | `number` | No | Custom height in pixels, 100 to 5000. |
@@ -376,7 +376,7 @@ await corsair.templated.api.renders.delete({ renderId: 'ce424057-6b54-41bb-afec-
 
 Duplicate an existing render with the same template and payload, spending an API credit
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.templated.api.renders.duplicate({ renderId: 'ce424057-6b54-41bb-afec-adc35a2b9175' });
@@ -519,7 +519,7 @@ await corsair.templated.api.renders.list({});
 
 Merge several renders, plus external PDFs when given, into one PDF and return its hosted URL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.templated.api.renders.merge({ ids: ['ce424057-6b54-41bb-afec-adc35a2b9175', 'aa112233-4455-6677-8899-aabbccddeeff'], name: 'packet' });
@@ -604,9 +604,6 @@ await corsair.templated.api.templates.create({ name: 'Square post', width: 1024,
 | `width` | `number` | Yes | Width in pixels, up to 5000. |
 | `height` | `number` | Yes | Height in pixels, up to 5000. |
 | `layers` | `object[]` | Yes | The layers that make up a single-page template, each with `layer` and `type`. |
-| `description` | `string` | No | — |
-| `folderId` | `string` | No | — |
-| `tags` | `string[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="layers full type">
@@ -623,10 +620,10 @@ await corsair.templated.api.templates.create({ name: 'Square post', width: 1024,
   rotation?: number | null,
   color?: string | null,
   background?: string | null,
-  fontFamily?: string | null,
-  fontSize?: number | null,
-  fontWeight?: string | null,
-  textAlign?: string | null,
+  font_family?: string | null,
+  font_size?: string | number | null,
+  font_weight?: string | number | null,
+  text_align?: string | null,
   image_url?: string | null,
   locked?: boolean | null
 }[]
@@ -766,10 +763,10 @@ await corsair.templated.api.templates.layers({ templateId: '306c724a-d138-486a-a
   rotation?: number | null,
   color?: string | null,
   background?: string | null,
-  fontFamily?: string | null,
-  fontSize?: number | null,
-  fontWeight?: string | null,
-  textAlign?: string | null,
+  font_family?: string | null,
+  font_size?: string | number | null,
+  font_weight?: string | number | null,
+  text_align?: string | null,
   image_url?: string | null,
   locked?: boolean | null
 }[]
