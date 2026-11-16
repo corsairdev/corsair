@@ -73,7 +73,7 @@ export type HelpwiseRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	// `unknown` because request bodies vary by endpoint and are validated by Zod schemas prior to this call.
 	body?: Record<string, unknown> | unknown[];
-	query?: Record<string, string | number | boolean | undefined>;
+	query?: Record<string, string | number | boolean | number[] | undefined>;
 	headers?: Record<string, string>;
 	baseUrl?: string;
 };
@@ -98,16 +98,24 @@ export async function makeHelpwiseRequest<T>(
 		throw new AuthMissingError('helpwise', 'api_key');
 	}
 
+	const base = baseUrl ?? HELPWISE_API_BASE;
+	// apis.helpwise.io takes HTTP Basic; the older app.helpwise.io/dev-apis
+	// routes answer 401 to Basic and want `Authorization: <key>:<secret>`.
+	const usesDevApis = base === HELPWISE_APP_BASE;
 	const config: OpenAPIConfig = {
-		BASE: baseUrl ?? HELPWISE_API_BASE,
+		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		USERNAME: credentials.apiKey,
-		PASSWORD: credentials.apiSecret,
+		...(usesDevApis
+			? {}
+			: { USERNAME: credentials.apiKey, PASSWORD: credentials.apiSecret }),
 		HEADERS: {
 			'Content-Type': 'application/json',
 			...headers,
+			...(usesDevApis
+				? { Authorization: `${credentials.apiKey}:${credentials.apiSecret}` }
+				: {}),
 		},
 	};
 

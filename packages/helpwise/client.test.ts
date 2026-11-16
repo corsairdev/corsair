@@ -109,6 +109,31 @@ describe('makeHelpwiseRequest', () => {
 			method: 'POST',
 			url: '/dev-apis/users/me',
 		});
+		// Live: dev-apis answer 401 to Basic auth and accept `key:secret`.
+		expect(config.HEADERS).toMatchObject({ Authorization: 'my_key:my_secret' });
+		expect(config.USERNAME).toBeUndefined();
+		expect(config.PASSWORD).toBeUndefined();
+	});
+
+	it('sends repeated inboxIds[] parameters for a multi-inbox list', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ threads: [], nextPageToken: '' }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		const actualHttp =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http');
+		mockRequest.mockImplementation(actualHttp.request);
+		try {
+			await makeHelpwiseRequest('/conversations', 'k:s', {
+				query: { 'inboxIds[]': [1, 2] },
+			});
+			const url = String(fetchMock.mock.calls[0]?.[0]);
+			expect(url).toContain('inboxIds%5B%5D=1&inboxIds%5B%5D=2');
+		} finally {
+			fetchMock.mockRestore();
+		}
 	});
 
 	it('throws AuthMissingError when key is empty string without issuing request', async () => {
