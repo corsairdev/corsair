@@ -339,8 +339,11 @@ const ApisSaveInputSchema = z.object({
 	owner: z.string().min(1),
 	api: z.string().min(1),
 	definition: z.string().min(1),
-	/** `yaml` or `json`, which decides the content type of the body. */
-	format: z.enum(['yaml', 'json']).optional(),
+	/**
+	 * `yaml`, `json` or `graphql` (SDL), which decides the content type of the
+	 * body. Defaults to `yaml`.
+	 */
+	format: z.enum(['yaml', 'json', 'graphql']).optional(),
 	/** Needed for GraphQL and MCP, where the definition carries no version. */
 	version: z.string().optional(),
 	isPrivate: z.boolean().optional(),

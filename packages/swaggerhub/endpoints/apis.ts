@@ -19,6 +19,13 @@ function mediaTypeOf(format: 'yaml' | 'json' | undefined): string {
 	return format === 'json' ? 'application/json' : 'application/yaml';
 }
 
+/** A save also takes GraphQL SDL, which SwaggerHub reads as `application/graphql`. */
+function saveMediaTypeOf(
+	format: 'yaml' | 'json' | 'graphql' | undefined,
+): string {
+	return format === 'graphql' ? 'application/graphql' : mediaTypeOf(format);
+}
+
 export const list: SwaggerhubEndpoints['apisList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -133,7 +140,7 @@ export const save: SwaggerhubEndpoints['apisSave'] = (ctx, input) =>
 				projectName,
 				noReconcile,
 			}),
-			definition: { content: definition, mediaType: mediaTypeOf(format) },
+			definition: { content: definition, mediaType: saveMediaTypeOf(format) },
 		}),
 		{
 			// The reply carries no body, so everything reported came from the input.

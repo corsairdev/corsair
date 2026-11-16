@@ -24,13 +24,13 @@ pnpm add @corsair-dev/swaggerhub
 | `apis.getNotifications` | `swaggerhub.api.apis.getNotifications` | `read` | Read which notification scopes are enabled for one API, and for the caller |
 | `apis.list` | `swaggerhub.api.apis.list` | `read` | List the APIs under one owner, with paging, sorting and a filter for the token user own APIs |
 | `apis.listVersions` | `swaggerhub.api.apis.listVersions` | `read` | List every version of one API, with its default version and metadata |
-| `apis.rename` | `swaggerhub.api.apis.rename` | `write` | Rename an API. Its published URLs change, so anything pointing at the old name breaks |
+| `apis.rename` | `swaggerhub.api.apis.rename` | `destructive` | Rename an API. Its published URLs change, so anything pointing at the old name breaks |
 | `apis.save` | `swaggerhub.api.apis.save` | `write` | Save a definition to one API, creating the version or updating it. Answers 409 on a published version unless force is set |
 | `apis.setDefaultVersion` | `swaggerhub.api.apis.setDefaultVersion` | `write` | Change which version the API shows by default. The version has to exist |
 | `apis.setNotifications` | `swaggerhub.api.apis.setNotifications` | `write` | Turn on notification scopes for one API. The body is the bare list of scopes |
 | `apiSettings.getLifecycle` | `swaggerhub.api.apiSettings.getLifecycle` | `read` | Read whether one API version is published |
 | `apiSettings.getVisibility` | `swaggerhub.api.apiSettings.getVisibility` | `read` | Read whether one API version is private |
-| `apiSettings.setLifecycle` | `swaggerhub.api.apiSettings.setLifecycle` | `write` | Publish or unpublish one API version. Publishing exposes it to everyone it is visible to |
+| `apiSettings.setLifecycle` | `swaggerhub.api.apiSettings.setLifecycle` | `destructive` | Publish or unpublish one API version. Publishing exposes it to everyone it is visible to |
 | `apiSettings.setVisibility` | `swaggerhub.api.apiSettings.setVisibility` | `write` | Make one API version private or public. A private version leaves public view immediately |
 | `comments.create` | `swaggerhub.api.comments.create` | `destructive` | Post a comment on one API version, optionally anchored to a line range. Collaborators with notifications on are told about it |
 | `comments.delete` | `swaggerhub.api.comments.delete` | `destructive` | Delete one comment and its replies. There is no undo |

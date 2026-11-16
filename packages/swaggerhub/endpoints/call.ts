@@ -105,7 +105,9 @@ export function queryOf(
  */
 export function readDefinition(raw: unknown): string {
 	if (typeof raw === 'string') return raw;
-	if (raw === undefined || raw === null) return '';
+	if (raw === undefined || raw === null) {
+		throw new Error('SwaggerHub returned no definition body');
+	}
 	// A JSON or YAML definition that the parser already turned into an object.
 	return JSON.stringify(raw);
 }

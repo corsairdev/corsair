@@ -151,6 +151,32 @@ describe('swaggerhub apis', () => {
 		});
 	});
 
+	it('refuses a definition read that answers JSON null', async () => {
+		mockFetch(jsonResponse(null));
+		await expect(
+			endpoints.apis.getDefinition(ctx, {
+				owner: 'admin',
+				api: 'example',
+				version: '1.0.0',
+			}),
+		).rejects.toThrow(/no definition/);
+	});
+
+	it('sends a GraphQL definition as application/graphql', async () => {
+		mockFetch(new Response(null, { status: 201 }));
+		const schema = 'type Query { ping: String }';
+		await endpoints.apis.save(ctx, {
+			owner: 'admin',
+			api: 'example',
+			definition: schema,
+			format: 'graphql',
+			version: '1.0.0',
+		});
+
+		expect(rawBody()).toBe(schema);
+		expect(sentHeader('Content-Type')).toContain('application/graphql');
+	});
+
 	it('sends the definition itself as the body on save', async () => {
 		mockFetch(new Response(null, { status: 201 }));
 		const result = await endpoints.apis.save(ctx, {

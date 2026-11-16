@@ -136,7 +136,7 @@ apiNotes:
   apis.getDefinition: |
     Answers `{ definition }` as text. `resolved` follows `$ref`s and `flatten` lifts inline schemas into named models; GraphQL definitions support neither. A JSON definition is re-serialized to a string, so the reply is always text.
   apis.save: |
-    **The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name and version it saved. Core does not pass the status on, so whether the save created the version is not reported.
+    **The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. Use `format: 'graphql'` for GraphQL SDL, which is sent as `application/graphql`. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name and version it saved. Core does not pass the status on, so whether the save created the version is not reported.
   apis.delete: |
     Deletes the API and every version of it. The route answers 200 with no body, so the plugin reports `{ owner, api, deleted: true }`.
   apis.deleteVersion: |
@@ -154,7 +154,7 @@ apiNotes:
   apis.setDefaultVersion: |
     Writes the default version. The version has to exist, or the route answers 404.
   apis.rename: |
-    Sends `newName` as a query parameter, with no body. **The published URLs change**, so anything pointing at the old name breaks.
+    Sends `newName` as a query parameter, with no body. **The published URLs change**, so anything pointing at the old name breaks. SwaggerHub emails the API's designers and consumers about the rename, and the old name stays reserved, so a later save under it answers 403.
   apis.getNotifications: |
     Answers `{ enabled }`, the notification scopes the caller has on the API. `scope` is a required query parameter, `USER` (the default) or `ALL`, and `version` narrows it to one version.
   apis.setNotifications: |
@@ -164,7 +164,7 @@ apiNotes:
   apiSettings.getLifecycle: |
     Answers `{ published }` for one version.
   apiSettings.setLifecycle: |
-    Publishes or unpublishes one version. `force` matters when the version is already published, and a lifecycle change is what makes a spec visible in the portal.
+    Publishes or unpublishes one version. `force` matters when the version is already published, and a lifecycle change is what makes a spec visible in the portal. SwaggerHub emails the users the API is shared with when it is published or unpublished.
   apiSettings.getVisibility: |
     Answers `{ private }` for one version.
   apiSettings.setVisibility: |

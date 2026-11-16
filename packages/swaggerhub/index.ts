@@ -386,7 +386,8 @@ const swaggerhubEndpointMeta = {
 			'Change which version the API shows by default. The version has to exist',
 	},
 	'apis.rename': {
-		riskLevel: 'write',
+		// SwaggerHub emails the API's designers and consumers about a rename.
+		riskLevel: 'destructive',
 		description:
 			'Rename an API. Its published URLs change, so anything pointing at the old name breaks',
 	},
@@ -410,7 +411,8 @@ const swaggerhubEndpointMeta = {
 		description: 'Read whether one API version is published',
 	},
 	'apiSettings.setLifecycle': {
-		riskLevel: 'write',
+		// Publishing or unpublishing emails the users the API is shared with.
+		riskLevel: 'destructive',
 		description:
 			'Publish or unpublish one API version. Publishing exposes it to everyone it is visible to',
 	},

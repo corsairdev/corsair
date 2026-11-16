@@ -544,7 +544,7 @@ Answers an APIs.json object with an `apis` array, one entry per version, plus `d
 
 Rename an API. Its published URLs change, so anything pointing at the old name breaks
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.swaggerhub.api.apis.rename({ owner: 'your-org', api: 'petstore', newName: 'petstore-v2' });
@@ -558,7 +558,7 @@ await corsair.swaggerhub.api.apis.rename({ owner: 'your-org', api: 'petstore', n
 | `api` | `string` | Yes | — |
 | `newName` | `string` | Yes | — |
 
-Sends `newName` as a query parameter, with no body. **The published URLs change**, so anything pointing at the old name breaks.
+Sends `newName` as a query parameter, with no body. **The published URLs change**, so anything pointing at the old name breaks. SwaggerHub emails the API's designers and consumers about the rename, and the old name stays reserved, so a later save under it answers 403.
 
 
 
@@ -594,14 +594,14 @@ await corsair.swaggerhub.api.apis.save({ owner: 'your-org', api: 'petstore', def
 | `owner` | `string` | Yes | — |
 | `api` | `string` | Yes | — |
 | `definition` | `string` | Yes | — |
-| `format` | `yaml \| json` | No | — |
+| `format` | `yaml \| json \| graphql` | No | — |
 | `version` | `string` | No | — |
 | `isPrivate` | `boolean` | No | — |
 | `force` | `boolean` | No | — |
 | `projectName` | `string` | No | — |
 | `noReconcile` | `boolean` | No | — |
 
-**The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name and version it saved. Core does not pass the status on, so whether the save created the version is not reported.
+**The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. Use `format: 'graphql'` for GraphQL SDL, which is sent as `application/graphql`. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name and version it saved. Core does not pass the status on, so whether the save created the version is not reported.
 
 
 
@@ -764,7 +764,7 @@ Answers `{ private }` for one version.
 
 Publish or unpublish one API version. Publishing exposes it to everyone it is visible to
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.swaggerhub.api.apiSettings.setLifecycle({ owner: 'your-org', api: 'petstore', version: '1.0.0', published: true });
@@ -780,7 +780,7 @@ await corsair.swaggerhub.api.apiSettings.setLifecycle({ owner: 'your-org', api: 
 | `published` | `boolean` | Yes | — |
 | `force` | `boolean` | No | — |
 
-Publishes or unpublishes one version. `force` matters when the version is already published, and a lifecycle change is what makes a spec visible in the portal.
+Publishes or unpublishes one version. `force` matters when the version is already published, and a lifecycle change is what makes a spec visible in the portal. SwaggerHub emails the users the API is shared with when it is published or unpublished.
 
 
 

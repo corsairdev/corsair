@@ -166,6 +166,11 @@ describe('swaggerhub plugin definition', () => {
 		expect(meta['apis.disableNotifications']?.irreversible).toBeUndefined();
 	});
 
+	it("marks renaming and publishing destructive, since SwaggerHub emails the API's users", () => {
+		expect(meta['apis.rename']?.riskLevel).toBe('destructive');
+		expect(meta['apiSettings.setLifecycle']?.riskLevel).toBe('destructive');
+	});
+
 	it('says that renaming breaks the old published URLs', () => {
 		expect(meta['apis.rename']?.description).toMatch(/breaks/);
 	});
