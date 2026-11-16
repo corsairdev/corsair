@@ -262,7 +262,7 @@ await corsair.hex.api.cells.create({ projectId: '00000000-0000-4000-8000-0000000
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `staticId` | `string` | Yes | — |
-| `cellType` | `CODE \| MARKDOWN \| DISPLAY_TABLE \| INPUT \| SQL \| VEGA_CHART \| CELL_GROUP \| METRIC \| TEXT \| MAP \| WRITEBACK \| DBT_METRIC \| PIVOT \| FILTER \| COMPONENT_IMPORT \| CHART \| BLOCK \| EXPLORE \| COLLAPSIBLE` | Yes | — |
+| `cellType` | `CODE \| MARKDOWN \| DISPLAY_TABLE \| INPUT \| SQL \| VEGA_CHART \| CELL_GROUP \| METRIC \| TEXT \| MAP \| WRITEBACK \| DBT_METRIC \| PIVOT \| FILTER \| COMPONENT_IMPORT \| CHART \| BLOCK \| EXPLORE \| COLLAPSIBLE \| string` | Yes | — |
 | `label` | `string \| null` | Yes | — |
 | `dataConnectionId` | `string \| null` | Yes | — |
 | `contents` | `object` | Yes | — |
@@ -348,7 +348,7 @@ await corsair.hex.api.cells.get({ cellId: '00000000-0000-4000-8000-000000000002'
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `staticId` | `string` | Yes | — |
-| `cellType` | `CODE \| MARKDOWN \| DISPLAY_TABLE \| INPUT \| SQL \| VEGA_CHART \| CELL_GROUP \| METRIC \| TEXT \| MAP \| WRITEBACK \| DBT_METRIC \| PIVOT \| FILTER \| COMPONENT_IMPORT \| CHART \| BLOCK \| EXPLORE \| COLLAPSIBLE` | Yes | — |
+| `cellType` | `CODE \| MARKDOWN \| DISPLAY_TABLE \| INPUT \| SQL \| VEGA_CHART \| CELL_GROUP \| METRIC \| TEXT \| MAP \| WRITEBACK \| DBT_METRIC \| PIVOT \| FILTER \| COMPONENT_IMPORT \| CHART \| BLOCK \| EXPLORE \| COLLAPSIBLE \| string` | Yes | — |
 | `label` | `string \| null` | Yes | — |
 | `dataConnectionId` | `string \| null` | Yes | — |
 | `contents` | `object` | Yes | — |
@@ -454,7 +454,7 @@ await corsair.hex.api.cells.getOutput({ cellId: '00000000-0000-4000-8000-0000000
 {
   id: string,
   staticId: string,
-  cellType: CODE | MARKDOWN | DISPLAY_TABLE | INPUT | SQL | VEGA_CHART | CELL_GROUP | METRIC | TEXT | MAP | WRITEBACK | DBT_METRIC | PIVOT | FILTER | COMPONENT_IMPORT | CHART | BLOCK | EXPLORE | COLLAPSIBLE
+  cellType: CODE | MARKDOWN | DISPLAY_TABLE | INPUT | SQL | VEGA_CHART | CELL_GROUP | METRIC | TEXT | MAP | WRITEBACK | DBT_METRIC | PIVOT | FILTER | COMPONENT_IMPORT | CHART | BLOCK | EXPLORE | COLLAPSIBLE | string
 }
 ```
 </Accordion>
@@ -463,11 +463,11 @@ await corsair.hex.api.cells.getOutput({ cellId: '00000000-0000-4000-8000-0000000
 
 ```ts
 {
-  type: table,
+  type: table | string,
   rowLimit: number,
   rowsReturned: number,
   totalRows: number | null,
-  totalRowsKind: EXACT | LOWER_BOUND | UNKNOWN,
+  totalRowsKind: EXACT | LOWER_BOUND | UNKNOWN | string,
   truncated: boolean,
   columns: {
     name: string,
@@ -476,7 +476,7 @@ await corsair.hex.api.cells.getOutput({ cellId: '00000000-0000-4000-8000-0000000
   rows: {
   }[]
 } | {
-  type: cell_run_error,
+  type: cell_run_error | string,
   message: string,
   traceback: string | null
 }
@@ -525,7 +525,7 @@ await corsair.hex.api.cells.list({ projectId: '00000000-0000-4000-8000-000000000
 {
   id: string,
   staticId: string,
-  cellType: CODE | MARKDOWN | DISPLAY_TABLE | INPUT | SQL | VEGA_CHART | CELL_GROUP | METRIC | TEXT | MAP | WRITEBACK | DBT_METRIC | PIVOT | FILTER | COMPONENT_IMPORT | CHART | BLOCK | EXPLORE | COLLAPSIBLE,
+  cellType: CODE | MARKDOWN | DISPLAY_TABLE | INPUT | SQL | VEGA_CHART | CELL_GROUP | METRIC | TEXT | MAP | WRITEBACK | DBT_METRIC | PIVOT | FILTER | COMPONENT_IMPORT | CHART | BLOCK | EXPLORE | COLLAPSIBLE | string,
   label: string | null,
   dataConnectionId: string | null,
   contents: {
@@ -608,7 +608,7 @@ await corsair.hex.api.cells.update({ cellId: '00000000-0000-4000-8000-0000000000
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `staticId` | `string` | Yes | — |
-| `cellType` | `CODE \| MARKDOWN \| DISPLAY_TABLE \| INPUT \| SQL \| VEGA_CHART \| CELL_GROUP \| METRIC \| TEXT \| MAP \| WRITEBACK \| DBT_METRIC \| PIVOT \| FILTER \| COMPONENT_IMPORT \| CHART \| BLOCK \| EXPLORE \| COLLAPSIBLE` | Yes | — |
+| `cellType` | `CODE \| MARKDOWN \| DISPLAY_TABLE \| INPUT \| SQL \| VEGA_CHART \| CELL_GROUP \| METRIC \| TEXT \| MAP \| WRITEBACK \| DBT_METRIC \| PIVOT \| FILTER \| COMPONENT_IMPORT \| CHART \| BLOCK \| EXPLORE \| COLLAPSIBLE \| string` | Yes | — |
 | `label` | `string \| null` | Yes | — |
 | `dataConnectionId` | `string \| null` | Yes | — |
 | `contents` | `object` | Yes | — |
@@ -1156,7 +1156,7 @@ await corsair.hex.api.dataConnections.create({ name: 'Analytics warehouse', type
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `type` | `alloydb \| athena \| bigquery \| clickhouse \| cloudsql__mysql \| cloudsql__postgres \| cloudsql__sqlserver \| databricks \| dremio \| mariadb \| materialize \| motherduck \| mysql \| postgres \| prestodb \| rds__mysql \| rds__postgres \| redshift \| snowflake \| sqlserver \| starburst \| transform \| trino` | Yes | — |
+| `type` | `alloydb \| athena \| bigquery \| clickhouse \| cloudsql__mysql \| cloudsql__postgres \| cloudsql__sqlserver \| databricks \| dremio \| mariadb \| materialize \| motherduck \| mysql \| postgres \| prestodb \| rds__mysql \| rds__postgres \| redshift \| snowflake \| sqlserver \| starburst \| transform \| trino \| string` | Yes | — |
 | `description` | `string` | No | — |
 | `sensitivity` | `object` | Yes | — |
 | `connectionDetails` | `object \| null` | Yes | — |
@@ -1165,7 +1165,7 @@ await corsair.hex.api.dataConnections.create({ name: 'Analytics warehouse', type
 | `allowWritebackCells` | `boolean` | Yes | — |
 | `schemaFilters` | `object` | No | — |
 | `schemaRefreshSchedule` | `object` | No | — |
-| `schemaRefreshAccess` | `ADMINS \| USERS_WITH_QUERY_ACCESS` | Yes | — |
+| `schemaRefreshAccess` | `ADMINS \| USERS_WITH_QUERY_ACCESS \| string` | Yes | — |
 | `sharing` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1175,7 +1175,7 @@ await corsair.hex.api.dataConnections.create({ name: 'Analytics warehouse', type
 {
   configured: boolean,
   effective: boolean,
-  overrideReason: USER_SCOPED_OAUTH_RESULTS | null
+  overrideReason: USER_SCOPED_OAUTH_RESULTS | string | null
 }
 ```
 </Accordion>
@@ -1422,12 +1422,12 @@ await corsair.hex.api.dataConnections.create({ name: 'Analytics warehouse', type
 ```ts
 {
   workspace?: {
-    public?: NONE | QUERY | VIEW_RESULTS,
-    guests?: NONE | QUERY | VIEW_RESULTS,
-    members?: NONE | QUERY | VIEW_RESULTS
+    public?: NONE | QUERY | VIEW_RESULTS | string,
+    guests?: NONE | QUERY | VIEW_RESULTS | string,
+    members?: NONE | QUERY | VIEW_RESULTS | string
   },
   groups?: {
-    access: NONE | QUERY | VIEW_RESULTS,
+    access: NONE | QUERY | VIEW_RESULTS | string,
     group: {
       name: string,
       id: string
@@ -1468,7 +1468,7 @@ await corsair.hex.api.dataConnections.get({ dataConnectionId: '00000000-0000-400
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `type` | `alloydb \| athena \| bigquery \| clickhouse \| cloudsql__mysql \| cloudsql__postgres \| cloudsql__sqlserver \| databricks \| dremio \| mariadb \| materialize \| motherduck \| mysql \| postgres \| prestodb \| rds__mysql \| rds__postgres \| redshift \| snowflake \| sqlserver \| starburst \| transform \| trino` | Yes | — |
+| `type` | `alloydb \| athena \| bigquery \| clickhouse \| cloudsql__mysql \| cloudsql__postgres \| cloudsql__sqlserver \| databricks \| dremio \| mariadb \| materialize \| motherduck \| mysql \| postgres \| prestodb \| rds__mysql \| rds__postgres \| redshift \| snowflake \| sqlserver \| starburst \| transform \| trino \| string` | Yes | — |
 | `description` | `string` | No | — |
 | `sensitivity` | `object` | Yes | — |
 | `connectionDetails` | `object \| null` | Yes | — |
@@ -1477,7 +1477,7 @@ await corsair.hex.api.dataConnections.get({ dataConnectionId: '00000000-0000-400
 | `allowWritebackCells` | `boolean` | Yes | — |
 | `schemaFilters` | `object` | No | — |
 | `schemaRefreshSchedule` | `object` | No | — |
-| `schemaRefreshAccess` | `ADMINS \| USERS_WITH_QUERY_ACCESS` | Yes | — |
+| `schemaRefreshAccess` | `ADMINS \| USERS_WITH_QUERY_ACCESS \| string` | Yes | — |
 | `sharing` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1487,7 +1487,7 @@ await corsair.hex.api.dataConnections.get({ dataConnectionId: '00000000-0000-400
 {
   configured: boolean,
   effective: boolean,
-  overrideReason: USER_SCOPED_OAUTH_RESULTS | null
+  overrideReason: USER_SCOPED_OAUTH_RESULTS | string | null
 }
 ```
 </Accordion>
@@ -1665,31 +1665,31 @@ await corsair.hex.api.dataConnections.get({ dataConnectionId: '00000000-0000-400
 {
   databases?: {
     include?: {
-      matchType: EXACT | PREFIX | REGEX | SUFFIX,
+      matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
       values: string[]
     },
     exclude?: {
-      matchType: EXACT | PREFIX | REGEX | SUFFIX,
+      matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
       values: string[]
     }
   },
   schemas?: {
     include?: {
-      matchType: EXACT | PREFIX | REGEX | SUFFIX,
+      matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
       values: string[]
     },
     exclude?: {
-      matchType: EXACT | PREFIX | REGEX | SUFFIX,
+      matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
       values: string[]
     }
   },
   tables?: {
     include?: {
-      matchType: EXACT | PREFIX | REGEX | SUFFIX,
+      matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
       values: string[]
     },
     exclude?: {
-      matchType: EXACT | PREFIX | REGEX | SUFFIX,
+      matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
       values: string[]
     }
   }
@@ -1701,7 +1701,7 @@ await corsair.hex.api.dataConnections.get({ dataConnectionId: '00000000-0000-400
 
 ```ts
 {
-  cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+  cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
   enabled: boolean,
   daily?: {
     hour: number,
@@ -1709,7 +1709,7 @@ await corsair.hex.api.dataConnections.get({ dataConnectionId: '00000000-0000-400
     timezoneString: string
   } | null,
   weekly?: {
-    dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY,
+    dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string,
     hour: number,
     minute: number,
     timezoneString: string
@@ -1737,12 +1737,12 @@ await corsair.hex.api.dataConnections.get({ dataConnectionId: '00000000-0000-400
       id: string,
       name: string
     },
-    access: NONE | QUERY | VIEW_RESULTS
+    access: NONE | QUERY | VIEW_RESULTS | string
   }[],
   workspace?: {
-    members?: NONE | QUERY | VIEW_RESULTS,
-    guests?: NONE | QUERY | VIEW_RESULTS,
-    public?: NONE | QUERY | VIEW_RESULTS
+    members?: NONE | QUERY | VIEW_RESULTS | string,
+    guests?: NONE | QUERY | VIEW_RESULTS | string,
+    public?: NONE | QUERY | VIEW_RESULTS | string
   }
 }
 ```
@@ -1792,12 +1792,12 @@ await corsair.hex.api.dataConnections.list({ limit: 10 });
   {
     id: string,
     name: string,
-    type: alloydb | athena | bigquery | clickhouse | cloudsql__mysql | cloudsql__postgres | cloudsql__sqlserver | databricks | dremio | mariadb | materialize | motherduck | mysql | postgres | prestodb | rds__mysql | rds__postgres | redshift | snowflake | sqlserver | starburst | transform | trino,
+    type: alloydb | athena | bigquery | clickhouse | cloudsql__mysql | cloudsql__postgres | cloudsql__sqlserver | databricks | dremio | mariadb | materialize | motherduck | mysql | postgres | prestodb | rds__mysql | rds__postgres | redshift | snowflake | sqlserver | starburst | transform | trino | string,
     description?: string,
     sensitivity: {
       configured: boolean,
       effective: boolean,
-      overrideReason: USER_SCOPED_OAUTH_RESULTS | null
+      overrideReason: USER_SCOPED_OAUTH_RESULTS | string | null
     },
     connectionDetails: {
       athena: {
@@ -1966,37 +1966,37 @@ await corsair.hex.api.dataConnections.list({ limit: 10 });
     schemaFilters?: {
       databases?: {
         include?: {
-          matchType: EXACT | PREFIX | REGEX | SUFFIX,
+          matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
           values: string[]
         },
         exclude?: {
-          matchType: EXACT | PREFIX | REGEX | SUFFIX,
+          matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
           values: string[]
         }
       },
       schemas?: {
         include?: {
-          matchType: EXACT | PREFIX | REGEX | SUFFIX,
+          matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
           values: string[]
         },
         exclude?: {
-          matchType: EXACT | PREFIX | REGEX | SUFFIX,
+          matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
           values: string[]
         }
       },
       tables?: {
         include?: {
-          matchType: EXACT | PREFIX | REGEX | SUFFIX,
+          matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
           values: string[]
         },
         exclude?: {
-          matchType: EXACT | PREFIX | REGEX | SUFFIX,
+          matchType: EXACT | PREFIX | REGEX | SUFFIX | string,
           values: string[]
         }
       }
     },
     schemaRefreshSchedule?: {
-      cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+      cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
       enabled: boolean,
       daily?: {
         hour: number,
@@ -2004,7 +2004,7 @@ await corsair.hex.api.dataConnections.list({ limit: 10 });
         timezoneString: string
       } | null,
       weekly?: {
-        dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY,
+        dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string,
         hour: number,
         minute: number,
         timezoneString: string
@@ -2020,30 +2020,30 @@ await corsair.hex.api.dataConnections.list({ limit: 10 });
         timezoneString: string
       } | null
     },
-    schemaRefreshAccess: ADMINS | USERS_WITH_QUERY_ACCESS,
+    schemaRefreshAccess: ADMINS | USERS_WITH_QUERY_ACCESS | string,
     sharing: {
       groups?: {
         group: {
           id: string,
           name: string
         },
-        access: NONE | QUERY | VIEW_RESULTS
+        access: NONE | QUERY | VIEW_RESULTS | string
       }[],
       workspace?: {
-        members?: NONE | QUERY | VIEW_RESULTS,
-        guests?: NONE | QUERY | VIEW_RESULTS,
-        public?: NONE | QUERY | VIEW_RESULTS
+        members?: NONE | QUERY | VIEW_RESULTS | string,
+        guests?: NONE | QUERY | VIEW_RESULTS | string,
+        public?: NONE | QUERY | VIEW_RESULTS | string
       }
     }
   } | {
     id: string,
     name: string,
-    type: alloydb | athena | bigquery | clickhouse | cloudsql__mysql | cloudsql__postgres | cloudsql__sqlserver | databricks | dremio | mariadb | materialize | motherduck | mysql | postgres | prestodb | rds__mysql | rds__postgres | redshift | snowflake | sqlserver | starburst | transform | trino,
+    type: alloydb | athena | bigquery | clickhouse | cloudsql__mysql | cloudsql__postgres | cloudsql__sqlserver | databricks | dremio | mariadb | materialize | motherduck | mysql | postgres | prestodb | rds__mysql | rds__postgres | redshift | snowflake | sqlserver | starburst | transform | trino | string,
     description?: string,
     sensitivity: {
       configured: boolean,
       effective: boolean,
-      overrideReason: USER_SCOPED_OAUTH_RESULTS | null
+      overrideReason: USER_SCOPED_OAUTH_RESULTS | string | null
     }
   }
 )[]
@@ -2271,7 +2271,7 @@ await corsair.hex.api.dataConnections.update({ dataConnectionId: '00000000-0000-
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `type` | `alloydb \| athena \| bigquery \| clickhouse \| cloudsql__mysql \| cloudsql__postgres \| cloudsql__sqlserver \| databricks \| dremio \| mariadb \| materialize \| motherduck \| mysql \| postgres \| prestodb \| rds__mysql \| rds__postgres \| redshift \| snowflake \| sqlserver \| starburst \| transform \| trino` | Yes | — |
+| `type` | `alloydb \| athena \| bigquery \| clickhouse \| cloudsql__mysql \| cloudsql__postgres \| cloudsql__sqlserver \| databricks \| dremio \| mariadb \| materialize \| motherduck \| mysql \| postgres \| prestodb \| rds__mysql \| rds__postgres \| redshift \| snowflake \| sqlserver \| starburst \| transform \| trino \| string` | Yes | — |
 | `description` | `string` | No | — |
 | `sensitivity` | `object` | Yes | — |
 | `connectionDetails` | `object \| null` | Yes | — |
@@ -2280,7 +2280,7 @@ await corsair.hex.api.dataConnections.update({ dataConnectionId: '00000000-0000-
 | `allowWritebackCells` | `boolean` | Yes | — |
 | `schemaFilters` | `object` | No | — |
 | `schemaRefreshSchedule` | `object` | No | — |
-| `schemaRefreshAccess` | `ADMINS \| USERS_WITH_QUERY_ACCESS` | Yes | — |
+| `schemaRefreshAccess` | `ADMINS \| USERS_WITH_QUERY_ACCESS \| string` | Yes | — |
 | `sharing` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2290,7 +2290,7 @@ await corsair.hex.api.dataConnections.update({ dataConnectionId: '00000000-0000-
 {
   configured: boolean,
   effective: boolean,
-  overrideReason: USER_SCOPED_OAUTH_RESULTS | null
+  overrideReason: USER_SCOPED_OAUTH_RESULTS | string | null
 }
 ```
 </Accordion>
@@ -2537,12 +2537,12 @@ await corsair.hex.api.dataConnections.update({ dataConnectionId: '00000000-0000-
 ```ts
 {
   workspace?: {
-    public?: NONE | QUERY | VIEW_RESULTS,
-    guests?: NONE | QUERY | VIEW_RESULTS,
-    members?: NONE | QUERY | VIEW_RESULTS
+    public?: NONE | QUERY | VIEW_RESULTS | string,
+    guests?: NONE | QUERY | VIEW_RESULTS | string,
+    members?: NONE | QUERY | VIEW_RESULTS | string
   },
   groups?: {
-    access: NONE | QUERY | VIEW_RESULTS,
+    access: NONE | QUERY | VIEW_RESULTS | string,
     group: {
       name: string,
       id: string
@@ -2566,7 +2566,10 @@ Use this endpoint to add or remove a status (including endorsements) from databa
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.dataConnections.updateSchema({ dataConnectionId: '00000000-0000-4000-8000-000000000004' });
+await corsair.hex.api.dataConnections.updateSchema({
+	dataConnectionId: '00000000-0000-4000-8000-000000000004',
+	updates: [{ type: 'TABLE', name: 'analytics.public.orders', status: 'Endorsed' }],
+});
 ```
 
 **Input**
@@ -3213,8 +3216,8 @@ await corsair.hex.api.projectRuns.getStatus({ projectId: '00000000-0000-4000-800
 | `projectVersion` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
 | `runUrl` | `string` | Yes | — |
-| `status` | `PENDING \| RUNNING \| ERRORED \| COMPLETED \| KILLED \| UNABLE_TO_ALLOCATE_KERNEL` | Yes | — |
-| `runTrigger` | `API \| SCHEDULED \| APP_REFRESH` | Yes | — |
+| `status` | `PENDING \| RUNNING \| ERRORED \| COMPLETED \| KILLED \| UNABLE_TO_ALLOCATE_KERNEL \| string` | Yes | — |
+| `runTrigger` | `API \| SCHEDULED \| APP_REFRESH \| string` | Yes | — |
 | `startTime` | `string \| null` | Yes | — |
 | `endTime` | `string \| null` | Yes | — |
 | `elapsedTime` | `number \| null` | Yes | — |
@@ -3228,12 +3231,12 @@ await corsair.hex.api.projectRuns.getStatus({ projectId: '00000000-0000-4000-800
 
 ```ts
 {
-  type: SUCCESS | FAILURE | ALL,
+  type: SUCCESS | FAILURE | ALL | string,
   subject?: string,
   body?: string,
-  recipientType: USER | GROUP | SLACK_CHANNEL,
+  recipientType: USER | GROUP | SLACK_CHANNEL | string,
   includeSuccessScreenshot: boolean,
-  screenshotFormat?: (png | pdf)[],
+  screenshotFormat?: (png | pdf | string)[],
   recipient: {
     id: string,
     name: string,
@@ -3301,20 +3304,20 @@ await corsair.hex.api.projectRuns.list({ projectId: '00000000-0000-4000-8000-000
   projectVersion: string,
   runId: string,
   runUrl: string,
-  status: PENDING | RUNNING | ERRORED | COMPLETED | KILLED | UNABLE_TO_ALLOCATE_KERNEL,
-  runTrigger: API | SCHEDULED | APP_REFRESH,
+  status: PENDING | RUNNING | ERRORED | COMPLETED | KILLED | UNABLE_TO_ALLOCATE_KERNEL | string,
+  runTrigger: API | SCHEDULED | APP_REFRESH | string,
   startTime: string | null,
   endTime: string | null,
   elapsedTime: number | null,
   flagConfigOverride?: string,
   traceId: string,
   notifications?: {
-    type: SUCCESS | FAILURE | ALL,
+    type: SUCCESS | FAILURE | ALL | string,
     subject?: string,
     body?: string,
-    recipientType: USER | GROUP | SLACK_CHANNEL,
+    recipientType: USER | GROUP | SLACK_CHANNEL | string,
     includeSuccessScreenshot: boolean,
-    screenshotFormat?: (png | pdf)[],
+    screenshotFormat?: (png | pdf | string)[],
     recipient: {
       id: string,
       name: string,
@@ -3397,12 +3400,12 @@ await corsair.hex.api.projectRuns.run({ projectId: '00000000-0000-4000-8000-0000
 
 ```ts
 {
-  type: SUCCESS | FAILURE | ALL,
+  type: SUCCESS | FAILURE | ALL | string,
   subject?: string,
   body?: string,
-  recipientType: USER | GROUP | SLACK_CHANNEL,
+  recipientType: USER | GROUP | SLACK_CHANNEL | string,
   includeSuccessScreenshot: boolean,
-  screenshotFormat?: (png | pdf)[],
+  screenshotFormat?: (png | pdf | string)[],
   recipient: {
     id: string,
     name: string,
@@ -3428,9 +3431,7 @@ Update the compute profile (kernel image and/or kernel size) on one or more proj
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.projects.batchUpdateComputeProfile({
-	projectIds: ['00000000-0000-4000-8000-000000000001'],
-});
+await corsair.hex.api.projects.batchUpdateComputeProfile({ projectIds: ['00000000-0000-4000-8000-000000000001'], kernelSize: 'medium' });
 ```
 
 **Input**
@@ -3494,7 +3495,7 @@ await corsair.hex.api.projects.create({ title: 'Customer Lifetime Value Model', 
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string \| null` | Yes | — |
-| `type` | `PROJECT \| COMPONENT` | Yes | — |
+| `type` | `PROJECT \| COMPONENT \| string` | Yes | — |
 | `computeProfile` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `owner` | `object` | Yes | — |
@@ -3594,7 +3595,7 @@ await corsair.hex.api.projects.create({ title: 'Customer Lifetime Value Model', 
 
 ```ts
 {
-  cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+  cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
   enabled: boolean,
   hourly: {
     minute: number,
@@ -3606,7 +3607,7 @@ await corsair.hex.api.projects.create({ title: 'Customer Lifetime Value Model', 
     timezone: string
   } | null,
   weekly: {
-    dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY,
+    dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string,
     hour: number,
     minute: number,
     timezone: string
@@ -3633,28 +3634,28 @@ await corsair.hex.api.projects.create({ title: 'Customer Lifetime Value Model', 
     user: {
       email: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   collections: {
     collection: {
       name: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   groups: {
     group: {
       name: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   workspace: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   },
   publicWeb: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   },
   support: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }
 }
 ```
@@ -3729,7 +3730,7 @@ await corsair.hex.api.projects.editSharingCollections({
   id: string,
   title: string,
   description: string | null,
-  type: PROJECT | COMPONENT,
+  type: PROJECT | COMPONENT | string,
   computeProfile: {
     PUBLISHED?: {
       kernelImage: string,
@@ -3772,7 +3773,7 @@ await corsair.hex.api.projects.editSharingCollections({
   archivedAt: string | null,
   trashedAt: string | null,
   schedules: {
-    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
     enabled: boolean,
     hourly: {
       timezone: string,
@@ -3787,7 +3788,7 @@ await corsair.hex.api.projects.editSharingCollections({
       timezone: string,
       minute: number,
       hour: number,
-      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY
+      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string
     } | null,
     monthly: {
       timezone: string,
@@ -3802,31 +3803,31 @@ await corsair.hex.api.projects.editSharingCollections({
   }[],
   sharing?: {
     users: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS,
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string,
       user: {
         email: string
       }
     }[],
     collections: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS,
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string,
       collection: {
         name: string
       }
     }[],
     groups: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS,
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string,
       group: {
         name: string
       }
     }[],
     workspace: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     publicWeb: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     support: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }
   },
   folderEntryId: string | null
@@ -3913,7 +3914,7 @@ await corsair.hex.api.projects.editSharingGroups({
   id: string,
   title: string,
   description: string | null,
-  type: PROJECT | COMPONENT,
+  type: PROJECT | COMPONENT | string,
   computeProfile: {
     LOGIC: {
       kernelImage: string,
@@ -3956,7 +3957,7 @@ await corsair.hex.api.projects.editSharingGroups({
   archivedAt: string | null,
   trashedAt: string | null,
   schedules: {
-    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
     enabled: boolean,
     hourly: {
       minute: number,
@@ -3968,7 +3969,7 @@ await corsair.hex.api.projects.editSharingGroups({
       timezone: string
     } | null,
     weekly: {
-      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY,
+      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string,
       hour: number,
       minute: number,
       timezone: string
@@ -3989,28 +3990,28 @@ await corsair.hex.api.projects.editSharingGroups({
       user: {
         email: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     collections: {
       collection: {
         name: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     groups: {
       group: {
         name: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     workspace: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     publicWeb: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     support: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }
   },
   folderEntryId: string | null
@@ -4084,7 +4085,7 @@ await corsair.hex.api.projects.editSharingOrgAndPublic({
   id: string,
   title: string,
   description: string | null,
-  type: PROJECT | COMPONENT,
+  type: PROJECT | COMPONENT | string,
   computeProfile: {
     LOGIC: {
       kernelImage: string,
@@ -4127,7 +4128,7 @@ await corsair.hex.api.projects.editSharingOrgAndPublic({
   archivedAt: string | null,
   trashedAt: string | null,
   schedules: {
-    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
     enabled: boolean,
     hourly: {
       minute: number,
@@ -4139,7 +4140,7 @@ await corsair.hex.api.projects.editSharingOrgAndPublic({
       timezone: string
     } | null,
     weekly: {
-      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY,
+      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string,
       hour: number,
       minute: number,
       timezone: string
@@ -4160,28 +4161,28 @@ await corsair.hex.api.projects.editSharingOrgAndPublic({
       user: {
         email: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     collections: {
       collection: {
         name: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     groups: {
       group: {
         name: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     workspace: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     publicWeb: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     support: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }
   },
   folderEntryId: string | null
@@ -4193,7 +4194,7 @@ await corsair.hex.api.projects.editSharingOrgAndPublic({
 
 ```ts
 {
-  type: workspace | publicWeb,
+  type: workspace | publicWeb | string,
   reason: string
 }[]
 ```
@@ -4269,7 +4270,7 @@ await corsair.hex.api.projects.editSharingUsers({
   id: string,
   title: string,
   description: string | null,
-  type: PROJECT | COMPONENT,
+  type: PROJECT | COMPONENT | string,
   computeProfile: {
     LOGIC: {
       kernelImage: string,
@@ -4312,7 +4313,7 @@ await corsair.hex.api.projects.editSharingUsers({
   archivedAt: string | null,
   trashedAt: string | null,
   schedules: {
-    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
     enabled: boolean,
     hourly: {
       minute: number,
@@ -4324,7 +4325,7 @@ await corsair.hex.api.projects.editSharingUsers({
       timezone: string
     } | null,
     weekly: {
-      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY,
+      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string,
       hour: number,
       minute: number,
       timezone: string
@@ -4345,28 +4346,28 @@ await corsair.hex.api.projects.editSharingUsers({
       user: {
         email: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     collections: {
       collection: {
         name: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     groups: {
       group: {
         name: string
       },
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }[],
     workspace: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     publicWeb: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     support: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }
   },
   folderEntryId: string | null
@@ -4450,7 +4451,7 @@ await corsair.hex.api.projects.get({ projectId: '00000000-0000-4000-8000-0000000
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string \| null` | Yes | — |
-| `type` | `PROJECT \| COMPONENT` | Yes | — |
+| `type` | `PROJECT \| COMPONENT \| string` | Yes | — |
 | `computeProfile` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `owner` | `object` | Yes | — |
@@ -4550,7 +4551,7 @@ await corsair.hex.api.projects.get({ projectId: '00000000-0000-4000-8000-0000000
 
 ```ts
 {
-  cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+  cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
   enabled: boolean,
   hourly: {
     minute: number,
@@ -4562,7 +4563,7 @@ await corsair.hex.api.projects.get({ projectId: '00000000-0000-4000-8000-0000000
     timezone: string
   } | null,
   weekly: {
-    dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY,
+    dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string,
     hour: number,
     minute: number,
     timezone: string
@@ -4589,28 +4590,28 @@ await corsair.hex.api.projects.get({ projectId: '00000000-0000-4000-8000-0000000
     user: {
       email: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   collections: {
     collection: {
       name: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   groups: {
     group: {
       name: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   workspace: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   },
   publicWeb: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   },
   support: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }
 }
 ```
@@ -4728,7 +4729,7 @@ await corsair.hex.api.projects.list({ limit: 10 });
   id: string,
   title: string,
   description: string | null,
-  type: PROJECT | COMPONENT,
+  type: PROJECT | COMPONENT | string,
   computeProfile: {
     PUBLISHED?: {
       kernelImage: string,
@@ -4771,7 +4772,7 @@ await corsair.hex.api.projects.list({ limit: 10 });
   archivedAt: string | null,
   trashedAt: string | null,
   schedules: {
-    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+    cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
     enabled: boolean,
     hourly: {
       timezone: string,
@@ -4786,7 +4787,7 @@ await corsair.hex.api.projects.list({ limit: 10 });
       timezone: string,
       minute: number,
       hour: number,
-      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY
+      dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string
     } | null,
     monthly: {
       timezone: string,
@@ -4801,31 +4802,31 @@ await corsair.hex.api.projects.list({ limit: 10 });
   }[],
   sharing?: {
     users: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS,
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string,
       user: {
         email: string
       }
     }[],
     collections: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS,
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string,
       collection: {
         name: string
       }
     }[],
     groups: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS,
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string,
       group: {
         name: string
       }
     }[],
     workspace: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     publicWeb: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     },
     support: {
-      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+      access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
     }
   },
   folderEntryId: string | null
@@ -4876,7 +4877,7 @@ await corsair.hex.api.projects.update({ projectId: '00000000-0000-4000-8000-0000
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string \| null` | Yes | — |
-| `type` | `PROJECT \| COMPONENT` | Yes | — |
+| `type` | `PROJECT \| COMPONENT \| string` | Yes | — |
 | `computeProfile` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `owner` | `object` | Yes | — |
@@ -4976,7 +4977,7 @@ await corsair.hex.api.projects.update({ projectId: '00000000-0000-4000-8000-0000
 
 ```ts
 {
-  cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM,
+  cadence: HOURLY | DAILY | WEEKLY | MONTHLY | CUSTOM | string,
   enabled: boolean,
   hourly: {
     minute: number,
@@ -4988,7 +4989,7 @@ await corsair.hex.api.projects.update({ projectId: '00000000-0000-4000-8000-0000
     timezone: string
   } | null,
   weekly: {
-    dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY,
+    dayOfWeek: SUNDAY | MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | string,
     hour: number,
     minute: number,
     timezone: string
@@ -5015,28 +5016,28 @@ await corsair.hex.api.projects.update({ projectId: '00000000-0000-4000-8000-0000
     user: {
       email: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   collections: {
     collection: {
       name: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   groups: {
     group: {
       name: string
     },
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }[],
   workspace: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   },
   publicWeb: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   },
   support: {
-    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS
+    access: NONE | APP_ONLY | CAN_VIEW | CAN_EDIT | FULL_ACCESS | string
   }
 }
 ```
@@ -5058,7 +5059,10 @@ Use this endpoint to add or remove a status (including endorsements) from datase
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.semantic.update({ semanticProjectId: '00000000-0000-4000-8000-000000000009' });
+await corsair.hex.api.semantic.update({
+	semanticProjectId: '00000000-0000-4000-8000-000000000009',
+	updates: [{ type: 'DATASET', name: 'orders', status: 'Endorsed' }],
+});
 ```
 
 **Input**
@@ -5140,10 +5144,10 @@ await corsair.hex.api.suggestions.get({ suggestionId: '00000000-0000-4000-8000-0
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `summary` | `string` | Yes | — |
-| `status` | `OPEN \| COMPLETED \| DISMISSED \| IN_PROGRESS \| RESOLVED` | Yes | — |
+| `status` | `OPEN \| COMPLETED \| DISMISSED \| IN_PROGRESS \| RESOLVED \| string` | Yes | — |
 | `createdDate` | `string` | Yes | — |
 | `lastSourceAddedDate` | `string \| null` | Yes | — |
-| `reviewAgentStatus` | `RUNNING \| COMPLETED \| NO_OP \| FAILED \| null` | Yes | — |
+| `reviewAgentStatus` | `RUNNING \| COMPLETED \| NO_OP \| FAILED \| string \| null` | Yes | — |
 | `sources` | `object[]` | Yes | — |
 | `proposedChanges` | `object[]` | Yes | — |
 
@@ -5174,10 +5178,10 @@ await corsair.hex.api.suggestions.get({ suggestionId: '00000000-0000-4000-8000-0
 ```ts
 {
   id: string,
-  status: NEEDS_REVIEW | COMPLETED | DISMISSED | STALE,
-  updateType: FILE_UPDATE | DATA_WAREHOUSE_UPDATE,
+  status: NEEDS_REVIEW | COMPLETED | DISMISSED | STALE | string,
+  updateType: FILE_UPDATE | DATA_WAREHOUSE_UPDATE | string,
   payload: {
-    updateType: CREATE_ORG_GUIDE_FILE | EDIT_ORG_GUIDE_FILE | EDIT_WORKSPACE_RULES | UPDATE_DESCRIPTION | UPDATE_STATUS,
+    updateType: CREATE_ORG_GUIDE_FILE | EDIT_ORG_GUIDE_FILE | EDIT_WORKSPACE_RULES | UPDATE_DESCRIPTION | UPDATE_STATUS | string,
     filePath?: string,
     diff?: string,
     dataConnectionName?: string | null,
@@ -5237,10 +5241,10 @@ await corsair.hex.api.suggestions.getV2({ suggestionId: '00000000-0000-4000-8000
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `summary` | `string` | Yes | — |
-| `status` | `OPEN \| COMPLETED \| DISMISSED \| IN_PROGRESS \| RESOLVED` | Yes | — |
+| `status` | `OPEN \| COMPLETED \| DISMISSED \| IN_PROGRESS \| RESOLVED \| string` | Yes | — |
 | `createdDate` | `string` | Yes | — |
 | `lastSourceAddedDate` | `string \| null` | Yes | — |
-| `reviewAgentStatus` | `RUNNING \| COMPLETED \| NO_OP \| FAILED \| null` | Yes | — |
+| `reviewAgentStatus` | `RUNNING \| COMPLETED \| NO_OP \| FAILED \| string \| null` | Yes | — |
 | `latestReview` | `object \| null` | Yes | — |
 | `sources` | `object[]` | Yes | — |
 | `unavailableSourceCount` | `number` | Yes | — |
@@ -5254,7 +5258,7 @@ await corsair.hex.api.suggestions.getV2({ suggestionId: '00000000-0000-4000-8000
 ```ts
 {
   id: string,
-  status: RUNNING | COMPLETED | NO_OP | FAILED,
+  status: RUNNING | COMPLETED | NO_OP | FAILED | string,
   startedAt: string
 } | null
 ```
@@ -5265,7 +5269,7 @@ await corsair.hex.api.suggestions.getV2({ suggestionId: '00000000-0000-4000-8000
 ```ts
 {
   id: string,
-  sourceType: THREAD_WARNING | USER_REPORT | USER_CONTEXT_EXHAUST,
+  sourceType: THREAD_WARNING | USER_REPORT | USER_CONTEXT_EXHAUST | string,
   threadId: string,
   agentChatThread: {
     id: string,
@@ -5282,7 +5286,7 @@ await corsair.hex.api.suggestions.getV2({ suggestionId: '00000000-0000-4000-8000
   agentChatMessageId: string | null,
   warning: {
     id: string,
-    type: agent_caveat | user_doubt | missing_context | other,
+    type: agent_caveat | user_doubt | missing_context | other | string,
     summary: string,
     reasoning: string,
     suggestedContext: string
@@ -5300,7 +5304,7 @@ await corsair.hex.api.suggestions.getV2({ suggestionId: '00000000-0000-4000-8000
 
 ```ts
 {
-  updateType: FILE_UPDATE | DATA_WAREHOUSE_UPDATE
+  updateType: FILE_UPDATE | DATA_WAREHOUSE_UPDATE | string
 }[]
 ```
 </Accordion>
@@ -5351,10 +5355,10 @@ await corsair.hex.api.suggestions.list({ limit: 10 });
   id: string,
   title: string,
   summary: string,
-  status: OPEN | COMPLETED | DISMISSED | IN_PROGRESS | RESOLVED,
+  status: OPEN | COMPLETED | DISMISSED | IN_PROGRESS | RESOLVED | string,
   createdDate: string,
   lastSourceAddedDate: string | null,
-  reviewAgentStatus: RUNNING | COMPLETED | NO_OP | FAILED | null
+  reviewAgentStatus: RUNNING | COMPLETED | NO_OP | FAILED | string | null
 }[]
 ```
 </Accordion>
@@ -5408,10 +5412,10 @@ await corsair.hex.api.suggestions.triggerReview({ suggestionId: '00000000-0000-4
   id: string,
   title: string,
   summary: string,
-  status: OPEN | COMPLETED | DISMISSED | IN_PROGRESS | RESOLVED,
+  status: OPEN | COMPLETED | DISMISSED | IN_PROGRESS | RESOLVED | string,
   createdDate: string,
   lastSourceAddedDate: string | null,
-  reviewAgentStatus: RUNNING | COMPLETED | NO_OP | FAILED | null
+  reviewAgentStatus: RUNNING | COMPLETED | NO_OP | FAILED | string | null
 }
 ```
 </Accordion>
@@ -5430,7 +5434,7 @@ Update the status of a context suggestion.
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.suggestions.update({ suggestionId: '00000000-0000-4000-8000-000000000010' });
+await corsair.hex.api.suggestions.update({ suggestionId: '00000000-0000-4000-8000-000000000010', status: 'DISMISSED', rejectionReason: 'Already covered by the revenue guide' });
 ```
 
 **Input**
@@ -5457,10 +5461,10 @@ await corsair.hex.api.suggestions.update({ suggestionId: '00000000-0000-4000-800
   id: string,
   title: string,
   summary: string,
-  status: OPEN | COMPLETED | DISMISSED | IN_PROGRESS | RESOLVED,
+  status: OPEN | COMPLETED | DISMISSED | IN_PROGRESS | RESOLVED | string,
   createdDate: string,
   lastSourceAddedDate: string | null,
-  reviewAgentStatus: RUNNING | COMPLETED | NO_OP | FAILED | null
+  reviewAgentStatus: RUNNING | COMPLETED | NO_OP | FAILED | string | null
 }
 ```
 </Accordion>
@@ -5479,7 +5483,7 @@ Update the status of an individual proposed change within a context suggestion. 
 **Risk:** `write`
 
 ```ts
-await corsair.hex.api.suggestions.updateChange({ suggestionId: '00000000-0000-4000-8000-000000000010', changeId: '00000000-0000-4000-8000-000000000011' });
+await corsair.hex.api.suggestions.updateChange({ suggestionId: '00000000-0000-4000-8000-000000000010', changeId: '00000000-0000-4000-8000-000000000011', updateTarget: 'FILE_UPDATE', status: 'COMPLETED' });
 ```
 
 **Input**
@@ -5506,7 +5510,7 @@ await corsair.hex.api.suggestions.updateChange({ suggestionId: '00000000-0000-40
 ```ts
 {
   id: string,
-  status: NEEDS_REVIEW | COMPLETED | DISMISSED | STALE,
+  status: NEEDS_REVIEW | COMPLETED | DISMISSED | STALE | string,
   rejectionReason: string | null
 }
 ```
@@ -5665,7 +5669,7 @@ await corsair.hex.api.threads.get({ id: '00000000-0000-4000-8000-000000000012' }
 | `updatedAt` | `string` | Yes | — |
 | `sensitive` | `boolean` | Yes | — |
 | `threadId` | `string` | Yes | — |
-| `status` | `IDLE \| RUNNING \| ERROR` | Yes | — |
+| `status` | `IDLE \| RUNNING \| ERROR \| string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `error` | `object \| null` | No | — |
 | `resources` | `object[]` | Yes | — |
@@ -5699,7 +5703,7 @@ await corsair.hex.api.threads.get({ id: '00000000-0000-4000-8000-000000000012' }
 {
   id: string,
   userFeedback: string,
-  type: THUMBS | FLAG,
+  type: THUMBS | FLAG | string,
   selectedReason?: string | null,
   userLiked: boolean
 }[]
@@ -5710,7 +5714,7 @@ await corsair.hex.api.threads.get({ id: '00000000-0000-4000-8000-000000000012' }
 
 ```ts
 {
-  type: NO_CONTEXT | BAD_DATA | AGENT_ERROR | AGENT_OVERLOADED | AGENT_RATE_LIMITED | GENERIC_ERROR | POSSIBLE_PROMPT_INJECTION | OVER_LIMIT | NO_DATA | INVALID_RESPONSE | HALLUCINATED_SCHEMA_ELEMENT | NON_EXPRESSIBLE | INVALID_JOIN | EXPLORE_TIMED_OUT | EXPLORE_ERRORED | EXPLORE_TABLE_SWAPPED | UNSUPPORTED_QUERY_ELEMENTS | EXPLORE_NO_DATA | CHART_ROW_LIMIT_EXCEEDED | BYOK_AUTHENTICATION | BYOK_KEY_MISSING | AGENT_COMPRESSION_ERROR | TOKEN_COUNTING_FAILURE | REQUEST_CANCELLED | INVALID_MESSAGE_HISTORY | INVALID_REQUEST | DATA_CONNECTION_NOT_AUTHORIZED | MODEL_NOT_AVAILABLE | PROVIDER_CONNECTION_INTERRUPTED | AGENT_AUTH | PROVIDER_QUOTA_EXCEEDED | DEADLINE_EXCEEDED | JOIN_VALIDATION_TIMEOUT,
+  type: NO_CONTEXT | BAD_DATA | AGENT_ERROR | AGENT_OVERLOADED | AGENT_RATE_LIMITED | GENERIC_ERROR | POSSIBLE_PROMPT_INJECTION | OVER_LIMIT | NO_DATA | INVALID_RESPONSE | HALLUCINATED_SCHEMA_ELEMENT | NON_EXPRESSIBLE | INVALID_JOIN | EXPLORE_TIMED_OUT | EXPLORE_ERRORED | EXPLORE_TABLE_SWAPPED | UNSUPPORTED_QUERY_ELEMENTS | EXPLORE_NO_DATA | CHART_ROW_LIMIT_EXCEEDED | BYOK_AUTHENTICATION | BYOK_KEY_MISSING | AGENT_COMPRESSION_ERROR | TOKEN_COUNTING_FAILURE | REQUEST_CANCELLED | INVALID_MESSAGE_HISTORY | INVALID_REQUEST | DATA_CONNECTION_NOT_AUTHORIZED | MODEL_NOT_AVAILABLE | PROVIDER_CONNECTION_INTERRUPTED | AGENT_AUTH | PROVIDER_QUOTA_EXCEEDED | DEADLINE_EXCEEDED | JOIN_VALIDATION_TIMEOUT | string,
   message: string
 } | null
 ```
@@ -5732,19 +5736,19 @@ await corsair.hex.api.threads.get({ id: '00000000-0000-4000-8000-000000000012' }
 ```ts
 (
   {
-    type: text,
+    type: text | string,
     text: string
   } | {
-    type: cell,
+    type: cell | string,
     id: string,
     staticId: string,
     label: string | null
   } | {
-    type: project,
+    type: project | string,
     id: string,
     title: string | null
   } | {
-    type: task,
+    type: task | string,
     title: string
   }
 )[] | null
@@ -5792,7 +5796,7 @@ await corsair.hex.api.threads.getMessages({ threadId: '00000000-0000-4000-8000-0
 
 ```ts
 {
-  type: text,
+  type: text | string,
   text: string,
   createdAt: string
 }[]
@@ -5872,7 +5876,7 @@ await corsair.hex.api.threads.list({ limit: 10 });
   feedback?: {
     id: string,
     userFeedback: string,
-    type: THUMBS | FLAG,
+    type: THUMBS | FLAG | string,
     selectedReason?: string | null,
     userLiked: boolean
   }[],
@@ -5949,7 +5953,7 @@ await corsair.hex.api.users.deactivate({ userId: '00000000-0000-4000-8000-000000
   id: string,
   name: string | null,
   email: string,
-  role: ADMIN | MANAGER | EDITOR | EXPLORER | MEMBER | GUEST | EMBEDDED_USER | ANONYMOUS,
+  role: ADMIN | MANAGER | EDITOR | EXPLORER | MEMBER | GUEST | EMBEDDED_USER | ANONYMOUS | string,
   lastLoginDate: string | null
 }
 ```
@@ -6001,7 +6005,7 @@ await corsair.hex.api.users.list({ limit: 10 });
   id: string,
   name: string | null,
   email: string,
-  role: ADMIN | MANAGER | EDITOR | EXPLORER | MEMBER | GUEST | EMBEDDED_USER | ANONYMOUS,
+  role: ADMIN | MANAGER | EDITOR | EXPLORER | MEMBER | GUEST | EMBEDDED_USER | ANONYMOUS | string,
   lastLoginDate: string | null
 }[]
 ```
@@ -6047,7 +6051,7 @@ await corsair.hex.api.users.me({});
   id: string,
   name: string | null,
   email: string,
-  role: ADMIN | MANAGER | EDITOR | EXPLORER | MEMBER | GUEST | EMBEDDED_USER | ANONYMOUS,
+  role: ADMIN | MANAGER | EDITOR | EXPLORER | MEMBER | GUEST | EMBEDDED_USER | ANONYMOUS | string,
   lastLoginDate: string | null,
   org: {
     id: string

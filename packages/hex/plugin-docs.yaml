@@ -110,9 +110,8 @@ apiExamples:
     dryRun: false
     updatePublishedResults: true
   projects.batchUpdateComputeProfile:
-    projectIds:
-      - 00000000-0000-4000-8000-000000000001
-    kernelSize: medium
+    call: >-
+      { projectIds: ['00000000-0000-4000-8000-000000000001'], kernelSize: 'medium' }
   projects.create:
     title: Customer Lifetime Value Model
     description: Probabilistic customer CLV projections
@@ -171,14 +170,11 @@ apiExamples:
   suggestions.triggerReview:
     suggestionId: 00000000-0000-4000-8000-000000000010
   suggestions.update:
-    suggestionId: 00000000-0000-4000-8000-000000000010
-    status: DISMISSED
-    rejectionReason: Already covered by the revenue guide
+    call: >-
+      { suggestionId: '00000000-0000-4000-8000-000000000010', status: 'DISMISSED', rejectionReason: 'Already covered by the revenue guide' }
   suggestions.updateChange:
-    suggestionId: 00000000-0000-4000-8000-000000000010
-    changeId: 00000000-0000-4000-8000-000000000011
-    updateTarget: FILE_UPDATE
-    status: COMPLETED
+    call: >-
+      { suggestionId: '00000000-0000-4000-8000-000000000010', changeId: '00000000-0000-4000-8000-000000000011', updateTarget: 'FILE_UPDATE', status: 'COMPLETED' }
   threads.continue:
     id: 00000000-0000-4000-8000-000000000012
     prompt: Can you break down customer churn by region?
