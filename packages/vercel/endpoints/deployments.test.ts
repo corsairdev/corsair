@@ -409,12 +409,22 @@ describe('deployments', () => {
 		expect(result[1]?.extra).toBe(true);
 	});
 
-	it('getDeploymentEvents parses a newline-delimited body and skips bad lines', async () => {
+	it('getDeploymentEvents parses a newline-delimited body and skips blank lines', async () => {
 		request.mockResolvedValueOnce(
-			'{"type":"stdout","text":"one"}\n\nnot json\n{"type":"stderr","text":"two"}\n',
+			'{"type":"stdout","text":"one"}\n\n{"type":"stderr","text":"two"}\n',
 		);
 		const result = await getDeploymentEvents(ctx, { idOrUrl: 'dpl_2' });
 		expect(result.map((event) => event.text)).toEqual(['one', 'two']);
+	});
+
+	it('getDeploymentEvents fails on a line that is not JSON instead of returning a shorter log', async () => {
+		request.mockResolvedValueOnce(
+			'{"type":"stdout","text":"one"}\n{"type":"stdout","te',
+		);
+		await expect(
+			getDeploymentEvents(ctx, { idOrUrl: 'dpl_2' }),
+		).rejects.toThrow(/aren't JSON/);
+		expect(logEvent).not.toHaveBeenCalled();
 	});
 
 	it('getDeploymentEvents rejects limit 0 and events without a type', async () => {
@@ -447,5 +457,26 @@ describe('deployments', () => {
 		});
 		expect(result[0]?.children).toHaveLength(1);
 		expect(result[1]?.contentType).toBeNull();
+	});
+});
+
+describe('createDeployment event payload', () => {
+	beforeEach(() => jest.clearAllMocks());
+
+	it('masks build and install commands in projectSettings', async () => {
+		request.mockResolvedValueOnce({ id: 'dpl_1', url: 'site.vercel.app' });
+		await createDeployment(ctx, {
+			name: 'site',
+			files: [{ file: 'index.html', data: '<h1>hi</h1>' }],
+			projectSettings: {
+				framework: null,
+				installCommand: 'npm config set //r/:_authToken=npm_SECRET && npm i',
+				buildCommand: 'pnpm build',
+			},
+		});
+		const logged = JSON.stringify(logEvent.mock.calls[0]?.[2]);
+		expect(logged).not.toContain('npm_SECRET');
+		expect(logged).not.toContain('pnpm build');
+		expect(logged).toContain('[redacted]');
 	});
 });

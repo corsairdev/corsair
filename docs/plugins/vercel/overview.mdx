@@ -146,16 +146,11 @@ await tenant.vercel.api.projects.getProjects({ limit: 10 });
 ```
 
 
-**Add an environment variable**
+**Change a project's build command**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.vercel.api.envs.createEnvVariable({
-	idOrName: 'my-site',
-	key: 'NEXT_PUBLIC_API_URL',
-	value: 'https://api.example.com',
-	target: ['production', 'preview'],
-});
+await tenant.vercel.api.projects.updateProject({ idOrName: 'my-site', buildCommand: 'pnpm build' });
 ```
 
 

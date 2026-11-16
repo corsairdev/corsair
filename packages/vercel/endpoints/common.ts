@@ -111,6 +111,25 @@ export function compactBody<T extends Record<string, unknown>>(
 	return out;
 }
 
+/**
+ * Build, install and dev commands can carry registry tokens or other secrets
+ * (`npm config set //registry/:_authToken=…`). For the event log, each
+ * `*Command` string becomes a marker that it was set.
+ */
+export function maskCommands<T extends Record<string, unknown>>(
+	settings: T | undefined,
+): Record<string, unknown> | undefined {
+	if (!settings) return settings;
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(settings)) {
+		out[key] =
+			key.endsWith('Command') && typeof value === 'string'
+				? '[redacted]'
+				: value;
+	}
+	return out;
+}
+
 /** One endpoint's entry in the plugin's endpointMeta. */
 export type EndpointMeta = EndpointMetaEntry & { description: string };
 

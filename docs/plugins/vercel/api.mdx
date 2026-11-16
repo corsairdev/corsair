@@ -382,7 +382,7 @@ Start a deployment from a Git ref, from inline files, or as a redeploy of an exi
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.deployments.createDeployment({});
+await corsair.vercel.api.deployments.createDeployment({ name: 'my-site', project: 'my-site', target: 'production', gitSource: { type: 'github', org: 'acme', repo: 'my-site', ref: 'main' } });
 ```
 
 **Input**
@@ -2053,7 +2053,7 @@ Add one or several environment variables to a project (key, value, type, target 
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.envs.createEnvVariable({});
+await corsair.vercel.api.envs.createEnvVariable({ idOrName: 'my-site', key: 'NEXT_PUBLIC_API_URL', value: 'https://api.example.com', type: 'encrypted', target: ['production', 'preview'] });
 ```
 
 **Input**
@@ -2103,7 +2103,7 @@ await corsair.vercel.api.envs.createEnvVariable({});
 
 ```ts
 {
-  id: string,
+  id?: string | null,
   key: string,
   type?: string | null,
   value?: string | null,
@@ -2123,7 +2123,7 @@ await corsair.vercel.api.envs.createEnvVariable({});
   createdBy?: string | null,
   updatedBy?: string | null
 } | {
-  id: string,
+  id?: string | null,
   key: string,
   type?: string | null,
   value?: string | null,
@@ -2208,7 +2208,7 @@ await corsair.vercel.api.envs.deleteEnvVariable({});
 
 ```ts
 {
-  id: string,
+  id?: string | null,
   key: string,
   type?: string | null,
   value?: string | null,
@@ -2262,7 +2262,7 @@ await corsair.vercel.api.envs.getEnvVariable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
+| `id` | `string \| null` | No | — |
 | `key` | `string` | Yes | — |
 | `type` | `string \| null` | No | — |
 | `value` | `string \| null` | No | — |
@@ -2324,7 +2324,7 @@ await corsair.vercel.api.envs.getEnvVariables({});
 
 ```ts
 {
-  id: string,
+  id?: string | null,
   key: string,
   type?: string | null,
   value?: string | null,
@@ -2372,7 +2372,7 @@ Change an environment variable by id: its value, key, type, targets, Git branch 
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.envs.updateEnvVariable({});
+await corsair.vercel.api.envs.updateEnvVariable({ idOrName: 'my-site', id: 'env_abc123', value: 'https://api2.example.com' });
 ```
 
 **Input**
@@ -2385,10 +2385,10 @@ await corsair.vercel.api.envs.updateEnvVariable({});
 | `key` | `string` | No | Variable name, e.g. DATABASE_URL. |
 | `value` | `string` | No | Variable value. Kept out of event logs and the local store. |
 | `type` | `encrypted \| sensitive \| plain \| system` | No | encrypted: stored encrypted, readable later with getEnvVariable. sensitive: write-only, its value can never be read back. plain: stored and shown in plain text. system: reserved for Vercel system variables. |
-| `target` | `(production \| preview \| development)[]` | No | — |
-| `gitBranch` | `string` | No | — |
+| `target` | `(production \| preview \| development)[]` | No | Environments the variable applies to. An empty list removes all of them (e.g. to keep only customEnvironmentIds). |
+| `gitBranch` | `string \| null` | No | Git branch to limit the variable to. null removes the limit. |
 | `comment` | `string` | No | Note on what the variable is for. |
-| `customEnvironmentIds` | `string[]` | No | Custom environment ids (env_…) the variable applies to. |
+| `customEnvironmentIds` | `string[]` | No | Custom environment ids (env_…). An empty list removes the variable from all of them. |
 
 
 
@@ -2396,7 +2396,7 @@ await corsair.vercel.api.envs.updateEnvVariable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
+| `id` | `string \| null` | No | — |
 | `key` | `string` | Yes | — |
 | `type` | `string \| null` | No | — |
 | `value` | `string \| null` | No | — |
@@ -2812,7 +2812,7 @@ Make an existing production build (an earlier or staged production deployment) t
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.projects.promoteDeployment({});
+await corsair.vercel.api.projects.promoteDeployment({ projectId: 'prj_abc123', deploymentId: 'dpl_abc123' });
 ```
 
 **Input**

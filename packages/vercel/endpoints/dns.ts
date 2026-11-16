@@ -1,5 +1,21 @@
 import { makeAuthenticatedVercelRequest, seg } from '../client';
 import { compactBody, defineEndpoint, pickQuery } from './common';
+
+// Record values (TXT verification tokens, contact addresses) and comments can
+// hold secrets or personal data: events keep only where the record is and what
+// kind it is.
+function recordForLog(input: {
+	teamId?: string;
+	domain?: string;
+	recordId?: string;
+	type?: string | null;
+	name?: string | null;
+	ttl?: number | null;
+}) {
+	const { teamId, domain, recordId, type, name, ttl } = input;
+	return { teamId, domain, recordId, type, name, ttl };
+}
+
 import {
 	VercelDnsInputSchemas as In,
 	VercelDnsOutputSchemas as Out,
@@ -32,6 +48,7 @@ export const createRecord = defineEndpoint({
 			{ method: 'POST', teamId, body: compactBody(body) },
 		);
 	},
+	logInput: recordForLog,
 });
 
 export const updateRecord = defineEndpoint({
@@ -46,6 +63,7 @@ export const updateRecord = defineEndpoint({
 			{ method: 'PATCH', teamId, body: compactBody(body) },
 		);
 	},
+	logInput: recordForLog,
 });
 
 export const deleteRecord = defineEndpoint({

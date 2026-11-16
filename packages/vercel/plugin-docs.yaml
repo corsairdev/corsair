@@ -20,15 +20,20 @@ examples:
     args:
       limit: 10
   write:
-    path: envs.createEnvVariable
-    title: Add an environment variable
+    path: projects.updateProject
+    title: Change a project's build command
     args:
       idOrName: my-site
-      key: NEXT_PUBLIC_API_URL
-      value: https://api.example.com
-      target:
-        - production
-        - preview
+      buildCommand: pnpm build
+apiExamples:
+  envs.createEnvVariable:
+    call: "{ idOrName: 'my-site', key: 'NEXT_PUBLIC_API_URL', value: 'https://api.example.com', type: 'encrypted', target: ['production', 'preview'] }"
+  envs.updateEnvVariable:
+    call: "{ idOrName: 'my-site', id: 'env_abc123', value: 'https://api2.example.com' }"
+  deployments.createDeployment:
+    call: "{ name: 'my-site', project: 'my-site', target: 'production', gitSource: { type: 'github', org: 'acme', repo: 'my-site', ref: 'main' } }"
+  projects.promoteDeployment:
+    call: "{ projectId: 'prj_abc123', deploymentId: 'dpl_abc123' }"
 dbExample:
   entity: projects
   note: Projects fetched through the API are stored locally (without their environment variable values).

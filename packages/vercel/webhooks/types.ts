@@ -104,11 +104,16 @@ export function createVercelMatch(eventType: string) {
 
 export function verifyVercelWebhookSignature(
 	request: {
+		/** Set by core when Hub already verified the delivery's signature. */
+		hubVerified?: boolean;
 		rawBody?: string | Buffer;
 		headers: Record<string, string | string[] | undefined>;
 	},
 	secret: string,
 ): boolean {
+	// Hub checked the provider signature before forwarding, and core then
+	// builds no webhook key, so there is nothing to compare here.
+	if (request.hubVerified === true) return true;
 	const signature = request.headers['x-vercel-signature'];
 	if (!signature || typeof signature !== 'string') return false;
 	if (!secret?.trim()) return false;

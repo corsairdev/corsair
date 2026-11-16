@@ -169,14 +169,14 @@ describe('OAuth install team', () => {
 		).resolves.toEqual({ linkType: 'team_id', externalId: 'team_abc' });
 	});
 
-	it('falls back to the teamId on the install redirect', async () => {
+	it('ignores a teamId from the install redirect, which the OAuth state does not cover', async () => {
 		await expect(
 			resolveVercelOAuthWebhookTenantLink({
 				access_token: 'x',
 				team_id: null,
-				teamId: 'team_def',
+				teamId: 'team_someone_else',
 			}),
-		).resolves.toEqual({ linkType: 'team_id', externalId: 'team_def' });
+		).resolves.toBeNull();
 	});
 
 	it('saves nothing for a personal-account install', async () => {

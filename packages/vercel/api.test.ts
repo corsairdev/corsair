@@ -54,15 +54,41 @@ describeLive('Vercel live', () => {
 	});
 
 	afterAll(async () => {
-		// Clean up whatever exists, even when a step failed.
+		// Clean up whatever exists, even when a step failed. Every attempt runs;
+		// a resource that's already gone (404) is fine, any other failure fails
+		// the run so nothing is left behind unnoticed.
+		const failures: string[] = [];
+		const attempt = async (label: string, run: () => Promise<unknown>) => {
+			try {
+				await run();
+			} catch (error) {
+				const status = (error as { status?: number }).status;
+				if (status !== 404) failures.push(`${label}: ${status ?? error}`);
+			}
+		};
 		if (webhookId) {
-			await api.webhooks.deleteWebhook({ id: webhookId }).catch(() => {});
+			const id = webhookId;
+			await attempt('delete webhook', () => api.webhooks.deleteWebhook({ id }));
 		}
 		if (projectId) {
-			await api.projects.deleteProject({ idOrName: projectId }).catch(() => {});
+			const idOrName = projectId;
+			await attempt('delete project', () =>
+				api.projects.deleteProject({ idOrName }),
+			);
 		}
 		ctx?.testDb.cleanup();
+		if (failures.length > 0) {
+			throw new Error(`Live cleanup failed: ${failures.join('; ')}`);
+		}
 	});
+
+	// Deploying without a tracked project would let Vercel create one from
+	// the name that the cleanup doesn't know about.
+	function trackedProject(): string {
+		if (!projectId)
+			throw new Error('No test project: the project step failed.');
+		return projectId;
+	}
 
 	it('reads the user and the connected team', async () => {
 		const me = await api.user.getUser({});
@@ -173,7 +199,7 @@ describeLive('Vercel live', () => {
 	it('deploys inline files (the first deployment becomes production)', async () => {
 		const created = await api.deployments.createDeployment({
 			name,
-			project: projectId,
+			project: trackedProject(),
 			files: [
 				{ file: 'index.html', data: '<!doctype html><h1>corsair live 1</h1>' },
 			],
@@ -195,7 +221,7 @@ describeLive('Vercel live', () => {
 	it('builds a preview and reads its build logs', async () => {
 		const created = await api.deployments.createDeployment({
 			name,
-			project: projectId,
+			project: trackedProject(),
 			files: [
 				{ file: 'index.html', data: '<!doctype html><h1>corsair live 2</h1>' },
 			],
@@ -218,7 +244,7 @@ describeLive('Vercel live', () => {
 	it('cancels a deployment while it builds', async () => {
 		const created = await api.deployments.createDeployment({
 			name,
-			project: projectId,
+			project: trackedProject(),
 			files: [{ file: 'index.html', data: '<!doctype html><h1>slow</h1>' }],
 			projectSettings: {
 				framework: null,
@@ -283,8 +309,9 @@ describeLive('Vercel live', () => {
 		).resolves.toBeDefined();
 	});
 
+	// Up to one readiness wait (120 s) and three production waits (80 s each).
 	it('promotes an earlier production deployment, rolls back, then pauses and unpauses', async () => {
-		const id = projectId as string;
+		const id = trackedProject();
 		const first = deploymentId as string;
 		// Promote and rollback run in the background; wait for the job to
 		// finish and production to point at the deployment.
@@ -342,7 +369,7 @@ describeLive('Vercel live', () => {
 		await expect(
 			api.projects.unpauseProject({ projectId: id }),
 		).resolves.toEqual({ projectId: id, paused: false });
-	});
+	}, 480_000);
 
 	it('creates, reads and deletes a webhook', async () => {
 		const created = await api.webhooks.createWebhook({

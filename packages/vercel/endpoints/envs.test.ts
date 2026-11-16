@@ -150,11 +150,41 @@ describe('envs', () => {
 		expect(logged()).not.toContain(SECRET);
 	});
 
-	it('getEnvVariable rejects a response without an id', async () => {
+	it('getEnvVariable accepts a response without an id (Vercel marks it optional) and stores nothing', async () => {
 		request.mockResolvedValueOnce({ key: 'X', type: 'plain' });
-		await expect(
-			getEnvVariable(ctx, { idOrName: 'prj_1', id: 'env_1' }),
-		).rejects.toThrow();
+		const result = await getEnvVariable(ctx, {
+			idOrName: 'prj_1',
+			id: 'env_1',
+		});
+		expect(result.key).toBe('X');
+		expect(upsert).not.toHaveBeenCalled();
+	});
+
+	it('getEnvVariables keeps list entries without an id', async () => {
+		request.mockResolvedValueOnce({
+			envs: [{ key: 'X', type: 'plain', securityIssues: [] }],
+		});
+		const result = await getEnvVariables(ctx, { idOrName: 'prj_1' });
+		expect(result.envs?.[0]?.key).toBe('X');
+	});
+
+	it('updateEnvVariable can clear target, custom environments and the Git branch', async () => {
+		request.mockResolvedValueOnce({ ...env });
+		await updateEnvVariable(ctx, {
+			idOrName: 'prj_1',
+			id: 'env_1',
+			target: [],
+			customEnvironmentIds: [],
+			gitBranch: null,
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v9/projects/prj_1/env/env_1',
+			ctx,
+			expect.objectContaining({
+				method: 'PATCH',
+				body: { target: [], customEnvironmentIds: [], gitBranch: null },
+			}),
+		);
 	});
 
 	it('createEnvVariable posts one variable and keeps its value out of the log and store', async () => {

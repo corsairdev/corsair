@@ -38,12 +38,24 @@ const hasValueOrDescription = (
 };
 
 const EdgeConfigItemChange = z.discriminatedUnion('operation', [
-	z.object({
-		operation: z.literal('create'),
-		key: itemKey,
-		value: itemValue,
-		description: itemDescription,
-	}),
+	z
+		.object({
+			operation: z.literal('create'),
+			key: itemKey,
+			value: itemValue,
+			description: itemDescription,
+		})
+		// z.unknown() lets a missing key through on some Zod 4 releases, so
+		// check presence explicitly. null is a valid JSON value; undefined isn't.
+		.superRefine((item, ctx) => {
+			if (item.value === undefined) {
+				ctx.addIssue({
+					code: 'custom',
+					message: 'create needs a value.',
+					path: ['value'],
+				});
+			}
+		}),
 	z
 		.object({
 			operation: z.enum(['update', 'upsert']),

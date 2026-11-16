@@ -115,15 +115,26 @@ export const deleteAlias = defineEndpoint({
 	input: In.deleteAlias,
 	output: Out.deleteAlias,
 	run: async (ctx, input) => {
+		// Alias ids carry no dots and hostnames always do. The local record is
+		// keyed by id, so a hostname is looked up first to clear it afterwards.
+		let uid: string | undefined = input.aliasId.includes('.')
+			? undefined
+			: input.aliasId;
+		if (!uid && ctx.db.aliases) {
+			const found = await makeAuthenticatedVercelRequest<{ uid?: unknown }>(
+				`/v4/aliases/${seg(input.aliasId)}`,
+				ctx,
+				{ teamId: input.teamId },
+			);
+			uid = typeof found?.uid === 'string' ? found.uid : undefined;
+		}
 		const result = await makeAuthenticatedVercelRequest<{ status?: unknown }>(
 			`/v2/aliases/${seg(input.aliasId)}`,
 			ctx,
 			{ method: 'DELETE', teamId: input.teamId },
 		);
-		// Alias ids carry no dots and hostnames always do; a hostname's uid isn't
-		// known here, so only an id clears the local record.
-		if (!input.aliasId.includes('.') && ctx.db.aliases) {
-			await ctx.db.aliases.deleteByEntityId(input.aliasId);
+		if (uid && ctx.db.aliases) {
+			await ctx.db.aliases.deleteByEntityId(uid);
 		}
 		// A non-2xx response throws before this, so reaching here means removed.
 		return {

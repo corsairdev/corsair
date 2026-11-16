@@ -230,3 +230,41 @@ describe('projects', () => {
 		expect(result.members?.[0]?.uid).toBe('u1');
 	});
 });
+
+describe('projects event payloads', () => {
+	beforeEach(() => jest.clearAllMocks());
+
+	it('masks command strings, which can carry registry tokens', async () => {
+		request.mockResolvedValue(project);
+		await updateProject(ctx, {
+			idOrName: 'prj_1',
+			installCommand:
+				'npm config set //registry.example.com/:_authToken=npm_SECRET && npm i',
+			outputDirectory: 'dist',
+		});
+		await createProject(ctx, {
+			name: 'site',
+			buildCommand: 'TOKEN=build_SECRET pnpm build',
+		});
+		const logged = JSON.stringify(logEvent.mock.calls.map((call) => call[2]));
+		expect(logged).not.toContain('SECRET');
+		expect(logged).toContain('[redacted]');
+		expect(logged).toContain('dist');
+	});
+
+	it('getProjectMembers keeps the search term out of the event but sends it to Vercel', async () => {
+		request.mockResolvedValueOnce({ members: [] });
+		await getProjectMembers(ctx, {
+			idOrName: 'prj_1',
+			search: 'person@example.com',
+		});
+		expect(request).toHaveBeenCalledWith(
+			'/v1/projects/prj_1/members',
+			ctx,
+			expect.objectContaining({ query: { search: 'person@example.com' } }),
+		);
+		expect(JSON.stringify(logEvent.mock.calls[0]?.[2])).not.toContain(
+			'person@example.com',
+		);
+	});
+});

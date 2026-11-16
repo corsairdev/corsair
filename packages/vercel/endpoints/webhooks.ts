@@ -5,10 +5,12 @@ import {
 	VercelWebhooksOutputSchemas as Out,
 } from './webhooks-types';
 
-/** A receiver URL can carry its own token in the query string; log without it. */
+/**
+ * A receiver URL can carry its own token in the path or the query string, so
+ * the event keeps only its origin.
+ */
 function urlForLog(url: string): string {
-	const parsed = new URL(url);
-	return `${parsed.origin}${parsed.pathname}`;
+	return new URL(url).origin;
 }
 
 export const getWebhooks = defineEndpoint({

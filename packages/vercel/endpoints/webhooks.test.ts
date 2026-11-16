@@ -93,7 +93,7 @@ describe('webhooks', () => {
 		request.mockResolvedValueOnce({ ...hook, secret: 'whsec-signing-secret' });
 		const result = await createWebhook(ctx, {
 			teamId: 'team_1',
-			url: 'https://example.com/vercel?token=receiver-token',
+			url: 'https://example.com/hooks/path-token?token=receiver-token',
 			events: ['deployment.succeeded', 'some.future-event'],
 			projectIds: ['prj_1'],
 		});
@@ -101,7 +101,7 @@ describe('webhooks', () => {
 			method: 'POST',
 			teamId: 'team_1',
 			body: {
-				url: 'https://example.com/vercel?token=receiver-token',
+				url: 'https://example.com/hooks/path-token?token=receiver-token',
 				events: ['deployment.succeeded', 'some.future-event'],
 				projectIds: ['prj_1'],
 			},
@@ -109,7 +109,8 @@ describe('webhooks', () => {
 		expect(result.secret).toBe('whsec-signing-secret');
 		expect(result.somethingNew).toBe('kept');
 		const logged = JSON.stringify(logEvent.mock.calls[0]?.[2]);
-		expect(logged).toContain('https://example.com/vercel');
+		expect(logged).toContain('https://example.com');
+		expect(logged).not.toContain('path-token');
 		expect(logged).toContain('deployment.succeeded');
 		expect(logged).not.toContain('receiver-token');
 		expect(logged).not.toContain('whsec-signing-secret');

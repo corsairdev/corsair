@@ -238,16 +238,31 @@ describe('aliases', () => {
 		});
 		expect(remove).toHaveBeenCalledWith('a1');
 	});
+});
 
-	it('deleteAlias by hostname leaves the local store alone', async () => {
-		request.mockResolvedValueOnce(undefined);
-		await expect(
-			deleteAlias(ctx, { aliasId: 'www.example.com' }),
-		).resolves.toEqual({
-			deleted: true,
-			aliasId: 'www.example.com',
-			status: null,
-		});
-		expect(remove).not.toHaveBeenCalled();
+describe('deleteAlias by hostname', () => {
+	beforeEach(() => jest.clearAllMocks());
+
+	it('looks up the alias id first so the local record is cleared too', async () => {
+		request
+			.mockResolvedValueOnce({ uid: 'als_9', alias: 'www.example.com' })
+			.mockResolvedValueOnce({ status: 'SUCCESS' });
+		const result = await deleteAlias(ctx, { aliasId: 'www.example.com' });
+		expect(request).toHaveBeenNthCalledWith(
+			1,
+			'/v4/aliases/www.example.com',
+			ctx,
+			{
+				teamId: undefined,
+			},
+		);
+		expect(request).toHaveBeenNthCalledWith(
+			2,
+			'/v2/aliases/www.example.com',
+			ctx,
+			{ method: 'DELETE', teamId: undefined },
+		);
+		expect(remove).toHaveBeenCalledWith('als_9');
+		expect(result.deleted).toBe(true);
 	});
 });

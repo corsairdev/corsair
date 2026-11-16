@@ -70,7 +70,8 @@ const EnvVariableInput = z.object(envFields).refine(needsTarget, {
 // present, absent, encrypted or decrypted; target as a list or one string).
 export const EnvVariableSchema = z
 	.object({
-		id: z.string(),
+		// Vercel's model marks id optional; requests still require it.
+		id: optStr(),
 		key: z.string(),
 		type: optStr(),
 		value: optStr(),
@@ -207,10 +208,27 @@ export const VercelEnvsInputSchemas = {
 			key: envFields.key.optional(),
 			value: envFields.value.optional(),
 			type: envType.optional(),
-			target: z.array(envTarget).min(1).optional(),
-			gitBranch: z.string().max(250).optional(),
+			target: z
+				.array(envTarget)
+				.optional()
+				.describe(
+					'Environments the variable applies to. An empty list removes all of them (e.g. to keep only customEnvironmentIds).',
+				),
+			gitBranch: z
+				.string()
+				.max(250)
+				.nullable()
+				.optional()
+				.describe(
+					'Git branch to limit the variable to. null removes the limit.',
+				),
 			comment: envFields.comment,
-			customEnvironmentIds: envFields.customEnvironmentIds,
+			customEnvironmentIds: z
+				.array(z.string().min(1))
+				.optional()
+				.describe(
+					'Custom environment ids (env_…). An empty list removes the variable from all of them.',
+				),
 		})
 		.superRefine((input, ctx) => {
 			const { teamId: _t, idOrName: _p, id: _i, ...changes } = input;

@@ -1,6 +1,6 @@
 import { makeAuthenticatedVercelRequest, seg } from '../client';
 import type { VercelContext } from '../index';
-import { compactBody, defineEndpoint, pickQuery } from './common';
+import { compactBody, defineEndpoint, maskCommands, pickQuery } from './common';
 import {
 	VercelProjectsInputSchemas as In,
 	VercelProjectsOutputSchemas as Out,
@@ -76,7 +76,7 @@ export const createProject = defineEndpoint({
 		return result;
 	},
 	logInput: ({ environmentVariables, ...rest }) => ({
-		...rest,
+		...maskCommands(rest),
 		environmentVariables: environmentVariables?.map(
 			({ value: _v, ...env }) => env,
 		),
@@ -97,6 +97,7 @@ export const updateProject = defineEndpoint({
 		await saveProject(ctx, result);
 		return result;
 	},
+	logInput: (input) => maskCommands(input) ?? {},
 });
 
 export const deleteProject = defineEndpoint({
@@ -196,4 +197,6 @@ export const getProjectMembers = defineEndpoint({
 				query: pickQuery(input, ['limit', 'since', 'until', 'search']),
 			},
 		),
+	// A search term can be an email address: keep it out of the event.
+	logInput: ({ search: _search, ...rest }) => rest,
 });

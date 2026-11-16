@@ -1,7 +1,7 @@
 import type { VercelQuery } from '../client';
 import { makeAuthenticatedVercelRequest, seg } from '../client';
 import type { VercelContext } from '../index';
-import { compactBody, defineEndpoint, pickQuery } from './common';
+import { compactBody, defineEndpoint, maskCommands, pickQuery } from './common';
 import {
 	VercelDeploymentsInputSchemas as In,
 	VercelDeploymentsOutputSchemas as Out,
@@ -47,17 +47,27 @@ function binaryFlags<T extends Record<string, unknown>>(
 	return query;
 }
 
-/** Newline-delimited JSON (application/stream+json) into its objects. */
+/**
+ * Newline-delimited JSON (application/stream+json) into its objects. Blank
+ * lines are skipped; any other line that isn't JSON fails the call, since a
+ * dropped line would return a silently shortened log.
+ */
 function parseJsonLines(text: string): unknown[] {
 	const events: unknown[] = [];
+	let malformed = 0;
 	for (const line of text.split('\n')) {
 		const trimmed = line.trim();
 		if (!trimmed) continue;
 		try {
 			events.push(JSON.parse(trimmed));
 		} catch {
-			// A partial or non-JSON line carries no event.
+			malformed += 1;
 		}
+	}
+	if (malformed > 0) {
+		throw new Error(
+			`Vercel returned ${malformed} build-log line(s) that aren't JSON; the log may be cut off. Try again.`,
+		);
 	}
 	return events;
 }
@@ -134,8 +144,10 @@ export const createDeployment = defineEndpoint({
 		return result;
 	},
 	// Inline file contents can hold source and config secrets: log paths only.
-	logInput: ({ files, ...rest }) => ({
+	// Build/install commands can carry tokens: log that they were set.
+	logInput: ({ files, projectSettings, ...rest }) => ({
 		...rest,
+		projectSettings: maskCommands(projectSettings),
 		files: files?.map((file) =>
 			'data' in file
 				? { file: file.file, encoding: file.encoding }

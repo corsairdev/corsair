@@ -284,3 +284,30 @@ describe('dns', () => {
 		expect(logEvent).not.toHaveBeenCalled();
 	});
 });
+
+describe('dns event payloads', () => {
+	beforeEach(() => jest.clearAllMocks());
+
+	it('createRecord and updateRecord log where the record is, not its value or comment', async () => {
+		request
+			.mockResolvedValueOnce({ uid: 'rec_1' })
+			.mockResolvedValueOnce({ id: 'rec_1', name: '_verify', type: 'TXT' });
+		await createRecord(ctx, {
+			domain: 'example.com',
+			type: 'TXT',
+			name: '_verify',
+			value: 'verification-token-123',
+			comment: 'Contact owner@example.com',
+		});
+		await updateRecord(ctx, {
+			recordId: 'rec_1',
+			value: 'verification-token-456',
+			comment: 'owner@example.com',
+		});
+		const logged = JSON.stringify(logEvent.mock.calls.map((call) => call[2]));
+		expect(logged).toContain('example.com');
+		expect(logged).toContain('_verify');
+		expect(logged).not.toContain('verification-token');
+		expect(logged).not.toContain('owner@example.com');
+	});
+});
