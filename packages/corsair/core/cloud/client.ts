@@ -1,4 +1,4 @@
-import type { CorsairClient } from '../client';
+import type { CorsairClient, WithTenantOptions } from '../client';
 import { DB_METHOD_RISK, decodeDbArgs, encodeDbArgs } from '../management/db';
 import { assertModeAllows } from '../permissions';
 import type { CorsairPlugin } from '../plugins';
@@ -30,6 +30,7 @@ function buildInvokeProxy(
 	tenantId: string,
 	pluginId: string,
 	path: string[],
+	account?: string,
 ): unknown {
 	const invoke = async (...args: unknown[]) => {
 		const transport = await resolveTransport(transportSource);
@@ -40,7 +41,7 @@ function buildInvokeProxy(
 				.replace(':tenant', encodeURIComponent(tenantId))
 				.replace(':plugin', encodeURIComponent(pluginId))
 				.replace(':op', path.map(encodeURIComponent).join('.')),
-			{ args: args[0] },
+			{ args: args[0], ...(account ? { account } : {}) },
 		);
 		// res is the { data } envelope; data is the dynamic, VM-defined op result.
 		return res.data;
@@ -51,10 +52,13 @@ function buildInvokeProxy(
 			if (typeof prop !== 'string' || THENABLE_KEYS.has(prop)) {
 				return undefined;
 			}
-			return buildInvokeProxy(transportSource, tenantId, pluginId, [
-				...path,
-				prop,
-			]);
+			return buildInvokeProxy(
+				transportSource,
+				tenantId,
+				pluginId,
+				[...path, prop],
+				account,
+			);
 		},
 	});
 }
@@ -66,6 +70,7 @@ function buildDbProxy(
 	transportSource: TransportSource,
 	tenantId: string,
 	pluginId: string,
+	account?: string,
 ): unknown {
 	return new Proxy(
 		{},
@@ -101,7 +106,7 @@ function buildDbProxy(
 										.replace(':plugin', encodeURIComponent(pluginId))
 										.replace(':entity', encodeURIComponent(entityType))
 										.replace(':method', encodeURIComponent(method)),
-									{ args: encodeDbArgs(args) },
+									{ args: encodeDbArgs(args), ...(account ? { account } : {}) },
 								);
 								return decodeDbArgs(res.data);
 							};
@@ -119,7 +124,11 @@ function buildDbProxy(
 // the VM — the runtime returns 404 unknown_plugin for a bad id.
 export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 	plugins: Plugins | undefined,
-	opts: { transport: TransportSource; tenantId: string },
+	opts: {
+		transport: TransportSource;
+		tenantId: string;
+		accounts?: WithTenantOptions['accounts'];
+	},
 ): CorsairClient<Plugins> {
 	const pluginIds = plugins ? new Set(plugins.map((p) => p.id)) : null;
 
@@ -138,6 +147,7 @@ export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 				if (pluginIds && !pluginIds.has(pluginId)) {
 					throw new Error(`Unknown plugin "${pluginId}"`);
 				}
+				const account = opts.accounts?.[pluginId];
 				return new Proxy(
 					{},
 					{
@@ -148,10 +158,25 @@ export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 									opts.tenantId,
 									pluginId,
 									[],
+									account,
 								);
 							}
 							if (key === 'db') {
-								return buildDbProxy(opts.transport, opts.tenantId, pluginId);
+								return buildDbProxy(
+									opts.transport,
+									opts.tenantId,
+									pluginId,
+									account,
+								);
+							}
+							if (key === 'accounts') {
+								return {
+									list: () => {
+										throw new Error(
+											'accounts.list is not supported in cloud mode yet',
+										);
+									},
+								};
 							}
 							if (typeof key === 'string' && DEFERRED.has(key)) {
 								throw new Error(

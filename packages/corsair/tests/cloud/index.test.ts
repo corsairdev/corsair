@@ -173,7 +173,10 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		).resolves.toBeDefined();
 	});
 
-	it('withTenant refuses an accounts binding in cloud mode', () => {
+	it('withTenant passes the bound account on call and db requests', async () => {
+		const fetchMock = jest.fn(
+			async () => new Response(JSON.stringify({ data: [] }), { status: 200 }),
+		);
 		const corsair = createCorsair({
 			plugins: [slack()],
 			multiTenancy: true,
@@ -182,11 +185,27 @@ describe('createCorsair with a ck_cloud_ key', () => {
 				baseUrl: 'https://vm/p/api/corsair',
 			},
 		});
-
+		const prev = global.fetch;
+		global.fetch = fetchMock as unknown as typeof fetch;
+		try {
+			const t = corsair.withTenant('acme', { accounts: { slack: 'a@x.com' } });
+			await (t as any).slack.api.messages.post({ channel: '#g', text: 'hi' });
+			await (t as any).slack.db.messages.list();
+			await corsair
+				.withTenant('acme')
+				.slack.api.messages.post({ channel: '#g', text: 'hi' });
+		} finally {
+			global.fetch = prev;
+		}
+		const bodies = fetchMock.mock.calls.map(
+			(c: any[]) => JSON.parse(c[1].body) as Record<string, unknown>,
+		);
+		expect(bodies[0]).toMatchObject({ account: 'a@x.com' });
+		expect(bodies[1]).toMatchObject({ account: 'a@x.com' });
+		expect(bodies[2]).not.toHaveProperty('account');
 		expect(() =>
-			corsair.withTenant('acme', { accounts: { slack: 'a' } }),
+			(corsair.withTenant('acme') as any).slack.accounts.list(),
 		).toThrow(/not supported in cloud mode/);
-		expect(() => corsair.withTenant('acme', { accounts: {} })).not.toThrow();
 	});
 
 	it('multi-tenant connectionStatus.get() throws without a tenantId', () => {
