@@ -20,11 +20,10 @@ const SPOTLIGHTR_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * Spotlightr authenticates with a `vooKey` query parameter on every route, not
- * a header. That has one consequence worth stating: `ApiError` redacts only the
- * params named `api_key`, `key`, `token` and `appid`, so `vooKey` would ride
- * through `cause.request.query` verbatim. This error therefore never keeps the
- * cause or the body; it copies the status and the message and nothing else.
+ * A request that never reached Spotlightr (DNS, reset, timeout). HTTP failures
+ * are not wrapped: core's `ApiError` passes through, rebuilt only to mask the
+ * key (see `withoutKey`), so its `status`, `retryAfter` and `request` reach
+ * core and the caller.
  */
 export class SpotlightrAPIError extends Error {
 	readonly status?: number;
@@ -53,6 +52,81 @@ export class SpotlightrAPIError extends Error {
 	}
 }
 
+const REDACTED = '[REDACTED]';
+
+/** Replaces every copy of the key, raw or URL-encoded, inside a string. */
+function maskKey(value: string, apiKey: string): string {
+	if (!apiKey) return value;
+	return value
+		.split(apiKey)
+		.join(REDACTED)
+		.split(encodeURIComponent(apiKey))
+		.join(REDACTED);
+}
+
+/**
+ * Spotlightr's paginated answers echo the request URL, key included, in
+ * `next_page_url` and `prev_page_url`. This masks the key anywhere in a
+ * response body so it never reaches the caller or an agent's transcript.
+ */
+// unknown: any JSON value; strings are masked, containers walked.
+export function redactKey(value: unknown, apiKey: string): unknown {
+	if (typeof value === 'string') return maskKey(value, apiKey);
+	if (Array.isArray(value)) return value.map((item) => redactKey(item, apiKey));
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, item]) => [
+				key,
+				redactKey(item, apiKey),
+			]),
+		);
+	}
+	return value;
+}
+
+/**
+ * Spotlightr authenticates with a `vooKey` query parameter, and core's
+ * ApiError redaction does not know that name, so the key would ride along in
+ * `url`, `request.url` and `request.query`. This rebuilds the same ApiError
+ * with the key masked there and the provider's text as the message; status,
+ * body and rate-limit fields are kept.
+ */
+export function withoutKey(error: ApiError, apiKey: string): ApiError {
+	const { query, ...request } = error.request;
+	const maskedQuery = query
+		? Object.fromEntries(
+				Object.entries(query).map(([key, value]) => [
+					key,
+					key === 'vooKey' ? REDACTED : value,
+				]),
+			)
+		: undefined;
+	return new ApiError(
+		{
+			...request,
+			url: maskKey(error.request.url, apiKey),
+			...(maskedQuery ? { query: maskedQuery } : {}),
+		},
+		{
+			url: maskKey(error.url, apiKey),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: redactKey(error.body, apiKey),
+		},
+		maskKey(
+			describeSpotlightrError(error.status, error.body, error.message),
+			apiKey,
+		),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
 /**
  * Spotlightr reports failures as a JSON *string*, not an object: a 401 body is
  * literally `"Unauthorized."`. A wrong key and a missing one differ only in the
@@ -69,8 +143,9 @@ export function describeSpotlightrError(
 	if (typeof body === 'string') {
 		const stripped = body.replace(/^"|"$/g, '').trim();
 		// An empty or blank body leaves the caller's message in place, rather
-		// than producing a label with nothing after it.
-		if (stripped.length > 0) text = stripped;
+		// than producing a label with nothing after it. So does the web
+		// server's HTML error page, which says nothing a caller can use.
+		if (stripped.length > 0 && !stripped.startsWith('<')) text = stripped;
 	} else {
 		const record = asRecord(body);
 		const message = record?.message;
@@ -98,8 +173,8 @@ export type SpotlightrRequest = {
 	path: string;
 	query?: SpotlightrQuery;
 	body?: unknown; // unknown: the operation's input schema validated it.
-	/** Multipart bodies, used by the two upload routes. */
-	formData?: Record<string, string | Blob | undefined>;
+	/** Multipart bodies. An array value is sent as repeated fields. */
+	formData?: Record<string, string | string[] | Blob | undefined>;
 };
 
 /** Encodes one path segment. */
@@ -136,22 +211,16 @@ export async function makeSpotlightrRequest(
 	};
 
 	try {
-		return await request<unknown>(config, requestOptions, {
+		const body = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: SPOTLIGHTR_RATE_LIMIT_CONFIG,
 		});
+		return redactKey(body, apiKey);
 	} catch (error) {
 		if (error instanceof SpotlightrAPIError) throw error;
-		if (error instanceof ApiError) {
-			// Deliberately no `cause`: it carries the request query, and `vooKey`
-			// is not one of the params ApiError redacts.
-			throw new SpotlightrAPIError(
-				describeSpotlightrError(error.status, error.body, error.message),
-				{ status: error.status, retryAfter: error.retryAfter, method },
-			);
-		}
+		if (error instanceof ApiError) throw withoutKey(error, apiKey);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new SpotlightrAPIError(error.message, { method });
+			throw new SpotlightrAPIError(maskKey(error.message, apiKey), { method });
 		}
 		throw new SpotlightrAPIError('Unknown Spotlightr error', { method });
 	}

@@ -1,8 +1,21 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SpotlightrAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof SpotlightrAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+/**
+ * GET routes that change data. `api/videoSource` replaces a video's source
+ * through a GET, so a 5xx on it is not replayed: the first call may have
+ * landed and a second caller may have changed the source since.
+ */
+const WRITING_GETS = ['api/videoSource'];
+
+function isReplayableRead(error: ApiError): boolean {
+	if (error.request.method !== 'GET') return false;
+	const url = error.request.url.replace(/^\/+/, '');
+	return !WRITING_GETS.some((path) => url.startsWith(path));
 }
 
 /**
@@ -12,12 +25,11 @@ function statusOf(error: Error): number | undefined {
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof SpotlightrAPIError && error.isRateLimit,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof SpotlightrAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -43,12 +55,12 @@ export const errorHandlers = {
 	},
 	// Spotlightr returns an HTML 500 page on a bad `vooKey` for some routes, so
 	// a 5xx there is not necessarily transient. Only reads are replayed:
-	// createVideo and the uploads are not idempotent.
+	// createVideo, the uploads and the videoSource GET are not idempotent.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SpotlightrAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			(error.status ?? 0) >= 500 &&
+			isReplayableRead(error),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

@@ -1,4 +1,5 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeSpotlightrError,
 	isAuthMessage,
@@ -112,7 +113,7 @@ describe('makeSpotlightrRequest', () => {
 		});
 	});
 
-	it('reads the bare-string 401 into a SpotlightrAPIError', async () => {
+	it('lets core ApiError through on a 401, with the bare-string message', async () => {
 		respond(unauthorized, 401);
 
 		const error = await makeSpotlightrRequest(API_KEY, {
@@ -120,12 +121,10 @@ describe('makeSpotlightrRequest', () => {
 			path: 'api/videos',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(SpotlightrAPIError);
-		expect((error as SpotlightrAPIError).status).toBe(401);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
 		// The body is the JSON string `"Unauthorized."`, so the quotes are gone.
-		expect((error as SpotlightrAPIError).message).toBe(
-			'Spotlightr 401: Unauthorized.',
-		);
+		expect((error as ApiError).message).toBe('Spotlightr 401: Unauthorized.');
 	});
 
 	it('keeps the missing-token text distinct from a wrong key', async () => {
@@ -147,8 +146,10 @@ describe('makeSpotlightrRequest', () => {
 			path: 'groups',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as SpotlightrAPIError).status).toBe(500);
+		expect((error as ApiError).status).toBe(500);
 		expect((error as Error).message).toContain('Spotlightr 500');
+		// The HTML page says nothing a caller can use, so it stays out.
+		expect((error as Error).message).not.toContain('<html>');
 	});
 
 	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
@@ -159,8 +160,8 @@ describe('makeSpotlightrRequest', () => {
 			path: 'api/videos',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as SpotlightrAPIError).retryAfter).toBe(3000);
-		expect((error as SpotlightrAPIError).isRateLimit).toBe(true);
+		expect((error as ApiError).retryAfter).toBe(3000);
+		expect((error as ApiError).status).toBe(429);
 	});
 
 	it('records the method so writes are not replayed on a 5xx', async () => {
@@ -172,12 +173,12 @@ describe('makeSpotlightrRequest', () => {
 			formData: { name: 'x' },
 		}).catch((caught: unknown) => caught);
 
-		expect((error as SpotlightrAPIError).method).toBe('POST');
+		expect((error as ApiError).request.method).toBe('POST');
 	});
 
 	it('never puts the key in the message or its inspection', async () => {
-		// The key travels in the query string, which ApiError does not redact, so
-		// the error must not keep the cause or the request.
+		// The key travels in the query string, which ApiError does not redact,
+		// so the rebuilt ApiError masks it in url, request.url and request.query.
 		respond(unauthorized, 401);
 
 		const error = await makeSpotlightrRequest(API_KEY, {

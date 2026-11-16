@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
 import { SpotlightrAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
@@ -19,12 +20,23 @@ async function strategy(error: Error) {
 
 function apiError(
 	status: number,
-	options: { retryAfter?: number; method?: string } = {},
+	options: { retryAfter?: number; method?: string; url?: string } = {},
 ) {
-	return new SpotlightrAPIError(`Spotlightr ${status}: failed`, {
-		status,
-		...options,
-	});
+	return new ApiError(
+		{
+			method: (options.method ?? 'GET') as 'GET',
+			url: options.url ?? 'api/videos',
+		},
+		{
+			url: `https://api.spotlightr.com/${options.url ?? 'api/videos'}`,
+			ok: false,
+			status,
+			statusText: '',
+			body: 'failed',
+		},
+		`Spotlightr ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('Spotlightr error handlers', () => {
@@ -73,8 +85,16 @@ describe('Spotlightr error handlers', () => {
 		expect(classify(apiError(500, { method: 'POST' }))).toBe('DEFAULT');
 	});
 
-	it('does not replay a 5xx whose method is unknown', () => {
-		expect(classify(apiError(500))).toBe('DEFAULT');
+	it('does not replay a 5xx on the videoSource GET, which writes', () => {
+		expect(
+			classify(apiError(500, { method: 'GET', url: 'api/videoSource' })),
+		).toBe('DEFAULT');
+	});
+
+	it('does not replay a transport failure that never got a status', () => {
+		expect(
+			classify(new SpotlightrAPIError('fetch failed', { method: 'GET' })),
+		).toBe('DEFAULT');
 	});
 
 	it('leaves anything unrecognised to DEFAULT with no retry', async () => {
