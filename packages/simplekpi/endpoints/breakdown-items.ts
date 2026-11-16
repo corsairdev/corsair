@@ -15,12 +15,27 @@ export const list: SimplekpiEndpoints['breakdownItemsList'] = (ctx, input) =>
 			output: Outputs.breakdownItemsList,
 		},
 		input,
-		({ breakdown_id, page, rows }) => ({
+		// The route takes only page and rows; a breakdown_id query is ignored
+		// (live, 11-16: a made-up id returned every item). So the filter runs
+		// here, on the page that came back.
+		({ page, rows }) => ({
 			method: 'GET',
 			path: '/v1/breakdownitems',
-			query: { breakdown_id, page, rows },
+			query: { page, rows },
 		}),
-		{ log: (_, result) => ({ count: result.length }) },
+		{
+			shape: (raw, { breakdown_id }) =>
+				breakdown_id === undefined || !Array.isArray(raw)
+					? raw
+					: raw.filter(
+							(item) =>
+								typeof item === 'object' &&
+								item !== null &&
+								!Array.isArray(item) &&
+								item.breakdown_id === breakdown_id,
+						),
+			log: (_, result) => ({ count: result.length }),
+		},
 	);
 
 export const create: SimplekpiEndpoints['breakdownItemsCreate'] = (

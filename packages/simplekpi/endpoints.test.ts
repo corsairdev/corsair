@@ -321,8 +321,19 @@ describe('breakdownItems', () => {
 		expect(lastRequest()).toMatchObject({
 			path: '/v1/breakdownitems',
 		});
-		expect(lastRequest().query).toEqual({ breakdown_id: '12', page: '1' });
+		// The API ignores a breakdown_id query, so the plugin filters the page.
+		expect(lastRequest().query).toEqual({ page: '1' });
 		expect(result).toEqual([breakdownItem]);
+	});
+
+	it('drops items from other breakdowns when filtering', async () => {
+		respond([breakdownItem, { ...breakdownItem, id: 78, breakdown_id: 99 }]);
+
+		const result = await invoke(BreakdownItems.list, { breakdown_id: 12 });
+
+		expect((result as Array<{ id: number }>).map((item) => item.id)).toEqual([
+			breakdownItem.id,
+		]);
 	});
 
 	it('creates, reads, updates and deletes', async () => {

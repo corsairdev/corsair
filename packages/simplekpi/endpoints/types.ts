@@ -449,7 +449,9 @@ const BreakdownItemsListInputSchema = z.object({
 		.number()
 		.int()
 		.optional()
-		.describe('Only items under this breakdown.'),
+		.describe(
+			'Only items under this breakdown. Applied to the returned page, since the API has no such filter.',
+		),
 	...paging,
 });
 
