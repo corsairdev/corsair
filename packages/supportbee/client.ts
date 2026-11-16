@@ -264,19 +264,28 @@ export async function makeSupportbeeRequest(
 	} catch (error) {
 		if (error instanceof SupportbeeAPIError) throw error;
 		if (error instanceof ApiError) {
-			const described = describeSupportbeeError(
-				error.status,
-				error.body,
-				error.message,
+			// Still core's ApiError (plugin rule R8), so its status and retry fields
+			// reach the handlers. It is rebuilt only to drop the request body and
+			// form, which hold ticket text, customer emails and attachment files.
+			// The token is in the config headers, never in the request options.
+			throw new ApiError(
+				{ method: error.request.method, url: error.request.url },
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				describeSupportbeeError(error.status, error.body, error.message)
+					.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
 			);
-			throw new SupportbeeAPIError(described.message, {
-				cause: error,
-				status: error.status,
-				code: described.code,
-				details: described.details,
-				retryAfter: error.retryAfter,
-				method,
-			});
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {

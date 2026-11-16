@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SupportbeeAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -23,9 +24,29 @@ function entry(name: keyof CorsairErrorHandler) {
 	return found;
 }
 
+// HTTP failures reach the handlers as core's ApiError, as the client throws them.
+function apiError(options: {
+	status: number;
+	method?: 'GET' | 'POST';
+	retryAfter?: number;
+}) {
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: '/tickets' },
+		{
+			url: 'https://acme.supportbee.com/tickets',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: undefined,
+		},
+		`SupportBee ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
+}
+
 describe('supportbee error handling', () => {
 	it('retries a 429 with the Retry-After the desk sent', async () => {
-		const error = new SupportbeeAPIError('rate limited', {
+		const error = apiError({
 			status: 429,
 			retryAfter: 2000,
 		});
@@ -39,7 +60,7 @@ describe('supportbee error handling', () => {
 	});
 
 	it('sends no Retry-After when the desk did not', async () => {
-		const error = new SupportbeeAPIError('rate limited', { status: 429 });
+		const error = apiError({ status: 429 });
 		const strategy = await entry('RATE_LIMIT_ERROR').handler(error, context);
 
 		// Assert absence: `not.toHaveProperty(key, value)` still passes when the
@@ -51,7 +72,7 @@ describe('supportbee error handling', () => {
 
 	it('does not retry an auth failure', async () => {
 		for (const status of [401, 403]) {
-			const error = new SupportbeeAPIError('nope', { status });
+			const error = apiError({ status });
 			expect(entry('AUTH_ERROR').match(error, context)).toBe(true);
 			expect(await entry('AUTH_ERROR').handler(error, context)).toEqual({
 				maxRetries: 0,
@@ -60,7 +81,7 @@ describe('supportbee error handling', () => {
 	});
 
 	it('does not retry a 404', async () => {
-		const error = new SupportbeeAPIError('Not Found', { status: 404 });
+		const error = apiError({ status: 404 });
 
 		expect(entry('NOT_FOUND_ERROR').match(error, context)).toBe(true);
 		expect(await entry('NOT_FOUND_ERROR').handler(error, context)).toEqual({
@@ -69,7 +90,7 @@ describe('supportbee error handling', () => {
 	});
 
 	it('does not retry a 400 or a schema rejection', async () => {
-		const error = new SupportbeeAPIError('bad field', { status: 400 });
+		const error = apiError({ status: 400 });
 		const zod = Object.assign(new Error('bad input'), { name: 'ZodError' });
 
 		expect(entry('VALIDATION_ERROR').match(error, context)).toBe(true);
@@ -80,11 +101,11 @@ describe('supportbee error handling', () => {
 	});
 
 	it('replays a 5xx only for a read', async () => {
-		const read = new SupportbeeAPIError('boom', {
+		const read = apiError({
 			status: 503,
 			method: 'GET',
 		});
-		const write = new SupportbeeAPIError('boom', {
+		const write = apiError({
 			status: 503,
 			method: 'POST',
 		});
@@ -113,14 +134,10 @@ describe('supportbee error handling', () => {
 		expect(entry('DEFAULT').match(error, context)).toBe(true);
 	});
 
-	it('classifies the status getters', () => {
-		expect(new SupportbeeAPIError('x', { status: 401 }).isAuthError).toBe(true);
-		expect(new SupportbeeAPIError('x', { status: 403 }).isAuthError).toBe(true);
-		expect(new SupportbeeAPIError('x', { status: 404 }).isNotFound).toBe(true);
-		expect(new SupportbeeAPIError('x', { status: 429 }).isRateLimit).toBe(true);
-		expect(new SupportbeeAPIError('x', { status: 500 }).isRateLimit).toBe(
-			false,
-		);
+	it('sends a transport failure with no status to DEFAULT', () => {
+		const error = new SupportbeeAPIError('fetch failed', { method: 'GET' });
+		expect(entry('SERVER_ERROR').match(error, context)).toBe(false);
+		expect(entry('DEFAULT').match(error, context)).toBe(true);
 	});
 });
 

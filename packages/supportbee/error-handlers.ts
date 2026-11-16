@@ -1,8 +1,10 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SupportbeeAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
+// HTTP failures arrive as core's ApiError. Transport failures
+// (SupportbeeAPIError) carry no status and fall through to DEFAULT.
 function statusOf(error: Error): number | undefined {
-	return error instanceof SupportbeeAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -21,22 +23,23 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof SupportbeeAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// 401 is a missing or wrong token; 403 is a user whose role lacks the
 	// permission the route needs, such as an admin-only snippet or filter.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SupportbeeAPIError && error.isAuthError,
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status === 401 || status === 403;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404 is an id or route that does not exist. It is terminal: the same
 	// request returns the same answer.
 	NOT_FOUND_ERROR: {
-		match: (error: Error) =>
-			error instanceof SupportbeeAPIError && error.isNotFound,
+		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 is a field SupportBee rejected, so the same body fails again.
@@ -50,9 +53,9 @@ export const errorHandlers = {
 	// A 5xx may have reached the desk, so only reads are replayed.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SupportbeeAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
