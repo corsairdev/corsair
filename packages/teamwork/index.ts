@@ -31,7 +31,7 @@ const teamworkEndpointsNested = teamworkOperationsNested;
 export type TeamworkPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	/** Global override for single-site setups; otherwise each tenant uses tenant_external_id. */
+	/** Global override for single-site setups; otherwise each tenant uses its stored site_name. */
 	siteName?: string;
 	hooks?: InternalTeamworkPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -40,7 +40,8 @@ export type TeamworkPluginOptions = {
 
 export const teamworkAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		// The Teamwork site (`acme` for acme.teamwork.com): the API lives on each site's own host.
+		account: ['site_name'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -3526,6 +3527,15 @@ export function teamwork<const T extends TeamworkPluginOptions>(
 			if (!ctx.keys) throw new AuthMissingError('teamwork', 'api_key');
 			const apiKey = await ctx.keys.get_api_key();
 			if (!apiKey) throw new AuthMissingError('teamwork', 'api_key');
+			// A key without a site can't reach any Teamwork host. Failing here, not in
+			// the endpoint, lets core hand back a connect link that asks for the site.
+			if (!options.siteName && !(await ctx.keys.get_site_name())) {
+				throw new AuthMissingError(
+					'teamwork',
+					'api_key',
+					'Teamwork site is not set: connect the account with its site name (acme for acme.teamwork.com) or set the siteName option.',
+				);
+			}
 			return apiKey;
 		},
 	} satisfies InternalTeamworkPlugin;

@@ -16,7 +16,7 @@ import { teamwork } from '@corsair-dev/teamwork';
 const plugin = teamwork();
 ```
 
-Store the Teamwork API key and that tenant's site subdomain as `tenant_external_id` through Corsair's API-key credential flow. Teamwork uses HTTP Basic authentication with the API key as the username and an empty password, over HTTPS. The optional `siteName` plugin option is a global override intended for a single Teamwork site; full `.teamwork.com` hostnames are also accepted. Custom API hosts are not supported.
+Store the Teamwork API key and that tenant's site as `site_name` (`acme` for acme.teamwork.com, `acme.eu` for an EU site) through Corsair's API-key credential flow. Teamwork uses HTTP Basic authentication with the API key as the username and an empty password, over HTTPS. The optional `siteName` plugin option is a global override intended for a single Teamwork site. Full `.teamwork.com` hostnames and site URLs are also accepted; hosts outside teamwork.com are not.
 
 ## Operation input shape
 

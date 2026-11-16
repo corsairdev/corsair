@@ -25,10 +25,9 @@ export type TeamworkOperationEndpoint<Id extends TeamworkOperationId> =
 
 export async function resolveTeamworkSiteName(
 	siteNameOverride: string | undefined,
-	keys: Pick<TeamworkContext['keys'], 'get_tenant_external_id'> | undefined,
+	keys: Pick<TeamworkContext['keys'], 'get_site_name'> | undefined,
 ): Promise<string> {
-	const siteName =
-		siteNameOverride ?? (await keys?.get_tenant_external_id()) ?? '';
+	const siteName = siteNameOverride ?? (await keys?.get_site_name()) ?? '';
 	if (!siteName) throw new Error('A Teamwork site name is required');
 	return siteName;
 }

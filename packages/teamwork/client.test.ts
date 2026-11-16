@@ -46,6 +46,28 @@ describe('Teamwork HTTP client', () => {
 		);
 	});
 
+	it('accepts EU sites and pasted site URLs but keeps the host on teamwork.com', () => {
+		expect(client.resolveTeamworkBaseUrl('acme.eu.teamwork.com')).toBe(
+			'https://acme.eu.teamwork.com',
+		);
+		expect(client.resolveTeamworkBaseUrl('acme.eu')).toBe(
+			'https://acme.eu.teamwork.com',
+		);
+		expect(
+			client.resolveTeamworkBaseUrl('https://acme.teamwork.com/app/home'),
+		).toBe('https://acme.teamwork.com');
+		for (const bad of [
+			'acme.example.com',
+			'http://acme.teamwork.com',
+			'acme.teamwork.com.evil.io',
+			'acme.us',
+		]) {
+			expect(() => client.resolveTeamworkBaseUrl(bad)).toThrow(
+				'A valid Teamwork site name is required',
+			);
+		}
+	});
+
 	it('encodes comma-separated array filters as one query value on the wire', async () => {
 		const originalFetch = global.fetch;
 		const fetchMock = jest.fn().mockResolvedValue(

@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { teamworkInputSchemas } from './endpoints/openapi-schema';
 import {
@@ -7,7 +7,7 @@ import {
 	teamworkOperationsById,
 } from './endpoints/operations';
 import { teamworkDefinitions, teamworkOperations } from './endpoints/types';
-import type { TeamworkContext } from './index';
+import type { TeamworkContext, TeamworkKeyBuilderContext } from './index';
 import { teamwork } from './index';
 
 jest.mock('corsair/core', () => {
@@ -133,9 +133,9 @@ function buildContext(siteName?: string): TeamworkContext {
 			get_dek: () => Promise.resolve('test-dek'),
 			issue_new_dek: () => Promise.resolve('test-dek'),
 			get_api_key: () => Promise.resolve('test-key'),
-			get_tenant_external_id: () => Promise.resolve('teamwork-test'),
+			get_site_name: () => Promise.resolve('teamwork-test'),
 			set_api_key: () => Promise.resolve(),
-			set_tenant_external_id: () => Promise.resolve(),
+			set_site_name: () => Promise.resolve(),
 			get_webhook_signature: () => Promise.resolve(null),
 			set_webhook_signature: () => Promise.resolve(),
 		},
@@ -272,7 +272,7 @@ describe('documented operation routes', () => {
 
 	it('uses a credential-required API-key connector and has no webhooks', () => {
 		const plugin = teamwork({ siteName: 'teamwork-test' });
-		expect(plugin.authConfig?.api_key?.account).toEqual(['tenant_external_id']);
+		expect(plugin.authConfig?.api_key?.account).toEqual(['site_name']);
 		expect(plugin.webhooks).toEqual({});
 		const operationIds = teamworkOperations
 			.map((operation) => operation.id)
@@ -305,6 +305,32 @@ describe('documented operation routes', () => {
 		] as const) {
 			expect(plugin.endpointMeta?.[id]?.riskLevel).toBe('destructive');
 		}
+	});
+
+	it('asks for the site through a connect link when a stored key has no site', async () => {
+		const keyBuilderContext = (siteName: string | null) =>
+			({
+				authType: 'api_key',
+				keys: {
+					get_api_key: () => Promise.resolve('test-key'),
+					get_site_name: () => Promise.resolve(siteName),
+				},
+			}) as unknown as TeamworkKeyBuilderContext;
+		const buildKey = (
+			options: Parameters<typeof teamwork>[0],
+			siteName: string | null,
+		) =>
+			(
+				teamwork(options).keyBuilder as unknown as (
+					ctx: TeamworkKeyBuilderContext,
+					source: 'endpoint',
+				) => Promise<string>
+			)(keyBuilderContext(siteName), 'endpoint');
+		await expect(buildKey({}, null)).rejects.toThrow(AuthMissingError);
+		await expect(buildKey({}, 'acme')).resolves.toBe('test-key');
+		await expect(buildKey({ siteName: 'acme' }, null)).resolves.toBe(
+			'test-key',
+		);
 	});
 
 	it('supports direct API-key use without stored tenant metadata when overridden', async () => {

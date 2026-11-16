@@ -19,12 +19,19 @@ export type TeamworkRequest = {
 	body?: unknown;
 };
 
+/**
+ * Accepts `acme`, `acme.teamwork.com`, an EU site (`acme.eu` or
+ * `acme.eu.teamwork.com`) or the site URL as pasted from the browser. The host
+ * always ends in `.teamwork.com`, so a stored value can't send the key elsewhere.
+ */
 export function resolveTeamworkBaseUrl(siteName: string): string {
 	const normalized = siteName
 		.trim()
 		.toLowerCase()
+		.replace(/^https:\/\//, '')
+		.replace(/\/.*$/, '')
 		.replace(/\.teamwork\.com$/, '');
-	if (!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(normalized)) {
+	if (!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.eu)?$/.test(normalized)) {
 		throw new Error('A valid Teamwork site name is required');
 	}
 	return `https://${normalized}${TEAMWORK_API_HOST_SUFFIX}`;
