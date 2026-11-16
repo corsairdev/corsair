@@ -1,38 +1,33 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SupersaasAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof SupersaasAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
- * SuperSaaS answers every failure as **plain text**, not JSON: a bad key is the
- * literal `HTTP Basic: Access denied.` with a 401.
+ * HTTP failures arrive as core's ApiError. SuperSaaS answers a bad key with a
+ * plain-text 401 and most other failures with `{ errors: [{ status, title }] }`.
  *
  * SuperSaaS documents no rate limit, so a 429 comes from a gateway.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		// The gateway refused the request before SuperSaaS saw it, so any method
-		// is safe to replay.
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof SupersaasAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// Core's request() has already retried it three times on Retry-After.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401 and 403: the account name or API key is wrong.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SupersaasAPIError && error.isAuthError,
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status === 401 || status === 403;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404: no such user, booking, slot or schedule.
 	NOT_FOUND_ERROR: {
-		match: (error: Error) =>
-			error instanceof SupersaasAPIError && error.isNotFound,
+		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 422: a field failed validation, such as an invalid email address or a
@@ -48,8 +43,8 @@ export const errorHandlers = {
 	// replayed booking create could double-book the same time.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SupersaasAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,

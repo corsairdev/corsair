@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SupersaasAPIError } from './client';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 
@@ -7,15 +8,22 @@ import { errorHandlers as builtinHandlers } from './error-handlers';
 const errorHandlers: CorsairErrorHandler = builtinHandlers;
 
 function build(options: {
-	status?: number;
+	status: number;
 	method?: string;
 	retryAfter?: number;
 }) {
-	return new SupersaasAPIError(`SuperSaaS ${options.status}`, {
-		status: options.status,
-		method: options.method,
-		retryAfter: options.retryAfter,
-	});
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/users.json' },
+		{
+			url: 'https://www.supersaas.com/api/users.json',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { errors: [{ status: String(options.status), title: 'x' }] },
+		},
+		`SuperSaaS ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 const context = (error: Error) => ({
@@ -36,26 +44,11 @@ function matches(name: keyof typeof errorHandlers, error: Error) {
 }
 
 describe('supersaas error handlers', () => {
-	it('retries a 429 three times and keeps the Retry-After value', async () => {
-		const result = await run(
-			'RATE_LIMIT_ERROR',
-			build({ status: 429, retryAfter: 1500 }),
-		);
-
-		expect(result).toMatchObject({
-			maxRetries: 3,
-			headersRetryAfterMs: 1500,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('leaves the fallback delay unset when no Retry-After arrived', async () => {
-		const result = await run('RATE_LIMIT_ERROR', build({ status: 429 }));
-
-		expect(result).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
+	it('leaves a 429 to core, which has already retried it three times', async () => {
+		const error = build({ status: 429, retryAfter: 1500 });
+		expect(matches('RATE_LIMIT_ERROR', error)).toBe(true);
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 
@@ -111,11 +104,10 @@ describe('supersaas error handlers', () => {
 	});
 });
 
-describe('supersaas error classification', () => {
-	it('separates auth from not-found', () => {
-		expect(build({ status: 401 }).isAuthError).toBe(true);
-		expect(build({ status: 401 }).isNotFound).toBe(false);
-		expect(build({ status: 404 }).isNotFound).toBe(true);
-		expect(build({ status: 404 }).isAuthError).toBe(false);
+describe('supersaas transport errors', () => {
+	it('leaves a request that never reached SuperSaaS to DEFAULT', () => {
+		const error = new SupersaasAPIError('fetch failed', { method: 'GET' });
+		expect(matches('SERVER_ERROR', error)).toBe(false);
+		expect(matches('DEFAULT', error)).toBe(true);
 	});
 });

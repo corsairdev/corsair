@@ -10,83 +10,66 @@ export const SUPERSAAS_API_BASE = 'https://www.supersaas.com/api';
 
 /**
  * SuperSaaS documents no rate limit and sends no rate-limit headers, so a 429
- * here comes from a gateway. Retries live in error-handlers.ts.
+ * here comes from a gateway. Core retries it three times, honouring
+ * Retry-After (R8); the plugin's handler does not add more.
  */
 const SUPERSAAS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
 
 /**
- * SuperSaaS authenticates with **HTTP Basic**, where the username is the account
- * name and the password is the API key. It can also take `account` and
- * `api_key` as query parameters, and a checksum instead of the key, but Basic is
- * the documented server-side form and it keeps both values out of the URL.
+ * A request that never reached SuperSaaS (DNS, reset, timeout). HTTP failures
+ * are not wrapped: core's `ApiError` passes through (see `withoutSentBody`), so
+ * its `status`, `retryAfter`, `request` and `body` reach core and the caller.
  *
- * Every failure is **plain text**, not JSON: a bad key answers the literal
- * `HTTP Basic: Access denied.` with a 401.
+ * SuperSaaS authenticates with **HTTP Basic**, where the username is the account
+ * name and the password is the API key; both live in the request config, which
+ * core never copies onto an error.
  */
 export class SupersaasAPIError extends Error {
-	readonly status?: number;
-	/** The provider's plain-text reason, when it sent one. */
-	readonly reason?: string;
-	/** Milliseconds from a Retry-After header, when one was sent. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
-	// unknown: the body is plain text, but a proxy can answer HTML or empty.
-	readonly body?: UnknownJson;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			// unknown: same open error body as the field above.
-			body?: UnknownJson;
-			retryAfter?: number;
-			method?: string;
-		} = {},
+		options: { cause?: Error; method?: string } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'SupersaasAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.reason =
-			typeof this.body === 'string' && this.body.trim().length > 0
-				? this.body.trim().slice(0, 300)
-				: undefined;
-	}
-
-	/** True when the account name or API key was rejected. */
-	get isAuthError(): boolean {
-		return this.status === 401 || this.status === 403;
-	}
-
-	/** True when the user, booking, slot or schedule was not found. */
-	get isNotFound(): boolean {
-		return this.status === 404;
+		this.method = options.method;
 	}
 }
 
-// unknown: see SupersaasAPIError.
-export function describeSupersaasError(
-	status: number | undefined,
-	body: UnknownJson,
-	fallback: string,
-): string {
-	// SuperSaaS writes a bare sentence, so the text is the whole message.
-	const text =
-		typeof body === 'string' && body.trim().length > 0
-			? body.trim().slice(0, 300)
-			: fallback;
-	return status === undefined ? text : `SuperSaaS ${status}: ${text}`;
+/**
+ * Core's ApiError keeps the request it was built from, body included, and a
+ * SuperSaaS body is a user or booking: names, emails, addresses, passwords.
+ * This rebuilds the same ApiError without the sent body; status, method, URL,
+ * response body and rate-limit fields are kept.
+ */
+function withoutSentBody(error: ApiError): ApiError {
+	if (error.request.body === undefined) return error;
+	const { body: _sentBody, ...request } = error.request;
+	return new ApiError(
+		request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 export type SupersaasQuery = Record<
@@ -104,6 +87,11 @@ export type SupersaasRequest = {
 	 * so the endpoints build that wrapper rather than sending a bare object.
 	 */
 	body?: UnknownJson; // unknown: the endpoint's input schema validated it
+	/**
+	 * A create answers 201 with an empty body and the new record's URL in
+	 * `Location`; naming the header makes that URL the result.
+	 */
+	responseHeader?: string;
 };
 
 /** Encodes one path segment. */
@@ -124,7 +112,7 @@ export function jsonPath(path: string): string {
 // shape differs per route, which is what that schema is for.
 export async function makeSupersaasRequest(
 	credentials: { accountName: string; apiKey: string },
-	{ method, path, query, body }: SupersaasRequest,
+	{ method, path, query, body, responseHeader }: SupersaasRequest,
 ): Promise<UnknownJson> {
 	const config: OpenAPIConfig = {
 		BASE: SUPERSAAS_API_BASE,
@@ -145,6 +133,7 @@ export async function makeSupersaasRequest(
 		query,
 		body,
 		mediaType: body === undefined ? undefined : 'application/json',
+		responseHeader,
 	};
 
 	try {
@@ -152,22 +141,7 @@ export async function makeSupersaasRequest(
 			rateLimitConfig: SUPERSAAS_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including the Basic credentials header, so `util.inspect(error)`
-			// would print them.
-			throw new SupersaasAPIError(
-				describeSupersaasError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method: error.request.method,
-				},
-			);
-		}
-		// A transport failure never held a body or headers, so its cause is safe to
-		// keep. DOMException (fetch timeouts) can fail instanceof Error across realms.
+		if (error instanceof ApiError) throw withoutSentBody(error);
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new SupersaasAPIError(error.message, { cause: error, method });
 		}
