@@ -1,4 +1,3 @@
-import * as foldersModule from './folders';
 import * as formsModule from './forms';
 import * as labelsModule from './labels';
 import * as reportsModule from './reports';
@@ -10,7 +9,6 @@ export const User = {
 	get: userModule.get,
 	getForms: userModule.getForms,
 	getSubmissions: userModule.getSubmissions,
-	getFolders: userModule.getFolders,
 	getHistory: userModule.getHistory,
 	getSettings: userModule.getSettings,
 	updateSettings: userModule.updateSettings,
@@ -54,13 +52,6 @@ export const Submissions = {
 export const Reports = {
 	get: reportsModule.get,
 	delete: reportsModule.deleteReport,
-};
-
-export const Folders = {
-	get: foldersModule.get,
-	create: foldersModule.create,
-	update: foldersModule.update,
-	delete: foldersModule.deleteFolder,
 };
 
 export const Labels = {

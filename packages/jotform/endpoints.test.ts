@@ -3,15 +3,7 @@ import { ZodError } from 'zod';
 import type { JotformRequestOptions } from './client';
 import * as client from './client';
 import { JOTFORM_EU_API_BASE, JOTFORM_HIPAA_API_BASE } from './client';
-import {
-	Folders,
-	Forms,
-	Labels,
-	Reports,
-	Submissions,
-	System,
-	User,
-} from './endpoints';
+import { Forms, Labels, Reports, Submissions, System, User } from './endpoints';
 import type { JotformContext } from './index';
 
 jest.mock('corsair/core', () => {
@@ -149,20 +141,6 @@ describe('User Endpoints', () => {
 			query: { limit: 5 },
 		});
 		expect(res.content).toHaveLength(1);
-	});
-
-	it('user.getFolders', async () => {
-		mockedRequest.mockResolvedValue({
-			responseCode: 200,
-			message: 'success',
-			content: [{ id: 'folder-1', name: 'My Folder' }],
-		});
-
-		const res = await User.getFolders(ctx, {});
-		expect(mockedRequest).toHaveBeenCalledWith('/user/folders', ctx.key, {
-			method: 'GET',
-		});
-		expect(res.responseCode).toBe(200);
 	});
 
 	it('user.getHistory', async () => {
@@ -573,7 +551,7 @@ describe('Forms Endpoints', () => {
 	});
 });
 
-describe('Submissions, Reports, Folders, Labels, and System Endpoints', () => {
+describe('Submissions, Reports, Labels, and System Endpoints', () => {
 	it('submissions.get, submissions.update, submissions.delete', async () => {
 		mockedRequest.mockResolvedValue({
 			responseCode: 200,
@@ -626,45 +604,6 @@ describe('Submissions, Reports, Folders, Labels, and System Endpoints', () => {
 		});
 		await Reports.delete(ctx, { id: 'rep-999' });
 		expect(mockedRequest).toHaveBeenCalledWith('/report/rep-999', ctx.key, {
-			method: 'DELETE',
-		});
-	});
-
-	it('folders (get, create, update, delete)', async () => {
-		mockedRequest.mockResolvedValue({
-			responseCode: 200,
-			message: 'success',
-			content: { id: 'fold-1', name: 'My Folder' },
-		});
-
-		await Folders.get(ctx, { id: 'fold-1' });
-		expect(mockedRequest).toHaveBeenCalledWith('/folder/fold-1', ctx.key, {
-			method: 'GET',
-		});
-
-		await Folders.create(ctx, { name: 'New Folder', color: '#ff0000' });
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/folder',
-			ctx.key,
-			expect.objectContaining({
-				method: 'POST',
-				contentType: 'application/x-www-form-urlencoded',
-			}),
-		);
-
-		await Folders.update(ctx, { id: 'fold-1', name: 'Updated Folder' });
-		expect(mockedRequest).toHaveBeenCalledWith('/folder/fold-1', ctx.key, {
-			method: 'PUT',
-			body: { name: 'Updated Folder' },
-		});
-
-		mockedRequest.mockResolvedValueOnce({
-			responseCode: 200,
-			message: 'success',
-			content: 'Folder deleted',
-		});
-		await Folders.delete(ctx, { id: 'fold-1' });
-		expect(mockedRequest).toHaveBeenCalledWith('/folder/fold-1', ctx.key, {
 			method: 'DELETE',
 		});
 	});

@@ -12,10 +12,6 @@ pnpm add @corsair-dev/jotform
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `folders.create` | `jotform.api.folders.create` | `write` | Create a new folder to organize forms |
-| `folders.delete` | `jotform.api.folders.delete` | `destructive` | Delete a specific folder by ID |
-| `folders.get` | `jotform.api.folders.get` | `read` | Get details, subfolders and form IDs for a specific folder |
-| `folders.update` | `jotform.api.folders.update` | `write` | Update folder properties such as name, color or contained forms |
 | `forms.clone` | `jotform.api.forms.clone` | `write` | Clone an existing form by duplicating its questions and settings |
 | `forms.create` | `jotform.api.forms.create` | `write` | Create a new form with questions, properties and email settings |
 | `forms.createForms` | `jotform.api.forms.createForms` | `write` | Create new forms using a complete JSON form content structure |
@@ -50,7 +46,6 @@ pnpm add @corsair-dev/jotform
 | `submissions.update` | `jotform.api.submissions.update` | `write` | Edit answers or read/flag status of an existing submission |
 | `system.getPlan` | `jotform.api.system.getPlan` | `read` | Get limits and details for a specific Jotform system plan |
 | `user.get` | `jotform.api.user.get` | `read` | Get user account details, including account type, email, website and usage link |
-| `user.getFolders` | `jotform.api.user.getFolders` | `read` | Get folders structure and layout for this account |
 | `user.getForms` | `jotform.api.user.getForms` | `read` | Get list of forms for this account with pagination, ordering and filtering |
 | `user.getHistory` | `jotform.api.user.getHistory` | `read` | Get user activity log history records |
 | `user.getInvoices` | `jotform.api.user.getInvoices` | `read` | Get list of invoices and payment receipts for this account |

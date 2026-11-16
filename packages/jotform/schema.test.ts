@@ -29,7 +29,7 @@ describe('Jotform Schemas & Registry Consistency', () => {
 		expect(metaKeys).toEqual(registeredOps);
 		expect(inputSchemaKeys).toEqual(registeredOps);
 		expect(outputSchemaKeys).toEqual(registeredOps);
-		expect(registeredOps.length).toBe(50);
+		expect(registeredOps.length).toBe(45);
 	});
 
 	it('validates user input and output schemas', () => {
@@ -133,7 +133,7 @@ describe('Jotform Schemas & Registry Consistency', () => {
 		).toMatchObject(validFormResponse);
 	});
 
-	it('validates submissions, reports, folders, and labels schemas', () => {
+	it('validates submissions, reports and labels schemas', () => {
 		// Submissions
 		expect(
 			JotformEndpointInputSchemas['submissions.get'].parse({
@@ -157,17 +157,6 @@ describe('Jotform Schemas & Registry Consistency', () => {
 				id: 'rep-123',
 			}),
 		).toEqual({ id: 'rep-123' });
-
-		// Folders
-		expect(
-			JotformEndpointInputSchemas['folders.create'].parse({
-				name: 'Test Folder',
-				color: '#ffffff',
-			}),
-		).toEqual({
-			name: 'Test Folder',
-			color: '#ffffff',
-		});
 
 		// Labels
 		expect(
@@ -200,6 +189,12 @@ describe('Jotform risk levels (R8)', () => {
 		const ops = Object.keys(JotformEndpointInputSchemas);
 		expect(ops).not.toContain('user.login');
 		expect(ops).not.toContain('user.register');
+	});
+
+	it('has no folder operations: Jotform answers 400 "deprecated" on every folder route', () => {
+		const ops = Object.keys(JotformEndpointInputSchemas);
+		expect(ops.filter((op) => /folder/i.test(op))).toEqual([]);
+		expect(Object.keys(jotform().endpoints ?? {})).not.toContain('folders');
 	});
 
 	it('accepts a null info field in the response envelope', () => {

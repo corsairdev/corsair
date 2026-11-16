@@ -8,202 +8,6 @@ description: "API reference for the Jotform plugin in Corsair: every `jotform.ap
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
-## Folders
-
-### create
-
-`folders.create`
-
-Create a new folder to organize forms
-
-**Risk:** `write`
-
-```ts
-await corsair.jotform.api.folders.create({ name: 'Feedback Forms' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | Yes | — |
-| `color` | `string` | No | — |
-| `parent` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `responseCode` | `number` | Yes | — |
-| `message` | `string` | Yes | — |
-| `content` | `object` | Yes | — |
-| `duration` | `string` | No | — |
-| `info` | `string \| null` | No | — |
-| `limit-left` | `number \| string` | No | — |
-
-<AccordionGroup>
-<Accordion title="content full type">
-
-```ts
-{
-  id: string,
-  name?: string | null,
-  parent?: string | null,
-  color?: string | null,
-  path?: string | null,
-  forms?: string[] | Record<string, any>
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### delete
-
-`folders.delete`
-
-Delete a specific folder by ID
-
-**Risk:** `destructive`
-
-```ts
-await corsair.jotform.api.folders.delete({ id: 'fold-123' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `responseCode` | `number` | Yes | — |
-| `message` | `string` | Yes | — |
-| `content` | `string \| Record<string, any> \| boolean` | Yes | — |
-| `duration` | `string` | No | — |
-| `info` | `string \| null` | No | — |
-| `limit-left` | `number \| string` | No | — |
-
-
-
----
-
-### get
-
-`folders.get`
-
-Get details, subfolders and form IDs for a specific folder
-
-**Risk:** `read`
-
-```ts
-await corsair.jotform.api.folders.get({ id: 'fold-123' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `responseCode` | `number` | Yes | — |
-| `message` | `string` | Yes | — |
-| `content` | `object` | Yes | — |
-| `duration` | `string` | No | — |
-| `info` | `string \| null` | No | — |
-| `limit-left` | `number \| string` | No | — |
-
-<AccordionGroup>
-<Accordion title="content full type">
-
-```ts
-{
-  id: string,
-  name?: string | null,
-  parent?: string | null,
-  color?: string | null,
-  path?: string | null,
-  forms?: string[] | Record<string, any>
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### update
-
-`folders.update`
-
-Update folder properties such as name, color or contained forms
-
-**Risk:** `write`
-
-```ts
-await corsair.jotform.api.folders.update({ id: 'fold-123', name: 'Archived Feedback Forms' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `color` | `string` | No | — |
-| `parent` | `string` | No | — |
-| `forms` | `string[]` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `responseCode` | `number` | Yes | — |
-| `message` | `string` | Yes | — |
-| `content` | `object` | Yes | — |
-| `duration` | `string` | No | — |
-| `info` | `string \| null` | No | — |
-| `limit-left` | `number \| string` | No | — |
-
-<AccordionGroup>
-<Accordion title="content full type">
-
-```ts
-{
-  id?: string,
-  name?: string | null,
-  parent?: string | null,
-  color?: string | null,
-  path?: string | null,
-  forms?: string[] | Record<string, any>
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ## Forms
 
 ### clone
@@ -376,7 +180,7 @@ await corsair.jotform.api.forms.createQuestions({ id: '230000000000000', questio
 |------|------|----------|-------------|
 | `responseCode` | `number` | Yes | — |
 | `message` | `string` | Yes | — |
-| `content` | `Record<string, any>` | Yes | — |
+| `content` | `Record<string, any>[] \| Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
 | `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
@@ -1761,52 +1565,6 @@ await corsair.jotform.api.user.get({});
 
 ---
 
-### getFolders
-
-`user.getFolders`
-
-Get folders structure and layout for this account
-
-**Risk:** `read`
-
-```ts
-await corsair.jotform.api.user.getFolders({});
-```
-
-**Input:** _empty object_
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `responseCode` | `number` | Yes | — |
-| `message` | `string` | Yes | — |
-| `content` | `object[] \| Record<string, any>` | Yes | — |
-| `duration` | `string` | No | — |
-| `info` | `string \| null` | No | — |
-| `limit-left` | `number \| string` | No | — |
-
-<AccordionGroup>
-<Accordion title="content full type">
-
-```ts
-{
-  id: string,
-  name?: string | null,
-  parent?: string | null,
-  color?: string | null,
-  path?: string | null,
-  forms?: string[] | Record<string, any>
-}[] | Record<string, any>
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ### getForms
 
 `user.getForms`
@@ -1995,7 +1753,7 @@ await corsair.jotform.api.user.getLabels({});
 |------|------|----------|-------------|
 | `responseCode` | `number` | Yes | — |
 | `message` | `string` | Yes | — |
-| `content` | `Record<string, any>` | Yes | — |
+| `content` | `Record<string, any> \| any[]` | Yes | — |
 | `duration` | `string` | No | — |
 | `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
@@ -2078,7 +1836,7 @@ await corsair.jotform.api.user.getSettingByKey({ key: 'time_zone' });
 |------|------|----------|-------------|
 | `responseCode` | `number` | Yes | — |
 | `message` | `string` | Yes | — |
-| `content` | `string \| number \| boolean \| Record<string, any> \| null` | Yes | — |
+| `content` | `string \| number \| boolean \| Record<string, any> \| any[] \| null` | Yes | — |
 | `duration` | `string` | No | — |
 | `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |

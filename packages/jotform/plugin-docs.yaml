@@ -1,5 +1,5 @@
 displayName: Jotform
-description: Manage Jotform online forms, questions, submissions, reports, folders, and labels through the official Jotform REST API.
+description: Manage Jotform online forms, questions, submissions, reports and labels through the official Jotform REST API.
 domain: jotform.com
 recommendedAuth: api_key
 overviewNote: >-
@@ -24,8 +24,6 @@ apiExamples:
     call: "{ limit: 20 }"
   user.getSubmissions:
     call: "{ limit: 20 }"
-  user.getFolders:
-    call: "{}"
   user.getHistory:
     call: "{ action: 'formCreation' }"
   user.getSettings:
@@ -94,14 +92,6 @@ apiExamples:
     call: "{ id: '90000000000000' }"
   reports.delete:
     call: "{ id: '90000000000000' }"
-  folders.get:
-    call: "{ id: 'fold-123' }"
-  folders.create:
-    call: "{ name: 'Feedback Forms' }"
-  folders.update:
-    call: "{ id: 'fold-123', name: 'Archived Feedback Forms' }"
-  folders.delete:
-    call: "{ id: 'fold-123' }"
   labels.get:
     call: "{ id: 'lbl-123' }"
   labels.create:

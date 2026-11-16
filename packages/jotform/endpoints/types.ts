@@ -124,21 +124,6 @@ export const JotformSubmissionSchema = z
 	})
 	.passthrough();
 
-export const JotformFolderSchema = z
-	.object({
-		id: z.string(),
-		name: z.string().nullable().optional(),
-		parent: z.string().nullable().optional(),
-		color: z.string().nullable().optional(),
-		path: z.string().nullable().optional(),
-		// Jotform returns forms as an object keyed by form ID; older payloads used an ID list.
-		// unknown because each form entry is a full form record we do not model here.
-		forms: z
-			.union([z.array(z.string()), z.record(z.string(), z.unknown())])
-			.optional(),
-	})
-	.passthrough();
-
 export const JotformLabelSchema = z
 	.object({
 		id: z.string(),
@@ -254,7 +239,6 @@ export const JotformEndpointInputSchemas = {
 			orderby: z.string().optional(),
 		})
 		.strict(),
-	'user.getFolders': z.object({}).strict(),
 	'user.getHistory': z
 		.object({
 			action: z.string().optional(),
@@ -457,34 +441,6 @@ export const JotformEndpointInputSchemas = {
 		})
 		.strict(),
 
-	// ── Folders ──
-	'folders.get': z
-		.object({
-			id: PathIdSchema,
-		})
-		.strict(),
-	'folders.create': z
-		.object({
-			name: z.string().min(1),
-			color: z.string().optional(),
-			parent: z.string().optional(),
-		})
-		.strict(),
-	'folders.update': z
-		.object({
-			id: PathIdSchema,
-			name: z.string().optional(),
-			color: z.string().optional(),
-			parent: z.string().optional(),
-			forms: z.array(z.string()).optional(),
-		})
-		.strict(),
-	'folders.delete': z
-		.object({
-			id: PathIdSchema,
-		})
-		.strict(),
-
 	// ── Labels ──
 	'labels.get': z
 		.object({
@@ -557,10 +513,6 @@ export const JotformEndpointOutputSchemas = {
 	'user.getForms': createJotformListEnvelope(z.array(JotformFormSummarySchema)),
 	'user.getSubmissions': createJotformListEnvelope(
 		z.array(JotformSubmissionSchema),
-	),
-	// unknown because folder layout and custom user folders return unstructured JSON maps
-	'user.getFolders': createJotformEnvelope(
-		z.union([z.array(JotformFolderSchema), z.record(z.string(), z.unknown())]),
 	),
 	'user.getHistory': createJotformEnvelope(z.array(JotformHistoryItemSchema)),
 	// unknown because user settings map contains arbitrary key-value pairs
@@ -690,18 +642,6 @@ export const JotformEndpointOutputSchemas = {
 	// unknown because report deletion returns boolean or status object
 	'reports.delete': createJotformEnvelope(
 		z.union([z.boolean(), z.record(z.string(), z.unknown())]),
-	),
-
-	// ── Folders ──
-	'folders.get': createJotformEnvelope(JotformFolderSchema),
-	'folders.create': createJotformEnvelope(JotformFolderSchema),
-	// The update response echoes only the changed properties, without id.
-	'folders.update': createJotformEnvelope(
-		JotformFolderSchema.extend({ id: z.string().optional() }),
-	),
-	// unknown because folder deletion returns string status or status object
-	'folders.delete': createJotformEnvelope(
-		z.union([z.string(), z.record(z.string(), z.unknown()), z.boolean()]),
 	),
 
 	// ── Labels ──

@@ -13,15 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import {
-	Folders,
-	Forms,
-	Labels,
-	Reports,
-	Submissions,
-	System,
-	User,
-} from './endpoints';
+import { Forms, Labels, Reports, Submissions, System, User } from './endpoints';
 import type {
 	JotformEndpointInputs,
 	JotformEndpointOutputs,
@@ -68,7 +60,6 @@ const jotformEndpointsNested = {
 		get: User.get,
 		getForms: User.getForms,
 		getSubmissions: User.getSubmissions,
-		getFolders: User.getFolders,
 		getHistory: User.getHistory,
 		getSettings: User.getSettings,
 		updateSettings: User.updateSettings,
@@ -110,12 +101,6 @@ const jotformEndpointsNested = {
 		get: Reports.get,
 		delete: Reports.delete,
 	},
-	folders: {
-		get: Folders.get,
-		create: Folders.create,
-		update: Folders.update,
-		delete: Folders.delete,
-	},
 	labels: {
 		get: Labels.get,
 		create: Labels.create,
@@ -142,10 +127,6 @@ export const jotformEndpointSchemas = {
 	'user.getSubmissions': {
 		input: JotformEndpointInputSchemas['user.getSubmissions'],
 		output: JotformEndpointOutputSchemas['user.getSubmissions'],
-	},
-	'user.getFolders': {
-		input: JotformEndpointInputSchemas['user.getFolders'],
-		output: JotformEndpointOutputSchemas['user.getFolders'],
 	},
 	'user.getHistory': {
 		input: JotformEndpointInputSchemas['user.getHistory'],
@@ -283,22 +264,6 @@ export const jotformEndpointSchemas = {
 		input: JotformEndpointInputSchemas['reports.delete'],
 		output: JotformEndpointOutputSchemas['reports.delete'],
 	},
-	'folders.get': {
-		input: JotformEndpointInputSchemas['folders.get'],
-		output: JotformEndpointOutputSchemas['folders.get'],
-	},
-	'folders.create': {
-		input: JotformEndpointInputSchemas['folders.create'],
-		output: JotformEndpointOutputSchemas['folders.create'],
-	},
-	'folders.update': {
-		input: JotformEndpointInputSchemas['folders.update'],
-		output: JotformEndpointOutputSchemas['folders.update'],
-	},
-	'folders.delete': {
-		input: JotformEndpointInputSchemas['folders.delete'],
-		output: JotformEndpointOutputSchemas['folders.delete'],
-	},
 	'labels.get': {
 		input: JotformEndpointInputSchemas['labels.get'],
 		output: JotformEndpointOutputSchemas['labels.get'],
@@ -351,10 +316,6 @@ const jotformEndpointMeta = {
 	'user.getSubmissions': {
 		riskLevel: 'read',
 		description: 'Get list of submissions for all forms in this account',
-	},
-	'user.getFolders': {
-		riskLevel: 'read',
-		description: 'Get folders structure and layout for this account',
 	},
 	'user.getHistory': {
 		riskLevel: 'read',
@@ -507,23 +468,6 @@ const jotformEndpointMeta = {
 	'reports.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a specific report by report ID',
-	},
-	'folders.get': {
-		riskLevel: 'read',
-		description: 'Get details, subfolders and form IDs for a specific folder',
-	},
-	'folders.create': {
-		riskLevel: 'write',
-		description: 'Create a new folder to organize forms',
-	},
-	'folders.update': {
-		riskLevel: 'write',
-		description:
-			'Update folder properties such as name, color or contained forms',
-	},
-	'folders.delete': {
-		riskLevel: 'destructive',
-		description: 'Delete a specific folder by ID',
 	},
 	'labels.get': {
 		riskLevel: 'read',

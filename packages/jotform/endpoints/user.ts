@@ -87,30 +87,6 @@ export const getSubmissions: JotformEndpoints['user.getSubmissions'] = async (
 	return parsed;
 };
 
-export const getFolders: JotformEndpoints['user.getFolders'] = async (
-	ctx,
-	input,
-) => {
-	JotformEndpointInputSchemas['user.getFolders'].parse(input);
-	const response = await makeJotformEndpointRequest(
-		ctx,
-		'/user/folders',
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
-	const parsed =
-		JotformEndpointOutputSchemas['user.getFolders'].parse(response);
-	await logEventFromContext(
-		ctx,
-		'jotform.user.getFolders',
-		{ status: 'success' },
-		'completed',
-	);
-	return parsed;
-};
-
 export const getHistory: JotformEndpoints['user.getHistory'] = async (
 	ctx,
 	input,
