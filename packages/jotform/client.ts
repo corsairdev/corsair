@@ -122,50 +122,47 @@ export function makeJotformEndpointRequest(
 	);
 }
 
-const SENSITIVE_KEY_PATTERNS = [
-	'apikey',
-	'api_key',
-	'key',
-	'password',
-	'token',
-	'secret',
-	'authorization',
-];
-
-function isSensitiveKey(key: string): boolean {
-	const normalized = key.toLowerCase().replace(/[_-]/g, '');
-	return SENSITIVE_KEY_PATTERNS.some((pattern) =>
-		normalized.includes(pattern.replace(/[_-]/g, '')),
-	);
-}
+// Jotform's error envelope fields that carry no request data. Everything else
+// in an error body (echoed answers, emails, keys) is dropped.
+const SAFE_ERROR_FIELDS = new Set([
+	'responseCode',
+	'message',
+	'error',
+	'content',
+	'duration',
+	'info',
+	'limit-left',
+]);
 
 // unknown because provider error JSON can be any value and must be narrowed before traversal.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-// unknown because arbitrary JSON values from provider errors must be inspected and sanitized recursively.
-function redactSensitiveData(data: unknown): unknown {
-	if (data === null || data === undefined) return data;
-	if (typeof data === 'string') {
-		// Avoid leaking secrets embedded in error messages
-		return data;
-	}
-	if (Array.isArray(data)) {
-		return data.map((item) => redactSensitiveData(item));
-	}
-	if (isRecord(data)) {
-		const result: Record<string, unknown> = {};
-		for (const [k, v] of Object.entries(data)) {
-			if (isSensitiveKey(k)) {
-				result[k] = '[REDACTED]';
-			} else {
-				result[k] = redactSensitiveData(v);
-			}
+// unknown because the error body is untrusted JSON; only scalar envelope fields survive.
+function safeErrorBody(data: unknown): unknown {
+	if (typeof data === 'string') return data;
+	if (!isRecord(data)) return undefined;
+	// unknown because each kept value is a scalar of any JSON type.
+	const kept: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(data)) {
+		if (!SAFE_ERROR_FIELDS.has(key)) continue;
+		if (
+			typeof value === 'string' ||
+			typeof value === 'number' ||
+			typeof value === 'boolean' ||
+			value === null
+		) {
+			kept[key] = value;
 		}
-		return result;
 	}
-	return data;
+	return kept;
+}
+
+/** Core puts the whole JSON body into the message for unmapped statuses; keep only status and text. */
+function safeErrorMessage(error: ApiError): string {
+	if (!error.message.startsWith('Generic Error:')) return error.message;
+	return `Generic Error: status: ${error.status}; status text: ${error.statusText}`;
 }
 
 export function sanitizeApiError(error: ApiError): ApiError {
@@ -177,7 +174,7 @@ export function sanitizeApiError(error: ApiError): ApiError {
 	} = error.request;
 
 	// unknown because the error response body can be any JSON structure returned by Jotform.
-	const sanitizedBody: unknown = redactSensitiveData(error.body);
+	const sanitizedBody: unknown = safeErrorBody(error.body);
 
 	return new ApiError(
 		{
@@ -191,7 +188,7 @@ export function sanitizeApiError(error: ApiError): ApiError {
 			statusText: error.statusText,
 			body: sanitizedBody,
 		},
-		error.message,
+		safeErrorMessage(error),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,

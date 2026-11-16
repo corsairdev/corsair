@@ -24,6 +24,7 @@ function makeApiError(
 	retryAfter?: number,
 	// unknown because provider error bodies can contain arbitrary JSON structures.
 	body: unknown = {},
+	errorMessage: string = message,
 ) {
 	return new ApiError(
 		{
@@ -38,7 +39,7 @@ function makeApiError(
 			statusText: message,
 			body,
 		},
-		message,
+		errorMessage,
 		retryAfter === undefined ? undefined : { retryAfter },
 	);
 }
@@ -165,14 +166,51 @@ describe('makeJotformRequest', () => {
 		expect(error.request.body).toBeUndefined();
 		expect(error.request.url).toBe('/user');
 		expect(error.url).toBe('https://api.jotform.com/user');
-		expect(error.body).toEqual(
-			expect.objectContaining({
-				apiKey: '[REDACTED]',
-				password: '[REDACTED]',
-				secret: '[REDACTED]',
-				error: 'Invalid request',
-			}),
+		expect(error.body).toEqual({ error: 'Invalid request' });
+	});
+
+	it('keeps only envelope fields and drops echoed answers from error bodies', async () => {
+		const rawError = makeApiError(422, 'Unprocessable Entity', undefined, {
+			responseCode: 422,
+			message: 'Invalid submission',
+			email: 'person@example.com',
+			content: { answer: 'private answer' },
+		});
+		mockedRequest.mockRejectedValue(rawError);
+
+		// unknown because a rejection value has no static type; assertions narrow it.
+		const error = await makeJotformRequest('/form/1/submissions', 'test-key', {
+			method: 'POST',
+		}).catch((caught: unknown) => caught);
+
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(error.body).toEqual({
+			responseCode: 422,
+			message: 'Invalid submission',
+		});
+		expect(JSON.stringify(error.body)).not.toContain('person@example.com');
+	});
+
+	it('drops the response body from a generic error message', async () => {
+		const rawError = makeApiError(
+			422,
+			'Unprocessable Entity',
+			undefined,
+			{ password: 'secret-value' },
+			'Generic Error: status: 422; status text: Unprocessable Entity; body: {"password":"secret-value"}',
 		);
+		mockedRequest.mockRejectedValue(rawError);
+
+		// unknown because a rejection value has no static type; assertions narrow it.
+		const error = await makeJotformRequest('/user', 'test-key').catch(
+			(caught: unknown) => caught,
+		);
+
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(error.message).toBe(
+			'Generic Error: status: 422; status text: Unprocessable Entity',
+		);
+		expect(error.message).not.toContain('secret-value');
 	});
 
 	it('passes rateLimitConfig with maxRetries 0 to transport', async () => {
