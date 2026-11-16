@@ -1,14 +1,15 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SuitedashAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof SuitedashAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
  * SuiteDash reports every failure inside the envelope `{ success: false,
- * message, data: [] }`, including a 200 for some business errors, so the client
- * turns that into an error before this map sees it.
+ * message, data: [] }`. An HTTP error reaches this map as core's ApiError; a
+ * 2xx that still says `success: false` arrives as SuitedashAPIError and falls
+ * to DEFAULT, which does not retry.
  *
  * Call limits are monthly and plan-based: 80 on trial, 400 on Start, 2000 on
  * Thrive, 20000 on Pinnacle. A 429 is therefore an exhausted allowance, not a
@@ -16,17 +17,18 @@ function statusOf(error: Error): number | undefined {
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof SuitedashAPIError && error.isQuotaExhausted,
+		match: (error: Error) => statusOf(error) === 429,
 		// The plan's monthly calls are used up; retrying cannot succeed and would
 		// only spend more of the allowance once it resets.
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401 and 403: the Public ID or Secret Key is missing or not valid, which
-	// SuiteDash names in the message.
+	// SuiteDash names in the message, or a Power-Up (Worlds) is off.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SuitedashAPIError && error.isAuthError,
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status === 401 || status === 403;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404: no such company, contact or project. 400, 405 and 422: a malformed
@@ -48,9 +50,9 @@ export const errorHandlers = {
 	// spending another call from a monthly allowance makes that expensive.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SuitedashAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

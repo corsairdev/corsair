@@ -25,58 +25,89 @@ const SUITEDASH_RATE_LIMIT_CONFIG: RateLimitConfig = {
 /**
  * SuiteDash needs **two** credentials on every call: a public id and a secret
  * key, each in its own header. It reports every failure inside the envelope
- * `{ success: false, message, data: [] }`, so a 200 is not proof of success.
- *
- * A 401 names the missing header, which is the most useful part of the message.
+ * `{ success: false, message, data: [] }`. An HTTP error arrives as core's
+ * ApiError (see `stripRequestData`); this class is only for a 2xx whose
+ * envelope still says `success: false`, where core raised nothing.
  */
 export class SuitedashAPIError extends Error {
-	readonly status?: number;
 	/** The provider's own message from the envelope. */
 	readonly reason?: string;
 	/** Field name to messages, from a 422. */
 	readonly fieldErrors?: string[];
-	/** Milliseconds from a Retry-After header, when one was sent. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
-	// unknown: an error body is an envelope, but a proxy can answer HTML.
+	// unknown: the envelope that said `success: false`.
 	readonly body?: UnknownJson;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			// unknown: same open error body as the field above.
-			body?: UnknownJson;
-			retryAfter?: number;
-			method?: string;
-		} = {},
+		options: { body?: UnknownJson; method?: string },
 	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
+		super(message);
 		this.name = 'SuitedashAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
+		this.body = options.body;
+		this.method = options.method;
 		const record = asRecord(this.body);
 		this.reason = readString(record, 'message');
 		this.fieldErrors = readStrings(record?.errors);
 	}
+}
 
-	/** True when a credential is missing or invalid. */
-	get isAuthError(): boolean {
-		return this.status === 401 || this.status === 403;
-	}
+const EMAIL = /[^\s"'<>@/]+@[^\s"'<>@/]+\.[^\s"'<>@/]+/g;
 
-	/**
-	 * The plan's monthly call allowance is exhausted. No retry fixes it, so this
-	 * is separate from a throughput limit.
-	 */
-	get isQuotaExhausted(): boolean {
-		return this.status === 429;
-	}
+// unknown: any JSON value; strings get email addresses masked.
+function maskEmails(value: UnknownJson): UnknownJson {
+	if (typeof value === 'string') return value.replace(EMAIL, '[email]');
+	if (Array.isArray(value)) return value.map(maskEmails);
+	const record = asRecord(value);
+	if (!record) return value;
+	return Object.fromEntries(
+		Object.entries(record).map(([key, entry]) => [key, maskEmails(entry)]),
+	);
+}
+
+function maskPath(url: string): string {
+	return (url.split('?')[0] ?? url)
+		.split('/')
+		.map((part) => {
+			try {
+				return decodeURIComponent(part).includes('@') ? '[email]' : part;
+			} catch {
+				return part;
+			}
+		})
+		.join('/');
+}
+
+/**
+ * Core's ApiError keeps the request's URL and query, and a contact is
+ * addressed by email in the path (`/contact/jane@acme.com`). This rebuilds the
+ * error without the query and with email addresses masked in the URL, the
+ * message and the body, and keeps what core and the handlers read: status,
+ * body, Retry-After and the method. It is still core's ApiError.
+ */
+export function stripRequestData(error: ApiError): ApiError {
+	return new ApiError(
+		{ method: error.request.method, url: maskPath(error.request.url) },
+		{
+			url: maskPath(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: maskEmails(error.body),
+		},
+		String(
+			maskEmails(
+				describeSuitedashError(error.status, error.body, error.message),
+			),
+		),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 // unknown: the record is an untyped envelope; read one field at a time.
@@ -175,31 +206,15 @@ export async function makeSuitedashRequest(
 		});
 		// A 2xx can still say `success: false`, so the flag decides, not the status.
 		const failure = failureFromEnvelope(raw);
-		if (failure) throw new SuitedashAPIError(failure, { body: raw, method });
+		if (failure) {
+			throw new SuitedashAPIError(String(maskEmails(failure)), {
+				body: maskEmails(raw),
+				method,
+			});
+		}
 		return raw;
 	} catch (error) {
-		// Rethrow this client's own error untouched: the generic `instanceof
-		// Error` branch below would otherwise re-wrap it and drop the body.
-		if (error instanceof SuitedashAPIError) throw error;
-		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including both credential headers, so `util.inspect(error)` would
-			// print them.
-			throw new SuitedashAPIError(
-				describeSuitedashError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method: error.request.method,
-				},
-			);
-		}
-		// A transport failure never held a body or headers, so its cause is safe to
-		// keep. DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new SuitedashAPIError(error.message, { cause: error, method });
-		}
-		throw new SuitedashAPIError('Unknown SuiteDash error', { method });
+		if (error instanceof ApiError) throw stripRequestData(error);
+		throw error;
 	}
 }

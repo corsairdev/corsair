@@ -1,16 +1,24 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SuitedashAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 
 // The literal map is narrower than the type core uses (its match takes a
 // context argument), so widen once here rather than at each call site.
 const errorHandlers: CorsairErrorHandler = builtinHandlers;
 
+// The error core's request() throws, as the client passes it on.
 function build(options: { status?: number; method?: string }) {
-	return new SuitedashAPIError(`SuiteDash ${options.status}`, {
-		status: options.status,
-		method: options.method,
-	});
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/companies' },
+		{
+			url: 'https://app.suitedash.com/secure-api/companies',
+			ok: false,
+			status: options.status ?? 500,
+			statusText: 'failed',
+			body: { success: false, message: 'failed', data: [] },
+		},
+		`SuiteDash ${options.status}`,
+	);
 }
 
 const context = (error: Error) => ({
@@ -83,9 +91,9 @@ describe('suitedash error handlers', () => {
 
 describe('suitedash error classification', () => {
 	it('separates auth from the exhausted allowance', () => {
-		expect(build({ status: 401 }).isAuthError).toBe(true);
-		expect(build({ status: 401 }).isQuotaExhausted).toBe(false);
-		expect(build({ status: 429 }).isQuotaExhausted).toBe(true);
-		expect(build({ status: 429 }).isAuthError).toBe(false);
+		expect(matches('AUTH_ERROR', build({ status: 401 }))).toBe(true);
+		expect(matches('RATE_LIMIT_ERROR', build({ status: 401 }))).toBe(false);
+		expect(matches('RATE_LIMIT_ERROR', build({ status: 429 }))).toBe(true);
+		expect(matches('AUTH_ERROR', build({ status: 429 }))).toBe(false);
 	});
 });

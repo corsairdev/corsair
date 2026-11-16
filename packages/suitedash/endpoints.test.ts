@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SuitedashAPIError, segment } from './client';
 import { Companies, Contacts, Marketing, Projects, Worlds } from './endpoints';
 import type { UnknownJson } from './json';
@@ -30,8 +31,9 @@ type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>; // unknown: p
 function invoke(endpoint: AnyEndpoint, input: UnknownJson) {
 	return endpoint(
 		{
-			key: PUBLIC_ID,
-			options: { secretKey: SECRET_KEY },
+			// The key builder packs both credentials into ctx.key.
+			key: JSON.stringify({ publicId: PUBLIC_ID, secretKey: SECRET_KEY }),
+			options: {},
 		} as never,
 		input as never,
 	);
@@ -126,18 +128,20 @@ describe('companies', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('rejects a primary contact with create_primary but no email', async () => {
+	it('rejects a primary contact with create_primary_contact_if_not_exists but no email', async () => {
 		await expect(
 			invoke(Companies.create, {
 				name: 'Microsoft',
 				role: 'Client',
 				primaryContact: {
-					create_primary: true,
+					create_primary_contact_if_not_exists: true,
 					first_name: 'Ada',
 					last_name: 'Lovelace',
 				},
 			}),
-		).rejects.toThrow(/email is required when create_primary is set/);
+		).rejects.toThrow(
+			/email is required when create_primary_contact_if_not_exists is set/,
+		);
 	});
 
 	it('accepts a primary contact that supplies every required field', async () => {
@@ -147,7 +151,7 @@ describe('companies', () => {
 			name: 'Microsoft',
 			role: 'Client',
 			primaryContact: {
-				create_primary: true,
+				create_primary_contact_if_not_exists: true,
 				role: 'Client',
 				first_name: 'Ada',
 				last_name: 'Lovelace',
@@ -425,9 +429,9 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		const failure = error as SuitedashAPIError;
+		const failure = error as ApiError;
+		expect(failure).toBeInstanceOf(ApiError);
 		expect(failure.status).toBe(401);
-		expect(failure.isAuthError).toBe(true);
 		expect(failure.message).toContain('X-Public-ID');
 		const inspected = util.inspect(error);
 		expect(inspected).not.toContain(PUBLIC_ID);
@@ -447,29 +451,61 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect((error as SuitedashAPIError).isQuotaExhausted).toBe(true);
+		expect((error as ApiError).status).toBe(429);
+		// Monthly allowance: one call, no retry.
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('masks the email a contact was addressed by in the error', async () => {
+		respond(
+			fetchMock,
+			{ success: false, message: 'No contact jane@acme.com', data: [] },
+			404,
+		);
+
+		const error = await invoke(Contacts.get, {
+			identifier: 'jane@acme.com',
+		}).catch(
+			// unknown: a rejection reason has no static type; narrowed below.
+			(caught: UnknownJson) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const util = await import('node:util');
+		for (const text of [
+			(error as Error).message,
+			util.inspect(error, { depth: 10 }),
+			JSON.stringify(error),
+		]) {
+			expect(text).not.toContain('jane@acme.com');
+			expect(text).not.toContain('jane%40acme.com');
+		}
 	});
 });
 
 describe('credentials', () => {
-	it('reads the secret key from the account when the option is absent', async () => {
+	it('reads both credentials from ctx.key, never from options', async () => {
 		respond(fetchMock, { success: true, message: null, data: [company] });
 
 		await Companies.list(
 			{
-				key: PUBLIC_ID,
-				options: {},
+				key: JSON.stringify({
+					publicId: 'from-key',
+					secretKey: 'from-key-secret',
+				}),
+				options: { secretKey: 'from-options' },
 				keys: { get_secret_key: jest.fn().mockResolvedValue('stored-secret') },
 			} as never,
 			{} as never,
 		);
 
+		expect(lastRequest(fetchMock).headers.get('x-public-id')).toBe('from-key');
 		expect(lastRequest(fetchMock).headers.get('x-secret-key')).toBe(
-			'stored-secret',
+			'from-key-secret',
 		);
 	});
 
-	it('throws a clear error when no secret key is configured', async () => {
+	it('throws AuthMissingError when ctx.key carries no secret key', async () => {
 		const { AuthMissingError } = jest.requireActual('corsair/core');
 
 		await expect(
