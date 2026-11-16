@@ -433,7 +433,11 @@ export function splitwise<const T extends SplitwisePluginOptions>(
 	} satisfies InternalSplitwisePlugin;
 }
 
-export { SplitwiseAPIError, SplitwiseOperationError } from './client';
+export {
+	describeSplitwiseError,
+	isNotLoggedIn,
+	SplitwiseOperationError,
+} from './client';
 
 export type {
 	AddFriendInput,

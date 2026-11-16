@@ -1,5 +1,6 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { SplitwiseAPIError, SplitwiseOperationError } from './client';
+import { SplitwiseOperationError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -13,38 +14,39 @@ function classify(error: Error): HandlerName {
 	return name;
 }
 
+// Every handler ignores its arguments now, so it is called the way core
+// calls it, with the error, through a widened signature.
 async function strategy(error: Error) {
-	return errorHandlers[classify(error)].handler(error);
+	const handler = errorHandlers[classify(error)].handler as (
+		error: Error,
+	) => Promise<unknown>;
+	return handler(error);
 }
 
 function apiError(
 	status: number,
 	options: { retryAfter?: number; method?: string } = {},
 ) {
-	return new SplitwiseAPIError(`Splitwise ${status}: failed`, {
-		status,
-		...options,
-	});
+	// Without a method the request counts as a write, so it is never replayed.
+	return new ApiError(
+		{ method: (options.method ?? 'POST') as 'GET' | 'POST', url: 'x' },
+		{
+			url: 'https://secure.splitwise.com/api/v3.0/x',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`Splitwise ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('Splitwise error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = apiError(429);
-		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('honours Retry-After on a 429', async () => {
+	it('leaves 429 retries to core, which already retried with Retry-After', async () => {
 		const error = apiError(429, { retryAfter: 7000 });
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 7000,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 401', async () => {

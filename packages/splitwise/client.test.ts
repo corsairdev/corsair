@@ -1,10 +1,10 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeSplitwiseError,
 	isNotLoggedIn,
 	makeSplitwiseRequest,
 	SPLITWISE_API_BASE,
-	SplitwiseAPIError,
 	SplitwiseOperationError,
 } from './client';
 import { forbidden, unauthorized } from './test-fixtures';
@@ -108,7 +108,7 @@ describe('makeSplitwiseRequest', () => {
 		expect(sent.headers.get('content-type')).toBeNull();
 	});
 
-	it('reads the 401 message into a SplitwiseAPIError', async () => {
+	it('passes the 401 through as core ApiError', async () => {
 		respond(unauthorized, 401);
 
 		const error = await captureError(
@@ -118,11 +118,9 @@ describe('makeSplitwiseRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(SplitwiseAPIError);
-		expect((error as SplitwiseAPIError).status).toBe(401);
-		expect((error as SplitwiseAPIError).message).toContain(
-			'you are not logged in',
-		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect(isNotLoggedIn(error)).toBe(true);
 	});
 
 	it('reads the first 403 message out of the errors map', async () => {
@@ -135,14 +133,15 @@ describe('makeSplitwiseRequest', () => {
 			}),
 		);
 
-		expect((error as SplitwiseAPIError).status).toBe(403);
-		expect((error as SplitwiseAPIError).message).toContain(
+		expect((error as ApiError).status).toBe(403);
+		expect(describeSplitwiseError(403, (error as ApiError).body, '')).toContain(
 			'you do not have permission',
 		);
 	});
 
-	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
-		respond({}, 429, { 'Retry-After': '7' });
+	it('retries a 429 in core and keeps Retry-After on the final error', async () => {
+		// Core makes 1 attempt plus 3 retries.
+		for (let i = 0; i < 4; i += 1) respond({}, 429, { 'Retry-After': '1' });
 
 		const error = await captureError(
 			makeSplitwiseRequest(API_KEY, {
@@ -151,10 +150,10 @@ describe('makeSplitwiseRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(SplitwiseAPIError);
-		expect((error as SplitwiseAPIError).retryAfter).toBe(7000);
-		expect((error as SplitwiseAPIError).isRateLimit).toBe(true);
-	});
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).retryAfter).toBe(1000);
+		expect((error as ApiError).status).toBe(429);
+	}, 20_000);
 
 	it('records the method so writes are not replayed on a 5xx', async () => {
 		respond({}, 500);
@@ -167,7 +166,24 @@ describe('makeSplitwiseRequest', () => {
 			}),
 		);
 
-		expect((error as SplitwiseAPIError).method).toBe('POST');
+		expect((error as ApiError).request.method).toBe('POST');
+	});
+
+	it('drops the request body, which can hold a password, from the error', async () => {
+		respond({ errors: { base: ['bad'] } }, 400);
+
+		const error = await captureError(
+			makeSplitwiseRequest(API_KEY, {
+				method: 'POST',
+				path: 'update_user/1',
+				body: { password: 'hunter2-secret', email: 'a@example.com' },
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).request.body).toBeUndefined();
+		expect(inspect(error)).not.toContain('hunter2-secret');
+		expect(inspect(error)).not.toContain('a@example.com');
 	});
 
 	it('never puts the key in the error message or its inspection', async () => {
@@ -223,11 +239,16 @@ describe('error classes', () => {
 	});
 
 	it('recognises the not-logged-in 401', () => {
-		const error = new SplitwiseAPIError(
-			'Splitwise 401: Invalid API Request: you are not logged in',
+		const error = new ApiError(
+			{ method: 'GET', url: 'get_current_user' },
 			{
+				url: 'https://secure.splitwise.com/api/v3.0/get_current_user',
+				ok: false,
 				status: 401,
+				statusText: 'Unauthorized',
+				body: { error: 'Invalid API Request: you are not logged in' },
 			},
+			'Unauthorized',
 		);
 		expect(isNotLoggedIn(error)).toBe(true);
 		expect(

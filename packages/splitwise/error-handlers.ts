@@ -1,25 +1,19 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SplitwiseAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof SplitwiseAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // Status codes: https://dev.splitwise.com/ ("Rate Limits" and the 401/403/404
 // responses on every path). Splitwise documents one 429 behaviour: slow down
 // and retry after a short delay, and does not say writes are idempotent.
 export const errorHandlers = {
-	// 429. Splitwise calls its limits "fairly lenient" and varying per endpoint,
-	// so the delay comes from Retry-After when the response carries one.
+	// 429. Core's request() already retried it three times with Retry-After,
+	// so it is not replayed again here.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof SplitwiseAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof SplitwiseAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401: a missing, wrong or revoked personal key, or an expired OAuth token.
 	// The same request fails again, so it is not retried.
@@ -54,9 +48,9 @@ export const errorHandlers = {
 	// expense).
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SplitwiseAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

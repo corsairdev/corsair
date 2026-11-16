@@ -4,10 +4,9 @@ import { splitwise } from './index';
 import { currentUser, expense, expenseCreated } from './test-fixtures';
 
 /**
- * `requests.test.ts` calls the HTTP client, which is built with `maxRetries: 0`
- * so only `error-handlers.ts` decides what is retried. This file goes through
- * `createCorsair` to prove that layer actually runs: it is the only place a 429
- * can be retried at all.
+ * Core's request() retries a 429 three times with Retry-After, and the
+ * plugin's 429 handler adds none. This file goes through `createCorsair` to
+ * prove both layers together.
  *
  * Reads are replayed and writes are not: `create_expense` is not idempotent, so
  * a replay after an unknown outcome would add a second expense.
@@ -72,7 +71,7 @@ describe('rate-limit retries through createCorsair', () => {
 	it('gives up after the builtin retry budget', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			// The handler allows 3 retries, so 4 attempts in total.
+			// Core retries a 429 three times, so 4 attempts in total.
 			for (let i = 0; i < 4; i += 1) {
 				respond({}, 429);
 			}
@@ -174,7 +173,7 @@ describe('rate-limit retries through createCorsair', () => {
 		}
 	}, 30_000);
 
-	it('falls back to the handler delay when there is no Retry-After', async () => {
+	it('falls back to the backoff delay when there is no Retry-After', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient();
 		try {
@@ -182,8 +181,8 @@ describe('rate-limit retries through createCorsair', () => {
 			respond(currentUser);
 
 			const pending = corsair.splitwise.api.users.getCurrentUser({});
-			// The handler has no documented window, so it uses the exponential
-			// backoff strategy: the first retry is one second.
+			// Splitwise documents no window, so core uses its exponential backoff:
+			// the first retry is one second.
 			await jest.advanceTimersByTimeAsync(900);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			await jest.advanceTimersByTimeAsync(200);

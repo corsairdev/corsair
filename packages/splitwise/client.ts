@@ -8,12 +8,14 @@ import { ApiError, request } from 'corsair/http';
 
 export const SPLITWISE_API_BASE = 'https://secure.splitwise.com/api/v3.0';
 
-// error-handlers.ts owns retries. The config has to be complete: request.ts
-// replaces its defaults with whatever object it is handed, so a partial one
-// either skips the rate-limit block or throws reading `headerNames`.
+// Core's request() retries a 429 three times and honours Retry-After, so the
+// 429 handler in error-handlers.ts does not retry again. The config has to be
+// complete: request.ts replaces its defaults with whatever object it is
+// handed, so a partial one either skips the rate-limit block or throws
+// reading `headerNames`.
 const SPLITWISE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -39,37 +41,39 @@ function readString(
  * - 401: `{ error: 'Invalid API Request: you are not logged in' }`
  * - 403 and 404: `{ errors: { base: ['Invalid API Request: ...'] } }`
  *
- * Some writes answer 200 with a body that still says it failed, so the
+ * HTTP failures stay core's ApiError; `describeSplitwiseError` reads either
+ * body. Some writes answer 200 with a body that still says it failed, so the
  * endpoints parse `success` and `errors` themselves and throw
  * `SplitwiseOperationError` when the write did not apply.
  */
-export class SplitwiseAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from a Retry-After header, when Splitwise sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, which decides replay safety. */
-	readonly method?: string;
 
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'SplitwiseAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
+/**
+ * Core's ApiError keeps the request it failed on, body included, and a
+ * `users.update` body can hold a password or an email address. This rebuilds
+ * the same ApiError without the request body. Status, retryAfter and
+ * Splitwise's response body stay as they were.
+ */
+function withoutRequestBody(error: ApiError): ApiError {
+	if (error.request.body === undefined) return error;
+	const stripped = new ApiError(
+		{ ...error.request, body: undefined },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	stripped.stack = error.stack;
+	return stripped;
 }
 
 /**
@@ -152,20 +156,10 @@ export async function makeSplitwiseRequest(
 			rateLimitConfig: SPLITWISE_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// Re-throw the plugin's own errors untouched: the generic Error branch
-		// below would wrap them and drop `errors` and the provider message.
-		if (error instanceof SplitwiseAPIError) throw error;
-		if (error instanceof ApiError) {
-			throw new SplitwiseAPIError(
-				describeSplitwiseError(error.status, error.body, error.message),
-				{ cause: error },
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new SplitwiseAPIError(error.message, { cause: error, method });
-		}
-		throw new SplitwiseAPIError('Unknown Splitwise error', { method });
+		// Core's ApiError goes through as an ApiError (plugin rules R8), only
+		// without the request body it carried.
+		if (error instanceof ApiError) throw withoutRequestBody(error);
+		throw error;
 	}
 }
 
@@ -173,8 +167,8 @@ export async function makeSplitwiseRequest(
 export function isNotLoggedIn(error: unknown): boolean {
 	// unknown: callers pass what they caught.
 	return (
-		error instanceof SplitwiseAPIError &&
+		error instanceof ApiError &&
 		error.status === 401 &&
-		error.message.includes(NOT_LOGGED_IN)
+		describeSplitwiseError(error.status, error.body, '').includes(NOT_LOGGED_IN)
 	);
 }
