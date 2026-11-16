@@ -1,8 +1,18 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { StoryblokAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
+// HTTP failures arrive as core's ApiError. Transport failures
+// (StoryblokAPIError) carry no status and fall through to DEFAULT.
 function statusOf(error: Error): number | undefined {
-	return error instanceof StoryblokAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+/** Publish and unpublish are GETs that change state, so they are not reads. */
+function isReplayableRead(error: ApiError): boolean {
+	return (
+		error.request.method === 'GET' &&
+		!/\/(publish|unpublish)(\?|$)/.test(error.request.url)
+	);
 }
 
 /**
@@ -21,21 +31,19 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof StoryblokAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// 401 `{ "error": "Unauthorized" }`: the token is missing, invalid or expired.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof StoryblokAPIError && error.isAuthError,
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404: no such story, component, datasource or space, which includes asking
 	// the wrong regional host for a space that lives elsewhere.
 	NOT_FOUND_ERROR: {
-		match: (error: Error) =>
-			error instanceof StoryblokAPIError && error.isNotFound,
+		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 422 and 400: a field failed validation, such as a story with no content or
@@ -57,9 +65,9 @@ export const errorHandlers = {
 	// replay would repeat a state change.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof StoryblokAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			isReplayableRead(error) &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

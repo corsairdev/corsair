@@ -1,21 +1,33 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { StoryblokAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 
 // The literal map is narrower than the type core uses (its match takes a
 // context argument), so widen once here rather than at each call site.
 const errorHandlers: CorsairErrorHandler = builtinHandlers;
 
+// HTTP failures reach the handlers as core's ApiError, as the client throws them.
 function build(options: {
-	status?: number;
-	method?: string;
+	status: number;
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	url?: string;
 	retryAfter?: number;
 }) {
-	return new StoryblokAPIError(`Storyblok ${options.status}`, {
-		status: options.status,
-		method: options.method,
-		retryAfter: options.retryAfter,
-	});
+	return new ApiError(
+		{
+			method: options.method ?? 'GET',
+			url: options.url ?? '/v1/spaces/1/stories',
+		},
+		{
+			url: 'https://mapi.storyblok.com/v1/spaces/1/stories',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { error: 'error' },
+		},
+		`Storyblok ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 const context = (error: Error) => ({
@@ -25,7 +37,13 @@ const context = (error: Error) => ({
 	originalError: error,
 });
 
+// Picks the handler the way core does (first match in key order), so a test
+// fails when its handler's matcher stops matching.
 async function run(name: keyof typeof errorHandlers, error: Error) {
+	const selected = Object.entries(errorHandlers).find(([, entry]) =>
+		entry?.match(error, context(error)),
+	);
+	expect(selected?.[0]).toBe(name);
 	const entry = errorHandlers[name];
 	if (!entry) throw new Error(`missing handler ${name}`);
 	return entry.handler(error, context(error));
@@ -111,11 +129,20 @@ describe('storyblok error handlers', () => {
 	});
 });
 
-describe('storyblok error classification', () => {
-	it('separates auth from not-found', () => {
-		expect(build({ status: 401 }).isAuthError).toBe(true);
-		expect(build({ status: 401 }).isNotFound).toBe(false);
-		expect(build({ status: 404 }).isNotFound).toBe(true);
-		expect(build({ status: 404 }).isAuthError).toBe(false);
-	});
+describe('storyblok publish and unpublish', () => {
+	it.each(['publish', 'unpublish'])(
+		'does not replay a 5xx on the %s GET, which changes state',
+		(action) => {
+			expect(
+				matches(
+					'SERVER_ERROR',
+					build({
+						status: 502,
+						method: 'GET',
+						url: `/v1/spaces/1/stories/2/${action}`,
+					}),
+				),
+			).toBe(false);
+		},
+	);
 });

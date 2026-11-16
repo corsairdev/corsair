@@ -172,16 +172,25 @@ export async function makeStoryblokRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including the Authorization header, so `util.inspect(error)` would
-			// print the token.
-			throw new StoryblokAPIError(
+			// Still core's ApiError (plugin rule R8), so its status and retry fields
+			// reach the handlers. It is rebuilt only to drop the request body, which
+			// holds story content that can include personal data. The token is in
+			// the config headers, never in the request options.
+			throw new ApiError(
+				{ method: error.request.method, url: error.request.url },
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
 				describeStoryblokError(error.status, error.body, error.message),
 				{
-					status: error.status,
-					body: error.body,
 					retryAfter: error.retryAfter,
-					method: error.request.method,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}
