@@ -38,7 +38,9 @@ export const ListQuerySchema = z
 	.object({
 		size: z.number().min(1).max(1000).optional(),
 		from: z.number().min(0).optional(),
+		// Sent as JobNimbus's `sort_field` (default date_created).
 		sort: z.string().optional(),
+		// Sent as JobNimbus's `sort_direction` (default desc).
 		direction: z.enum(['asc', 'desc']).optional(),
 		actor: z.string().optional(),
 	})
@@ -983,6 +985,13 @@ export const AccountGroupSchema = z
 
 export const AccountGroupsResponseSchema = z.array(AccountGroupSchema);
 
+// `field` selects one settings entry; list-valued ones (groups, workflows) come back as a bare array.
+// `unknown` items because each selectable entry has its own tenant-configured shape.
+export const AccountSettingsOrFieldResponseSchema = z.union([
+	AccountSettingsResponseSchema,
+	z.array(z.unknown()),
+]);
+
 export const AccountUserSchema = z
 	.object({
 		id: z.string().optional(),
@@ -1255,7 +1264,7 @@ export const JobNimbusEndpointOutputSchemas = {
 	budgetsList: BudgetsListResponseSchema,
 
 	// Account
-	accountGetSettings: AccountSettingsResponseSchema,
+	accountGetSettings: AccountSettingsOrFieldResponseSchema,
 	accountGetGroups: AccountGroupsResponseSchema,
 	accountGetUsers: AccountUsersResponseSchema,
 	accountGetUoms: AccountUomsResponseSchema,

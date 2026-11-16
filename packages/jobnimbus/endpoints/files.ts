@@ -234,8 +234,8 @@ export const filesList: JobNimbusEndpoints['filesList'] = async (
 		query: compactQuery({
 			size: parsedInput.size,
 			from: parsedInput.from,
-			sort: parsedInput.sort,
-			direction: parsedInput.direction,
+			sort_field: parsedInput.sort,
+			sort_direction: parsedInput.direction,
 			actor: parsedInput.actor,
 		}),
 	});
