@@ -6541,5 +6541,84 @@
         "title": "Current REST API, 55 operations, OAuth and managed auth"
       }
     ]
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.69",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.44",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.44",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.44",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.72",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.54",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.49",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.1.201",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2468,
+        "title": "One shape for a file going into an endpoint and coming out"
+      }
+    ]
   }
 ]
