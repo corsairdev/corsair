@@ -19,7 +19,7 @@ pnpm add @corsair-dev/tomba
 | `company.search` | `tomba.api.company.search` | `read` | Search the company database with a plain-language query or structured filters, 50 per page |
 | `domain.emailCount` | `tomba.api.domain.emailCount` | `read` | How many addresses Tomba holds for a domain, by department and seniority |
 | `domain.emailFormat` | `tomba.api.domain.emailFormat` | `read` | Read the address patterns a company uses and their share |
-| `domain.emailSources` | `tomba.api.domain.emailSources` | `read` | Read the public pages Tomba took a domain addresses from |
+| `domain.emailSources` | `tomba.api.domain.emailSources` | `read` | List the public pages where Tomba found an email address, with first and last seen dates |
 | `domain.location` | `tomba.api.domain.location` | `read` | Where a company's people are, by country |
 | `domain.similar` | `tomba.api.domain.similar` | `read` | Find companies similar to a domain, with their industry |
 | `domain.status` | `tomba.api.domain.status` | `read` | Read Tomba's reachability verdict for a domain |

@@ -329,7 +329,8 @@ const tombaEndpointMeta = {
 	},
 	'domain.emailSources': {
 		riskLevel: 'read',
-		description: 'Read the public pages Tomba took a domain addresses from',
+		description:
+			'List the public pages where Tomba found an email address, with first and last seen dates',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof tombaEndpointsNested>;
 
