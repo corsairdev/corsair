@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { Assets, DatasourceEntries, Datasources, Tags } from './endpoints';
 import type { UnknownJson } from './json';
 import { liveBareAsset } from './test-fixtures';
@@ -103,5 +104,59 @@ describe('bodyless 204 answers', () => {
 		respondNoContent(fetchMock);
 		const result = await invoke(Datasources.remove, { datasource_id: 777 });
 		expect(result).toEqual({ id: 777, deleted: true });
+	});
+});
+
+describe('review round on 9c8e96fb5', () => {
+	it('does not read an empty JSON object as a 204', async () => {
+		respond(fetchMock, {});
+		// The body is validated as the record, not replaced by what was sent.
+		expect(
+			await invoke(Tags.update, { tag_id: 'home', name: 'landing' }),
+		).toEqual({ tag: {} });
+	});
+
+	it('rejects a delete body that does not hold the record', async () => {
+		respond(fetchMock, { unexpected: true });
+		await expect(
+			invoke(Datasources.remove, { datasource_id: 777 }),
+		).rejects.toThrow(/unexpected body/);
+
+		respond(fetchMock, { unexpected: true });
+		await expect(
+			invoke(DatasourceEntries.remove, { datasource_entry_id: 888 }),
+		).rejects.toThrow(/unexpected body/);
+
+		respond(fetchMock, { unexpected: true });
+		await expect(invoke(Tags.remove, { tag_id: 'home' })).rejects.toThrow(
+			/unexpected body/,
+		);
+	});
+
+	it('accepts a delete body that holds the record', async () => {
+		respond(fetchMock, { datasource: { id: 777, name: 'x' } });
+		expect(await invoke(Datasources.remove, { datasource_id: 777 })).toEqual({
+			id: 777,
+			deleted: true,
+		});
+	});
+
+	it('keeps a tag name out of both error URLs', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'Not found' }), {
+				status: 404,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		const error = await invoke(Tags.remove, {
+			tag_id: 'ann@example.com',
+		}).catch(
+			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
+		expect(failure.url).not.toContain('ann');
+		expect(failure.request.url).not.toContain('ann');
+		expect(failure.url).toContain('/tags/');
 	});
 });

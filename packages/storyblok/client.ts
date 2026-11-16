@@ -144,6 +144,15 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(text);
 }
 
+/**
+ * A tag's id is its name, free text that can hold personal data such as an
+ * email address, so error URLs carry a placeholder in its place. The request
+ * itself still goes to the real path.
+ */
+function redactTagName(url: string): string {
+	return url.replace(/\/tags\/[^/?#]+/, '/tags/{tag}');
+}
+
 // unknown: callers parse the body with the endpoint's zod output schema, and the
 // shape differs per route, which is what that schema is for.
 export async function makeStoryblokRequest(
@@ -183,10 +192,10 @@ export async function makeStoryblokRequest(
 			// holds story content that can include personal data. The token is in
 			// the config headers, never in the request options.
 			throw new ApiError(
-				{ method: error.request.method, url: error.request.url },
+				{ method: error.request.method, url: redactTagName(error.request.url) },
 				{
 					// The query can hold search text such as an email address.
-					url: error.url.split('?')[0] ?? error.url,
+					url: redactTagName(error.url.split('?')[0] ?? error.url),
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,

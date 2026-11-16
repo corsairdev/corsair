@@ -507,7 +507,7 @@ const DatasourceEntriesListInputSchema = z.object({
 		.union([z.number().int(), z.string().regex(/^\d+$/)])
 		.optional()
 		.describe(
-			'The numeric id of a dimension; entries then carry that dimension_value.',
+			'The numeric id of a dimension; entries then carry that dimension_value. Send it with datasource_id: Storyblok only resolves dimension values within one datasource.',
 		),
 });
 

@@ -1,6 +1,6 @@
 import type { StoryblokEndpoints } from '..';
 import { segment } from '../client';
-import { call, isEmptyBody, wrapRecord } from './shared';
+import { call, confirmDeletion, isEmptyBody, wrapRecord } from './shared';
 import {
 	StoryblokEndpointInputSchemas as Inputs,
 	StoryblokEndpointOutputSchemas as Outputs,
@@ -62,8 +62,8 @@ export const remove: StoryblokEndpoints['tagsDelete'] = (ctx, input) =>
 		input,
 		({ tag_id }) => ({ method: 'DELETE', path: `/tags/${segment(tag_id)}` }),
 		{
-			// A bodyless 204: the result names the tag that was deleted.
-			shape: (_, { tag_id }) => ({ id: tag_id, deleted: true }),
+			// A bodyless 204 (or the wrapped record) confirms the delete.
+			shape: (raw, { tag_id }) => confirmDeletion(raw, 'tag', tag_id),
 			// The tag id is the tag's name, free text that can hold personal data.
 			log: () => ({}),
 		},

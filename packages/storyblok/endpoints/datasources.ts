@@ -1,6 +1,6 @@
 import type { StoryblokEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './shared';
+import { call, confirmDeletion } from './shared';
 import {
 	StoryblokEndpointInputSchemas as Inputs,
 	StoryblokEndpointOutputSchemas as Outputs,
@@ -85,8 +85,9 @@ export const remove: StoryblokEndpoints['datasourcesDelete'] = (ctx, input) =>
 			path: `/datasources/${segment(datasource_id)}`,
 		}),
 		{
-			// A bodyless 204: the result names the datasource that was deleted.
-			shape: (_, { datasource_id }) => ({ id: datasource_id, deleted: true }),
+			// A bodyless 204 (or the wrapped record) confirms the delete.
+			shape: (raw, { datasource_id }) =>
+				confirmDeletion(raw, 'datasource', datasource_id),
 			log: ({ datasource_id }) => ({ datasourceId: datasource_id }),
 		},
 	);

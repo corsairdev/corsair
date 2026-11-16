@@ -164,15 +164,39 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	return result;
 }
 
-/** True for the empty body of a 204 (or an empty object or string). */
+/**
+ * True only for a response with no body, as a 204 arrives. A JSON body, even
+ * `{}`, goes through output validation instead.
+ */
 export function isEmptyBody(
 	raw: unknown, // unknown: whatever the route answered
 ): boolean {
-	if (raw === undefined || raw === null || raw === '') return true;
-	return (
-		typeof raw === 'object' &&
-		!Array.isArray(raw) &&
-		Object.keys(raw).length === 0
+	return raw === undefined || raw === null || raw === '';
+}
+
+/**
+ * The result of a delete Storyblok answers with a bodyless 204. A body that
+ * wraps the deleted record under `key` also confirms it; any other body is
+ * not a confirmation, so it throws rather than report a delete that may not
+ * have happened.
+ */
+export function confirmDeletion<Id extends string | number>(
+	raw: unknown, // unknown: whatever the delete route answered
+	key: string,
+	id: Id,
+): { id: Id; deleted: true } {
+	const record =
+		raw && typeof raw === 'object' && !Array.isArray(raw)
+			? (raw as Record<string, unknown>)[key] // unknown: checked just below
+			: undefined;
+	if (
+		isEmptyBody(raw) ||
+		(record !== null && typeof record === 'object' && !Array.isArray(record))
+	) {
+		return { id, deleted: true as const };
+	}
+	throw new Error(
+		`Storyblok answered the delete with an unexpected body, so it is not confirmed. Read the ${key} again before assuming it was removed.`,
 	);
 }
 
