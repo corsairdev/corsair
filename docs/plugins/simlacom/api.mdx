@@ -3,6 +3,7 @@ title: "Simla.com API reference"
 sidebarTitle: "API"
 description: "API reference for the Simla.com plugin in Corsair: every `simlacom.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -146,8 +147,8 @@ await corsair.simlacom.api.corporateCustomers.byExternalidAddressesByEntityexter
 
 ```ts
 {
-  externalId: string,
-  entityExternalId: string
+  externalId: unknown,
+  entityExternalId: unknown
 }
 ```
 </Accordion>
@@ -239,7 +240,7 @@ await corsair.simlacom.api.corporateCustomers.byExternalidAddressesCreate.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -330,8 +331,8 @@ await corsair.simlacom.api.corporateCustomers.byExternalidCompaniesByEntityexter
 
 ```ts
 {
-  externalId: string,
-  entityExternalId: string
+  externalId: unknown,
+  entityExternalId: unknown
 }
 ```
 </Accordion>
@@ -431,7 +432,7 @@ await corsair.simlacom.api.corporateCustomers.byExternalidCompaniesCreate.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -530,8 +531,8 @@ await corsair.simlacom.api.corporateCustomers.byExternalidContactsByEntityextern
 
 ```ts
 {
-  externalId: string,
-  entityExternalId: string
+  externalId: unknown,
+  entityExternalId: unknown
 }
 ```
 </Accordion>
@@ -608,7 +609,7 @@ await corsair.simlacom.api.corporateCustomers.byExternalidContactsCreate.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -690,7 +691,7 @@ await corsair.simlacom.api.corporateCustomers.byExternalidEdit.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -1047,7 +1048,7 @@ await corsair.simlacom.api.corporateCustomers.getByExternalid.get({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -1141,16 +1142,16 @@ await corsair.simlacom.api.corporateCustomers.getByExternalid.get({
 
 ---
 
-### getByExternalidaddresses.get
+### getByExternalidAddresses.get
 
-`corporateCustomers.getByExternalidaddresses.get`
+`corporateCustomers.getByExternalidAddresses.get`
 
 List of addresses for a corporate customer
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.corporateCustomers.getByExternalidaddresses.get({
+await corsair.simlacom.api.corporateCustomers.getByExternalidAddresses.get({
 	path: { externalId: 'demo' },
 });
 ```
@@ -1168,7 +1169,7 @@ await corsair.simlacom.api.corporateCustomers.getByExternalidaddresses.get({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -1244,16 +1245,16 @@ await corsair.simlacom.api.corporateCustomers.getByExternalidaddresses.get({
 
 ---
 
-### getByExternalidcompanies.get
+### getByExternalidCompanies.get
 
-`corporateCustomers.getByExternalidcompanies.get`
+`corporateCustomers.getByExternalidCompanies.get`
 
 List of companies of a contact person
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.corporateCustomers.getByExternalidcompanies.get({
+await corsair.simlacom.api.corporateCustomers.getByExternalidCompanies.get({
 	path: { externalId: 'demo' },
 });
 ```
@@ -1271,7 +1272,7 @@ await corsair.simlacom.api.corporateCustomers.getByExternalidcompanies.get({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -1378,16 +1379,16 @@ await corsair.simlacom.api.corporateCustomers.getByExternalidcompanies.get({
 
 ---
 
-### getByExternalidcontacts.get
+### getByExternalidContacts.get
 
-`corporateCustomers.getByExternalidcontacts.get`
+`corporateCustomers.getByExternalidContacts.get`
 
 List of contact persons of the corporate customer
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.corporateCustomers.getByExternalidcontacts.get({
+await corsair.simlacom.api.corporateCustomers.getByExternalidContacts.get({
 	path: { externalId: 'demo' },
 });
 ```
@@ -1405,7 +1406,7 @@ await corsair.simlacom.api.corporateCustomers.getByExternalidcontacts.get({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -2357,7 +2358,7 @@ await corsair.simlacom.api.cost.byIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -2885,18 +2886,183 @@ await corsair.simlacom.api.cost.upload.post({
 
 ---
 
-## Customer Actions On The Site Of The Store
+## Customer Interaction
 
-### customerInteractionBySiteFavoritesByCustomeridRemove.post
+### cartBySiteClear.post
 
-`customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post`
+`customerInteraction.cartBySiteClear.post`
 
-Deleting a product offer from the customer's list of favorites
+Cleaning the current cart of the customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.simlacom.api.customerInteraction.cartBySiteClear.post({
+	path: { site: 'demo' },
+	body: {
+		cart: { clearedAt: '2025-01-01 12:00:00+00:00' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  site: unknown
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  siteBy?: custom
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  cart?: {
+    clearedAt?: string,
+    customer?: {
+      id?: number,
+      externalId?: string,
+      browserId?: string,
+      gaClientId?: string
+    },
+    order?: {
+      id?: number,
+      externalId?: string,
+      number?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
+
+
+
+---
+
+### cartBySiteSet.post
+
+`customerInteraction.cartBySiteSet.post`
+
+Creating or overwriting cart data
 
 **Risk:** `write`
 
 ```ts
-await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.customerInteractionBySiteFavoritesByCustomeridRemove.post({
+await corsair.simlacom.api.customerInteraction.cartBySiteSet.post({
+	path: { site: 'demo' },
+	body: {
+		cart: { externalId: 'demo' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  site: unknown
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  siteBy?: custom
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  cart?: {
+    externalId?: string,
+    droppedAt?: string,
+    link?: string,
+    customer?: {
+      id?: number,
+      externalId?: string,
+      browserId?: string,
+      site?: string,
+      gaClientId?: string
+    },
+    items?: {
+      price?: number,
+      quantity: number,
+      offer: {
+        id?: number,
+        externalId?: string,
+        xmlId?: string
+      }
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
+
+
+
+---
+
+### favoritesBySiteByCustomeridAdd.post
+
+`customerInteraction.favoritesBySiteByCustomeridAdd.post`
+
+Adding a product offer to the customer's list of favorites
+
+**Risk:** `write`
+
+```ts
+await corsair.simlacom.api.customerInteraction.favoritesBySiteByCustomeridAdd.post({
 	path: { site: 'demo', customerId: 'demo' },
 	body: {
 		favorite: {
@@ -2919,8 +3085,8 @@ await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.customerInteractio
 
 ```ts
 {
-  site: string,
-  customerId: string
+  site: unknown,
+  customerId: unknown
 }
 ```
 </Accordion>
@@ -2963,16 +3129,92 @@ await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.customerInteractio
 
 ---
 
-### getCustomerInteractionBySitecartByCustomerid.get
+### favoritesBySiteByCustomeridRemove.post
 
-`customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get`
+`customerInteraction.favoritesBySiteByCustomeridRemove.post`
+
+Deleting a product offer from the customer's list of favorites
+
+**Risk:** `write`
+
+```ts
+await corsair.simlacom.api.customerInteraction.favoritesBySiteByCustomeridRemove.post({
+	path: { site: 'demo', customerId: 'demo' },
+	body: {
+		favorite: {
+			offer: { id: 1 },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  site: unknown,
+  customerId: unknown
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  by?: custom,
+  siteBy?: custom
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  favorite?: {
+    offer: {
+      id?: number,
+      externalId?: string,
+      xmlId?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
+
+
+
+---
+
+### getCartBySiteByCustomerid.get
+
+`customerInteraction.getCartBySiteByCustomerid.get`
 
 Getting the current cart of the customer
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitecartByCustomerid.get({
+await corsair.simlacom.api.customerInteraction.getCartBySiteByCustomerid.get({
 	path: { customerId: 'demo', site: 'demo' },
 });
 ```
@@ -2990,8 +3232,8 @@ await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.getCustomerInterac
 
 ```ts
 {
-  customerId: string,
-  site: string
+  customerId: unknown,
+  site: unknown
 }
 ```
 </Accordion>
@@ -3057,16 +3299,16 @@ await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.getCustomerInterac
 
 ---
 
-### getCustomerInteractionBySitefavoritesByCustomerid.get
+### getFavoritesBySiteByCustomerid.get
 
-`customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get`
+`customerInteraction.getFavoritesBySiteByCustomerid.get`
 
 Getting a list of favorites for the customer
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.getCustomerInteractionBySitefavoritesByCustomerid.get({
+await corsair.simlacom.api.customerInteraction.getFavoritesBySiteByCustomerid.get({
 	path: { site: 'demo', customerId: 'demo' },
 });
 ```
@@ -3084,8 +3326,8 @@ await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.getCustomerInterac
 
 ```ts
 {
-  site: string,
-  customerId: string
+  site: unknown,
+  customerId: unknown
 }
 ```
 </Accordion>
@@ -3142,247 +3384,6 @@ await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.getCustomerInterac
 
 ---
 
-### postCustomerInteractionBySitecartclear.post
-
-`customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post`
-
-Cleaning the current cart of the customer
-
-**Risk:** `destructive`
-
-```ts
-await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartclear.post({
-	path: { site: 'demo' },
-	body: {
-		cart: { clearedAt: '2025-01-01 12:00:00+00:00' },
-	},
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  site: string
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-  siteBy?: custom
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  cart?: {
-    clearedAt?: string,
-    customer?: {
-      id?: number,
-      externalId?: string,
-      browserId?: string,
-      gaClientId?: string
-    },
-    order?: {
-      id?: number,
-      externalId?: string,
-      number?: string
-    }
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-
-
-
----
-
-### postCustomerInteractionBySitecartset.post
-
-`customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post`
-
-Creating or overwriting cart data
-
-**Risk:** `write`
-
-```ts
-await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitecartset.post({
-	path: { site: 'demo' },
-	body: {
-		cart: { externalId: 'demo' },
-	},
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  site: string
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-  siteBy?: custom
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  cart?: {
-    externalId?: string,
-    droppedAt?: string,
-    link?: string,
-    customer?: {
-      id?: number,
-      externalId?: string,
-      browserId?: string,
-      site?: string,
-      gaClientId?: string
-    },
-    items?: {
-      price?: number,
-      quantity: number,
-      offer: {
-        id?: number,
-        externalId?: string,
-        xmlId?: string
-      }
-    }[]
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-
-
-
----
-
-### postCustomerInteractionBySitefavoritesByCustomeridadd.post
-
-`customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post`
-
-Adding a product offer to the customer's list of favorites
-
-**Risk:** `write`
-
-```ts
-await corsair.simlacom.api.customerActionsOnTheSiteOfTheStore.postCustomerInteractionBySitefavoritesByCustomeridadd.post({
-	path: { site: 'demo', customerId: 'demo' },
-	body: {
-		favorite: {
-			offer: { id: 1 },
-		},
-	},
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  site: string,
-  customerId: string
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-  by?: custom,
-  siteBy?: custom
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  favorite?: {
-    offer: {
-      id?: number,
-      externalId?: string,
-      xmlId?: string
-    }
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-
-
-
----
-
 ## Customers
 
 ### byExternalidEdit.post
@@ -3415,7 +3416,7 @@ await corsair.simlacom.api.customers.byExternalidEdit.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -3524,6 +3525,76 @@ await corsair.simlacom.api.customers.byExternalidEdit.post({
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
 | `id` | `number` | No | Customer internal ID |
 | `state` | `string \| null` | No | Customer customer (not returned by default) |
+
+
+
+---
+
+### byExternalidSubscriptions.post
+
+`customers.byExternalidSubscriptions.post`
+
+Subscribe/unsubscribe customer to mailings
+
+**Risk:** `write`
+
+```ts
+await corsair.simlacom.api.customers.byExternalidSubscriptions.post({
+	path: { externalId: 'demo' },
+	body: { by: 'demo' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  externalId: unknown
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  by?: string,
+  site?: string,
+  subscriptions?: {
+    channel: custom,
+    subscription?: string,
+    active: boolean,
+    messageId?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
 
 
 
@@ -3829,7 +3900,7 @@ await corsair.simlacom.api.customers.getByExternalid.get({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -4139,7 +4210,7 @@ await corsair.simlacom.api.customers.list.get({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `object` | No | — |
-| `query` | `object` | Yes | — |
+| `query` | `object` | No | — |
 | `body` | `never` | No | — |
 
 <AccordionGroup>
@@ -4287,7 +4358,7 @@ await corsair.simlacom.api.customers.list.get({
     subscriptions
   ][
     channel
-  ]: custom,
+  ]?: custom,
   filter[
     subscriptions
   ][
@@ -4297,7 +4368,7 @@ await corsair.simlacom.api.customers.list.get({
     subscriptions
   ][
     subscribed
-  ]: boolean,
+  ]?: boolean,
   filter[
     online
   ]?: boolean,
@@ -4767,76 +4838,6 @@ await corsair.simlacom.api.customers.notesCreate.post({
 
 ---
 
-### postByExternalidsubscriptions.post
-
-`customers.postByExternalidsubscriptions.post`
-
-Subscribe/unsubscribe customer to mailings
-
-**Risk:** `write`
-
-```ts
-await corsair.simlacom.api.customers.postByExternalidsubscriptions.post({
-	path: { externalId: 'demo' },
-	body: { by: 'demo' },
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  externalId: string
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  by?: string,
-  site?: string,
-  subscriptions?: {
-    channel: custom,
-    subscription?: string,
-    active: boolean,
-    messageId?: number
-  }[]
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-
-
-
----
-
 ### pushTokens.get
 
 `customers.pushTokens.get`
@@ -5189,8 +5190,8 @@ await corsair.simlacom.api.customFields.byEntityByCodeEdit.post({
 
 ```ts
 {
-  entity: custom,
-  code: string
+  entity: unknown,
+  code: unknown
 }
 ```
 </Accordion>
@@ -5269,7 +5270,7 @@ await corsair.simlacom.api.customFields.byEntityCreate.post({
 
 ```ts
 {
-  entity: custom
+  entity: unknown
 }
 ```
 </Accordion>
@@ -5443,7 +5444,7 @@ await corsair.simlacom.api.customFields.dictionariesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -5592,8 +5593,8 @@ await corsair.simlacom.api.customFields.getByEntityByCode.get({
 
 ```ts
 {
-  entity: custom,
-  code: string
+  entity: unknown,
+  code: unknown
 }
 ```
 </Accordion>
@@ -5672,7 +5673,7 @@ await corsair.simlacom.api.customFields.getDictionariesByCode.get({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -5833,16 +5834,16 @@ await corsair.simlacom.api.customFields.list.get({});
 
 ## Data Book
 
-### getReferencesitesByCodetracker.get
+### getReferenceSitesByCodeTracker.get
 
-`dataBook.getReferencesitesByCodetracker.get`
+`dataBook.getReferenceSitesByCodeTracker.get`
 
 Getting store tracker settings
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.dataBook.getReferencesitesByCodetracker.get({
+await corsair.simlacom.api.dataBook.getReferenceSitesByCodeTracker.get({
 	path: { code: 'demo' },
 });
 ```
@@ -5860,7 +5861,7 @@ await corsair.simlacom.api.dataBook.getReferencesitesByCodetracker.get({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -6002,7 +6003,7 @@ await corsair.simlacom.api.dataBook.referenceCostGroupsByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -6149,7 +6150,7 @@ await corsair.simlacom.api.dataBook.referenceCostItemsByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -6354,7 +6355,7 @@ The official OpenAPI marks `courier.firstName` required but omits its type and c
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -6573,7 +6574,7 @@ await corsair.simlacom.api.dataBook.referenceCurrenciesByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -6775,7 +6776,7 @@ await corsair.simlacom.api.dataBook.referenceDeliveryServicesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -6910,7 +6911,7 @@ await corsair.simlacom.api.dataBook.referenceDeliveryTypesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -7072,7 +7073,7 @@ await corsair.simlacom.api.dataBook.referenceLegalEntitiesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -7284,7 +7285,7 @@ await corsair.simlacom.api.dataBook.referenceOrderMethodsByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -7416,7 +7417,7 @@ await corsair.simlacom.api.dataBook.referenceOrderTypesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -7549,7 +7550,7 @@ await corsair.simlacom.api.dataBook.referencePaymentStatusesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -7684,7 +7685,7 @@ await corsair.simlacom.api.dataBook.referencePaymentTypesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -7846,7 +7847,7 @@ await corsair.simlacom.api.dataBook.referencePriceTypesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -7988,7 +7989,7 @@ await corsair.simlacom.api.dataBook.referenceProductStatusesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -8128,7 +8129,7 @@ await corsair.simlacom.api.dataBook.referencePushCategoriesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -8258,7 +8259,7 @@ await corsair.simlacom.api.dataBook.referenceSitesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -8399,7 +8400,7 @@ await corsair.simlacom.api.dataBook.referenceStatusesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -8674,7 +8675,7 @@ await corsair.simlacom.api.dataBook.referenceStoresByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -8889,8 +8890,8 @@ await corsair.simlacom.api.dataBook.referenceSubscriptionsByChannelByCodeEdit.po
 
 ```ts
 {
-  channel: string,
-  code: string
+  channel: unknown,
+  code: unknown
 }
 ```
 </Accordion>
@@ -9031,7 +9032,7 @@ await corsair.simlacom.api.dataBook.referenceTicketChannelsByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -9248,7 +9249,7 @@ await corsair.simlacom.api.dataBook.referenceTicketStatusesByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -9302,7 +9303,10 @@ Creating a ticket status
 ```ts
 await corsair.simlacom.api.dataBook.referenceTicketStatusesCreate.post({
 	body: {
-		ticketStatus: { name: 'demo' },
+		ticketStatus: {
+			name: 'demo',
+			group: { id: 1 },
+		},
 	},
 });
 ```
@@ -9460,7 +9464,7 @@ await corsair.simlacom.api.dataBook.referenceTicketStatusGroupsByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -9674,7 +9678,7 @@ await corsair.simlacom.api.dataBook.referenceTicketSubtopicsByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -9728,7 +9732,10 @@ Creating a ticket subtopic
 ```ts
 await corsair.simlacom.api.dataBook.referenceTicketSubtopicsCreate.post({
 	body: {
-		ticketSubtopic: { name: 'demo' },
+		ticketSubtopic: {
+			name: 'demo',
+			topic: { id: 1 },
+		},
 	},
 });
 ```
@@ -9885,7 +9892,7 @@ await corsair.simlacom.api.dataBook.referenceTicketTopicsByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -10092,7 +10099,7 @@ await corsair.simlacom.api.dataBook.referenceTicketTypesByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -10296,7 +10303,7 @@ await corsair.simlacom.api.dataBook.referenceUnitsByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -10463,6 +10470,82 @@ await corsair.simlacom.api.deliveries.deliveryCalculate.post({
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### deliveryGenericBySubcodeTracking.post
+
+`deliveries.deliveryGenericBySubcodeTracking.post`
+
+Updating of delivery statuses
+
+**Risk:** `write`
+
+```ts
+await corsair.simlacom.api.deliveries.deliveryGenericBySubcodeTracking.post({
+	path: { subcode: 'demo' },
+	body: {
+		statusUpdate: [],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  subcode: unknown
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  statusUpdate?: {
+    deliveryId: string,
+    trackNumber?: string,
+    cost?: number,
+    history?: {
+      code: string,
+      updatedAt: string,
+      comment?: string
+    }[],
+    extraData?: {
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
 
 
 
@@ -10833,16 +10916,16 @@ await corsair.simlacom.api.deliveries.deliveryShipmentsCreate.post({
 
 ---
 
-### getDeliveryshipmentsById.get
+### getDeliveryShipmentsById.get
 
-`deliveries.getDeliveryshipmentsById.get`
+`deliveries.getDeliveryShipmentsById.get`
 
 Getting information on shipment
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.deliveries.getDeliveryshipmentsById.get({
+await corsair.simlacom.api.deliveries.getDeliveryShipmentsById.get({
 	path: { id: 1 },
 });
 ```
@@ -10935,82 +11018,6 @@ await corsair.simlacom.api.deliveries.getDeliveryshipmentsById.get({
 ```
 </Accordion>
 </AccordionGroup>
-
-
-
----
-
-### postDeliverygenericBySubcodetracking.post
-
-`deliveries.postDeliverygenericBySubcodetracking.post`
-
-Updating of delivery statuses
-
-**Risk:** `write`
-
-```ts
-await corsair.simlacom.api.deliveries.postDeliverygenericBySubcodetracking.post({
-	path: { subcode: 'demo' },
-	body: {
-		statusUpdate: [],
-	},
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  subcode: string
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  statusUpdate?: {
-    deliveryId: string,
-    trackNumber?: string,
-    cost?: number,
-    history?: {
-      code: string,
-      updatedAt: string,
-      comment?: string
-    }[],
-    extraData?: {
-    }
-  }[]
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
 
 
 
@@ -11578,7 +11585,7 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -11619,7 +11626,179 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
   availableCountries?: {
   },
   accountUrl?: string,
-  integrations?: custom | null
+  integrations?: {
+    telephony?: {
+      makeCallUrl?: string,
+      allowEdit?: boolean,
+      inputEventSupported?: boolean,
+      outputEventSupported?: boolean,
+      hangupEventSupported?: boolean,
+      changeUserStatusUrl?: string,
+      additionalCodes?: {
+        userId: number,
+        code: string
+      }[],
+      externalPhones?: {
+        siteCode: string,
+        externalPhone: string
+      }[]
+    },
+    delivery?: {
+      description?: string,
+      actions?: {
+      },
+      payerType?: {
+      },
+      platePrintLimit?: number,
+      rateDeliveryCost?: boolean,
+      allowPackages?: boolean,
+      codAvailable?: boolean,
+      selfShipmentAvailable?: boolean,
+      duplicateOrderProductSupported?: boolean,
+      allowTrackNumber?: boolean,
+      availableCountries?: {
+      },
+      requiredFields?: {
+      },
+      statusList?: {
+        code?: string,
+        name?: string,
+        isEditable?: boolean,
+        isError?: boolean,
+        isPreprocessing?: boolean
+      }[] | null,
+      plateList?: {
+        type?: string,
+        code?: string,
+        label?: string
+      }[],
+      deliveryDataFieldList?: {
+        code?: string,
+        label?: string,
+        hint?: string,
+        type?: string,
+        multiple?: boolean,
+        choices?: {
+        },
+        autocompleteUrl?: string,
+        visible?: boolean,
+        required?: boolean,
+        affectsCost?: boolean,
+        editable?: boolean
+      }[],
+      shipmentDataFieldList?: {
+        code?: string,
+        label?: string,
+        hint?: string,
+        type?: string,
+        multiple?: boolean,
+        choices?: {
+        },
+        autocompleteUrl?: string,
+        visible?: boolean,
+        required?: boolean,
+        affectsCost?: boolean,
+        editable?: boolean
+      }[],
+      settings?: {
+        defaultPayerType?: string,
+        costCalculateBy?: string,
+        nullDeclaredValue?: boolean,
+        lockedByDefault?: boolean,
+        paymentTypes?: {
+          code?: string,
+          active?: boolean,
+          cod?: boolean
+        }[],
+        shipmentPoints?: {
+          code?: string,
+          shipmentPointId?: string,
+          shipmentPointLabel?: string
+        }[],
+        statuses?: {
+          code?: string,
+          trackingStatusCode?: string
+        }[] | null,
+        deliveryExtraData?: {
+        },
+        shipmentExtraData?: {
+        }
+      }
+    },
+    store?: {
+      actions?: {
+        code?: string,
+        url?: string,
+        callPoints?: string[]
+      }[]
+    },
+    recommendation?: {
+      actions?: {
+        recommendation: string
+      },
+      addDefaultModes?: boolean,
+      modes?: {
+        code?: string | null,
+        names?: {
+        }
+      }[]
+    },
+    payment?: {
+      actions: {
+        create: string,
+        approve?: string,
+        cancel?: string,
+        refund?: string | null
+      },
+      currencies: string[],
+      invoiceTypes: string[],
+      shops?: {
+        code: string,
+        name: string,
+        active?: boolean
+      }[]
+    },
+    embedJs?: {
+      entrypoint?: string,
+      stylesheet?: string,
+      runner?: custom,
+      targets?: {
+      } | null,
+      pages?: {
+        code: string | null,
+        menu?: string | null,
+        parentMenuItemCode?: string | null,
+        menuItemOrdering?: number | null,
+        menuItemTitle?: {
+          en: string | null,
+          es: string | null,
+          ru: string | null
+        } | null,
+        pageHelpLink?: {
+          en: string | null,
+          es: string | null,
+          ru: string | null
+        } | null,
+        isSettingsMainPage?: boolean
+      }[] | null
+    },
+    mgTransport?: {
+      token?: string | null,
+      isActive?: boolean | null,
+      webhookUrl?: string,
+      actions?: {
+        visits?: string,
+        online?: string,
+        manualTemplatesSync?: string
+      }
+    },
+    mgBot?: {
+      isActive?: boolean,
+      logo?: string,
+      token?: string,
+      name?: string
+    }
+  }[] | null
 }
 ```
 </Accordion>
@@ -11635,7 +11814,7 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
 
 Integration module creation/editing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
@@ -11659,7 +11838,7 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
 
 ```ts
 {
-  code: string
+  code: unknown
 }
 ```
 </Accordion>
@@ -11689,7 +11868,175 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
     availableCountries?: {
     },
     accountUrl?: string,
-    integrations?: custom | null
+    integrations?: {
+      telephony?: {
+        makeCallUrl?: string,
+        allowEdit?: boolean,
+        inputEventSupported?: boolean,
+        outputEventSupported?: boolean,
+        hangupEventSupported?: boolean,
+        changeUserStatusUrl?: string,
+        additionalCodes?: {
+          userId: number,
+          code: string
+        }[],
+        externalPhones?: {
+          siteCode: string,
+          externalPhone: string
+        }[]
+      },
+      delivery?: {
+        description?: string,
+        actions?: {
+        },
+        payerType?: {
+        },
+        platePrintLimit?: number,
+        rateDeliveryCost?: boolean,
+        allowPackages?: boolean,
+        codAvailable?: boolean,
+        selfShipmentAvailable?: boolean,
+        duplicateOrderProductSupported?: boolean,
+        allowTrackNumber?: boolean,
+        availableCountries?: {
+        },
+        requiredFields?: {
+        },
+        statusList?: {
+          code?: string,
+          name?: string,
+          isEditable?: boolean,
+          isError?: boolean,
+          isPreprocessing?: boolean
+        }[] | null,
+        plateList?: {
+          type?: string,
+          code?: string,
+          label?: string
+        }[],
+        deliveryDataFieldList?: {
+          code?: string,
+          label?: string,
+          hint?: string,
+          type?: string,
+          multiple?: boolean,
+          choices?: {
+          },
+          autocompleteUrl?: string,
+          visible?: boolean,
+          required?: boolean,
+          affectsCost?: boolean,
+          editable?: boolean
+        }[],
+        shipmentDataFieldList?: {
+          code?: string,
+          label?: string,
+          hint?: string,
+          type?: string,
+          multiple?: boolean,
+          choices?: {
+          },
+          autocompleteUrl?: string,
+          visible?: boolean,
+          required?: boolean,
+          affectsCost?: boolean,
+          editable?: boolean
+        }[],
+        settings?: {
+          defaultPayerType?: string,
+          costCalculateBy?: string,
+          nullDeclaredValue?: boolean,
+          lockedByDefault?: boolean,
+          paymentTypes?: {
+            code?: string,
+            active?: boolean,
+            cod?: boolean
+          }[],
+          shipmentPoints?: {
+            code?: string,
+            shipmentPointId?: string,
+            shipmentPointLabel?: string
+          }[],
+          statuses?: {
+            code?: string,
+            trackingStatusCode?: string
+          }[] | null,
+          deliveryExtraData?: {
+          },
+          shipmentExtraData?: {
+          }
+        }
+      },
+      store?: {
+        actions?: {
+          code?: string,
+          url?: string,
+          callPoints?: string[]
+        }[]
+      },
+      recommendation?: {
+        actions?: {
+          recommendation: string
+        },
+        addDefaultModes?: boolean,
+        modes?: {
+          code?: string | null,
+          names?: {
+          }
+        }[]
+      },
+      payment?: {
+        actions: {
+          create: string,
+          approve?: string,
+          cancel?: string,
+          refund?: string | null
+        },
+        currencies: string[],
+        invoiceTypes: string[],
+        shops?: {
+          code: string,
+          name: string,
+          active?: boolean
+        }[]
+      },
+      embedJs?: {
+        entrypoint?: string,
+        stylesheet?: string,
+        runner?: custom,
+        targets?: {
+        } | null,
+        pages?: {
+          code: string | null,
+          menu?: string | null,
+          parentMenuItemCode?: string | null,
+          menuItemOrdering?: number | null,
+          menuItemTitle?: {
+            en: string | null,
+            es: string | null,
+            ru: string | null
+          } | null,
+          pageHelpLink?: {
+            en: string | null,
+            es: string | null,
+            ru: string | null
+          } | null,
+          isSettingsMainPage?: boolean
+        }[] | null
+      },
+      mgTransport?: {
+        webhookUrl?: string,
+        actions?: {
+          visits?: string,
+          online?: string,
+          manualTemplatesSync?: string
+        },
+        refreshToken?: boolean
+      },
+      mgBot?: {
+        refreshToken?: boolean
+      }
+    }[] | null
   }
 }
 ```
@@ -11714,76 +12061,6 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
 ```
 </Accordion>
 </AccordionGroup>
-
-
-
----
-
-### postIntegrationModulesByCodeupdateScopes.post
-
-`integration.postIntegrationModulesByCodeupdateScopes.post`
-
-Updating permissions for the API key
-
-**Risk:** `write`
-
-```ts
-await corsair.simlacom.api.integration.postIntegrationModulesByCodeupdateScopes.post({
-	path: { code: 'demo' },
-	body: {
-		requires: {
-			scopes: [],
-		},
-	},
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  code: string
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  requires?: {
-    scopes: string[]
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-| `apiKey` | `string` | No | New API key for the integrated module |
 
 
 
@@ -11928,7 +12205,7 @@ await corsair.simlacom.api.knowledgeBase.documentsByIdDelete.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -11985,7 +12262,7 @@ await corsair.simlacom.api.knowledgeBase.documentsByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -12117,7 +12394,7 @@ await corsair.simlacom.api.knowledgeBase.documentsHistory.get({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `object` | No | — |
-| `query` | `object` | Yes | — |
+| `query` | `object` | No | — |
 | `body` | `never` | No | — |
 
 <AccordionGroup>
@@ -12143,10 +12420,10 @@ await corsair.simlacom.api.knowledgeBase.documentsHistory.get({
   ]?: string,
   filter[
     documentId
-  ]: number,
+  ]?: number,
   filter[
     sinceId
-  ]: number
+  ]?: number
 }
 ```
 </Accordion>
@@ -12242,7 +12519,7 @@ await corsair.simlacom.api.knowledgeBase.getDocumentsById.get({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -12554,6 +12831,243 @@ await corsair.simlacom.api.knowledgeBase.sectionsCreate.post({
 ---
 
 ## Loyalty
+
+### accountByIdActivate.post
+
+`loyalty.accountByIdActivate.post`
+
+Activation of participation in the loyalty program
+
+**Risk:** `destructive`
+
+```ts
+await corsair.simlacom.api.loyalty.accountByIdActivate.post({
+	path: { id: 1 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `never` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
+| `loyaltyAccount` | `object` | No | Participation in the loyalty program |
+| `verification` | `object` | No | SMS-verification |
+
+<AccordionGroup>
+<Accordion title="loyaltyAccount full type">
+
+```ts
+{
+  active?: boolean,
+  id?: number,
+  phoneNumber?: string,
+  cardNumber?: string,
+  amount?: number,
+  level: {
+    id?: number,
+    name: string
+  },
+  createdAt?: string,
+  activatedAt?: string,
+  confirmedPhoneAt?: string,
+  lastCheckId?: string,
+  customFields?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="verification full type">
+
+```ts
+{
+  createdAt?: string,
+  expiredAt?: string,
+  verifiedAt?: string,
+  checkId?: string,
+  actionType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### accountByIdBonusCharge.post
+
+`loyalty.accountByIdBonusCharge.post`
+
+Charging off bonuses to a loyalty program participant
+
+**Risk:** `destructive`
+
+```ts
+await corsair.simlacom.api.loyalty.accountByIdBonusCharge.post({
+	path: { id: 1 },
+	body: { amount: 1 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  amount: number,
+  comment?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
+
+
+
+---
+
+### accountByIdBonusCredit.post
+
+`loyalty.accountByIdBonusCredit.post`
+
+Accrual of bonuses for participation in the loyalty program
+
+**Risk:** `destructive`
+
+```ts
+await corsair.simlacom.api.loyalty.accountByIdBonusCredit.post({
+	path: { id: 1 },
+	body: { amount: 1 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  amount: number,
+  activationDate?: string,
+  expireDate?: string,
+  comment?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
+| `loyaltyBonus` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="loyaltyBonus full type">
+
+```ts
+{
+  amount?: number,
+  activationDate?: string,
+  expireDate?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### accountByIdEdit.post
 
@@ -13329,7 +13843,54 @@ await corsair.simlacom.api.loyalty.getAccountById.get({
       id?: number,
       privilegeSize?: number,
       privilegeSizePromo?: number,
-      items?: custom
+      items?: (
+        {
+          id?: number,
+          offer?: {
+            displayName?: string,
+            id?: number | null,
+            externalId?: string,
+            xmlId?: string,
+            name: string,
+            article?: string,
+            properties?: {
+            },
+            active?: boolean
+          }
+        } | {
+          id?: number,
+          offer?: {
+            displayName?: string,
+            id?: number | null,
+            externalId?: string,
+            xmlId?: string,
+            name: string,
+            article?: string,
+            properties?: {
+            },
+            active?: boolean
+          }
+        } | {
+          id?: number,
+          product?: {
+            id?: number,
+            name: string,
+            externalId?: string,
+            active?: boolean
+          }
+        } | {
+          id?: number,
+          productGroup?: {
+            id?: number,
+            name: string,
+            externalId?: string,
+            active?: boolean
+          }
+        } | {
+          id?: number,
+          manufacturer?: string
+        }
+      )[]
     }[]
   },
   createdAt?: string,
@@ -13348,16 +13909,16 @@ await corsair.simlacom.api.loyalty.getAccountById.get({
 
 ---
 
-### getAccountByIdbonusByStatusdetails.get
+### getAccountByIdBonusByStatusDetails.get
 
-`loyalty.getAccountByIdbonusByStatusdetails.get`
+`loyalty.getAccountByIdBonusByStatusDetails.get`
 
 Getting details on the bonus account
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.loyalty.getAccountByIdbonusByStatusdetails.get({
+await corsair.simlacom.api.loyalty.getAccountByIdBonusByStatusDetails.get({
 	path: { id: 1, status: 'demo' },
 });
 ```
@@ -13376,7 +13937,7 @@ await corsair.simlacom.api.loyalty.getAccountByIdbonusByStatusdetails.get({
 ```ts
 {
   id: number,
-  status: string
+  status: unknown
 }
 ```
 </Accordion>
@@ -13443,16 +14004,16 @@ await corsair.simlacom.api.loyalty.getAccountByIdbonusByStatusdetails.get({
 
 ---
 
-### getAccountByIdbonusoperations.get
+### getAccountByIdBonusOperations.get
 
-`loyalty.getAccountByIdbonusoperations.get`
+`loyalty.getAccountByIdBonusOperations.get`
 
 History of the bonus account for a specific participation
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.loyalty.getAccountByIdbonusoperations.get({
+await corsair.simlacom.api.loyalty.getAccountByIdBonusOperations.get({
 	path: { id: 1 },
 });
 ```
@@ -13610,7 +14171,68 @@ await corsair.simlacom.api.loyalty.getLoyaltiesById.get({
       id?: number,
       privilegeSize?: number,
       privilegeSizePromo?: number,
-      items?: custom
+      items?: (
+        {
+          id?: number,
+          offer?: {
+            displayName?: string,
+            id?: number | null,
+            externalId?: string,
+            xmlId?: string,
+            name: string,
+            article?: string,
+            vatRate?: string,
+            properties?: {
+            },
+            active?: boolean,
+            unit?: {
+              code?: string,
+              name?: string,
+              sym?: string
+            },
+            barcode?: string
+          }
+        } | {
+          id?: number,
+          offer?: {
+            displayName?: string,
+            id?: number | null,
+            externalId?: string,
+            xmlId?: string,
+            name: string,
+            article?: string,
+            vatRate?: string,
+            properties?: {
+            },
+            active?: boolean,
+            unit?: {
+              code?: string,
+              name?: string,
+              sym?: string
+            },
+            barcode?: string
+          }
+        } | {
+          id?: number,
+          product?: {
+            id?: number,
+            name: string,
+            externalId?: string,
+            active?: boolean
+          }
+        } | {
+          id?: number,
+          productGroup?: {
+            id?: number,
+            name: string,
+            externalId?: string,
+            active?: boolean
+          }
+        } | {
+          id?: number,
+          manufacturer?: string
+        }
+      )[]
     }[]
   }[],
   expirePeriod?: string,
@@ -13630,7 +14252,45 @@ await corsair.simlacom.api.loyalty.getLoyaltiesById.get({
   maxChargePercent: number,
   chargeRate: number,
   minResidualCost?: number,
-  events?: custom,
+  events?: (
+    {
+      id?: number,
+      privilegeType?: custom,
+      privilegeSize?: number,
+      privilegeSizePromo?: number,
+      expirePeriod?: string,
+      activatePeriod?: custom,
+      discountOneOrderOnly?: boolean,
+      activatedAt?: string,
+      discountForAllProducts?: boolean,
+      type?: string,
+      afterFirstOrder?: boolean
+    } | {
+      id?: number,
+      privilegeType?: custom,
+      privilegeSize?: number,
+      privilegeSizePromo?: number,
+      expirePeriod?: string,
+      activatePeriod?: custom,
+      discountOneOrderOnly?: boolean,
+      activatedAt?: string,
+      discountForAllProducts?: boolean,
+      type?: string,
+      afterFirstOrder?: boolean
+    } | {
+      id?: number,
+      privilegeType?: custom,
+      privilegeSize?: number,
+      privilegeSizePromo?: number,
+      expirePeriod?: string,
+      activatePeriod?: custom,
+      discountOneOrderOnly?: boolean,
+      activatedAt?: string,
+      discountForAllProducts?: boolean,
+      type?: string,
+      beforePeriod?: string
+    }
+  )[],
   createdAt?: string,
   activatedAt?: string,
   deactivatedAt?: string,
@@ -13752,243 +14412,6 @@ await corsair.simlacom.api.loyalty.loyalties.get({});
 
 ---
 
-### postAccountByIdactivate.post
-
-`loyalty.postAccountByIdactivate.post`
-
-Activation of participation in the loyalty program
-
-**Risk:** `write`
-
-```ts
-await corsair.simlacom.api.loyalty.postAccountByIdactivate.post({
-	path: { id: 1 },
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `never` | No | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  id: number
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-| `loyaltyAccount` | `object` | No | Participation in the loyalty program |
-| `verification` | `object` | No | SMS-verification |
-
-<AccordionGroup>
-<Accordion title="loyaltyAccount full type">
-
-```ts
-{
-  active?: boolean,
-  id?: number,
-  phoneNumber?: string,
-  cardNumber?: string,
-  amount?: number,
-  level: {
-    id?: number,
-    name: string
-  },
-  createdAt?: string,
-  activatedAt?: string,
-  confirmedPhoneAt?: string,
-  lastCheckId?: string,
-  customFields?: {
-  }
-}
-```
-</Accordion>
-
-<Accordion title="verification full type">
-
-```ts
-{
-  createdAt?: string,
-  expiredAt?: string,
-  verifiedAt?: string,
-  checkId?: string,
-  actionType?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### postAccountByIdbonuscharge.post
-
-`loyalty.postAccountByIdbonuscharge.post`
-
-Charging off bonuses to a loyalty program participant
-
-**Risk:** `destructive`
-
-```ts
-await corsair.simlacom.api.loyalty.postAccountByIdbonuscharge.post({
-	path: { id: 1 },
-	body: { amount: 1 },
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  id: number
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  amount: number,
-  comment?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-
-
-
----
-
-### postAccountByIdbonuscredit.post
-
-`loyalty.postAccountByIdbonuscredit.post`
-
-Accrual of bonuses for participation in the loyalty program
-
-**Risk:** `destructive`
-
-```ts
-await corsair.simlacom.api.loyalty.postAccountByIdbonuscredit.post({
-	path: { id: 1 },
-	body: { amount: 1 },
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  id: number
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  amount: number,
-  activationDate?: string,
-  expireDate?: string,
-  comment?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-| `loyaltyBonus` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="loyaltyBonus full type">
-
-```ts
-{
-  amount?: number,
-  activationDate?: string,
-  expireDate?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ## Notifications
 
 ### send.post
@@ -14090,7 +14513,7 @@ await corsair.simlacom.api.orders.byExternalidDeliveryCancel.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -14156,7 +14579,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -15440,7 +15863,7 @@ The OpenAPI reference documents success/error statuses but no response content s
 
 ```ts
 {
-  externalId: string,
+  externalId: unknown,
   plateId: number
 }
 ```
@@ -16935,7 +17358,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -17895,7 +18318,7 @@ await corsair.simlacom.api.orders.history.get({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `object` | No | — |
-| `query` | `object` | Yes | — |
+| `query` | `object` | No | — |
 | `body` | `never` | No | — |
 
 <AccordionGroup>
@@ -17921,13 +18344,13 @@ await corsair.simlacom.api.orders.history.get({
   ]?: string,
   filter[
     orderId
-  ]: number,
+  ]?: number,
   filter[
     orderExternalId
   ]?: string,
   filter[
     sinceId
-  ]: number
+  ]?: number
 }
 ```
 </Accordion>
@@ -19769,7 +20192,7 @@ await corsair.simlacom.api.orders.paymentsByIdEdit.post({
 
 ```ts
 {
-  id: string
+  id: unknown
 }
 ```
 </Accordion>
@@ -21813,16 +22236,16 @@ await corsair.simlacom.api.ordersPicking.packsHistory.get({});
 
 ## Payments
 
-### getPaymentinvoiceByInvoiceuuid.get
+### getPaymentInvoiceByInvoiceuuid.get
 
-`payments.getPaymentinvoiceByInvoiceuuid.get`
+`payments.getPaymentInvoiceByInvoiceuuid.get`
 
 Get the invoice
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.payments.getPaymentinvoiceByInvoiceuuid.get({
+await corsair.simlacom.api.payments.getPaymentInvoiceByInvoiceuuid.get({
 	path: { invoiceUuid: 'demo' },
 });
 ```
@@ -21840,7 +22263,7 @@ await corsair.simlacom.api.payments.getPaymentinvoiceByInvoiceuuid.get({
 
 ```ts
 {
-  invoiceUuid: string
+  invoiceUuid: unknown
 }
 ```
 </Accordion>
@@ -23136,7 +23559,7 @@ await corsair.simlacom.api.store.productGroupsByExternalidEdit.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -24144,16 +24567,16 @@ await corsair.simlacom.api.tasks.getById.get({
 
 ---
 
-### getByIdcomments.get
+### getByIdComments.get
 
-`tasks.getByIdcomments.get`
+`tasks.getByIdComments.get`
 
 Receiving comments on the task
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.tasks.getByIdcomments.get({
+await corsair.simlacom.api.tasks.getByIdComments.get({
 	path: { id: 1 },
 });
 ```
@@ -24247,7 +24670,7 @@ await corsair.simlacom.api.tasks.history.get({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `object` | No | — |
-| `query` | `object` | Yes | — |
+| `query` | `object` | No | — |
 | `body` | `never` | No | — |
 
 <AccordionGroup>
@@ -24273,10 +24696,10 @@ await corsair.simlacom.api.tasks.history.get({
   ]?: string,
   filter[
     taskId
-  ]: number,
+  ]?: number,
   filter[
     sinceId
-  ]: number
+  ]?: number
 }
 ```
 </Accordion>
@@ -25075,7 +25498,7 @@ await corsair.simlacom.api.tickets.byExternalidEdit.post({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -25140,7 +25563,7 @@ await corsair.simlacom.api.tickets.byExternalidEdit.post({
     tags?: string[],
     addTags?: string[],
     removeTags?: string[],
-    attachedTag: string,
+    attachedTag?: string,
     customFields?: {
     },
     callIds?: number[],
@@ -25699,7 +26122,7 @@ await corsair.simlacom.api.tickets.create.post({});
     tags?: string[],
     addTags?: string[],
     removeTags?: string[],
-    attachedTag: string,
+    attachedTag?: string,
     customFields?: {
     },
     callIds?: number[],
@@ -25902,7 +26325,7 @@ await corsair.simlacom.api.tickets.getByExternalid.get({
 
 ```ts
 {
-  externalId: string
+  externalId: unknown
 }
 ```
 </Accordion>
@@ -26099,7 +26522,7 @@ await corsair.simlacom.api.tickets.history.get({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `object` | No | — |
-| `query` | `object` | Yes | — |
+| `query` | `object` | No | — |
 | `body` | `never` | No | — |
 
 <AccordionGroup>
@@ -26128,13 +26551,13 @@ await corsair.simlacom.api.tickets.history.get({
   ]?: string,
   filter[
     ticketId
-  ]: number,
+  ]?: number,
   filter[
     ticketExternalId
   ]?: string,
   filter[
     sinceId
-  ]: number
+  ]?: number
 }
 ```
 </Accordion>
@@ -26654,6 +27077,69 @@ await corsair.simlacom.api.tickets.list.get({});
 
 ## Users
 
+### byIdStatus.post
+
+`users.byIdStatus.post`
+
+Change user status
+
+**Risk:** `write`
+
+```ts
+await corsair.simlacom.api.users.byIdStatus.post({
+	path: { id: 1 },
+	body: { status: 'free' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  status?: custom
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Query result (successful/unsuccessful) |
+
+
+
+---
+
 ### getById.get
 
 `users.getById.get`
@@ -26869,69 +27355,6 @@ await corsair.simlacom.api.users.list.get({});
 
 ---
 
-### postByIdstatus.post
-
-`users.postByIdstatus.post`
-
-Change user status
-
-**Risk:** `write`
-
-```ts
-await corsair.simlacom.api.users.postByIdstatus.post({
-	path: { id: 1 },
-	body: { status: 'free' },
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  id: number
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  status?: custom
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | Query result (successful/unsuccessful) |
-
-
-
----
-
 ### userGroups.get
 
 `users.userGroups.get`
@@ -27032,16 +27455,16 @@ await corsair.simlacom.api.users.userGroups.get({});
 
 ## Verification
 
-### getSmsByCheckidstatus.get
+### getSmsByCheckidStatus.get
 
-`verification.getSmsByCheckidstatus.get`
+`verification.getSmsByCheckidStatus.get`
 
 Checking the verification status
 
 **Risk:** `read`
 
 ```ts
-await corsair.simlacom.api.verification.getSmsByCheckidstatus.get({
+await corsair.simlacom.api.verification.getSmsByCheckidStatus.get({
 	path: { checkId: 'demo' },
 });
 ```
@@ -27059,7 +27482,7 @@ await corsair.simlacom.api.verification.getSmsByCheckidstatus.get({
 
 ```ts
 {
-  checkId: string
+  checkId: unknown
 }
 ```
 </Accordion>
@@ -27551,3 +27974,4 @@ await corsair.simlacom.api.webAnalytics.visitsUpload.post({
 
 
 ---
+

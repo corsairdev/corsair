@@ -3,11 +3,9 @@ description: Access and manage customers, orders, catalogs, loyalty, deliveries,
 domain: simla.com
 recommendedAuth: api_key
 factory:
-  note: Configure the instance subdomain used by the Simla.com API host.
-  options:
-    subdomain: demo
+  note: Each connection stores its API key and account subdomain (acme for https://acme.simla.com). Set `subdomain` here only to override the stored one.
 overviewNote: |
-  Configure an API key in Corsair and set `subdomain` to the account-specific host prefix. Requests use `X-API-KEY` and `https://{subdomain}.simla.com/api/v5/`. POST nested values are JSON strings inside form-urlencoded bodies.
+  Connect with an API key and the account subdomain (`acme` for `https://acme.simla.com`; the full URL works too). Requests use `X-API-KEY` and `https://{subdomain}.simla.com/api/v5/`. POST nested values are JSON strings inside form-urlencoded bodies. Responses are checked for structure only, because live data differs from the published models (string ids, lists where the model has an object).
 
   List operations pass through the documented `page`/`limit` pagination metadata; cursor-based operations accept their documented cursor parameter. The account is limited to 10 requests per second per IP (40 for telephony); the provider may respond with 503 when the limit is exceeded.
 
@@ -863,6 +861,8 @@ apiExamples:
       "body":
         "ticketStatus":
           "name": "demo"
+          "group":
+            "id": 1
   dataBook.referenceTicketStatusesByIdEdit.post:
     args:
       "path":
@@ -877,6 +877,8 @@ apiExamples:
       "body":
         "ticketSubtopic":
           "name": "demo"
+          "topic":
+            "id": 1
   dataBook.referenceTicketSubtopicsByIdEdit.post:
     args:
       "path":

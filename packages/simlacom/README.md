@@ -7,10 +7,10 @@ Call all documented Simla.com API v5 REST operations from a Corsair instance. Th
 ```ts
 import { simlacom } from '@corsair-dev/simlacom';
 
-const simla = simlacom({ subdomain: 'demo' });
+const simla = simlacom();
 ```
 
-Configure the instance API key in Corsair credentials. The plugin sends it only in the `X-API-KEY` header. `subdomain` is the part of `https://{subdomain}.simla.com`; the API key is never put in the URL.
+Each connection stores two values: the API key (Settings > Integration > API access keys) and the account `subdomain`, `acme` for `https://acme.simla.com` (the full account URL is accepted too). Hub's connect form asks for both. A `subdomain` plugin option overrides the stored one. Requests only ever go to `https://{subdomain}.simla.com`; the key travels in the `X-API-KEY` header, never in the URL.
 
 Each operation exposes its own TypeScript input and output types, generated from the v5 request and response schemas. The API reference page includes a call example for every registered operation.
 
@@ -19,12 +19,13 @@ Official sources: [v5 method reference](https://rest-api-docs.simla.com/v5/), [A
 ## Request and response behavior
 
 - The current API is v5. Operations use `https://{subdomain}.simla.com/api/v5/`; the two account/version discovery methods use their documented `/api/` paths.
-- Inputs use `{ path, query, body }`. Each group is strict and validated against the published OpenAPI contract; undocumented fields are rejected. Responses are validated against the documented JSON response schemas.
-- GET filters use the documented bracketed query names. List operations accept `page` (and `limit` where documented); cursor-based methods accept the documented `cursor`. Pagination metadata is returned unchanged.
+- Inputs use `{ path, query, body }`. Each group is strict and validated against the published OpenAPI contract; undocumented fields are rejected. Numeric record ids can be passed as numbers where the reference types them as digit strings.
+- Responses are checked for structure only: objects stay objects and lists stay lists, while scalars, nulls and new enum values pass. Live responses differ from the published models (ids and `ordering` as strings, lists where the model has an object), so a strict check would reject valid data. The docs and TypeScript types still describe the published models.
+- GET filters use the documented bracketed query names. A list value is always sent as `name[]=a&name[]=b`, also for the few parameters the reference names without `[]` (Simla.com refuses `ids=1&ids=2`). List operations accept `page` (and `limit` where documented); cursor-based methods accept the documented `cursor`. Pagination metadata is returned unchanged.
 - POST requests use `application/x-www-form-urlencoded`; nested values are encoded as JSON strings per the provider rules.
 - Binary file upload takes a base64 string in `body`; binary downloads return `{ kind: 'binary', contentType, base64 }`. Binary payloads are capped at 20 MiB by this client.
 - The documented limit is 10 requests/second per IP, or 40/second for telephony. Simla.com may answer with HTTP 503 at the limit. The shared transport honors `Retry-After` for 429; the plugin does not automatically replay 503 writes.
-- Propagated API errors retain their HTTP status and rate-limit timing while response bodies, path/query values, and request bodies are redacted.
+- API errors keep their HTTP status, rate-limit timing and Simla.com's `errorMsg` and per-field `errors` (for example "Telephony not enabled"); other response fields, path/query values and request bodies are removed.
 - The reference marks `courier.firstName` on courier create/edit and `phone`, `type`, and `code` on telephony call events as required but omits their types. The plugin enforces presence and documents those value shapes as unverified.
 - The order plate print route documents only success/error statuses and no response content schema. It validates a JSON object, but the exact response fields remain unverified.
 

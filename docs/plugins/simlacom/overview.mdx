@@ -6,17 +6,17 @@ description: "Access and manage customers, orders, catalogs, loyalty, deliveries
 
 Use **Simla.com** through Corsair: one client, typed API calls.
 
-Configure an API key in Corsair and set `subdomain` to the account-specific host prefix. Requests use `X-API-KEY` and `https://{subdomain}.simla.com/api/v5/`. POST nested values are JSON strings inside form-urlencoded bodies.
+Connect with an API key and the account subdomain (`acme` for `https://acme.simla.com`; the full URL works too). Requests use `X-API-KEY` and `https://{subdomain}.simla.com/api/v5/`. POST nested values are JSON strings inside form-urlencoded bodies. Responses are checked for structure only, because live data differs from the published models (string ids, lists where the model has an object).
 
 List operations pass through the documented `page`/`limit` pagination metadata; cursor-based operations accept their documented cursor parameter. The account is limited to 10 requests per second per IP (40 for telephony); the provider may respond with 503 when the limit is exceeded.
 
 Binary upload expects base64 in `body`; binary download responses are `{ kind: 'binary', contentType, base64 }` and the client enforces a 20 MiB safety limit.
 
-The plugin excludes the 27 provider-hosted integration-module callback/configuration routes and all inbound webhook receiving/management (outside issue #2408).
+The plugin excludes the 27 provider-hosted integration-module callback/configuration routes, the `update-scopes` route (it mints a new API key) and all inbound webhook receiving/management (outside issue #2408).
 
 **What you get:**
 
-- 230 typed API operations
+- 229 typed API operations
 
 ## Setup
 
@@ -52,9 +52,7 @@ import { simlacom } from '@corsair-dev/simlacom';
 
 export const corsair = createCorsair({
 	plugins: [
-		simlacom({
-			subdomain: 'demo',
-		}),
+		simlacom(),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
@@ -76,12 +74,10 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 
 Store the Simla.com API key before the first call: `pnpm corsair setup --plugin=simlacom --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
-Configure the instance subdomain used by the Simla.com API host.
+Each connection stores its API key and account subdomain (acme for https://acme.simla.com). Set `subdomain` here only to override the stored one.
 
 ```ts
-simlacom({
-	subdomain: 'demo',
-})
+simlacom()
 ```
 
 More: [API Key](/concepts/api-key)
