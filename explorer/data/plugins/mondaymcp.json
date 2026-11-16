@@ -1,0 +1,3193 @@
+{
+  "id": "mondaymcp",
+  "displayName": "Monday MCP",
+  "description": "Speak to the official monday.com Platform MCP server (https://mcp.monday.com/mcp) — 59 tools for boards, items, docs, dashboards, forms, workflows, automations, AI agents, sprints and assets over Streamable HTTP JSON-RPC.",
+  "npmPackageName": "@corsair-dev/mondaymcp",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 59,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mondaymcp.api.agents.catalog",
+      "shortPath": "agents.catalog",
+      "description": "Browses the account-wide catalog of available trigger types and skills for monday platform agents using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "list_triggers | list_skills",
+            "description": "list_triggers or list_skills."
+          },
+          {
+            "key": "block_reference_ids",
+            "optional": true,
+            "type": "any[]",
+            "description": "Used with list_triggers. Fetch specific trigger types by block_reference_id. Omit to return all trigger types."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.agents.manage",
+      "shortPath": "agents.manage",
+      "description": "Full lifecycle management for monday platform agents — create, read, update, delete, change state, and run — using the Platform MCP.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "create | create_blank | get | update | delete | activate | deactivate | run",
+            "description": "One of create, create_blank, get, update, delete, activate, deactivate, run."
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required for update, delete, activate, deactivate, run. Use with get to fetch a specific agent; omit it with get to list owned agents."
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string",
+            "description": "Required for create. Plain-language description of what the agent should do."
+          },
+          {
+            "key": "agent_model",
+            "optional": true,
+            "type": "any",
+            "description": "Used with create or update. Omit unless the user explicitly names a valid monday-supported model."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Used with create_blank or update. Display name of the agent."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string",
+            "description": "Used with create_blank or update. Short role title (e.g. \"Customer Success Bot\")."
+          },
+          {
+            "key": "role_description",
+            "optional": true,
+            "type": "string",
+            "description": "Used with create_blank or update. Detailed description of the agent role."
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string",
+            "description": "Used with create_blank. HTTPS URL of the avatar. Prefer dapulse-res.cloudinary.com or cdn.monday.com."
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "male | female",
+            "description": "Used with create_blank. male or female — a hint for the generated avatar/name when profile fields are omitted."
+          },
+          {
+            "key": "background_color",
+            "optional": true,
+            "type": "string",
+            "description": "Used with create_blank. Lowercase hex, e.g. \"#9450fd\"."
+          },
+          {
+            "key": "user_prompt",
+            "optional": true,
+            "type": "string",
+            "description": "Used with create_blank. Stored as metadata; not used for AI generation."
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string",
+            "description": "Used with update. New step-by-step execution plan in markdown."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.agents.manageKnowledge",
+      "shortPath": "agents.manageKnowledge",
+      "description": "Lists, grants, updates, or revokes a monday platform agent's access to boards and docs using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "list | add | update | remove",
+            "description": "One of list, add, update, remove."
+          },
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the agent."
+          },
+          {
+            "key": "resource_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required for add, update, remove. The ID of the board or doc to grant/update/revoke access to."
+          },
+          {
+            "key": "scope_type",
+            "optional": true,
+            "type": "BOARD | DOC",
+            "description": "Required for add, update, remove. The resource type: BOARD or DOC."
+          },
+          {
+            "key": "permission_type",
+            "optional": true,
+            "type": "READ | READ_WRITE",
+            "description": "Required for add and update. READ (agent can read) or READ_WRITE (agent can read and write)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.agents.manageSkills",
+      "shortPath": "agents.manageSkills",
+      "description": "Creates skills in the account catalog and attaches or detaches them from a monday platform agent using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "create | add | remove",
+            "description": "One of create, add, remove."
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required for add and remove. Not used for create (an account-level operation)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Required for create. Display name of the new skill."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Required for create. Markdown instructions defining what the skill does and how to execute it — this is the skill's runtime behavior."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Used with create. Short description shown in the catalog."
+          },
+          {
+            "key": "skill_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required for add and remove. The skill ID from agent_catalog action: \"list_skills\", or the ID returned by action: \"create\". Never guess a skill ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.agents.manageTriggers",
+      "shortPath": "agents.manageTriggers",
+      "description": "Lists, adds, or removes the triggers attached to a monday platform agent — triggers define when the agent runs automatically — using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "list | add | remove",
+            "description": "One of list, add, remove."
+          },
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the agent."
+          },
+          {
+            "key": "block_reference_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required for add. The trigger type's block_reference_id from agent_catalog action: \"list_triggers\". Never guess this value."
+          },
+          {
+            "key": "field_values",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Used with add when the trigger type has required fields. Key/value object whose shape is described by field_schemas in the catalog. Scalar fields use string/number/boolean; selection fields use {'{ \"value\": \"\", \"label\": \"\" }'}."
+          },
+          {
+            "key": "node_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required for remove. The node_id of the trigger instance — get it from action: \"list\". Each instance has a unique node_id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.assets.finalizeUpload",
+      "shortPath": "assets.finalizeUpload",
+      "description": "Completes a file upload started with get_asset_upload_url, creates the asset, and attaches it to an item's file column using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uploadId",
+            "optional": false,
+            "type": "string",
+            "description": "The upload_id returned by get_asset_upload_url."
+          },
+          {
+            "key": "etag",
+            "optional": false,
+            "type": "string",
+            "description": "The ETag header value from the PUT response when uploading to the presigned URL."
+          },
+          {
+            "key": "boardId",
+            "optional": true,
+            "type": "string",
+            "description": "The board's unique identifier. Optional; the server resolves the board from the item."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string",
+            "description": "The item's unique identifier."
+          },
+          {
+            "key": "columnId",
+            "optional": false,
+            "type": "string",
+            "description": "The file or doc column's unique identifier to attach the uploaded asset to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.assets.get",
+      "shortPath": "assets.get",
+      "description": "Retrieves file metadata for one or more monday.com assets by their IDs, including download URL, thumbnail, size, and uploader information using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "any[]",
+            "description": "Array of asset IDs to fetch. Must contain at least one ID. Asset IDs are numeric strings (e.g., `[\"12345678\"]`)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.assets.getUploadUrl",
+      "shortPath": "assets.getUploadUrl",
+      "description": "Returns a presigned URL to upload a file to monday.com, the first step in attaching a file to an item using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the file to upload, including extension (e.g. \"report.pdf\")."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "The MIME type of the file (e.g. \"application/pdf\", \"image/png\", \"text/plain\"). Optional when the extension is a known type."
+          },
+          {
+            "key": "fileSize",
+            "optional": false,
+            "type": "number",
+            "description": "The file size in bytes. Maximum 500&nbsp;MB (524288000 bytes)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.automations.create",
+      "shortPath": "automations.create",
+      "description": "Creates an automation on a monday.com board from a structured natural-language description using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userPrompt",
+            "optional": false,
+            "type": "string",
+            "description": "Structured description of the automation to create, in the format the description of monday's `create_automation` MCP tool gives."
+          },
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The numeric board ID as a string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.automations.list",
+      "shortPath": "automations.list",
+      "description": "Lists all automations on a specific monday.com board, including their IDs, titles, active state, and configuration, using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The numeric board ID as a string."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of automations to return (1–100). Default: 100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor from a previous response. Pass it to retrieve the next page of automations."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.automations.manage",
+      "shortPath": "automations.manage",
+      "description": "Activates, deactivates, or deletes an existing monday.com automation using the Platform MCP.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "activate | deactivate | delete",
+            "description": "The operation to perform: activate (enable a paused automation), deactivate (pause without deleting), or delete (permanently remove — irreversible)."
+          },
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The automation ID to operate on. Obtain it from list_automations."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.boards.create",
+      "shortPath": "boards.create",
+      "description": "Creates a new monday.com board in a specified workspace with configurable visibility, description, and ownership using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardName",
+            "optional": false,
+            "type": "string",
+            "description": "The display name of the new board."
+          },
+          {
+            "key": "boardKind",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility level of the board. One of `public`, `private`, or `share`. Defaults to `public`."
+          },
+          {
+            "key": "boardDescription",
+            "optional": true,
+            "type": "string",
+            "description": "A short description of the board's purpose."
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the workspace to create the board in. Use `list_workspaces` to discover workspace IDs."
+          },
+          {
+            "key": "boardOwnerIds",
+            "optional": true,
+            "type": "any[]",
+            "description": "List of user IDs to set as board owners. Use `list_users_and_teams` to look up user IDs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.boards.getActivity",
+      "shortPath": "boards.getActivity",
+      "description": "Returns the activity log for a board, showing what changed, when, and by whom, over a configurable time range using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the board to retrieve activity logs for."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the activity window in ISO 8601 format (e.g. `2025-12-01T00:00:00Z`). Defaults to 30 days ago."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "End of the activity window in ISO 8601 format. Defaults to the current time."
+          },
+          {
+            "key": "includeData",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to include the full before/after data payload for each event. Defaults to `false`. Can significantly increase response size."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.boards.getInfo",
+      "shortPath": "boards.getInfo",
+      "description": "Returns comprehensive metadata for a board, including its columns, groups, views, owners, and workspace details using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric ID of the board to retrieve information for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.boards.getItemsPage",
+      "shortPath": "boards.getItemsPage",
+      "description": "Retrieves items from a board with pagination, optional column values, filters, sorting, and sub-item support using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the board to retrieve items from."
+          },
+          {
+            "key": "itemIds",
+            "optional": true,
+            "type": "any[]",
+            "description": "Fetch specific items by their IDs (maximum 100)."
+          },
+          {
+            "key": "searchTerm",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search term. Use when the user provides an approximate term rather than an exact column value. Prefer structured `filters` for exact matches."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of items to return per page. Range: 1–500. Defaults to `25`."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor from the previous response's `nextCursor` field."
+          },
+          {
+            "key": "includeColumns",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to include column values. Defaults to `false`. Only enable when you need column data — it significantly increases response size."
+          },
+          {
+            "key": "includeItemDescription",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to include the item's rich-text description (body/notes). Defaults to `false`."
+          },
+          {
+            "key": "includeSubItems",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to include sub-items for each item. Defaults to `false`."
+          },
+          {
+            "key": "subItemLimit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of sub-items to return per item when `includeSubItems` is true. Range: 1–100. Defaults to `25`."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of column filter objects. Each filter requires `columnId` and `compareValue`, with optional `operator` and `compareAttribute`. Call `get_column_type_info` with `fetchMode: \"guidelines\"` to understand valid filter values per column type."
+          },
+          {
+            "key": "filtersOperator",
+            "optional": true,
+            "type": "string",
+            "description": "Logical operator for combining multiple filters. Either `and` (default) or `or`."
+          },
+          {
+            "key": "columnIds",
+            "optional": true,
+            "type": "any[]",
+            "description": "Limit which columns are returned when `includeColumns` is true. Omit to return all columns."
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of sort objects with `columnId` and `direction` (`asc` or `desc`)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.boards.insights",
+      "shortPath": "boards.insights",
+      "description": "Calculates aggregated summaries of board data by filtering, grouping, and applying aggregation functions to columns using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the board to calculate insights for."
+          },
+          {
+            "key": "aggregations",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of aggregation objects, each with a `columnId` and an optional `function`. Supported functions include `COUNT`, `COUNT_ITEMS`, `SUM`, `AVERAGE`, `MIN`, `MAX`, `MEDIAN`, `LABEL`, `DATE_TRUNC_MONTH`, `DATE_TRUNC_WEEK`, and more. Columns in `groupBy` must also appear here without a function."
+          },
+          {
+            "key": "groupBy",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of column IDs to group results by. All groupBy columns must also be present in `aggregations` without a function."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of result rows to return. Maximum 1000. Defaults to `1000`."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of column filter objects (same structure as `get_board_items_page` filters). Narrows the item set before aggregation."
+          },
+          {
+            "key": "filtersOperator",
+            "optional": true,
+            "type": "string",
+            "description": "Logical operator for combining multiple filters: `and` (default) or `or`."
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of sort objects with `columnId` and `direction` (`asc` or `desc`)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.columns.create",
+      "shortPath": "columns.create",
+      "description": "Adds a new column of a specified type to a monday.com board, with an optional title, description, and type-specific settings using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the board to add the column to."
+          },
+          {
+            "key": "columnType",
+            "optional": false,
+            "type": "string",
+            "description": "The type of column to create. Supported types include: `auto_number`, `board_relation`, `checkbox`, `date`, `dependency`, `dropdown`, `email`, `file`, `formula`, `hour`, `link`, `location`, `long_text`, `numbers`, `people`, `phone`, `rating`, `status`, `tags`, `team`, `text`, `time_tracking`, `timeline`, `vote`, `week`, `world_clock`, and others."
+          },
+          {
+            "key": "columnTitle",
+            "optional": false,
+            "type": "string",
+            "description": "The display title for the new column."
+          },
+          {
+            "key": "columnDescription",
+            "optional": true,
+            "type": "string",
+            "description": "An optional description shown in the column header tooltip."
+          },
+          {
+            "key": "columnSettings",
+            "optional": true,
+            "type": "string",
+            "description": "Column-specific configuration as a JSON string. Use `get_column_type_info` with `fetchMode: \"schema\"` to get the correct structure for a given type."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.columns.getTypeInfo",
+      "shortPath": "columns.getTypeInfo",
+      "description": "Returns the JSON settings schema or filter/aggregation guidelines for a specific monday.com column type using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "columnType",
+            "optional": false,
+            "type": "string",
+            "description": "The column type to look up (e.g. `status`, `text`, `date`, `numbers`, `people`, `dropdown`, `timeline`)."
+          },
+          {
+            "key": "fetchMode",
+            "optional": true,
+            "type": "string",
+            "description": "Either `schema` (default) to get the full JSON settings schema, or `guidelines` to get only filter and aggregation rules."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.dashboards.allWidgetsSchema",
+      "shortPath": "dashboards.allWidgetsSchema",
+      "description": "Returns the complete JSON Schema definitions for all available widget types in monday.com, including required fields, data types, and configuration options using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.dashboards.create",
+      "shortPath": "dashboards.create",
+      "description": "Creates a new monday.com dashboard that aggregates and visualizes data from one or more boards using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Human-readable title for the dashboard (UTF-8 characters)."
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the workspace that will own the dashboard. Use `list_workspaces` or `workspace_info` to find workspace IDs."
+          },
+          {
+            "key": "board_ids",
+            "optional": false,
+            "type": "any[]",
+            "description": "List of board IDs (as strings) to connect to the dashboard. Minimum 1, maximum 50. All widgets on this dashboard will source data from these boards."
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility level: `PUBLIC` or `PRIVATE`. Defaults to `PUBLIC`."
+          },
+          {
+            "key": "board_folder_id",
+            "optional": true,
+            "type": "string",
+            "description": "Folder ID within the workspace to place the dashboard in. If omitted, the dashboard is placed in the workspace root."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.dashboards.createWidget",
+      "shortPath": "dashboards.createWidget",
+      "description": "Adds a new data visualization widget to a monday.com dashboard or board view with type-specific configuration settings using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent_container_id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the parent container — a dashboard ID or a board view ID."
+          },
+          {
+            "key": "parent_container_type",
+            "optional": false,
+            "type": "string",
+            "description": "Type of the parent container. Must be `DASHBOARD` or `BOARD_VIEW`."
+          },
+          {
+            "key": "widget_kind",
+            "optional": false,
+            "type": "string",
+            "description": "The type of widget to create. One of: `APP_FEATURE`, `BATTERY`, `CALENDAR`, `CHART`, `GANTT`, `LISTVIEW`, `NUMBER`."
+          },
+          {
+            "key": "widget_name",
+            "optional": false,
+            "type": "string",
+            "description": "Display name for the widget (1–255 UTF-8 characters)."
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Widget-specific configuration as a JSON object. Must conform to the schema for the specified `widget_kind`. Use `all_widgets_schema` to retrieve the required structure for each type."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.docs.create",
+      "shortPath": "docs.create",
+      "description": "Creates a new monday.com document in a workspace or attached to a board item, then populates it with the provided markdown content using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_name",
+            "optional": false,
+            "type": "string",
+            "description": "The display name of the new document."
+          },
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string",
+            "description": "Markdown content to import into the document as blocks on creation."
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string",
+            "description": "Where to create the document. One of `workspace` (standalone doc) or `item` (attached to a board item)."
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The ID of the workspace to create the document in. Use `list_workspaces` to discover workspace IDs."
+          },
+          {
+            "key": "doc_kind",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility of the document. One of `public`, `private`, or `share`. Defaults to `public`. Only used when location=`workspace`."
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "number",
+            "description": "ID of a folder to place the document inside. Only used when location=`workspace`. Use `search` with searchType `FOLDERS` to find folder IDs."
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "number",
+            "description": "The ID of the board item to attach the document to. Only used when location=`item`."
+          },
+          {
+            "key": "column_id",
+            "optional": true,
+            "type": "string",
+            "description": "ID of an existing doc column on the item's board. If omitted, a new doc column is created automatically. Only used when location=`item`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.docs.read",
+      "shortPath": "docs.read",
+      "description": "Retrieves monday.com documents with their full markdown content and block structure, or fetches the version history of a single document using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string",
+            "description": "Operation mode. `content` (default) retrieves documents with markdown content. `version_history` retrieves the edit history of a single document."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Query type for content mode. One of `ids` (doc IDs), `object_ids` (object IDs from the URL), or `workspace_ids`. Required when mode is `content`."
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "any[]",
+            "description": "Array of ID values matching the selected `type`. In `version_history` mode, provide the single document `object_id` here (e.g., `[\"18412502542\"]`)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of documents per page (default: 25). Content mode only."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number to return, starting at 1. Content mode only."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string",
+            "description": "Sort order for results. One of `created_at` or `used_at`. Content mode only."
+          },
+          {
+            "key": "include_blocks",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, includes block IDs, types, positions, and content in the response. Required before calling `update_doc`. Defaults to `false`. Content mode only."
+          },
+          {
+            "key": "blocks_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of blocks to return per document (default: 25). Use with `blocks_page` to paginate long documents. Content mode only."
+          },
+          {
+            "key": "blocks_page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for block pagination, starting at 1. Content mode only."
+          },
+          {
+            "key": "include_comments",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, fetches all comments and replies on the document. Defaults to `false`. Content mode only."
+          },
+          {
+            "key": "comments_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of comments to fetch per document when `include_comments` is `true`. Defaults to 50. Content mode only."
+          },
+          {
+            "key": "version_history_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of restoring points to return. Version history mode only."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date string to filter version history from (e.g., `\"2026-03-15T00:00:00Z\"`). Version history mode only."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date string to filter version history until. Defaults to now. Version history mode only."
+          },
+          {
+            "key": "include_diff",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, fetches content diffs between consecutive restoring points. May be slower. Version history mode only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.docs.update",
+      "shortPath": "docs.update",
+      "description": "Updates an existing monday.com document by executing an ordered list of operations such as appending content, renaming, editing blocks, or adding comments using the Platform MCP.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": true,
+            "type": "string",
+            "description": "The document ID returned by `read_docs` (`id` field). Takes priority over `object_id` if both are provided."
+          },
+          {
+            "key": "object_id",
+            "optional": true,
+            "type": "string",
+            "description": "The document object ID visible in the document URL. Resolved to `doc_id` internally."
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "any[]",
+            "description": "Ordered list of operations to perform (1–25). Each operation requires an `operation_type` and type-specific fields; monday's `update_doc` MCP tool description lists the operation types."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Creates a new folder inside a monday.com workspace, with optional color, icon, font weight, and parent folder settings using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workspace where the folder will be created."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the folder."
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string",
+            "description": "The folder's color. One of: `AQUAMARINE`, `BRIGHT_BLUE`, `BRIGHT_GREEN`, `CHILI_BLUE`, `DARK_ORANGE`, `DARK_PURPLE`, `DARK_RED`, `DONE_GREEN`, `INDIGO`, `LIPSTICK`, `NULL`, `PURPLE`, `SOFIA_PINK`, `STUCK_RED`, `SUNSET`, `WORKING_ORANGE`."
+          },
+          {
+            "key": "fontWeight",
+            "optional": true,
+            "type": "string",
+            "description": "The font weight of the folder label. One of: `FONT_WEIGHT_BOLD`, `FONT_WEIGHT_LIGHT`, `FONT_WEIGHT_NORMAL`, `FONT_WEIGHT_VERY_LIGHT`, `NULL`."
+          },
+          {
+            "key": "customIcon",
+            "optional": true,
+            "type": "string",
+            "description": "The icon displayed on the folder. One of: `FOLDER`, `MOREBELOW`, `MOREBELOWFILLED`, `NULL`, `WORK`."
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of a parent folder to nest this folder inside. If omitted, the folder is created at the workspace root."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.folders.moveObject",
+      "shortPath": "folders.moveObject",
+      "description": "Moves a board, folder, or overview to a different position, parent folder, or workspace in monday.com using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "string",
+            "description": "The type of object to move. One of: `Board`, `Folder`, `Overview`."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the object to move."
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the destination folder. Provide this to move the object into a specific folder."
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the destination workspace. Provide this when moving the object to a different workspace."
+          },
+          {
+            "key": "accountProductId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the destination account product. Provide this when moving to a different account product context."
+          },
+          {
+            "key": "position_object_id",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of a reference object to position this object relative to. Must be paired with `position_object_type`."
+          },
+          {
+            "key": "position_object_type",
+            "optional": true,
+            "type": "string",
+            "description": "The type of the reference object for positioning. One of: `Board`, `Folder`, `Overview`. Must be paired with `position_object_id`."
+          },
+          {
+            "key": "position_is_after",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, places this object after the reference object. If `false`, places it before."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.folders.update",
+      "shortPath": "folders.update",
+      "description": "Updates the name, color, icon, position, or parent of an existing folder in monday.com using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the folder to update."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The new name for the folder."
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string",
+            "description": "The new color for the folder. One of: `AQUAMARINE`, `BRIGHT_BLUE`, `BRIGHT_GREEN`, `CHILI_BLUE`, `DARK_ORANGE`, `DARK_PURPLE`, `DARK_RED`, `DONE_GREEN`, `INDIGO`, `LIPSTICK`, `NULL`, `PURPLE`, `SOFIA_PINK`, `STUCK_RED`, `SUNSET`, `WORKING_ORANGE`."
+          },
+          {
+            "key": "fontWeight",
+            "optional": true,
+            "type": "string",
+            "description": "The new font weight for the folder label. One of: `FONT_WEIGHT_BOLD`, `FONT_WEIGHT_LIGHT`, `FONT_WEIGHT_NORMAL`, `FONT_WEIGHT_VERY_LIGHT`, `NULL`."
+          },
+          {
+            "key": "customIcon",
+            "optional": true,
+            "type": "string",
+            "description": "The new icon for the folder. One of: `FOLDER`, `MOREBELOW`, `MOREBELOWFILLED`, `NULL`, `WORK`."
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the new parent folder to nest this folder inside."
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the workspace containing the folder. Required when moving the folder to a different workspace."
+          },
+          {
+            "key": "accountProductId",
+            "optional": true,
+            "type": "string",
+            "description": "The account product ID to associate with the folder."
+          },
+          {
+            "key": "position_object_id",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of an object to position this folder relative to. Must be paired with `position_object_type`."
+          },
+          {
+            "key": "position_object_type",
+            "optional": true,
+            "type": "string",
+            "description": "The type of object used as the positioning reference. One of: `Board`, `Folder`, `Overview`. Must be paired with `position_object_id`."
+          },
+          {
+            "key": "position_is_after",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, positions the folder after the reference object. If `false`, positions it before."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.forms.create",
+      "shortPath": "forms.create",
+      "description": "Creates a new monday.com WorkForm and a backing board to store responses, returning a form token for subsequent form operations using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destination_workspace_id",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the workspace in which the form and its backing board will be created."
+          },
+          {
+            "key": "destination_name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the backing board that stores form responses. If omitted, the board receives a default name."
+          },
+          {
+            "key": "board_kind",
+            "optional": true,
+            "type": "string",
+            "description": "Visibility of the backing board. One of `private`, `public`, or `share`."
+          },
+          {
+            "key": "destination_folder_id",
+            "optional": true,
+            "type": "string",
+            "description": "ID of an existing folder to place the backing board in."
+          },
+          {
+            "key": "destination_folder_name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a new folder to create and place the backing board in."
+          },
+          {
+            "key": "board_owner_ids",
+            "optional": true,
+            "type": "any[]",
+            "description": "List of user IDs to set as owners of the backing board."
+          },
+          {
+            "key": "board_owner_team_ids",
+            "optional": true,
+            "type": "any[]",
+            "description": "List of team IDs to set as owners of the backing board."
+          },
+          {
+            "key": "board_subscriber_ids",
+            "optional": true,
+            "type": "any[]",
+            "description": "User IDs to notify on board activity."
+          },
+          {
+            "key": "board_subscriber_teams_ids",
+            "optional": true,
+            "type": "any[]",
+            "description": "Team IDs to notify on board activity."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.forms.createSubmission",
+      "shortPath": "forms.createSubmission",
+      "description": "Submits a completed response to a monday.com WorkForm, creating a new item on the form's backing board with the provided answers using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_token",
+            "optional": false,
+            "type": "string",
+            "description": "The form token, a full WorkForm URL, or a shortened wkf.ms URL. Shortened URLs are automatically resolved."
+          },
+          {
+            "key": "answers",
+            "optional": false,
+            "type": "any[]",
+            "description": "Array of answer objects. Each object must include question_id and exactly one answer field matching the question type; monday's `create_form_submission` MCP tool description lists the answer fields per type."
+          },
+          {
+            "key": "form_timezone_offset",
+            "optional": false,
+            "type": "number",
+            "description": "The submitter's timezone offset in minutes (e.g., -120 for UTC−2, 0 for UTC, 120 for UTC+2)."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Required only if the form has password protection enabled (check features.password.enabled from get_form)."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any[]",
+            "description": "Routing tags to attach to the submission. Each tag maps a column_id to a value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.forms.editQuestions",
+      "shortPath": "forms.editQuestions",
+      "description": "Creates, updates, or deletes a single question on a monday.com WorkForm, with support for 23 question types and conditional visibility rules using the Platform MCP.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "string",
+            "description": "The operation to perform: create, update, or delete."
+          },
+          {
+            "key": "formToken",
+            "optional": false,
+            "type": "string",
+            "description": "The unique token identifying the form."
+          },
+          {
+            "key": "questionId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of the question to update or delete. Required for update and delete."
+          },
+          {
+            "key": "question",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The question definition. Required for create. For update, required with type always included. monday's `form_questions_editor` MCP tool description lists its sub-fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Retrieves the full structure of a monday.com WorkForm by its form token, including all questions, settings, appearance, and features using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formToken",
+            "optional": false,
+            "type": "string",
+            "description": "The unique token identifying the form. Extract from the form URL: the alphanumeric string after /forms/ and before ?."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.forms.update",
+      "shortPath": "forms.update",
+      "description": "Updates a monday.com WorkForm's settings, appearance, features, tags, or question order using a single action-based call using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formToken",
+            "optional": false,
+            "type": "string",
+            "description": "The unique token identifying the form."
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "string",
+            "description": "The operation to perform; monday's `update_form` MCP tool description lists the supported actions and their required fields."
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Form data to update. Required for updateFormHeader, updateAppearance, updateAccessibility, updateFeatures, and updateQuestionOrder. Patch semantics — only include the fields you want to change."
+          },
+          {
+            "key": "formPassword",
+            "optional": true,
+            "type": "string",
+            "description": "Required for the setFormPassword action."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Required for createTag, updateTag, and deleteTag. For create: provide name and value. For update: provide id and new value. For delete: provide id only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Creates a new group (section) in a monday.com board with an optional color and position relative to existing groups using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the board to create the group in."
+          },
+          {
+            "key": "groupName",
+            "optional": false,
+            "type": "string",
+            "description": "The display name of the new group. Maximum 255 characters."
+          },
+          {
+            "key": "groupColor",
+            "optional": true,
+            "type": "string",
+            "description": "Hex color for the group header. Must be one of the 19 predefined monday.com group colors: `#037f4c`, `#00c875`, `#9cd326`, `#cab641`, `#ffcb00`, `#784bd1`, `#9d50dd`, `#007eb5`, `#579bfc`, `#66ccff`, `#bb3354`, `#df2f4a`, `#ff007f`, `#ff5ac4`, `#ff642e`, `#fdab3d`, `#7f5347`, `#c4c4c4`, `#757575`."
+          },
+          {
+            "key": "relativeTo",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of an existing group to position this group relative to. Use `get_board_info` to find group IDs."
+          },
+          {
+            "key": "positionRelativeMethod",
+            "optional": true,
+            "type": "string",
+            "description": "Whether to place the new group `before_at` or `after_at` the `relativeTo` group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.items.changeColumnValues",
+      "shortPath": "items.changeColumnValues",
+      "description": "Updates one or more column values on an existing monday.com item in a single call using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the board that contains the item."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the item to update."
+          },
+          {
+            "key": "columnValues",
+            "optional": false,
+            "type": "string",
+            "description": "A JSON string of column values to update. Keys are column IDs, values are type-specific. Examples: `{\"text_col\": \"New value\"}`, `{\"status_col\": {\"label\": \"Done\"}}`, `{\"date_col\": {\"date\": \"2024-06-01\"}}`, `{\"email_col\": \"user@example.com\"}`, `{\"phone_col\": \"+1-800-555-0100\"}`."
+          },
+          {
+            "key": "createLabelsIfMissing",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, creates new Status or Dropdown labels that don't already exist. Requires board structure modification permission. Defaults to `false`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.items.create",
+      "shortPath": "items.create",
+      "description": "Creates a new item on a board, optionally with column values, as a sub-item under a parent, or as a duplicate of an existing item using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the board to create the item on."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The display name of the new item."
+          },
+          {
+            "key": "columnValues",
+            "optional": false,
+            "type": "string",
+            "description": "A JSON string of initial column values. Keys are column IDs, values are type-specific. Examples: `{\"text_col\": \"hello\"}`, `{\"status_col\": {\"label\": \"Done\"}}`, `{\"date_col\": {\"date\": \"2024-05-10\"}}`, `{\"email_col\": \"user@example.com\"}`."
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the group to add the item to. Defaults to the board's top group if not specified."
+          },
+          {
+            "key": "parentItemId",
+            "optional": true,
+            "type": "number",
+            "description": "The ID of a parent item to create this as a sub-item under."
+          },
+          {
+            "key": "duplicateFromItemId",
+            "optional": true,
+            "type": "number",
+            "description": "The ID of an existing item to duplicate as the base. Only provide when duplicating an item."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.meetings.getNotetaker",
+      "shortPath": "meetings.getNotetaker",
+      "description": "Retrieves monday.com AI Notetaker meetings by ID, or lists recent ones, with optional summaries, topics, action items and transcripts using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Meeting IDs to fetch in one call. Omit to list recent meetings for the chosen access level."
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "OWN | SHARED_WITH_ME | SHARED_WITH_ACCOUNT | ALL",
+            "description": "Which meetings to include. Defaults to ALL when ids are given; without ids, meetings shared only account-wide are left out unless ALL is passed."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Case-insensitive substring match on title, attendee name or email. Not a topic search."
+          },
+          {
+            "key": "include_summary",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the AI-generated summary for each meeting. The summary is returned when no include_ flag is set."
+          },
+          {
+            "key": "include_topics",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include discussion topics for each meeting."
+          },
+          {
+            "key": "include_action_items",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include action items for each meeting."
+          },
+          {
+            "key": "include_transcript",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the full transcript for each meeting. Transcripts can be very large."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.notifications.create",
+      "shortPath": "notifications.create",
+      "description": "Sends a notification to a user via the monday.com bell icon, with an optional email, targeting an update/reply or an item/board using the Platform MCP.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the user to send the notification to."
+          },
+          {
+            "key": "target_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the target object. Provide an update or reply ID when `target_type` is `\"Post\"`, or an item or board ID when `target_type` is `\"Project\"`."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The notification message text."
+          },
+          {
+            "key": "target_type",
+            "optional": false,
+            "type": "string",
+            "description": "The context for the notification link. `\"Post\"` links to an update or reply; `\"Project\"` links to an item or board."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.schema.executeQuery",
+      "shortPath": "schema.executeQuery",
+      "description": "Executes any monday.com GraphQL query or mutation dynamically. The most flexible tool in the Platform MCP, giving direct access to the full monday.com API surface.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The full GraphQL query or mutation string to execute."
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "string",
+            "description": "A JSON string containing the variables for the GraphQL operation. Defaults to \"{}\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.schema.getGraphqlSchema",
+      "shortPath": "schema.getGraphqlSchema",
+      "description": "Fetches the monday.com GraphQL schema structure, including all available query fields, mutation fields, and a list of every type in the schema using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operationType",
+            "optional": true,
+            "type": "string",
+            "description": "Filter results by operation type. Use \"read\" to return only query fields, or \"write\" to return only mutation fields. Omit to return both."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.schema.getTypeDetails",
+      "shortPath": "schema.getTypeDetails",
+      "description": "Returns the full field list and type information for a specific GraphQL type in the monday.com API schema using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "typeName",
+            "optional": false,
+            "type": "string",
+            "description": "The exact name of the GraphQL type to inspect. Type names are case-sensitive (e.g., \"Board\", \"Item\", \"Column\")."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.search.query",
+      "shortPath": "search.query",
+      "description": "Searches across monday.com for boards, documents, or folders by keyword, with optional filtering by workspace using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchType",
+            "optional": false,
+            "type": "string",
+            "description": "The type of objects to search. One of `BOARD`, `DOCUMENTS`, or `FOLDERS`."
+          },
+          {
+            "key": "searchTerm",
+            "optional": true,
+            "type": "string",
+            "description": "The keyword to search for. Omit or pass an empty string to return all objects of the given type."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to return per page. Maximum and default is `20`."
+          },
+          {
+            "key": "workspaceIds",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of workspace IDs to scope the search. Only pass this when you want to restrict results to specific workspaces."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.sprints.getBoards",
+      "shortPath": "sprints.getBoards",
+      "description": "Discovers monday Dev sprint boards and their paired tasks boards in your account using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.sprints.getMetadata",
+      "shortPath": "sprints.getMetadata",
+      "description": "Returns a table of sprints from a monday Dev sprints board, including timeline, status, and completion data for each sprint using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sprintsBoardId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the monday Dev board containing the sprints. Use `get_monday_dev_sprints_boards` to find this ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of sprints to retrieve. Between 1 and 100. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.sprints.getSummary",
+      "shortPath": "sprints.getSummary",
+      "description": "Returns a complete AI-generated performance summary and analysis for a completed monday Dev sprint using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sprintId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the sprint to get the summary for. Must be a completed sprint created after January 1, 2025. Use `get_sprints_metadata` to find sprint IDs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.updates.create",
+      "shortPath": "updates.create",
+      "description": "Posts a new update (comment) on a monday.com item, with support for mentions and threaded replies using the Platform MCP.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the item to post the update on."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The update text. Use HTML tags for formatting. Do not use `@` mentions here — use `mentionsList` instead."
+          },
+          {
+            "key": "mentionsList",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array of mention objects. Each object requires an `id` and a `type`. Valid types: `User`, `Team`, `Board`, `Project`. Example: `[{\"id\": \"48202303\", \"type\": \"User\"}]`."
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "number",
+            "description": "The ID of an existing update to reply to. Omit this parameter to create a top-level update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.updates.list",
+      "shortPath": "updates.list",
+      "description": "Retrieves updates (comments and posts) from a monday.com item or board, with optional filtering by date range, replies, and file attachments using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the item or board to retrieve updates from."
+          },
+          {
+            "key": "objectType",
+            "optional": false,
+            "type": "string",
+            "description": "The type of object: `\"Item\"` or `\"Board\"`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of updates to return per page. Default: `25`. Maximum: `100`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination. Default: `1`."
+          },
+          {
+            "key": "includeReplies",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set to `true` to include threaded replies on each update. Default: `false`."
+          },
+          {
+            "key": "includeAssets",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set to `true` to include file attachments in the response. Default: `false`."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Start of date range filter in ISO 8601 format (e.g. `\"2025-01-01\"` or `\"2025-01-01T00:00:00Z\"`). **Board queries only.** Must be used together with `toDate`."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "End of date range filter in ISO 8601 format. **Board queries only.** Must be used together with `fromDate`."
+          },
+          {
+            "key": "includeItemUpdates",
+            "optional": true,
+            "type": "boolean",
+            "description": "When `objectType` is `\"Board\"`, set to `true` to include updates on individual items. Default: `false` (board-level discussion only)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.users.getContext",
+      "shortPath": "users.getContext",
+      "description": "Returns information about the currently authenticated user, their account, and their most relevant boards, people, and workspaces using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.users.listAndTeams",
+      "shortPath": "users.listAndTeams",
+      "description": "Fetches user profiles and team data from the account, with several targeting modes for looking up specific users or teams efficiently using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "getMe",
+            "optional": true,
+            "type": "boolean",
+            "description": "Returns the current user's profile including team memberships. **Top priority** — use whenever the request refers to \"me\" or \"my teams\". Conflicts with all other parameters."
+          },
+          {
+            "key": "userIds",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of specific user IDs to fetch (max 500). Always use when user IDs are available in context. Returns user profiles including team memberships."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Fuzzy name search for **users only**. Standalone — cannot be combined with other parameters. Do not use to search for teams."
+          },
+          {
+            "key": "teamIds",
+            "optional": true,
+            "type": "any[]",
+            "description": "Array of specific team IDs to fetch (max 500). Always use when team IDs are known. Returns team details with owners and optional member data."
+          },
+          {
+            "key": "includeTeams",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetches all teams in the account alongside users. **Avoid** — only use as a last resort. To get a specific user's teams, fetch that user by `userIds` instead."
+          },
+          {
+            "key": "teamsOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "Returns only teams, no users. Combine with `teamIds` for targeted team lookup, or with `includeTeamMembers` for full member details."
+          },
+          {
+            "key": "includeTeamMembers",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set to `true` only when you need full member details for teams beyond names and IDs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.views.create",
+      "shortPath": "views.create",
+      "description": "Creates a new board view (tab) with optional filters and sorting on a monday.com board using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board ID to create the view on."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "any",
+            "description": "The type of board view to create. Defaults to TABLE. Use TABLE for standard board views."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The name of the view (e.g. \"High Priority Items\", \"My Tasks\")."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any[]",
+            "description": "Sort configuration. Array of { column_id, direction } objects. direction defaults to asc."
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Type-specific view settings as a JSON object. The shape varies by view type. For TABLE views, prefer create_view_table."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.views.createTable",
+      "shortPath": "views.createTable",
+      "description": "Creates a new table-type board view with filters, sort, tags, and table-specific settings (column visibility/order and group-by) using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board ID to create the table view on."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The name of the view (e.g. \"High Priority Items\", \"My Tasks\")."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any[]",
+            "description": "Sort configuration. Array of { column_id, direction } objects. direction defaults to asc."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any[]",
+            "description": "Tags to apply to the view."
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Table-specific settings: columns (visibility/order) and group_by, as described in monday's `create_view_table` MCP tool."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.views.update",
+      "shortPath": "views.update",
+      "description": "Updates an existing board view (tab) — its name, filters, or sort order — on a monday.com board using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "viewId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the view to update."
+          },
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board ID the view belongs to."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "any",
+            "description": "The type of the board view being updated. Defaults to TABLE."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New name for the view (omit to leave unchanged)."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any[]",
+            "description": "Sort configuration. Array of { column_id, direction } objects. direction defaults to asc."
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Type-specific view settings as a JSON object. The shape varies by view type. For TABLE views, prefer update_view_table."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.views.updateTable",
+      "shortPath": "views.updateTable",
+      "description": "Updates an existing table-type board view — name, filters, sort, tags, or table-specific settings (column visibility/order and group-by) using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "viewId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the table view to update."
+          },
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string",
+            "description": "The board ID the view belongs to."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New name for the view (omit to leave unchanged)."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any[]",
+            "description": "Sort configuration. Array of { column_id, direction } objects. direction defaults to asc."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any[]",
+            "description": "Tags to apply to the view."
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Table-specific settings: columns (visibility/order) and group_by. Same shape as create_view_table."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.workflows.create",
+      "shortPath": "workflows.create",
+      "description": "Creates a new empty workflow in a monday.com workspace using the Platform MCP, returning the workflow object ID and draft ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workspace to create the workflow in."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Workflow title. Defaults to \"New Workflow\"."
+          },
+          {
+            "key": "privacyKind",
+            "optional": true,
+            "type": "PUBLIC | PRIVATE",
+            "description": "Visibility: PUBLIC (default) or PRIVATE."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Optional workflow description."
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional folder ID to place the workflow in."
+          },
+          {
+            "key": "ownerIds",
+            "optional": true,
+            "type": "any[]",
+            "description": "Optional list of user IDs to set as workflow owners."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.workflows.plan",
+      "shortPath": "workflows.plan",
+      "description": "Plans one or more monday.com workflows for a described process using an AI agent, returning a structured implementation plan, via the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "Natural-language description of the full end-to-end process to plan (e.g. \"When a deal is marked Won, create a task in the onboarding board and notify the account manager\"). Maximum 2000 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.workflows.update",
+      "shortPath": "workflows.update",
+      "description": "Asks the monday.com workflow expert about a workflow, or has it add, edit or delete steps from a natural-language prompt (on a draft, or on the live version when no draft ID is given), via the Platform MCP.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowObjectId",
+            "optional": false,
+            "type": "number",
+            "description": "The workflow object ID returned by create_workflow (also in the workflow URL). Not an automation id."
+          },
+          {
+            "key": "workflowDraftId",
+            "optional": true,
+            "type": "number",
+            "description": "The draft to work on, from the latest create_workflow or workflows.update response. Omit to work on the live version."
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "A question about the workflow or the changes to make (e.g. \"Add a trigger that fires when an item is created on the Marketing board\")."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.workspaces.create",
+      "shortPath": "workspaces.create",
+      "description": "Creates a new workspace in your monday.com account with a specified name, kind, and optional description using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the new workspace."
+          },
+          {
+            "key": "workspaceKind",
+            "optional": false,
+            "type": "string",
+            "description": "The type of workspace to create. One of: `open`, `closed`, or `template`. Open workspaces are visible to all account members; closed workspaces require an explicit invite."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "A short description of the workspace's purpose."
+          },
+          {
+            "key": "accountProductId",
+            "optional": true,
+            "type": "string",
+            "description": "The account product ID to associate with the workspace (e.g., to scope the workspace to a specific monday product like CRM or Dev)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.workspaces.getInfo",
+      "shortPath": "workspaces.getInfo",
+      "description": "Returns the boards, docs, and folders inside a workspace, including which folder each item belongs to using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the workspace to retrieve information for. Use list_workspaces to find workspace IDs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "Returns a paginated list of all workspaces available to the authenticated user, including their IDs, names, and descriptions using the Platform MCP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of workspaces to return per page. Min: `1`, max: `100`, default: `100`. Use a lower value for smaller responses."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number to return. Default: `1`. Increment to paginate through large workspace lists."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mondaymcp.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Updates the name, description, kind, or account product association of an existing workspace using the Platform MCP.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workspace to update. Use list_workspaces to find workspace IDs."
+          },
+          {
+            "key": "attributeName",
+            "optional": true,
+            "type": "string",
+            "description": "The new name for the workspace."
+          },
+          {
+            "key": "attributeDescription",
+            "optional": true,
+            "type": "string",
+            "description": "The new description for the workspace."
+          },
+          {
+            "key": "attributeKind",
+            "optional": true,
+            "type": "string",
+            "description": "The new kind for the workspace. One of: `open`, `closed`, or `template`."
+          },
+          {
+            "key": "attributeAccountProductId",
+            "optional": true,
+            "type": "number",
+            "description": "The target account product ID to move the workspace to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

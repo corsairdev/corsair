@@ -1,0 +1,249 @@
+{
+  "id": "moonclerk",
+  "displayName": "MoonClerk",
+  "description": "Read MoonClerk payment forms, customers, subscriptions, and payments.",
+  "npmPackageName": "@corsair-dev/moonclerk",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "moonclerk.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Get a customer and subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number | null, account_balance?: number | null, name?: string | null, email?: string | null, payment_method?: { type?: string | null, last4?: string | null, exp_month?: number | null, exp_year?: number | null, brand?: string | null } | null, custom_id?: string | null, customer_reference?: string | null, discount?: { coupon?: { code?: string | null, duration?: string | null, amount_off?: number | null, currency?: string | null, percent_off?: number | null, duration_in_months?: number | null, max_redemptions?: number | null, redeem_by?: string | null } | null, starts_at?: string | null, ends_at?: string | null } | null, delinquent?: boolean | null, management_url?: string | null, custom_fields?: Record<string, { id?: number | null, type?: string | null, response?: string | number | boolean | null | { line1?: string | null, line2?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null } | null }> | null, form_id?: number | null, checkout?: { amount_due?: number | null, coupon_amount?: number | null, coupon_code?: string | null, date?: string | null, fee?: number | null, subtotal?: number | null, token?: string | null, total?: number | null, trial_period_days?: number | null, upfront_amount?: number | null } | null, subscription?: { id?: number | null, subscription_reference?: string | null, status?: active | canceled | expired | past_due | pending | unpaid | string | null, start?: string | null, first_payment_attempt?: string | null, next_payment_attempt?: string | null, current_period_start?: string | null, current_period_end?: string | null, trial_start?: string | null, trial_end?: string | null, trial_period_days?: number | null, expires_at?: string | null, canceled_at?: string | null, ended_at?: string | null, plan?: { id?: number | null, plan_reference?: string | null, amount?: number | null, amount_description?: string | null, currency?: string | null, interval?: string | null, interval_count?: number | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moonclerk.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers and subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "checkout_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checkout_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_payment_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_payment_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | canceled | expired | past_due | pending | unpaid"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "{ id?: number | null, account_balance?: number | null, name?: string | null, email?: string | null, payment_method?: { type?: string | null, last4?: string | null, exp_month?: number | null, exp_year?: number | null, brand?: string | null } | null, custom_id?: string | null, customer_reference?: string | null, discount?: { coupon?: { code?: string | null, duration?: string | null, amount_off?: number | null, currency?: string | null, percent_off?: number | null, duration_in_months?: number | null, max_redemptions?: number | null, redeem_by?: string | null } | null, starts_at?: string | null, ends_at?: string | null } | null, delinquent?: boolean | null, management_url?: string | null, custom_fields?: Record<string, { id?: number | null, type?: string | null, response?: string | number | boolean | null | { line1?: string | null, line2?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null } | null }> | null, form_id?: number | null, checkout?: { amount_due?: number | null, coupon_amount?: number | null, coupon_code?: string | null, date?: string | null, fee?: number | null, subtotal?: number | null, token?: string | null, total?: number | null, trial_period_days?: number | null, upfront_amount?: number | null } | null, subscription?: { id?: number | null, subscription_reference?: string | null, status?: active | canceled | expired | past_due | pending | unpaid | string | null, start?: string | null, first_payment_attempt?: string | null, next_payment_attempt?: string | null, current_period_start?: string | null, current_period_end?: string | null, trial_start?: string | null, trial_end?: string | null, trial_period_days?: number | null, expires_at?: string | null, canceled_at?: string | null, ended_at?: string | null, plan?: { id?: number | null, plan_reference?: string | null, amount?: number | null, amount_description?: string | null, currency?: string | null, interval?: string | null, interval_count?: number | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moonclerk.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Get a payment form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, access_token?: string | null, currency?: string | null, payment_volume?: number | null, successful_checkout_count?: number | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moonclerk.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List payment forms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forms",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, access_token?: string | null, currency?: string | null, payment_volume?: number | null, successful_checkout_count?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moonclerk.api.payments.get",
+      "shortPath": "payments.get",
+      "description": "Get a payment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payment",
+            "optional": false,
+            "type": "{ id?: number | null, date?: string | null, status?: successful | refunded | failed | string | null, currency?: string | null, amount?: number | null, fee?: number | null, amount_refunded?: number | null, amount_description?: string | null, name?: string | null, email?: string | null, payment_method?: { type?: string | null, last4?: string | null, exp_month?: number | null, exp_year?: number | null, brand?: string | null } | null, charge_reference?: string | null, customer_id?: number | null, customer_reference?: string | null, invoice_reference?: string | null, custom_fields?: Record<string, { id?: number | null, type?: string | null, response?: string | number | boolean | null | { line1?: string | null, line2?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null } | null }> | null, form_id?: number | null, custom_id?: string | null, checkout?: { amount_due?: number | null, coupon_amount?: number | null, coupon_code?: string | null, date?: string | null, fee?: number | null, subtotal?: number | null, token?: string | null, total?: number | null, trial_period_days?: number | null, upfront_amount?: number | null } | null, coupon?: { code?: string | null, duration?: string | null, amount_off?: number | null, currency?: string | null, percent_off?: number | null, duration_in_months?: number | null, max_redemptions?: number | null, redeem_by?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moonclerk.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "List payments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "successful | refunded | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payments",
+            "optional": false,
+            "type": "{ id?: number | null, date?: string | null, status?: successful | refunded | failed | string | null, currency?: string | null, amount?: number | null, fee?: number | null, amount_refunded?: number | null, amount_description?: string | null, name?: string | null, email?: string | null, payment_method?: { type?: string | null, last4?: string | null, exp_month?: number | null, exp_year?: number | null, brand?: string | null } | null, charge_reference?: string | null, customer_id?: number | null, customer_reference?: string | null, invoice_reference?: string | null, custom_fields?: Record<string, { id?: number | null, type?: string | null, response?: string | number | boolean | null | { line1?: string | null, line2?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null } | null }> | null, form_id?: number | null, custom_id?: string | null, checkout?: { amount_due?: number | null, coupon_amount?: number | null, coupon_code?: string | null, date?: string | null, fee?: number | null, subtotal?: number | null, token?: string | null, total?: number | null, trial_period_days?: number | null, upfront_amount?: number | null } | null, coupon?: { code?: string | null, duration?: string | null, amount_off?: number | null, currency?: string | null, percent_off?: number | null, duration_in_months?: number | null, max_redemptions?: number | null, redeem_by?: string | null } | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
