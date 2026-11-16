@@ -409,7 +409,7 @@ Delete a DID and its keys; credentials signed with it can no longer be verified 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.truvera.api.dids.delete({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' });
+await corsair.truvera.api.dids.delete({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
 ```
 
 **Input**
@@ -434,7 +434,7 @@ Resolve one DID and read its document
 **Risk:** `read`
 
 ```ts
-await corsair.truvera.api.dids.get({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' });
+await corsair.truvera.api.dids.get({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
 ```
 
 **Input**
@@ -507,7 +507,7 @@ Read one DID resolution metadata: controller, versions and deactivation
 **Risk:** `read`
 
 ```ts
-await corsair.truvera.api.dids.getMetadata({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' });
+await corsair.truvera.api.dids.getMetadata({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
 ```
 
 **Input**
@@ -689,7 +689,7 @@ Delete a profile; the DID itself remains
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.truvera.api.profiles.delete({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' });
+await corsair.truvera.api.profiles.delete({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
 ```
 
 **Input**
@@ -724,7 +724,7 @@ Read one profile by its DID
 **Risk:** `read`
 
 ```ts
-await corsair.truvera.api.profiles.get({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' });
+await corsair.truvera.api.profiles.get({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
 ```
 
 **Input**
