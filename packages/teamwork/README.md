@@ -30,7 +30,7 @@ await corsair.teamwork.api.v3_get_projects_api_v3_projects_json({
 
 ```
 
-All operation input objects are strict. Inputs and documented success responses are validated with Zod; the registry includes create, update, completion, move, delete, timer, file metadata, notebook, link, comment, board, and time-tracking operations where the provider documents a JSON contract.
+Path and query inputs are strict. Request bodies check every documented field but also accept keys the published specs leave out (a V1 milestone `title`, a V3 time entry `description`), and V3 bodies only require what the API requires (verified live on 11-16). Responses are parsed leniently: Teamwork sends `null` for most unset fields and, on V1, booleans and numbers where the spec says string, so every response field is optional and nullable and unknown enum values pass. The registry includes create, update, completion, move, delete, timer, file metadata, notebook, link, comment, board, and time-tracking operations where the provider documents a JSON contract.
 
 ## Authentication, versions, and pagination
 
@@ -40,9 +40,9 @@ V3 requests expose the documented `page` and `pageSize` query fields (50 default
 
 Array query parameters follow the collection format in the OpenAPI contract; Swagger's default CSV format is serialized as comma-separated values, while explicitly documented `multi` parameters remain repeated keys.
 
-When a V3 response supports field projection, `fields[projects]` selection also adjusts response validation: selected project fields are required and omitted fields remain optional. Project output types reflect that sparse response shape.
+Sparse fieldsets (`fields[projects]`, `fields[tasks]` and so on) parse on every resource, since response fields are optional.
 
-V3 task create/update inputs accept Teamwork's official examples, including plain numeric assignee arrays, string priorities, descriptions, and custom-field arrays. Known fields are still validated and unknown fields are rejected.
+V3 task create/update inputs accept Teamwork's official examples, including plain numeric assignee arrays, string priorities, descriptions, and custom-field arrays. Creates require a task name, and every task write requires `taskOptions.notify`, so the caller decides whether assignees get an email.
 
 V3 task create operations require `task.name`; update operations accept partial task fields.
 

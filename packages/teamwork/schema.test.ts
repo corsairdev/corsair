@@ -282,7 +282,54 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		).toBe(false);
 	});
 
-	it('validates documented numeric maps without allowing unrelated body fields', () => {
+	it('takes V3 bodies the API accepts although the spec marks other fields required or leaves them out', () => {
+		// Sent live on 11-16: Teamwork created this time entry without taskId, tags or timelogOptions.
+		const createTime =
+			teamworkInputSchemas[
+				'v3_post_projects_api_v3_projects_projectid_time_json'
+			];
+		expect(
+			createTime?.safeParse({
+				path: { projectId: 1 },
+				body: {
+					timelog: {
+						description: 'Release notes',
+						date: '2026-11-16',
+						time: '09:00:00',
+						hours: 0,
+						minutes: 15,
+						isBillable: false,
+					},
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			createTime?.safeParse({
+				path: { projectId: 1 },
+				body: { timelog: { minutes: 'fifteen' } },
+			}).success,
+		).toBe(false);
+		// The spec types remindAt as an empty object; the API wants a date-time string.
+		const createReminder =
+			teamworkInputSchemas[
+				'v3_post_projects_api_v3_tasks_taskid_reminders_json'
+			];
+		expect(
+			createReminder?.safeParse({
+				path: { taskId: 1 },
+				body: {
+					reminder: {
+						remindAt: '2026-12-01T09:00:00Z',
+						type: 'email',
+						userIds: [1],
+						note: 'Check the draft',
+					},
+				},
+			}).success,
+		).toBe(true);
+	});
+
+	it('validates documented numeric maps', () => {
 		const ratesSchema =
 			teamworkInputSchemas[
 				'v3_patch_projects_api_v3_companies_companyid_rates_json'
@@ -298,10 +345,7 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			ratesSchema?.safeParse({
 				path: { companyId: 123 },
 				query: {},
-				body: {
-					clientRateByRoleId: { '123': 100 },
-					undocumented: true,
-				},
+				body: { clientRateByRoleId: { '123': 'a lot' } },
 			}).success,
 		).toBe(false);
 	});
@@ -347,10 +391,14 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		expect(
 			createTaskSchema?.safeParse({
 				...input,
-				body: {
-					...input.body,
-					task: { ...input.body.task, undocumented: true },
-				},
+				body: { ...input.body, task: { ...input.body.task, name: 5 } },
+			}).success,
+		).toBe(false);
+		// notify must be chosen explicitly, so an agent decides whether assignees get an email.
+		expect(
+			createTaskSchema?.safeParse({
+				...input,
+				body: { ...input.body, taskOptions: {} },
 			}).success,
 		).toBe(false);
 	});

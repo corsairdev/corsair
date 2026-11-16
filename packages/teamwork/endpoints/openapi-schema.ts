@@ -20,12 +20,21 @@ function isRecord(value: unknown): value is OpenApiDocument {
  * booleans where the spec says string. So in a response every field is
  * optional and nullable, enums are open and min/max limits are dropped;
  * `v1Response` also accepts any JSON scalar where the spec names one.
- * `v1Request` checks the documented body fields but lets other keys through:
- * the V1 spec leaves out fields its own reference documents (a milestone's
- * `title`, a task list's `name`, a task's `description`), so a strict body
- * could not create a named record.
+ * `v1Request` and `v3Request` (request bodies) check the documented fields but
+ * let other keys through: both specs leave out fields Teamwork's reference
+ * documents and the API takes (a V1 milestone's `title`, a task list's `name`,
+ * a V3 time entry's `description`), so a strict body could not send them.
+ * `v3Request` also ignores the spec's generated `required` lists, which name
+ * fields the API does not need (a V3 time entry without `taskId`, `tags` or
+ * `timelogOptions` is accepted live); only `x-corsair-required`, set by the
+ * task overlay below, is enforced.
  */
-type SchemaMode = 'request' | 'v1Request' | 'response' | 'v1Response';
+type SchemaMode =
+	| 'request'
+	| 'v1Request'
+	| 'v3Request'
+	| 'response'
+	| 'v1Response';
 
 // A JSON scalar of any type, for V1 response fields whose published type doesn't match the wire.
 const looseScalar = z.union([z.string(), z.number(), z.boolean()]);
@@ -37,7 +46,9 @@ function schemaFromOpenApi(
 	mode: SchemaMode,
 	cache: Map<string, z.ZodType>,
 ): z.ZodType {
-	const strictRequests = mode === 'request' || mode === 'v1Request';
+	const strictRequests =
+		mode === 'request' || mode === 'v1Request' || mode === 'v3Request';
+	const openBody = mode === 'v1Request' || mode === 'v3Request';
 	const looseScalars = mode === 'v1Response';
 	if (!isRecord(value)) {
 		// `unknown` is necessary because the provider omitted a schema for this JSON value.
@@ -153,8 +164,10 @@ function schemaFromOpenApi(
 		schema = z.array(itemSchema);
 	} else if (type === 'object' || isRecord(value.properties)) {
 		const properties = isRecord(value.properties) ? value.properties : {};
-		const requiredNames = Array.isArray(value.required)
-			? value.required.filter(
+		const requiredList =
+			mode === 'v3Request' ? value['x-corsair-required'] : value.required;
+		const requiredNames = Array.isArray(requiredList)
+			? requiredList.filter(
 					// `unknown` is necessary because JSON Schema required entries are parsed from provider JSON.
 					(name: unknown): name is string => typeof name === 'string',
 				)
@@ -180,8 +193,8 @@ function schemaFromOpenApi(
 		} else if (strictRequests && value.additionalProperties === true) {
 			// `unknown` is necessary because OpenAPI explicitly permits arbitrary JSON map values here.
 			schema = objectSchema.catchall(z.unknown());
-		} else if (mode === 'v1Request') {
-			// `unknown` is necessary because the V1 spec omits documented body fields (see SchemaMode).
+		} else if (openBody) {
+			// `unknown` is necessary because the specs omit documented body fields (see SchemaMode).
 			schema = objectSchema.catchall(z.unknown());
 		} else if (strictRequests) {
 			schema = objectSchema.strict();
@@ -260,6 +273,7 @@ function v3TaskRequestDefinitions(
 		'payload.UserGroups': {
 			...userGroups,
 			required: [],
+			'x-corsair-required': [],
 			properties: Object.fromEntries(
 				Object.keys(userGroupProperties).map((name) => [
 					name,
@@ -284,6 +298,7 @@ function v3TaskRequestDefinitions(
 		'value.CustomFieldValue': {
 			...customFieldValue,
 			required: ['customfieldId', 'value'],
+			'x-corsair-required': ['customfieldId', 'value'],
 		},
 		'task.Task': {
 			...task,
@@ -292,10 +307,12 @@ function v3TaskRequestDefinitions(
 				description: { type: 'string' },
 			},
 			required: requireTaskName ? ['name'] : [],
+			'x-corsair-required': requireTaskName ? ['name'] : [],
 		},
 		'task.Options': {
 			...taskOptions,
 			required: ['notify'],
+			'x-corsair-required': ['notify'],
 		},
 		'task.Request': {
 			...taskRequest,
@@ -307,6 +324,7 @@ function v3TaskRequestDefinitions(
 				},
 			},
 			required: ['task', 'taskOptions'],
+			'x-corsair-required': ['task', 'taskOptions'],
 		},
 	};
 }
@@ -335,7 +353,7 @@ function createInputSchema(
 		const bodySchema = schemaFromOpenApi(
 			operation.body,
 			definitions,
-			operation.version === 'v1' ? 'v1Request' : 'request',
+			operation.version === 'v1' ? 'v1Request' : 'v3Request',
 			new Map(),
 		);
 		inputShape.body = operation.bodyRequired

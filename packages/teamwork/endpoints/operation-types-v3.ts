@@ -78,7 +78,8 @@ type TeamworkV3Input_companydomain_Domain = {
 type TeamworkV3Input_companydomain_Request = {
 	companyDomain: TeamworkV3Input_companydomain_Domain;
 };
-type TeamworkV3Input_entity_RemindAt = Record<string, never>;
+// The spec has an empty object; Teamwork takes the reminder time as a date-time string.
+type TeamworkV3Input_entity_RemindAt = string;
 type TeamworkV3Input_notebook_Notebook = {
 	categoryId: number;
 	contents?: string;

@@ -388,14 +388,27 @@ type TeamworkOpenBody<T> = T extends Array<infer Item>
 				[key: string]: TeamworkJsonValue | undefined;
 			}
 		: T;
+/** V3 bodies: other keys allowed, and the spec's generated required lists are not enforced (see `v3Request`). */
+type TeamworkOpenPartialBody<T> = T extends Array<infer Item>
+	? Array<TeamworkOpenPartialBody<Item>>
+	: T extends object
+		? { [Key in keyof T]?: TeamworkOpenPartialBody<T[Key]> } & {
+				[key: string]: TeamworkJsonValue | undefined;
+			}
+		: T;
 export type TeamworkEndpointInputs = {
 	[Id in keyof TeamworkV1Inputs]: {
 		[Field in keyof TeamworkV1Inputs[Id]]: Field extends 'body'
 			? TeamworkOpenBody<TeamworkV1Inputs[Id][Field]>
 			: TeamworkV1Inputs[Id][Field];
 	};
-} & TeamworkV2Inputs &
-	TeamworkV3Inputs;
+} & TeamworkV2Inputs & {
+		[Id in keyof TeamworkV3Inputs]: {
+			[Field in keyof TeamworkV3Inputs[Id]]: Field extends 'body'
+				? TeamworkOpenPartialBody<TeamworkV3Inputs[Id][Field]>
+				: TeamworkV3Inputs[Id][Field];
+		};
+	};
 /**
  * What a response really holds. The live run on 11-16 got null for unset
  * fields the spec types as values, and V1 booleans where the spec says string.

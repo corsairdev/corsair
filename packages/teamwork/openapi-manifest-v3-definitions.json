@@ -1065,7 +1065,8 @@
       "type": "object"
     },
     "entity.RemindAt": {
-      "type": "object"
+      "format": "date-time",
+      "type": "string"
     },
     "entity.WeekDate": {
       "properties": {
