@@ -161,6 +161,41 @@ describe('makeTriggerCmdRequest', () => {
 		expect((error as ApiError).request.method).toBe('POST');
 	});
 
+	it("keeps command params out of a failed run's error", async () => {
+		respond({ err: 'boom' }, 400);
+
+		const error = await makeTriggerCmdRequest(TOKEN, {
+			method: 'POST',
+			path: 'api/run/trigger',
+			body: { computer: 'laptop', trigger: 'x', params: 'secret-sentinel-77' },
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(400);
+		expect((error as ApiError).request.body).toBeUndefined();
+		expect(inspect(error, { depth: 10 })).not.toContain('secret-sentinel-77');
+	});
+
+	it('keeps panel button params out of the error query and URL', async () => {
+		respond({ err: 'boom' }, 400);
+
+		const error = await makeTriggerCmdRequest(TOKEN, {
+			method: 'GET',
+			path: 'api/panel/trigger',
+			query: { panel: 'p', button: 'b', params: 'secret-sentinel-78' },
+		}).catch((caught: unknown) => caught);
+
+		expect((error as ApiError).request.query).toMatchObject({
+			panel: 'p',
+			params: '[REDACTED]',
+		});
+		expect(inspect(error, { depth: 10 })).not.toContain('secret-sentinel-78');
+		// The request that went out still carried the params.
+		expect(String(fetchMock.mock.calls.at(-1)?.[0])).toContain(
+			'params=secret-sentinel-78',
+		);
+	});
+
 	it('never puts the token in the message or its inspection', async () => {
 		respond(invalidToken, 401);
 

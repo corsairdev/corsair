@@ -29,10 +29,13 @@ const TRIGGERCMD_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * CLI and docs use. This client sends it as a Bearer header instead, so it never
  * appears in a URL that an `ApiError` would capture.
  *
- * Errors are core's ApiError, passed through unchanged. This reads the
- * provider's `err` text from its body.
+ * Errors are core's ApiError (with the caller's `params` removed, see
+ * withoutParams). This reads the provider's `err` text from its body.
  */
-export function triggerCmdErrorMessage(error: unknown): string | undefined {
+export function triggerCmdErrorMessage(
+	// unknown: any thrown value; only core's ApiError has a body to read.
+	error: unknown,
+): string | undefined {
 	if (!(error instanceof ApiError)) return undefined;
 	const err = asRecord(error.body)?.err;
 	return typeof err === 'string' && err.length > 0 ? err : undefined;
@@ -55,6 +58,48 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
 }
 
+/**
+ * Core's ApiError keeps the request it failed on: the JSON body of
+ * `commands.run` and the query of `panels.trigger`, both of which can carry
+ * the caller's free-text `params` (a path, a message, a secret). Core only
+ * hides credential-named query keys. This rebuilds the same ApiError with the
+ * body dropped and `params` replaced in the query and URL; status,
+ * retryAfter and the provider's response body stay as they were.
+ */
+function withoutParams(error: ApiError): ApiError {
+	const query = error.request.query;
+	const hasQueryParams = query !== undefined && 'params' in query;
+	if (error.request.body === undefined && !hasQueryParams) return error;
+	const redactUrl = (url: string) =>
+		url.replace(/([?&]params=)[^&#]*/g, '$1[REDACTED]');
+	const stripped = new ApiError(
+		{
+			...error.request,
+			url: redactUrl(error.request.url),
+			body: undefined,
+			query: hasQueryParams ? { ...query, params: '[REDACTED]' } : query,
+		},
+		{
+			url: redactUrl(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	stripped.stack = error.stack;
+	return stripped;
+}
+
+// unknown: the raw provider response; each endpoint parses it with its own
+// output schema in call.ts.
 export async function makeTriggerCmdRequest(
 	apiToken: string,
 	{ method, path, query, body }: TriggerCmdRequest,
@@ -78,9 +123,16 @@ export async function makeTriggerCmdRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
-	// Core's ApiError goes through unchanged: its status, retryAfter and body
-	// are what the error handlers read.
-	return request<unknown>(config, requestOptions, {
-		rateLimitConfig: TRIGGERCMD_RATE_LIMIT_CONFIG,
-	});
+	try {
+		// unknown: see makeTriggerCmdRequest; call.ts parses the response.
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: TRIGGERCMD_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		// Core's ApiError goes through as an ApiError (plugin rules R8), only
+		// without the caller's `params`. Its status, retryAfter and body are
+		// what the error handlers read.
+		if (error instanceof ApiError) throw withoutParams(error);
+		throw error;
+	}
 }
