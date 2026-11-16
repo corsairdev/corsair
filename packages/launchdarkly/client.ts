@@ -174,7 +174,9 @@ export async function makeLaunchDarklyRequest<T>(
 					statusText: error.statusText,
 					body: safeErrorDetails(error.body),
 				},
-				`LaunchDarkly API request failed with status ${error.status}`,
+				safeErrorDetails(error.body)?.code
+					? `LaunchDarkly API request failed with status ${error.status} (${safeErrorDetails(error.body)?.code})`
+					: `LaunchDarkly API request failed with status ${error.status}`,
 				{
 					retryAfter: error.retryAfter,
 					rateLimitReset: error.rateLimitReset,
@@ -184,6 +186,14 @@ export async function makeLaunchDarklyRequest<T>(
 			);
 		}
 		if (error instanceof Error) {
+			// Header validation (a key with a newline, say) throws a TypeError whose message quotes
+			// the header value, so the key is masked and the original stack and cause are dropped.
+			if (apiKey && error.message.includes(apiKey)) {
+				throw new LaunchDarklyAPIError(
+					error.message.split(apiKey).join('[REDACTED]'),
+					error.name,
+				);
+			}
 			throw error;
 		}
 		throw new LaunchDarklyAPIError('Unknown error');

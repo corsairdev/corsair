@@ -744,7 +744,8 @@ export const TeamSchema = z
 		description: z.string().optional(),
 		memberIDs: z.array(z.string()).optional(),
 		customRoleKeys: z.array(z.string()).optional(),
-		_creationDate: z.string().optional(),
+		// Unix epoch milliseconds (int64), as LaunchDarkly documents and returns.
+		_creationDate: z.number().optional(),
 		_version: z.number().optional(),
 		_links: LinksSchema,
 	})
@@ -945,20 +946,22 @@ export const CustomRolesDeleteOutputSchema = z.void();
 // 9. Contexts
 // ============================================================================
 
+// One context record: LaunchDarkly nests the context itself (kind, key, attributes) under `context`.
 export const ContextItemSchema = z
 	.object({
-		key: z.string(),
-		kind: z.string().optional(),
-		name: z.string().optional(),
-		// `unknown` because context attributes can contain arbitrary user-defined metadata.
-		attributes: z.record(z.string(), z.unknown()).optional(),
+		// `unknown` because a context is arbitrary JSON: a single kind or a multi-kind object of contexts.
+		context: z.unknown(),
+		lastSeen: z.string().optional(),
+		applicationId: z.string().optional(),
+		// `unknown` because associated contexts mirror the arbitrary context JSON above.
+		associatedContexts: z.unknown().optional(),
 		_links: LinksSchema,
 	})
 	// Preserve provider response fields that are documented as expandable or evolving.
 	.passthrough();
-
 export const ContextsSchema = z
 	.object({
+		_environmentId: z.string().optional(),
 		items: z.array(ContextItemSchema),
 		totalCount: z.number().optional(),
 		continuationToken: z.string().optional(),

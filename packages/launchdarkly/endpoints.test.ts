@@ -964,8 +964,16 @@ describe('LaunchDarkly endpoints', () => {
 
 	describe('Contexts', () => {
 		it('Contexts.search posts context search query', async () => {
+			// Documented ContextRecord shape: the context sits under `context`.
 			mockedRequest.mockResolvedValueOnce({
-				items: [{ key: 'ctx-1', kind: 'user' }],
+				_environmentId: 'env-1',
+				items: [
+					{
+						context: { kind: 'user', key: 'ctx-1', name: 'Sample' },
+						lastSeen: '2026-11-16T10:00:00.000Z',
+						applicationId: '',
+					},
+				],
 				totalCount: 1,
 			});
 
@@ -983,12 +991,23 @@ describe('LaunchDarkly endpoints', () => {
 					query: expect.objectContaining({ filter: 'kind anyOf ["user"]' }),
 				}),
 			);
-			expect(res.items[0]?.key).toBe('ctx-1');
+			expect(res.items[0]?.context).toEqual({
+				kind: 'user',
+				key: 'ctx-1',
+				name: 'Sample',
+			});
 		});
 
 		it('Contexts.get gets context by kind and key', async () => {
 			mockedRequest.mockResolvedValueOnce({
-				items: [{ key: 'user-1', kind: 'user' }],
+				_environmentId: 'env-1',
+				items: [
+					{
+						context: { kind: 'user', key: 'user-1' },
+						lastSeen: '2026-11-16T10:00:00.000Z',
+						applicationId: 'NodeJSClient/9.0.0',
+					},
+				],
 			});
 
 			const res = await Contexts.get(dummyContext, {
@@ -1003,7 +1022,7 @@ describe('LaunchDarkly endpoints', () => {
 				'test-token-xyz',
 				expect.objectContaining({ method: 'GET' }),
 			);
-			expect(res.items[0]?.kind).toBe('user');
+			expect(res.items[0]?.applicationId).toBe('NodeJSClient/9.0.0');
 		});
 
 		it('Contexts.listKinds lists context kinds for project', async () => {
