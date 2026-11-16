@@ -1,0 +1,2135 @@
+{
+  "id": "sendbird",
+  "displayName": "Sendbird",
+  "description": "Manage Sendbird Chat users, group channels, and text messages.",
+  "npmPackageName": "@corsair-dev/sendbird",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "applicationId"]
+    }
+  ],
+  "api": [
+    {
+      "path": "sendbird.api.channels.create",
+      "shortPath": "channels.create",
+      "description": "Create a group channel from user IDs.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_distinct",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "access_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_super",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "operator_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "channel_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_ephemeral",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inviter_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "strict",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "invitation_status",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "hidden_status",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "block_sdk_user_channel_join",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cover_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_distinct",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_super",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_ephemeral",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_access_code_required",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "member_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "joined_member_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "max_length_message",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_message_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_mention_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "freeze",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "operators",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "last_message",
+            "optional": true,
+            "type": "{ message_id: number, type: string, channel_url?: string | null, custom_type?: string | null, message?: string | null, data?: string | null, user?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null, mention_type?: string | null, mentioned_users?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null, is_removed?: boolean | null, created_at?: number | null, updated_at?: number | null, parent_message_id?: number | null, is_reply_to_channel?: boolean | null, translations?: Record<string, any> | null, file?: Record<string, any> | null, files?: any, sorted_metaarray?: any[] | null, message_events?: Record<string, any> | null, og_tag?: Record<string, any> | null, thread_info?: Record<string, any> | null, parent_message_info?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null"
+          },
+          {
+            "key": "delivery_receipt",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "read_receipt",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.channels.delete",
+      "shortPath": "channels.delete",
+      "description": "Delete a group channel.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendbird.api.channels.get",
+      "shortPath": "channels.get",
+      "description": "Get a group channel.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "show_delivery_receipt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_read_receipt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_member",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "member_active_mode",
+            "optional": true,
+            "type": "all | activated | deactivated"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cover_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_distinct",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_super",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_ephemeral",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_access_code_required",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "member_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "joined_member_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "max_length_message",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_message_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_mention_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "freeze",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "operators",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "last_message",
+            "optional": true,
+            "type": "{ message_id: number, type: string, channel_url?: string | null, custom_type?: string | null, message?: string | null, data?: string | null, user?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null, mention_type?: string | null, mentioned_users?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null, is_removed?: boolean | null, created_at?: number | null, updated_at?: number | null, parent_message_id?: number | null, is_reply_to_channel?: boolean | null, translations?: Record<string, any> | null, file?: Record<string, any> | null, files?: any, sorted_metaarray?: any[] | null, message_events?: Record<string, any> | null, og_tag?: Record<string, any> | null, thread_info?: Record<string, any> | null, parent_message_info?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null"
+          },
+          {
+            "key": "delivery_receipt",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "read_receipt",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.channels.list",
+      "shortPath": "channels.list",
+      "description": "List group channels with a page token.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "distinct_mode",
+            "optional": true,
+            "type": "all | distinct | nondistinct"
+          },
+          {
+            "key": "public_mode",
+            "optional": true,
+            "type": "all | private | public"
+          },
+          {
+            "key": "super_mode",
+            "optional": true,
+            "type": "all | super | nonsuper"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_empty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_member",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_delivery_receipt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_read_receipt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_metadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_frozen",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_order_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_type_startswith",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel_urls",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name_contains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name_startswith",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members_exactly_in",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members_include_in",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query_type",
+            "optional": true,
+            "type": "AND | OR"
+          },
+          {
+            "key": "members_nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members_nickname_contains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_values",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_value_startswith",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metacounter_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metacounter_values",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metacounter_value_gt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metacounter_value_gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metacounter_value_lt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metacounter_value_lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_sorted_metaarray_in_last_message",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "{ channel_url: string, name?: string | null, cover_url?: string | null, custom_type?: string | null, data?: string | null, is_distinct?: boolean | null, is_public?: boolean | null, is_super?: boolean | null, is_ephemeral?: boolean | null, is_access_code_required?: boolean | null, member_count?: number | null, joined_member_count?: number | null, max_length_message?: number | null, unread_message_count?: number | null, unread_mention_count?: number | null, created_at?: number | null, freeze?: boolean | null, members?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null, operators?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null, last_message?: { message_id: number, type: string, channel_url?: string | null, custom_type?: string | null, message?: string | null, data?: string | null, user?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null, mention_type?: string | null, mentioned_users?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null, is_removed?: boolean | null, created_at?: number | null, updated_at?: number | null, parent_message_id?: number | null, is_reply_to_channel?: boolean | null, translations?: Record<string, any> | null, file?: Record<string, any> | null, files?: any, sorted_metaarray?: any[] | null, message_events?: Record<string, any> | null, og_tag?: Record<string, any> | null, thread_info?: Record<string, any> | null, parent_message_info?: Record<string, any> | null } | null, created_by?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null, delivery_receipt?: Record<string, number> | null, read_receipt?: Record<string, number> | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.channels.update",
+      "shortPath": "channels.update",
+      "description": "Update a group channel.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name?: string, cover_url?: string, custom_type?: string, data?: string, is_distinct?: boolean, is_public?: boolean, access_code?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cover_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_distinct",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_super",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_ephemeral",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_access_code_required",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "member_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "joined_member_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "max_length_message",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_message_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_mention_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "freeze",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "operators",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "last_message",
+            "optional": true,
+            "type": "{ message_id: number, type: string, channel_url?: string | null, custom_type?: string | null, message?: string | null, data?: string | null, user?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null, mention_type?: string | null, mentioned_users?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null, is_removed?: boolean | null, created_at?: number | null, updated_at?: number | null, parent_message_id?: number | null, is_reply_to_channel?: boolean | null, translations?: Record<string, any> | null, file?: Record<string, any> | null, files?: any, sorted_metaarray?: any[] | null, message_events?: Record<string, any> | null, og_tag?: Record<string, any> | null, thread_info?: Record<string, any> | null, parent_message_info?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null"
+          },
+          {
+            "key": "delivery_receipt",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "read_receipt",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Delete a message.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_type",
+            "optional": false,
+            "type": "open_channels | group_channels"
+          },
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "delete_files",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendbird.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get a message.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_type",
+            "optional": false,
+            "type": "open_channels | group_channels"
+          },
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_parent_message_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_thread_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_reactions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_poll_details",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_sorted_meta_array",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null"
+          },
+          {
+            "key": "mention_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentioned_users",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "is_removed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "parent_message_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_reply_to_channel",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "translations",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "sorted_metaarray",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "message_events",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "og_tag",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "thread_info",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "parent_message_info",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages around a timestamp or message ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_type",
+            "optional": false,
+            "type": "open_channels | group_channels"
+          },
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prev_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reverse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sender_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operator_filter",
+            "optional": true,
+            "type": "all | operator | nonoperator"
+          },
+          {
+            "key": "message_type",
+            "optional": true,
+            "type": "MESG | FILE | ADMM"
+          },
+          {
+            "key": "custom_types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "including_removed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_parent_message_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_thread_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_reactions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_poll_details",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_sorted_meta_array",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_reply_type",
+            "optional": true,
+            "type": "NONE | ALL | ONLY_REPLY_TO_CHANNEL"
+          },
+          {
+            "key": "show_subchannel_messages_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ message_id: number, type: string, channel_url?: string | null, custom_type?: string | null, message?: string | null, data?: string | null, user?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null, mention_type?: string | null, mentioned_users?: { user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null, is_removed?: boolean | null, created_at?: number | null, updated_at?: number | null, parent_message_id?: number | null, is_reply_to_channel?: boolean | null, translations?: Record<string, any> | null, file?: Record<string, any> | null, files?: any, sorted_metaarray?: any[] | null, message_events?: Record<string, any> | null, og_tag?: Record<string, any> | null, thread_info?: Record<string, any> | null, parent_message_info?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a text message to a channel; members can see it.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_type",
+            "optional": false,
+            "type": "open_channels | group_channels"
+          },
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ message_type: MESG, custom_type?: string, data?: string, mention_type?: users | channel, mentioned_user_ids?: string[], user_id: string, message: string, send_push?: boolean, is_silent?: boolean, mark_as_read?: boolean, created_at?: number, poll_id?: number, include_poll_details?: boolean, dedup_id?: string, apns_bundle_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null"
+          },
+          {
+            "key": "mention_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentioned_users",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "is_removed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "parent_message_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_reply_to_channel",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "translations",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "sorted_metaarray",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "message_events",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "og_tag",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "thread_info",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "parent_message_info",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Update a text message.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_type",
+            "optional": false,
+            "type": "open_channels | group_channels"
+          },
+          {
+            "key": "channel_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ message_type: MESG, custom_type?: string, data?: string, mention_type?: users | channel, mentioned_user_ids?: string[], message?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null } | null"
+          },
+          {
+            "key": "mention_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentioned_users",
+            "optional": true,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[] | null"
+          },
+          {
+            "key": "is_removed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "parent_message_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_reply_to_channel",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "translations",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "sorted_metaarray",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "message_events",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "og_tag",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "thread_info",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "parent_message_info",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a user with a profile URL.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profile_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "issue_access_token",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "access_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_online",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "has_ever_logged_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "joined_ts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "discovery_keys",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "preferred_languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "unread_channel_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_message_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_blocking_me",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_blocked_by_me",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a user.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "sendbird.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_unread_count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "super_mode",
+            "optional": true,
+            "type": "all | super | nonsuper"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "access_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_online",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "has_ever_logged_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "joined_ts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "discovery_keys",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "preferred_languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "unread_channel_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_message_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_blocking_me",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_blocked_by_me",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.users.list",
+      "shortPath": "users.list",
+      "description": "List application users with a page token.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "active_mode",
+            "optional": true,
+            "type": "activated | deactivated | all"
+          },
+          {
+            "key": "show_bot",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nickname_startswith",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadatakey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadatavalues_in",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ user_id: string, nickname?: string | null, profile_url?: string | null, access_token?: string | null, is_online?: boolean | null, is_active?: boolean | null, has_ever_logged_in?: boolean | null, role?: string | null, state?: string | null, joined_ts?: number | null, created_at?: number | null, last_seen_at?: number | null, discovery_keys?: string[] | null, preferred_languages?: string[] | null, metadata?: Record<string, any> | null, unread_channel_count?: number | null, unread_message_count?: number | null, is_blocking_me?: boolean | null, is_blocked_by_me?: boolean | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sendbird.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a user.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ nickname?: string, profile_url?: string, is_active?: boolean, last_seen_at?: number, discovery_keys?: string[], preferred_languages?: string[], leave_all_when_deactivated?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "access_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_online",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "has_ever_logged_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "joined_ts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "discovery_keys",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "preferred_languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "unread_channel_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unread_message_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_blocking_me",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_blocked_by_me",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "sendbird.db.channels.search",
+      "entityName": "channels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cover_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "custom_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "data",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_distinct",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_public",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_super",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_ephemeral",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_access_code_required",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "member_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "joined_member_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_length_message",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unread_message_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unread_mention_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "freeze",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "sendbird.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "custom_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "data",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mention_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_removed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parent_message_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_reply_to_channel",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "sendbird.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nickname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "access_token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_online",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_ever_logged_in",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "joined_ts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_seen_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unread_channel_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unread_message_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_blocking_me",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_blocked_by_me",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

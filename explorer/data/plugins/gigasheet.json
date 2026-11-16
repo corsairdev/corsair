@@ -1,0 +1,780 @@
+{
+  "id": "gigasheet",
+  "displayName": "Gigasheet",
+  "description": "Cloud spreadsheet and big data analytics platform for large datasets, filtering, and exports.",
+  "npmPackageName": "@corsair-dev/gigasheet",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gigasheet.api.datasets.delete",
+      "shortPath": "datasets.delete",
+      "description": "Permanently delete a sheet or folder by handle, optionally deleting child files",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.datasets.get",
+      "shortPath": "datasets.get",
+      "description": "Retrieve metadata, column names, types, and processing status of a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FileSize",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "FileRows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "uploading | loading | processing | processed | error | string"
+          },
+          {
+            "key": "DetailedStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Headers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "FieldsTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "IsDirectory",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ParentDirectory",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CreatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastUpdated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.datasets.getColumns",
+      "shortPath": "datasets.getColumns",
+      "description": "Retrieve column IDs, headers, and data types for a given sheet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "showHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id: string, Name: string, FieldType?: string, Origin?: string }[]"
+      }
+    },
+    {
+      "path": "gigasheet.api.datasets.getOperationStatus",
+      "shortPath": "datasets.getOperationStatus",
+      "description": "Retrieve operation status for an asynchronous dataset task (Working, Done, Error)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "Working | Done | Error | string"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UpdatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.datasets.list",
+      "shortPath": "datasets.list",
+      "description": "List files and directories in root library or specified folder handle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ metadata?: { FileUuid?: string, FileName?: string, FileRows?: number, FileSize?: string, Status?: string, IsDirectory?: boolean, Owner?: string, ParentDirectory?: string, CreatedAt?: string, LastUpdated?: string }, permissions?: number[], within_quota?: boolean }[]"
+      }
+    },
+    {
+      "path": "gigasheet.api.exports.create",
+      "shortPath": "exports.create",
+      "description": "Queue an asynchronous export job with optional AgGrid filter and sort state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderHandle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compressionType",
+            "optional": true,
+            "type": "zip | gzip"
+          },
+          {
+            "key": "decompress",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recordsPerFile",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "row_limit_from_head",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skipNotification",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useClientState",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientState",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "gridState",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.exports.download",
+      "shortPath": "exports.download",
+      "description": "Retrieve a temporary presigned S3 download URL for a completed export",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presignedUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.rows.appendByName",
+      "shortPath": "rows.appendByName",
+      "description": "Append new records to an existing sheet matching columns by name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.rows.deleteRows",
+      "shortPath": "rows.deleteRows",
+      "description": "Permanently delete specified rows from a dataset by iterator number",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.rows.insertBlankRow",
+      "shortPath": "rows.insertBlankRow",
+      "description": "Insert one or more blank rows with null values at a given row index",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "index",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "num_rows",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.upload.direct",
+      "shortPath": "upload.direct",
+      "description": "Upload raw file contents or byte array directly into Gigasheet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contents",
+            "optional": false,
+            "type": "string | number[]"
+          },
+          {
+            "key": "parentDirectory",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetHandle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skipNotification",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skipTypeInference",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callbackUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.upload.fromUrl",
+      "shortPath": "upload.fromUrl",
+      "description": "Upload a dataset into Gigasheet from a publicly accessible or presigned URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folderHandle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetHandle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skipNotification",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skipTypeInference",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callbackUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.user.getDetails",
+      "shortPath": "user.getDetails",
+      "description": "Retrieve detailed account and profile information for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.user.getEnrichmentCredits",
+      "shortPath": "user.getEnrichmentCredits",
+      "description": "Retrieve enrichment credit limit and used credit balance for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Used",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.user.getSpaceUsed",
+      "shortPath": "user.getSpaceUsed",
+      "description": "Retrieve total storage space used by the authenticated user in bytes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bytesUsed",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.user.whoami",
+      "shortPath": "user.whoami",
+      "description": "Check authentication status and retrieve username of the current request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authenticated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.views.get",
+      "shortPath": "views.get",
+      "description": "Retrieve metadata and client state identifier for a specific saved view",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "view",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_state",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gigasheet.api.views.list",
+      "shortPath": "views.list",
+      "description": "Retrieve all saved views and configurations associated with a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, file?: string, owner?: string, client_state?: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
