@@ -181,6 +181,19 @@ describe('pick-first sites use the oldest account', () => {
 		).toBe('acct-old');
 	});
 
+	test('orm accounts.upsertByTenantAndIntegration updates the oldest account', async () => {
+		await seedIntegration(t.database);
+		await seedAccount(t.database, 'acct-new', '2026-02-01');
+		await seedAccount(t.database, 'acct-old', '2026-01-01');
+		const orm = createCorsairOrm(t.database);
+		const updated = await orm.accounts.upsertByTenantAndIntegration(
+			't1',
+			'integ-gmail',
+			{ config: {} },
+		);
+		expect(updated.id).toBe('acct-old');
+	});
+
 	test('ensureIntegrationAccountRow still inserts exactly one row', async () => {
 		await seedIntegration(t.database);
 		await ensureIntegrationAccountRow(t.database, 'gmail', 't1', KEK);

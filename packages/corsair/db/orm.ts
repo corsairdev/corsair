@@ -507,7 +507,13 @@ function createAccountsClient(
 				tenantId,
 				integrationId: integration.id,
 			});
-			return row ? base.findOne({ id: row.id }) : null;
+			return row
+				? base.findOne({
+						id: row.id,
+						tenant_id: tenantId,
+						integration_id: integration.id,
+					})
+				: null;
 		},
 		listByTenant: (tenantId, options) =>
 			base.findMany({
@@ -516,9 +522,10 @@ function createAccountsClient(
 				offset: options?.offset,
 			}),
 		upsertByTenantAndIntegration: async (tenantId, integrationId, data) => {
-			const existing = await base.findOne({
-				tenant_id: tenantId,
-				integration_id: integrationId,
+			assertDatabaseConfigured(database);
+			const existing = await findAccountRow(database.db, {
+				tenantId,
+				integrationId,
 			});
 			if (existing) {
 				return (await base.update(existing.id, data))!;
