@@ -125,7 +125,7 @@ await corsair.tomtom.api.search.fuzzy({ query: 'pizza', lat: 52.37, lon: 4.89, r
 | `lat` | `number` | No | Latitude for the geo bias |
 | `lon` | `number` | No | Longitude for the geo bias |
 
-`radius` needs both `lat` and `lon`. `limit` caps at 100, and `summary.numResults` is the total, not the page size.
+`radius` needs both `lat` and `lon`. `limit` caps at 100. `summary.totalResults` is the total match count and `summary.numResults` the size of this page.
 
 
 
@@ -227,7 +227,7 @@ await corsair.tomtom.api.search.geocode({ query: 'Damrak 1 Amsterdam', country_s
 | `lat` | `number` | No | Latitude for the geo bias |
 | `lon` | `number` | No | Longitude for the geo bias |
 
-The query goes in the path, so a full address works but should be URL-encoded by the caller if it contains reserved characters.
+The query goes in the path. Pass the address as plain text; the plugin encodes it.
 
 
 
@@ -400,12 +400,12 @@ await corsair.tomtom.api.traffic.incidents({ bbox: '4.88,52.36,4.92,52.39' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bbox` | `string` | Yes | Bounding box as "minLon,minLat,maxLon,maxLat"; the whole world is -180,-90,180,90 |
+| `bbox` | `string` | Yes | Bounding box as "minLon,minLat,maxLon,maxLat", at most 10,000 km² in area |
 | `language` | `string` | No | Default en-GB |
-| `category_filter` | `number` | No | Sum of the incident category numbers to include |
-| `time_validity_filter` | `present \| all` | No | Default present |
+| `category_filter` | `number[]` | No | Incident categories to include, such as [1, 6] for Accident and Jam; sent comma-separated |
+| `time_validity_filter` | `(present \| future)[]` | No | present, future or both; default present |
 
-The bounding box is minLon,minLat,maxLon,maxLat. `category_filter` is the sum of the category numbers you want.
+The bounding box is minLon,minLat,maxLon,maxLat. The box may cover at most 10,000 km². `category_filter` is a list of category numbers, such as [1, 6] for Accident and Jam, and `time_validity_filter` takes present, future or both.
 
 
 
@@ -466,16 +466,23 @@ await corsair.tomtom.api.traffic.tile({ layer: 'flow', style: 'relative-delay', 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `layer` | `flow \| incidents` | No | Default flow |
-| `style` | `absolute \| relative \| relative-delay \| reduced-sensitivity` | No | Only applies to the flow layer |
+| `style` | `absolute \| relative \| relative-delay \| reduced-sensitivity` | No | Flow layer style, default relative |
+| `incident_style` | `s0 \| s0-dark \| s1 \| s2 \| s3 \| night` | No | Incidents layer style, default s3 |
 | `zoom` | `number` | Yes | — |
 | `x` | `number` | Yes | — |
 | `y` | `number` | Yes | — |
 
-The flow layer names a style in the path; the incidents layer has no style segment.
+Returns the PNG as base64. The flow layer defaults to the relative style and the incidents layer to s3.
 
 
 
-**Output:** `string`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content_type` | `string` | Yes | Usually image/png |
+| `base64` | `string` | Yes | The tile image, base64-encoded |
+
 
 
 ---
