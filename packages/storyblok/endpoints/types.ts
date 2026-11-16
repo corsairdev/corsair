@@ -782,6 +782,21 @@ const ReleasesUpdateInputSchema = z.object({
 
 export type ReleasesUpdateInput = z.infer<typeof ReleasesUpdateInputSchema>;
 
+// ── Bodyless deletes ──────────────────────────────────────────────────────
+
+/**
+ * Deleting a tag, a datasource or a datasource entry answers a bodyless 204,
+ * so the result names what was deleted instead of echoing a record.
+ */
+const DeletedResponseSchema = z.object({
+	id: z
+		.union([RecordId, z.string()])
+		.describe('The id (or, for a tag, the id or name) that was deleted.'),
+	deleted: z.literal(true),
+});
+
+export type DeletedResponse = z.infer<typeof DeletedResponseSchema>;
+
 // ── Registry ──────────────────────────────────────────────────────────────
 
 export type StoryblokEndpointInputs = {
@@ -848,16 +863,16 @@ export type StoryblokEndpointOutputs = {
 	datasourcesGet: DatasourceWriteResponse;
 	datasourcesCreate: DatasourceWriteResponse;
 	datasourcesUpdate: DatasourceWriteResponse;
-	datasourcesDelete: DatasourceWriteResponse;
+	datasourcesDelete: DeletedResponse;
 	datasourceEntriesList: DatasourceEntriesListResponse;
 	datasourceEntriesGet: DatasourceEntryWriteResponse;
 	datasourceEntriesCreate: DatasourceEntryWriteResponse;
 	datasourceEntriesUpdate: DatasourceEntryWriteResponse;
-	datasourceEntriesDelete: DatasourceEntryWriteResponse;
+	datasourceEntriesDelete: DeletedResponse;
 	tagsList: TagsListResponse;
 	tagsCreate: TagWriteResponse;
 	tagsUpdate: TagWriteResponse;
-	tagsDelete: TagWriteResponse;
+	tagsDelete: DeletedResponse;
 	webhooksList: WebhooksListResponse;
 	webhooksGet: WebhooksGetResponse;
 	webhooksCreate: WebhookWriteResponse;
@@ -940,16 +955,16 @@ export const StoryblokEndpointOutputSchemas = {
 	datasourcesGet: DatasourceWriteResponseSchema,
 	datasourcesCreate: DatasourceWriteResponseSchema,
 	datasourcesUpdate: DatasourceWriteResponseSchema,
-	datasourcesDelete: DatasourceWriteResponseSchema,
+	datasourcesDelete: DeletedResponseSchema,
 	datasourceEntriesList: DatasourceEntriesListResponseSchema,
 	datasourceEntriesGet: DatasourceEntryWriteResponseSchema,
 	datasourceEntriesCreate: DatasourceEntryWriteResponseSchema,
 	datasourceEntriesUpdate: DatasourceEntryWriteResponseSchema,
-	datasourceEntriesDelete: DatasourceEntryWriteResponseSchema,
+	datasourceEntriesDelete: DeletedResponseSchema,
 	tagsList: TagsListResponseSchema,
 	tagsCreate: TagWriteResponseSchema,
 	tagsUpdate: TagWriteResponseSchema,
-	tagsDelete: TagWriteResponseSchema,
+	tagsDelete: DeletedResponseSchema,
 	webhooksList: WebhooksListResponseSchema,
 	webhooksGet: WebhooksGetResponseSchema,
 	webhooksCreate: WebhookWriteResponseSchema,

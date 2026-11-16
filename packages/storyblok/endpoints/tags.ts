@@ -1,6 +1,6 @@
 import type { StoryblokEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './shared';
+import { call, isEmptyBody, wrapRecord } from './shared';
 import {
 	StoryblokEndpointInputSchemas as Inputs,
 	StoryblokEndpointOutputSchemas as Outputs,
@@ -42,8 +42,13 @@ export const update: StoryblokEndpoints['tagsUpdate'] = (ctx, input) =>
 			path: `/tags/${segment(tag_id)}`,
 			body: { tag: { name } },
 		}),
-		// The tag id is the tag's name, free text that can hold personal data.
-		{ log: () => ({}) },
+		{
+			// Storyblok answers a bodyless 204, so the result is the new name.
+			shape: (raw, { name }) =>
+				isEmptyBody(raw) ? { tag: { name } } : wrapRecord('tag', raw),
+			// The tag id is the tag's name, free text that can hold personal data.
+			log: () => ({}),
+		},
 	);
 
 export const remove: StoryblokEndpoints['tagsDelete'] = (ctx, input) =>
@@ -56,6 +61,10 @@ export const remove: StoryblokEndpoints['tagsDelete'] = (ctx, input) =>
 		},
 		input,
 		({ tag_id }) => ({ method: 'DELETE', path: `/tags/${segment(tag_id)}` }),
-		// The tag id is the tag's name, free text that can hold personal data.
-		{ log: () => ({}) },
+		{
+			// A bodyless 204: the result names the tag that was deleted.
+			shape: (_, { tag_id }) => ({ id: tag_id, deleted: true }),
+			// The tag id is the tag's name, free text that can hold personal data.
+			log: () => ({}),
+		},
 	);

@@ -169,3 +169,36 @@ export const allowedActions = {
 
 /** The live 401 body. */
 export const authProblem = { error: 'Unauthorized' };
+
+/**
+ * GET and DELETE /assets/:id answer the asset itself, with no `asset` wrapper
+ * (trimmed from a live run, 11-16).
+ */
+export const liveBareAsset = {
+	id: 242144717887711,
+	filename:
+		'https://a.storyblok.com/f/296608950365974/1x1/4367b02867/corsair-plugin-test-3.png',
+	space_id: 296608950365974,
+	created_at: '2026-11-16T05:29:22.763Z',
+	updated_at: '2026-11-16T05:29:25.118Z',
+	file: null,
+	asset_folder_id: null,
+	deleted_at: null,
+	short_filename: 'corsair-plugin-test-3.png',
+	content_length: 70,
+	content_type: 'image/png',
+	permanently_deleted: false,
+	alt: null,
+	copyright: null,
+	title: null,
+	focus: null,
+	ext_id: null,
+	expire_at: null,
+	source: null,
+	internal_tag_ids: [],
+	locked: false,
+	is_private: false,
+	publish_at: null,
+	meta_data: {},
+	internal_tags_list: [],
+};

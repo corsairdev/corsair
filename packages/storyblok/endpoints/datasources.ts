@@ -84,5 +84,9 @@ export const remove: StoryblokEndpoints['datasourcesDelete'] = (ctx, input) =>
 			method: 'DELETE',
 			path: `/datasources/${segment(datasource_id)}`,
 		}),
-		{ log: ({ datasource_id }) => ({ datasourceId: datasource_id }) },
+		{
+			// A bodyless 204: the result names the datasource that was deleted.
+			shape: (_, { datasource_id }) => ({ id: datasource_id, deleted: true }),
+			log: ({ datasource_id }) => ({ datasourceId: datasource_id }),
+		},
 	);

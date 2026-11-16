@@ -101,6 +101,14 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		scope?: 'scoped' | 'space' | 'root';
 	},
 	options: {
+		/**
+		 * Turns the raw body into the documented output before it is validated:
+		 * some routes answer a bodyless 204 or drop the record's wrapper key.
+		 */
+		shape?: (
+			raw: unknown, // unknown: the response body, undefined on a 204
+			parsed: z.output<Input>,
+		) => unknown; // unknown: the output schema validates what this returns
 		log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
 	} = {},
 ): Promise<z.output<Output>> {
@@ -143,7 +151,9 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		query,
 		body,
 	});
-	const result = operation.output.parse(raw);
+	const result = operation.output.parse(
+		options.shape ? options.shape(raw, parsed) : raw,
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -152,4 +162,29 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		'completed',
 	);
 	return result;
+}
+
+/** True for the empty body of a 204 (or an empty object or string). */
+export function isEmptyBody(
+	raw: unknown, // unknown: whatever the route answered
+): boolean {
+	if (raw === undefined || raw === null || raw === '') return true;
+	return (
+		typeof raw === 'object' &&
+		!Array.isArray(raw) &&
+		Object.keys(raw).length === 0
+	);
+}
+
+/**
+ * The record under `key`. Storyblok wraps most records (`{ asset: {...} }`), but
+ * GET and DELETE on a single asset answer the bare record, so a body without
+ * the key is wrapped here.
+ */
+export function wrapRecord(
+	key: string,
+	raw: unknown, // unknown: a wrapped or bare record
+): unknown {
+	if (raw && typeof raw === 'object' && key in raw) return raw;
+	return { [key]: raw };
 }

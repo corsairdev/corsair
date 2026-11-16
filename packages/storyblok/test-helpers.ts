@@ -52,3 +52,8 @@ export function respond(
 		}),
 	);
 }
+
+/** A 204 with no body, as Storyblok answers several updates and deletes. */
+export function respondNoContent(fetchMock: jest.SpyInstance) {
+	fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+}

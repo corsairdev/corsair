@@ -1,6 +1,6 @@
 import type { StoryblokEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './shared';
+import { call, isEmptyBody, wrapRecord } from './shared';
 import {
 	StoryblokEndpointInputSchemas as Inputs,
 	StoryblokEndpointOutputSchemas as Outputs,
@@ -77,7 +77,21 @@ export const update: StoryblokEndpoints['datasourceEntriesUpdate'] = (
 			// dimension_id sits next to datasource_entry, not inside it.
 			body: { datasource_entry, dimension_id },
 		}),
-		{ log: ({ datasource_entry_id }) => ({ entryId: datasource_entry_id }) },
+		{
+			// Storyblok answers a bodyless 204, so the result is what was sent.
+			shape: (raw, { datasource_entry_id, name, value, dimension_value }) =>
+				isEmptyBody(raw)
+					? {
+							datasource_entry: {
+								id: datasource_entry_id,
+								name,
+								value,
+								...(dimension_value === undefined ? {} : { dimension_value }),
+							},
+						}
+					: wrapRecord('datasource_entry', raw),
+			log: ({ datasource_entry_id }) => ({ entryId: datasource_entry_id }),
+		},
 	);
 
 export const remove: StoryblokEndpoints['datasourceEntriesDelete'] = (
@@ -96,5 +110,12 @@ export const remove: StoryblokEndpoints['datasourceEntriesDelete'] = (
 			method: 'DELETE',
 			path: `/datasource_entries/${segment(datasource_entry_id)}`,
 		}),
-		{ log: ({ datasource_entry_id }) => ({ entryId: datasource_entry_id }) },
+		{
+			// A bodyless 204: the result names the entry that was deleted.
+			shape: (_, { datasource_entry_id }) => ({
+				id: datasource_entry_id,
+				deleted: true,
+			}),
+			log: ({ datasource_entry_id }) => ({ entryId: datasource_entry_id }),
+		},
 	);

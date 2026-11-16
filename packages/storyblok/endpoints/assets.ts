@@ -1,6 +1,6 @@
 import type { StoryblokEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './shared';
+import { call, isEmptyBody, wrapRecord } from './shared';
 import {
 	StoryblokEndpointInputSchemas as Inputs,
 	StoryblokEndpointOutputSchemas as Outputs,
@@ -29,7 +29,11 @@ export const get: StoryblokEndpoints['assetsGet'] = (ctx, input) =>
 		},
 		input,
 		({ asset_id }) => ({ method: 'GET', path: `/assets/${segment(asset_id)}` }),
-		{ log: ({ asset_id }) => ({ assetId: asset_id }) },
+		{
+			// This route answers the bare asset, without the `asset` wrapper.
+			shape: (raw) => wrapRecord('asset', raw),
+			log: ({ asset_id }) => ({ assetId: asset_id }),
+		},
 	);
 
 /** Asset metadata only: uploading a new file is a separate signed-upload flow. */
@@ -47,7 +51,14 @@ export const update: StoryblokEndpoints['assetsUpdate'] = (ctx, input) =>
 			path: `/assets/${segment(asset_id)}`,
 			body: { asset },
 		}),
-		{ log: ({ asset_id }) => ({ assetId: asset_id }) },
+		{
+			// Storyblok answers a bodyless 204, so the result is what was sent.
+			shape: (raw, { asset_id, ...asset }) =>
+				isEmptyBody(raw)
+					? { asset: { id: asset_id, ...asset } }
+					: wrapRecord('asset', raw),
+			log: ({ asset_id }) => ({ assetId: asset_id }),
+		},
 	);
 
 export const remove: StoryblokEndpoints['assetsDelete'] = (ctx, input) =>
@@ -63,7 +74,11 @@ export const remove: StoryblokEndpoints['assetsDelete'] = (ctx, input) =>
 			method: 'DELETE',
 			path: `/assets/${segment(asset_id)}`,
 		}),
-		{ log: ({ asset_id }) => ({ assetId: asset_id }) },
+		{
+			// This route answers the deleted asset bare, without the wrapper.
+			shape: (raw) => wrapRecord('asset', raw),
+			log: ({ asset_id }) => ({ assetId: asset_id }),
+		},
 	);
 
 export const bulkDelete: StoryblokEndpoints['assetsBulkDelete'] = (
