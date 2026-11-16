@@ -444,16 +444,7 @@ export type CategoryKpisUpdateResponse = z.infer<
 
 // ── breakdownitems ────────────────────────────────────────────────────────
 
-const BreakdownItemsListInputSchema = z.object({
-	breakdown_id: z
-		.number()
-		.int()
-		.optional()
-		.describe(
-			'Only items under this breakdown. Applied to the returned page, since the API has no such filter.',
-		),
-	...paging,
-});
+const BreakdownItemsListInputSchema = z.object({ ...paging });
 
 export type BreakdownItemsListInput = z.infer<
 	typeof BreakdownItemsListInputSchema

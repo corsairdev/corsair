@@ -50,9 +50,9 @@ export function deletion(
 	operation: string,
 	id: number,
 ): { id: number; deleted: true } {
-	// Core returns undefined (or an empty string) for a 204; JSON `{}`, `[]` or
-	// `null` is a body, which this route documents it never sends.
-	if (raw !== undefined && raw !== '') {
+	// Core returns undefined for a 204; JSON `{}`, `[]`, `null` or `""` is a
+	// body, which this route documents it never sends.
+	if (raw !== undefined) {
 		throw new Error(
 			`${operation} answered with a body, but SimpleKPI documents this route as bodyless. Nothing was confirmed; re-read the resource before assuming the change applied.`,
 		);

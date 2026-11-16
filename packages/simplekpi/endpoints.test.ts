@@ -211,7 +211,7 @@ describe('kpis', () => {
 		expect(result).toEqual({ id: 1234, deleted: true });
 	});
 
-	it.each([[{}], [[]], [null]])(
+	it.each([[{}], [[]], [null], ['']])(
 		'throws when a delete answers the JSON body %j instead of a 204',
 		async (body) => {
 			respond(body as UnknownJson);
@@ -310,30 +310,16 @@ describe('kpiCategories.kpis', () => {
 });
 
 describe('breakdownItems', () => {
-	it('filters the list by breakdown_id', async () => {
+	it('lists with paging only, since the API has no breakdown filter', async () => {
 		respond([breakdownItem]);
 
-		const result = await invoke(BreakdownItems.list, {
-			breakdown_id: 12,
-			page: 1,
-		});
+		const result = await invoke(BreakdownItems.list, { page: 1 });
 
 		expect(lastRequest()).toMatchObject({
 			path: '/v1/breakdownitems',
 		});
-		// The API ignores a breakdown_id query, so the plugin filters the page.
 		expect(lastRequest().query).toEqual({ page: '1' });
 		expect(result).toEqual([breakdownItem]);
-	});
-
-	it('drops items from other breakdowns when filtering', async () => {
-		respond([breakdownItem, { ...breakdownItem, id: 78, breakdown_id: 99 }]);
-
-		const result = await invoke(BreakdownItems.list, { breakdown_id: 12 });
-
-		expect((result as Array<{ id: number }>).map((item) => item.id)).toEqual([
-			breakdownItem.id,
-		]);
 	});
 
 	it('creates, reads, updates and deletes', async () => {

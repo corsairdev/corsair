@@ -67,7 +67,7 @@ apiExamples:
   kpiCategories.kpis.delete:
     call: "{ category_id: 5478, id: 1234 }"
   breakdownItems.list:
-    call: "{ breakdown_id: 12 }"
+    call: "{ page: 1, rows: 100 }"
   breakdownItems.create:
     call: "{ name: 'EMEA', breakdown_id: 12 }"
   breakdownItems.get:
@@ -110,7 +110,7 @@ apiExamples:
     call: "{ id: 12 }"
 apiNotes:
   breakdownItems.delete: 'SimpleKPI answers 204 but keeps the item, archived (`is_archived: true`), rather than removing it (live, 11-16).'
-  breakdownItems.list: '`breakdown_id` filters the returned page here; the API itself has no such filter, so page through every item to find all of one breakdown.'
+  breakdownItems.list: 'The API has no breakdown filter, so page through the items and filter on `breakdown_id` yourself.'
   kpis.create: 'icon_id and unit_id must be real ids: the contract does not mark them mandatory, but the API validates them and a missing one becomes 0, which fails with a 400.'
   kpis.update: 'PUT replaces the whole object. A field left out is reset to its default, not kept, so read the KPI first and send it back changed.'
   kpiEntries.create: 'An upsert on kpi_id, source_id and entry_date. A write with every value empty answers 200 with `{ stored: false }`, which the output models alongside the entry shape.'
