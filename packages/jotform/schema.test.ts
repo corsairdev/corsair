@@ -225,3 +225,66 @@ describe('Jotform path segments', () => {
 		).toBe(false);
 	});
 });
+
+// Shapes seen on the live API (11-16): Jotform's PHP backend sends an empty
+// array where it has nothing to return, and a list where we expected a map.
+describe('Jotform live response shapes', () => {
+	const envelope = (content: unknown) => ({
+		responseCode: 200,
+		message: 'success',
+		content,
+		duration: '30ms',
+		info: null,
+		'limit-left': 930,
+	});
+
+	it('user.getSettingByKey: {key: value} when set, [] when unset', () => {
+		const schema = JotformEndpointOutputSchemas['user.getSettingByKey'];
+		expect(
+			schema.safeParse(envelope({ company: 'Corsair Plugin Test' })).success,
+		).toBe(true);
+		expect(schema.safeParse(envelope([])).success).toBe(true);
+	});
+
+	it('user.getLabels: [] before any label, then the root label with sublabels', () => {
+		const schema = JotformEndpointOutputSchemas['user.getLabels'];
+		expect(schema.safeParse(envelope([])).success).toBe(true);
+		expect(
+			schema.safeParse(
+				envelope({
+					id: 'root',
+					owner: 'corsairtests',
+					owner_type: 'USER',
+					created_at: '2026-11-16 02:25:09',
+					sublabels: [
+						{
+							id: 'l1',
+							name: 'corsair-plugin-test',
+							order: '0',
+							color: '#F09E39',
+							parent_label_id: 'root',
+							sublabels: [],
+						},
+					],
+				}),
+			).success,
+		).toBe(true);
+	});
+
+	it('forms.createQuestions: a list of the added questions', () => {
+		const schema = JotformEndpointOutputSchemas['forms.createQuestions'];
+		expect(
+			schema.safeParse(
+				envelope([
+					{
+						type: 'control_textarea',
+						text: 'Bulk',
+						order: '2',
+						name: 'bulk',
+						qid: 2,
+					},
+				]),
+			).success,
+		).toBe(true);
+	});
+});

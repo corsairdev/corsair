@@ -569,13 +569,15 @@ export const JotformEndpointOutputSchemas = {
 	'user.updateSettings': createJotformEnvelope(
 		z.record(z.string(), z.unknown()),
 	),
-	// unknown because single setting value can be string, number, boolean, or nested JSON object
+	// unknown because single setting value can be string, number, boolean, or nested JSON object.
+	// Live API: a set key returns `{ key: value }`, an unset key returns `[]`.
 	'user.getSettingByKey': createJotformEnvelope(
 		z.union([
 			z.string(),
 			z.number(),
 			z.boolean(),
 			z.record(z.string(), z.unknown()),
+			z.array(z.unknown()),
 			z.null(),
 		]),
 	),
@@ -586,8 +588,11 @@ export const JotformEndpointOutputSchemas = {
 	'user.getInvoices': createJotformEnvelope(
 		z.array(z.record(z.string(), z.unknown())),
 	),
-	// unknown because labels endpoint returns hierarchical label dictionary
-	'user.getLabels': createJotformEnvelope(z.record(z.string(), z.unknown())),
+	// unknown because labels endpoint returns hierarchical label dictionary.
+	// Live API: `[]` until the account has a label, then the root label with `sublabels`.
+	'user.getLabels': createJotformEnvelope(
+		z.union([z.record(z.string(), z.unknown()), z.array(z.unknown())]),
+	),
 
 	// ── Forms ──
 	'forms.get': createJotformEnvelope(
@@ -617,9 +622,13 @@ export const JotformEndpointOutputSchemas = {
 	'forms.createQuestion': createJotformEnvelope(
 		z.record(z.string(), z.unknown()),
 	),
-	// unknown because batch created questions return added questions map
+	// unknown because batch created questions return the added questions.
+	// Live API: a list of the new questions, each with its `qid`.
 	'forms.createQuestions': createJotformEnvelope(
-		z.record(z.string(), z.unknown()),
+		z.union([
+			z.array(z.record(z.string(), z.unknown())),
+			z.record(z.string(), z.unknown()),
+		]),
 	),
 	// unknown because updated question returns modified question properties
 	'forms.updateQuestion': createJotformEnvelope(
