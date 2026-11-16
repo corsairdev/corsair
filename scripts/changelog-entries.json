@@ -6699,5 +6699,27 @@
         "title": "ToFileOutput returns a text file as text"
       }
     ]
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/reducto",
+    "dir": "packages/reducto",
+    "name": "Reducto",
+    "version": "0.1.4",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2567,
+        "title": "Files.upload takes a link or base64, not only a Blob"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-16",
+    "package": "cloud",
+    "version": "0.1.202",
+    "changes": []
   }
 ]
