@@ -445,8 +445,9 @@ export const thinkificEndpointMeta = {
 		description: 'List a enrollments in a bundle',
 	},
 	'bundles.createEnrollment': {
-		riskLevel: 'write',
-		description: 'Create an Enrollment in a Bundle of Courses',
+		riskLevel: 'destructive',
+		description:
+			'Create an Enrollment in a Bundle of Courses (Thinkific can email the learner)',
 	},
 	'bundles.updateEnrollments': {
 		riskLevel: 'write',
@@ -508,8 +509,8 @@ export const thinkificEndpointMeta = {
 	},
 	'enrollments.list': { riskLevel: 'read', description: 'Get Enrollments' },
 	'enrollments.create': {
-		riskLevel: 'write',
-		description: 'Create enrollment',
+		riskLevel: 'destructive',
+		description: 'Create enrollment (Thinkific can email the learner)',
 	},
 	'enrollments.get': {
 		riskLevel: 'read',
