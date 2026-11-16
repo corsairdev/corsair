@@ -1,5 +1,5 @@
 import type { ErrorHandler, ErrorMatcher } from 'corsair/core';
-import { TextCortexAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 function apiError(
@@ -7,11 +7,18 @@ function apiError(
 	method: 'GET' | 'POST' = 'POST',
 	retryAfter?: number,
 ) {
-	return new TextCortexAPIError(`TextCortex ${status}`, {
-		status,
-		method,
-		retryAfter,
-	});
+	return new ApiError(
+		{ method, url: '/chat/completions' },
+		{
+			url: 'https://api.textcortex.com/v1/chat/completions',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`TextCortex ${status}`,
+		{ retryAfter },
+	);
 }
 
 const context = {} as Parameters<ErrorHandler>[1];
@@ -66,14 +73,11 @@ describe('textcortex error handlers', () => {
 		}
 	});
 
-	it('retries a 429 and passes a Retry-After through', async () => {
+	it('does not replay a 429 that core already retried', async () => {
+		expect(match('RATE_LIMIT_ERROR')(apiError(429, 'GET', 4000))).toBe(true);
 		await expect(
 			handler('RATE_LIMIT_ERROR')(apiError(429, 'GET', 4000), context),
-		).resolves.toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 4000,
-			retryStrategy: 'exponential_backoff',
-		});
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('treats 400, 404 and 422 as permanent, and a ZodError too', async () => {

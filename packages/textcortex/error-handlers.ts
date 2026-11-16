@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TextCortexAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof TextCortexAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // TextCortex speaks the OpenAI error shape on chat routes and its own
@@ -11,8 +11,7 @@ export const errorHandlers = {
 	// 402 is out of funding: no retry adds credits, and TextCortex has already
 	// done no work. This sits first so a 402 never reads as a transient failure.
 	INSUFFICIENT_CREDITS: {
-		match: (error: Error) =>
-			error instanceof TextCortexAPIError && error.isInsufficientCredits,
+		match: (error: Error) => statusOf(error) === 402,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401 and 403: a bad key, or a key whose capabilities do not cover the
@@ -24,16 +23,11 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A 429 is transient throughput. TextCortex honours Retry-After when it
-	// sends one and promises no fixed header otherwise.
+	// A 429 is transient throughput. Core's request() already retried it three
+	// times with Retry-After, so it is not replayed again here.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TextCortexAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 and 422 rejected the request, 404 an unknown model or resource.
 	VALIDATION_ERROR: {
@@ -62,9 +56,9 @@ export const errorHandlers = {
 	// idempotency key.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TextCortexAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

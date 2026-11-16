@@ -8,67 +8,19 @@ import { ApiError, request } from 'corsair/http';
 
 export const TEXTCORTEX_API_BASE = 'https://api.textcortex.com/v1';
 
-/**
- * TextCortex speaks the OpenAI shape, so a failure carries `error.message` and
- * `error.type` on the chat routes. Its own endpoints answer `{ detail }` or a
- * service error with `status` and `message` instead, and a validation failure
- * can put an array in `detail`. All three are read here.
- * https://docs.textcortex.com/api
- */
-export class TextCortexAPIError extends Error {
-	readonly status?: number;
-	/** The OpenAI-style error type or code, when TextCortex sent one. */
-	readonly code?: string;
-	/**
-	 * The validation messages, one per rejected field, when `detail` arrived as
-	 * an array. Empty for the single-message shapes.
-	 */
-	readonly details: Array<{ location?: string; message: string }>;
-	/** Milliseconds from a Retry-After header, when TextCortex sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			details?: Array<{ location?: string; message: string }>;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'TextCortexAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.code = options.code;
-		this.details = options.details ?? [];
-	}
-
-	/** True for a 402, which means the account has no funding left. */
-	get isInsufficientCredits(): boolean {
-		return this.status === 402;
-	}
-}
-
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads Retry-After into the error. TextCortex honours Retry-After when it
-// sends one and promises no fixed rate-limit header otherwise.
+// Core's request() retries a 429 three times and honours Retry-After, so the
+// 429 handler in error-handlers.ts does not retry again. TextCortex promises
+// no reset header, so only Retry-After is read.
 const TEXTCORTEX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 	isRateLimitError: (status) => status === 429,
 };
 
-type TextCortexErrorDetails = {
+export type TextCortexErrorDetails = {
 	message?: string;
 	code?: string;
 	details: Array<{ location?: string; message: string }>;
@@ -121,16 +73,48 @@ function readErrorDetails(body: unknown): TextCortexErrorDetails {
 	};
 }
 
-// unknown: same open error body as readErrorDetails.
-export function describeTextCortexError(
-	status: number | undefined,
-	body: unknown,
-	fallback: string,
-): string {
-	const details = readErrorDetails(body);
-	const text = details.message ?? details.details[0]?.message ?? fallback;
-	const label = [status, details.code].filter((p) => p !== undefined).join(' ');
-	return label ? `TextCortex ${label}: ${text}` : text;
+/**
+ * TextCortex speaks the OpenAI shape, so a failure carries `error.message` and
+ * `error.type` on the chat routes. Its own endpoints answer `{ detail }` or a
+ * service error with `status` and `message` instead, and a validation failure
+ * can put an array in `detail`. Errors are core's ApiError; this reads any of
+ * the three bodies, or returns undefined for anything else.
+ * https://docs.textcortex.com/api
+ */
+export function textCortexErrorDetails(
+	// unknown: any thrown value; only core's ApiError has a body to read.
+	error: unknown,
+): TextCortexErrorDetails | undefined {
+	return error instanceof ApiError ? readErrorDetails(error.body) : undefined;
+}
+
+/**
+ * Core's ApiError keeps the request it failed on, body included, and a chat
+ * body holds the user's prompt. This rebuilds the same ApiError without the
+ * request body, so the prompt does not travel with the error into logs.
+ * Status, retryAfter and the provider's response body stay as they were.
+ */
+function withoutRequestBody(error: ApiError): ApiError {
+	if (error.request.body === undefined) return error;
+	const stripped = new ApiError(
+		{ ...error.request, body: undefined },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	stripped.stack = error.stack;
+	return stripped;
 }
 
 export type TextCortexQuery = Record<
@@ -181,24 +165,9 @@ export async function makeTextCortexRequest(
 			rateLimitConfig: TEXTCORTEX_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const details = readErrorDetails(error.body);
-			throw new TextCortexAPIError(
-				describeTextCortexError(error.status, error.body, error.message),
-				{
-					cause: error,
-					code: details.code,
-					details: details.details,
-				},
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new TextCortexAPIError(error.message, {
-				cause: error instanceof Error ? error : undefined,
-				method,
-			});
-		}
-		throw new TextCortexAPIError('Unknown TextCortex error', { method });
+		// Core's ApiError goes through as an ApiError (plugin rules R8), only
+		// without the request body it echoed.
+		if (error instanceof ApiError) throw withoutRequestBody(error);
+		throw error;
 	}
 }

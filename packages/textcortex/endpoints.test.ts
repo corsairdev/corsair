@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { TextCortexAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { textCortexErrorDetails } from './client';
 import { Account, Ai } from './endpoints';
 import {
 	balanceResponse,
@@ -70,16 +71,15 @@ function expectAuthenticated() {
  * A promise can reject with any value, so this is the one place the reason is
  * treated as untyped before it is narrowed.
  */
-async function rejection(
-	promise: Promise<unknown>,
-): Promise<TextCortexAPIError> {
+async function rejection(promise: Promise<unknown>): Promise<ApiError> {
 	const caught = await promise.then(
 		() => undefined,
 		// unknown: a rejection reason has no static type.
 		(caught: unknown) => caught,
 	);
-	expect(caught).toBeInstanceOf(TextCortexAPIError);
-	return caught as TextCortexAPIError;
+	// Core's ApiError goes through as an ApiError (plugin rules R8).
+	expect(caught).toBeInstanceOf(ApiError);
+	return caught as ApiError;
 }
 
 beforeEach(() => {
@@ -121,7 +121,7 @@ describe('models, balance and capabilities', () => {
 		const result = await invoke(Account.capabilitiesGet, {});
 
 		expect(lastRequest().path).toBe('/v1/capabilities');
-		expect(result.capabilities?.chat).toBe(true);
+		expect(result.openai_compatible?.balance).toEqual({ retrieve: true });
 	});
 });
 
@@ -239,14 +239,48 @@ describe('images.create and web.search', () => {
 
 		const result = await invoke(Ai.webSearch, {
 			query: 'textcortex api',
-			max_results: 5,
+			limit: 5,
 		});
 
 		expect(lastRequest()).toMatchObject({
 			path: '/v1/web/search',
 			method: 'POST',
+			body: { query: 'textcortex api', limit: 5 },
 		});
-		expect(result.results[0]?.url).toBe('https://example.com');
+		expect(result.data[0]?.url).toBe('https://example.com');
+		expect(result.usage?.cost).toBe(0.01);
+	});
+
+	it('rejects a search limit over 10 and the old max_results name', async () => {
+		// The API caps limit at 10 and refuses unknown fields with a 422.
+		await expect(
+			invoke(Ai.webSearch, { query: 'x', limit: 11 }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Ai.webSearch, { query: 'x', max_results: 5 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects base64 images and more than one image, which TextCortex refuses', async () => {
+		await expect(
+			invoke(Ai.imagesCreate, { prompt: 'x', response_format: 'b64_json' }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Ai.imagesCreate, { prompt: 'x', n: 2 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a field the plugin does not model instead of dropping it', async () => {
+		await expect(
+			invoke(Ai.chatCompletions, {
+				model: 'gpt-6-luna',
+				messages: [{ role: 'user', content: 'Hi' }],
+				tools: [{ type: 'function' }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an empty search query', async () => {
@@ -262,8 +296,9 @@ describe('error handling', () => {
 		const error = await rejection(invoke(Account.modelsList, {}));
 
 		expect(error.status).toBe(401);
-		expect(error.message).toContain('TextCortex 401');
-		expect(error.message).toContain('Missing Authorization header');
+		expect(textCortexErrorDetails(error)?.message).toBe(
+			'Missing Authorization header',
+		);
 	});
 
 	it('reads the OpenAI error envelope on the chat route', async () => {
@@ -277,8 +312,10 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(400);
-		expect(error.code).toBe('invalid_request_error');
-		expect(error.message).toContain('Invalid request body');
+		expect(textCortexErrorDetails(error)?.code).toBe('invalid_request_error');
+		expect(textCortexErrorDetails(error)?.message).toContain(
+			'Invalid request body',
+		);
 	});
 
 	it('reads a validation detail array', async () => {
@@ -288,8 +325,9 @@ describe('error handling', () => {
 			invoke(Ai.responsesCreate, { model: 'x', input: 'y' }),
 		);
 
-		expect(error.details).toHaveLength(1);
-		expect(error.details[0]?.location).toBe('body.model');
+		const details = textCortexErrorDetails(error)?.details;
+		expect(details).toHaveLength(1);
+		expect(details?.[0]?.location).toBe('body.model');
 	});
 
 	it('flags an out-of-credits answer', async () => {
@@ -298,7 +336,6 @@ describe('error handling', () => {
 		const error = await rejection(invoke(Account.modelsList, {}));
 
 		expect(error.status).toBe(402);
-		expect(error.isInsufficientCredits).toBe(true);
 	});
 
 	it('never leaks the key through the error', async () => {
@@ -309,6 +346,23 @@ describe('error handling', () => {
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
 		expect(require('node:util').inspect(error)).not.toContain(API_KEY);
+	});
+
+	it("keeps the prompt out of a failed request's error", async () => {
+		respond(openAiErrorResponse, 400);
+
+		const error = await rejection(
+			invoke(Ai.chatCompletions, {
+				model: 'gpt-6-luna',
+				messages: [{ role: 'user', content: 'private-sentinel-4821' }],
+			}),
+		);
+
+		expect(error.request.body).toBeUndefined();
+		expect(error.request.method).toBe('POST');
+		expect(require('node:util').inspect(error)).not.toContain(
+			'private-sentinel-4821',
+		);
 	});
 
 	it('fails loudly when the chat answer has no choices', async () => {
