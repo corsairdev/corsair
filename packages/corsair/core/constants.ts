@@ -280,10 +280,10 @@ export const BaseProviders = [
 	'formdesk',
 	'foursquare',
 	'fundable',
+	'gemini',
 	'gagelist',
 	'gamma',
 	'gatherup',
-	'gemini',
 	'genderapi',
 	'genderapiio',
 	'genderize',
@@ -908,10 +908,10 @@ export const ProviderDisplayNames = {
 	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
+	gemini: 'Gemini',
 	gagelist: 'Gagelist',
 	gamma: 'Gamma',
 	gatherup: 'GatherUp',
-	gemini: 'Gemini',
 	genderapi: 'Gender API',
 	genderapiio: 'GenderAPI.io',
 	genderize: 'Genderize',
@@ -1543,10 +1543,10 @@ export type AllProviders =
 	| 'formdesk'
 	| 'foursquare'
 	| 'fundable'
+	| 'gemini'
 	| 'gagelist'
 	| 'gamma'
 	| 'gatherup'
-	| 'gemini'
 	| 'genderapi'
 	| 'genderapiio'
 	| 'genderize'
