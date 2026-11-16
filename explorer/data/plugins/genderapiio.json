@@ -1,0 +1,236 @@
+{
+  "id": "genderapiio",
+  "displayName": "GenderAPI.io",
+  "description": "Infer gender from a name, an email address or a username with GenderAPI.io - one at a time or in a batch of up to 50, with the confidence, the source that answered and the credits it cost.",
+  "npmPackageName": "@corsair-dev/genderapiio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "genderapiio.api.account.capabilities",
+      "shortPath": "account.capabilities",
+      "description": "Read the deployment version, the AI availability and the batch limit. This route is free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "documentation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "capabilities",
+            "optional": true,
+            "type": "{ ai?: boolean, forceToGenderize?: boolean, max_batch_items?: number, shared_v1_keys_and_credits?: boolean, ip_trial?: { credits: number, period_hours: number }, default_ai_mode?: { single: string, batch: string } }"
+          },
+          {
+            "key": "billing_consistency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapiio.api.account.errorCatalog",
+      "shortPath": "account.errorCatalog",
+      "description": "Read every error code with the statuses it uses and what a caller should do about it. This route is free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "Record<string, { code: string, http_statuses: number[], action: string, description: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapiio.api.account.usage",
+      "shortPath": "account.usage",
+      "description": "Read the shared balance, the trial reset time and whether this call used a key or the IP trial. This route is free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ remaining_credits: number, expires_at: string | null, resets_at?: string | null, limit?: number | null, period_seconds?: number | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string, duration_ms?: number, access?: { mode: string, reason?: string | null }, usage?: { charged_credits?: number | null, remaining_credits?: number | null, billing_status?: string, resets_at?: string | null, limit?: number | null, period_seconds?: number | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapiio.api.gender.batch",
+      "shortPath": "gender.batch",
+      "description": "Infer gender for up to 50 names, emails or usernames in one request. An item can fail on its own, and only successful items are billed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string, type: name | email | username, value: string, country?: string, forceToGenderize?: boolean, ai_mode?: off | fallback | always }[]",
+            "description": "Items to infer, answered in the same order, each with its own charge. An item can fail without failing the batch"
+          },
+          {
+            "key": "ai_mode",
+            "optional": true,
+            "type": "off | fallback | always",
+            "description": "Applies to every item without its own `ai_mode`. A batch defaults to `off`, where a single request defaults to `fallback`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ index: number, id?: string, charged_credits?: number, data?: { input: { type: name | email | username, value: string, country?: string | null, forceToGenderize?: boolean }, name: string | null, gender: string | null, country: string | null, confidence: number | null, confidence_kind: string | null, sample_count: number | null, source: string, result_status?: string | null, reason?: string | null, country_source?: string | null, match?: { name: string | null, method: string | null, scope: string | null, country: string | null } }, error?: { code?: string, status?: number, title?: string, detail?: string, action?: string, errors?: { pointer?: string, message?: string }[] } }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string, duration_ms?: number, access?: { mode: string, reason?: string | null }, usage?: { charged_credits?: number | null, remaining_credits?: number | null, billing_status?: string, resets_at?: string | null, limit?: number | null, period_seconds?: number | null }, summary?: { total: number, succeeded: number, identified: number, unknown: number, failed: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapiio.api.gender.infer",
+      "shortPath": "gender.infer",
+      "description": "Infer gender from a name, an email address or a username, with a confidence, the source that answered (dataset or AI) and the credits it cost",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "name | email | username",
+            "description": "What the value is: a first or full name, an email address, or a username or nickname"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "The name, email address or username to infer from"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Scopes the lookup to one country, which changes the answer for names such as Kim"
+          },
+          {
+            "key": "ai_mode",
+            "optional": true,
+            "type": "off | fallback | always",
+            "description": "`fallback` lets AI answer when the dataset cannot (1 credit in total); `off` is dataset only; `always` forces AI (2 credits)"
+          },
+          {
+            "key": "forceToGenderize",
+            "optional": true,
+            "type": "boolean",
+            "description": "Resolves more names by falling back to nickname-based AI. A dataset hit costs 1 credit, an AI one 2. Cannot be combined with `ai_mode` `off` or `always`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input: { type: name | email | username, value: string, country?: string | null, forceToGenderize?: boolean }, name: string | null, gender: string | null, country: string | null, confidence: number | null, confidence_kind: string | null, sample_count: number | null, source: string, result_status?: string | null, reason?: string | null, country_source?: string | null, match?: { name: string | null, method: string | null, scope: string | null, country: string | null } }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string, duration_ms?: number, access?: { mode: string, reason?: string | null }, usage?: { charged_credits?: number | null, remaining_credits?: number | null, billing_status?: string, resets_at?: string | null, limit?: number | null, period_seconds?: number | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapiio.api.phone.validate",
+      "shortPath": "phone.validate",
+      "description": "Validate and format a phone number, returning its E.164 form, country and calling code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number, with or without a country calling code"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "The country to parse the number in, when it has no calling code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ valid: boolean, possible: boolean, e164: string | null, country: string | null, country_calling_code: number | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request_id: string, duration_ms?: number, access?: { mode: string, reason?: string | null }, usage?: { charged_credits?: number | null, remaining_credits?: number | null, billing_status?: string, resets_at?: string | null, limit?: number | null, period_seconds?: number | null } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

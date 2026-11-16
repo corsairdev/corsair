@@ -1,0 +1,612 @@
+---
+title: "CustomJS API reference"
+sidebarTitle: "API"
+description: "API reference for the CustomJS plugin in Corsair: every `customjs.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auth
+
+### check
+
+`auth.check`
+
+Verify the API key and read its workspace name, rate-limit window and suspension state; the key and JWT in the raw answer are dropped
+
+**Risk:** `read`
+
+```ts
+await corsair.customjs.api.auth.check({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace the key belongs to. |
+| `name` | `string` | Yes | The workspace name. |
+| `maxRequestCount` | `number \| null` | No | Requests allowed in one rate-limit window. |
+| `inActive` | `boolean \| null` | No | True when the workspace is suspended. |
+| `createdAt` | `number \| null` | No | Workspace creation time, milliseconds since the epoch. |
+| `utmSource` | `string \| null` | No | How the account found CustomJS, when it was recorded. |
+
+
+
+---
+
+## Javascript
+
+### run
+
+`javascript.run`
+
+Run JavaScript inline with the given input and return what it produced as text; the code can call any bundled NPM module and reach the network
+
+**Risk:** `write`
+
+```ts
+await corsair.customjs.api.javascript.run({ input: { name: 'Jon Doe' }, code: 'return input.name' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | JavaScript run as the body of a function. `input` holds the request value, and `return` sends the result back. |
+| `input` | `JsonValue` | No | Either a JSON value or a JSON string; CustomJS hands back whatever it is given. |
+
+The code runs as a function body: use `input` for the request value and `return` for the result. Bundled modules include axios, cheerio, pdf-lib, nodemailer, jsonwebtoken and the AWS SDK.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `string` | Yes | The script return value as text, or an empty string. |
+
+
+
+---
+
+### runBinary
+
+`javascript.runBinary`
+
+Run JavaScript inline and return its Buffer result as base64, for PDFs and images; the code can call any bundled NPM module and reach the network
+
+**Risk:** `write`
+
+```ts
+await corsair.customjs.api.javascript.runBinary({ input: { html: '<h1>Hello</h1>' }, code: 'const { HTML2PDF } = require("./utils"); return HTML2PDF(input.html);' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | JavaScript whose return value is a file, usually a Buffer from `HTML2PDF` or `SCREENSHOT`. |
+| `input` | `JsonValue` | No | Either a JSON value or a JSON string; CustomJS hands back whatever it is given. |
+
+Send `returnBinary` by using this operation rather than `javascript.run`; the plugin sets it for you.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | The file bytes, base64 encoded. |
+| `contentType` | `string` | Yes | The `content-type` CustomJS answered with. |
+| `byteLength` | `number` | Yes | Size in bytes. |
+
+
+
+---
+
+## Pages
+
+### create
+
+`pages.create`
+
+Publish an HTML page to a new live URL; CustomJS does not enforce unique names, so a repeated call publishes a second page
+
+**Risk:** `write`
+
+```ts
+await corsair.customjs.api.pages.create({ name: 'Launch page', htmlContent: '<h1>Launch day</h1>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A label for the page. CustomJS does not enforce uniqueness. |
+| `htmlContent` | `string` | Yes | The full HTML document to host. |
+| `slug` | `string` | No | A custom slug for the page URL. |
+
+CustomJS does not enforce unique names, and the answer carries `shortId` rather than the `name` the docs show.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageId` | `string` | Yes | The ID used to update or delete the page. |
+| `shortId` | `string \| null` | No | The generated path segment in `htmlFileUrl`. |
+| `htmlFileUrl` | `string` | Yes | The live URL of the page. |
+| `message` | `string \| null` | No | CustomJS status text. |
+
+
+
+---
+
+### delete
+
+`pages.delete`
+
+Delete a hosted page, which takes its live URL down permanently; an unknown page ID fails with a 404
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.customjs.api.pages.delete({ pageId: '76f8fd9c-3dcb-4598-83f4-3eee09a23529' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageId` | `string` | Yes | The page to delete. |
+
+An unknown `pageId` fails with a 404 (`CustomjsAPIError` with `status: 404`), so a delete that resolves removed the page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | CustomJS deleted the page. An unknown page ID fails with a 404 instead. |
+| `pageId` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`pages.list`
+
+List the hosted HTML pages in the workspace with their live URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.customjs.api.pages.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[]` | Yes | Every page in the workspace. |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  pageId: string,
+  name: string,
+  htmlFileUrl: string,
+  type?: string | null,
+  workspaceId?: string | null,
+  origin?: string | null,
+  timestamp?: number | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`pages.update`
+
+Replace the HTML of a hosted page in place, keeping its live URL, and optionally rename it
+
+**Risk:** `write`
+
+```ts
+await corsair.customjs.api.pages.update({ pageId: '76f8fd9c-3dcb-4598-83f4-3eee09a23529', htmlContent: '<h1>Launch day v2</h1>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageId` | `string` | Yes | The page to replace, from `pages.list`. |
+| `htmlContent` | `string` | Yes | The new HTML document. |
+| `name` | `string` | No | A new name for the page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageId` | `string` | Yes | — |
+| `htmlFileUrl` | `string` | Yes | Unchanged by an update. |
+| `name` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Pdf
+
+### fromHtml
+
+`pdf.fromHtml`
+
+Render HTML or a Nunjucks template to PDF in Chromium, returning the bytes as base64 with an optional page size
+
+**Risk:** `read`
+
+```ts
+await corsair.customjs.api.pdf.fromHtml({ html: '<h1>Hello</h1>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | HTML document, optionally with Nunjucks placeholders such as `{{ name }}`. |
+| `data` | `Record<string, JsonValue>` | No | Values for the Nunjucks placeholders. Supplying any renders the HTML as a template first. |
+| `config` | `object` | No | Page size. |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  pdfWidthMm?: number,
+  pdfHeightMm?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | The file bytes, base64 encoded. |
+| `contentType` | `string` | Yes | The `content-type` CustomJS answered with. |
+| `byteLength` | `number` | Yes | Size in bytes. |
+
+
+
+---
+
+### fromMarkdown
+
+`pdf.fromMarkdown`
+
+Render Markdown to PDF, returning the bytes as base64
+
+**Risk:** `read`
+
+```ts
+await corsair.customjs.api.pdf.fromMarkdown({ markdown: '# Report\n\nTotal: 100' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `string` | Yes | Markdown text to render. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | The file bytes, base64 encoded. |
+| `contentType` | `string` | Yes | The `content-type` CustomJS answered with. |
+| `byteLength` | `number` | Yes | Size in bytes. |
+
+
+
+---
+
+## Scrape
+
+### agent
+
+`scrape.agent`
+
+Give an AI agent a plain-language goal and let it drive a browser for up to maxSteps actions; it bills model tokens and can submit forms on the site it visits
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.customjs.api.scrape.agent({ goal: 'Go to shop.example.com and list every product name and price', maxSteps: 8 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `goal` | `string` | Yes | The task in plain language. Include the URL here, for example "Go to shop.example.com and list every product name and price". |
+| `url` | `string` | No | Starting page, when it is not written into the goal. |
+| `maxSteps` | `number` | No | Browser actions the agent may take. Defaults to 10. |
+| `output` | `ai_extract \| text \| html \| markdown \| screenshot` | No | What the agent returns. Defaults to `ai_extract`. |
+| `credentials` | `Record<string, string>` | No | Login field values. The agent fills the matching fields automatically, so this is a secret and is never logged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | `success` when the run finished. |
+| `steps` | `number \| null` | No | Steps that ran. |
+| `events` | `object[] \| null` | No | Per-step log. |
+| `result` | `object \| null` | No | What the agent found. |
+| `usage` | `object \| null` | No | Model tokens used. |
+| `screenshots` | `object[] \| null` | No | Screenshots taken while it worked. |
+| `sessionUrl` | `string \| null` | No | S3 URL of the full session log, kept for 30 days. |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  step: number,
+  type: string,
+  action?: string | null,
+  url?: string | null,
+  selector?: string | null,
+  success?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  data: string | number | boolean | null | JsonValue[] | Record<string, JsonValue>,
+  format?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  promptTokens?: number | null,
+  completionTokens?: number | null,
+  totalTokens?: number | null,
+  estimatedCostUsd?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="screenshots full type">
+
+```ts
+{
+  step: number,
+  url: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### page
+
+`scrape.page`
+
+Drive a browser through exact steps (navigate, click, type, evaluate and extract) and return the extracted values, with no model tokens spent per step
+
+**Risk:** `write`
+
+```ts
+await corsair.customjs.api.scrape.page({ url: 'https://example.com', commands: [{ action: 'extract', selector: 'h1', as: 'heading' }], returnType: 'json' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The page the first step opens. |
+| `commands` | `object[]` | Yes | Exact browser steps to run. Command mode costs no model tokens per step. |
+| `returnType` | `json \| text \| html \| markdown \| screenshot` | No | `json` returns every `extract` result as an object. `text`, `html` and `markdown` return the final page. `screenshot` returns the S3 URL of the last screenshot. Defaults to `json`. |
+
+A `wait` step here takes `ms`; the screenshot route takes `value` for the same thing.
+
+<AccordionGroup>
+<Accordion title="commands full type">
+
+```ts
+(
+  {
+    action: navigate,
+    url: string
+  } | {
+    action: click,
+    selector: string
+  } | {
+    action: type,
+    selector: string,
+    value: string
+  } | {
+    action: wait,
+    ms: number
+  } | {
+    action: extract,
+    selector: string,
+    multiple?: boolean,
+    attribute?: string,
+    as?: string
+  } | {
+    action: screenshot,
+    as?: string
+  } | {
+    action: scroll,
+    direction?: up | down,
+    amount?: number
+  } | {
+    action: evaluate,
+    expression: string,
+    as?: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | `success` when the run finished. |
+| `steps` | `number \| null` | No | Steps that ran. |
+| `extractions` | `Record<string, JsonValue> \| null` | No | One entry per command with an `as` key: extract results, screenshot URLs, and evaluate output. |
+| `events` | `object[] \| null` | No | Per-step log of what ran. |
+| `returnType` | `string \| null` | No | The `returnType` that was used. |
+| `screenshots` | `object[] \| null` | No | Screenshots taken during the run. |
+| `sessionUrl` | `string \| null` | No | S3 URL of the full session log, kept for 30 days. |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  step: number,
+  type: string,
+  action?: string | null,
+  url?: string | null,
+  selector?: string | null,
+  success?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="screenshots full type">
+
+```ts
+{
+  step: number,
+  url: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Screenshot
+
+### capture
+
+`screenshot.capture`
+
+Capture a URL as PNG after optional click, type, wait and scroll steps, cropped to a box when one is given
+
+**Risk:** `write`
+
+```ts
+await corsair.customjs.api.screenshot.capture({ url: 'https://example.com', commands: [{ action: 'click', selector: '#accept-cookies' }, { action: 'wait', value: 500 }], box: { x: 0, y: 0, width: 1200, height: 800 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to capture. |
+| `commands` | `object[]` | No | Browser actions to run in order before the capture. |
+| `box` | `object` | No | Capture only this region. CustomJS applies it only when both `width` and `height` are greater than 0. |
+
+<AccordionGroup>
+<Accordion title="commands full type">
+
+```ts
+(
+  {
+    action: click,
+    selector: string
+  } | {
+    action: type,
+    selector: string,
+    value: string
+  } | {
+    action: wait,
+    value: number
+  } | {
+    action: scroll,
+    value: number
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="box full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  width: number,
+  height: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | The file bytes, base64 encoded. |
+| `contentType` | `string` | Yes | The `content-type` CustomJS answered with. |
+| `byteLength` | `number` | Yes | Size in bytes. |
+
+
+
+---
+

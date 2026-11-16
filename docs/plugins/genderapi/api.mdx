@@ -1,0 +1,298 @@
+---
+title: "Gender API API reference"
+sidebarTitle: "API"
+description: "API reference for the Gender API plugin in Corsair: every `genderapi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### stats
+
+`account.stats`
+
+Read the remaining request count and whether the monthly limit is used up
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapi.api.account.stats({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_limit_reached` | `boolean` | Yes | — |
+| `remaining_requests` | `number` | Yes | — |
+| `amount_month_start` | `number` | No | — |
+| `amount_month_bought` | `number` | No | — |
+| `duration` | `string` | No | — |
+
+
+
+---
+
+## Country Of Origin
+
+### get
+
+`countryOfOrigin.get`
+
+Find the countries a first name most likely comes from, each with a probability score
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapi.api.countryOfOrigin.get({ name: 'Markus' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The first name to look up |
+
+Each entry carries a probability, and the last one is often a catch-all with the code `--`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `country_of_origin` | `object[]` | Yes | — |
+| `name_sanitized` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `samples` | `number` | No | — |
+| `accuracy` | `number` | No | — |
+| `country_of_origin_map_url` | `string` | No | — |
+| `credits_used` | `number` | No | — |
+| `duration` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="country_of_origin full type">
+
+```ts
+{
+  country_name?: string,
+  country: string,
+  probability: number,
+  continental_region?: string,
+  statistical_region?: string,
+  countryName?: string,
+  continentalRegion?: string,
+  statisticalRegion?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email
+
+### lookup
+
+`email.lookup`
+
+Extract the first and last name from an email address and look up the gender behind the first name
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapi.api.email.lookup({ email: 'markus.johnson@gmail.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | An email address that contains a first name |
+| `country` | `string` | No | Localizes the answer |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `name_sanitized` | `string` | No | — |
+| `gender` | `string` | Yes | — |
+| `samples` | `number` | Yes | — |
+| `accuracy` | `number` | Yes | — |
+| `country` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `credits_used` | `number` | No | — |
+| `errno` | `number` | No | — |
+| `errmsg` | `string` | No | — |
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `mail_provider` | `string` | No | — |
+
+
+
+---
+
+## Full Name
+
+### split
+
+`fullName.split`
+
+Split a full name into first and last name, then look up the gender behind the first name
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapi.api.fullName.split({ split: 'theresa miller' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `split` | `string` | Yes | The full name to split into first and last name before the lookup |
+| `country` | `string` | No | Localizes the answer |
+| `strict` | `boolean` | No | When true, returns a null last name if it is not in the database; when false, tries to extract it anyway |
+
+With `strict: true`, a last name that is not in the database comes back as null instead of a guess.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `name_sanitized` | `string` | No | — |
+| `gender` | `string` | Yes | — |
+| `samples` | `number` | Yes | — |
+| `accuracy` | `number` | Yes | — |
+| `country` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `credits_used` | `number` | No | — |
+| `errno` | `number` | No | — |
+| `errmsg` | `string` | No | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string \| null` | No | — |
+| `strict` | `boolean` | No | — |
+
+
+
+---
+
+## Lookup
+
+### multi
+
+`lookup.multi`
+
+Look up up to 100 names in one request, answered in the same order, with an optional country per name
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapi.api.lookup.multi({ names: ['lisa', 'jess', 'thomas'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `names` | `string[]` | Yes | Names to look up together, answered in the same order |
+| `countries` | `string[]` | No | One country code per name, in the same order. A single code applies to every name |
+
+Up to 100 names; `countries` takes one code per name, or one for all of them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `result` | `object[]` | Yes | — |
+| `country` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `credits_used` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  name: string,
+  name_sanitized?: string,
+  gender: string,
+  samples: number,
+  accuracy: number,
+  country?: string,
+  duration?: string,
+  credits_used?: number,
+  errno?: number,
+  errmsg?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### name
+
+`lookup.name`
+
+Look up the gender behind one first name, with the sample count and the accuracy behind the answer. A country, locale or IP localizes it, which changes the answer for names such as Andrea
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapi.api.lookup.name({ name: 'Andrea', country: 'IT' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The first name to look up |
+| `country` | `string` | No | Localizes the answer, which changes it for names such as Andrea: male in Italy, female in Germany |
+| `locale` | `string` | No | Localizes by browser locale instead of an explicit country |
+| `ip` | `string \| string` | No | Localizes by the customer IP address instead of an explicit country |
+
+Localizing with `country`, `locale` or `ip` changes the answer for names such as Andrea.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `name_sanitized` | `string` | No | — |
+| `gender` | `string` | Yes | — |
+| `samples` | `number` | Yes | — |
+| `accuracy` | `number` | Yes | — |
+| `country` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `credits_used` | `number` | No | — |
+| `errno` | `number` | No | — |
+| `errmsg` | `string` | No | — |
+
+
+
+---
+
