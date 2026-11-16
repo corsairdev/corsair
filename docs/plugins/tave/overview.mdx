@@ -12,7 +12,7 @@ Things to know before you call:
 
 - **Amounts are integers, not decimals.** Every money field (`price`, `amount`, balances and totals) is a whole number in the studio currency, so 25000 for a 250.00 price. The schemas reject a decimal, which the API would otherwise round or refuse.
 - **A job is a lead or a job.** `jobs.list` returns both, separated by `stage` (lead, booked, fulfillment, completed). Pass `includeClosed: true` to see closed ones, which are hidden by default.
-- **Paging is on the body.** List routes take `page` and `pageSize` and answer `{ type, items, meta }`, where `meta` holds `currentPage`, `totalPages` and `totalItems`. `pageSize` runs from 10 to 100 and defaults to 100.
+- **Paging is on the query.** List routes other than `products.list` (which has no paging and returns the whole price list) take `page` and `pageSize` and answer `{ type, items, meta }`, where `meta` holds `currentPage`, `totalPages` and `totalItems`. `pageSize` runs from 10 to 100 and defaults to 100.
 - **A wrong path answers 200 with a web page.** A route that does not exist returns the documentation HTML instead of a JSON 404, so the plugin checks the content type and reports `isHtmlResponse` on `TaveAPIError` rather than handing back a page. This is the first thing to check when a call looks like it succeeded but has no data.
 - **Update needs at least one field.** `jobs.update`, `products.update`, `payments.update` and `tasks.update` reject a body that changes nothing before sending it.
 - **Tasks need a list.** `tasks.create` requires `name` and `taskListId`. Get the list ID from `taskLists.list`.
