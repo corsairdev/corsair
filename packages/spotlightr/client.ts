@@ -85,30 +85,59 @@ export function redactKey(value: unknown, apiKey: string): unknown {
 }
 
 /**
- * Spotlightr authenticates with a `vooKey` query parameter, and core's
- * ApiError redaction does not know that name, so the key would ride along in
- * `url`, `request.url` and `request.query`. This rebuilds the same ApiError
- * with the key masked there and the provider's text as the message; status,
- * body and rate-limit fields are kept.
+ * Query values that are the key or a person's details: the key, a student's
+ * email (access.get) and a viewer id that is often an email (videos.views).
+ */
+const PRIVATE_QUERY = new Set(['vooKey', 'email', 'customViewerID']);
+
+/** Masks the private query values inside a URL string. */
+function maskUrl(value: string, apiKey: string): string {
+	const masked = maskKey(value, apiKey);
+	const at = masked.indexOf('?');
+	if (at === -1) return masked;
+	const params = masked
+		.slice(at + 1)
+		.split('&')
+		.map((pair) => {
+			const name = decodeURIComponent(pair.split('=')[0] ?? '');
+			return PRIVATE_QUERY.has(name)
+				? `${pair.split('=')[0]}=${REDACTED}`
+				: pair;
+		});
+	return `${masked.slice(0, at)}?${params.join('&')}`;
+}
+
+/**
+ * Core's ApiError keeps the request it was built from, and its redaction does
+ * not know `vooKey` and never touches form fields. This rebuilds the same
+ * ApiError with the key and personal query values masked, and with the sent
+ * body and form data dropped: they carry video names, source URLs, student
+ * emails and passwords. Status, method, path, response body and rate-limit
+ * fields are kept, and the message is the provider's text.
  */
 export function withoutKey(error: ApiError, apiKey: string): ApiError {
-	const { query, ...request } = error.request;
+	const {
+		query,
+		body: _sentBody,
+		formData: _sentForm,
+		...request
+	} = error.request;
 	const maskedQuery = query
 		? Object.fromEntries(
 				Object.entries(query).map(([key, value]) => [
 					key,
-					key === 'vooKey' ? REDACTED : value,
+					PRIVATE_QUERY.has(key) ? REDACTED : value,
 				]),
 			)
 		: undefined;
 	return new ApiError(
 		{
 			...request,
-			url: maskKey(error.request.url, apiKey),
+			url: maskUrl(error.request.url, apiKey),
 			...(maskedQuery ? { query: maskedQuery } : {}),
 		},
 		{
-			url: maskKey(error.url, apiKey),
+			url: maskUrl(error.url, apiKey),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,

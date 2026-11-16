@@ -197,6 +197,33 @@ describe('makeSpotlightrRequest', () => {
 		}
 	});
 
+	it('drops form data and masks personal query values on a failure', async () => {
+		respond('Bad request.', 400);
+		const created = await makeSpotlightrRequest(API_KEY, {
+			method: 'POST',
+			path: 'spotlight/students',
+			formData: { email: 'jane@acme.com', password: 'hunter2-secret' },
+		}).catch((caught: unknown) => caught);
+
+		respond('Server error.', 400);
+		const read = await makeSpotlightrRequest(API_KEY, {
+			method: 'GET',
+			path: 'access',
+			query: { email: 'jane@acme.com', 'Course ID': 7 },
+		}).catch((caught: unknown) => caught);
+
+		for (const error of [created, read]) {
+			expect(error).toBeInstanceOf(ApiError);
+			const text = `${inspect(error, { depth: 6 })} ${JSON.stringify(error)}`;
+			expect(text).not.toContain('jane@acme.com');
+			expect(text).not.toContain('jane%40acme.com');
+			expect(text).not.toContain('hunter2-secret');
+			expect(text).not.toContain(API_KEY);
+		}
+		expect((read as ApiError).request.query).toMatchObject({ 'Course ID': 7 });
+		expect((created as ApiError).request.method).toBe('POST');
+	});
+
 	it('drops the cause so the query cannot leak through it', () => {
 		const error = new SpotlightrAPIError('Spotlightr 401: Unauthorized.', {
 			status: 401,
