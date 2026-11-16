@@ -157,6 +157,8 @@ describe('makeHexRequest', () => {
 	});
 });
 
+// The keyBuilder tests cast partial contexts with `as never`: the keyBuilder reads only
+// authType, options and keys, and a full CorsairContext would add nothing these tests check.
 describe('Hex keyBuilder', () => {
 	it('returns an explicitly configured key from plugin options', async () => {
 		const plugin = hex({ key: 'configured-hex-key' });
