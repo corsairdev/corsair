@@ -343,3 +343,38 @@ describe('Helpwise users, notes, whatsapp, reports schemas', () => {
 		).toBe(true);
 	});
 });
+
+describe('Helpwise shapes seen on a live trial account (11-16)', () => {
+	it('reads empty contact and tag lists, null emails and the users envelope', () => {
+		const out = HelpwiseEndpointOutputSchemas;
+		expect(
+			out['contacts.list'].safeParse({ nextPage: false, results: null })
+				.success,
+		).toBe(true);
+		expect(
+			out['contacts.search'].safeParse({ nextPage: false, result: null })
+				.success,
+		).toBe(true);
+		expect(out['tags.list'].safeParse(null).success).toBe(true);
+		expect(
+			out['contacts.get'].safeParse({
+				id: 1,
+				firstname: 'corsair-plugin-test',
+				emails: null,
+			}).success,
+		).toBe(true);
+		expect(
+			out['users.list'].safeParse({
+				status: 'success',
+				data: { users: [{ id: 1, firstname: 'Test' }] },
+			}).success,
+		).toBe(true);
+		expect(
+			out['inboxes.list'].safeParse({
+				status: 'success',
+				data: [],
+				message: null,
+			}).success,
+		).toBe(true);
+	});
+});

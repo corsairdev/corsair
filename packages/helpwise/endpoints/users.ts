@@ -38,7 +38,11 @@ export const list: HelpwiseEndpoint<'users.list'> = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'helpwise.users.list',
-		{ count: parsed.data?.length ?? 0 },
+		{
+			count: Array.isArray(parsed.data)
+				? parsed.data.length
+				: (parsed.data?.users?.length ?? 0),
+		},
 		'completed',
 	);
 	return parsed;

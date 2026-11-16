@@ -74,6 +74,9 @@ export const ConversationsGetInputSchema = z
 		inboxId: z.number(),
 		conversationId: z.number(),
 		labelId: z.number().optional(),
+		// Long conversations come in pages; pass the previous reply's token.
+		limit: z.number().int().min(1).max(100).optional(),
+		pageToken: z.string().optional(),
 	})
 	.strict();
 export type ConversationsGetInput = z.infer<typeof ConversationsGetInputSchema>;
@@ -231,6 +234,8 @@ export const InboxesListResponseSchema = z
 	.object({
 		status: z.string().optional(),
 		// unknown: mailbox properties vary across email, SMS, WhatsApp, and chat channels.
+		// Live: the list is under `data` (`{"status":"success","data":[]}`).
+		data: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
 		mailboxes: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
@@ -288,15 +293,22 @@ export const ContactSchema = z
 		displayName: z.string().nullable().optional(),
 		company: z.string().nullable().optional(),
 		jobTitle: z.string().nullable().optional(),
-		emails: z.array(z.string()).optional(),
-		isBlocked: z.boolean().optional(),
+		// Live: `null` when the contact has none.
+		emails: z.array(z.string()).nullable().optional(),
+		isBlocked: z.boolean().nullable().optional(),
 	})
 	.passthrough();
 
+// Live: an empty account returns `{"nextPage":false,"results":null}`.
+const NextPageSchema = z
+	.union([z.string(), z.number(), z.boolean()])
+	.nullable()
+	.optional();
+
 export const ContactsListResponseSchema = z
 	.object({
-		nextPage: z.union([z.string(), z.number()]).nullable().optional(),
-		results: z.array(ContactSchema),
+		nextPage: NextPageSchema,
+		results: z.array(ContactSchema).nullable(),
 	})
 	.passthrough();
 export type ContactsListResponse = z.infer<typeof ContactsListResponseSchema>;
@@ -359,9 +371,9 @@ export type ContactsSearchInput = z.infer<typeof ContactsSearchInputSchema>;
 
 export const ContactsSearchResponseSchema = z
 	.object({
-		nextPage: z.union([z.string(), z.number()]).nullable().optional(),
-		result: z.array(ContactSchema).optional(),
-		results: z.array(ContactSchema).optional(),
+		nextPage: NextPageSchema,
+		result: z.array(ContactSchema).nullable().optional(),
+		results: z.array(ContactSchema).nullable().optional(),
 	})
 	.passthrough();
 export type ContactsSearchResponse = z.infer<
@@ -387,7 +399,8 @@ export const TagSchema = z
 export const TagsListInputSchema = z.object({}).strict();
 export type TagsListInput = z.infer<typeof TagsListInputSchema>;
 
-export const TagsListResponseSchema = z.array(TagSchema);
+// Live: `null` when the account has no tags.
+export const TagsListResponseSchema = z.array(TagSchema).nullable();
 export type TagsListResponse = z.infer<typeof TagsListResponseSchema>;
 
 export const TagsGetInputSchema = z
@@ -587,7 +600,18 @@ export const UsersListResponseSchema = z
 	.object({
 		status: z.string().optional(),
 		// unknown: team and user attributes returned in list.
-		data: z.array(z.record(z.string(), z.unknown())).optional(),
+		// Live: `{"data":{"users":[...]}}`; an array is accepted too.
+		data: z
+			.union([
+				z.array(z.record(z.string(), z.unknown())),
+				z
+					.object({
+						users: z.array(z.record(z.string(), z.unknown())).nullable(),
+					})
+					.passthrough(),
+			])
+			.nullable()
+			.optional(),
 	})
 	.passthrough();
 export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;

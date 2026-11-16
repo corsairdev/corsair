@@ -33,7 +33,7 @@ export const list: HelpwiseEndpoint<'contacts.list'> = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'helpwise.contacts.list',
-		{ count: parsed.results.length },
+		{ count: parsed.results?.length ?? 0 },
 		'completed',
 	);
 	return parsed;

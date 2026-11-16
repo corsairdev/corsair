@@ -22,7 +22,7 @@ export const list: HelpwiseEndpoint<'inboxes.list'> = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'helpwise.inboxes.list',
-		{ count: parsed.mailboxes?.length ?? 0 },
+		{ count: (parsed.data ?? parsed.mailboxes)?.length ?? 0 },
 		'completed',
 	);
 	return parsed;
