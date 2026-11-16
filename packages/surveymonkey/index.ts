@@ -464,7 +464,8 @@ const surveymonkeyEndpointMeta = {
 			'Change a survey title, nickname, language, button text, variables or folder',
 	},
 	'surveys.replace': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Replace a survey wholesale. Fields left out reset to their defaults, so prefer update',
 	},
@@ -653,10 +654,9 @@ const surveymonkeyEndpointMeta = {
 		description: 'Copy a contact list, optionally under a new name',
 	},
 	'contactLists.merge': {
-		riskLevel: 'destructive',
-		irreversible: true,
+		riskLevel: 'write',
 		description:
-			'Move every contact from this list into another. The source list is left empty, so this effectively undoes it',
+			'Copy every contact from list_id into this list. list_id keeps its contacts',
 	},
 	'contacts.list': {
 		riskLevel: 'read',

@@ -228,6 +228,36 @@ describe('surveymonkey pages and questions', () => {
 		});
 	});
 
+	it('forwards quiz and display options and choice weights on create', async () => {
+		mockFetch(jsonResponse(question, { status: 201 }));
+		await endpoints.questions.create(ctx, {
+			survey_id: '1234',
+			page_id: '5678',
+			family: 'matrix',
+			subtype: 'rating',
+			headings: [{ heading: 'Rate us' }],
+			quiz_options: { scoring_enabled: true },
+			display_options: { display_type: 'emoji' },
+			answers: {
+				rows: [{ text: 'Service' }],
+				choices: [
+					{ text: 'Bad', weight: 1 },
+					{ text: 'Good', weight: 5, quiz_options: { score: 2 } },
+				],
+			},
+		});
+		expect(sentBody()).toMatchObject({
+			quiz_options: { scoring_enabled: true },
+			display_options: { display_type: 'emoji' },
+			answers: {
+				choices: [
+					{ text: 'Bad', weight: 1 },
+					{ text: 'Good', weight: 5, quiz_options: { score: 2 } },
+				],
+			},
+		});
+	});
+
 	it('requires a family, a subtype and at least one heading on create', async () => {
 		const create = endpoints.questions.create.bind(endpoints.questions);
 		const base = { survey_id: '1234', page_id: '5678' };
@@ -309,6 +339,20 @@ describe('surveymonkey responses', () => {
 		expect(queryParam('per_page')).toBe('100');
 		expect(queryParam('simple')).toBe('true');
 		expect(result.data[0]?.pages).toHaveLength(1);
+	});
+
+	it('refuses a bulk page larger than the 100 the route allows', async () => {
+		await expect(
+			endpoints.responses.listBulk(ctx, { survey_id: '1234', per_page: 500 }),
+		).rejects.toThrow();
+		expect(fetchCount()).toBe(0);
+	});
+
+	it('refuses a dot-segment id before sending a delete', async () => {
+		await expect(
+			endpoints.pages.delete(ctx, { survey_id: '1234', page_id: '..' }),
+		).rejects.toThrow(/not a valid id/);
+		expect(fetchCount()).toBe(0);
 	});
 
 	it('reads one response and its details', async () => {
@@ -565,16 +609,16 @@ describe('surveymonkey contacts and contact lists', () => {
 		expect(pathname()).toBe('/v3/contact_lists/1234/copy');
 		expect(sentBody()).toEqual({ name: 'Copy' });
 
-		mockFetch(jsonResponse({}));
-		await expect(
-			endpoints.contactLists.merge(ctx, {
-				contact_list_id: '1234',
-				list_id: '5678',
-			}),
-		).resolves.toEqual({
-			source_list_id: '1234',
-			target_list_id: '5678',
-			merged: true,
+		// The documented answer is the list in the URL, which got the contacts.
+		mockFetch(jsonResponse({ ...contactList, id: '1234' }));
+		const merged = await endpoints.contactLists.merge(ctx, {
+			contact_list_id: '1234',
+			list_id: '5678',
+		});
+		expect(merged).toMatchObject({
+			id: '1234',
+			source_list_id: '5678',
+			target_list_id: '1234',
 		});
 		expect(sentBody()).toEqual({ list_id: '5678' });
 	});

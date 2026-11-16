@@ -196,20 +196,19 @@ describe('surveymonkey plugin definition', () => {
 		expect(irreversible).toEqual([
 			'collectors.delete',
 			'contactLists.delete',
-			'contactLists.merge',
 			'contacts.delete',
 			'pages.delete',
 			'questions.delete',
 			'responses.delete',
 			'responses.deleteAll',
 			'surveys.delete',
+			'surveys.replace',
 			'webhooks.delete',
 		]);
 	});
 
 	it('says that sending a message mails real people', () => {
-		// Sending is `write` like every other send in the catalog, so the
-		// description is where an agent learns that it leaves the building.
+		// R8: an operation that sends a message is destructive.
 		expect(meta['messages.send']?.riskLevel).toBe('destructive');
 		expect(meta['messages.send']?.description).toMatch(/mails real people/);
 		// Drafting one must not read as a send.
@@ -255,10 +254,10 @@ describe('surveymonkey plugin definition', () => {
 	it('caps per_page the way the bulk route documents', () => {
 		const bulk = surveymonkeyEndpointSchemas['responses.listBulk'];
 		expect(
-			bulk.input.safeParse({ survey_id: '1', per_page: 1000 }).success,
+			bulk.input.safeParse({ survey_id: '1', per_page: 100 }).success,
 		).toBe(true);
 		expect(
-			bulk.input.safeParse({ survey_id: '1', per_page: 1001 }).success,
+			bulk.input.safeParse({ survey_id: '1', per_page: 101 }).success,
 		).toBe(false);
 	});
 

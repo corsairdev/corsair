@@ -138,7 +138,10 @@ export const copy: SurveymonkeyEndpoints['contactListsCopy'] = (ctx, input) =>
 		},
 	);
 
-/** A merge moves every contact from this list into `list_id` and answers nothing. */
+/**
+ * A merge copies every contact from `list_id` into the list in the URL
+ * (`contact_list_id`) and answers that list. `list_id` keeps its contacts.
+ */
 export const merge: SurveymonkeyEndpoints['contactListsMerge'] = (ctx, input) =>
 	call(
 		ctx,
@@ -154,14 +157,15 @@ export const merge: SurveymonkeyEndpoints['contactListsMerge'] = (ctx, input) =>
 			body: { list_id },
 		}),
 		{
-			shape: (_, parsed) => ({
-				source_list_id: parsed.contact_list_id,
-				target_list_id: parsed.list_id,
-				merged: true,
+			// unknown: the documented answer is the target list, `{ id, name, href }`.
+			shape: (raw: unknown, parsed) => ({
+				...(raw !== null && typeof raw === 'object' ? raw : {}),
+				source_list_id: parsed.list_id,
+				target_list_id: parsed.contact_list_id,
 			}),
 			log: (parsed) => ({
-				sourceListId: parsed.contact_list_id,
-				targetListId: parsed.list_id,
+				sourceListId: parsed.list_id,
+				targetListId: parsed.contact_list_id,
 			}),
 		},
 	);

@@ -74,6 +74,8 @@ export const create: SurveymonkeyEndpoints['questionsCreate'] = (ctx, input) =>
 			sorting,
 			validation,
 			forced_ranking,
+			quiz_options,
+			display_options,
 			answers,
 		}) => ({
 			method: 'POST',
@@ -87,6 +89,8 @@ export const create: SurveymonkeyEndpoints['questionsCreate'] = (ctx, input) =>
 				sorting,
 				validation,
 				forced_ranking,
+				quiz_options,
+				display_options,
 				answers,
 			}),
 		}),

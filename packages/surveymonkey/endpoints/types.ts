@@ -580,6 +580,12 @@ const QuestionsCreateInputSchema = z.object({
 					z.object({
 						text: z.string().optional(),
 						position: z.number().int().optional(),
+						/** Required on matrix rating rows: the choice's weight. */
+						weight: z.number().int().optional(),
+						/** An image choice, `{ url }`. */
+						image: z.looseObject({}).optional(),
+						/** Quiz scoring for the choice, such as `{ score }`. */
+						quiz_options: z.looseObject({}).optional(),
 					}),
 				)
 				.optional(),
@@ -638,6 +644,8 @@ const QuestionsUpdateInputSchema = z.object({
 						text: z.string().optional(),
 						position: z.number().int().optional(),
 						visible: z.boolean().optional(),
+						weight: z.number().int().optional(),
+						quiz_options: z.looseObject({}).optional(),
 					}),
 				)
 				.optional(),
@@ -702,7 +710,9 @@ export type ResponsesListResponse = z.infer<typeof ResponsesListResponseSchema>;
 const ResponsesListBulkInputSchema = z.object({
 	survey_id: z.string().min(1),
 	...responseFilters,
-	/** `true` drops the page and question structure and keeps the answers flat. */
+	/** The bulk route allows at most 100 a page. */
+	per_page: z.number().int().min(1).max(100).optional(),
+	/** `true` adds the question and answer text alongside the ids. */
 	simple: z.boolean().optional(),
 	collector_ids: z.string().optional(),
 	page_ids: z.string().optional(),
@@ -1168,11 +1178,19 @@ export type ContactListsMergeInput = z.input<
 	typeof ContactListsMergeInputSchema
 >;
 
-const ContactListsMergeResponseSchema = z.object({
-	source_list_id: z.string(),
-	target_list_id: z.string(),
-	merged: z.literal(true),
-});
+/**
+ * The merge route answers the list in the URL, which received the contacts:
+ * `{ id, name, href }`. The plugin adds which list they came from.
+ */
+const ContactListsMergeResponseSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).nullish(),
+		name: z.string().nullish(),
+		href: z.string().nullish(),
+		source_list_id: z.string(),
+		target_list_id: z.string(),
+	})
+	.loose();
 
 export type ContactListsMergeResponse = z.infer<
 	typeof ContactListsMergeResponseSchema
