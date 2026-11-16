@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { createCorsair } from '../core';
 import type { CorsairTenantWrapper } from '../core/client';
-import { disconnectConnection } from '../core/management/operations';
+import {
+	describeTenant,
+	disconnectConnection,
+	listTenants,
+} from '../core/management/operations';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
@@ -127,5 +131,44 @@ describe('two accounts end to end', () => {
 			.where('tenant_id', '=', 'solo')
 			.execute();
 		expect(accounts).toHaveLength(1);
+	});
+
+	it("lists a tenant's accounts, and each listed value selects it", async () => {
+		await deliver('t1', 'tok-a', { id: 'a', label: 'A Mail' });
+		await deliver('t1', 'tok-b', { id: 'b', label: 'B Mail' });
+		const t = tenants().withTenant('t1');
+		const list = await t.mail.accounts.list();
+		expect(list.map((a) => [a.ref, a.label])).toEqual([
+			['a', 'A Mail'],
+			['b', 'B Mail'],
+		]);
+		expect(JSON.stringify(list)).not.toContain('tok-');
+		for (const key of ['id', 'ref', 'label'] as const) {
+			const bound = tenants().withTenant('t1', {
+				accounts: { mail: list[1]![key] },
+			});
+			expect(await bound.mail.api.token()).toBe('tok-b');
+		}
+		expect(await tenants().withTenant('nobody').mail.accounts.list()).toEqual(
+			[],
+		);
+	});
+
+	it('management lists each account with its identity', async () => {
+		await deliver('t1', 'tok-a', { id: 'a', label: 'A Mail' });
+		await deliver('t1', 'tok-b', { id: 'b' });
+		const internal = getCorsairInternal(corsair);
+		const t = await describeTenant(internal, 't1');
+		expect(t.accounts.map((a) => [a.ref, a.label, !!a.accountId])).toEqual([
+			['a', 'A Mail', true],
+			['b', undefined, true],
+		]);
+		const listed = (await listTenants(internal)).find((x) => x.id === 't1');
+		expect(listed?.accounts).toEqual(t.accounts);
+		const noKek = await describeTenant(
+			{ ...internal, kek: undefined } as unknown as typeof internal,
+			't1',
+		);
+		expect(noKek.accounts[0]).not.toHaveProperty('ref');
 	});
 });

@@ -146,7 +146,7 @@ type AccountIdentityScope = {
 };
 
 type AccountIdentity = { id: string; label?: string };
-type AccountSummary = { id: string; ref?: string; label?: string };
+export type AccountSummary = { id: string; ref?: string; label?: string };
 
 export class AccountSelectionError extends Error {
 	code: 'account_required' | 'account_not_found' | 'account_limit';
@@ -181,7 +181,7 @@ const toAccount = (r: {
 	dek?: string | null;
 }): Account => ({ id: r.id, config: r.config, dek: r.dek ?? null });
 
-async function readIdentity(
+export async function readIdentity(
 	row: { config: unknown; dek?: string | null },
 	kek: string,
 ): Promise<{ ref?: string; label?: string }> {
@@ -249,6 +249,28 @@ export async function fanOutAccounts(i: {
 		tenantId: i.tenantId,
 	});
 	return list.map((a) => ({ id: a.id, label: a.label ?? a.ref }));
+}
+
+/** A tenant's accounts for a plugin, oldest first. Identity only, never credentials. */
+export async function listAccountSummaries(i: {
+	db: Kysely<CorsairKyselyDatabase>;
+	kek: string;
+	integrationName: string;
+	tenantId: string;
+}): Promise<AccountSummary[]> {
+	const integration = await i.db
+		.selectFrom('corsair_integrations')
+		.select('id')
+		.where('name', '=', i.integrationName)
+		.executeTakeFirst();
+	if (!integration) return [];
+	const accounts = await listAccounts({
+		db: i.db,
+		kek: i.kek,
+		integrationId: integration.id,
+		tenantId: i.tenantId,
+	});
+	return accounts.map(summarize);
 }
 
 async function integrationName(

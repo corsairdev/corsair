@@ -7,8 +7,10 @@ import type {
 	PluginEntityClients,
 } from '../../db/orm';
 import type { HubConfig } from '../../hub';
+import type { AccountSummary } from '../account-lookup';
 import {
 	fanOutAccounts,
+	listAccountSummaries,
 	resolveIntegrationAccountIds,
 } from '../account-lookup';
 import {
@@ -166,9 +168,10 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 							 */
 							pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
 						}
-					: {}) &
-				// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
-				(ExtractAuthType<
+					: {}) & {
+					accounts: { list(): Promise<AccountSummary[]> };
+				} & (ExtractAuthType<
+					// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
 					InferPluginOptions<P>,
 					InferDefaultAuthType<P>
 				> extends AuthTypes
@@ -523,6 +526,18 @@ export function buildCorsairClient<
 							tenantId: effectiveTenantId,
 						})
 				: undefined;
+
+		apiUnsafe[plugin.id]!.accounts = {
+			list: async () =>
+				database
+					? listAccountSummaries({
+							db: database.db,
+							kek: kek ?? '',
+							integrationName: plugin.id,
+							tenantId: effectiveTenantId,
+						})
+					: [],
+		};
 
 		// Create typed entity clients from plugin schema, nested under `db`
 		if (schema?.entities) {

@@ -1,7 +1,11 @@
 import { createHubConnectSession } from '../../hub/connect';
 import type { HubConnectSessionInput } from '../../hub/types';
 import type { CorsairInternalConfig } from '..';
-import { AccountSelectionError, resolveAccount } from '../account-lookup';
+import {
+	AccountSelectionError,
+	readIdentity,
+	resolveAccount,
+} from '../account-lookup';
 import { createIntegrationKeyManager } from '../auth/key-manager';
 import {
 	getPluginAuthStatusForTenant,
@@ -163,6 +167,25 @@ export async function getPlugin(
 
 // ── tenants ────────────────────────────────────────────────────────────────
 
+// Identity is sealed, so without a kek the account lists without ref/label.
+async function tenantAccount(
+	internal: CorsairInternalConfig,
+	r: {
+		accountId: string;
+		config: unknown;
+		dek?: string | null;
+		integrationName: string;
+	},
+): Promise<Tenant['accounts'][number]> {
+	const identity = internal.kek ? await readIdentity(r, internal.kek) : {};
+	return {
+		integrationName: r.integrationName,
+		accountId: r.accountId,
+		...identity,
+		hasCredentials: !!r.dek,
+	};
+}
+
 async function listAccountSummariesForTenant(
 	internal: CorsairInternalConfig,
 	tenantId: string,
@@ -172,14 +195,18 @@ async function listAccountSummariesForTenant(
 	const rows = await internal.database.db
 		.selectFrom('corsair_accounts as a')
 		.innerJoin('corsair_integrations as i', 'i.id', 'a.integration_id')
-		.select(['a.id as accountId', 'a.dek as dek', 'i.name as integrationName'])
+		.select([
+			'a.id as accountId',
+			'a.config as config',
+			'a.dek as dek',
+			'i.name as integrationName',
+		])
 		.where('a.tenant_id', '=', tenantId)
+		.orderBy('a.created_at', 'asc')
+		.orderBy('a.id', 'asc')
 		.execute();
 
-	return rows.map((r) => ({
-		integrationName: r.integrationName,
-		hasCredentials: !!r.dek,
-	}));
+	return Promise.all(rows.map((r) => tenantAccount(internal, r)));
 }
 
 export async function describeTenant(
@@ -208,7 +235,15 @@ export async function listTenants(
 		const rows = await internal.database.db
 			.selectFrom('corsair_accounts as a')
 			.innerJoin('corsair_integrations as i', 'i.id', 'a.integration_id')
-			.select(['a.tenant_id', 'a.dek as dek', 'i.name as integrationName'])
+			.select([
+				'a.tenant_id',
+				'a.id as accountId',
+				'a.config as config',
+				'a.dek as dek',
+				'i.name as integrationName',
+			])
+			.orderBy('a.created_at', 'asc')
+			.orderBy('a.id', 'asc')
 			.execute();
 
 		for (const r of rows) {
@@ -220,10 +255,7 @@ export async function listTenants(
 				tenants.set(tenantId, t);
 			}
 			const hasCredentials = !!r.dek;
-			t.accounts.push({
-				integrationName: r.integrationName,
-				hasCredentials,
-			});
+			t.accounts.push(await tenantAccount(internal, r));
 			if (hasCredentials && !t.connectedPlugins.includes(r.integrationName)) {
 				t.connectedPlugins.push(r.integrationName);
 			}

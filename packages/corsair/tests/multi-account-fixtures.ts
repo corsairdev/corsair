@@ -24,6 +24,9 @@ type DynamicPlugin = {
 		note(input?: { id: string }): Promise<unknown>;
 	};
 	db: { notes: NotesClient };
+	accounts: {
+		list(): Promise<{ id: string; ref?: string; label?: string }[]>;
+	};
 };
 
 /** Plugin trees are built from runtime plugin ids, so tests view them through this shape. */

@@ -9,6 +9,9 @@ export type Tenant = {
 	id: string;
 	accounts: Array<{
 		integrationName: string;
+		accountId: string;
+		ref?: string;
+		label?: string;
 		hasCredentials: boolean;
 	}>;
 	connectedPlugins: string[];
