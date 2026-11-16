@@ -125,11 +125,23 @@ export async function makeTomTomRequest(
 	}
 }
 
+/** The same deadline core's request() applies, covering the body read too. */
+const TILE_TIMEOUT_MS = 20_000;
+/** Core's retry budget for a 429, which the tile route has to apply itself. */
+const TILE_MAX_RETRIES = 3;
+
+function retryAfterMs(response: Response): number | undefined {
+	const seconds = Number(response.headers.get('Retry-After'));
+	return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : undefined;
+}
+
 /**
  * Raster tiles are PNG bytes, which core's `request()` would decode as text and
- * corrupt, so the tile route is fetched here and returned as base64. A failure
- * still throws core's `ApiError` (with the key redacted by its URL handling) so
- * the same handlers apply.
+ * corrupt, so the tile route is fetched here and returned as base64. It applies
+ * what `request()` would: a 20 s deadline over the request and the body, and up
+ * to three retries of a 429 that honour Retry-After (1, 2, 4 s otherwise). A
+ * failure still throws core's `ApiError` (the key redacted by its URL
+ * handling), so the same handlers apply.
  */
 export async function fetchTomTomTile(
 	apiKey: string,
@@ -142,27 +154,48 @@ export async function fetchTomTomTile(
 		url: path,
 		query: { key: apiKey },
 	};
-	let response: Response;
-	try {
-		response = await fetch(url, { headers: { Accept: 'image/png' } });
-	} catch (error) {
-		throw new TomTomAPIError(
-			error instanceof Error ? error.message : 'TomTom tile request failed',
-			{ method: 'GET' },
-		);
-	}
-	if (!response.ok) {
-		const type = response.headers.get('Content-Type') ?? '';
-		const text = await response.text();
-		let body: unknown = text; // unknown: JSON error envelope or plain text
-		if (type.includes('json')) {
+	for (let attempt = 0; ; attempt += 1) {
+		const signal = AbortSignal.timeout(TILE_TIMEOUT_MS);
+		let response: Response;
+		let bytes: Buffer | undefined;
+		let errorText = '';
+		try {
+			response = await fetch(url, { headers: { Accept: 'image/png' }, signal });
+			if (response.ok) {
+				bytes = Buffer.from(await response.arrayBuffer());
+			} else {
+				errorText = await response.text();
+			}
+		} catch (error) {
+			throw new TomTomAPIError(
+				error instanceof Error ? error.message : 'TomTom tile request failed',
+				{ cause: error instanceof Error ? error : undefined, method: 'GET' },
+			);
+		}
+		if (bytes) {
+			return {
+				content_type: response.headers.get('Content-Type') ?? 'image/png',
+				base64: bytes.toString('base64'),
+			};
+		}
+		const retryAfter = retryAfterMs(response);
+		if (response.status === 429 && attempt < TILE_MAX_RETRIES) {
+			await new Promise((resolve) =>
+				setTimeout(
+					resolve,
+					Math.min(retryAfter ?? 1000 * 2 ** attempt, 60_000),
+				),
+			);
+			continue;
+		}
+		let body: unknown = errorText; // unknown: JSON error envelope or plain text
+		if ((response.headers.get('Content-Type') ?? '').includes('json')) {
 			try {
-				body = JSON.parse(text);
+				body = JSON.parse(errorText);
 			} catch {
-				body = text;
+				body = errorText;
 			}
 		}
-		const seconds = Number(response.headers.get('Retry-After'));
 		throw new ApiError(
 			requestOptions,
 			{
@@ -173,17 +206,9 @@ export async function fetchTomTomTile(
 				body,
 			},
 			describeTomTomError(response.status, body, response.statusText).message,
-			{
-				retryAfter:
-					Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : undefined,
-			},
+			{ retryAfter },
 		);
 	}
-	const bytes = Buffer.from(await response.arrayBuffer());
-	return {
-		content_type: response.headers.get('Content-Type') ?? 'image/png',
-		base64: bytes.toString('base64'),
-	};
 }
 
 /** Joins two coordinates as `lat,lon`, which every TomTom path parameter takes. */

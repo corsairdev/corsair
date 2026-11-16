@@ -389,6 +389,34 @@ describe('traffic', () => {
 		);
 	});
 
+	it('traffic.tile retries a 429 on Retry-After, as core would', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('{}', {
+				status: 429,
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '1' },
+			}),
+		);
+		respondPng();
+
+		const result = (await invoke(TrafficEndpoints.tile, {
+			zoom: 12,
+			x: 1,
+			y: 1,
+		})) as { base64: string };
+
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		expect(Buffer.from(result.base64, 'base64')).toEqual(Buffer.from(PNG));
+	});
+
+	it('traffic.tile sets a deadline on the request', async () => {
+		respondPng();
+
+		await invoke(TrafficEndpoints.tile, { zoom: 12, x: 1, y: 1 });
+
+		const [, init] = fetchMock.mock.calls.at(-1) as [URL, RequestInit];
+		expect(init.signal).toBeInstanceOf(AbortSignal);
+	});
+
 	it('traffic.tile throws core ApiError on a failure, key redacted', async () => {
 		respond({ detailedError: { code: 'Forbidden', message: 'no' } }, 403);
 
