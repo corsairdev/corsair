@@ -51,13 +51,13 @@ const riskLevels = {
 	'callControlApplications.get': 'read',
 	'callControlApplications.list': 'read',
 	'callControlApplications.update': 'write',
-	'calls.create': 'write',
+	'calls.create': 'destructive',
 	'calls.get': 'read',
-	'calls.hangup': 'write',
-	'calls.speak': 'write',
+	'calls.hangup': 'destructive',
+	'calls.speak': 'destructive',
 	'messages.delete': 'destructive',
 	'messages.get': 'read',
-	'messages.send': 'write',
+	'messages.send': 'destructive',
 	'messagingProfiles.create': 'write',
 	'messagingProfiles.delete': 'destructive',
 	'messagingProfiles.get': 'read',
@@ -116,11 +116,18 @@ describe('telnyx plugin definition', () => {
 		}
 	});
 
-	it('treats hanging up and speaking as writes, not reads', () => {
-		// Both change the live call, so a read-only caller must not reach them.
+	it('marks sends, dials and live-call actions destructive (R8)', () => {
+		// A send or dial bills the account and reaches a person; speaking talks
+		// to the person on the call; a hang-up cannot be undone.
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['calls.hangup']?.riskLevel).toBe('write');
-		expect(meta['calls.speak']?.riskLevel).toBe('write');
+		for (const name of [
+			'messages.send',
+			'calls.create',
+			'calls.speak',
+			'calls.hangup',
+		] as const) {
+			expect(meta[name]?.riskLevel).toBe('destructive');
+		}
 	});
 
 	it('registers a schema for every operation, in both directions', () => {

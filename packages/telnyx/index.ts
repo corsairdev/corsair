@@ -205,7 +205,7 @@ const defaultAuthType = 'api_key' as const;
 
 const telnyxEndpointMeta = {
 	'messages.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send an SMS or MMS from a Telnyx number, charging the account per part; text or at least one media URL is required',
 	},
@@ -218,7 +218,7 @@ const telnyxEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a message record from the messaging log; the message itself was already delivered or failed',
+			'Cancel a scheduled message before Telnyx sends it; a message that already went out cannot be cancelled',
 	},
 	'messagingProfiles.list': {
 		riskLevel: 'read',
@@ -271,7 +271,7 @@ const telnyxEndpointMeta = {
 			'Search the numbers available to buy in a country, filtered by area code, locality or type',
 	},
 	'calls.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Place an outbound call through a call control application, which dials the number and bills per minute',
 	},
@@ -280,11 +280,12 @@ const telnyxEndpointMeta = {
 		description: 'Read one call with its state, direction and timestamps',
 	},
 	'calls.hangup': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Hang up an active call, ending it for both legs',
 	},
 	'calls.speak': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Read text aloud on an active call using text to speech',
 	},
 	'callControlApplications.list': {
