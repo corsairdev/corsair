@@ -6,6 +6,8 @@ import { kalshi } from './index';
 jest.mock('corsair/http', () => ({
 	request: jest.fn(),
 	ApiError: class extends Error {
+		// unknown: the mock mirrors core's ApiError, whose request and body are
+		// whatever the call sent and got back.
 		constructor(
 			request: unknown,
 			response: {
@@ -126,6 +128,21 @@ describe('Kalshi error handlers', () => {
 
 			expect(names).toContain('CUSTOM');
 			expect(names[names.length - 1]).toBe('DEFAULT');
+		});
+
+		it("keeps DEFAULT last even when the caller's DEFAULT comes first in their object", () => {
+			const handler = {
+				match: () => true,
+				handler: async () => ({ maxRetries: 0 }),
+			};
+			const merged =
+				kalshi({ errorHandlers: { DEFAULT: handler, CUSTOM: handler } })
+					.errorHandlers ?? {};
+			const names = Object.keys(merged);
+
+			expect(names[names.length - 1]).toBe('DEFAULT');
+			expect(names.indexOf('CUSTOM')).toBeLessThan(names.indexOf('DEFAULT'));
+			expect(merged.DEFAULT).toBe(handler);
 		});
 	});
 });

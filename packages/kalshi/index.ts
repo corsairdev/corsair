@@ -349,12 +349,16 @@ export function kalshi<const T extends KalshiPluginOptions>(
 		webhookSchemas: {} as const,
 		pluginWebhookMatcher: undefined,
 		// Keep DEFAULT last: it always matches, so any handler after it never runs.
+		// The caller's DEFAULT is taken out before spreading: re-assigning it after
+		// the spread would keep its key wherever the caller put it.
 		errorHandlers: (() => {
 			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			const { DEFAULT: customDefault, ...customSpecific } =
+				options.errorHandlers ?? {};
 			return {
 				...specificDefaults,
-				...options.errorHandlers,
-				DEFAULT: options.errorHandlers?.DEFAULT ?? defaultHandler,
+				...customSpecific,
+				DEFAULT: customDefault ?? defaultHandler,
 			};
 		})(),
 		keyBuilder: async (ctx: KalshiKeyBuilderContext, source) => {
