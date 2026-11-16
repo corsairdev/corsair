@@ -1077,7 +1077,8 @@ const RecipientsBulkCreateResponseSchema = z
 		succeeded: z.array(recipientSchema).nullish(),
 		// unknown: the invalid entries are echoed input (an address, or a contact).
 		invalids: z.array(z.unknown()).nullish(),
-		existing: z.array(recipientSchema).nullish(),
+		// The reference lists `existing` as the email addresses already on the message.
+		existing: z.array(z.union([z.string(), recipientSchema])).nullish(),
 	})
 	.loose();
 
@@ -1260,6 +1261,11 @@ const ContactsBulkCreateInputSchema = z.object({
 			}),
 		)
 		.min(1),
+	/**
+	 * Updates contacts whose email already exists. The reference's example sends
+	 * this beside `contacts`; its table lists it per contact, so both are sent.
+	 */
+	update_existing: z.boolean().optional(),
 });
 
 export type ContactsBulkCreateInput = z.input<

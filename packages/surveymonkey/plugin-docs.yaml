@@ -236,7 +236,7 @@ apiNotes:
   recipients.create: |
     Answers the created recipient. The email has to look valid, and the message must not have been sent yet.
   recipients.bulkCreate: |
-    Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. A recipient already on the message comes back under `existing` rather than failing the call.
+    Wraps the list in `contacts` and answers `{ succeeded, invalids, existing }`. A recipient already on the message comes back under `existing`, as its email address, rather than failing the call.
   contactLists.list: |
     Answers `{ data }` of contact lists on the account, 50 a page by default.
   contactLists.create: |
@@ -256,7 +256,7 @@ apiNotes:
   contacts.create: |
     Answers the created contact. **Both names are required**, and so is an email or a phone number. This creates the contact on the account; a contact list is a separate resource.
   contacts.bulkCreate: |
-    Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. `update_existing: true` on an entry updates the contact when its email is already known instead of adding it to `existing`.
+    Wraps the list in `contacts` and answers `{ succeeded, invalids, existing }`. `update_existing: true` beside `contacts` (or on an entry) updates the contact when its email is already known instead of adding it to `existing`.
   contacts.get: |
     Answers one contact with its `custom_fields` and status.
   contacts.update: |

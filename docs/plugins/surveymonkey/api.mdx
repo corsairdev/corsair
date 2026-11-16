@@ -620,8 +620,9 @@ await corsair.surveymonkey.api.contacts.bulkCreate({ contacts: [{ first_name: 'B
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contacts` | `object[]` | Yes | — |
+| `update_existing` | `boolean` | No | — |
 
-Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. `update_existing: true` on an entry updates the contact when its email is already known instead of adding it to `existing`.
+Wraps the list in `contacts` and answers `{ succeeded, invalids, existing }`. `update_existing: true` beside `contacts` (or on an entry) updates the contact when its email is already known instead of adding it to `existing`.
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -2258,7 +2259,7 @@ await corsair.surveymonkey.api.recipients.bulkCreate({ collector_id: '1234', mes
 | `message_id` | `string` | Yes | — |
 | `contacts` | `object[]` | Yes | — |
 
-Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. A recipient already on the message comes back under `existing` rather than failing the call.
+Wraps the list in `contacts` and answers `{ succeeded, invalids, existing }`. A recipient already on the message comes back under `existing`, as its email address, rather than failing the call.
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -2302,7 +2303,7 @@ Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. A r
 <Accordion title="existing full type">
 
 ```ts
-{
+(string | {
   id: string,
   email?: string | null,
   first_name?: string | null,
@@ -2310,7 +2311,7 @@ Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. A r
   href?: string | null,
   survey_response_status?: string | null,
   mail_status?: string | null
-}[] | null
+})[] | null
 ```
 </Accordion>
 </AccordionGroup>

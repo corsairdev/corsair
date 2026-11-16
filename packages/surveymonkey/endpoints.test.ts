@@ -567,7 +567,12 @@ describe('surveymonkey collectors, messages and recipients', () => {
 	it('adds recipients in bulk inside a contacts array', async () => {
 		mockFetch(
 			jsonResponse(
-				{ succeeded: [recipient], invalids: ['not-an-address'], existing: [] },
+				{
+					succeeded: [recipient],
+					invalids: ['not-an-address'],
+					// The reference lists `existing` as email addresses.
+					existing: ['bob@example.com'],
+				},
 				{ status: 201 },
 			),
 		);
@@ -633,6 +638,16 @@ describe('surveymonkey contacts and contact lists', () => {
 			target_list_id: '1234',
 		});
 		expect(sentBody()).toEqual({ list_id: '5678' });
+	});
+
+	it('refuses a merge answer that is not an object', async () => {
+		mockFetch(jsonResponse(null));
+		await expect(
+			endpoints.contactLists.merge(ctx, {
+				contact_list_id: '1234',
+				list_id: '5678',
+			}),
+		).rejects.toThrow(/unexpected contact list merge body/);
 	});
 
 	it('reports a deleted contact list', async () => {
@@ -706,6 +721,7 @@ describe('surveymonkey contacts and contact lists', () => {
 			contacts: [
 				{ first_name: 'John', last_name: 'Doe', email: 'a@example.com' },
 			],
+			update_existing: true,
 		});
 
 		expect(created.invalids).toEqual([{ email: 'x' }]);
@@ -714,6 +730,7 @@ describe('surveymonkey contacts and contact lists', () => {
 			contacts: [
 				{ first_name: 'John', last_name: 'Doe', email: 'a@example.com' },
 			],
+			update_existing: true,
 		});
 	});
 

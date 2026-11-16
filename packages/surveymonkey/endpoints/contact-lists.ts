@@ -159,7 +159,7 @@ export const merge: SurveymonkeyEndpoints['contactListsMerge'] = (ctx, input) =>
 		{
 			// unknown: the documented answer is the target list, `{ id, name, href }`.
 			shape: (raw: unknown, parsed) => ({
-				...(raw !== null && typeof raw === 'object' ? raw : {}),
+				...listBody(raw, 'contact list merge'),
 				source_list_id: parsed.list_id,
 				target_list_id: parsed.contact_list_id,
 			}),

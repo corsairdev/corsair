@@ -78,10 +78,13 @@ export const bulkCreate: SurveymonkeyEndpoints['contactsBulkCreate'] = (
 			output: Outputs.contactsBulkCreate,
 		},
 		input,
-		({ contacts }) => ({
+		({ contacts, update_existing }) => ({
 			method: 'POST',
 			path: '/contacts/bulk',
-			body: { contacts },
+			body:
+				update_existing === undefined
+					? { contacts }
+					: { contacts, update_existing },
 		}),
 		{
 			log: (parsed, result) => ({
