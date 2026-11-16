@@ -535,6 +535,85 @@ describe('toFileOutput', () => {
 				.contentBase64,
 		).toBeDefined();
 	});
+
+	it('returns a text file as text, so a CSV reads without decoding base64', () => {
+		const csv = new TextEncoder().encode('name,city\nAnaïs,Zürich\n');
+		const out = toFileOutput(csv, 'text/csv; charset=utf-8', {
+			filename: 'people.csv',
+		});
+		expect(out).toEqual({
+			text: 'name,city\nAnaïs,Zürich\n',
+			contentType: 'text/csv',
+			byteLength: csv.byteLength,
+			filename: 'people.csv',
+		});
+		expect(FileOutputSchema.safeParse(out).success).toBe(true);
+		// JSON, XML, YAML, SVG and the +json/+xml types are text too.
+		for (const type of [
+			'application/json',
+			'application/ld+json',
+			'application/xml',
+			'application/atom+xml',
+			'application/x-yaml',
+			'image/svg+xml',
+			'Text/Markdown',
+		]) {
+			expect(toFileOutput(csv, type).text).toBe('name,city\nAnaïs,Zürich\n');
+		}
+	});
+
+	it('reads a text file as text when the server sends only a generic type but the name says text', () => {
+		const csv = new TextEncoder().encode('a,b\n1,2\n');
+		// Dropbox serves every file as application/octet-stream.
+		expect(
+			toFileOutput(csv, 'application/octet-stream', { filename: 'q3.csv' })
+				.text,
+		).toBe('a,b\n1,2\n');
+		expect(toFileOutput(csv, null, { filename: 'NOTES.MD' }).text).toBe(
+			'a,b\n1,2\n',
+		);
+		// A specific type from the server wins over the name, and a binary name stays base64.
+		expect(
+			toFileOutput(csv, 'image/png', { filename: 'q3.csv' }).text,
+		).toBeUndefined();
+		expect(
+			toFileOutput(csv, 'application/octet-stream', { filename: 'q3.pdf' })
+				.text,
+		).toBeUndefined();
+		expect(toFileOutput(csv, 'application/octet-stream').text).toBeUndefined();
+	});
+
+	it('keeps the bytes exact: a byte-order mark stays in the text', () => {
+		const withBom = new Uint8Array([0xef, 0xbb, 0xbf, 0x61]);
+		const { text } = toFileOutput(withBom, 'text/plain');
+		expect(text).toBe('﻿a');
+		expect(new TextEncoder().encode(text)).toEqual(withBom);
+	});
+
+	it('falls back to base64 when the bytes are not UTF-8, the type is not text, or text is turned off', () => {
+		const latin1 = new Uint8Array([0x63, 0x61, 0x66, 0xe9]); // "café" in Latin-1
+		expect(toFileOutput(latin1, 'text/plain')).toEqual({
+			contentBase64: Buffer.from(latin1).toString('base64'),
+			contentType: 'text/plain',
+			byteLength: 4,
+		});
+		const ascii = new TextEncoder().encode('hello');
+		expect(
+			toFileOutput(ascii, 'application/octet-stream').text,
+		).toBeUndefined();
+		expect(toFileOutput(ascii, null).text).toBeUndefined();
+		expect(toFileOutput(ascii, 'text/plain', { text: false })).toEqual({
+			contentBase64: Buffer.from(ascii).toString('base64'),
+			contentType: 'text/plain',
+			byteLength: 5,
+		});
+		// The limit applies to text as it does to base64.
+		expect(toFileOutput(ascii, 'text/plain', { maxBytes: 4 })).toEqual({
+			contentType: 'text/plain',
+			byteLength: 5,
+			contentOmitted: 'over_limit',
+		});
+	});
 });
 
 describe("request with responseType 'binary'", () => {
