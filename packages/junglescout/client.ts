@@ -51,6 +51,40 @@ export function parseJungleScoutResponse(response: unknown): unknown {
 	return parsedBody;
 }
 
+/**
+ * Keeps the generic parts of a JSON:API error (`status`, `code`, `title`) so a
+ * caller can tell a bad filter from a bad key. `detail` and `source` are dropped
+ * because they can echo the searched keyword or ASIN.
+ */
+// `unknown`: the provider's error body is untrusted JSON of any shape.
+export function errorSummary(body: unknown): {
+	errors?: Array<{ status?: string; code?: string; title?: string }>;
+} {
+	if (typeof body !== 'object' || body === null || !('errors' in body)) {
+		return {};
+	}
+	const { errors } = body;
+	if (!Array.isArray(errors)) return {};
+	return {
+		errors: errors.map((entry: unknown) => {
+			// `unknown`: each entry is checked field by field below.
+			const item =
+				typeof entry === 'object' && entry !== null
+					? (entry as Record<string, unknown>)
+					: {};
+			const pick = (key: string) =>
+				typeof item[key] === 'string' || typeof item[key] === 'number'
+					? String(item[key])
+					: undefined;
+			return {
+				status: pick('status'),
+				code: pick('code'),
+				title: pick('title'),
+			};
+		}),
+	};
+}
+
 export async function makeJungleScoutRequest(
 	endpoint: string,
 	apiKey?: string,
@@ -102,7 +136,7 @@ export async function makeJungleScoutRequest(
 					ok: false,
 					status: error.status,
 					statusText: 'Request failed',
-					body: {},
+					body: errorSummary(error.body),
 				},
 				`Jungle Scout API request failed with status ${error.status}`,
 				{

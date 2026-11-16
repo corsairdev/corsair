@@ -112,7 +112,16 @@ describe('makeJungleScoutRequest', () => {
 				ok: false,
 				status: 429,
 				statusText: 'Too Many Requests',
-				body: { errors: [{ detail: `Rejected ${privateTerm}` }] },
+				body: {
+					errors: [
+						{
+							status: '429',
+							code: 'too_many_requests',
+							title: 'Too Many Requests',
+							detail: `Rejected ${privateTerm}`,
+						},
+					],
+				},
 			},
 			`Rejected ${privateTerm}`,
 			{ retryAfter: 4000 },
@@ -135,7 +144,16 @@ describe('makeJungleScoutRequest', () => {
 			method: 'POST',
 			url: '/api/keywords/keywords_by_asin_query',
 		});
-		expect(error.body).toEqual({});
+		// The provider's generic error stays; the echoing `detail` goes.
+		expect(error.body).toEqual({
+			errors: [
+				{
+					status: '429',
+					code: 'too_many_requests',
+					title: 'Too Many Requests',
+				},
+			],
+		});
 		expect(error.message).not.toContain(privateTerm);
 		expect(error.url).not.toContain(privateTerm);
 		expect(JSON.stringify(error)).not.toContain(privateTerm);
