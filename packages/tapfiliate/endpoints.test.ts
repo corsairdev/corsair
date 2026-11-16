@@ -901,3 +901,59 @@ describe('documented contracts', () => {
 		});
 	});
 });
+
+describe('single reads and the customer update', () => {
+	it('reads one conversion', async () => {
+		respond(conversion);
+		const result = await invoke(Conversions.conversionsGet, {
+			conversionId: 4321,
+		});
+		expect(lastRequest()).toMatchObject({
+			path: '/1.6/conversions/4321/',
+			method: 'GET',
+		});
+		expect(result.id).toBe(4321);
+	});
+
+	it('reads one commission', async () => {
+		respond(commission);
+		const result = await invoke(Conversions.commissionsGet, {
+			commissionId: 1234,
+		});
+		expect(lastRequest().path).toBe('/1.6/commissions/1234/');
+		expect(result.amount).toBe(3.05);
+	});
+
+	it('reads one customer', async () => {
+		respond(customer);
+		const result = await invoke(Customers.get, { customerId: 'cu_123' });
+		expect(lastRequest().path).toBe('/1.6/customers/cu_123/');
+		expect(result.customer_id).toBe('cust-1');
+	});
+
+	it('patches a customer with only the fields it was given', async () => {
+		respond({ ...customer, customer_id: 'cust-2' });
+		const result = await invoke(Customers.update, {
+			customerId: 'cu_123',
+			customer_id: 'cust-2',
+		});
+		expect(lastRequest()).toMatchObject({
+			path: '/1.6/customers/cu_123/',
+			method: 'PATCH',
+		});
+		expect(lastRequest().body).toEqual({ customer_id: 'cust-2' });
+		expect(result.customer_id).toBe('cust-2');
+	});
+
+	it('lists payments and reads one', async () => {
+		respond(payments);
+		const listed = await invoke(Payments.paymentsList, { page: 2 });
+		expect(lastRequest().path).toBe('/1.6/payments/');
+		expect(listed[0]?.id).toBe('pa_abc123');
+
+		respond(payment);
+		const one = await invoke(Payments.paymentsGet, { paymentId: 'pa_abc123' });
+		expect(lastRequest().path).toBe('/1.6/payments/pa_abc123/');
+		expect(one.amount).toBe(30.55);
+	});
+});
