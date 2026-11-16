@@ -532,7 +532,7 @@ await corsair.templated.api.renders.merge({ ids: ['ce424057-6b54-41bb-afec-adc35
 | `ids` | `string[]` | Yes | The renders to merge. |
 | `urls` | `string[]` | No | External PDF URLs to merge after the renders, in order. |
 | `name` | `string` | No | A name for the merged PDF. |
-| `host` | `boolean` | No | Host the merged PDF and return its URL. When false the API answers the file itself. |
+| `host` | `true` | No | Host the merged PDF and return its URL. Always on. |
 
 Always asked to host the merged PDF, because the direct-download form answers the file rather than JSON.
 
@@ -648,6 +648,34 @@ await corsair.templated.api.templates.create({ name: 'Square post', width: 1024,
 | `createdAt` | `string \| null` | No | — |
 | `modifiedAt` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
+| `layers` | `object[] \| null` | No | — |
+| `pages` | `Record<string, any>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+  layer?: string | null,
+  type?: string | null,
+  text?: string | null,
+  x?: number | null,
+  y?: number | null,
+  width?: number | null,
+  height?: number | null,
+  rotation?: number | null,
+  color?: string | null,
+  background?: string | null,
+  font_family?: string | null,
+  font_size?: string | number | null,
+  font_weight?: string | number | null,
+  text_align?: string | null,
+  image_url?: string | null,
+  locked?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -720,6 +748,34 @@ await corsair.templated.api.templates.get({ templateId: '306c724a-d138-486a-a601
 | `createdAt` | `string \| null` | No | — |
 | `modifiedAt` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
+| `layers` | `object[] \| null` | No | — |
+| `pages` | `Record<string, any>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+  layer?: string | null,
+  type?: string | null,
+  text?: string | null,
+  x?: number | null,
+  y?: number | null,
+  width?: number | null,
+  height?: number | null,
+  rotation?: number | null,
+  color?: string | null,
+  background?: string | null,
+  font_family?: string | null,
+  font_size?: string | number | null,
+  font_weight?: string | number | null,
+  text_align?: string | null,
+  image_url?: string | null,
+  locked?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -781,7 +837,7 @@ await corsair.templated.api.templates.layers({ templateId: '306c724a-d138-486a-a
 
 `templates.list`
 
-List templates, filtered by name or tag, 15 per page
+List templates, filtered by name or tag, 25 per page
 
 **Risk:** `read`
 
@@ -820,7 +876,26 @@ page starts at 0 and limit defaults to 25 here; filters are query, width and hei
   folderId?: string | null,
   createdAt?: string | null,
   modifiedAt?: string | null,
-  tags?: string[] | null
+  tags?: string[] | null,
+  layers?: {
+    layer?: string | null,
+    type?: string | null,
+    text?: string | null,
+    x?: number | null,
+    y?: number | null,
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null,
+    color?: string | null,
+    background?: string | null,
+    font_family?: string | null,
+    font_size?: string | number | null,
+    font_weight?: string | number | null,
+    text_align?: string | null,
+    image_url?: string | null,
+    locked?: boolean | null
+  }[] | null,
+  pages?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>

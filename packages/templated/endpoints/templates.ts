@@ -2,6 +2,7 @@ import type { TemplatedEndpoints } from '..';
 import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
+	DeleteResultSchema,
 	TemplatesAddTagsInputSchema,
 	TemplatesCreateInputSchema,
 	TemplatesCreateResponseSchema,
@@ -111,7 +112,11 @@ export const templatesRemove: TemplatedEndpoints['templatesRemove'] = async (
 ) => {
 	return callDelete(
 		ctx,
-		{ event: 'templates.remove', input: TemplatesRemoveInputSchema },
+		{
+			event: 'templates.remove',
+			input: TemplatesRemoveInputSchema,
+			output: DeleteResultSchema,
+		},
 		input,
 		(parsed) => ({
 			method: 'DELETE',

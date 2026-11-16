@@ -569,6 +569,24 @@ describe('error handling', () => {
 		);
 	});
 
+	it('refuses host: false on a merge, which would answer file bytes', async () => {
+		await expect(
+			invoke(Renders.rendersMerge, { ids: ['r1'], host: false } as never),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('types the layers templates.get returns when asked for them', async () => {
+		respond({ ...template, layers: [templateLayer] });
+
+		const result = await invoke(Templates.templatesGet, {
+			templateId: template.id,
+			includeLayers: true,
+		});
+
+		expect(result.layers?.[0]?.font_family).toBe('Roboto');
+	});
+
 	it('rejects a dot-segment id before sending', async () => {
 		await expect(
 			invoke(Renders.rendersRemove, { renderId: '..' }),

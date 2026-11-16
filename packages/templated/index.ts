@@ -247,7 +247,7 @@ const templatedEndpointMeta = {
 	},
 	'templates.list': {
 		riskLevel: 'read',
-		description: 'List templates, filtered by name or tag, 15 per page',
+		description: 'List templates, filtered by name or tag, 25 per page',
 	},
 	'templates.get': {
 		riskLevel: 'read',

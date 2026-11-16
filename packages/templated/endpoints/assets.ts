@@ -4,6 +4,7 @@ import { call, callDelete } from './call';
 import {
 	AccountInputSchema,
 	AccountResponseSchema,
+	DeleteResultSchema,
 	FolderResponseSchema,
 	FoldersCreateInputSchema,
 	FoldersListInputSchema,
@@ -92,7 +93,11 @@ export const uploadsRemove: TemplatedEndpoints['uploadsRemove'] = async (
 ) => {
 	return callDelete(
 		ctx,
-		{ event: 'uploads.remove', input: UploadsRemoveInputSchema },
+		{
+			event: 'uploads.remove',
+			input: UploadsRemoveInputSchema,
+			output: DeleteResultSchema,
+		},
 		input,
 		(parsed) => ({
 			method: 'DELETE',
@@ -182,7 +187,11 @@ export const foldersRemove: TemplatedEndpoints['foldersRemove'] = async (
 ) => {
 	return callDelete(
 		ctx,
-		{ event: 'folders.remove', input: FoldersRemoveInputSchema },
+		{
+			event: 'folders.remove',
+			input: FoldersRemoveInputSchema,
+			output: DeleteResultSchema,
+		},
 		input,
 		(parsed) => ({
 			method: 'DELETE',

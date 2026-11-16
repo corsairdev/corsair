@@ -30,7 +30,7 @@ pnpm add @corsair-dev/templated
 | `templates.delete` | `templated.api.templates.delete` | `destructive` | Delete a template |
 | `templates.get` | `templated.api.templates.get` | `read` | Read one template, optionally with its layers or its pages |
 | `templates.layers` | `templated.api.templates.layers` | `read` | List a template layers, including locked ones when asked |
-| `templates.list` | `templated.api.templates.list` | `read` | List templates, filtered by name or tag, 15 per page |
+| `templates.list` | `templated.api.templates.list` | `read` | List templates, filtered by name or tag, 25 per page |
 | `templates.removeTags` | `templated.api.templates.removeTags` | `write` | Remove specific tags from a template |
 | `uploads.create` | `templated.api.uploads.create` | `write` | Upload an image, up to 2 MB, for use as a template layer |
 | `uploads.delete` | `templated.api.uploads.delete` | `destructive` | Delete one or more uploads |

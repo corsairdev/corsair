@@ -223,12 +223,12 @@ export const RendersMergeInputSchema = z.object({
 		.optional()
 		.describe('External PDF URLs to merge after the renders, in order.'),
 	name: z.string().optional().describe('A name for the merged PDF.'),
+	// Only the hosted form is modelled: without it the API answers the file
+	// bytes, so `host: false` is refused rather than silently overridden.
 	host: z
-		.boolean()
+		.literal(true)
 		.optional()
-		.describe(
-			'Host the merged PDF and return its URL. When false the API answers the file itself.',
-		),
+		.describe('Host the merged PDF and return its URL. Always on.'),
 });
 
 export type RendersMergeInput = z.infer<typeof RendersMergeInputSchema>;
@@ -244,6 +244,33 @@ export type RendersMergeResponse = z.infer<typeof RendersMergeResponseSchema>;
 
 // ── templates ─────────────────────────────────────────────────────────────
 
+export const TemplateLayerSchema = z
+	.object({
+		layer: z.string().nullish(),
+		type: z.string().nullish(),
+		text: z.string().nullish(),
+		x: z.number().nullish(),
+		y: z.number().nullish(),
+		width: z.number().nullish(),
+		height: z.number().nullish(),
+		rotation: z.number().nullish(),
+		// A text layer can carry an open style map; the documented keys are here.
+		color: z.string().nullish(),
+		background: z.string().nullish(),
+		// The documented layer keys are snake_case; font_size is a CSS string
+		// such as "24px" on a write, and the layers route can answer a number.
+		font_family: z.string().nullish(),
+		font_size: z.union([z.string(), z.number()]).nullish(),
+		font_weight: z.union([z.string(), z.number()]).nullish(),
+		text_align: z.string().nullish(),
+		// An image layer points at a URL or an upload ID.
+		image_url: z.string().nullish(),
+		locked: z.boolean().nullish(),
+	})
+	.loose();
+
+export type TemplatedTemplateLayer = z.infer<typeof TemplateLayerSchema>;
+
 export const TemplateSchema = z
 	.object({
 		id: z.string(),
@@ -257,6 +284,10 @@ export const TemplateSchema = z
 		createdAt: z.string().nullish(),
 		modifiedAt: z.string().nullish(),
 		tags: z.array(z.string()).nullish(),
+		// Present when templates.get is asked for them.
+		layers: z.array(TemplateLayerSchema).nullish(),
+		// unknown: each page carries its own layer map, per template.
+		pages: z.array(z.record(z.string(), z.unknown())).nullish(),
 	})
 	.loose();
 
@@ -298,33 +329,6 @@ export type TemplatesGetInput = z.infer<typeof TemplatesGetInputSchema>;
 export const TemplatesGetResponseSchema = TemplateSchema;
 
 export type TemplatesGetResponse = z.infer<typeof TemplatesGetResponseSchema>;
-
-export const TemplateLayerSchema = z
-	.object({
-		layer: z.string().nullish(),
-		type: z.string().nullish(),
-		text: z.string().nullish(),
-		x: z.number().nullish(),
-		y: z.number().nullish(),
-		width: z.number().nullish(),
-		height: z.number().nullish(),
-		rotation: z.number().nullish(),
-		// A text layer can carry an open style map; the documented keys are here.
-		color: z.string().nullish(),
-		background: z.string().nullish(),
-		// The documented layer keys are snake_case; font_size is a CSS string
-		// such as "24px" on a write, and the layers route can answer a number.
-		font_family: z.string().nullish(),
-		font_size: z.union([z.string(), z.number()]).nullish(),
-		font_weight: z.union([z.string(), z.number()]).nullish(),
-		text_align: z.string().nullish(),
-		// An image layer points at a URL or an upload ID.
-		image_url: z.string().nullish(),
-		locked: z.boolean().nullish(),
-	})
-	.loose();
-
-export type TemplatedTemplateLayer = z.infer<typeof TemplateLayerSchema>;
 
 export const TemplatesLayersInputSchema = z.object({
 	templateId: TemplateIdSchema,
@@ -669,27 +673,29 @@ export const TemplatedEndpointInputSchemas = {
 	accountGet: AccountInputSchema,
 } as const;
 
+export const DeleteResultSchema = z.object({ success: z.literal(true) });
+
 export const TemplatedEndpointOutputSchemas = {
 	rendersList: RendersListResponseSchema,
 	rendersGet: RendersGetResponseSchema,
 	rendersCreate: RendersCreateResponseSchema,
 	rendersDuplicate: RendersCreateResponseSchema,
-	rendersRemove: z.object({ success: z.literal(true) }),
+	rendersRemove: DeleteResultSchema,
 	rendersMerge: RendersMergeResponseSchema,
 	templatesList: TemplatesListResponseSchema,
 	templatesGet: TemplatesGetResponseSchema,
 	templatesLayers: TemplatesLayersResponseSchema,
 	templatesCreate: TemplatesCreateResponseSchema,
-	templatesRemove: z.object({ success: z.literal(true) }),
+	templatesRemove: DeleteResultSchema,
 	templatesAddTags: TemplateTagsResponseSchema,
 	templatesRemoveTags: TemplateTagsResponseSchema,
 	uploadsList: UploadsListResponseSchema,
 	uploadsCreate: UploadsCreateResponseSchema,
-	uploadsRemove: z.object({ success: z.literal(true) }),
+	uploadsRemove: DeleteResultSchema,
 	foldersList: FoldersListResponseSchema,
 	foldersCreate: FolderResponseSchema,
 	foldersUpdate: FolderResponseSchema,
-	foldersRemove: z.object({ success: z.literal(true) }),
+	foldersRemove: DeleteResultSchema,
 	fontsList: FontsListResponseSchema,
 	galleryFontsList: GalleryFontsListResponseSchema,
 	accountGet: AccountResponseSchema,

@@ -46,7 +46,11 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
  */
 export async function callDelete<Input extends z.ZodType>(
 	ctx: TemplatedContext,
-	operation: { event: string; input: Input },
+	operation: {
+		event: string;
+		input: Input;
+		output: z.ZodType<{ success: true }>;
+	},
 	// unknown: raw caller input, parsed below by the operation's input schema.
 	rawInput: unknown,
 	toRequest: (parsed: z.output<Input>) => TemplatedRequest,
@@ -60,5 +64,5 @@ export async function callDelete<Input extends z.ZodType>(
 		{},
 		'completed',
 	);
-	return { success: true };
+	return operation.output.parse({ success: true });
 }
