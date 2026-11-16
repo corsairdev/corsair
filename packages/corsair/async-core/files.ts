@@ -96,11 +96,27 @@ function withinLimit(
 	return bytes;
 }
 
-/** A data URL's percent-encoded body as the bytes it encodes; `%FF` is byte 255, not text. */
-function fromPercentEncoded(body: string): Uint8Array {
-	const out: number[] = [];
+/**
+ * A data URL's percent-encoded body as the bytes it encodes; `%FF` is byte 255, not text.
+ *
+ * Decoding stops once the output passes `cap`, and a body too long to fit is
+ * refused before it is encoded at all. `maxBytes` is the limit the error names.
+ */
+function fromPercentEncoded(
+	body: string,
+	maxBytes: number | undefined,
+	cap: number | undefined = maxBytes,
+): Uint8Array {
+	// Every three characters decode to at least one byte (`%41` is the tightest).
+	if (cap !== undefined && Math.ceil(body.length / 3) > cap)
+		throw tooLarge(maxBytes ?? cap);
 	const raw = new TextEncoder().encode(body);
+	const out = new Uint8Array(
+		cap === undefined ? raw.length : Math.min(raw.length, cap),
+	);
+	let length = 0;
 	for (let i = 0; i < raw.length; i++) {
+		if (cap !== undefined && length === cap) throw tooLarge(maxBytes ?? cap);
 		// The digits come from the bytes too: `i` counts bytes, so a non-ASCII
 		// character earlier in `body` would shift a string index.
 		const hex =
@@ -108,13 +124,29 @@ function fromPercentEncoded(body: string): Uint8Array {
 				? String.fromCharCode(raw[i + 1] ?? 0, raw[i + 2] ?? 0)
 				: '';
 		if (/^[0-9a-fA-F]{2}$/.test(hex)) {
-			out.push(Number.parseInt(hex, 16));
+			out[length++] = Number.parseInt(hex, 16);
 			i += 2;
 		} else {
-			out.push(raw[i] as number);
+			out[length++] = raw[i] as number;
 		}
 	}
-	return new Uint8Array(out);
+	return length === out.length ? out : out.slice(0, length);
+}
+
+/**
+ * A base64 data URL's body as base64 text. Like `fetch`, the body is
+ * percent-decoded first, so `%2Fw%3D%3D` reads as `/w==`. A plain `{ base64 }`
+ * input is not a URL and skips this.
+ */
+function base64Text(body: string, maxBytes: number | undefined): string {
+	if (!body.includes('%')) return body;
+	// Padded base64 is 4 characters per 3 bytes, so longer text is over the
+	// limit. Whitespace is dropped first because base64 ignores it; an escaped
+	// space (`%20`) still counts, and base64 never needs one.
+	const cap =
+		maxBytes === undefined ? undefined : Math.ceil((maxBytes + 2) / 3) * 4;
+	const decoded = fromPercentEncoded(body.replace(/\s+/g, ''), maxBytes, cap);
+	return Buffer.from(decoded).toString('latin1');
 }
 
 function fromBase64(text: string, maxBytes: number | undefined): Uint8Array {
@@ -171,10 +203,13 @@ export async function resolveFileInput(
 
 	const data = DATA_URL.exec(given.url);
 	if (data) {
-		const [, type, , isBase64, body] = data;
+		const [, type, , isBase64, body = ''] = data;
 		const bytes = isBase64
-			? fromBase64(body ?? '', options.maxBytes)
-			: withinLimit(fromPercentEncoded(body ?? ''), options.maxBytes);
+			? fromBase64(base64Text(body, options.maxBytes), options.maxBytes)
+			: withinLimit(
+					fromPercentEncoded(body, options.maxBytes),
+					options.maxBytes,
+				);
 		return build(
 			bytes,
 			given.filename ?? fallback,

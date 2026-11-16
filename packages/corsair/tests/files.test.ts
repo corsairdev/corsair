@@ -342,6 +342,54 @@ describe('resolveFileInput', () => {
 		).rejects.toThrow('limit');
 	});
 
+	it('percent-decodes a base64 data URL before reading the base64, as fetch does', async () => {
+		// %2Fw%3D%3D is "/w==", which is the single byte 255.
+		const escaped = await resolveFileInput(
+			'data:application/octet-stream;base64,%2Fw%3D%3D',
+		);
+		expect(Array.from(escaped.bytes)).toEqual([255]);
+		const atLimit = await resolveFileInput(
+			'data:application/octet-stream;base64,%2Fw%3D%3D',
+			{ maxBytes: 1 },
+		);
+		expect(Array.from(atLimit.bytes)).toEqual([255]);
+		// Plain { base64 } is not a URL, so a % in it is still refused.
+		await expect(resolveFileInput({ base64: '%2Fw%3D%3D' })).rejects.toThrow(
+			'not valid base64',
+		);
+	});
+
+	it('holds a percent-encoded data URL to the limit counting decoded bytes', async () => {
+		// Ten escapes are ten bytes from thirty characters: at the limit, not over it.
+		const ten = await resolveFileInput(`data:text/plain,${'%41'.repeat(10)}`, {
+			maxBytes: 10,
+		});
+		expect(new TextDecoder().decode(ten.bytes)).toBe('A'.repeat(10));
+		expect(ten.bytes.byteLength).toBe(10);
+		await expect(
+			resolveFileInput(`data:text/plain,${'%41'.repeat(11)}`, {
+				maxBytes: 10,
+			}),
+		).rejects.toThrow(/larger than/);
+		await expect(
+			resolveFileInput(`data:text/plain,${'a'.repeat(11)}`, { maxBytes: 10 }),
+		).rejects.toThrow(/larger than/);
+	});
+
+	it('refuses an oversized data URL without encoding the whole body', async () => {
+		const encode = jest.spyOn(TextEncoder.prototype, 'encode');
+		try {
+			await expect(
+				resolveFileInput(`data:text/plain,${'a'.repeat(1_000_000)}`, {
+					maxBytes: 1024,
+				}),
+			).rejects.toThrow(/larger than/);
+			expect(encode).not.toHaveBeenCalled();
+		} finally {
+			encode.mockRestore();
+		}
+	});
+
 	it('refuses base64 that is not, that is empty, or that is over the limit', async () => {
 		await expect(resolveFileInput({ base64: 'not base64 !!' })).rejects.toThrow(
 			'not valid base64',
