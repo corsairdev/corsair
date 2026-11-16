@@ -408,6 +408,7 @@ export const BaseProviders = [
 	'nanonets',
 	'neon',
 	'netsuite',
+	'neutrino',
 	'neverbounce',
 	'nextdns',
 	'northflank',
@@ -1035,6 +1036,7 @@ export const ProviderDisplayNames = {
 	nanonets: 'Nanonets',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
+	neutrino: 'Neutrino API',
 	neverbounce: 'NeverBounce',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
@@ -1669,6 +1671,7 @@ export type AllProviders =
 	| 'nanonets'
 	| 'neon'
 	| 'netsuite'
+	| 'neutrino'
 	| 'neverbounce'
 	| 'nextdns'
 	| 'northflank'

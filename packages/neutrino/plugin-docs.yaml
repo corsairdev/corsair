@@ -1,0 +1,75 @@
+displayName: Neutrino API
+description: Look up IP geolocation and blocklists, validate and verify email addresses and phone numbers, parse user agents, check domain and host reputation, inspect URLs, geocode addresses, look up card BINs, convert units and send SMS codes.
+domain: neutrinoapi.com
+recommendedAuth: api_key
+overviewNote: |
+  Neutrino needs two credentials on every call: the account's numeric **user id** and one of its **API keys**. Both are on https://www.neutrinoapi.com/account/. The plugin sends them combined in a single `API-Key` header as `user-id:api-key`, which is the form Neutrino documents, so neither lands in a query string.
+
+  Set both before the first call, for example `pnpm corsair setup --plugin=neutrino --tenant=acme api_key=<key> user_id=<id>`, or pass `key` and `userId` in the plugin options.
+
+  What each group does:
+
+  - **IP.** `ip.info` geolocates an address, `ip.blocklist` checks the blocklists Neutrino tracks with a flag per threat type, and `ip.probe` reports the hosting provider rather than the place.
+  - **Email.** `email.validate` checks syntax, domain and MX without contacting the mailbox. `email.verify` adds an SMTP probe and reports `verified` separately from `valid`, because a server can accept a domain and still refuse the mailbox check.
+  - **Phone.** `phone.validate` parses a number into its international and local forms with the carrier prefix. `phone.hlrLookup` queries the carrier's home location register for whether the number is live and whether it was ported.
+  - **Web.** `web.uaLookup` parses a User-Agent, `web.domainLookup` reads domain facts and blocklists, `web.hostReputation` checks a host against many DNSBLs, and `web.urlInfo` inspects a URL.
+  - **Geocode, commerce, messaging.** Forward and reverse geocoding, card BIN facts, unit and currency conversion, and an SMS code send.
+
+  Worth knowing before you call:
+
+  - **`web.urlInfo` and the phone HLR lookup make Neutrino do outside work.** The first fetches the page themselves, and the second queries a carrier, so both cost more and can fail on a target that refuses them.
+  - **`messaging.smsVerify` sends a real SMS** and spends a credit. The code it returns is the same code the recipient gets, which is what `verifySecurityCode` compares against. A 5xx on this route is never retried, because the message may already have gone out.
+  - **Parameters are hyphenated.** `country-code`, `bin-number`, `from-value`, `fetch-content`, `code-length`. The plugin maps its own camelCase inputs onto those names, so a caller writes `countryCode` and `binNumber`.
+  - **A convert result comes twice.** `result` is a string and `result-float` a number; use the one the surrounding code needs rather than parsing the first.
+
+  Errors are `{ "api-error": <number>, "api-error-msg": "..." }`. **Code 43 is the credential check**, and it is the only code that means a bad user id or key; a 403 with another code is a plan or permission limit. The auth check runs before routing, so a bad key hides whether a route exists.
+examples:
+  read:
+    path: ip.info
+    title: Geolocate a public address
+    args:
+      ip: 1.1.1.1
+  write:
+    path: messaging.smsVerify
+    title: Send a security code by SMS
+    args:
+      number: "+61412345678"
+      codeLength: 6
+apiExamples:
+  ip.info:
+    call: "{ ip: '1.1.1.1' }"
+  ip.blocklist:
+    call: "{ ip: '1.1.1.1' }"
+  ip.probe:
+    call: "{ ip: '1.1.1.1' }"
+  email.validate:
+    call: "{ email: 'tech@neutrinoapi.com' }"
+  email.verify:
+    call: "{ email: 'tech@neutrinoapi.com' }"
+  phone.validate:
+    call: "{ number: '+61412345678' }"
+  phone.hlrLookup:
+    call: "{ number: '+61412345678' }"
+  web.uaLookup:
+    call: "{ ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/130.0 Safari/537.36' }"
+  web.domainLookup:
+    call: "{ host: 'neutrinoapi.com' }"
+  web.hostReputation:
+    call: "{ host: 'neutrinoapi.com' }"
+  web.urlInfo:
+    call: "{ url: 'https://neutrinoapi.com', fetchContent: true }"
+  geocode.address:
+    call: "{ address: '48 Greys Avenue, Auckland' }"
+  geocode.reverse:
+    call: "{ latitude: -36.8499, longitude: 174.7611 }"
+  commerce.binLookup:
+    call: "{ binNumber: '48334884' }"
+  commerce.convert:
+    call: "{ fromValue: 100, fromType: 'USD', toType: 'EUR' }"
+  messaging.smsVerify:
+    call: "{ number: '+61412345678', codeLength: 6 }"
+apiNotes:
+  email.verify: 'verified is separate from valid: the domain can be valid and the mailbox check still refused.'
+  messaging.smsVerify: 'Sends a real SMS and spends a credit. A 5xx on this route is not retried.'
+  web.urlInfo: 'Neutrino fetches the URL themselves, so a redirect is followed by them and the call costs more than a header read.'
+  commerce.convert: 'result is a string and result-float a number; both are returned.'
