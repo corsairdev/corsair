@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Mistral AI: every `mistralai.api.*` operation with input and output types."
+title: "Mistral AI API reference"
+sidebarTitle: "API"
+description: "API reference for the Mistral AI plugin in Corsair: every `mistralai.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `mistralai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -17,7 +16,7 @@ Every `mistralai.api.*` operation is listed below with parameter shapes and retu
 
 Run an agent on a list of messages with the agent's instructions and tools; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.agents.complete({ agent_id: '<agent id>', messages: [{ role: 'user', content: 'Summarize ticket #4521' }] });
@@ -1060,7 +1059,7 @@ await corsair.mistralai.api.agents.upsertAlias({ agent_id: '<agent id>', alias: 
 
 Turn text into speech; returns base64 audio (mp3 by default); spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.audio.speech({ input: 'Your order has shipped.', voice_id: '<voice id>', response_format: 'mp3' });
@@ -1098,7 +1097,7 @@ await corsair.mistralai.api.audio.speech({ input: 'Your order has shipped.', voi
 
 Transcribe audio from base64 content, a URL or an uploaded file, optionally with speakers and timestamps; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.audio.transcribe({ model: 'voxtral-mini-latest', file_url: 'https://example.com/call.mp3', timestamp_granularities: ['segment'] });
@@ -1547,7 +1546,7 @@ Cancellation is a request; `batch.get` shows CANCELLATION_REQUESTED until the jo
 | `error_file` | `string \| null` | No | — |
 | `errors` | `object[]` | Yes | — |
 | `outputs` | `Record<string, any>[] \| null` | No | — |
-| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED` | Yes | — |
+| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED \| string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `total_requests` | `number` | Yes | — |
 | `completed_requests` | `number` | Yes | — |
@@ -1578,7 +1577,7 @@ Cancellation is a request; `batch.get` shows CANCELLATION_REQUESTED until the jo
 
 Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits and needs a Mistral plan with billing enabled (402 otherwise). Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.batch.create({ endpoint: '/v1/chat/completions', model: 'mistral-small-latest', input_files: ['<file id>'] });
@@ -1627,7 +1626,7 @@ Pass exactly one of `input_files` (ids of `.jsonl` files uploaded with purpose `
 | `error_file` | `string \| null` | No | — |
 | `errors` | `object[]` | Yes | — |
 | `outputs` | `Record<string, any>[] \| null` | No | — |
-| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED` | Yes | — |
+| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED \| string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `total_requests` | `number` | Yes | — |
 | `completed_requests` | `number` | Yes | — |
@@ -1720,7 +1719,7 @@ await corsair.mistralai.api.batch.get({ job_id: '<batch job id>' });
 | `error_file` | `string \| null` | No | — |
 | `errors` | `object[]` | Yes | — |
 | `outputs` | `Record<string, any>[] \| null` | No | — |
-| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED` | Yes | — |
+| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED \| string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `total_requests` | `number` | Yes | — |
 | `completed_requests` | `number` | Yes | — |
@@ -1799,7 +1798,7 @@ await corsair.mistralai.api.batch.list({ status: ['RUNNING', 'QUEUED'], page_siz
     count?: number | null
   }[],
   outputs?: Record<string, any>[] | null,
-  status: QUEUED | RUNNING | SUCCESS | FAILED | TIMEOUT_EXCEEDED | CANCELLATION_REQUESTED | CANCELLED,
+  status: QUEUED | RUNNING | SUCCESS | FAILED | TIMEOUT_EXCEEDED | CANCELLATION_REQUESTED | CANCELLED | string,
   created_at: number,
   total_requests: number,
   completed_requests: number,
@@ -1824,7 +1823,7 @@ await corsair.mistralai.api.batch.list({ status: ['RUNNING', 'QUEUED'], page_siz
 
 Generate a chat answer from a list of messages, with optional tools and JSON output; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.chat.complete({ model: 'mistral-small-latest', messages: [{ role: 'system', content: 'Answer briefly.' }, { role: 'user', content: 'Capital of France?' }], temperature: 0.2 });
@@ -2143,7 +2142,7 @@ auto | none | any | required | {
 
 Classify texts with a fine-tuned classifier model; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.classifiers.classify({ model: '<fine-tuned classifier id>', input: ['I want a refund for my order'] });
@@ -2188,7 +2187,7 @@ Record<string, {
 
 Classify conversations with a fine-tuned classifier model; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.classifiers.classifyChat({ model: '<fine-tuned classifier id>', input: { messages: [{ role: 'user', content: 'I want a refund' }] } });
@@ -2481,7 +2480,7 @@ Record<string, {
 
 Score texts against moderation categories (sexual, hate, violence, self-harm…); spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.classifiers.moderate({ model: 'mistral-moderation-latest', input: ['Text to check'] });
@@ -2527,7 +2526,7 @@ await corsair.mistralai.api.classifiers.moderate({ model: 'mistral-moderation-la
 
 Score a conversation against moderation categories; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.classifiers.moderateChat({ model: 'mistral-moderation-latest', input: [{ role: 'user', content: 'Message to check' }] });
@@ -2819,7 +2818,7 @@ await corsair.mistralai.api.classifiers.moderateChat({ model: 'mistral-moderatio
 
 Turn one or more texts into embedding vectors; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.embeddings.create({ model: 'mistral-embed', input: ['How do I reset my password?', 'Billing questions'] });
@@ -3103,7 +3102,7 @@ await corsair.mistralai.api.files.upload({ filename: 'requests.jsonl', content_b
 
 Fill in code between a prompt and a suffix with a Codestral model; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.fim.complete({ model: 'codestral-latest', prompt: 'def fibonacci(n):', suffix: 'print(fibonacci(10))', max_tokens: 64 });
@@ -3437,7 +3436,7 @@ await corsair.mistralai.api.models.update({ model_id: 'ft:open-mistral-7b:<org>:
 
 Read a PDF or image (URL or uploaded file) into markdown per page, with optional structured annotations; spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.ocr.process({ model: 'mistral-ocr-latest', document: { type: 'document_url', document_url: 'https://arxiv.org/pdf/2201.04234' }, pages: [0, 1] });
@@ -3654,7 +3653,7 @@ none | auto | required | {
 
 Generate a response with the Responses API (input items, tools, reasoning); spends Mistral credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mistralai.api.responses.create({ model: 'mistral-medium-latest', input: 'Draft a two-line release note for v2.1', max_output_tokens: 120 });
