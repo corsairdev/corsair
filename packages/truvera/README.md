@@ -14,10 +14,10 @@ pnpm add @corsair-dev/truvera
 |-----------|--------------|------|-------------|
 | `credentials.delete` | `truvera.api.credentials.delete` | `destructive` | Delete a credential metadata record; this does not revoke the credential |
 | `credentials.get` | `truvera.api.credentials.get` | `read` | Read one credential metadata, and its contents when it was persisted |
-| `credentials.issue` | `truvera.api.credentials.issue` | `write` | Issue and sign a verifiable credential, optionally distributing it to a holder, persisting it, or making it revocable |
+| `credentials.issue` | `truvera.api.credentials.issue` | `destructive` | Issue and sign a verifiable credential, optionally distributing it to a holder, persisting it, or making it revocable |
 | `credentials.list` | `truvera.api.credentials.list` | `read` | List the credential metadata on the account, with offset paging |
-| `credentials.revoke` | `truvera.api.credentials.revoke` | `write` | Revoke a credential, which makes every verification of it fail |
-| `credentials.unrevoke` | `truvera.api.credentials.unrevoke` | `write` | Unrevoke a credential, which restores it as valid |
+| `credentials.revoke` | `truvera.api.credentials.revoke` | `destructive` | Revoke a credential, which makes every verification of it fail |
+| `credentials.unrevoke` | `truvera.api.credentials.unrevoke` | `destructive` | Unrevoke a credential, which restores it as valid |
 | `dids.create` | `truvera.api.dids.create` | `write` | Create a DID with its keys, optionally with a DIDComm service endpoint |
 | `dids.delete` | `truvera.api.dids.delete` | `destructive` | Delete a DID and its keys; credentials signed with it can no longer be verified against it |
 | `dids.get` | `truvera.api.dids.get` | `read` | Resolve one DID and read its document |
@@ -34,7 +34,7 @@ pnpm add @corsair-dev/truvera
 | `registries.get` | `truvera.api.registries.get` | `read` | Read one revocation registry |
 | `registries.list` | `truvera.api.registries.list` | `read` | List the revocation registries on the account |
 | `registries.revocationStatus` | `truvera.api.registries.revocationStatus` | `read` | Read whether one credential in a registry is revoked |
-| `registries.revoke` | `truvera.api.registries.revoke` | `write` | Revoke or unrevoke several credentials in one registry in one call |
+| `registries.revoke` | `truvera.api.registries.revoke` | `destructive` | Revoke or unrevoke several credentials in one registry in one call |
 | `schemas.create` | `truvera.api.schemas.create` | `write` | Create a JSON credential schema that a credential type and subject follow |
 | `schemas.delete` | `truvera.api.schemas.delete` | `destructive` | Delete a schema; credentials already issued against it stay valid |
 | `schemas.get` | `truvera.api.schemas.get` | `read` | Read one schema by its id |

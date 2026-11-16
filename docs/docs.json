@@ -4719,19 +4719,19 @@
                 ]
               },
               {
-                "group": "Truvera",
-                "pages": [
-                  "plugins/truvera/overview",
-                  "plugins/truvera/api",
-                  "plugins/truvera/database"
-                ]
-              },
-              {
                 "group": "Trustpilot",
                 "pages": [
                   "plugins/trustpilot/overview",
                   "plugins/trustpilot/api",
                   "plugins/trustpilot/database"
+                ]
+              },
+              {
+                "group": "Truvera",
+                "pages": [
+                  "plugins/truvera/overview",
+                  "plugins/truvera/api",
+                  "plugins/truvera/database"
                 ]
               },
               {
