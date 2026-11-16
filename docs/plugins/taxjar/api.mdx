@@ -405,10 +405,10 @@ await corsair.taxjar.api.nexusRegions.list({});
 
 Record an order transaction for tax reporting; shipping is required even when it is zero
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.taxjar.api.orders.create({ transaction_id: '123', transaction_date: '2026-11-15', to_country: 'US', to_zip: '90002', amount: 16.5, shipping: 1.5, sales_tax: 0.95 });
+await corsair.taxjar.api.orders.create({ transaction_id: '123', transaction_date: '2026-11-15', to_country: 'US', to_zip: '90002', to_state: 'CA', amount: 16.5, shipping: 1.5, sales_tax: 0.95 });
 ```
 
 **Input**
@@ -425,7 +425,7 @@ await corsair.taxjar.api.orders.create({ transaction_id: '123', transaction_date
 | `to_state` | `string` | No | — |
 | `to_city` | `string` | No | — |
 | `to_street` | `string` | No | — |
-| `amount` | `number` | No | The order amount, excluding shipping. |
+| `amount` | `number` | No | The total amount of the order including shipping, excluding sales tax. |
 | `shipping` | `number` | Yes | The shipping charge. TaxJar requires this field, even as 0. |
 | `customer_id` | `string` | No | The unique customer ID you assigned. |
 | `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
@@ -489,7 +489,7 @@ shipping is required even when it is 0; amounts in the response come back as dec
   customer_id?: string | null,
   exemption_type?: string | null,
   line_items?: {
-    id?: string | null,
+    id?: string | number | null,
     quantity?: number | null,
     product_identifier?: string | null,
     product_tax_code?: string | null,
@@ -524,6 +524,7 @@ await corsair.taxjar.api.orders.delete({ transactionId: '123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `provider` | `string` | No | The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with. |
 
 
 
@@ -554,6 +555,7 @@ await corsair.taxjar.api.orders.get({ transactionId: '123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `provider` | `string` | No | The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with. |
 
 
 
@@ -589,7 +591,7 @@ await corsair.taxjar.api.orders.get({ transactionId: '123' });
   customer_id?: string | null,
   exemption_type?: string | null,
   line_items?: {
-    id?: string | null,
+    id?: string | number | null,
     quantity?: number | null,
     product_identifier?: string | null,
     product_tax_code?: string | null,
@@ -648,7 +650,7 @@ Returns transaction IDs under the orders key, not full transactions.
 
 Change an order transaction; a transaction that has been filed may refuse the change
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.taxjar.api.orders.update({ transactionId: '123', amount: 17, shipping: 2 });
@@ -659,6 +661,7 @@ await corsair.taxjar.api.orders.update({ transactionId: '123', amount: 17, shipp
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `sales_tax` | `number` | No | The sales tax collected. |
 | `transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
 | `from_country` | `string` | No | — |
 | `from_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
@@ -670,7 +673,7 @@ await corsair.taxjar.api.orders.update({ transactionId: '123', amount: 17, shipp
 | `to_state` | `string` | No | — |
 | `to_city` | `string` | No | — |
 | `to_street` | `string` | No | — |
-| `amount` | `number` | No | The order amount, excluding shipping. |
+| `amount` | `number` | No | The total amount of the order including shipping, excluding sales tax. |
 | `shipping` | `number` | No | The shipping charge. TaxJar requires this field on a create, even as 0. |
 | `customer_id` | `string` | No | The unique customer ID you assigned. |
 | `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
@@ -728,7 +731,7 @@ await corsair.taxjar.api.orders.update({ transactionId: '123', amount: 17, shipp
   customer_id?: string | null,
   exemption_type?: string | null,
   line_items?: {
-    id?: string | null,
+    id?: string | number | null,
     quantity?: number | null,
     product_identifier?: string | null,
     product_tax_code?: string | null,
@@ -814,10 +817,10 @@ The rate values are decimal strings such as "0.0975"; a street address improves 
 
 Record a refund transaction, linked to its original order by transaction_reference_id
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.taxjar.api.refunds.create({ transaction_id: 'r1', transaction_reference_id: '123', transaction_date: '2026-11-16', to_country: 'US', amount: 16.5, shipping: 1.5 });
+await corsair.taxjar.api.refunds.create({ transaction_id: 'r1', transaction_reference_id: '123', transaction_date: '2026-11-16', to_country: 'US', to_zip: '90002', to_state: 'CA', amount: -16.5, shipping: -1.5, sales_tax: -0.95 });
 ```
 
 **Input**
@@ -834,7 +837,7 @@ await corsair.taxjar.api.refunds.create({ transaction_id: 'r1', transaction_refe
 | `to_state` | `string` | No | — |
 | `to_city` | `string` | No | — |
 | `to_street` | `string` | No | — |
-| `amount` | `number` | No | The order amount, excluding shipping. |
+| `amount` | `number` | No | The total amount of the order including shipping, excluding sales tax. |
 | `shipping` | `number` | Yes | The shipping charge. TaxJar requires this field, even as 0. |
 | `customer_id` | `string` | No | The unique customer ID you assigned. |
 | `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
@@ -897,7 +900,7 @@ Send transaction_reference_id with the original order transaction_id so the refu
   shipping?: number | string | null,
   sales_tax?: number | string | null,
   line_items?: {
-    id?: string | null,
+    id?: string | number | null,
     quantity?: number | null,
     product_identifier?: string | null,
     product_tax_code?: string | null,
@@ -932,6 +935,7 @@ await corsair.taxjar.api.refunds.delete({ transactionId: 'r1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `provider` | `string` | No | The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with. |
 
 
 
@@ -962,6 +966,7 @@ await corsair.taxjar.api.refunds.get({ transactionId: 'r1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `provider` | `string` | No | The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with. |
 
 
 
@@ -995,7 +1000,7 @@ await corsair.taxjar.api.refunds.get({ transactionId: 'r1' });
   shipping?: number | string | null,
   sales_tax?: number | string | null,
   line_items?: {
-    id?: string | null,
+    id?: string | number | null,
     quantity?: number | null,
     product_identifier?: string | null,
     product_tax_code?: string | null,
@@ -1054,10 +1059,10 @@ Returns transaction IDs under the refunds key, not orders.
 
 Change a refund transaction
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.taxjar.api.refunds.update({ transactionId: 'r1', amount: 10, shipping: 1.5 });
+await corsair.taxjar.api.refunds.update({ transactionId: 'r1', transaction_reference_id: '123', amount: -10, shipping: -1.5 });
 ```
 
 **Input**
@@ -1065,6 +1070,7 @@ await corsair.taxjar.api.refunds.update({ transactionId: 'r1', amount: 10, shipp
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `sales_tax` | `number` | No | The sales tax collected. |
 | `transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
 | `transaction_reference_id` | `string` | No | — |
 | `from_country` | `string` | No | — |
@@ -1077,7 +1083,7 @@ await corsair.taxjar.api.refunds.update({ transactionId: 'r1', amount: 10, shipp
 | `to_state` | `string` | No | — |
 | `to_city` | `string` | No | — |
 | `to_street` | `string` | No | — |
-| `amount` | `number` | No | The order amount, excluding shipping. |
+| `amount` | `number` | No | The total amount of the order including shipping, excluding sales tax. |
 | `shipping` | `number` | No | The shipping charge. TaxJar requires this field on a create, even as 0. |
 | `customer_id` | `string` | No | The unique customer ID you assigned. |
 | `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
@@ -1133,7 +1139,7 @@ await corsair.taxjar.api.refunds.update({ transactionId: 'r1', amount: 10, shipp
   shipping?: number | string | null,
   sales_tax?: number | string | null,
   line_items?: {
-    id?: string | null,
+    id?: string | number | null,
     quantity?: number | null,
     product_identifier?: string | null,
     product_tax_code?: string | null,
@@ -1211,7 +1217,7 @@ Calculate the tax for an order from an origin and destination, optionally per li
 **Risk:** `read`
 
 ```ts
-await corsair.taxjar.api.taxes.calculate({ from_country: 'US', from_zip: '33018', to_country: 'US', to_zip: '97035', amount: 15, shipping: 1.5 });
+await corsair.taxjar.api.taxes.calculate({ from_country: 'US', from_zip: '92093', from_state: 'CA', to_country: 'US', to_zip: '90002', to_state: 'CA', amount: 15, shipping: 1.5 });
 ```
 
 **Input**
@@ -1242,9 +1248,9 @@ Records nothing; returns numeric amounts, unlike the transaction routes. Send ei
 
 ```ts
 {
-  id: string,
+  id?: string,
   country: string,
-  zip: string,
+  zip?: string,
   state?: string,
   city?: string,
   street?: string
@@ -1311,7 +1317,7 @@ Records nothing; returns numeric amounts, unlike the transaction routes. Send ei
     special_tax_rate?: number | string | null,
     special_district_tax_collectable?: number | string | null,
     line_items?: {
-      id?: string | null,
+      id?: string | number | null,
       taxable_amount?: number | string | null,
       tax_collectable?: number | string | null,
       combined_tax_rate?: number | string | null,
