@@ -194,6 +194,7 @@ export function junglescout<const T extends JungleScoutPluginOptions>(
 		endpointMeta: junglescoutEndpointMeta,
 		endpointSchemas: junglescoutEndpointSchemas,
 		options,
+		hooks: options.hooks,
 		authConfig: jungleScoutAuthConfig,
 		errorHandlers: mergedErrorHandlers,
 		keyBuilder: async (ctx: JungleScoutKeyBuilderContext, source) => {
