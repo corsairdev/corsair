@@ -308,6 +308,7 @@ describe('documented operation routes', () => {
 	});
 
 	it('asks for the site through a connect link when a stored key has no site', async () => {
+		// Casts through `unknown`: the test stubs only the two key getters the keyBuilder reads, not the whole key manager.
 		const keyBuilderContext = (siteName: string | null) =>
 			({
 				authType: 'api_key',
@@ -320,6 +321,7 @@ describe('documented operation routes', () => {
 			options: Parameters<typeof teamwork>[0],
 			siteName: string | null,
 		) =>
+			// `unknown` cast: the plugin's keyBuilder type is a union over auth types, and this test calls only the api_key branch.
 			(
 				teamwork(options).keyBuilder as unknown as (
 					ctx: TeamworkKeyBuilderContext,

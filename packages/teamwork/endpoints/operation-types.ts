@@ -396,6 +396,14 @@ type TeamworkOpenPartialBody<T> = T extends Array<infer Item>
 				[key: string]: TeamworkJsonValue | undefined;
 			}
 		: T;
+// The task overlay in openapi-schema.ts keeps these bodies' required fields (name on create, taskOptions.notify).
+type TeamworkV3TaskRequestId =
+	| 'v3_post_projects_api_v3_me_personaltasks_json'
+	| 'v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json'
+	| 'v3_post_projects_api_v3_tasklists_tasklistid_tasks_json'
+	| 'v3_patch_projects_api_v3_tasks_taskid_json'
+	| 'v3_put_projects_api_v3_tasks_taskid_json'
+	| 'v3_post_projects_api_v3_tasks_taskid_subtasks_json';
 export type TeamworkEndpointInputs = {
 	[Id in keyof TeamworkV1Inputs]: {
 		[Field in keyof TeamworkV1Inputs[Id]]: Field extends 'body'
@@ -405,7 +413,9 @@ export type TeamworkEndpointInputs = {
 } & TeamworkV2Inputs & {
 		[Id in keyof TeamworkV3Inputs]: {
 			[Field in keyof TeamworkV3Inputs[Id]]: Field extends 'body'
-				? TeamworkOpenPartialBody<TeamworkV3Inputs[Id][Field]>
+				? Id extends TeamworkV3TaskRequestId
+					? TeamworkV3Inputs[Id][Field]
+					: TeamworkOpenPartialBody<TeamworkV3Inputs[Id][Field]>
 				: TeamworkV3Inputs[Id][Field];
 		};
 	};

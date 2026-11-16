@@ -37,6 +37,13 @@ export function resolveTeamworkBaseUrl(siteName: string): string {
 	return `https://${normalized}${TEAMWORK_API_HOST_SUFFIX}`;
 }
 
+export function encodeTeamworkPathValue(value: string): string {
+	if (value === '' || value === '.' || value === '..') {
+		throw new Error('Invalid Teamwork path value');
+	}
+	return encodeURIComponent(value);
+}
+
 // `unknown` because response JSON is untrusted until its operation-specific schema validates it.
 export async function makeTeamworkRequest(
 	options: TeamworkRequest,
@@ -48,6 +55,9 @@ export async function makeTeamworkRequest(
 		BASE: resolveTeamworkBaseUrl(options.siteName),
 		VERSION: options.version ?? '1.0.0',
 		WITH_CREDENTIALS: false,
+		// Core's default encodeURI keeps `/` and `..`, so an id like `../people/1` would
+		// reach another route than the one whose permission was checked.
+		ENCODE_PATH: encodeTeamworkPathValue,
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			Authorization: `Basic ${Buffer.from(`${options.apiKey}:`).toString('base64')}`,

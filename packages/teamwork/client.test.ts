@@ -46,6 +46,48 @@ describe('Teamwork HTTP client', () => {
 		);
 	});
 
+	it('encodes path values whole, so an id cannot reach another route', () => {
+		expect(client.encodeTeamworkPathValue('../people/123')).toBe(
+			'..%2Fpeople%2F123',
+		);
+		expect(client.encodeTeamworkPathValue('42')).toBe('42');
+		for (const bad of ['', '.', '..']) {
+			expect(() => client.encodeTeamworkPathValue(bad)).toThrow(
+				'Invalid Teamwork path value',
+			);
+		}
+	});
+
+	it('sends a traversal id inside its own path segment', async () => {
+		const originalFetch = global.fetch;
+		const fetchMock = jest.fn().mockResolvedValue(
+			new Response('{"STATUS":"OK"}', {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		global.fetch = fetchMock;
+		try {
+			const actualHttp =
+				jest.requireActual<typeof import('corsair/http')>('corsair/http');
+			mockedRequest.mockImplementationOnce(actualHttp.request);
+			await client.makeTeamworkRequest({
+				apiKey: 'secret-key',
+				siteName: 'acme',
+				method: 'DELETE',
+				path: '/projects/{id}.json',
+				pathParameters: { id: '../people/123' },
+				query: {},
+			});
+			const url = String(fetchMock.mock.calls[0]?.[0]);
+			expect(url).toBe(
+				'https://acme.teamwork.com/projects/..%2Fpeople%2F123.json',
+			);
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
 	it('accepts EU sites and pasted site URLs but keeps the host on teamwork.com', () => {
 		expect(client.resolveTeamworkBaseUrl('acme.eu.teamwork.com')).toBe(
 			'https://acme.eu.teamwork.com',
