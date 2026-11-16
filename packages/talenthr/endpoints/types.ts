@@ -150,13 +150,13 @@ export const DirectoryInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'Filter IDs joined by commas, in the form `field:id` (for example `department_id:6,division_id:13`). Get the IDs from `employees.directoryFilters`.',
+			'Filter IDs joined by commas, in the form `field:id` (for example `department_id:6,division_id:13`). TalentHR lists the filter IDs at `GET /directory/filters`, which this plugin does not wrap; the IDs come from the division, department, location and job title lists.',
 		),
 	customFields: z
 		.string()
 		.optional()
 		.describe(
-			'Custom field slugs joined by commas, from `customFields.list`. TalentHR returns them under each row.',
+			'Custom field slugs joined by commas, as set up in TalentHR (its `GET /custom-fields`, which this plugin does not wrap). TalentHR returns them under each row.',
 		),
 });
 
@@ -425,6 +425,10 @@ export const EmployeesRehireInputSchema = z.object({
 		.object({ employment_status_id: z.number().int().positive() })
 		.describe('The status the employee returns to.'),
 	job_record: JobRecordSchema.optional(),
+	prevent_email: z
+		.boolean()
+		.optional()
+		.describe('When true, TalentHR sends no rehire notification email.'),
 });
 
 export type EmployeesRehireInput = z.input<typeof EmployeesRehireInputSchema>;

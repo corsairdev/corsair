@@ -11,6 +11,7 @@ overviewNote: |
   - **Every answer is an envelope.** Successful calls are `{ success: true, data }` and the plugin returns `data` alone. The deletes answer `{ success: true }` with no `data`, so their result is that object.
   - **Updates are not partial.** `employees.update` requires `first_name`, `last_name` and `email` on every call, because TalentHR treats the body as the full contact record rather than a patch. Read the employee first and send those three back with the fields you are changing.
   - **Hiring sends email.** `employees.hire` emails the new employee unless you pass `prevent_email: true`.
+  - **Terminating, rehiring and answering time off also send email.** `employees.terminate` notifies the people given offboarding tasks, `employees.rehire` sends a rehire email unless `prevent_email: true`, and `timeOff.reply` emails the employee the outcome. All of these are `destructive`.
   - **Booking time off emails a manager.** `timeOff.create` with `preapproved: false` or without `preapproved` sends the employee's manager an approval email. Passing `preapproved: true` approves it directly when the caller's role allows.
   - **Time off amounts are strings.** Every budget field arrives as a string with three decimals, such as `"10.000"`. Parse them before doing arithmetic.
   - **Paging is offset based.** `employees.directory` takes `limit` (default 10, maximum 100) and `offset`, and answers `{ total, rows }` where `total` counts every match, not the page.
@@ -38,7 +39,7 @@ apiExamples:
   employees.hire:
     call: "{ first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', hire_date: '2026-12-01', employment_status: { employment_status_id: 1 }, reports_to_employee_id: 15 }"
   employees.update:
-    call: "{ employeeId: 15, city: 'Athens', work_phone: '+30 210 0000000' }"
+    call: "{ employeeId: 15, first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', city: 'Athens', work_phone: '+30 210 0000000' }"
   employees.terminate:
     call: "{ employeeId: 34, effective_date: '2026-12-31', termination_reason: 'Relocation' }"
   employees.rehire:

@@ -157,6 +157,7 @@ export const rehire: TalentHREndpoints['employeesRehire'] = async (
 				reports_to_employee_id: parsed.reports_to_employee_id,
 				employment_status: parsed.employment_status,
 				job_record: parsed.job_record,
+				prevent_email: parsed.prevent_email,
 			},
 		}),
 	);

@@ -239,7 +239,7 @@ const talenthrEndpointMeta = {
 			'Read one employee, including their user role, seniority, custom fields and manager',
 	},
 	'employees.hire': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create an employee with a hire date, employment status and optional job, pay and emergency contact records; TalentHR emails the new employee unless prevent_email is set',
 	},
@@ -249,14 +249,14 @@ const talenthrEndpointMeta = {
 			'Change an employee’s name, contact, address, SSN, birth date, manager or emergency contact',
 	},
 	'employees.terminate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Terminate an employee from a given date, recording the reason and whether the departure was regrettable',
+			'Terminate an employee from a given date, recording the reason and whether the departure was regrettable; TalentHR emails the people given offboarding tasks',
 	},
 	'employees.rehire': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Return a terminated employee to active status from a new hire date, with a manager and employment status',
+			'Return a terminated employee to active status from a new hire date, with a manager and employment status; TalentHR sends a rehire email unless prevent_email is set',
 	},
 	'employees.delete': {
 		riskLevel: 'destructive',
@@ -275,9 +275,9 @@ const talenthrEndpointMeta = {
 			'List one employee’s time off requests with their type, dates, budget and approval state',
 	},
 	'timeOff.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Book time off for an employee, either preapproved or sent to their manager for approval',
+			'Book time off for an employee, either preapproved or sent to their manager for approval by email',
 	},
 	'timeOff.delete': {
 		riskLevel: 'destructive',
@@ -285,9 +285,9 @@ const talenthrEndpointMeta = {
 			'Cancel a time off request, which frees its budget back to the employee',
 	},
 	'timeOff.reply': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Approve or reject a time off request on behalf of the manager',
+			'Approve or reject a time off request on behalf of the manager; TalentHR emails the employee the outcome',
 	},
 	'timeOff.types': {
 		riskLevel: 'read',
