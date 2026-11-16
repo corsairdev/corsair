@@ -6525,5 +6525,21 @@
         "title": "Accept the responses the live API returns"
       }
     ]
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/vercel",
+    "dir": "packages/vercel",
+    "name": "Vercel",
+    "version": "0.1.4",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2550,
+        "title": "Current REST API, 55 operations, OAuth and managed auth"
+      }
+    ]
   }
 ]
