@@ -3,16 +3,18 @@ description: 'Read and write a Splitwise account: groups, friends, expenses, com
 domain: splitwise.com
 recommendedAuth: api_key
 overviewNote: |
-  Create a personal key on your app's details page at https://secure.splitwise.com/apps, or use an OAuth access token. Send it as a Bearer token.
+  Create a personal key on your app's details page at https://secure.splitwise.com/apps, or use an OAuth access token. Send it as a Bearer token. Registering an app needs an active Splitwise Pro subscription (as of 11-2026).
 
   Things to know before you write:
 
   - **Money is a string.** Splitwise sends every amount as a decimal string such as `"25.0"`, and this plugin keeps that type in its outputs. Inputs take a number and send it as a two-decimal string.
   - **A 200 can mean the write failed.** `groups.delete`, `groups.undelete`, `groups.addUser`, `groups.removeUser` and the expense writes answer 200 with `success: false` or a populated `errors` map. The plugin throws `SplitwiseOperationError` in that case, so a resolved promise means the write applied.
   - **Updates replace shares.** Passing `users` to `expenses.update` replaces every share on the expense. The schema requires `cost` alongside it.
-  - **Splitting.** `expenses.create` takes either `split_equally: true` with a `group_id`, or a `users` list whose paid and owed amounts add up to `cost`. Both are checked before the request.
+  - **Splitting.** `expenses.create` takes either `split_equally: true` with a `group_id`, or a `users` list whose paid and owed amounts add up to `cost` in whole cents. Amounts take at most two decimal places. Both are checked before the request.
+  - **Writes that reach people are destructive.** Adding friends or group members invites them by email, and creating or editing an expense or commenting notifies the people on it. `friends.add`, `friends.addMany`, `groups.create`, `groups.addUser`, `expenses.create`, `expenses.update` and `comments.create` are `destructive`.
+  - **Errors.** HTTP failures are core's `ApiError`. `describeSplitwiseError` reads the message out of either error body, and `isNotLoggedIn` spots the 401 for a missing or revoked key.
   - **Categories.** An expense must use a subcategory from `categories.list`; a parent category is rejected by the API.
-  - **Rate limits.** Splitwise answers 429 when you exceed them and does not publish the exact limits. The plugin retries a 429 up to three times, honouring `Retry-After`.
+  - **Rate limits.** Splitwise answers 429 when you exceed them and does not publish the exact limits. Core retries a 429 up to three times, honouring `Retry-After`.
   - **Reads only are replayed.** A 5xx is retried for a read. `expenses.create` is not idempotent, so a failed write is returned rather than sent again.
 examples:
   read:
@@ -84,7 +86,7 @@ apiExamples:
 apiNotes:
   users.get: 'Splitwise only answers for people you share a group or an expense with; anyone else is a 403.'
   users.update: 'The ID travels in the path, so it cannot also be changed through the body.'
-  groups.create: 'Members are sent as users__{index}__{property} keys. A member needs either `user_id`, or `first_name` and `email`.'
+  groups.create: 'Members are sent as `users__<index>__<property>` keys. A member needs either `user_id`, or `first_name` and `email`.'
   groups.delete: 'Deletes the group and every expense in it. The group can be restored with `groups.undelete`.'
   groups.undelete: 'This route reports `errors` as an array of strings rather than the map every other write uses.'
   groups.removeUser: 'Splitwise refuses while the user has a non-zero balance.'

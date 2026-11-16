@@ -276,7 +276,7 @@ const splitwiseEndpointMeta = {
 		description: 'Get one group with its members, balances and debts',
 	},
 	'groups.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a group and add members by user ID or by name and email; the current user is added automatically',
 	},
@@ -290,7 +290,7 @@ const splitwiseEndpointMeta = {
 		description: 'Restore a deleted group',
 	},
 	'groups.addUser': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Add a Splitwise user, or a new person by name and email, to a group',
 	},
@@ -309,12 +309,12 @@ const splitwiseEndpointMeta = {
 		description: 'Get one friend with their balances and shared groups',
 	},
 	'friends.add': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Add a friend by email; a first name is needed when the person has no Splitwise account yet',
 	},
 	'friends.addMany': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Add several friends in one call, returning each result alongside any errors',
 	},
@@ -334,12 +334,12 @@ const splitwiseEndpointMeta = {
 		description: 'Get one expense with its shares, repayments and comments',
 	},
 	'expenses.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Record an expense, split either equally across a group or by an explicit paid and owed share per person',
 	},
 	'expenses.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Change an expense; passing any share replaces every share on it',
 	},
@@ -357,7 +357,7 @@ const splitwiseEndpointMeta = {
 		description: 'List the comments on an expense',
 	},
 	'comments.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Post a comment on an expense',
 	},
 	'comments.delete': {
