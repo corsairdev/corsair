@@ -125,7 +125,7 @@ await corsair.superchat.api.contactLists.addContact({ contactId: 'ct_1aBMS9FKwvS
 | `contactId` | `string` | Yes | — |
 | `contactListId` | `string` | Yes | — |
 
-The list id goes in the body as { id }, not in the path, on this route. Removing a contact takes it in the path instead.
+The list id goes in the body as `{ id }`, not in the path, on this route. Removing a contact takes it in the path instead.
 
 
 
@@ -201,9 +201,6 @@ await corsair.superchat.api.contactLists.delete({ contactListId: 'cl_1aBMS9FKwvS
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `description` | `string \| null` | No | — |
-| `url` | `string \| null` | No | — |
 
 
 
@@ -213,7 +210,7 @@ await corsair.superchat.api.contactLists.delete({ contactListId: 'cl_1aBMS9FKwvS
 
 `contactLists.forContact`
 
-List the contact lists one contact belongs to; this route answers a bare array rather than the paged envelope
+List the contact lists one contact belongs to, paged by cursor like the other lists
 
 **Risk:** `read`
 
@@ -226,13 +223,22 @@ await corsair.superchat.api.contactLists.forContact({ contactId: 'ct_1aBMS9FKwvS
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactId` | `string` | Yes | — |
+| `after` | `string` | No | Cursor: the id to read records after. |
+| `before` | `string` | No | Cursor: the id to read records before. |
+| `limit` | `number` | No | Objects per page, 1 to 100. Defaults to 50. |
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="results full type">
 
 ```ts
 {
@@ -243,7 +249,20 @@ await corsair.superchat.api.contactLists.forContact({ contactId: 'ct_1aBMS9FKwvS
 }[]
 ```
 </Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  previous_cursor?: string | null,
+  next_url?: string | null,
+  previous_url?: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -360,9 +379,9 @@ await corsair.superchat.api.contacts.create({ first_name: 'Jane', last_name: 'Sm
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `first_name` | `string \| null` | No | — |
-| `last_name` | `string \| null` | No | — |
-| `gender` | `male \| female \| diverse \| unknown \| null` | No | — |
+| `first_name` | `string \| null` | Yes | Required; the value may be null. |
+| `last_name` | `string \| null` | Yes | Required; the value may be null. |
+| `gender` | `male \| female \| diverse \| unknown \| null` | Yes | Required; the value may be null. |
 | `custom_attributes` | `object[] \| null` | No | — |
 | `handles` | `object[]` | Yes | — |
 
@@ -375,7 +394,7 @@ At least one handle is required; a handle is the email address or phone number t
 {
   identifier?: string | null,
   type?: string | null,
-  value?: unknown | null,
+  value?: any | null,
   attribute_id?: string | null
 }[] | null
 ```
@@ -385,7 +404,7 @@ At least one handle is required; a handle is the email address or phone number t
 
 ```ts
 {
-  id?: string | null,
+  id: string | null,
   type: mail | phone,
   value: string
 }[]
@@ -426,7 +445,7 @@ At least one handle is required; a handle is the email address or phone number t
 {
   identifier?: string | null,
   type?: string | null,
-  value?: unknown | null,
+  value?: any | null,
   attribute_id?: string | null
 }[] | null
 ```
@@ -519,7 +538,7 @@ await corsair.superchat.api.contacts.get({ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ'
 {
   identifier?: string | null,
   type?: string | null,
-  value?: unknown | null,
+  value?: any | null,
   attribute_id?: string | null
 }[] | null
 ```
@@ -579,7 +598,7 @@ Paging is by cursor: set after or before, never both, and limit is 1 to 100 with
   custom_attributes?: {
     identifier?: string | null,
     type?: string | null,
-    value?: unknown | null,
+    value?: any | null,
     attribute_id?: string | null
   }[] | null,
   created_at?: string | null,
@@ -671,7 +690,7 @@ Every expression has to match. A custom_attribute expression also needs an ident
   custom_attributes?: {
     identifier?: string | null,
     type?: string | null,
-    value?: unknown | null,
+    value?: any | null,
     attribute_id?: string | null
   }[] | null,
   created_at?: string | null,
@@ -727,7 +746,7 @@ The route requires first_name, last_name and gender even though it is a PATCH. T
 
 ```ts
 {
-  id?: string | null,
+  id: string | null,
   type: mail | phone,
   value: string
 }[] | null
@@ -740,7 +759,7 @@ The route requires first_name, last_name and gender even though it is a PATCH. T
 {
   identifier?: string | null,
   type?: string | null,
-  value?: unknown | null,
+  value?: any | null,
   attribute_id?: string | null
 }[] | null
 ```
@@ -780,7 +799,7 @@ The route requires first_name, last_name and gender even though it is a PATCH. T
 {
   identifier?: string | null,
   type?: string | null,
-  value?: unknown | null,
+  value?: any | null,
   attribute_id?: string | null
 }[] | null
 ```
@@ -821,9 +840,9 @@ await corsair.superchat.api.conversations.get({ id: 'cv_1aBMS9FKwvSDjljRJI1aZ' }
 | `status` | `string \| null` | No | — |
 | `channel` | `object \| null` | No | — |
 | `inbox` | `object \| null` | No | — |
-| `labels` | `unknown[] \| null` | No | — |
-| `assigned_users` | `unknown[] \| null` | No | — |
-| `contacts` | `unknown[] \| null` | No | — |
+| `labels` | `any[] \| null` | No | — |
+| `assigned_users` | `any[] \| null` | No | — |
+| `contacts` | `any[] \| null` | No | — |
 | `snoozed_until` | `string \| null` | No | ISO 8601. |
 | `time_window` | `object \| null` | No | — |
 | `url` | `string \| null` | No | — |
@@ -909,9 +928,9 @@ await corsair.superchat.api.conversations.list({ limit: 20 });
     id?: string | null,
     name?: string | null
   } | null,
-  labels?: unknown[] | null,
-  assigned_users?: unknown[] | null,
-  contacts?: unknown[] | null,
+  labels?: any[] | null,
+  assigned_users?: any[] | null,
+  contacts?: any[] | null,
   snoozed_until?: string | null,
   time_window?: {
     start?: string | null,
@@ -956,6 +975,9 @@ await corsair.superchat.api.conversations.messages({ id: 'cv_1aBMS9FKwvSDjljRJI1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The conversation id, as `cv_...`. |
+| `after` | `string` | No | Cursor: the id to read records after. |
+| `before` | `string` | No | Cursor: the id to read records before. |
+| `limit` | `number` | No | Objects per page, 1 to 100. Defaults to 50. |
 
 
 
@@ -980,8 +1002,10 @@ await corsair.superchat.api.conversations.messages({ id: 'cv_1aBMS9FKwvSDjljRJI1
     type?: string | null,
     body?: string | null
   } | null,
-  to?: unknown[] | null,
-  from?: unknown | null,
+  to?: any[] | {
+    channel_id?: string | null
+  } | null,
+  from?: any | null,
   created_at?: string | null,
   updated_at?: string | null,
   direction?: string | null,
@@ -1042,9 +1066,9 @@ Snoozing needs both status snoozed and a snoozed_until time, or the API rejects 
 | `status` | `string \| null` | No | — |
 | `channel` | `object \| null` | No | — |
 | `inbox` | `object \| null` | No | — |
-| `labels` | `unknown[] \| null` | No | — |
-| `assigned_users` | `unknown[] \| null` | No | — |
-| `contacts` | `unknown[] \| null` | No | — |
+| `labels` | `any[] \| null` | No | — |
+| `assigned_users` | `any[] \| null` | No | — |
+| `contacts` | `any[] \| null` | No | — |
 | `snoozed_until` | `string \| null` | No | ISO 8601. |
 | `time_window` | `object \| null` | No | — |
 | `url` | `string \| null` | No | — |
@@ -1209,8 +1233,8 @@ await corsair.superchat.api.messages.get({ id: 'me_1aBMS9FKwvSDjljRJI1aZ' });
 | `conversation_id` | `string \| null` | No | — |
 | `in_reply_to` | `string \| null` | No | — |
 | `content` | `object \| null` | No | — |
-| `to` | `unknown[] \| null` | No | — |
-| `from` | `unknown \| null` | No | — |
+| `to` | `any[] \| object \| null` | No | — |
+| `from` | `any \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 | `direction` | `string \| null` | No | — |
@@ -1226,6 +1250,15 @@ await corsair.superchat.api.messages.get({ id: 'me_1aBMS9FKwvSDjljRJI1aZ' });
 } | null
 ```
 </Accordion>
+
+<Accordion title="to full type">
+
+```ts
+any[] | {
+  channel_id?: string | null
+} | null
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -1238,7 +1271,7 @@ await corsair.superchat.api.messages.get({ id: 'me_1aBMS9FKwvSDjljRJI1aZ' });
 
 Send a text message on a channel to one recipient. This reaches a real person on WhatsApp, SMS or another channel, and the content has to suit that channel
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.superchat.api.messages.send({ to: [{ identifier: 'jane@example.com' }], from: { channel_id: 'mc_1aBMS9FKwvSDjljRJI1aZ', name: 'Acme Support' }, content: { type: 'text', body: 'Hello!' } });
@@ -1296,8 +1329,8 @@ Delivers to a real person on the channel named in from. The content has to suit 
 | `conversation_id` | `string \| null` | No | — |
 | `in_reply_to` | `string \| null` | No | — |
 | `content` | `object \| null` | No | — |
-| `to` | `unknown[] \| null` | No | — |
-| `from` | `unknown \| null` | No | — |
+| `to` | `any[] \| object \| null` | No | — |
+| `from` | `any \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 | `direction` | `string \| null` | No | — |
@@ -1310,6 +1343,15 @@ Delivers to a real person on the channel named in from. The content has to suit 
 {
   type?: string | null,
   body?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="to full type">
+
+```ts
+any[] | {
+  channel_id?: string | null
 } | null
 ```
 </Accordion>
