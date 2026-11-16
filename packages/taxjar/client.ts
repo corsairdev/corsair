@@ -116,6 +116,17 @@ export async function makeTaxJarRequest(
 }
 
 /**
+ * A customer or transaction is addressed by the id the caller assigned, which
+ * can be an email address. The record segment is replaced with a marker.
+ */
+export function maskPath(url: string): string {
+	return (url.split('?')[0] ?? url).replace(
+		/(\/(?:customers|transactions\/orders|transactions\/refunds))\/[^/]+/,
+		'$1/[id]',
+	);
+}
+
+/**
  * Core's ApiError keeps the request it failed on: an order, refund or
  * customer body with names, street addresses and amounts, and the query.
  * This rebuilds it without them and keeps what core and the handlers read:
@@ -125,10 +136,10 @@ export function stripRequestData(error: ApiError): ApiError {
 	return new ApiError(
 		{
 			method: error.request.method,
-			url: error.request.url.split('?')[0] ?? '',
+			url: maskPath(error.request.url),
 		},
 		{
-			url: error.url.split('?')[0] ?? '',
+			url: maskPath(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,

@@ -623,6 +623,17 @@ describe('error handling', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('masks a customer id in the error URLs', async () => {
+		respond(notFoundResponse, 404);
+
+		const error = await rejection(
+			invoke(Customers.customersGet, { customerId: 'buyer@example.com' }),
+		);
+
+		expect(JSON.stringify(error)).not.toContain('buyer');
+		expect(error.request.url).toBe('/customers/[id]');
+	});
+
 	it('never leaks the key through the error', async () => {
 		respond(unauthorizedResponse, 401);
 
