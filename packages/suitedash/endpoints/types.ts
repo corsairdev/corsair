@@ -359,9 +359,18 @@ const CompaniesGetResponseSchema = oneOf(CompanySchema);
 
 export type CompaniesGetResponse = z.infer<typeof CompaniesGetResponseSchema>;
 
+// The spec's update body has no `role`, and the meta route marks role as
+// read/create only, so an update does not take it; `name` is optional like
+// every other field, since only the fields sent change.
+const {
+	role: _createOnlyRole,
+	name: _requiredName,
+	...companyUpdateBody
+} = companyBody;
 const CompaniesUpdateInputSchema = z.object({
 	...CompanyTargetSchema.shape,
-	...companyBody,
+	...companyUpdateBody,
+	name: z.string().min(1).optional(),
 });
 
 export type CompaniesUpdateInput = z.infer<typeof CompaniesUpdateInputSchema>;
@@ -376,14 +385,6 @@ const CompaniesMetaInputSchema = z.object({});
 
 export type CompaniesMetaInput = z.infer<typeof CompaniesMetaInputSchema>;
 
-/**
- * The meta routes answer an array of attribute maps, and the map keys are the
- * account's own field uuids, so there is no fixed shape to type.
- */
-/**
- * The `meta` routes answer a bare object keyed by attribute name, with no
- * envelope (spec: `{ "{attributeName}": MetaAttribute }`; live 11-16 the same).
- */
 const MetaResponseSchema = z.record(z.string(), MetaAttributeSchema);
 
 export type MetaResponse = z.infer<typeof MetaResponseSchema>;

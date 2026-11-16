@@ -7,6 +7,7 @@ import {
 	authProblem,
 	businessFailure,
 	company,
+	companyMetaLive,
 	contact,
 	metaAttribute,
 	pagination,
@@ -169,8 +170,7 @@ describe('companies', () => {
 
 		await invoke(Companies.update, {
 			identifier: 'e2c43cd3-eb1c-4269-a184-ffd9d26d6ef8',
-			name: 'Renamed',
-			role: 'Client',
+			phone: '+1 555 0100',
 		});
 
 		const sent = lastRequest(fetchMock);
@@ -178,20 +178,40 @@ describe('companies', () => {
 		expect(sent.path).toBe(
 			'/secure-api/company/e2c43cd3-eb1c-4269-a184-ffd9d26d6ef8',
 		);
-		expect(sent.body).toEqual({ name: 'Renamed', role: 'Client' });
+		// Neither name nor role is required; role cannot be changed by an update.
+		expect(sent.body).toEqual({ phone: '+1 555 0100' });
+	});
+
+	it('drops role from an update, which the API only takes on create', async () => {
+		respond(fetchMock, { success: true, message: null, data: company });
+
+		await invoke(Companies.update, {
+			identifier: 'e2c43cd3-eb1c-4269-a184-ffd9d26d6ef8',
+			name: 'Renamed',
+			role: 'Client',
+		});
+
+		expect(lastRequest(fetchMock).body).toEqual({ name: 'Renamed' });
+	});
+
+	it('parses the meta map the live API returned', async () => {
+		respond(fetchMock, companyMetaLive);
+
+		const result = (await invoke(Companies.meta, {})) as Record<
+			string,
+			{ allowed_values?: string[] | null }
+		>;
+
+		expect(result.role?.allowed_values).toEqual(['Lead', 'Prospect', 'Client']);
 	});
 
 	it('reads the account meta attributes', async () => {
-		respond(fetchMock, {
-			success: true,
-			message: null,
-			data: [{ 'abc-123': metaAttribute }],
-		});
+		respond(fetchMock, { 'abc-123': metaAttribute });
 
 		const result = await invoke(Companies.meta, {});
 
 		expect(lastRequest(fetchMock).path).toBe('/secure-api/company/meta');
-		expect(result).toMatchObject({ data: [{ 'abc-123': metaAttribute }] });
+		expect(result).toEqual({ 'abc-123': metaAttribute });
 	});
 });
 
@@ -264,7 +284,7 @@ describe('contacts', () => {
 	});
 
 	it('reads the contact meta attributes', async () => {
-		respond(fetchMock, { success: true, message: null, data: [metaAttribute] });
+		respond(fetchMock, { first_name: metaAttribute });
 
 		await invoke(Contacts.meta, {});
 
@@ -328,7 +348,7 @@ describe('projects', () => {
 	});
 
 	it('reads the project meta attributes', async () => {
-		respond(fetchMock, { success: true, message: null, data: [metaAttribute] });
+		respond(fetchMock, { first_name: metaAttribute });
 
 		await invoke(Projects.meta, {});
 

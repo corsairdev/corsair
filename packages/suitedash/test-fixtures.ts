@@ -113,3 +113,29 @@ export const businessFailure = {
 	message: 'The company was not found',
 	data: [],
 };
+
+/** `GET /company/meta`, live 11-16 (trial): a bare attribute map, no envelope. */
+export const companyMetaLive = {
+	uid: {
+		type: 'string',
+		format: 'uuid',
+		required: false,
+		nullable: false,
+		allowed_on_action: ['read'],
+	},
+	role: {
+		type: 'string',
+		required: true,
+		nullable: false,
+		allowed_on_action: ['read', 'create'],
+		allowed_values: ['Lead', 'Prospect', 'Client'],
+		field_name: 'Role',
+	},
+	name: {
+		type: 'string',
+		required: true,
+		nullable: false,
+		allowed_on_action: ['read', 'create', 'update'],
+		field_name: 'Name',
+	},
+};
