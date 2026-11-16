@@ -9,7 +9,7 @@ overviewNote: |
 
   - **Every generation is paid.** `chat.completions`, `responses.create` and `images.create` spend credits and produce something new, so they are `destructive` and need approval. `web.search` also spends credits per search, but it only returns data, so it is a `read`. Check `balance.get` for what is left.
   - **A 402 means the credits ran out.** Waiting does not help, so the plugin never retries a 402. Errors are core's `ApiError` with the request body removed; `textCortexErrorDetails(error)` reads the provider's message, code and per-field details.
-  - **The models route is the place to start.** `models.list` returns the IDs `chat.completions` and `responses.create` accept. Use the base ID and set `reasoning_effort` instead of a `-thinking` variant, which is deprecated.
+  - **The models route is the place to start.** `models.list` returns the IDs `chat.completions` and `responses.create` accept. Use the base ID rather than a deprecated `-thinking` variant; on `chat.completions`, set `reasoning_effort` instead (`responses.create` does not take it).
   - **Two request shapes.** `chat.completions` takes an OpenAI-style `messages` array. `responses.create` takes a single `input` string with optional `instructions`, and stores nothing: the plugin pins `store: false` and rejects `store: true`.
   - **Text is the supported content.** `chat.completions` sends plain-text messages. Image inputs, tool calls and streaming are not modelled, and the request schemas are strict, so an unsupported field such as `tools` or `stream` is rejected before anything is sent or billed.
   - **Errors come in three shapes.** The chat route answers the OpenAI `{ error: { message, type } }` envelope, TextCortex's own routes answer `{ message, status }` or `{ detail }`, and a validation failure puts an array in `detail`. All three are parsed, and a validation array keeps each field's location.
@@ -44,4 +44,4 @@ apiNotes:
   'responses.create': 'Spends credits; store is always sent as false and store: true is rejected.'
   'images.create': 'Spends credits per image. TextCortex makes one image per call and returns a URL.'
   'web.search': 'Spends credits per search; returns up to 10 results in `data`, and `website` limits them to one site.'
-  'models.list': 'Use the base model ID and reasoning_effort rather than a deprecated -thinking variant.'
+  'models.list': 'Use the base model ID rather than a deprecated -thinking variant; chat.completions takes reasoning_effort for that.'
