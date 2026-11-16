@@ -294,12 +294,12 @@ const teltelEndpointMeta = {
 			'Read the account balance, its credit limit and the outstanding amount where one is owed',
 	},
 	'sms.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send one SMS from a verified number or sender ID, charging the account per part',
 	},
 	'sms.sendBulk': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send many SMS in one call; a partial result answers 207 with the messages that failed',
 	},
@@ -338,7 +338,7 @@ const teltelEndpointMeta = {
 		description: "Change a campaign's title, sender, groups, message or rate",
 	},
 	'campaigns.action': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Start, pause or stop a campaign; start sends to every contact in its groups',
 	},
@@ -404,7 +404,7 @@ const teltelEndpointMeta = {
 			'List calls with their duration, cost and hangup reason, filtered by direction or start time',
 	},
 	'calls.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Place a click-to-call between two numbers, which bills per minute once answered',
 	},

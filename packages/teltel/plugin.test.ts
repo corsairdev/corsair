@@ -85,30 +85,31 @@ describe('teltel plugin definition', () => {
 		}
 	});
 
-	it('marks only the deletes destructive and irreversible', () => {
+	it('marks deletes, sends and dials destructive, and deletes irreversible', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = Object.entries(meta)
 			.filter(([, entry]) => entry.riskLevel === 'destructive')
 			.map(([name]) => name)
 			.sort();
 
+		// R8: sends and calls bill the account and reach people; starting a
+		// campaign sends to every contact in its groups.
 		expect(destructive).toEqual([
+			'calls.create',
+			'campaigns.action',
 			'campaigns.delete',
 			'contactGroups.delete',
 			'contacts.delete',
+			'sms.send',
+			'sms.sendBulk',
 		]);
-		for (const name of destructive) {
-			expect(meta[name as keyof typeof meta]?.irreversible).toBe(true);
+		for (const name of [
+			'campaigns.delete',
+			'contactGroups.delete',
+			'contacts.delete',
+		] as const) {
+			expect(meta[name]?.irreversible).toBe(true);
 		}
-	});
-
-	it('treats sending and starting a campaign as writes', () => {
-		const meta = plugin.endpointMeta ?? {};
-		expect(meta['sms.send']?.riskLevel).toBe('write');
-		expect(meta['sms.sendBulk']?.riskLevel).toBe('write');
-		// Starting a campaign sends to every contact in its groups.
-		expect(meta['campaigns.action']?.riskLevel).toBe('write');
-		expect(meta['calls.create']?.riskLevel).toBe('write');
 	});
 
 	it('registers a schema for every operation, in both directions', () => {
