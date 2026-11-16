@@ -1,0 +1,59 @@
+displayName: Deepline
+description: Find GTM tools, run enrichment Plays, retrieve saved lead datasets, and inspect workspace credit usage through Deepline.
+domain: deepline.com
+recommendedAuth: api_key
+overviewNote: |
+  1. Open [Deepline workspace settings](https://code.deepline.com/dashboard/settings) and select the workspace you want Corsair to use.
+  2. Create a workspace API key and copy it into Corsair's Deepline connection. The key selects the workspace, so no workspace ID is required.
+  3. Call `billing.balance` or `plays.list` to check the connection. Discovery and billing reads do not launch a Play.
+
+  The plugin calls the HTTP API directly. Installing Deepline's CLI is optional for applications using Corsair.
+
+  `tools.execute` and `plays.run` are `destructive`. They can spend credits, send messages, or change records through connected providers. Describe the selected tool or Play before approving a dispatch. All other operations are reads, including `plays.activity`, which uses a POST request for its date filters.
+
+  **Execution recovery.** Pass a persisted `idempotencyKey` to `tools.execute`. If a response is lost, call `executions.getByKey` with the same key. A new key starts new work. Native tools return their output under `result`; provider tools can return `toolResponse`. The lookup preserves the original response status and recovery state, including `outcome_unknown`; a successful lookup does not mean the original execution succeeded.
+
+  **Play runs.** `plays.run` returns a run record. Read its public ID from `run.id` and pass it unchanged to `runs.get`; Corsair handles URL encoding. The API does not document a Play-start idempotency key. After an uncertain submission, inspect `runs.history` before deciding whether to submit again. `maxCredits` caps that run's spend. The plugin does not automatically poll or resubmit a Play.
+
+  **Saved rows.** `datasets.rows` reads the dataset namespace returned by the run, such as `result.rows`. Supply `runId` to export that execution's rows. Corsair rejects the response if Deepline cannot confirm the run scope or returns rows attributed to a different run. Without `runId`, this reads the mutable workspace dataset. Advance `offset` by the returned row count; stop on a short page. `datasets.history` exposes immutable row history and its coverage information. Empty or incomplete legacy history does not mean the run produced no rows.
+
+  **Pagination.** `plays.list` enables the SDK's inventory pagination and accepts the returned `cursor`. Its `search` input maps to the SDK's `grep` parameter. Keep the same filters between pages. Tool search uses `offset` and `next_offset`; run history and child runs use cursors. Billing usage uses `recent_offset`, and the JSON ledger uses `cursor`. `runs.logs` continues from `lastSeq` as `afterSeq`. Retention loss remains visible in `logsTruncated`.
+
+  **Billing.** Pending charges, unavailable balances and incomplete history stay explicit in responses. Never treat a missing amount as zero. The ledger needs workspace admin access.
+
+  **Data handling.** The plugin records only operation names in Corsair events. It does not copy lead rows, search terms, inputs, logs or billing data into event payloads or local entities. HTTP errors retain their status and retry metadata but discard provider content that could echo personal data or credentials. Successful responses still contain the requested data.
+
+  **Coverage.** This plugin exposes 21 operations. It does not create or edit Play source, manage provider credentials, buy credits, change billing settings, or accept webhooks. The ledger returns JSON; CSV export is available through Deepline's CLI.
+examples:
+  read:
+    path: tools.search
+    title: Find company enrichment tools
+    args:
+      q: company enrichment
+      limit: 5
+  write:
+    path: plays.run
+    title: Start a reviewed Play with a credit cap
+    args:
+      name: prebuilt/person-linkedin-to-email
+      input:
+        linkedin_url: https://www.linkedin.com/in/example-person/
+      maxCredits: 5
+apiNotes:
+  tools.list: Use a narrow grep or categories filter for large catalogs. compact false includes provider schemas.
+  tools.get: Returns the tool's input contract, output contract, access requirements and pricing. Read it before tools.execute.
+  tools.execute: May spend credits or perform external actions. Send the provider input under payload. Preserve idempotencyKey before dispatch and reuse it for recovery.
+  executions.getByKey: Reads an existing execution without launching another. Inspect responseStatus and executionRecovery.state before interpreting response as a success.
+  plays.list: Uses SDK inventory pagination. Pass cursor with unchanged filters; search maps to grep on the wire.
+  plays.run: May spend credits or perform external actions. A wait timeout returns the existing run. Inspect run.id instead of submitting again.
+  runs.get: The default is the canonical run package. full true returns the legacy wrapper; watchSnapshot true returns a bounded snapshot.
+  datasets.rows: Pass runId to require rows from that run. Use the exact dataset namespace reported by the run and advance offset to retrieve further pages.
+  datasets.history: Follow nextCursor. Read coverage before concluding that history is complete.
+  billing.ledger: Requires workspace admin access. Returns JSON pages, including has_more and next_cursor.
+apiExamples:
+  tools.execute:
+    call: "{ toolId: 'free_simple_company_search', idempotencyKey: 'company-lookup-001', payload: { sql: \"SELECT company_name, normalized_domain FROM companies WHERE normalized_domain = 'example.com' LIMIT 1\" } }"
+  datasets.rows:
+    call: "{ playName: 'prebuilt/person-linkedin-to-email', tableNamespace: 'result.rows', runId: '<run.id>', limit: 100, offset: 0 }"
+  executions.getByKey:
+    call: "{ key: 'company-lookup-001' }"
