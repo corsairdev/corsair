@@ -80,4 +80,15 @@ describe('webhooks.getPayloads', () => {
 			{ method: 'GET', query: { cursor: undefined, limit: undefined } },
 		);
 	});
+
+	it('rejects a limit above 50 before calling Airtable', async () => {
+		await expect(
+			corsair.airtable.api.webhooks.getPayloads({
+				baseId: 'appBase',
+				webhookId: 'achHook',
+				limit: 51,
+			}),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
 });

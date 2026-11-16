@@ -2,6 +2,7 @@ import { makeAirtableRequest } from '../client';
 import type { AirtableContext } from '../index';
 import type { AirtableWebhookPayloadsResponse } from '../webhooks/types';
 import { AirtableWebhookPayloadsResponseSchema } from '../webhooks/types';
+import { AirtableEndpointInputSchemas } from './types';
 
 type WebhooksGetPayloadsInput = {
 	baseId: string;
@@ -14,8 +15,12 @@ type WebhooksGetPayloadsResponse = AirtableWebhookPayloadsResponse;
 
 export const getPayloads = async (
 	ctx: AirtableContext,
-	input: WebhooksGetPayloadsInput,
+	rawInput: WebhooksGetPayloadsInput,
 ): Promise<WebhooksGetPayloadsResponse> => {
+	// Core doesn't apply input schemas to direct calls; parse so a bad cursor or limit
+	// fails here instead of reaching Airtable.
+	const input =
+		AirtableEndpointInputSchemas.webhooksGetPayloads.parse(rawInput);
 	const response = await makeAirtableRequest(
 		`bases/${input.baseId}/webhooks/${input.webhookId}/payloads`,
 		ctx.key,
