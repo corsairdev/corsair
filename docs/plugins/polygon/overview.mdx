@@ -1,0 +1,150 @@
+---
+title: "Polygon OMS plugin"
+sidebarTitle: "Overview"
+description: "Polygon Open Money Stack (OMS) payments API for moving money between crypto and fiat, with quotes, transfers, wallets, customers and webhooks."
+---
+
+Use **Polygon OMS** through Corsair: one client, typed API calls.
+
+Polygon OMS takes a key and secret pair and mints a 60-minute bearer token from them, and the plugin does the exchange for you. Create a project and an API key in the OMS dashboard, then copy the secret at creation time, because OMS shows it once and stores only a hash. Both values are stored on the account: the key as `api_key` and the secret as `api_secret`. The key picks the host: `sk_sdbx_` keys go to the sandbox, which simulates every transfer, and `sk_live_` keys to production. Set `environment` in the plugin options to override it.
+
+Things to know before money moves:
+
+- **Two steps, not one.** `quotes.create` prices a transfer and locks the rate for a few minutes. `transactions.create` accepts that quote and starts the transfer. Nothing moves until the second call, which is why the plugin marks the quote a write and the transaction destructive.
+- **One amount, one side.** Set the amount on the source or the destination, never both: OMS calculates the other side. The plugin rejects a call that sets both or neither before it is sent.
+- **Idempotency.** OMS requires an `Idempotency-Key` header on every non-auth POST. The plugin generates one per call; pass `idempotencyKey` in the input to reuse it, which is what makes a retried transfer the same attempt rather than a second one.
+- **Personal data is write-only.** A customer accepts `birthDate`, `residentialAddress`, `ipAddress` and identifying documents, and OMS never returns them. Reads show the onboarding `status` and, when something is outstanding, a `hold`.
+- **Networks are names, not numbers.** Pass `polygon` or `ethereum`; OMS rejects the numeric chain ids. `networks.list` reports what this project can actually route.
+- **Balances can be negative.** `wallets.balance` mirrors the provider, so a clawback after funds were spent reads as a negative string.
+- **Webhooks.** The plugin registers, reads, updates and deletes OMS webhook endpoints, including the one-time HMAC signing key from `webhooks.create`. It does not handle inbound deliveries.
+
+**What you get:**
+
+- 21 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/polygon better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/polygon better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/polygon better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/polygon better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { polygon } from '@corsair-dev/polygon';
+
+export const corsair = createCorsair({
+	plugins: [
+		polygon(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Polygon OMS API key before the first call: `pnpm corsair setup --plugin=polygon --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+polygon()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'polygon',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the networks this project can route**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.polygon.api.networks.list({ limit: 20 });
+```
+
+
+**Price a USDC to USD bank payout**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.polygon.api.quotes.create({
+	customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k',
+	source: {
+		type: 'walletCrypto',
+		details: { id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn', asset: 'usdc', network: 'polygon' },
+		amount: '100.00',
+	},
+	destination: {
+		type: 'bankUs',
+		details: { id: 'ext_fky491gakzj0dd46qb6whsr2vq', asset: 'usd', network: 'ach' },
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/polygon/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/polygon/api">
+    Every `polygon.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
