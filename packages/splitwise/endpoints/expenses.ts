@@ -157,7 +157,8 @@ export const create: SplitwiseEndpoints['expensesCreate'] = async (
 			return { method: 'POST', path: 'create_expense', body };
 		},
 		{
-			log: (parsed) => ({ cost: parsed.cost, group_id: parsed.group_id }),
+			// The amount is the customer's own data, so only the group is logged.
+			log: (parsed) => ({ group_id: parsed.group_id }),
 			// Splitwise answers 200 with a populated `errors` map when it refused
 			// the expense; the status code alone says nothing.
 			assert: (result) => requireNoErrors(result, 'create the expense'),

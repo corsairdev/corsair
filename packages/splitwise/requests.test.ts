@@ -507,6 +507,13 @@ describe('expenses', () => {
 			users__1__paid_share: '0.00',
 			users__1__owed_share: '12.50',
 		});
+		// The amount stays out of the event history.
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'splitwise.expenses.create',
+			{ group_id: undefined },
+			'completed',
+		);
 	});
 
 	it('expenses.create supports the equal split shape inside a group', async () => {
