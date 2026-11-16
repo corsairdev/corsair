@@ -115,11 +115,10 @@ await corsair.teltel.api.calls.list({ direction: 'outbound', limit: 50 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 | `sort` | `string` | No | Fields to sort by; prefix one with "-" for descending. |
 | `direction` | `inbound \| outbound` | No | — |
-| `starttime[from]` | `string` | No | — |
-| `starttime[to]` | `string` | No | — |
+| `starttime[from]` | `string` | No | Only calls started after this timestamp (strict). |
+| `starttime[to]` | `string` | No | Only calls started before this timestamp (strict). |
 
 
 
@@ -376,7 +375,6 @@ await corsair.teltel.api.campaigns.list({ limit: 50 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 | `sort` | `string` | No | — |
 | `state` | `string` | No | — |
 
@@ -479,7 +477,6 @@ await corsair.teltel.api.contactGroups.contacts({ groupId: 5 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 | `groupId` | `number` | Yes | The contact group ID. |
 
 
@@ -660,7 +657,6 @@ await corsair.teltel.api.contactGroups.list({});
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 
 
 
@@ -958,7 +954,6 @@ await corsair.teltel.api.contacts.list({ group_id: 5 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 | `sort` | `string` | No | — |
 | `group_id` | `number` | No | — |
 | `phone` | `string` | No | — |
@@ -1111,7 +1106,6 @@ await corsair.teltel.api.inbox.list({ limit: 50 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 | `sort` | `string` | No | — |
 | `from` | `string` | No | — |
 | `to` | `string` | No | — |
@@ -1318,7 +1312,6 @@ await corsair.teltel.api.numbers.list({ limit: 50 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 | `sort` | `string` | No | — |
 
 
@@ -1453,7 +1446,6 @@ await corsair.teltel.api.priceGroups.list({ countryId: 115 });
 | `countryId` | `number` | Yes | The country resource ID the price groups belong to. |
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 
 
 
@@ -1571,7 +1563,7 @@ A partial result answers 207 with success and errors arrays under data; both sha
 |------|------|----------|-------------|
 | `data` | `object[] \| object \| null` | No | — |
 | `success` | `object[] \| null` | No | — |
-| `errors` | `Record<string, string>[] \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1600,6 +1592,17 @@ A partial result answers 207 with success and errors arrays under data; both sha
 {
   id?: string | null,
   index?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  index?: number | null,
+  title?: string | null,
+  detail?: string | null
 }[] | null
 ```
 </Accordion>
@@ -1694,13 +1697,12 @@ await corsair.teltel.api.smsReports.list({ limit: 100, offset: 0, state: 'DONE' 
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 | `sort` | `string` | No | A field to sort by; prefix it with "-" for descending. |
 | `state` | `string` | No | Only messages in this state: NEW, PROC, WAIT, DONE, ERROR or CANCEL. |
 | `from` | `string` | No | Only messages from this number. |
 | `to` | `string` | No | Only messages to this number. |
-| `created_at[from]` | `string` | No | Only messages created on or after this timestamp. |
-| `created_at[to]` | `string` | No | Only messages created on or before this timestamp. |
+| `created_at[from]` | `string` | No | Only messages created after this timestamp (strict), e.g. "2024-03-01T00:00:00". |
+| `created_at[to]` | `string` | No | Only messages created before this timestamp (strict), e.g. "2024-03-31T23:59:59". |
 
 limit runs from 1 to 5000 and defaults to 500; offset skips results. state is NEW, PROC, WAIT, DONE, ERROR or CANCEL; filters travel in one filter value.
 
@@ -1771,7 +1773,6 @@ await corsair.teltel.api.users.list({});
 |------|------|----------|-------------|
 | `limit` | `number` | No | Results to return, 1 to 5000. TelTEL defaults it to 500. |
 | `offset` | `number` | No | Results to skip. TelTEL defaults it to 0. |
-| `fields` | `string` | No | Comma-separated field names to return, leaving the rest out. |
 
 Each user comes back without the api_key field TelTEL includes.
 
