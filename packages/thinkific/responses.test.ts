@@ -204,15 +204,17 @@ describe('Thinkific errors and account fields', () => {
 	});
 
 	it('asks for a connection when the subdomain is missing', async () => {
-		const plugin = thinkific();
+		const { keyBuilder } = thinkific();
+		if (!keyBuilder) throw new Error('Expected a keyBuilder');
+		// The keyBuilder only reads these two key getters; the full KeyBuilderContext isn't needed.
 		const keyContext = {
 			keys: {
 				get_api_key: async () => 'unit-test-api-key',
 				get_subdomain: async () => null,
 			},
-		};
+		} as unknown as Parameters<typeof keyBuilder>[0];
 		await expect(
-			Reflect.apply(plugin.keyBuilder, undefined, [keyContext, 'endpoint']),
+			Promise.resolve().then(() => keyBuilder(keyContext, 'endpoint')),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
