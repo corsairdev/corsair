@@ -372,7 +372,7 @@ Create a contact. At least one handle is required, and a handle is the email add
 **Risk:** `write`
 
 ```ts
-await corsair.superchat.api.contacts.create({ first_name: 'Jane', last_name: 'Smith', handles: [{ type: 'mail', value: 'jane@example.com' }] });
+await corsair.superchat.api.contacts.create({ first_name: 'Jane', last_name: 'Smith', gender: null, handles: [{ id: null, type: 'mail', value: 'jane@example.com' }] });
 ```
 
 **Input**

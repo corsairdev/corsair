@@ -40,7 +40,7 @@ apiExamples:
   contacts.get:
     call: "{ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ' }"
   contacts.create:
-    call: "{ first_name: 'Jane', last_name: 'Smith', handles: [{ type: 'mail', value: 'jane@example.com' }] }"
+    call: "{ first_name: 'Jane', last_name: 'Smith', gender: null, handles: [{ id: null, type: 'mail', value: 'jane@example.com' }] }"
   contacts.update:
     call: "{ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ', first_name: 'Jane', last_name: 'Smith', gender: null }"
   contacts.search:
