@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import {
 	attachment,
 	forwardingAddress,
@@ -70,7 +71,10 @@ describe('supportbee error URLs', () => {
 				(caught: unknown) => caught, // unknown: rejection reason, checked by text
 			);
 
-		expect(JSON.stringify(error)).not.toContain('bob@example.com');
+		// The client percent-encodes the query, so check the URL itself.
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).url).not.toContain('?');
+		expect(JSON.stringify(error)).not.toContain('bob%40example.com');
 	});
 });
 
