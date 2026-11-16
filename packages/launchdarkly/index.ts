@@ -483,7 +483,8 @@ export const launchdarklyEndpointMeta = {
 		description: 'Create a new environment in a project',
 	},
 	'environments.update': {
-		riskLevel: 'write',
+		// Environment settings (approvals, secure mode, TTL) change how live SDKs behave.
+		riskLevel: 'destructive',
 		description: 'Update environment configuration via JSON Patch',
 	},
 	'environments.delete': {
@@ -515,8 +516,10 @@ export const launchdarklyEndpointMeta = {
 		description: 'Create a new feature flag in a project',
 	},
 	'featureFlags.update': {
-		riskLevel: 'write',
-		description: 'Update feature flag rules and variations via JSON Patch',
+		// Toggling a flag or changing its targeting changes what the customer's production app serves.
+		riskLevel: 'destructive',
+		description:
+			'Update feature flag rules and variations via JSON Patch (turning a flag on or off, or changing targeting, changes what live apps serve)',
 	},
 	'featureFlags.delete': {
 		riskLevel: 'destructive',
@@ -545,8 +548,10 @@ export const launchdarklyEndpointMeta = {
 		description: 'Create a new user segment',
 	},
 	'segments.update': {
-		riskLevel: 'write',
-		description: 'Update user segment rules via JSON Patch',
+		// Segments feed flag targeting, so editing one changes who gets which variation.
+		riskLevel: 'destructive',
+		description:
+			'Update user segment rules via JSON Patch (changes who flags that use the segment target)',
 	},
 	'segments.delete': {
 		riskLevel: 'destructive',
@@ -644,15 +649,18 @@ export const launchdarklyEndpointMeta = {
 
 	'users.list': {
 		riskLevel: 'read',
-		description: 'List users in an environment',
+		description:
+			'List users in an environment (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.search)',
 	},
 	'users.get': {
 		riskLevel: 'read',
-		description: 'Get user record in an environment by user key',
+		description:
+			'Get user record in an environment by user key (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.get)',
 	},
 	'users.search': {
 		riskLevel: 'read',
-		description: 'Search users in an environment by query string',
+		description:
+			'Search users in an environment by query string (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.search)',
 	},
 
 	'accessTokens.list': {
@@ -664,7 +672,8 @@ export const launchdarklyEndpointMeta = {
 		description: 'Get details of an access token by ID',
 	},
 	'accessTokens.create': {
-		riskLevel: 'write',
+		// Returns a new API credential with up to the caller's own permissions.
+		riskLevel: 'destructive',
 		description: 'Create a new personal or service access token',
 	},
 	'accessTokens.delete': {
