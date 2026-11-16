@@ -438,22 +438,34 @@ describe('surveymonkey collectors, messages and recipients', () => {
 		await endpoints.messages.create(ctx, {
 			collector_id: '1234',
 			subject: 'Please take my survey',
-			body: 'It only takes a minute.',
+			body_text: 'It only takes a minute. [SurveyLink]',
 		});
 		expect(sentBody()).toEqual({
 			subject: 'Please take my survey',
-			body: 'It only takes a minute.',
+			body_text: 'It only takes a minute. [SurveyLink]',
 		});
 		// Nothing was sent to a respondent: the send route is separate.
 		expect(pathname()).toBe('/v3/collectors/1234/messages');
 	});
 
-	it('sends a message to every recipient on it', async () => {
-		mockFetch(jsonResponse({ ...message, status: 'sent' }));
-		await endpoints.messages.send(ctx, {
+	it('sends a message and reads the documented send answer, which has no id', async () => {
+		// The documented example response for POST .../send.
+		mockFetch(
+			jsonResponse({
+				is_scheduled: false,
+				scheduled_date: '2015-11-04T12:56:55+00:00',
+				body: '<html>...</html>',
+				subject: 'We want your opinion',
+				recipients: ['1234', '1234'],
+				recipient_status: null,
+				type: 'invite',
+			}),
+		);
+		const sent = await endpoints.messages.send(ctx, {
 			collector_id: '1234',
 			message_id: '2345',
 		});
+		expect(sent.recipients).toEqual(['1234', '1234']);
 
 		expect(lastCall().init.method).toBe('POST');
 		expect(pathname()).toBe('/v3/collectors/1234/messages/2345/send');
@@ -461,7 +473,7 @@ describe('surveymonkey collectors, messages and recipients', () => {
 	});
 
 	it('schedules a send instead of sending now', async () => {
-		mockFetch(jsonResponse({ ...message, status: 'scheduled' }));
+		mockFetch(jsonResponse({ is_scheduled: true, type: 'invite' }));
 		await endpoints.messages.send(ctx, {
 			collector_id: '1234',
 			message_id: '2345',
@@ -499,15 +511,20 @@ describe('surveymonkey collectors, messages and recipients', () => {
 	it('adds recipients in bulk inside a contacts array', async () => {
 		mockFetch(
 			jsonResponse(
-				{ succeeded: [recipient], invalid: [], existing: [] },
+				{ succeeded: [recipient], invalids: ['not-an-address'], existing: [] },
 				{ status: 201 },
 			),
 		);
-		await endpoints.recipients.bulkCreate(ctx, {
-			collector_id: '1234',
-			message_id: '2345',
-			contacts: [{ email: 'bob@example.com' }],
-		});
+		await endpoints.recipients
+			.bulkCreate(ctx, {
+				collector_id: '1234',
+				message_id: '2345',
+				contacts: [{ email: 'bob@example.com' }],
+			})
+			.then((result) => {
+				// The API names the failures `invalids`.
+				expect(result.invalids).toEqual(['not-an-address']);
+			});
 
 		expect(pathname()).toBe(
 			'/v3/collectors/1234/messages/2345/recipients/bulk',
@@ -625,16 +642,17 @@ describe('surveymonkey contacts and contact lists', () => {
 	it('creates contacts in bulk', async () => {
 		mockFetch(
 			jsonResponse(
-				{ succeeded: [contact], invalid: [], existing: [] },
+				{ succeeded: [contact], invalids: [{ email: 'x' }], existing: [] },
 				{ status: 201 },
 			),
 		);
-		await endpoints.contacts.bulkCreate(ctx, {
+		const created = await endpoints.contacts.bulkCreate(ctx, {
 			contacts: [
 				{ first_name: 'John', last_name: 'Doe', email: 'a@example.com' },
 			],
 		});
 
+		expect(created.invalids).toEqual([{ email: 'x' }]);
 		expect(pathname()).toBe('/v3/contacts/bulk');
 		expect(sentBody()).toEqual({
 			contacts: [

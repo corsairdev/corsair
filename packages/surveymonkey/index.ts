@@ -609,7 +609,7 @@ const surveymonkeyEndpointMeta = {
 		description: 'Change a message subject, body or type before it is sent',
 	},
 	'messages.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send a message to every recipient on it. This mails real people, so check the recipients first',
 	},

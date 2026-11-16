@@ -50,7 +50,8 @@ export const create: SurveymonkeyEndpoints['messagesCreate'] = (ctx, input) =>
 			collector_id,
 			type,
 			subject,
-			body,
+			body_text,
+			body_html,
 			from_collector_id,
 			from_message_id,
 		}) => ({
@@ -59,7 +60,8 @@ export const create: SurveymonkeyEndpoints['messagesCreate'] = (ctx, input) =>
 			body: {
 				subject,
 				...(type === undefined ? {} : { type }),
-				...(body === undefined ? {} : { body }),
+				...(body_text === undefined ? {} : { body_text }),
+				...(body_html === undefined ? {} : { body_html }),
 				...(from_collector_id === undefined ? {} : { from_collector_id }),
 				...(from_message_id === undefined ? {} : { from_message_id }),
 			},
@@ -102,13 +104,14 @@ export const update: SurveymonkeyEndpoints['messagesUpdate'] = (ctx, input) =>
 			output: Outputs.messagesUpdate,
 		},
 		input,
-		({ collector_id, message_id, type, subject, body }) => ({
+		({ collector_id, message_id, type, subject, body_text, body_html }) => ({
 			method: 'PATCH',
 			path: messagePath(collector_id, message_id),
 			body: {
 				...(type === undefined ? {} : { type }),
 				...(subject === undefined ? {} : { subject }),
-				...(body === undefined ? {} : { body }),
+				...(body_text === undefined ? {} : { body_text }),
+				...(body_html === undefined ? {} : { body_html }),
 			},
 		}),
 		{
@@ -141,7 +144,7 @@ export const send: SurveymonkeyEndpoints['messagesSend'] = (ctx, input) =>
 			log: (parsed, result) => ({
 				collectorId: parsed.collector_id,
 				messageId: parsed.message_id,
-				status: result.status ?? undefined,
+				scheduled: result.is_scheduled ?? undefined,
 			}),
 		},
 	);

@@ -938,7 +938,13 @@ const MessagesCreateInputSchema = z.object({
 	/** `invite` for the first send, `reminder` to chase non-responders. */
 	type: z.enum(['invite', 'reminder', 'thank_you']).optional(),
 	subject: z.string().min(1),
-	body: z.string().optional(),
+	/**
+	 * The plain-text email body. It must include [SurveyLink], [OptOutLink],
+	 * [PrivacyLink] and [FooterLink].
+	 */
+	body_text: z.string().optional(),
+	/** The HTML email body, which overrides `body_text`. Same required links. */
+	body_html: z.string().optional(),
 	from_collector_id: z.string().optional(),
 	from_message_id: z.string().optional(),
 });
@@ -967,7 +973,8 @@ const MessagesUpdateInputSchema = z.object({
 	message_id: z.string().min(1),
 	type: z.enum(['invite', 'reminder', 'thank_you']).optional(),
 	subject: z.string().optional(),
-	body: z.string().optional(),
+	body_text: z.string().optional(),
+	body_html: z.string().optional(),
 });
 
 export type MessagesUpdateInput = z.input<typeof MessagesUpdateInputSchema>;
@@ -987,7 +994,21 @@ const MessagesSendInputSchema = z.object({
 
 export type MessagesSendInput = z.input<typeof MessagesSendInputSchema>;
 
-const MessagesSendResponseSchema = messageSchema;
+/**
+ * The send route answers the scheduled message without an `id`:
+ * `{ is_scheduled, scheduled_date, body, subject, recipients, recipient_status, type }`.
+ */
+const MessagesSendResponseSchema = z
+	.object({
+		is_scheduled: z.boolean().nullish(),
+		scheduled_date: z.string().nullish(),
+		body: z.string().nullish(),
+		subject: z.string().nullish(),
+		recipients: z.array(z.union([z.string(), z.number()])).nullish(),
+		recipient_status: z.string().nullish(),
+		type: z.string().nullish(),
+	})
+	.loose();
 
 export type MessagesSendResponse = z.infer<typeof MessagesSendResponseSchema>;
 
@@ -1043,7 +1064,8 @@ export type RecipientsBulkCreateInput = z.input<
 const RecipientsBulkCreateResponseSchema = z
 	.object({
 		succeeded: z.array(recipientSchema).nullish(),
-		invalid: z.array(z.looseObject({})).nullish(),
+		// unknown: the invalid entries are echoed input (an address, or a contact).
+		invalids: z.array(z.unknown()).nullish(),
 		existing: z.array(recipientSchema).nullish(),
 	})
 	.loose();
@@ -1228,7 +1250,8 @@ export type ContactsBulkCreateInput = z.input<
 const ContactsBulkCreateResponseSchema = z
 	.object({
 		succeeded: z.array(contactSchema).nullish(),
-		invalid: z.array(z.looseObject({})).nullish(),
+		// unknown: the invalid entries are echoed input (an address, or a contact).
+		invalids: z.array(z.unknown()).nullish(),
 		existing: z.array(contactSchema).nullish(),
 	})
 	.loose();

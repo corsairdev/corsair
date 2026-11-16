@@ -210,7 +210,7 @@ describe('surveymonkey plugin definition', () => {
 	it('says that sending a message mails real people', () => {
 		// Sending is `write` like every other send in the catalog, so the
 		// description is where an agent learns that it leaves the building.
-		expect(meta['messages.send']?.riskLevel).toBe('write');
+		expect(meta['messages.send']?.riskLevel).toBe('destructive');
 		expect(meta['messages.send']?.description).toMatch(/mails real people/);
 		// Drafting one must not read as a send.
 		expect(meta['messages.create']?.description).toMatch(
