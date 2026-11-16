@@ -1,0 +1,779 @@
+---
+title: "Polygon.io API reference"
+sidebarTitle: "API"
+description: "API reference for the Polygon.io plugin in Corsair: every `polygonio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Aggregates
+
+### bars
+
+`aggregates.bars`
+
+Read historical OHLC and volume bars for a ticker over a custom range and window size, with `next_url` paging
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.aggregates.bars({ ticker: 'AAPL', multiplier: 1, timespan: 'day', from: '2026-01-02', to: '2026-01-09' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so none of them is required. |
+| `ticker` | `string` | No | A case-sensitive ticker, such as AAPL. |
+| `multiplier` | `number` | No | The size of each window, such as 5 for a 5-minute bar. |
+| `timespan` | `second \| minute \| hour \| day \| week \| month \| quarter \| year` | No | The unit of the window. |
+| `from` | `string` | No | Start of the range, as YYYY-MM-DD or a millisecond timestamp. |
+| `to` | `string` | No | End of the range, inclusive, as YYYY-MM-DD or a millisecond timestamp. |
+| `adjusted` | `boolean` | No | Whether prices are adjusted for splits. The API adjusts by default. |
+| `sort` | `asc \| desc` | No | Order by timestamp. The API defaults to ascending. |
+| `limit` | `number` | No | How many base aggregates to read. Defaults to 5000, and the maximum is 50000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string \| null` | No | — |
+| `adjusted` | `boolean \| null` | No | — |
+| `queryCount` | `number \| null` | No | — |
+| `resultsCount` | `number \| null` | No | — |
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `count` | `number \| null` | No | The total number of matching rows. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o?: number | null,
+  h?: number | null,
+  l?: number | null,
+  c?: number | null,
+  v?: number | null,
+  vw?: number | null,
+  n?: number | null,
+  t?: number | null,
+  T?: string | null,
+  otc?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### dailySummary
+
+`aggregates.dailySummary`
+
+Read one ticker's open and close for a date, with any pre-market and after-hours prices
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.aggregates.dailySummary({ ticker: 'AAPL', date: '2026-01-09' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | A case-sensitive ticker, such as AAPL. |
+| `date` | `string` | Yes | The trading date, as YYYY-MM-DD. |
+| `adjusted` | `boolean` | No | Whether prices are adjusted for splits. The API adjusts by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `symbol` | `string \| null` | No | — |
+| `from` | `string \| null` | No | The trading date. |
+| `open` | `number \| null` | No | — |
+| `high` | `number \| null` | No | — |
+| `low` | `number \| null` | No | — |
+| `close` | `number \| null` | No | — |
+| `volume` | `number \| null` | No | — |
+| `afterHours` | `number \| null` | No | — |
+| `preMarket` | `number \| null` | No | — |
+
+
+
+---
+
+### marketSummary
+
+`aggregates.marketSummary`
+
+Read every US stock's OHLC and volume for one trading date, in a single page
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.aggregates.marketSummary({ date: '2026-01-09', include_otc: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | The trading date, as YYYY-MM-DD. A non-trading date returns no rows. |
+| `adjusted` | `boolean` | No | Whether prices are adjusted for splits. The API adjusts by default. |
+| `include_otc` | `boolean` | No | Include OTC securities. The API excludes them by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string \| null` | No | — |
+| `adjusted` | `boolean \| null` | No | — |
+| `queryCount` | `number \| null` | No | — |
+| `resultsCount` | `number \| null` | No | — |
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `count` | `number \| null` | No | The total number of matching rows. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o?: number | null,
+  h?: number | null,
+  l?: number | null,
+  c?: number | null,
+  v?: number | null,
+  vw?: number | null,
+  n?: number | null,
+  t?: number | null,
+  T?: string | null,
+  otc?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### previousDay
+
+`aggregates.previousDay`
+
+Read the previous trading day's open, high, low, close and volume
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.aggregates.previousDay({ ticker: 'AAPL', adjusted: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | A case-sensitive ticker, such as AAPL. |
+| `adjusted` | `boolean` | No | Whether prices are adjusted for splits. The API adjusts by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string \| null` | No | — |
+| `adjusted` | `boolean \| null` | No | — |
+| `queryCount` | `number \| null` | No | — |
+| `resultsCount` | `number \| null` | No | — |
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `count` | `number \| null` | No | The total number of matching rows. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o?: number | null,
+  h?: number | null,
+  l?: number | null,
+  c?: number | null,
+  v?: number | null,
+  vw?: number | null,
+  n?: number | null,
+  t?: number | null,
+  T?: string | null,
+  otc?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Market
+
+### exchanges
+
+`market.exchanges`
+
+List the known exchanges with their MICs, names and asset classes
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.market.exchanges({ asset_class: 'stocks', locale: 'us' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched. |
+| `asset_class` | `string` | No | Filter by asset class. |
+| `locale` | `string` | No | Filter by locale. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `count` | `number \| null` | No | The total number of matching rows. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  type?: string | null,
+  asset_class?: string | null,
+  locale?: string | null,
+  name?: string | null,
+  acronym?: string | null,
+  mic?: string | null,
+  operating_mic?: string | null,
+  participant_id?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### holidays
+
+`market.holidays`
+
+Read upcoming market holidays with their closed or early-close hours
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.market.holidays({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `holidays` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="holidays full type">
+
+```ts
+{
+  date?: string | null,
+  exchange?: string | null,
+  name?: string | null,
+  status?: string | null,
+  open?: string | null,
+  close?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`market.status`
+
+Read the current trading status of the US exchanges, currency markets and index groups
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.market.status({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `market` | `string \| null` | No | `open`, `closed`, `extended-hours` or `early-close`. |
+| `earlyHours` | `boolean \| null` | No | — |
+| `afterHours` | `boolean \| null` | No | — |
+| `serverTime` | `string \| null` | No | — |
+| `exchanges` | `Record<string, string> \| null` | No | — |
+| `currencies` | `Record<string, string> \| null` | No | — |
+| `indicesGroups` | `Record<string, string> \| null` | No | — |
+
+
+
+---
+
+## Snapshots
+
+### movers
+
+`snapshots.movers`
+
+Read the top 20 gainers or losers in the US stock market
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.snapshots.movers({ direction: 'gainers', include_otc: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `direction` | `gainers \| losers` | Yes | Whether to return the top gainers or the top losers. |
+| `include_otc` | `boolean` | No | Include OTC securities. The API excludes them by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `tickers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tickers full type">
+
+```ts
+{
+  ticker?: string | null,
+  todaysChange?: number | null,
+  todaysChangePerc?: number | null,
+  updated?: number | null,
+  day?: {
+    o?: number | null,
+    h?: number | null,
+    l?: number | null,
+    c?: number | null,
+    v?: number | null,
+    vw?: number | null,
+    n?: number | null,
+    t?: number | null,
+    T?: string | null,
+    otc?: boolean | null
+  } | null,
+  min?: {
+    o?: number | null,
+    h?: number | null,
+    l?: number | null,
+    c?: number | null,
+    v?: number | null,
+    vw?: number | null,
+    n?: number | null,
+    t?: number | null,
+    T?: string | null,
+    otc?: boolean | null
+  } | null,
+  prevDay?: {
+    o?: number | null,
+    h?: number | null,
+    l?: number | null,
+    c?: number | null,
+    v?: number | null,
+    vw?: number | null,
+    n?: number | null,
+    t?: number | null,
+    T?: string | null,
+    otc?: boolean | null
+  } | null,
+  lastTrade?: {
+    T?: string | null,
+    p?: number | null,
+    s?: number | null,
+    x?: number | null,
+    i?: string | null,
+    t?: number | null,
+    c?: number[] | null,
+    z?: number | null
+  } | null,
+  lastQuote?: {
+    P?: number | null,
+    S?: number | null,
+    p?: number | null,
+    s?: number | null,
+    t?: number | null
+  } | null,
+  fmv?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### snapshot
+
+`snapshots.snapshot`
+
+Read a ticker's latest snapshot: last day and minute bars, previous day, and the change so far today
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.snapshots.snapshot({ ticker: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | A case-sensitive ticker, such as AAPL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `ticker` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticker full type">
+
+```ts
+{
+  ticker?: string | null,
+  todaysChange?: number | null,
+  todaysChangePerc?: number | null,
+  updated?: number | null,
+  day?: {
+    o?: number | null,
+    h?: number | null,
+    l?: number | null,
+    c?: number | null,
+    v?: number | null,
+    vw?: number | null,
+    n?: number | null,
+    t?: number | null,
+    T?: string | null,
+    otc?: boolean | null
+  } | null,
+  min?: {
+    o?: number | null,
+    h?: number | null,
+    l?: number | null,
+    c?: number | null,
+    v?: number | null,
+    vw?: number | null,
+    n?: number | null,
+    t?: number | null,
+    T?: string | null,
+    otc?: boolean | null
+  } | null,
+  prevDay?: {
+    o?: number | null,
+    h?: number | null,
+    l?: number | null,
+    c?: number | null,
+    v?: number | null,
+    vw?: number | null,
+    n?: number | null,
+    t?: number | null,
+    T?: string | null,
+    otc?: boolean | null
+  } | null,
+  lastTrade?: {
+    T?: string | null,
+    p?: number | null,
+    s?: number | null,
+    x?: number | null,
+    i?: string | null,
+    t?: number | null,
+    c?: number[] | null,
+    z?: number | null
+  } | null,
+  lastQuote?: {
+    P?: number | null,
+    S?: number | null,
+    p?: number | null,
+    s?: number | null,
+    t?: number | null
+  } | null,
+  fmv?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tickers
+
+### list
+
+`tickers.list`
+
+List ticker symbols filtered by type, market, exchange, CUSIP, CIK or name, with `next_url` paging
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.tickers.list({ market: 'stocks', active: true, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched. |
+| `ticker` | `string` | No | One exact ticker symbol. |
+| `type` | `string` | No | A ticker type code, as `tickers.types` reports them. |
+| `market` | `string` | No | A market, such as `stocks`, `crypto`, `fx` or `otc`. |
+| `exchange` | `string` | No | An ISO 10383 Market Identifier Code, such as XNYS. |
+| `cusip` | `string` | No | A CUSIP. The API accepts it but never returns it. |
+| `cik` | `string` | No | An SEC Central Index Key. |
+| `date` | `string` | No | Tickers as they were on this date. Defaults to the latest. |
+| `search` | `string` | No | Matches within the ticker and the company name. |
+| `active` | `boolean` | No | Whether to return only actively traded tickers. Defaults to true. |
+| `tickerGte` | `string` | No | Ticker at or after this value. |
+| `tickerGt` | `string` | No | Ticker after this value. |
+| `tickerLte` | `string` | No | Ticker at or before this value. |
+| `tickerLt` | `string` | No | Ticker before this value. |
+| `order` | `asc \| desc` | No | Order by the `sort` field. |
+| `sort` | `string` | No | The field to sort on, such as `ticker`. |
+| `limit` | `number` | No | Page size. Defaults to 100, and the maximum is 1000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `count` | `number \| null` | No | The total number of matching rows. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  ticker?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  type?: string | null,
+  market?: string | null,
+  locale?: string | null,
+  primary_exchange?: string | null,
+  currency_name?: string | null,
+  cik?: string | null,
+  composite_figi?: string | null,
+  share_class_figi?: string | null,
+  list_date?: string | null,
+  delisted_utc?: string | null,
+  last_updated_utc?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### overview
+
+`tickers.overview`
+
+Read one ticker with its company details, optionally as it was on a given date
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.tickers.overview({ ticker: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | A case-sensitive ticker, such as AAPL. |
+| `date` | `string` | No | Read the ticker as it was on this date, which matters when a symbol was reused. Defaults to the latest. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `count` | `number \| null` | No | The total number of matching rows. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  ticker?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  type?: string | null,
+  market?: string | null,
+  locale?: string | null,
+  primary_exchange?: string | null,
+  currency_name?: string | null,
+  cik?: string | null,
+  composite_figi?: string | null,
+  share_class_figi?: string | null,
+  list_date?: string | null,
+  delisted_utc?: string | null,
+  last_updated_utc?: string | null,
+  description?: string | null,
+  homepage_url?: string | null,
+  market_cap?: number | null,
+  total_employees?: number | null,
+  phone_number?: string | null,
+  sic_code?: string | null,
+  sic_description?: string | null,
+  round_lot?: number | null,
+  ticker_root?: string | null,
+  ticker_suffix?: string | null,
+  share_class_shares_outstanding?: number | null,
+  weighted_shares_outstanding?: number | null,
+  address?: {
+    address1?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postal_code?: string | null
+  } | null,
+  branding?: {
+    logo_url?: string | null,
+    icon_url?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### types
+
+`tickers.types`
+
+List the ticker type codes, which `tickers.list` filters on
+
+**Risk:** `read`
+
+```ts
+await corsair.polygonio.api.tickers.types({ asset_class: 'stocks' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_class` | `string` | No | `stocks`, `options`, `crypto`, `fx` or `indices`. |
+| `locale` | `string` | No | `us` or `global`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
+| `request_id` | `string \| null` | No | — |
+| `count` | `number \| null` | No | The total number of matching rows. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  code?: string | null,
+  description?: string | null,
+  asset_class?: string | null,
+  locale?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

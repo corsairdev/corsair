@@ -1,0 +1,139 @@
+---
+title: "PostGrid plugin"
+sidebarTitle: "Overview"
+description: "Print and mail API for sending letters, postcards and self mailers, with contact, template and tracker management."
+---
+
+Use **PostGrid** through Corsair: one client, typed API calls.
+
+PostGrid prints and mails physical mail on demand. Create a key under Settings in the dashboard and paste it in; it travels in the `x-api-key` header. A key created in test mode reads and writes test-mode data only, which is the right place to develop.
+
+What to know before you print:
+
+- **An order spends money.** `letters.create`, `postcards.create` and `selfMailers.create` print and post a physical item. There is no sandbox flag on the request: test mode is a property of the key.
+- **Idempotency.** Order creation accepts an `Idempotency-Key` header, and PostGrid honours it for 24 hours. The plugin generates one per call; pass `idempotencyKey` in the input to reuse it so a retried request returns the original order instead of printing a second one.
+- **Cancelling.** An order can be cancelled only while its status is `ready`. After that it is with the printer. For a send-as-soon-as-possible order that is roughly midnight Eastern on the following day.
+- **Tracking.** Every order carries `status`, from `ready` through `printing` and `processed_for_delivery` to `completed` or `cancelled`. Live mail bound for the US also gains `imbStatus`, the USPS stage, plus `imbDate` and `imbZIPCode`.
+- **Paging is by offset.** List routes take `skip` and `limit` and return `totalCount`; page while `skip` is below it by adding `limit` each time.
+- **Addresses are corrected.** A created contact may come back with a different address than it was sent, and `addressStatus` says whether it was `verified`, `corrected` or `failed`. On an order, a `to` or `from` contact given with an `id` is sent as that id alone, so `skipVerification` and `forceVerifiedStatus` take effect only on an inline contact (address fields, no `id`).
+- **Webhooks.** PostGrid can post delivery notifications to a URL you register in its dashboard, but this plugin does not handle inbound deliveries.
+
+**What you get:**
+
+- 21 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/postgrid better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/postgrid better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/postgrid better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/postgrid better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { postgrid } from '@corsair-dev/postgrid';
+
+export const corsair = createCorsair({
+	plugins: [
+		postgrid(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the PostGrid API key before the first call: `pnpm corsair setup --plugin=postgrid --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+postgrid()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'postgrid',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recent letters**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.postgrid.api.letters.list({ limit: 10 });
+```
+
+
+**Create a template with a merge variable**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.postgrid.api.templates.create({ description: 'Welcome postcard', html: '<b>Hello</b> {{to.firstName}}!' });
+```
+
+
+See the full list on the [API](/plugins/postgrid/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/postgrid/api">
+    Every `postgrid.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
