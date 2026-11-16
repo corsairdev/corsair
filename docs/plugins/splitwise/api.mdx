@@ -65,7 +65,7 @@ An expense must reference a subcategory. A parent category ID is rejected.
 
 Post a comment on an expense
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.splitwise.api.comments.create({ expense_id: 51023, content: 'Does this include the delivery fee?' });
@@ -280,7 +280,7 @@ await corsair.splitwise.api.currencies.list({});
 
 Record an expense, split either equally across a group or by an explicit paid and owed share per person
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.splitwise.api.expenses.create({ description: 'Internet', cost: 60, group_id: 321, split_equally: true });
@@ -476,7 +476,7 @@ Soft delete: the expense can be restored with `expenses.undelete`.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `errors` | `Record<string, string[]> \| null` | No | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
 
 
 
@@ -808,7 +808,7 @@ await corsair.splitwise.api.expenses.undelete({ expense_id: 51023 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `errors` | `Record<string, string[]> \| null` | No | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
 
 
 
@@ -820,7 +820,7 @@ await corsair.splitwise.api.expenses.undelete({ expense_id: 51023 });
 
 Change an expense; passing any share replaces every share on it
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.splitwise.api.expenses.update({ expense_id: 51023, description: 'Brunch (updated)' });
@@ -997,7 +997,7 @@ Passing `users` replaces every share, so `cost` is required with it. Omitted fie
 
 Add a friend by email; a first name is needed when the person has no Splitwise account yet
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.splitwise.api.friends.add({ user_email: 'grace@example.com', user_first_name: 'Grace' });
@@ -1062,7 +1062,7 @@ await corsair.splitwise.api.friends.add({ user_email: 'grace@example.com', user_
 
 Add several friends in one call, returning each result alongside any errors
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.splitwise.api.friends.addMany({ users: [{ email: 'grace@example.com', first_name: 'Grace' }, { email: 'alan@example.com' }] });
@@ -1160,7 +1160,7 @@ There is no undelete call for a friendship.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `errors` | `Record<string, string[]> \| null` | No | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
 
 
 
@@ -1295,7 +1295,7 @@ await corsair.splitwise.api.friends.list({});
 
 Add a Splitwise user, or a new person by name and email, to a group
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.splitwise.api.groups.addUser({ group_id: 321, user_id: 491923 });
@@ -1352,7 +1352,7 @@ await corsair.splitwise.api.groups.addUser({ group_id: 321, user_id: 491923 });
 
 Create a group and add members by user ID or by name and email; the current user is added automatically
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.splitwise.api.groups.create({ name: 'Housemates 2026', group_type: 'home', users: [{ first_name: 'Grace', last_name: 'Hopper', email: 'grace@example.com' }] });
@@ -1367,7 +1367,7 @@ await corsair.splitwise.api.groups.create({ name: 'Housemates 2026', group_type:
 | `simplify_by_default` | `boolean` | No | Turn on simplify debts |
 | `users` | `object[]` | No | Members to add besides the current user, who is added automatically |
 
-Members are sent as users__{index}__{property} keys. A member needs either `user_id`, or `first_name` and `email`.
+Members are sent as `users__<index>__<property>` keys. A member needs either `user_id`, or `first_name` and `email`.
 
 <AccordionGroup>
 <Accordion title="users full type">
@@ -1483,7 +1483,7 @@ Deletes the group and every expense in it. The group can be restored with `group
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `errors` | `Record<string, string[]> \| null` | No | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
 
 
 
@@ -1694,7 +1694,7 @@ Splitwise refuses while the user has a non-zero balance.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `errors` | `Record<string, string[]> \| null` | No | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
 
 
 

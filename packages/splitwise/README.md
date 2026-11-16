@@ -13,23 +13,23 @@ pnpm add @corsair-dev/splitwise
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `categories.list` | `splitwise.api.categories.list` | `read` | List expense categories with their subcategories; an expense must use a subcategory |
-| `comments.create` | `splitwise.api.comments.create` | `write` | Post a comment on an expense |
+| `comments.create` | `splitwise.api.comments.create` | `destructive` | Post a comment on an expense |
 | `comments.delete` | `splitwise.api.comments.delete` | `destructive` | Delete a comment; this cannot be undone |
 | `comments.list` | `splitwise.api.comments.list` | `read` | List the comments on an expense |
 | `currencies.list` | `splitwise.api.currencies.list` | `read` | List the currency codes Splitwise accepts |
-| `expenses.create` | `splitwise.api.expenses.create` | `write` | Record an expense, split either equally across a group or by an explicit paid and owed share per person |
+| `expenses.create` | `splitwise.api.expenses.create` | `destructive` | Record an expense, split either equally across a group or by an explicit paid and owed share per person |
 | `expenses.delete` | `splitwise.api.expenses.delete` | `destructive` | Delete an expense; it can be restored with `expenses.undelete` |
 | `expenses.get` | `splitwise.api.expenses.get` | `read` | Get one expense with its shares, repayments and comments |
 | `expenses.list` | `splitwise.api.expenses.list` | `read` | List the current user expenses, filtered by group, friend or date, with limit and offset paging |
 | `expenses.undelete` | `splitwise.api.expenses.undelete` | `write` | Restore a deleted expense |
-| `expenses.update` | `splitwise.api.expenses.update` | `write` | Change an expense; passing any share replaces every share on it |
-| `friends.add` | `splitwise.api.friends.add` | `write` | Add a friend by email; a first name is needed when the person has no Splitwise account yet |
-| `friends.addMany` | `splitwise.api.friends.addMany` | `write` | Add several friends in one call, returning each result alongside any errors |
+| `expenses.update` | `splitwise.api.expenses.update` | `destructive` | Change an expense; passing any share replaces every share on it |
+| `friends.add` | `splitwise.api.friends.add` | `destructive` | Add a friend by email; a first name is needed when the person has no Splitwise account yet |
+| `friends.addMany` | `splitwise.api.friends.addMany` | `destructive` | Add several friends in one call, returning each result alongside any errors |
 | `friends.delete` | `splitwise.api.friends.delete` | `destructive` | Break off the friendship; Splitwise keeps the expenses but the friend is removed from the list and there is no undelete call |
 | `friends.get` | `splitwise.api.friends.get` | `read` | Get one friend with their balances and shared groups |
 | `friends.list` | `splitwise.api.friends.list` | `read` | List the current user friends with the balance owed either way |
-| `groups.addUser` | `splitwise.api.groups.addUser` | `write` | Add a Splitwise user, or a new person by name and email, to a group |
-| `groups.create` | `splitwise.api.groups.create` | `write` | Create a group and add members by user ID or by name and email; the current user is added automatically |
+| `groups.addUser` | `splitwise.api.groups.addUser` | `destructive` | Add a Splitwise user, or a new person by name and email, to a group |
+| `groups.create` | `splitwise.api.groups.create` | `destructive` | Create a group and add members by user ID or by name and email; the current user is added automatically |
 | `groups.delete` | `splitwise.api.groups.delete` | `destructive` | Delete a group and every expense in it; the group can be restored with `groups.undelete` |
 | `groups.get` | `splitwise.api.groups.get` | `read` | Get one group with its members, balances and debts |
 | `groups.list` | `splitwise.api.groups.list` | `read` | List the current user groups with their members, balances and simplified debts; expenses outside a group appear as group 0 |
