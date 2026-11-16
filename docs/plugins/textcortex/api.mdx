@@ -315,7 +315,7 @@ await corsair.textcortex.api.responses.create({ model: 'gpt-6-luna', input: 'Say
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `model` | `string` | Yes | A model ID from `models.list`. Use the base ID and set `reasoning_effort` rather than a `-thinking` variant, which is deprecated. |
+| `model` | `string` | Yes | A model ID from `models.list`. Use the base ID; `-thinking` variants are deprecated. |
 | `input` | `string` | Yes | The prompt or conversation text. |
 | `instructions` | `string` | No | A system instruction that applies to the whole response. |
 | `max_output_tokens` | `number` | No | — |

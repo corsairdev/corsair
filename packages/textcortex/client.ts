@@ -89,13 +89,34 @@ export function textCortexErrorDetails(
 }
 
 /**
+ * A 422 validation body lists each rejected field as `{ loc, msg, type, input }`
+ * (OpenAPI `ValidationError`), and `input` is the rejected value: for a prompt
+ * that is too long, the prompt itself. This drops `input` from each entry and
+ * leaves the rest of the body as the provider sent it.
+ */
+// unknown: the provider's error body, any JSON or text.
+function withoutEchoedInput(body: unknown): unknown {
+	const record = asRecord(body);
+	if (!record || !Array.isArray(record.detail)) return body;
+	return {
+		...record,
+		detail: record.detail.map((entry: unknown) => {
+			const item = asRecord(entry);
+			if (!item || !('input' in item)) return entry;
+			const { input: _input, ...rest } = item;
+			return rest;
+		}),
+	};
+}
+
+/**
  * Core's ApiError keeps the request it failed on, body included, and a chat
  * body holds the user's prompt. This rebuilds the same ApiError without the
- * request body, so the prompt does not travel with the error into logs.
+ * request body and without a validation body's echoed `input`, so the prompt
+ * does not travel with the error into logs.
  * Status, retryAfter and the provider's response body stay as they were.
  */
 function withoutRequestBody(error: ApiError): ApiError {
-	if (error.request.body === undefined) return error;
 	const stripped = new ApiError(
 		{ ...error.request, body: undefined },
 		{
@@ -103,7 +124,7 @@ function withoutRequestBody(error: ApiError): ApiError {
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			body: error.body,
+			body: withoutEchoedInput(error.body),
 		},
 		error.message,
 		{

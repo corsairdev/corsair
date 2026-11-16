@@ -218,7 +218,14 @@ export type ChatCompletionsResponse = z.infer<
 // ── responses ─────────────────────────────────────────────────────────────
 
 export const ResponsesInputSchema = z.strictObject({
-	model: ModelIdSchema,
+	// Responses takes no reasoning_effort, so its model note says nothing about
+	// it.
+	model: z
+		.string()
+		.min(1)
+		.describe(
+			'A model ID from `models.list`. Use the base ID; `-thinking` variants are deprecated.',
+		),
 	input: z.string().min(1).describe('The prompt or conversation text.'),
 	instructions: z
 		.string()

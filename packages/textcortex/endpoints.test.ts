@@ -375,6 +375,34 @@ describe('error handling', () => {
 		);
 	});
 
+	it('drops the echoed input from a validation error body', async () => {
+		respond(
+			{
+				detail: [
+					{
+						loc: ['body', 'prompt'],
+						msg: 'String should have at most 8000 characters',
+						type: 'string_too_long',
+						input: 'private-sentinel-9310',
+					},
+				],
+			},
+			422,
+		);
+
+		const error = await rejection(
+			invoke(Ai.imagesCreate, { prompt: 'private-sentinel-9310' }),
+		);
+
+		expect(error.status).toBe(422);
+		expect(textCortexErrorDetails(error)?.details[0]?.location).toBe(
+			'body.prompt',
+		);
+		expect(require('node:util').inspect(error, { depth: 10 })).not.toContain(
+			'private-sentinel-9310',
+		);
+	});
+
 	it('fails loudly when the chat answer has no choices', async () => {
 		respond({ id: 'x', object: 'chat.completion' });
 
