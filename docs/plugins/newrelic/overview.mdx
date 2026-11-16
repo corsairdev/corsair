@@ -1,0 +1,148 @@
+---
+title: "New Relic plugin"
+sidebarTitle: "Overview"
+description: "Read New Relic applications with their health and reporting status, pull metric timeslices, manage alert policies and list their conditions, and run NRQL queries through NerdGraph."
+---
+
+Use **New Relic** through Corsair: one client, typed API calls.
+
+Use a **user key**, not a license key. Create one at https://one.newrelic.com/api-keys under **Create a key**, choosing **User** as the key type. A license key only ingests data and cannot read any of this.
+
+The plugin talks to two surfaces, both under the same key:
+
+- **REST v2** for applications, metrics and alerts, at `api.newrelic.com/v2`.
+- **NerdGraph**, the GraphQL API, for NRQL, at `api.newrelic.com/graphql`.
+
+An EU account uses `api.eu.newrelic.com` for both, and **a key is only valid in its own region**. Pass `region: 'eu'` on any call from an EU account; the default is `us`.
+
+What to know:
+
+- **`health_status` is a colour**, one of `green`, `orange`, `red` or `unknown`. The REST API says `orange` where the UI shows yellow, and `unknown` means the app has no alert policy attached.
+- **`reporting` goes false after ten quiet minutes**, and `last_reported_at` is then an empty string rather than a timestamp, so a missing time is not an error.
+- **A metric window defaults to the last 30 minutes** when `from` is omitted. `summarize: true` collapses the window into one value per metric, which is what most dashboards want.
+- **REST v2 pages through a `Link` header**, which this plugin cannot read, so `page` is an input. A long list needs an explicit page walk.
+- **`alerts.conditions` covers APM, browser and mobile conditions only.** External service, synthetic and NRQL conditions live behind separate endpoints that are not wrapped here.
+- **A NRQL query is a NerdGraph call.** `accountId` is required, and the answer carries the time window New Relic actually ran over, which can differ from the `SINCE` clause.
+- **A bad NRQL query answers 200 with an `errors` array.** The plugin turns that into a thrown error rather than returning rows that are silently empty.
+- **Deleting a policy deletes its conditions**, and New Relic has no restore call.
+- **`incident_preference` is one of `PER_POLICY`, `PER_CONDITION` or `PER_CONDITION_AND_TARGET`** and decides whether alerts roll up per policy, per condition, or per condition and signal. It defaults to `PER_POLICY`.
+
+**What you get:**
+
+- 8 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/newrelic better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/newrelic better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/newrelic better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/newrelic better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { newrelic } from '@corsair-dev/newrelic';
+
+export const corsair = createCorsair({
+	plugins: [
+		newrelic(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the New Relic API key before the first call: `pnpm corsair setup --plugin=newrelic --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+newrelic()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'newrelic',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List applications with their health**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.newrelic.api.applications.list({});
+```
+
+
+**Create an alert policy**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.newrelic.api.alerts.createPolicy({ name: 'EMEA API alerts' });
+```
+
+
+See the full list on the [API](/plugins/newrelic/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/newrelic/api">
+    Every `newrelic.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
