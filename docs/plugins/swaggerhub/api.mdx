@@ -601,7 +601,7 @@ await corsair.swaggerhub.api.apis.save({ owner: 'your-org', api: 'petstore', def
 | `projectName` | `string` | No | — |
 | `noReconcile` | `boolean` | No | — |
 
-**The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. Use `format: 'graphql'` for GraphQL SDL, which is sent as `application/graphql`. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name and version it saved. Core does not pass the status on, so whether the save created the version is not reported.
+**The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. Use `format: 'graphql'` for GraphQL SDL, which is sent as `application/graphql`. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, the name and the `version` you passed. When the version comes from the definition's `info.version` and you leave `version` out, the result has `version: null`. Core does not pass the status on, so whether the save created the version is not reported.
 
 
 
