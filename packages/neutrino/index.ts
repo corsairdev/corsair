@@ -270,7 +270,10 @@ const neutrinoEndpointMeta = {
 			'Convert between currencies, units and number bases using the unit codes Neutrino publishes',
 	},
 	'messaging.smsVerify': {
-		riskLevel: 'write',
+		// Sends a real SMS and spends a credit, so it needs the approval a
+		// destructive call gets (R8).
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Generate a security code and text it to a number, which sends a real SMS and costs a credit; compare it with verifySecurityCode',
 	},

@@ -56,47 +56,60 @@ function readString(
  * Every error is `{ "api-error": <number>, "api-error-msg": "..." }` with a
  * non-200 status. The numeric code is what distinguishes a bad credential (43)
  * from a bad parameter, and the message is always upper case.
+ *
+ * An HTTP failure stays core's `ApiError` (see `sanitizeApiError`), so its
+ * status and Retry-After reach core and the handlers. This class covers only a
+ * transport failure, which never had a response.
  */
 export class NeutrinoAPIError extends Error {
-	readonly status?: number;
-	/** Neutrino's own numeric code, e.g. 43 for a bad user id or key. */
-	readonly code?: number;
-	/**
-	 * True for a route whose success includes a side effect that cannot be
-	 * repeated, so a 5xx must not be replayed.
-	 */
-	readonly sendsMessage: boolean;
 	readonly method?: string;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: number;
-			sendsMessage?: boolean;
-			method?: string;
-		} = {},
+		options: { cause?: Error; method?: string } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'NeutrinoAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.sendsMessage = options.sendsMessage ?? false;
 		this.method = options.method;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/**
-	 * 43 is the only credential code. A 403 with another code is a plan or
-	 * permission limit, which the handlers separate.
-	 */
-	get isAuthError(): boolean {
-		return this.code === ACCESS_DENIED || this.status === 401;
-	}
+/**
+ * Rebuilds Neutrino's HTTP error as a core `ApiError`, so its status and
+ * Retry-After reach core (R8). The sent form and query are dropped: a
+ * form-body call carries the API key, which core does not redact.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const record = asRecord(error.body);
+	const code = readNumber(record, 'api-error');
+	const message = readString(record, 'api-error-msg');
+	const envelope =
+		code === undefined && message === undefined
+			? undefined
+			: { 'api-error': code, 'api-error-msg': message };
+	return new ApiError(
+		{ ...request, url: request.url.split('?')[0] ?? request.url },
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: envelope,
+		},
+		describeNeutrinoError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 // unknown: see NeutrinoAPIError.
@@ -126,11 +139,6 @@ export type NeutrinoRequest = {
 	method: 'GET' | 'POST';
 	path: string;
 	query?: NeutrinoQuery;
-	/**
-	 * True when a success sends a message, which cannot be repeated safely on a
-	 * 5xx. Set by messaging.smsVerify and carried onto the error.
-	 */
-	sendsMessage?: boolean;
 	/** A urlencoded body, which is the form Neutrino documents for POST. */
 	form?: Record<string, string | number | boolean | undefined>;
 };
@@ -139,7 +147,7 @@ export type NeutrinoRequest = {
 // Neutrino methods answer a file rather than JSON, so a caller checks first.
 export async function makeNeutrinoRequest(
 	credentials: NeutrinoCredentials,
-	{ method, path, query, form, sendsMessage }: NeutrinoRequest,
+	{ method, path, query, form }: NeutrinoRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: NEUTRINO_API_BASE,
@@ -169,19 +177,10 @@ export async function makeNeutrinoRequest(
 			rateLimitConfig: NEUTRINO_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new NeutrinoAPIError(
-				describeNeutrinoError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					code: readNumber(asRecord(error.body), 'api-error'),
-					sendsMessage,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
+			// A transport failure never had a response body, so its cause is safe.
 			throw new NeutrinoAPIError(error.message, { cause: error, method });
 		}
 		throw new NeutrinoAPIError('Unknown Neutrino error', { method });

@@ -22,8 +22,6 @@ export const smsVerify: NeutrinoEndpoints['smsVerify'] = (ctx, input) =>
 		({ number, codeLength, countryCode, languageCode, brandName }) => ({
 			method: 'GET',
 			path: '/sms-verify',
-			// A success sends a real SMS, so a 5xx must not be replayed.
-			sendsMessage: true,
 			query: {
 				number,
 				'code-length': codeLength,

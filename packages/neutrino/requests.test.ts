@@ -74,6 +74,16 @@ async function capture(
 	}
 }
 
+/**
+ * Resolves to whatever the promise rejected with, so an assertion can read
+ * `String(error)` without a cast.
+ * unknown: a rejection reason has no static type; each caller only stringifies
+ * it, so a stricter type would be invented rather than checked.
+ */
+async function captureError<T>(promise: Promise<T>): Promise<unknown> {
+	return promise.catch((caught: unknown) => caught);
+}
+
 describe('credential transport', () => {
 	it('sends the user id and key combined in one API-Key header', async () => {
 		const { init } = await capture(
@@ -399,36 +409,33 @@ describe('messaging.smsVerify', () => {
 
 describe('neutrino error reporting', () => {
 	it('reads the numeric code and message', async () => {
-		const error = await capture(
-			endpoints.ip.info,
-			{ ip: '1.1.1.1' },
-			accessDenied,
-			{ status: 403 },
-		).catch((caught: unknown) => caught);
+		const error = await captureError(
+			capture(endpoints.ip.info, { ip: '1.1.1.1' }, accessDenied, {
+				status: 403,
+			}),
+		);
 
 		expect(String(error)).toContain('43');
 		expect(String(error)).toContain('ACCESS DENIED');
 	});
 
 	it('reports a bad parameter by its own code', async () => {
-		const error = await capture(
-			endpoints.ip.info,
-			{ ip: 'notanip' },
-			badParameter,
-			{ status: 400 },
-		).catch((caught: unknown) => caught);
+		const error = await captureError(
+			capture(endpoints.ip.info, { ip: 'notanip' }, badParameter, {
+				status: 400,
+			}),
+		);
 
 		expect(String(error)).toContain('21');
 		expect(String(error)).toContain('IP ADDRESS IS NOT VALID');
 	});
 
 	it('does not leak the credentials into the error message', async () => {
-		const error = await capture(
-			endpoints.ip.info,
-			{ ip: '1.1.1.1' },
-			accessDenied,
-			{ status: 403 },
-		).catch((caught: unknown) => caught);
+		const error = await captureError(
+			capture(endpoints.ip.info, { ip: '1.1.1.1' }, accessDenied, {
+				status: 403,
+			}),
+		);
 
 		expect(String(error)).not.toContain(API_KEY);
 		expect(String(error)).not.toContain(USER_ID);
@@ -476,15 +483,19 @@ describe('neutrino plugin definition', () => {
 		]);
 	});
 
-	it('marks only the SMS send as a write', () => {
+	it('marks only the SMS send as destructive', () => {
 		const meta = neutrino().endpointMeta ?? {};
 		for (const [name, entry] of Object.entries(meta)) {
-			const expected = name === 'messaging.smsVerify' ? 'write' : 'read';
+			// The SMS send spends a credit and sends a real message, so R8
+			// requires the approval a destructive call gets. Every other route
+			// only reads.
+			const expected = name === 'messaging.smsVerify' ? 'destructive' : 'read';
 			expect({ name, risk: entry.riskLevel }).toEqual({
 				name,
 				risk: expected,
 			});
 		}
+		expect(meta['messaging.smsVerify']?.irreversible).toBe(true);
 	});
 
 	it('builds a key from the option, then the stored key, then throws', async () => {

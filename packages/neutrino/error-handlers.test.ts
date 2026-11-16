@@ -1,4 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { NeutrinoAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -23,22 +24,43 @@ async function strategy(error: Error) {
 	});
 }
 
+/**
+ * Builds the core `ApiError` the client produces: the status, a path, and a
+ * sanitized body carrying Neutrino's numeric code.
+ */
 function apiError(
 	status: number,
-	options: { code?: number; sendsMessage?: boolean } = {},
-): NeutrinoAPIError {
-	return new NeutrinoAPIError(`Neutrino ${status}: failed`, {
-		status,
-		...options,
-	});
+	options: { code?: number; path?: string; retryAfter?: number } = {},
+): ApiError {
+	const path = options.path ?? '/ip-info';
+	const body =
+		options.code === undefined
+			? undefined
+			: {
+					'api-error': options.code,
+					'api-error-msg': 'ACCESS DENIED. USER ID OR API KEY INVALID',
+				};
+	return new ApiError(
+		{ method: 'GET', url: path },
+		{
+			url: `https://neutrinoapi.net${path}`,
+			ok: false,
+			status,
+			statusText: 'error',
+			body,
+		},
+		'Neutrino failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('neutrino error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = apiError(429);
+	it('retries a 429 with backoff and passes Retry-After through', async () => {
+		const error = apiError(429, { retryAfter: 2000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 3,
+			headersRetryAfterMs: 2000,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
@@ -50,8 +72,7 @@ describe('neutrino error handlers', () => {
 	});
 
 	it('treats a 403 with another code as a plan limit, not a bad key', async () => {
-		const error = apiError(403, { code: 12 });
-		expect(classify(error)).toBe('PERMISSION_ERROR');
+		expect(classify(apiError(403, { code: 12 }))).toBe('PERMISSION_ERROR');
 	});
 
 	it('does not retry a 400 for a bad parameter', async () => {
@@ -76,13 +97,14 @@ describe('neutrino error handlers', () => {
 	});
 
 	it('never replays a 5xx from the SMS send, which may have gone out', async () => {
-		const error = apiError(500, { sendsMessage: true });
+		// The route sends a real SMS, so a 5xx could mean the message landed.
+		const error = apiError(500, { path: '/sms-verify' });
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('falls back to DEFAULT for a transport failure', () => {
-		expect(classify(new Error('socket hang up'))).toBe('DEFAULT');
+		expect(classify(new NeutrinoAPIError('socket hang up'))).toBe('DEFAULT');
 	});
 });
 
@@ -104,12 +126,12 @@ describe('mergeErrorHandlers', () => {
 	it('runs a caller handler for a status no builtin covers', () => {
 		const custom = {
 			match: (error: Error) =>
-				error instanceof NeutrinoAPIError && error.status === 502,
+				error instanceof ApiError && error.status === 502,
 			handler: async () => ({ maxRetries: 9 }),
 		};
 		const merged = mergeErrorHandlers(errorHandlers, { CUSTOM: custom });
 
-		const failure = new NeutrinoAPIError('bad gateway', { status: 502 });
+		const failure = apiError(502);
 		const firstMatch = Object.entries(merged).find(([, entry]) =>
 			entry?.match?.(failure, {
 				pluginId: 'neutrino',

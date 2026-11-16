@@ -540,7 +540,7 @@ await corsair.neutrino.api.ip.probe({ ip: '1.1.1.1' });
 
 Generate a security code and text it to a number, which sends a real SMS and costs a credit; compare it with verifySecurityCode
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.neutrino.api.messaging.smsVerify({ number: '+61412345678', codeLength: 6 });

@@ -17,8 +17,8 @@ export const info: NeutrinoEndpoints['ipInfo'] = (ctx, input) =>
 		input,
 		({ ip }) => ({ method: 'GET', path: '/ip-info', query: { ip } }),
 		{
-			log: ({ ip }, result) => ({
-				ip,
+			// The address is the caller's customer data, so it is not logged.
+			log: (_, result) => ({
 				countryCode: result['country-code'] ?? undefined,
 			}),
 		},
@@ -39,8 +39,8 @@ export const blocklist: NeutrinoEndpoints['ipBlocklist'] = (ctx, input) =>
 		input,
 		({ ip }) => ({ method: 'GET', path: '/ip-blocklist', query: { ip } }),
 		{
-			log: ({ ip }, result) => ({
-				ip,
+			// The address is the caller's customer data, so it is not logged.
+			log: (_, result) => ({
 				listed: result['is-listed'] ?? undefined,
 				listCount: result['list-count'] ?? undefined,
 			}),
@@ -59,8 +59,8 @@ export const probe: NeutrinoEndpoints['ipProbe'] = (ctx, input) =>
 		input,
 		({ ip }) => ({ method: 'GET', path: '/ip-probe', query: { ip } }),
 		{
-			log: ({ ip }, result) => ({
-				ip,
+			// The address is the caller's customer data, so it is not logged.
+			log: (_, result) => ({
 				provider: result['provider-domain'] ?? undefined,
 			}),
 		},
