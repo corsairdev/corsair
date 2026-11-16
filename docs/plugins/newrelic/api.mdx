@@ -411,15 +411,11 @@ Without from, New Relic returns the last 30 minutes. summarize collapses the win
   metrics?: {
     name?: string | null,
     timeslice?: number | null,
-    values?: {
+    values?: Record<string, number | null> | null,
+    timeslices?: {
       from?: string | null,
       to?: string | null,
-      average_value?: number | null,
-      total_value?: number | null,
-      call_count?: number | null,
-      min_value?: number | null,
-      max_value?: number | null,
-      sum_of_squares?: number | null
+      values?: Record<string, number | null> | null
     }[] | null
   }[] | null
 }
@@ -461,7 +457,7 @@ Runs through NerdGraph, so accountId is required. A bad query answers 200 with a
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `Record<string, string \| number \| boolean \| null>[]` | Yes | — |
+| `results` | `Record<string, JsonValue>[]` | Yes | — |
 | `metadata` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -470,8 +466,8 @@ Runs through NerdGraph, so accountId is required. A bad query answers 200 with a
 ```ts
 {
   timeWindow?: {
-    begin?: string | null,
-    end?: string | null
+    begin?: number | null,
+    end?: number | null
   } | null
 } | null
 ```

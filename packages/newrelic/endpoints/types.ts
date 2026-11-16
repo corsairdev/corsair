@@ -162,24 +162,34 @@ const MetricsDataInputSchema = z.object({
 
 export type MetricsDataInput = z.input<typeof MetricsDataInputSchema>;
 
-const MetricValueSchema = z
+/**
+ * `values` is a map keyed by the value names the caller asked for, e.g.
+ * `average_value` or `call_count`, so it cannot be a fixed object shape.
+ */
+const MetricValuesSchema = z.record(z.string(), z.number().nullish());
+
+/** One period of the window, with its aggregate under `values`. */
+const MetricTimesliceSchema = z
 	.object({
 		from: z.string().nullish(),
 		to: z.string().nullish(),
-		average_value: z.number().nullish(),
-		total_value: z.number().nullish(),
-		call_count: z.number().nullish(),
-		min_value: z.number().nullish(),
-		max_value: z.number().nullish(),
-		sum_of_squares: z.number().nullish(),
+		values: MetricValuesSchema.nullish(),
 	})
 	.loose();
 
+/**
+ * New Relic answers with a `timeslices` array. With `summarize: true` the array
+ * holds a single entry covering the whole window, so the only difference is the
+ * length. A series-level `values` map is also accepted, which some metric types
+ * return instead of a series.
+ */
 const MetricSeriesSchema = z
 	.object({
 		name: z.string().nullish(),
+		/** The period length in seconds. */
 		timeslice: z.number().nullish(),
-		values: z.array(MetricValueSchema).nullish(),
+		values: MetricValuesSchema.nullish(),
+		timeslices: z.array(MetricTimesliceSchema).nullish(),
 	})
 	.loose();
 
@@ -332,14 +342,33 @@ export type NrqlInput = z.input<typeof NrqlInputSchema>;
 
 /**
  * A NRQL result keeps its own columns, whose names follow the query, so the row
- * keys are open. The values are always scalars: a number, a string, a boolean or
- * null, never a nested object. `metadata` carries the time window New Relic
- * actually ran over, which can differ from the `SINCE` clause.
+ * keys are open. A value is not limited to a scalar: `SELECT uniques(appName)`
+ * returns an array, and `percentile(duration, 50, 95)` returns an object, so the
+ * cell is any JSON value and the caller reads the column it asked for.
  */
-const NrqlRowSchema = z.record(
-	z.string(),
-	z.union([z.string(), z.number(), z.boolean(), z.null()]),
+/** A NRQL cell is any JSON value: a scalar, an array, or a nested object. */
+export type NrqlCell =
+	| string
+	| number
+	| boolean
+	| null
+	| NrqlCell[]
+	| { [key: string]: NrqlCell };
+
+// The query decides which JSON type a cell holds, so the schema accepts any of
+// them: `uniques()` returns an array and `percentile()` returns an object.
+const NrqlCellSchema: z.ZodType<NrqlCell> = z.lazy(() =>
+	z.union([
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.null(),
+		z.array(NrqlCellSchema),
+		z.record(z.string(), NrqlCellSchema),
+	]),
 );
+
+const NrqlRowSchema = z.record(z.string(), NrqlCellSchema);
 
 const NrqlResultSchema = z
 	.object({
@@ -348,8 +377,9 @@ const NrqlResultSchema = z
 			.object({
 				timeWindow: z
 					.object({
-						begin: z.string().nullish(),
-						end: z.string().nullish(),
+						// NerdGraph answers these as epoch milliseconds.
+						begin: z.number().nullish(),
+						end: z.number().nullish(),
 					})
 					.loose()
 					.nullish(),
@@ -363,8 +393,9 @@ const NrqlResponseSchema = z.object({
 	results: z.array(NrqlRowSchema),
 	metadata: z
 		.object({
+			// NerdGraph answers these as epoch milliseconds.
 			timeWindow: z
-				.object({ begin: z.string().nullish(), end: z.string().nullish() })
+				.object({ begin: z.number().nullish(), end: z.number().nullish() })
 				.loose()
 				.nullish(),
 		})

@@ -10,11 +10,14 @@ import {
 	graphqlForbidden,
 	graphqlNrqlError,
 	metricData,
+	nrqlPercentileResult,
 	nrqlResult,
+	nrqlUniquesResult,
 	policies,
 	rateLimited,
 	restAuthError,
 	silentApplication,
+	summarizedMetricData,
 } from './test-fixtures';
 
 const API_KEY = 'NRAK-TESTKEY';
@@ -38,7 +41,15 @@ type Endpoint = CorsairEndpoint<never, unknown, unknown>;
 
 const endpoints = newrelicEndpointsNested;
 
-/** Runs one endpoint and returns the response and the request that made it. */
+/**
+ * Runs one endpoint and returns the response and the request that made it.
+ *
+ * `input` and `body` are unknown on purpose. Each endpoint has its own input and
+ * output type, and `newrelicEndpointsNested` keys them by resource and then by
+ * operation, so a shared parameter type strict enough to typecheck every call
+ * site would need the union of all of them. Each test passes a literal that the
+ * endpoint's zod schema validates at runtime and asserts on the parsed result.
+ */
 async function capture(
 	endpoint: Endpoint,
 	input: unknown,
@@ -64,6 +75,15 @@ async function capture(
 	} finally {
 		globalThis.fetch = original;
 	}
+}
+
+/** The `values` map of the first timeslice of the first metric series. */
+function metricValues(result: unknown): unknown {
+	const series = asRecord(asRecord(result)?.metric_data)?.metrics;
+	const first = asRecord(Array.isArray(series) ? series[0] : null);
+	const timeslices = first?.timeslices;
+	const slice = asRecord(Array.isArray(timeslices) ? timeslices[0] : null);
+	return slice?.values;
 }
 
 function sentBody(init: RequestInit): Record<string, unknown> {
@@ -205,12 +225,23 @@ describe('metrics.get', () => {
 			metricData,
 		);
 
-		const series = asRecord(asRecord(result)?.metric_data)?.metrics;
-		const first = asRecord(Array.isArray(series) ? series[0] : null);
-		const values = first?.values;
-		const value = asRecord(Array.isArray(values) ? values[0] : null);
-		expect(value?.average_value).toBe(0.97);
-		expect(value?.call_count).toBe(1);
+		expect(metricValues(result)).toEqual({
+			average_value: 0.97,
+			call_count: 1,
+		});
+	});
+
+	it('accepts the summarized form, which has one timeslice', async () => {
+		const { result } = await capture(
+			endpoints.metrics.get,
+			{ applicationId: 1129082, names: ['Apdex'], summarize: true },
+			summarizedMetricData,
+		);
+
+		expect(metricValues(result)).toEqual({
+			average_value: 0.97,
+			call_count: 1840,
+		});
 	});
 
 	it('rejects an empty metric name list', async () => {
@@ -319,8 +350,36 @@ describe('query.nrql', () => {
 		const rows = asRecord(result)?.results;
 		const first = asRecord(Array.isArray(rows) ? rows[0] : null);
 		expect(first?.count).toBe(1234);
+		// NerdGraph answers the window in epoch milliseconds.
 		const window = asRecord(asRecord(asRecord(result)?.metadata)?.timeWindow);
-		expect(window?.begin).toBe('2026-11-16T14:00:00Z');
+		expect(window?.begin).toBe(1763301600000);
+	});
+
+	it('keeps an array cell from uniques()', async () => {
+		const { result } = await capture(
+			endpoints.query.nrql,
+			{ accountId: 1234567, query: 'SELECT uniques(appName) FROM Transaction' },
+			nrqlUniquesResult,
+		);
+
+		const rows = asRecord(result)?.results;
+		const first = asRecord(Array.isArray(rows) ? rows[0] : null);
+		expect(first?.uniques).toEqual(['My Web Page', 'Silent Worker']);
+	});
+
+	it('keeps an object cell from percentile()', async () => {
+		const { result } = await capture(
+			endpoints.query.nrql,
+			{
+				accountId: 1234567,
+				query: 'SELECT percentile(duration, 50, 95) FROM Transaction',
+			},
+			nrqlPercentileResult,
+		);
+
+		const rows = asRecord(result)?.results;
+		const first = asRecord(Array.isArray(rows) ? rows[0] : null);
+		expect(first?.percentile).toEqual({ 50: 0.012, 95: 0.048 });
 	});
 
 	it('throws on a 200 that carries GraphQL errors', async () => {

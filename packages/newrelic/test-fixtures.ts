@@ -62,17 +62,37 @@ export const metricData = {
 		metrics: [
 			{
 				name: 'Apdex',
-				timeslice: 60,
-				values: [
+				timeslices: [
 					{
 						from: '2026-11-16T14:42:00+00:00',
 						to: '2026-11-16T14:43:00+00:00',
-						average_value: 0.97,
-						total_value: 0.97,
-						call_count: 1,
-						min_value: 0.97,
-						max_value: 0.97,
-						sum_of_squares: 0.9409,
+						values: {
+							average_value: 0.97,
+							call_count: 1,
+						},
+					},
+				],
+			},
+		],
+	},
+};
+
+/** `summarize: true` collapses the window into one timeslice. */
+export const summarizedMetricData = {
+	metric_data: {
+		from: '2026-11-16T14:42:00+00:00',
+		to: '2026-11-16T15:12:00+00:00',
+		metrics: [
+			{
+				name: 'Apdex',
+				timeslices: [
+					{
+						from: '2026-11-16T14:42:00+00:00',
+						to: '2026-11-16T15:12:00+00:00',
+						values: {
+							average_value: 0.97,
+							call_count: 1840,
+						},
 					},
 				],
 			},
@@ -127,6 +147,38 @@ export const conditions = {
 };
 
 /** NerdGraph's answer: the NRQL result is nested under data.actor.account. */
+/** `SELECT uniques(appName)` puts an array in the cell. */
+export const nrqlUniquesResult = {
+	data: {
+		actor: {
+			account: {
+				nrql: {
+					results: [{ uniques: ['My Web Page', 'Silent Worker'] }],
+					metadata: {
+						timeWindow: { begin: 1763301600000, end: 1763305200000 },
+					},
+				},
+			},
+		},
+	},
+};
+
+/** `percentile(duration, 50, 95)` puts an object in the cell. */
+export const nrqlPercentileResult = {
+	data: {
+		actor: {
+			account: {
+				nrql: {
+					results: [{ percentile: { 50: 0.012, 95: 0.048 } }],
+					metadata: {
+						timeWindow: { begin: 1763301600000, end: 1763305200000 },
+					},
+				},
+			},
+		},
+	},
+};
+
 export const nrqlResult = {
 	data: {
 		actor: {
@@ -134,9 +186,10 @@ export const nrqlResult = {
 				nrql: {
 					results: [{ count: 1234 }],
 					metadata: {
+						// NerdGraph answers these as epoch milliseconds.
 						timeWindow: {
-							begin: '2026-11-16T14:00:00Z',
-							end: '2026-11-16T15:00:00Z',
+							begin: 1763301600000,
+							end: 1763305200000,
 						},
 					},
 				},

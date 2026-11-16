@@ -1,4 +1,6 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
+import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import { NewrelicAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -23,14 +25,31 @@ async function strategy(error: Error) {
 	});
 }
 
+/**
+ * Builds the core `ApiError` the client produces: the status, the method, and a
+ * sanitized `{ errors: [{ message }] }` body.
+ */
 function apiError(
 	status: number,
-	options: { method?: string; retryAfter?: number; codes?: string[] } = {},
-): NewrelicAPIError {
-	return new NewrelicAPIError(`New Relic ${status}: failed`, {
-		status,
-		...options,
-	});
+	options: {
+		method?: ApiRequestOptions['method'];
+		retryAfter?: number;
+		path?: string;
+	} = {},
+): ApiError {
+	const path = options.path ?? '/applications.json';
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: path },
+		{
+			url: `https://api.newrelic.com/v2${path}`,
+			ok: false,
+			status,
+			statusText: 'error',
+			body: { errors: [{ message: `New Relic ${status}: failed` }] },
+		},
+		`New Relic ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('newrelic error handlers', () => {
@@ -57,13 +76,16 @@ describe('newrelic error handlers', () => {
 	});
 
 	it('treats a GraphQL FORBIDDEN extension code as a permission failure', async () => {
-		const error = apiError(200, { codes: ['FORBIDDEN'] });
+		const error = new NewrelicAPIError('permission denied', {
+			messages: ['permission denied'],
+			codes: ['FORBIDDEN'],
+		});
 		expect(classify(error)).toBe('PERMISSION_ERROR');
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a bad NRQL query that arrived as a 200', async () => {
 		const error = new NewrelicAPIError('NRQL syntax error', {
-			status: 200,
 			messages: ['NRQL syntax error'],
 		});
 		expect(classify(error)).toBe('VALIDATION_ERROR');
@@ -111,12 +133,12 @@ describe('mergeErrorHandlers', () => {
 	it('runs a caller handler for a status no builtin covers', () => {
 		const custom = {
 			match: (error: Error) =>
-				error instanceof NewrelicAPIError && error.status === 502,
+				error instanceof ApiError && error.status === 503,
 			handler: async () => ({ maxRetries: 9 }),
 		};
 		const merged = mergeErrorHandlers(errorHandlers, { CUSTOM: custom });
 
-		const failure = new NewrelicAPIError('bad gateway', { status: 502 });
+		const failure = apiError(503, { method: 'POST' });
 		const firstMatch = Object.entries(merged).find(([, entry]) =>
 			entry?.match?.(failure, {
 				pluginId: 'newrelic',

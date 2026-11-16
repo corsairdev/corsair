@@ -45,7 +45,8 @@ const NEWRELIC_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: { retryAfter: 'retry-after' },
 };
 
-// unknown: the record is an untyped error body; one field is read at a time.
+// unknown: a response body arrives as parsed JSON. This helper reads one named
+// string from it, and the caller decides what the record is.
 function readString(
 	record: Record<string, unknown> | null | undefined,
 	key: string,
@@ -63,48 +64,32 @@ function readString(
  *   how a bad NRQL query reports itself.
  */
 export class NewrelicAPIError extends Error {
-	readonly status?: number;
 	/** Every message New Relic sent, in order. */
 	readonly messages: string[];
-	/** GraphQL extension codes, e.g. a permission failure. */
+	/** GraphQL extension codes, e.g. `FORBIDDEN` for a missing role. */
 	readonly codes: string[];
-	readonly retryAfter?: number;
 	readonly method?: string;
 
 	constructor(
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
 			messages?: string[];
 			codes?: string[];
-			retryAfter?: number;
 			method?: string;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'NewrelicAPIError';
-		this.status = options.status;
 		this.messages = options.messages ?? [];
 		this.codes = options.codes ?? [];
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 	}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** REST v2 answers 401 for a bad or expired user key. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	/** A 403 is a valid key without the role the call needs. */
+	/** A GraphQL permission failure arrives as a 200 with a FORBIDDEN code. */
 	get isPermissionError(): boolean {
-		return (
-			this.status === 403 ||
-			this.codes.some((code) => code === 'FORBIDDEN' || code === 'UNAUTHORIZED')
+		return this.codes.some(
+			(code) => code === 'FORBIDDEN' || code === 'UNAUTHORIZED',
 		);
 	}
 }
@@ -132,7 +117,7 @@ export function readErrors(body: unknown): {
 	return { messages, codes };
 }
 
-// unknown: see NewrelicAPIError.
+// unknown: same parsed body as readErrors, which may be any JSON value.
 export function describeNewrelicError(
 	status: number | undefined,
 	body: unknown,
@@ -142,6 +127,44 @@ export function describeNewrelicError(
 	const text = messages.length > 0 ? messages.join('; ') : fallback;
 	const label = status === undefined ? '' : `New Relic ${status}: `;
 	return `${label}${text}`;
+}
+
+/**
+ * Rebuilds New Relic's HTTP error as a core `ApiError`, so its status and
+ * Retry-After reach core and the error handlers (R8).
+ *
+ * The sent body is dropped. The provider's `{ errors: [{ message }] }` array is
+ * kept, because the message is what a caller reads.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const { messages } = readErrors(error.body);
+	const envelope =
+		messages.length === 0
+			? undefined
+			: { errors: messages.map((message) => ({ message })) };
+	return new ApiError(
+		{ ...request, url: request.url.split('?')[0] ?? request.url },
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: envelope,
+		},
+		describeNewrelicError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /**
@@ -161,7 +184,14 @@ export type NewrelicRequest = {
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
 	/** Set for a GraphQL call, which posts a query document. */
-	graphql?: { query: string; variables?: Record<string, unknown> };
+	graphql?: {
+		query: string;
+		// unknown: GraphQL variables are typed per document, and `NEWRELIC_NRQL_DOCUMENT`
+		// declares `$accountId: Int!` and `$query: Nrql!`. Each caller validates those
+		// two values against its own input schema before it builds this object, so a
+		// shared type here would only restate what the endpoint already proved.
+		variables?: Record<string, unknown>;
+	};
 };
 
 // unknown: callers parse the body with the endpoint's zod output schema.
@@ -197,7 +227,6 @@ export async function makeNewrelicRequest(
 		const errors = readErrors(result);
 		if (errors.messages.length > 0) {
 			throw new NewrelicAPIError(errors.messages.join('; '), {
-				status: 200,
 				messages: errors.messages,
 				codes: errors.codes,
 				method: 'POST',
@@ -205,21 +234,13 @@ export async function makeNewrelicRequest(
 		}
 		return result;
 	} catch (error) {
-		// Rethrow the error raised above rather than wrapping it again.
+		// Rethrow the error raised above rather than wrapping it again. It is the
+		// only kind NewrelicAPIError covers now: a GraphQL call that answered 200
+		// with an errors array.
 		if (error instanceof NewrelicAPIError) throw error;
-		if (error instanceof ApiError) {
-			const errors = readErrors(error.body);
-			throw new NewrelicAPIError(
-				describeNewrelicError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					messages: errors.messages,
-					codes: errors.codes,
-					retryAfter: error.retryAfter,
-					method: isGraphql ? 'POST' : method,
-				},
-			);
-		}
+		// An HTTP failure stays core's ApiError (see `sanitizeApiError`) so its
+		// status and Retry-After reach core (R8).
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new NewrelicAPIError(error.message, {
