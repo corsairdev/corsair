@@ -1,5 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
-import { SimilarwebAPIError, segment } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isSimilarwebDataNotFound,
+	segment,
+	similarwebErrorText,
+} from './client';
 import { Account, Apps, Categories, Websites } from './endpoints';
 import type { UnknownJson } from './json';
 import {
@@ -268,6 +273,33 @@ describe('apps.rank', () => {
 	});
 });
 
+describe('apps.rank defaults', () => {
+	it('sends the required parameters with their defaults when omitted', async () => {
+		respond(appRank);
+
+		await invoke(Apps.rank, {
+			store: 'Apple',
+			app_id: '310633997',
+			country: 'us',
+		});
+
+		expect(lastRequest().query).toMatchObject({
+			category: 'all',
+			mode: 'topselling_free',
+			device: 'iphone',
+			duration: '90',
+		});
+	});
+});
+
+describe('websites.countryRank world', () => {
+	it('rejects world, which the country-rank route does not support', async () => {
+		await expect(
+			invoke(Websites.countryRank, { domain: 'cnn.com', country: 'world' }),
+		).rejects.toThrow(/globalRank/);
+	});
+});
+
 describe('apps.describe', () => {
 	it('GETs the describe route and reports the accepted values', async () => {
 		respond(appDescribe);
@@ -325,6 +357,12 @@ describe('usage.get', () => {
 		});
 	});
 
+	it('fails on a usage field of the wrong type instead of dropping it', async () => {
+		respond({ allowance: '10000', user_remaining: 4989 });
+
+		await expect(invoke(Account.usage, {})).rejects.toThrow(/allowance/);
+	});
+
 	it('leaves used undefined when a number is missing', async () => {
 		respond({ allowance: 10000 });
 
@@ -350,13 +388,15 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect(error).toBeInstanceOf(SimilarwebAPIError);
-		const failure = error as SimilarwebAPIError;
+		// Core's ApiError goes through unchanged (plugin rules R8); core redacts
+		// the api_key query value itself.
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
 		expect(failure.status).toBe(401);
-		expect(failure.reason).toBe('invalid API key');
-		expect(failure.isAuthError).toBe(true);
-		expect(failure.message).toContain('invalid API key');
-		expect(util.inspect(error)).not.toContain(API_KEY);
+		expect(similarwebErrorText(failure)).toBe('invalid API key');
+		expect(isSimilarwebDataNotFound(failure)).toBe(false);
+		expect(util.inspect(error, { depth: 10 })).not.toContain(API_KEY);
+		expect(JSON.stringify(failure.request)).not.toContain(API_KEY);
 		expect(failure.message).not.toContain(API_KEY);
 	});
 
@@ -370,7 +410,8 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect((error as SimilarwebAPIError).isAuthError).toBe(true);
+		expect((error as ApiError).status).toBe(403);
+		expect(isSimilarwebDataNotFound(error)).toBe(false);
 	});
 
 	it('reads a 404 as data not found rather than an auth problem', async () => {
@@ -383,8 +424,6 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		const failure = error as SimilarwebAPIError;
-		expect(failure.isDataNotFound).toBe(true);
-		expect(failure.isAuthError).toBe(false);
+		expect(isSimilarwebDataNotFound(error)).toBe(true);
 	});
 });

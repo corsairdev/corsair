@@ -104,8 +104,12 @@ const CountryRankInputSchema = z
 			.string()
 			.min(2)
 			.describe(
-				'A two-letter ISO country code, or world. Which countries are available depends on the subscription; capabilities.get lists them.',
-			),
+				'A two-letter ISO country code. Which countries are available depends on the subscription; capabilities.get lists them. Worldwide is not supported here; use websites.globalRank.',
+			)
+			.refine((value) => value.toLowerCase() !== 'world', {
+				message:
+					'Country rank does not support world; use websites.globalRank for the worldwide rank.',
+			}),
 	})
 	.superRefine(requireBothOrNeither('start_date', 'end_date'));
 
@@ -204,20 +208,22 @@ const AppRankInputSchema = z
 		category: z
 			.string()
 			.optional()
-			.describe('An app category, or all. Defaults to all.'),
+			.describe('An app category, or all. Sent as all when omitted.'),
 		mode: z
 			.string()
 			.optional()
 			.describe(
-				'The chart to read, such as free, paid, topselling_free or topgrossing. apps.describe lists every accepted value per store.',
+				'The chart to read, such as free, paid, topselling_free or topgrossing. apps.describe lists every accepted value per store. Sent as topselling_free when omitted, which both stores accept.',
 			),
-		device: AppDeviceSchema.optional(),
+		device: AppDeviceSchema.optional().describe(
+			"androidphone, iphone or ipad. Sent as the store's phone (androidphone or iphone) when omitted.",
+		),
 		duration: z
 			.number()
 			.int()
 			.min(1)
 			.optional()
-			.describe('Days back from today. Defaults to 90.'),
+			.describe('Days back from today. Sent as 90 when omitted.'),
 	})
 	.superRefine((value, ctx) => {
 		// An Android device with the Apple store, or the reverse, is a valid

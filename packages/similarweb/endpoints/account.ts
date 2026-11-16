@@ -57,8 +57,8 @@ export const usage: SimilarwebEndpoints['usageGet'] = (ctx, input) =>
 				if (!record) {
 					throw new Error('usage.get expected a usage object from Similarweb.');
 				}
-				const allowance = readNumber(record.allowance);
-				const remaining = readNumber(record.user_remaining);
+				const allowance = readNumber(record.allowance, 'allowance');
+				const remaining = readNumber(record.user_remaining, 'user_remaining');
 				return {
 					allowance,
 					user_remaining: remaining,
@@ -79,6 +79,14 @@ function asObject(value: UnknownJson): JsonObject | null {
 	return isJsonObject(value) ? value : null;
 }
 
-function readNumber(value: UnknownJson): number | undefined {
-	return typeof value === 'number' ? value : undefined;
+/**
+ * A missing or null field reads as undefined; a field that is present with
+ * another type fails, rather than turning a malformed answer into "unknown".
+ */
+function readNumber(value: UnknownJson, field: string): number | undefined {
+	if (value === undefined || value === null) return undefined;
+	if (typeof value === 'number') return value;
+	throw new Error(
+		`usage.get expected ${field} to be a number from Similarweb, got ${typeof value}.`,
+	);
 }

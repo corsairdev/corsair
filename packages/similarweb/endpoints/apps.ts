@@ -18,12 +18,18 @@ export const rank: SimilarwebEndpoints['appsRank'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: `/v1/app/${segment(parsed.store)}/${segment(parsed.app_id)}/rank/app-store-rank`,
+			// The reference marks category, mode, device and duration required,
+			// so an omitted one is sent with the documented default rather than
+			// left out: all categories, the top free chart, the store's phone,
+			// 90 days.
 			query: {
 				country: parsed.country.toLowerCase(),
-				category: parsed.category,
-				mode: parsed.mode,
-				device: parsed.device,
-				duration: parsed.duration,
+				category: parsed.category ?? 'all',
+				mode: parsed.mode ?? 'topselling_free',
+				device:
+					parsed.device ??
+					(parsed.store === 'Apple' ? 'iphone' : 'androidphone'),
+				duration: parsed.duration ?? 90,
 			},
 		}),
 		{
