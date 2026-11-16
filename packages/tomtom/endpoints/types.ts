@@ -330,7 +330,7 @@ const CalculateRouteInputSchema = z.object({
 		.optional()
 		.describe('Use live traffic in the calculation'),
 	depart_at: z.iso
-		.datetime()
+		.datetime({ offset: true })
 		.optional()
 		.describe(
 			'Departure time as an ISO 8601 instant, for future-traffic routing',

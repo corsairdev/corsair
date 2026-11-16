@@ -87,9 +87,101 @@ export type TomTomRequest = {
 	query?: TomTomQuery;
 };
 
+const REDACTED = '[REDACTED]';
+
 /**
- * TomTom takes the key as the `key` query parameter, which `ApiError` redacts,
- * so core's error passes through unchanged.
+ * Query parameters that hold exact coordinates: a bounding box, a flow point,
+ * and the search bias position.
+ */
+const LOCATION_QUERY = new Set(['bbox', 'point', 'lat', 'lon']);
+
+/**
+ * Path segments that hold a search text, an address or coordinates: the search
+ * query, the geocoded address, the reverse-geocoded point and the route's
+ * waypoints. Each is replaced by a marker, so the route stays readable.
+ */
+const LOCATION_PATHS: [RegExp, string][] = [
+	[
+		/(search\/2\/(?:search|geocode|reverseGeocode)\/)[^/?#]+?(\.json)/,
+		`$1${REDACTED}$2`,
+	],
+	[/(routing\/1\/calculateRoute\/)[^/?#]+(\/json)/, `$1${REDACTED}$2`],
+];
+
+function maskLocation(value: string): string {
+	let masked = value;
+	for (const [pattern, replacement] of LOCATION_PATHS) {
+		masked = masked.replace(pattern, replacement);
+	}
+	const at = masked.indexOf('?');
+	if (at === -1) return masked;
+	const params = masked
+		.slice(at + 1)
+		.split('&')
+		.map((pair) => {
+			const name = pair.split('=')[0] ?? '';
+			return LOCATION_QUERY.has(name) ? `${name}=${REDACTED}` : pair;
+		});
+	return `${masked.slice(0, at)}?${params.join('&')}`;
+}
+
+/**
+ * R8 keeps exact coordinates and customer data out of errors, and core's
+ * ApiError redacts only credential names, so a TomTom error would keep the
+ * address, coordinates or bounding box from the path and query. When the
+ * request carried any, the same ApiError is rebuilt with those masked in both
+ * URLs and `request.query`; status, message, response body and rate-limit
+ * fields are kept. Otherwise core's error passes through unchanged.
+ */
+function withoutLocation(error: ApiError): ApiError {
+	const url = maskLocation(error.url);
+	const requestUrl = maskLocation(error.request.url);
+	const query = error.request.query;
+	const queryHasLocation = Object.keys(query ?? {}).some((key) =>
+		LOCATION_QUERY.has(key),
+	);
+	if (
+		url === error.url &&
+		requestUrl === error.request.url &&
+		!queryHasLocation
+	) {
+		return error;
+	}
+	const maskedQuery = query
+		? Object.fromEntries(
+				Object.entries(query).map(([key, value]) => [
+					key,
+					LOCATION_QUERY.has(key) ? REDACTED : value,
+				]),
+			)
+		: undefined;
+	return new ApiError(
+		{
+			...error.request,
+			url: requestUrl,
+			...(maskedQuery ? { query: maskedQuery } : {}),
+		},
+		{
+			url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/**
+ * TomTom takes the key as the `key` query parameter, which `ApiError` redacts.
+ * Core's error passes through, rebuilt only to mask location data
+ * (`withoutLocation`).
  */
 export async function makeTomTomRequest(
 	apiKey: string,
@@ -114,9 +206,8 @@ export async function makeTomTomRequest(
 			rateLimitConfig: TOMTOM_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof TomTomAPIError || error instanceof ApiError) {
-			throw error;
-		}
+		if (error instanceof ApiError) throw withoutLocation(error);
+		if (error instanceof TomTomAPIError) throw error;
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new TomTomAPIError(error.message, { cause: error, method });
@@ -183,7 +274,9 @@ export async function fetchTomTomTile(
 			await new Promise((resolve) =>
 				setTimeout(
 					resolve,
-					Math.min(retryAfter ?? 1000 * 2 ** attempt, 60_000),
+					// An explicit Retry-After is honoured as sent, like core does;
+					// only the computed fallback is capped.
+					retryAfter ?? Math.min(1000 * 2 ** attempt, 60_000),
 				),
 			);
 			continue;

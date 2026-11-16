@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	RoutingEndpoints,
 	SearchEndpoints,
@@ -244,6 +245,21 @@ describe('routing', () => {
 		]);
 	});
 
+	it('routing.calculate accepts a departure time with an offset or in UTC', async () => {
+		for (const depart_at of [
+			'2026-12-01T10:00:00+01:00',
+			'2026-12-01T09:00:00Z',
+		]) {
+			respond(routeEnvelope);
+			await invoke(RoutingEndpoints.calculate, {
+				origins: [{ latitude: 1, longitude: 2 }],
+				destinations: [{ latitude: 3, longitude: 4 }],
+				depart_at,
+			});
+			expect(lastRequest().params.departAt).toBe(depart_at);
+		}
+	});
+
 	it('routing.calculate rejects an empty origins list', async () => {
 		const error = await captureError(
 			invoke(RoutingEndpoints.calculate, {
@@ -254,6 +270,47 @@ describe('routing', () => {
 
 		expect((error as Error).name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('location data in errors', () => {
+	it('masks the reverse-geocoded point and the search text', async () => {
+		respond({ detailedError: { code: 'BadRequest', message: 'no' } }, 400);
+		const reverse = (await captureError(
+			invoke(SearchEndpoints.reverseGeocode, {
+				latitude: 52.378123,
+				longitude: 4.900456,
+			}),
+		)) as ApiError;
+
+		respond({ detailedError: { code: 'BadRequest', message: 'no' } }, 400);
+		const fuzzy = (await captureError(
+			invoke(SearchEndpoints.fuzzy, {
+				query: 'Damrak 1 Amsterdam',
+				lat: 52.3731,
+				lon: 4.8922,
+			}),
+		)) as ApiError;
+
+		for (const error of [reverse, fuzzy]) {
+			expect(error).toBeInstanceOf(ApiError);
+			const text = JSON.stringify(error);
+			expect(text).not.toContain('52.378123');
+			expect(text).not.toContain('4.900456');
+			expect(text).not.toContain('Damrak');
+			expect(text).not.toContain('52.3731');
+		}
+		expect(fuzzy.request.query).toMatchObject({ lat: '[REDACTED]' });
+	});
+
+	it('masks the bounding box on a failed incidents read', async () => {
+		respond({ detailedError: { code: 'BadRequest', message: 'no' } }, 400);
+		const error = await captureError(
+			invoke(TrafficEndpoints.incidents, { bbox: '4.88,52.36,4.92,52.39' }),
+		);
+
+		expect((error as { status?: number }).status).toBe(400);
+		expect(JSON.stringify(error)).not.toContain('52.36');
 	});
 });
 
@@ -415,6 +472,28 @@ describe('traffic', () => {
 
 		const [, init] = fetchMock.mock.calls.at(-1) as [URL, RequestInit];
 		expect(init.signal).toBeInstanceOf(AbortSignal);
+	});
+
+	it('traffic.tile honours a Retry-After above 60 s as sent', async () => {
+		jest.useFakeTimers();
+		try {
+			fetchMock.mockResolvedValueOnce(
+				new Response('{}', {
+					status: 429,
+					headers: { 'Content-Type': 'application/json', 'Retry-After': '300' },
+				}),
+			);
+			respondPng();
+
+			const pending = invoke(TrafficEndpoints.tile, { zoom: 12, x: 1, y: 1 });
+			await jest.advanceTimersByTimeAsync(290_000);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			await jest.advanceTimersByTimeAsync(11_000);
+			await pending;
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
 	it('traffic.tile throws core ApiError on a failure, key redacted', async () => {
