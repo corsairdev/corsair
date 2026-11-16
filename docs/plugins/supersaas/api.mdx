@@ -126,7 +126,7 @@ await corsair.supersaas.api.bookings.get({});
 | `schedule_id` | `number \| string \| null` | No | — |
 | `schedule_name` | `string \| null` | No | — |
 | `price` | `number \| string \| null` | No | — |
-| `waitlisted` | `boolean \| null` | No | — |
+| `waitlisted` | `boolean \| string \| null` | No | false, or "W" (documented) / true when on the waiting list. |
 | `deleted` | `boolean \| null` | No | — |
 | `user_id` | `number \| string \| null` | No | — |
 | `user_name` | `string \| null` | No | — |
@@ -191,7 +191,7 @@ await corsair.supersaas.api.bookings.list({});
   schedule_id?: number | string | null,
   schedule_name?: string | null,
   price?: number | string | null,
-  waitlisted?: boolean | null,
+  waitlisted?: boolean | string | null,
   deleted?: boolean | null,
   user_id?: number | string | null,
   user_name?: string | null,
@@ -313,7 +313,7 @@ await corsair.supersaas.api.schedules.agenda({});
   schedule_id?: number | string | null,
   schedule_name?: string | null,
   price?: number | string | null,
-  waitlisted?: boolean | null,
+  waitlisted?: boolean | string | null,
   deleted?: boolean | null,
   user_id?: number | string | null,
   user_name?: string | null,
@@ -365,7 +365,7 @@ await corsair.supersaas.api.schedules.agenda({});
     schedule_id?: number | string | null,
     schedule_name?: string | null,
     price?: number | string | null,
-    waitlisted?: boolean | null,
+    waitlisted?: boolean | string | null,
     deleted?: boolean | null,
     user_id?: number | string | null,
     user_name?: string | null,
@@ -413,8 +413,8 @@ await corsair.supersaas.api.schedules.changes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `schedule_id` | `number` | Yes | The schedule id, the number at the end of the Configure Overview URL. |
-| `from` | `string` | No | Only changes after this time. Omitted shows the ten most recent. |
-| `to` | `string` | No | A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone. |
+| `from` | `string` | No | Only changes after this UTC time (YYYY-MM-DD HH:MM:SS), not the schedule timezone. Omitted shows the ten most recent. |
+| `to` | `string` | No | Only changes before this UTC time (YYYY-MM-DD HH:MM:SS). |
 | `limit` | `number` | No | Records to return. |
 | `offset` | `number` | No | Records to skip, to read past a full page. |
 | `slot` | `boolean` | No | Group the answer by slot (capacity schedules). |
@@ -442,7 +442,7 @@ await corsair.supersaas.api.schedules.changes({});
   schedule_id?: number | string | null,
   schedule_name?: string | null,
   price?: number | string | null,
-  waitlisted?: boolean | null,
+  waitlisted?: boolean | string | null,
   deleted?: boolean | null,
   user_id?: number | string | null,
   user_name?: string | null,
@@ -494,7 +494,7 @@ await corsair.supersaas.api.schedules.changes({});
     schedule_id?: number | string | null,
     schedule_name?: string | null,
     price?: number | string | null,
-    waitlisted?: boolean | null,
+    waitlisted?: boolean | string | null,
     deleted?: boolean | null,
     user_id?: number | string | null,
     user_name?: string | null,
@@ -568,7 +568,7 @@ await corsair.supersaas.api.schedules.free({});
   schedule_id?: number | string | null,
   schedule_name?: string | null,
   price?: number | string | null,
-  waitlisted?: boolean | null,
+  waitlisted?: boolean | string | null,
   deleted?: boolean | null,
   user_id?: number | string | null,
   user_name?: string | null,
@@ -620,7 +620,7 @@ await corsair.supersaas.api.schedules.free({});
     schedule_id?: number | string | null,
     schedule_name?: string | null,
     price?: number | string | null,
-    waitlisted?: boolean | null,
+    waitlisted?: boolean | string | null,
     deleted?: boolean | null,
     user_id?: number | string | null,
     user_name?: string | null,
@@ -697,7 +697,7 @@ await corsair.supersaas.api.schedules.range({});
   schedule_id?: number | string | null,
   schedule_name?: string | null,
   price?: number | string | null,
-  waitlisted?: boolean | null,
+  waitlisted?: boolean | string | null,
   deleted?: boolean | null,
   user_id?: number | string | null,
   user_name?: string | null,
@@ -749,7 +749,7 @@ await corsair.supersaas.api.schedules.range({});
     schedule_id?: number | string | null,
     schedule_name?: string | null,
     price?: number | string | null,
-    waitlisted?: boolean | null,
+    waitlisted?: boolean | string | null,
     deleted?: boolean | null,
     user_id?: number | string | null,
     user_name?: string | null,
@@ -907,7 +907,7 @@ await corsair.supersaas.api.slots.get({});
   schedule_id?: number | string | null,
   schedule_name?: string | null,
   price?: number | string | null,
-  waitlisted?: boolean | null,
+  waitlisted?: boolean | string | null,
   deleted?: boolean | null,
   user_id?: number | string | null,
   user_name?: string | null,
@@ -991,7 +991,7 @@ await corsair.supersaas.api.slots.list({});
     schedule_id?: number | string | null,
     schedule_name?: string | null,
     price?: number | string | null,
-    waitlisted?: boolean | null,
+    waitlisted?: boolean | string | null,
     deleted?: boolean | null,
     user_id?: number | string | null,
     user_name?: string | null,
@@ -1145,14 +1145,23 @@ await corsair.supersaas.api.users.createWithKey({});
 
 
 
-**Output**
+**Output:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `created` | `true` | Yes | — |
-| `id` | `string` | Yes | The new record id, from the Location header. |
-| `location` | `string` | Yes | The new record URL SuperSaaS returned. |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+  created: true,
+  id: string,
+  location: string
+} | {
+  id: string,
+  updated: true
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
