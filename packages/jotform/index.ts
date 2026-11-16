@@ -478,12 +478,14 @@ const jotformEndpointMeta = {
 			'Get submissions list for a specific form with pagination and filtering',
 	},
 	'forms.createSubmission': {
-		riskLevel: 'write',
-		description: 'Submit a new entry with field answers to a specific form',
+		riskLevel: 'destructive',
+		description:
+			'Submit a new entry with field answers to a specific form. Jotform runs the form notifications and autoresponder emails as for a real submission',
 	},
 	'forms.createSubmissions': {
-		riskLevel: 'write',
-		description: 'Add multiple submission entries in batch to a specific form',
+		riskLevel: 'destructive',
+		description:
+			'Add multiple submission entries in batch to a specific form. Each one can trigger the form notification and autoresponder emails',
 	},
 	'submissions.get': {
 		riskLevel: 'read',

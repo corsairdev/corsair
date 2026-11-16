@@ -22,8 +22,8 @@ pnpm add @corsair-dev/jotform
 | `forms.createQuestion` | `jotform.api.forms.createQuestion` | `write` | Add a new question field to a specific form |
 | `forms.createQuestions` | `jotform.api.forms.createQuestions` | `write` | Add multiple questions in batch to a specific form |
 | `forms.createReport` | `jotform.api.forms.createReport` | `write` | Create a new report (grid, excel, csv, etc.) for a specific form |
-| `forms.createSubmission` | `jotform.api.forms.createSubmission` | `write` | Submit a new entry with field answers to a specific form |
-| `forms.createSubmissions` | `jotform.api.forms.createSubmissions` | `write` | Add multiple submission entries in batch to a specific form |
+| `forms.createSubmission` | `jotform.api.forms.createSubmission` | `destructive` | Submit a new entry with field answers to a specific form |
+| `forms.createSubmissions` | `jotform.api.forms.createSubmissions` | `destructive` | Add multiple submission entries in batch to a specific form |
 | `forms.delete` | `jotform.api.forms.delete` | `destructive` | Delete a specific form by ID from the account |
 | `forms.deleteQuestion` | `jotform.api.forms.deleteQuestion` | `destructive` | Delete a specific question field from a form |
 | `forms.get` | `jotform.api.forms.get` | `read` | Get basic information and status for a specific form |

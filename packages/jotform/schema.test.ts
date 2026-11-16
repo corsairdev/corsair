@@ -188,3 +188,27 @@ describe('Jotform Schemas & Registry Consistency', () => {
 		).toEqual({ planName: 'FREE' });
 	});
 });
+
+describe('Jotform risk levels (R8)', () => {
+	it('marks submissions destructive because they run the form emails', () => {
+		const meta = jotform().endpointMeta ?? {};
+		expect(meta['forms.createSubmission']?.riskLevel).toBe('destructive');
+		expect(meta['forms.createSubmissions']?.riskLevel).toBe('destructive');
+	});
+
+	it('takes no account password through tool input', () => {
+		const ops = Object.keys(JotformEndpointInputSchemas);
+		expect(ops).not.toContain('user.login');
+		expect(ops).not.toContain('user.register');
+	});
+
+	it('accepts a null info field in the response envelope', () => {
+		const parsed = JotformEndpointOutputSchemas['system.getPlan'].safeParse({
+			responseCode: 200,
+			message: 'success',
+			content: { name: 'FREE' },
+			info: null,
+		});
+		expect(parsed.success).toBe(true);
+	});
+});
