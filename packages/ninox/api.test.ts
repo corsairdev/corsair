@@ -37,7 +37,10 @@ describeIfKey('Ninox live API', () => {
 
 	it('lists modules through the output schema', async () => {
 		const parsed = Outputs.modulesList.parse(
-			await corsair.ninox.api.modules.list({ workspaceId: workspace, limit: 10 }),
+			await corsair.ninox.api.modules.list({
+				workspaceId: workspace,
+				limit: 10,
+			}),
 		);
 
 		expect(Array.isArray(parsed.modules)).toBe(true);
@@ -45,7 +48,10 @@ describeIfKey('Ninox live API', () => {
 
 	it('lists tables and fields for the first module when one exists', async () => {
 		const { modules } = Outputs.modulesList.parse(
-			await corsair.ninox.api.modules.list({ workspaceId: workspace, limit: 1 }),
+			await corsair.ninox.api.modules.list({
+				workspaceId: workspace,
+				limit: 1,
+			}),
 		);
 		const moduleName = modules[0]?.name;
 		// A workspace with no modules has nothing further to read.
@@ -79,7 +85,10 @@ describeIfKey('Ninox live API', () => {
 
 	it('reads records from the first table when one exists', async () => {
 		const { modules } = Outputs.modulesList.parse(
-			await corsair.ninox.api.modules.list({ workspaceId: workspace, limit: 1 }),
+			await corsair.ninox.api.modules.list({
+				workspaceId: workspace,
+				limit: 1,
+			}),
 		);
 		const moduleName = modules[0]?.name;
 		if (!moduleName) return;
