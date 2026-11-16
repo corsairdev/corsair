@@ -65,7 +65,7 @@ Add to a contact's lead score and record the change in their history; customers.
 **Risk:** `write`
 
 ```ts
-await corsair.simplero.api.customers.adjustLeadScore({ id: 12, value: 5 });
+await corsair.simplero.api.customers.adjustLeadScore({ id: 12, amount: 5, explanation: 'Attended the webinar' });
 ```
 
 **Input**
@@ -73,7 +73,8 @@ await corsair.simplero.api.customers.adjustLeadScore({ id: 12, value: 5 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | A Simplero integer id. |
-| `value` | `number` | Yes | Added to the stored score, unlike customers.update which replaces it. |
+| `amount` | `number` | Yes | Added to the stored score (negative to subtract), unlike customers.update which replaces it. |
+| `explanation` | `string` | No | Why the score changed, shown in the contact's history. |
 
 
 
@@ -464,6 +465,7 @@ Name and internal_name are both required by Simplero.
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   internal_name?: string | null,
@@ -519,6 +521,7 @@ await corsair.simplero.api.lists.get({ id: 7 });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   internal_name?: string | null,
@@ -578,6 +581,7 @@ await corsair.simplero.api.lists.list({ per_page: 100 });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   internal_name?: string | null,
@@ -654,6 +658,7 @@ await corsair.simplero.api.lists.update({ id: 7, name: 'Weekly newsletter' });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   internal_name?: string | null,
@@ -722,6 +727,7 @@ Name and internal_name are both required by Simplero.
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   internal_name?: string | null,
@@ -780,6 +786,7 @@ await corsair.simplero.api.products.get({ id: 34 });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   internal_name?: string | null,
@@ -845,6 +852,7 @@ await corsair.simplero.api.products.list({ recurring: false });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   internal_name?: string | null,
@@ -926,6 +934,7 @@ await corsair.simplero.api.products.update({ id: 34, summary: 'Updated summary' 
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   internal_name?: string | null,
@@ -986,6 +995,7 @@ await corsair.simplero.api.purchases.get({ id: 99 });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   customer_id?: number | null,
   product_id?: number | null,
@@ -1054,6 +1064,7 @@ await corsair.simplero.api.purchases.list({ customer_id: 12, state: 'complete' }
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   customer_id?: number | null,
   product_id?: number | null,
@@ -1141,6 +1152,7 @@ Buyer details and marketing preferences only. Refunds, cancellations, captures a
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   customer_id?: number | null,
   product_id?: number | null,
@@ -1199,6 +1211,7 @@ await corsair.simplero.api.subscriptions.get({ id: 55 });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   list_id?: number | null,
   customer_id?: number | null,
@@ -1260,6 +1273,7 @@ await corsair.simplero.api.subscriptions.list({ list_id: 7 });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   list_id?: number | null,
   customer_id?: number | null,
@@ -1415,6 +1429,7 @@ Tracking data only. Whether a contact is subscribed changes through unsubscribe 
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   list_id?: number | null,
   customer_id?: number | null,
@@ -1471,6 +1486,7 @@ await corsair.simplero.api.tags.create({ name: 'VIP', color: '#ff0000' });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   description?: string | null,
@@ -1525,6 +1541,7 @@ await corsair.simplero.api.tags.get({ id: 5 });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   description?: string | null,
@@ -1584,6 +1601,7 @@ await corsair.simplero.api.tags.list({});
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   description?: string | null,
@@ -1656,6 +1674,7 @@ await corsair.simplero.api.tags.update({ id: 5, name: 'Very VIP' });
 
 ```ts
 {
+  id?: number | null,
   token?: string | null,
   name?: string | null,
   description?: string | null,

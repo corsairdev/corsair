@@ -13,7 +13,7 @@ Simplero documents 1134 routes across every part of the platform. This plugin wr
 Things to know before you write:
 
 - **Contact creates need both required fields.** Simplero requires `email` and `lead_score` on a contact, so a create must send a score. Sending a score replaces it.
-- **`adjustLeadScore` is not `update`.** The action adds to the stored score and records the change in the contact's history; `customers.update` replaces the score outright.
+- **`adjustLeadScore` is not `update`.** The action adds `amount` (negative to subtract) to the stored score and records it, with an optional `explanation`, in the contact's history; `customers.update` replaces the score outright.
 - **Tag actions take one or many.** `customers.addTag` and `customers.removeTag` accept `tag_id` or `tag_ids`, never both and never neither; the schema rejects either mistake. Tag changes can start or stop the automations attached to that tag.
 - **PATCH changes only what it sends.** An omitted field keeps its stored value, unlike a PUT. `purchases.update` and `subscriptions.update` are limited to buyer details and tracking data.
 - **Subscription state is an action, not a field.** `subscriptions.update` cannot subscribe or unsubscribe anyone; that is `subscriptions.unsubscribe` and `subscriptions.resubscribe`, and unsubscribing is reversible.
