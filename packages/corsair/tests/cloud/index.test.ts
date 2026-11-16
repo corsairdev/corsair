@@ -293,6 +293,27 @@ describe('corsairCloud', () => {
 		);
 	});
 
+	it('withInstance().withTenant() passes the bound account on a call', async () => {
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+			if (String(url) === 'https://vm/p/instances') {
+				return instanceResolve('users', 'https://vm/users');
+			}
+			return new Response(JSON.stringify({ data: {} }), { status: 200 });
+		});
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+
+		await corsair
+			.withInstance('users')
+			.withTenant('acme', { accounts: { gmail: 'b@x.com' } })
+			.gmail.api.messages.list({});
+
+		const [, init] = (globalThis.fetch as jest.Mock).mock.calls[1];
+		expect(JSON.parse(init.body)).toMatchObject({ account: 'b@x.com' });
+	});
+
 	it('accepts any plugin id dynamically (the VM is the authority)', async () => {
 		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
 			if (String(url) === 'https://vm/p/instances') {
