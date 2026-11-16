@@ -562,6 +562,27 @@ describe('toFileOutput', () => {
 		}
 	});
 
+	it('reads a text file as text when the server sends only a generic type but the name says text', () => {
+		const csv = new TextEncoder().encode('a,b\n1,2\n');
+		// Dropbox serves every file as application/octet-stream.
+		expect(
+			toFileOutput(csv, 'application/octet-stream', { filename: 'q3.csv' })
+				.text,
+		).toBe('a,b\n1,2\n');
+		expect(toFileOutput(csv, null, { filename: 'NOTES.MD' }).text).toBe(
+			'a,b\n1,2\n',
+		);
+		// A specific type from the server wins over the name, and a binary name stays base64.
+		expect(
+			toFileOutput(csv, 'image/png', { filename: 'q3.csv' }).text,
+		).toBeUndefined();
+		expect(
+			toFileOutput(csv, 'application/octet-stream', { filename: 'q3.pdf' })
+				.text,
+		).toBeUndefined();
+		expect(toFileOutput(csv, 'application/octet-stream').text).toBeUndefined();
+	});
+
 	it('keeps the bytes exact: a byte-order mark stays in the text', () => {
 		const withBom = new Uint8Array([0xef, 0xbb, 0xbf, 0x61]);
 		const { text } = toFileOutput(withBom, 'text/plain');

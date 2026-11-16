@@ -325,6 +325,64 @@ function isTextType(contentType: string): boolean {
 	);
 }
 
+// Types a server sends when it doesn't know or say what a file is.
+const GENERIC_MEDIA_TYPES = new Set([
+	'application/octet-stream',
+	'binary/octet-stream',
+	'application/unknown',
+]);
+
+// Names that hold text, for a file served with only a generic type.
+const TEXT_EXTENSIONS = new Set([
+	'txt',
+	'text',
+	'csv',
+	'tsv',
+	'md',
+	'markdown',
+	'json',
+	'jsonl',
+	'ndjson',
+	'xml',
+	'yaml',
+	'yml',
+	'toml',
+	'ini',
+	'log',
+	'html',
+	'htm',
+	'css',
+	'js',
+	'mjs',
+	'cjs',
+	'ts',
+	'tsx',
+	'jsx',
+	'sql',
+	'sh',
+	'py',
+	'rb',
+	'go',
+	'rs',
+	'java',
+	'svg',
+	'ics',
+	'vcf',
+	'srt',
+	'vtt',
+]);
+
+/**
+ * Whether a file holds text: its type says so, or the server sent only a
+ * generic type and the file's name says so. A specific type always wins.
+ */
+function holdsText(contentType: string, filename: string | undefined): boolean {
+	if (isTextType(contentType)) return true;
+	if (!GENERIC_MEDIA_TYPES.has(contentType.toLowerCase())) return false;
+	const extension = /\.([a-z0-9]+)$/.exec(filename?.toLowerCase() ?? '')?.[1];
+	return extension !== undefined && TEXT_EXTENSIONS.has(extension);
+}
+
 /** The bytes as UTF-8 text, or undefined when they are not valid UTF-8. The BOM is kept, so the text encodes back to the same bytes. */
 function asUtf8(bytes: Uint8Array): string | undefined {
 	try {
@@ -342,7 +400,9 @@ function asUtf8(bytes: Uint8Array): string | undefined {
  * caller that got no content still knows what it would be.
  *
  * A text file in UTF-8 comes back as `text` instead of base64, so a caller can
- * read a CSV or JSON file as it is. Pass `text: false` to always get base64.
+ * read a CSV or JSON file as it is. A file served as application/octet-stream
+ * counts as text when its `filename` ends in a text extension such as .csv.
+ * Pass `text: false` to always get base64.
  */
 export function toFileOutput(
 	bytes: Uint8Array,
@@ -368,7 +428,7 @@ export function toFileOutput(
 		return { ...base, contentOmitted: 'over_limit' };
 	}
 	const text =
-		options.text !== false && isTextType(base.contentType)
+		options.text !== false && holdsText(base.contentType, options.filename)
 			? asUtf8(bytes)
 			: undefined;
 	if (text !== undefined) return { ...base, text };
