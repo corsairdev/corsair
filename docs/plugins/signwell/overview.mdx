@@ -10,8 +10,8 @@ Create an API token in SignWell under Settings, then API. Pass it as the plugin'
 
 Things to know before you send:
 
-- **Sending notifies real people.** `documents.create`, `documents.createFromTemplate` and `bulkSends.create` notify every recipient unless you set `draft: true`. Test mode keeps a document out of billing and makes it non-binding, but the notifications still go out.
-- **Test mode does not follow a draft.** SignWell documents that a document created in test mode is not automatically sent in test mode. Every route here that sends accepts `test_mode`, and the plugin also sets `X-TestMode-Enabled` so the two never disagree.
+- **Sending notifies real people.** `documents.create` and `documents.createFromTemplate` notify every recipient unless you set `draft: true`. `bulkSends.create` has no draft or test mode: it sends every row as soon as it is created. Test mode keeps a document out of billing and makes it non-binding, but the notifications still go out.
+- **Test mode does not follow a draft.** SignWell documents that a document created in test mode is not automatically sent in test mode. The document routes (`documents.create`, `documents.createFromTemplate`, `documents.send`) accept `test_mode`, and the plugin also sets `X-TestMode-Enabled` so the two never disagree.
 - **Recipient ids change meaning.** At creation, `recipients[].id` is the number you assign to attach fields. After the document exists, the id comes from `documents.get`, and `documents.updateRecipients` needs that one.
 - **Only unsigned recipients can change.** Updating a recipient or their passcode fails with a 409 once that recipient has started signing.
 - **Completed files come back as a URL.** SignWell returns a PDF or ZIP body by default, which this plugin cannot hand back intact, so `documents.getCompletedPdf` and `documents.getNom151Certificate` ask for `url_only` and return `file_url`.
@@ -123,6 +123,7 @@ const tenant = corsair.withTenant('acme');
 await tenant.signwell.api.documents.create({
 	files: [{ name: 'offer.pdf', file_url: 'https://acme.example/offer.pdf' }],
 	recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan@acme-logistics.com' }],
+	with_signature_page: true,
 	subject: 'Please sign the offer',
 });
 ```

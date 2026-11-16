@@ -233,7 +233,7 @@ await corsair.signwell.api.apiApplications.get({ id: '5a67dbd7-928a-4ea0-a7e2-e4
 
 Create a bulk send from a CSV of recipient rows against one or more templates; each row becomes a document and is sent
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signwell.api.bulkSends.create({ template_ids: ['d7315111-c671-4b15-8354-c9a19bbaefa0'], bulk_send_csv: 'bmFtZSxlbWFpbApUZXN0LHRlc3RAZXhhbXBsZS5jb20K' });
@@ -453,7 +453,7 @@ await corsair.signwell.api.bulkSends.getDocuments({ id: '5a67dbd7-928a-4ea0-a7e2
     name?: string | null
   }[] | null,
   copied_contacts?: {
-    name: string,
+    name?: string,
     email: string
   }[] | null,
   allow_decline?: boolean | null,
@@ -462,7 +462,7 @@ await corsair.signwell.api.bulkSends.getDocuments({ id: '5a67dbd7-928a-4ea0-a7e2
     name: string,
     color?: string
   }[] | null,
-  conditional_rules?: Record<string, unknown>[] | null
+  conditional_rules?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -582,7 +582,7 @@ await corsair.signwell.api.bulkSends.validateCsv({ template_ids: ['d7315111-c671
 
 Create a document from one or more files and send it for signature unless draft is true; this notifies real recipients
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signwell.api.documents.create({ files: [{ name: 'offer.pdf', file_url: 'https://acme.example/offer.pdf' }], recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan@acme-logistics.com' }], subject: 'Please sign the offer', draft: true });
@@ -640,8 +640,11 @@ Set draft: true to create without notifying anyone. Without it SignWell sends th
 ```ts
 {
   id: string,
-  name: string,
+  name?: string,
   email?: string,
+  phone_number?: string,
+  send_sms?: boolean,
+  send_sms_delay?: number,
   delivery_method?: email | sms | email_and_sms,
   subject?: string,
   message?: string,
@@ -668,7 +671,8 @@ Set draft: true to create without notifying anyone. Without it SignWell sends th
 ```ts
 {
   name: string,
-  required: boolean
+  recipient_id: string,
+  required?: boolean
 }[]
 ```
 </Accordion>
@@ -677,11 +681,18 @@ Set draft: true to create without notifying anyone. Without it SignWell sends th
 
 ```ts
 {
-  field_id: string,
-  operator?: is | is_not | contains | does_not_contain | is_empty | is_not_empty,
-  value?: string,
-  action?: show | hide | require | optional,
-  target_field_ids?: string[]
+  id?: string,
+  deleted?: boolean,
+  target_id?: string,
+  action_type?: show | hide | require,
+  action_field_ids?: string[],
+  conditions?: {
+    condition_type: any_of | all_of | none_of | not_all_of,
+    status: completed | not_completed,
+    field_api_ids: string[],
+    join_operator?: and_operator | or_operator,
+    position?: number
+  }[]
 }[]
 ```
 </Accordion>
@@ -696,17 +707,24 @@ Set draft: true to create without notifying anyone. Without it SignWell sends th
   type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed,
   required?: boolean,
   api_id?: string,
-  value?: string,
+  value?: string | boolean | number,
+  label?: string,
+  name?: string,
   width?: number,
   height?: number,
-  validation?: {
-    number?: boolean,
-    minimum?: number,
-    maximum?: number,
-    date_format?: string,
-    regex?: string,
-    regex_error_message?: string
-  },
+  validation?: no_text_validation | numbers | letters | email_address | us_phone_number | us_zip_code | us_ssn | us_age | alphanumeric | us_bank_routing_number | us_bank_account_number | custom,
+  validation_regex?: string,
+  validation_regex_error_message?: string,
+  date_format?: string,
+  fixed_width?: boolean,
+  lock_sign_date?: boolean,
+  options?: (string | {
+    name: string,
+    api_id?: string,
+    is_other?: boolean
+  })[],
+  default_option?: string,
+  allow_other?: boolean,
   recipient_id: string
 }[][]
 ```
@@ -716,7 +734,7 @@ Set draft: true to create without notifying anyone. Without it SignWell sends th
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[]
 ```
@@ -766,7 +784,7 @@ Set draft: true to create without notifying anyone. Without it SignWell sends th
 | `allow_decline` | `boolean \| null` | No | — |
 | `allow_reassign` | `boolean \| null` | No | — |
 | `labels` | `object[] \| null` | No | — |
-| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+| `conditional_rules` | `Record<string, any>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -818,7 +836,7 @@ boolean | {
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[] | null
 ```
@@ -845,7 +863,7 @@ boolean | {
 
 Create a document from one or several templates, filling each placeholder with a recipient, and send it unless draft is true
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signwell.api.documents.createFromTemplate({ template_id: 'd7315111-c671-4b15-8354-c9a19bbaefa0', recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan@acme-logistics.com' }] });
@@ -877,7 +895,8 @@ await corsair.signwell.api.documents.createFromTemplate({ template_id: 'd7315111
 | `allow_reassign` | `boolean` | No | — |
 | `language` | `string` | No | — |
 | `labels` | `object[]` | No | — |
-| `fields` | `Record<string, unknown>[][]` | No | Overrides for the template's field values, if any. |
+| `template_fields` | `object[]` | No | Prefill the template's existing fields by api_id. |
+| `fields` | `Record<string, any>[][]` | No | SignWell's fields for appended files; to prefill the template's own fields use template_fields. |
 
 Supply template_id or template_ids, never both; the schema rejects a call that sends both or neither.
 
@@ -887,8 +906,10 @@ Supply template_id or template_ids, never both; the schema rejects a call that s
 ```ts
 {
   id: string,
-  name: string,
-  email: string,
+  placeholder_name?: string,
+  name?: string,
+  email?: string,
+  phone_number?: string,
   subject?: string,
   message?: string,
   passcode?: string,
@@ -901,7 +922,7 @@ Supply template_id or template_ids, never both; the schema rejects a call that s
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[]
 ```
@@ -913,6 +934,16 @@ Supply template_id or template_ids, never both; the schema rejects a call that s
 {
   name: string,
   color?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="template_fields full type">
+
+```ts
+{
+  api_id: string,
+  value: string | boolean | number
 }[]
 ```
 </Accordion>
@@ -961,7 +992,7 @@ Supply template_id or template_ids, never both; the schema rejects a call that s
 | `allow_decline` | `boolean \| null` | No | — |
 | `allow_reassign` | `boolean \| null` | No | — |
 | `labels` | `object[] \| null` | No | — |
-| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+| `conditional_rules` | `Record<string, any>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -1013,7 +1044,7 @@ boolean | {
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[] | null
 ```
@@ -1128,7 +1159,7 @@ await corsair.signwell.api.documents.get({ id: 'a692e1ce-9929-4541-adc7-61932bab
 | `allow_decline` | `boolean \| null` | No | — |
 | `allow_reassign` | `boolean \| null` | No | — |
 | `labels` | `object[] \| null` | No | — |
-| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+| `conditional_rules` | `Record<string, any>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -1180,7 +1211,7 @@ boolean | {
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[] | null
 ```
@@ -1273,7 +1304,7 @@ await corsair.signwell.api.documents.getNom151Certificate({ id: 'a692e1ce-9929-4
 
 Send a draft document to its recipients, optionally changing its subject, message and reminders first
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signwell.api.documents.send({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', subject: 'Please sign the offer' });
@@ -1324,7 +1355,8 @@ A draft created in test mode is still sent live unless test_mode is set again he
 ```ts
 {
   name: string,
-  required: boolean
+  recipient_id: string,
+  required?: boolean
 }[]
 ```
 </Accordion>
@@ -1333,7 +1365,7 @@ A draft created in test mode is still sent live unless test_mode is set again he
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[]
 ```
@@ -1349,17 +1381,24 @@ A draft created in test mode is still sent live unless test_mode is set again he
   type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed,
   required?: boolean,
   api_id?: string,
-  value?: string,
+  value?: string | boolean | number,
+  label?: string,
+  name?: string,
   width?: number,
   height?: number,
-  validation?: {
-    number?: boolean,
-    minimum?: number,
-    maximum?: number,
-    date_format?: string,
-    regex?: string,
-    regex_error_message?: string
-  },
+  validation?: no_text_validation | numbers | letters | email_address | us_phone_number | us_zip_code | us_ssn | us_age | alphanumeric | us_bank_routing_number | us_bank_account_number | custom,
+  validation_regex?: string,
+  validation_regex_error_message?: string,
+  date_format?: string,
+  fixed_width?: boolean,
+  lock_sign_date?: boolean,
+  options?: (string | {
+    name: string,
+    api_id?: string,
+    is_other?: boolean
+  })[],
+  default_option?: string,
+  allow_other?: boolean,
   recipient_id: string
 }[][]
 ```
@@ -1409,7 +1448,7 @@ A draft created in test mode is still sent live unless test_mode is set again he
 | `allow_decline` | `boolean \| null` | No | — |
 | `allow_reassign` | `boolean \| null` | No | — |
 | `labels` | `object[] \| null` | No | — |
-| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+| `conditional_rules` | `Record<string, any>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -1461,7 +1500,7 @@ boolean | {
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[] | null
 ```
@@ -1488,7 +1527,7 @@ boolean | {
 
 Remind recipients who have not signed yet, either everyone or a named list, through their own delivery method
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signwell.api.documents.sendReminder({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' });
@@ -1569,7 +1608,7 @@ await corsair.signwell.api.documents.updateAuthentication({ id: 'a692e1ce-9929-4
   passcode_delivery?: {
     enabled: boolean,
     methods?: email[],
-    expire_after_days?: number
+    expire_after_access?: boolean
   }
 }[]
 ```
@@ -1619,7 +1658,7 @@ await corsair.signwell.api.documents.updateAuthentication({ id: 'a692e1ce-9929-4
 | `allow_decline` | `boolean \| null` | No | — |
 | `allow_reassign` | `boolean \| null` | No | — |
 | `labels` | `object[] \| null` | No | — |
-| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+| `conditional_rules` | `Record<string, any>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -1671,7 +1710,7 @@ boolean | {
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[] | null
 ```
@@ -1696,9 +1735,9 @@ boolean | {
 
 `documents.updateRecipients`
 
-Change the name or email of recipients on a document that has been sent; only recipients who have not started signing
+Change the name or email of recipients on a document that has been sent, which emails the updated recipients; only recipients who have not started signing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signwell.api.documents.updateRecipients({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan.lee@acme-logistics.com' }] });
@@ -1774,7 +1813,7 @@ Use the recipient ids from documents.get, not the ids you supplied at creation.
 | `allow_decline` | `boolean \| null` | No | — |
 | `allow_reassign` | `boolean \| null` | No | — |
 | `labels` | `object[] \| null` | No | — |
-| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+| `conditional_rules` | `Record<string, any>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -1826,7 +1865,7 @@ boolean | {
 
 ```ts
 {
-  name: string,
+  name?: string,
   email: string
 }[] | null
 ```
@@ -2028,7 +2067,8 @@ await corsair.signwell.api.templates.create({ files: [{ name: 'contract.pdf', fi
 ```ts
 {
   name: string,
-  required: boolean
+  placeholder_id: string,
+  required?: boolean
 }[]
 ```
 </Accordion>
@@ -2037,11 +2077,18 @@ await corsair.signwell.api.templates.create({ files: [{ name: 'contract.pdf', fi
 
 ```ts
 {
-  field_id: string,
-  operator?: is | is_not | contains | does_not_contain | is_empty | is_not_empty,
-  value?: string,
-  action?: show | hide | require | optional,
-  target_field_ids?: string[]
+  id?: string,
+  deleted?: boolean,
+  target_id?: string,
+  action_type?: show | hide | require,
+  action_field_ids?: string[],
+  conditions?: {
+    condition_type: any_of | all_of | none_of | not_all_of,
+    status: completed | not_completed,
+    field_api_ids: string[],
+    join_operator?: and_operator | or_operator,
+    position?: number
+  }[]
 }[]
 ```
 </Accordion>
@@ -2056,17 +2103,24 @@ await corsair.signwell.api.templates.create({ files: [{ name: 'contract.pdf', fi
   type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed,
   required?: boolean,
   api_id?: string,
-  value?: string,
+  value?: string | boolean | number,
+  label?: string,
+  name?: string,
   width?: number,
   height?: number,
-  validation?: {
-    number?: boolean,
-    minimum?: number,
-    maximum?: number,
-    date_format?: string,
-    regex?: string,
-    regex_error_message?: string
-  },
+  validation?: no_text_validation | numbers | letters | email_address | us_phone_number | us_zip_code | us_ssn | us_age | alphanumeric | us_bank_routing_number | us_bank_account_number | custom,
+  validation_regex?: string,
+  validation_regex_error_message?: string,
+  date_format?: string,
+  fixed_width?: boolean,
+  lock_sign_date?: boolean,
+  options?: (string | {
+    name: string,
+    api_id?: string,
+    is_other?: boolean
+  })[],
+  default_option?: string,
+  allow_other?: boolean,
   placeholder_id: string
 }[][]
 ```
@@ -2090,8 +2144,8 @@ await corsair.signwell.api.templates.create({ files: [{ name: 'contract.pdf', fi
 | `metadata` | `Record<string, string> \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601 timestamp. |
 | `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
-| `placeholders` | `Record<string, unknown>[] \| null` | No | — |
-| `copied_placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `placeholders` | `Record<string, any>[] \| null` | No | — |
+| `copied_placeholders` | `Record<string, any>[] \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `reminders` | `boolean \| null` | No | — |
 | `archived` | `boolean \| null` | No | — |
@@ -2199,8 +2253,8 @@ await corsair.signwell.api.templates.get({ id: 'd7315111-c671-4b15-8354-c9a19bba
 | `metadata` | `Record<string, string> \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601 timestamp. |
 | `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
-| `placeholders` | `Record<string, unknown>[] \| null` | No | — |
-| `copied_placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `placeholders` | `Record<string, any>[] \| null` | No | — |
+| `copied_placeholders` | `Record<string, any>[] \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `reminders` | `boolean \| null` | No | — |
 | `archived` | `boolean \| null` | No | — |
@@ -2322,17 +2376,24 @@ await corsair.signwell.api.templates.update({ id: 'd7315111-c671-4b15-8354-c9a19
   type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed,
   required?: boolean,
   api_id?: string,
-  value?: string,
+  value?: string | boolean | number,
+  label?: string,
+  name?: string,
   width?: number,
   height?: number,
-  validation?: {
-    number?: boolean,
-    minimum?: number,
-    maximum?: number,
-    date_format?: string,
-    regex?: string,
-    regex_error_message?: string
-  },
+  validation?: no_text_validation | numbers | letters | email_address | us_phone_number | us_zip_code | us_ssn | us_age | alphanumeric | us_bank_routing_number | us_bank_account_number | custom,
+  validation_regex?: string,
+  validation_regex_error_message?: string,
+  date_format?: string,
+  fixed_width?: boolean,
+  lock_sign_date?: boolean,
+  options?: (string | {
+    name: string,
+    api_id?: string,
+    is_other?: boolean
+  })[],
+  default_option?: string,
+  allow_other?: boolean,
   placeholder_id: string
 }[][]
 ```
@@ -2356,8 +2417,8 @@ await corsair.signwell.api.templates.update({ id: 'd7315111-c671-4b15-8354-c9a19
 | `metadata` | `Record<string, string> \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601 timestamp. |
 | `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
-| `placeholders` | `Record<string, unknown>[] \| null` | No | — |
-| `copied_placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `placeholders` | `Record<string, any>[] \| null` | No | — |
+| `copied_placeholders` | `Record<string, any>[] \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `reminders` | `boolean \| null` | No | — |
 | `archived` | `boolean \| null` | No | — |
