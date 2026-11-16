@@ -44486,21 +44486,21 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_companies_companyid_json({
 
 ```ts
 {
-  company: {
+  company?: {
     addressOne?: string,
     addressTwo?: string,
     cid?: string,
     city?: string,
-    clientManagedBy: number,
+    clientManagedBy?: number,
     countrycode?: string,
     currencyId?: number,
-    customFields: {
-      Values: {
-        countryCode: string,
-        currencySymbol: string,
-        customfieldId: number,
-        urlTextToDisplay: string,
-        value: any
+    customFields?: {
+      Values?: {
+        countryCode?: string,
+        currencySymbol?: string,
+        customfieldId?: number,
+        urlTextToDisplay?: string,
+        value?: any
       }[]
     },
     emailOne?: string,
@@ -44519,12 +44519,12 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_companies_companyid_json({
     website?: string,
     zip?: string
   },
-  companyOptions: {
+  companyOptions?: {
     fireWebhook?: boolean,
     logActivity?: boolean,
     useNotifyViaTWIM?: boolean
   },
-  tags: {
+  tags?: {
     color?: string,
     name?: string,
     projectId?: number
@@ -44813,7 +44813,7 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_companies_companyid_rates_js
 
 ```ts
 {
-  clientRateByRoleId: {
+  clientRateByRoleId?: {
   }
 }
 ```
@@ -44903,9 +44903,9 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_companies_domains_id_json({
 
 ```ts
 {
-  companyDomain: {
-    companyId: number,
-    domain: string
+  companyDomain?: {
+    companyId?: number,
+    domain?: string
   }
 }
 ```
@@ -45030,8 +45030,8 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_notebooks_notebookid_json({
 
 ```ts
 {
-  notebook: {
-    categoryId: number,
+  notebook?: {
+    categoryId?: number,
     contents?: string,
     isFullWidth?: boolean,
     isPrivate?: boolean,
@@ -45039,63 +45039,63 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_notebooks_notebookid_json({
     name?: string,
     newVersion?: boolean,
     notify?: {
-      ids: {
-        companyIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+      ids?: {
+        companyIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        jobRoleIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        jobRoleIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        teamIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        teamIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        userIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        userIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         }
       },
-      type: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      type?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       }
     },
     notifyCurrentUser?: boolean,
     privacy?: {
-      companyIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      companyIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      jobRoleIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      jobRoleIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      teamIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      teamIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      userIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      userIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       }
     },
     secureContent?: boolean,
     sendDiff?: boolean,
-    tagIds: {
-      Null: boolean,
-      Set: boolean,
-      Value: number[]
+    tagIds?: {
+      Null?: boolean,
+      Set?: boolean,
+      Value?: number[]
     },
     type?: string
   }
@@ -45399,16 +45399,16 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_tasks_taskid_json({
   attachments?: {
     files?: {
       categoryId?: number,
-      id: number
+      id?: number
     }[],
     pendingFiles?: {
       categoryId?: number,
-      reference: string
+      reference?: string
     }[]
   },
   predecessors?: {
-    id: number,
-    type: string
+    id?: number,
+    type?: string
   }[],
   tags?: {
     color?: string,
@@ -45419,91 +45419,91 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_tasks_taskid_json({
     allocationId?: number,
     assignees?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     attachmentIds?: number[],
     changeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     commentFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completedAt?: string,
@@ -45512,7 +45512,7 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_tasks_taskid_json({
     createdBy?: number,
     crmDealIds?: number[],
     customFields?: {
-      Values: {
+      Values?: {
         countryCode?: string,
         currencySymbol?: string,
         customfieldId: number,
@@ -45532,24 +45532,24 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_tasks_taskid_json({
     estimatedMinutes?: number,
     grantAccessTo?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     hasDeskTickets?: boolean,
@@ -45558,40 +45558,40 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_tasks_taskid_json({
     originalDueDate?: string,
     parentTaskId?: number,
     priority?: {
-      Null: boolean,
-      Set: boolean,
-      Value: string
+      Null?: boolean,
+      Set?: boolean,
+      Value?: string
     } | none | "" | low | medium | high,
     private?: boolean,
     progress?: number,
     projectId?: number,
     reminders?: {
-      isRelative: boolean,
-      note: string,
-      relativeNumberDays: number,
-      remindAt: string,
-      type: string,
-      userId: number
+      isRelative?: boolean,
+      note?: string,
+      relativeNumberDays?: number,
+      remindAt?: string,
+      type?: string,
+      userId?: number
     }[],
     repeatOptions?: {
-      duration: number,
+      duration?: number,
       editOption?: string,
-      endsAt: string,
-      frequency: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      endsAt?: string,
+      frequency?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      monthlyRepeatType: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      monthlyRepeatType?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      rrule: string,
-      selectedDays: {
-        Null: boolean,
-        Set: boolean,
-        Value: string[]
+      rrule?: string,
+      selectedDays?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string[]
       }
     },
     startAt?: string,
@@ -46044,15 +46044,14 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_tasks_taskid_reminders_remin
 
 ```ts
 {
-  reminder: {
-    isRelative: boolean,
+  reminder?: {
+    isRelative?: boolean,
     note?: string,
-    relativeNumberDays: number,
-    remindAt: {
-    },
-    teamIds: number[],
-    type: string,
-    userIds: number[]
+    relativeNumberDays?: number,
+    remindAt?: string,
+    teamIds?: number[],
+    type?: string,
+    userIds?: number[]
   }
 }
 ```
@@ -46160,28 +46159,28 @@ await corsair.teamwork.api.v3_patch_projects_api_v3_time_timelogid_json({
 
 ```ts
 {
-  tags: {
+  tags?: {
     color?: string,
     name?: string,
     projectId?: number
   }[],
-  timelog: {
+  timelog?: {
     date?: string,
     hasStartTime?: boolean,
     hours?: number,
     invoiceId?: number,
     isBillable?: boolean,
-    isUtc: boolean,
+    isUtc?: boolean,
     minutes?: number,
     projectId?: number,
     tagIds?: number[],
-    taskId: number,
+    taskId?: number,
     ticketId?: number,
     time?: string,
     userId?: number,
     verified?: boolean
   },
-  timelogOptions: {
+  timelogOptions?: {
     fireWebhook?: boolean,
     logActivity?: boolean,
     markTaskComplete?: boolean,
@@ -46440,80 +46439,80 @@ await corsair.teamwork.api.v3_post_projects_api_v3_comments_json({
 
 ```ts
 {
-  attachments: {
+  attachments?: {
     files?: {
       categoryId?: number,
-      id: number
+      id?: number
     }[],
     pendingFiles?: {
       categoryId?: number,
-      reference: string
+      reference?: string
     }[]
   },
-  comment: {
+  comment?: {
     body?: string,
     contentType?: string,
     createdAt?: string,
     createdBy?: number,
-    fileIds: {
-      Null: boolean,
-      Set: boolean,
-      Value: number[]
+    fileIds?: {
+      Null?: boolean,
+      Set?: boolean,
+      Value?: number[]
     },
     grantAccessTo?: {
-      companyIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      companyIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      jobRoleIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      jobRoleIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      teamIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      teamIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      userIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      userIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       }
     },
     private?: boolean
   },
-  commentOptions: {
+  commentOptions?: {
     fireWebhook?: boolean,
     markdownToHTML?: boolean,
     notify?: {
-      ids: {
-        companyIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+      ids?: {
+        companyIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        jobRoleIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        jobRoleIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        teamIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        teamIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        userIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        userIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         }
       },
-      type: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      type?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       }
     },
     notifyCurrentUser?: boolean,
@@ -46770,9 +46769,9 @@ await corsair.teamwork.api.v3_post_projects_api_v3_companies_id_domains_json({
 
 ```ts
 {
-  companyDomains: {
-    companyId: number,
-    domain: string
+  companyDomains?: {
+    companyId?: number,
+    domain?: string
   }[]
 }
 ```
@@ -46900,21 +46899,21 @@ await corsair.teamwork.api.v3_post_projects_api_v3_companies_json({
 
 ```ts
 {
-  company: {
+  company?: {
     addressOne?: string,
     addressTwo?: string,
     cid?: string,
     city?: string,
-    clientManagedBy: number,
+    clientManagedBy?: number,
     countrycode?: string,
     currencyId?: number,
-    customFields: {
-      Values: {
-        countryCode: string,
-        currencySymbol: string,
-        customfieldId: number,
-        urlTextToDisplay: string,
-        value: any
+    customFields?: {
+      Values?: {
+        countryCode?: string,
+        currencySymbol?: string,
+        customfieldId?: number,
+        urlTextToDisplay?: string,
+        value?: any
       }[]
     },
     emailOne?: string,
@@ -46933,12 +46932,12 @@ await corsair.teamwork.api.v3_post_projects_api_v3_companies_json({
     website?: string,
     zip?: string
   },
-  companyOptions: {
+  companyOptions?: {
     fireWebhook?: boolean,
     logActivity?: boolean,
     useNotifyViaTWIM?: boolean
   },
-  tags: {
+  tags?: {
     color?: string,
     name?: string,
     projectId?: number
@@ -47235,80 +47234,80 @@ await corsair.teamwork.api.v3_post_projects_api_v3_links_linkid_comments_json({
 
 ```ts
 {
-  attachments: {
+  attachments?: {
     files?: {
       categoryId?: number,
-      id: number
+      id?: number
     }[],
     pendingFiles?: {
       categoryId?: number,
-      reference: string
+      reference?: string
     }[]
   },
-  comment: {
+  comment?: {
     body?: string,
     contentType?: string,
     createdAt?: string,
     createdBy?: number,
-    fileIds: {
-      Null: boolean,
-      Set: boolean,
-      Value: number[]
+    fileIds?: {
+      Null?: boolean,
+      Set?: boolean,
+      Value?: number[]
     },
     grantAccessTo?: {
-      companyIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      companyIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      jobRoleIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      jobRoleIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      teamIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      teamIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      userIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      userIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       }
     },
     private?: boolean
   },
-  commentOptions: {
+  commentOptions?: {
     fireWebhook?: boolean,
     markdownToHTML?: boolean,
     notify?: {
-      ids: {
-        companyIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+      ids?: {
+        companyIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        jobRoleIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        jobRoleIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        teamIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        teamIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        userIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        userIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         }
       },
-      type: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      type?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       }
     },
     notifyCurrentUser?: boolean,
@@ -47512,16 +47511,16 @@ await corsair.teamwork.api.v3_post_projects_api_v3_me_personaltasks_json({
   attachments?: {
     files?: {
       categoryId?: number,
-      id: number
+      id?: number
     }[],
     pendingFiles?: {
       categoryId?: number,
-      reference: string
+      reference?: string
     }[]
   },
   predecessors?: {
-    id: number,
-    type: string
+    id?: number,
+    type?: string
   }[],
   tags?: {
     color?: string,
@@ -47532,91 +47531,91 @@ await corsair.teamwork.api.v3_post_projects_api_v3_me_personaltasks_json({
     allocationId?: number,
     assignees?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     attachmentIds?: number[],
     changeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     commentFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completedAt?: string,
@@ -47625,7 +47624,7 @@ await corsair.teamwork.api.v3_post_projects_api_v3_me_personaltasks_json({
     createdBy?: number,
     crmDealIds?: number[],
     customFields?: {
-      Values: {
+      Values?: {
         countryCode?: string,
         currencySymbol?: string,
         customfieldId: number,
@@ -47645,24 +47644,24 @@ await corsair.teamwork.api.v3_post_projects_api_v3_me_personaltasks_json({
     estimatedMinutes?: number,
     grantAccessTo?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     hasDeskTickets?: boolean,
@@ -47671,40 +47670,40 @@ await corsair.teamwork.api.v3_post_projects_api_v3_me_personaltasks_json({
     originalDueDate?: string,
     parentTaskId?: number,
     priority?: {
-      Null: boolean,
-      Set: boolean,
-      Value: string
+      Null?: boolean,
+      Set?: boolean,
+      Value?: string
     } | none | "" | low | medium | high,
     private?: boolean,
     progress?: number,
     projectId?: number,
     reminders?: {
-      isRelative: boolean,
-      note: string,
-      relativeNumberDays: number,
-      remindAt: string,
-      type: string,
-      userId: number
+      isRelative?: boolean,
+      note?: string,
+      relativeNumberDays?: number,
+      remindAt?: string,
+      type?: string,
+      userId?: number
     }[],
     repeatOptions?: {
-      duration: number,
+      duration?: number,
       editOption?: string,
-      endsAt: string,
-      frequency: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      endsAt?: string,
+      frequency?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      monthlyRepeatType: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      monthlyRepeatType?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      rrule: string,
-      selectedDays: {
-        Null: boolean,
-        Set: boolean,
-        Value: string[]
+      rrule?: string,
+      selectedDays?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string[]
       }
     },
     startAt?: string,
@@ -48148,13 +48147,13 @@ await corsair.teamwork.api.v3_post_projects_api_v3_me_timers_json({
 
 ```ts
 {
-  timer: {
+  timer?: {
     isBillable?: boolean,
     isRunning?: boolean,
-    projectId: number,
+    projectId?: number,
     seconds?: number,
     stopRunningTimers?: boolean,
-    taskId: number
+    taskId?: number
   }
 }
 ```
@@ -48333,8 +48332,8 @@ await corsair.teamwork.api.v3_post_projects_api_v3_projects_projectid_notebooks_
 
 ```ts
 {
-  notebook: {
-    categoryId: number,
+  notebook?: {
+    categoryId?: number,
     contents?: string,
     isFullWidth?: boolean,
     isPrivate?: boolean,
@@ -48342,63 +48341,63 @@ await corsair.teamwork.api.v3_post_projects_api_v3_projects_projectid_notebooks_
     name?: string,
     newVersion?: boolean,
     notify?: {
-      ids: {
-        companyIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+      ids?: {
+        companyIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        jobRoleIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        jobRoleIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        teamIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        teamIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         },
-        userIds: {
-          Null: boolean,
-          Set: boolean,
-          Value: number[]
+        userIds?: {
+          Null?: boolean,
+          Set?: boolean,
+          Value?: number[]
         }
       },
-      type: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      type?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       }
     },
     notifyCurrentUser?: boolean,
     privacy?: {
-      companyIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      companyIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      jobRoleIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      jobRoleIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      teamIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      teamIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       },
-      userIds: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+      userIds?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       }
     },
     secureContent?: boolean,
     sendDiff?: boolean,
-    tagIds: {
-      Null: boolean,
-      Set: boolean,
-      Value: number[]
+    tagIds?: {
+      Null?: boolean,
+      Set?: boolean,
+      Value?: number[]
     },
     type?: string
   }
@@ -48667,28 +48666,28 @@ await corsair.teamwork.api.v3_post_projects_api_v3_projects_projectid_time_json(
 
 ```ts
 {
-  tags: {
+  tags?: {
     color?: string,
     name?: string,
     projectId?: number
   }[],
-  timelog: {
+  timelog?: {
     date?: string,
     hasStartTime?: boolean,
     hours?: number,
     invoiceId?: number,
     isBillable?: boolean,
-    isUtc: boolean,
+    isUtc?: boolean,
     minutes?: number,
     projectId?: number,
     tagIds?: number[],
-    taskId: number,
+    taskId?: number,
     ticketId?: number,
     time?: string,
     userId?: number,
     verified?: boolean
   },
-  timelogOptions: {
+  timelogOptions?: {
     fireWebhook?: boolean,
     logActivity?: boolean,
     markTaskComplete?: boolean,
@@ -48959,16 +48958,16 @@ await corsair.teamwork.api.v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_
   attachments?: {
     files?: {
       categoryId?: number,
-      id: number
+      id?: number
     }[],
     pendingFiles?: {
       categoryId?: number,
-      reference: string
+      reference?: string
     }[]
   },
   predecessors?: {
-    id: number,
-    type: string
+    id?: number,
+    type?: string
   }[],
   tags?: {
     color?: string,
@@ -48979,91 +48978,91 @@ await corsair.teamwork.api.v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_
     allocationId?: number,
     assignees?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     attachmentIds?: number[],
     changeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     commentFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completedAt?: string,
@@ -49072,7 +49071,7 @@ await corsair.teamwork.api.v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_
     createdBy?: number,
     crmDealIds?: number[],
     customFields?: {
-      Values: {
+      Values?: {
         countryCode?: string,
         currencySymbol?: string,
         customfieldId: number,
@@ -49092,24 +49091,24 @@ await corsair.teamwork.api.v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_
     estimatedMinutes?: number,
     grantAccessTo?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     hasDeskTickets?: boolean,
@@ -49118,40 +49117,40 @@ await corsair.teamwork.api.v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_
     originalDueDate?: string,
     parentTaskId?: number,
     priority?: {
-      Null: boolean,
-      Set: boolean,
-      Value: string
+      Null?: boolean,
+      Set?: boolean,
+      Value?: string
     } | none | "" | low | medium | high,
     private?: boolean,
     progress?: number,
     projectId?: number,
     reminders?: {
-      isRelative: boolean,
-      note: string,
-      relativeNumberDays: number,
-      remindAt: string,
-      type: string,
-      userId: number
+      isRelative?: boolean,
+      note?: string,
+      relativeNumberDays?: number,
+      remindAt?: string,
+      type?: string,
+      userId?: number
     }[],
     repeatOptions?: {
-      duration: number,
+      duration?: number,
       editOption?: string,
-      endsAt: string,
-      frequency: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      endsAt?: string,
+      frequency?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      monthlyRepeatType: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      monthlyRepeatType?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      rrule: string,
-      selectedDays: {
-        Null: boolean,
-        Set: boolean,
-        Value: string[]
+      rrule?: string,
+      selectedDays?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string[]
       }
     },
     startAt?: string,
@@ -49617,16 +49616,16 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasklists_tasklistid_tasks_js
   attachments?: {
     files?: {
       categoryId?: number,
-      id: number
+      id?: number
     }[],
     pendingFiles?: {
       categoryId?: number,
-      reference: string
+      reference?: string
     }[]
   },
   predecessors?: {
-    id: number,
-    type: string
+    id?: number,
+    type?: string
   }[],
   tags?: {
     color?: string,
@@ -49637,91 +49636,91 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasklists_tasklistid_tasks_js
     allocationId?: number,
     assignees?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     attachmentIds?: number[],
     changeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     commentFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completedAt?: string,
@@ -49730,7 +49729,7 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasklists_tasklistid_tasks_js
     createdBy?: number,
     crmDealIds?: number[],
     customFields?: {
-      Values: {
+      Values?: {
         countryCode?: string,
         currencySymbol?: string,
         customfieldId: number,
@@ -49750,24 +49749,24 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasklists_tasklistid_tasks_js
     estimatedMinutes?: number,
     grantAccessTo?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     hasDeskTickets?: boolean,
@@ -49776,40 +49775,40 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasklists_tasklistid_tasks_js
     originalDueDate?: string,
     parentTaskId?: number,
     priority?: {
-      Null: boolean,
-      Set: boolean,
-      Value: string
+      Null?: boolean,
+      Set?: boolean,
+      Value?: string
     } | none | "" | low | medium | high,
     private?: boolean,
     progress?: number,
     projectId?: number,
     reminders?: {
-      isRelative: boolean,
-      note: string,
-      relativeNumberDays: number,
-      remindAt: string,
-      type: string,
-      userId: number
+      isRelative?: boolean,
+      note?: string,
+      relativeNumberDays?: number,
+      remindAt?: string,
+      type?: string,
+      userId?: number
     }[],
     repeatOptions?: {
-      duration: number,
+      duration?: number,
       editOption?: string,
-      endsAt: string,
-      frequency: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      endsAt?: string,
+      frequency?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      monthlyRepeatType: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      monthlyRepeatType?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      rrule: string,
-      selectedDays: {
-        Null: boolean,
-        Set: boolean,
-        Value: string[]
+      rrule?: string,
+      selectedDays?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string[]
       }
     },
     startAt?: string,
@@ -50261,15 +50260,14 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasks_taskid_reminders_json({
 
 ```ts
 {
-  reminder: {
-    isRelative: boolean,
+  reminder?: {
+    isRelative?: boolean,
     note?: string,
-    relativeNumberDays: number,
-    remindAt: {
-    },
-    teamIds: number[],
-    type: string,
-    userIds: number[]
+    relativeNumberDays?: number,
+    remindAt?: string,
+    teamIds?: number[],
+    type?: string,
+    userIds?: number[]
   }
 }
 ```
@@ -50395,16 +50393,16 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasks_taskid_subtasks_json({
   attachments?: {
     files?: {
       categoryId?: number,
-      id: number
+      id?: number
     }[],
     pendingFiles?: {
       categoryId?: number,
-      reference: string
+      reference?: string
     }[]
   },
   predecessors?: {
-    id: number,
-    type: string
+    id?: number,
+    type?: string
   }[],
   tags?: {
     color?: string,
@@ -50415,91 +50413,91 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasks_taskid_subtasks_json({
     allocationId?: number,
     assignees?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     attachmentIds?: number[],
     changeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     commentFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completedAt?: string,
@@ -50508,7 +50506,7 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasks_taskid_subtasks_json({
     createdBy?: number,
     crmDealIds?: number[],
     customFields?: {
-      Values: {
+      Values?: {
         countryCode?: string,
         currencySymbol?: string,
         customfieldId: number,
@@ -50528,24 +50526,24 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasks_taskid_subtasks_json({
     estimatedMinutes?: number,
     grantAccessTo?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     hasDeskTickets?: boolean,
@@ -50554,40 +50552,40 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasks_taskid_subtasks_json({
     originalDueDate?: string,
     parentTaskId?: number,
     priority?: {
-      Null: boolean,
-      Set: boolean,
-      Value: string
+      Null?: boolean,
+      Set?: boolean,
+      Value?: string
     } | none | "" | low | medium | high,
     private?: boolean,
     progress?: number,
     projectId?: number,
     reminders?: {
-      isRelative: boolean,
-      note: string,
-      relativeNumberDays: number,
-      remindAt: string,
-      type: string,
-      userId: number
+      isRelative?: boolean,
+      note?: string,
+      relativeNumberDays?: number,
+      remindAt?: string,
+      type?: string,
+      userId?: number
     }[],
     repeatOptions?: {
-      duration: number,
+      duration?: number,
       editOption?: string,
-      endsAt: string,
-      frequency: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      endsAt?: string,
+      frequency?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      monthlyRepeatType: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      monthlyRepeatType?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      rrule: string,
-      selectedDays: {
-        Null: boolean,
-        Set: boolean,
-        Value: string[]
+      rrule?: string,
+      selectedDays?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string[]
       }
     },
     startAt?: string,
@@ -51035,28 +51033,28 @@ await corsair.teamwork.api.v3_post_projects_api_v3_tasks_taskid_time_json({
 
 ```ts
 {
-  tags: {
+  tags?: {
     color?: string,
     name?: string,
     projectId?: number
   }[],
-  timelog: {
+  timelog?: {
     date?: string,
     hasStartTime?: boolean,
     hours?: number,
     invoiceId?: number,
     isBillable?: boolean,
-    isUtc: boolean,
+    isUtc?: boolean,
     minutes?: number,
     projectId?: number,
     tagIds?: number[],
-    taskId: number,
+    taskId?: number,
     ticketId?: number,
     time?: string,
     userId?: number,
     verified?: boolean
   },
-  timelogOptions: {
+  timelogOptions?: {
     fireWebhook?: boolean,
     logActivity?: boolean,
     markTaskComplete?: boolean,
@@ -51436,13 +51434,13 @@ await corsair.teamwork.api.v3_put_projects_api_v3_me_timers_timerid_json({
 
 ```ts
 {
-  timer: {
+  timer?: {
     isBillable?: boolean,
     isRunning?: boolean,
-    projectId: number,
+    projectId?: number,
     seconds?: number,
     stopRunningTimers?: boolean,
-    taskId: number
+    taskId?: number
   }
 }
 ```
@@ -51902,7 +51900,7 @@ await corsair.teamwork.api.v3_put_projects_api_v3_projects_number_json({
 
 ```ts
 {
-  projectNumberSettings: {
+  projectNumberSettings?: {
     autoIncrement?: boolean,
     nextNumber?: number,
     projectNumberPattern?: string,
@@ -52080,7 +52078,7 @@ await corsair.teamwork.api.v3_put_projects_api_v3_projects_projectid_featureorde
     time?: number,
     timeline?: number
   },
-  featureOrderOptions: {
+  featureOrderOptions?: {
     useNotifyViaTWIM?: boolean
   }
 }
@@ -52187,8 +52185,8 @@ await corsair.teamwork.api.v3_put_projects_api_v3_projects_projectid_people_json
 
 ```ts
 {
-  checkTeamIds: number[],
-  userIds: number[]
+  checkTeamIds?: number[],
+  userIds?: number[]
 }
 ```
 </Accordion>
@@ -52413,16 +52411,16 @@ await corsair.teamwork.api.v3_put_projects_api_v3_tasks_taskid_json({
   attachments?: {
     files?: {
       categoryId?: number,
-      id: number
+      id?: number
     }[],
     pendingFiles?: {
       categoryId?: number,
-      reference: string
+      reference?: string
     }[]
   },
   predecessors?: {
-    id: number,
-    type: string
+    id?: number,
+    type?: string
   }[],
   tags?: {
     color?: string,
@@ -52433,91 +52431,91 @@ await corsair.teamwork.api.v3_put_projects_api_v3_tasks_taskid_json({
     allocationId?: number,
     assignees?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     attachmentIds?: number[],
     changeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     commentFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completeFollowers?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     completedAt?: string,
@@ -52526,7 +52524,7 @@ await corsair.teamwork.api.v3_put_projects_api_v3_tasks_taskid_json({
     createdBy?: number,
     crmDealIds?: number[],
     customFields?: {
-      Values: {
+      Values?: {
         countryCode?: string,
         currencySymbol?: string,
         customfieldId: number,
@@ -52546,24 +52544,24 @@ await corsair.teamwork.api.v3_put_projects_api_v3_tasks_taskid_json({
     estimatedMinutes?: number,
     grantAccessTo?: {
       companyIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       jobRoleIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       teamIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[],
       userIds?: {
-        Null: boolean,
-        Set: boolean,
-        Value: number[]
+        Null?: boolean,
+        Set?: boolean,
+        Value?: number[]
       } | number[] | number[]
     },
     hasDeskTickets?: boolean,
@@ -52572,40 +52570,40 @@ await corsair.teamwork.api.v3_put_projects_api_v3_tasks_taskid_json({
     originalDueDate?: string,
     parentTaskId?: number,
     priority?: {
-      Null: boolean,
-      Set: boolean,
-      Value: string
+      Null?: boolean,
+      Set?: boolean,
+      Value?: string
     } | none | "" | low | medium | high,
     private?: boolean,
     progress?: number,
     projectId?: number,
     reminders?: {
-      isRelative: boolean,
-      note: string,
-      relativeNumberDays: number,
-      remindAt: string,
-      type: string,
-      userId: number
+      isRelative?: boolean,
+      note?: string,
+      relativeNumberDays?: number,
+      remindAt?: string,
+      type?: string,
+      userId?: number
     }[],
     repeatOptions?: {
-      duration: number,
+      duration?: number,
       editOption?: string,
-      endsAt: string,
-      frequency: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      endsAt?: string,
+      frequency?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      monthlyRepeatType: {
-        Null: boolean,
-        Set: boolean,
-        Value: string
+      monthlyRepeatType?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string
       },
-      rrule: string,
-      selectedDays: {
-        Null: boolean,
-        Set: boolean,
-        Value: string[]
+      rrule?: string,
+      selectedDays?: {
+        Null?: boolean,
+        Set?: boolean,
+        Value?: string[]
       }
     },
     startAt?: string,
@@ -53053,28 +53051,28 @@ await corsair.teamwork.api.v3_put_projects_api_v3_time_timelogid_json({
 
 ```ts
 {
-  tags: {
+  tags?: {
     color?: string,
     name?: string,
     projectId?: number
   }[],
-  timelog: {
+  timelog?: {
     date?: string,
     hasStartTime?: boolean,
     hours?: number,
     invoiceId?: number,
     isBillable?: boolean,
-    isUtc: boolean,
+    isUtc?: boolean,
     minutes?: number,
     projectId?: number,
     tagIds?: number[],
-    taskId: number,
+    taskId?: number,
     ticketId?: number,
     time?: string,
     userId?: number,
     verified?: boolean
   },
-  timelogOptions: {
+  timelogOptions?: {
     fireWebhook?: boolean,
     logActivity?: boolean,
     markTaskComplete?: boolean,
