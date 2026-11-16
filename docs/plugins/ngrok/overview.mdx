@@ -1,0 +1,140 @@
+---
+title: "ngrok plugin"
+sidebarTitle: "Overview"
+description: "Manage ngrok cloud endpoints and their traffic policies, reserve custom domains, list agent tunnels and API keys, and manage event subscriptions that deliver ngrok events to your destinations."
+---
+
+Use **ngrok** through Corsair: one client, typed API calls.
+
+Create an API key at https://dashboard.ngrok.com/api-keys. The plugin sends it as a bearer token and also sends the `Ngrok-Version: 2` header every request needs; without that header the API answers a version error that reads like an auth failure.
+
+Things worth knowing:
+
+- **Creating an endpoint makes it live.** `endpoints.create` returns an endpoint that starts forwarding on its public URL immediately, so a traffic policy that restricts access should be attached in the same call rather than after.
+- **`traffic_policy` is text, not an object.** It is the policy body as YAML or JSON, and ngrok evaluates it in order. An empty policy forwards everything.
+- **Reserving a domain does not make it serve traffic.** `domains.create` returns a `cname_target`; point DNS at it, and certificate issuance starts once the record resolves. `certificate_management_status.provisioning_job` reports how that went.
+- **An API key's token is returned once.** `apiKeys.create` includes the `token` in its response and never again; a later `apiKeys.list` or read omits it. Store it when it is minted, because there is no way to read it back.
+- **Paging is by id, not page number.** Take the `next_page_uri` from one response and pass it as `before_id` on the next; it is absent on the last page.
+- **Event subscriptions need destinations that already exist.** `events.create` takes `destination_ids`, and destinations are created through a separate ngrok API that this plugin does not wrap.
+
+Errors carry a globally unique code, and two of them share a 403: `ERR_NGROK_200` means no Authorization header was sent, while `ERR_NGROK_202` means the credential does not look like a key. The plugin reports both as auth failures, and keeps the `operation_id` that ngrok support asks for. A 5xx on a read is retried; a 5xx on a create, update or delete is not, because it may have gone through.
+
+**What you get:**
+
+- 18 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ngrok better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/ngrok better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ngrok better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/ngrok better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ngrok } from '@corsair-dev/ngrok';
+
+export const corsair = createCorsair({
+	plugins: [
+		ngrok(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the ngrok API key before the first call: `pnpm corsair setup --plugin=ngrok --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+ngrok()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ngrok',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first endpoints**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ngrok.api.endpoints.list({ limit: 10 });
+```
+
+
+**Reserve a custom domain**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ngrok.api.domains.create({ domain: 'acme.example.com', description: 'Acme production' });
+```
+
+
+See the full list on the [API](/plugins/ngrok/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ngrok/api">
+    Every `ngrok.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
