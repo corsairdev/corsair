@@ -423,7 +423,7 @@ async function loadPlugin(
 	}
 }
 
-type PluginProcessResult = {
+export type PluginProcessResult = {
 	dir: string;
 	pluginId: string;
 	npmName: string;
@@ -546,7 +546,11 @@ export function batches<T>(items: T[], size: number): T[][] {
 	return out;
 }
 
-function runInBatches(dirs: string[], flags: string[]): PluginProcessResult[] {
+export function runInBatches(
+	dirs: string[],
+	flags: string[],
+	script = fileURLToPath(import.meta.url),
+): PluginProcessResult[] {
 	const tmp = mkdtempSync(join(tmpdir(), 'plugin-readmes-'));
 	try {
 		return batches(dirs, PLUGINS_PER_PROCESS).flatMap((batch, i) => {
@@ -555,7 +559,7 @@ function runInBatches(dirs: string[], flags: string[]): PluginProcessResult[] {
 				process.execPath,
 				[
 					...process.execArgv,
-					fileURLToPath(import.meta.url),
+					script,
 					...flags,
 					`--only=${batch.join(',')}`,
 					`--results=${out}`,

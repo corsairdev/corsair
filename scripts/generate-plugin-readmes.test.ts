@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -13,6 +13,7 @@ import {
 	missingMetadataFields,
 	missingPackageName,
 	renderPluginReadme,
+	runInBatches,
 	summarizeCheckResults,
 } from './generate-plugin-readmes.ts';
 
@@ -322,4 +323,28 @@ test('batches splits plugins into fixed-size chunks, keeping order', () => {
 		['e'],
 	]);
 	assert.deepEqual(batches([], 50), []);
+});
+
+test('runInBatches checks a plugin in a child process and returns its result', () => {
+	const [result] = runInBatches(['slack'], ['--check']);
+	assert.equal(result?.pluginId, 'slack');
+	assert.equal(result?.error, undefined);
+});
+
+test('runInBatches marks a batch failed when its child writes no results', () => {
+	const dir = mkdtempSync(join(tmpdir(), 'readmes-batch-'));
+	const script = join(dir, 'exits.mjs');
+	writeFileSync(script, 'process.exit(1);');
+	try {
+		const results = runInBatches(['a', 'b'], ['--check'], script);
+		assert.deepEqual(
+			results.map((r) => [r.dir, r.error]),
+			[
+				['a', 'batch process exited without results'],
+				['b', 'batch process exited without results'],
+			],
+		);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
 });
