@@ -407,6 +407,7 @@ export const BaseProviders = [
 	'mrscraper',
 	'nanonets',
 	'neon',
+	'neuronwriter',
 	'netsuite',
 	'neverbounce',
 	'nextdns',
@@ -1034,6 +1035,7 @@ export const ProviderDisplayNames = {
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
 	neon: 'Neon',
+	neuronwriter: 'NEURONwriter',
 	netsuite: 'NetSuite',
 	neverbounce: 'NeverBounce',
 	nextdns: 'NextDNS',
@@ -1668,6 +1670,7 @@ export type AllProviders =
 	| 'mrscraper'
 	| 'nanonets'
 	| 'neon'
+	| 'neuronwriter'
 	| 'netsuite'
 	| 'neverbounce'
 	| 'nextdns'
