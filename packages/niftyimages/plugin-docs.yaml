@@ -1,0 +1,45 @@
+displayName: NiftyImages
+description: List NiftyImages widgets, read per-widget view and click stats, page the recipients a widget recorded and the images it generated, and read one recipient's aggregated stats.
+domain: niftyimages.com
+recommendedAuth: api_key
+overviewNote: |
+  The API key comes from the NiftyImages account settings page. The plugin sends it in the `ApiKey` header, one of the three transports the docs allow, so it never appears in a URL a proxy would log.
+
+  Six widget calls are wrapped. Each takes a widget key from `widgets.list`, and each stats call takes an optional `startDate` and `endDate`:
+
+  - **`widgets.list`** answers every widget with its name and key.
+  - **`widgets.stats`** is `/Widgets/AllStats`, so one call reports every widget at once rather than one per call.
+  - **`widgets.users`** and **`widgets.userStats`** read the recipients a widget recorded and one recipient's totals.
+  - **`widgets.images`** and **`widgets.userImages`** list the generated images and their URLs.
+
+  Things worth knowing:
+
+  - **Lists answer bare arrays.** `widgets.list` sends `[{ Name, WidgetKey }]`, not an envelope, so the plugin keys it as `widgets`. A non-array body means an error rather than an empty page.
+  - **Property names are PascalCase.** `WidgetKey`, `CreateDate`, `Views`, `UniqueClicks`. The plugin passes them through exactly as sent, so a caller reads `row.WidgetKey` rather than `row.widgetKey`.
+  - **Every date is ISO 8601**, in both directions: query parameters and response fields, e.g. `2016-03-12T08:00Z`.
+  - **A recipient is whatever the widget recorded**, usually an email address. It goes in the path, so the plugin percent-encodes it; an `@` or `+` left raw would split the path.
+  - **A wrong path answers an HTML page, not a JSON 404.** That is why a 404 is reported as a path problem: an unauthenticated request answers 401 whatever the path, so without a key a wrong route and a wrong key look the same.
+  - **Only the Widget endpoints are wrapped.** NiftyImages also documents Data Store, Timer, Map, Bee Plugin, Image and Photoshop calls; those pages did not resolve while building this, so they are left out rather than guessed at.
+examples:
+  read:
+    path: widgets.list
+    title: List the account's widgets
+    args: {}
+  write: null
+apiExamples:
+  widgets.list:
+    call: "{ startDate: '2016-02-10T08:00Z', endDate: '2016-03-10T08:00Z' }"
+  widgets.stats:
+    call: "{ startDate: '2016-02-10T08:00Z', endDate: '2016-03-10T08:00Z' }"
+  widgets.users:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578' }"
+  widgets.userStats:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578', user: 'jordan@acme-logistics.com' }"
+  widgets.images:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578' }"
+  widgets.userImages:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578', user: 'jordan@acme-logistics.com' }"
+apiNotes:
+  widgets.list: 'Answers a bare array of { Name, WidgetKey }, which the plugin keys as widgets.'
+  widgets.stats: 'Reads AllStats, so one call covers every widget rather than one.'
+  widgets.userStats: 'The user is percent-encoded into the path, because it is usually an email address.'
