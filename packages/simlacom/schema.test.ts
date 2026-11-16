@@ -5,10 +5,11 @@ import type {
 } from './endpoints/operation-io-types';
 import type { JsonSchema, JsonValue } from './endpoints/operation-types';
 import {
+	createOperationOutputSchema,
 	SIMLACOM_INPUT_SCHEMAS,
 	SIMLACOM_OUTPUT_SCHEMAS,
 } from './endpoints/schemas';
-import { SIMLACOM_OPERATIONS } from './endpoints/types';
+import { getSimlaComOperation, SIMLACOM_OPERATIONS } from './endpoints/types';
 import { operationData } from './operation-data';
 
 function documentedResponseSample(
@@ -230,5 +231,108 @@ describe('OpenAPI-derived Zod schemas', () => {
 			createCost?.safeParse({ body: { cost: { dateFrom: 'not-a-date' } } })
 				.success,
 		).toBe(false);
+	});
+
+	it('parses real responses that drift from the published models (live run, 11-16)', () => {
+		// Trimmed from a Simla.com trial account: list fields arrive where the model
+		// has an object, and `ordering` arrives as a string where it says integer.
+		const userGroups = {
+			success: true,
+			pagination: {
+				limit: 20,
+				totalCount: 1,
+				currentPage: 1,
+				totalPageCount: 1,
+			},
+			groups: [
+				{
+					id: 13,
+					name: 'Managers',
+					code: 'manager',
+					isManager: true,
+					isDeliveryMen: false,
+					deliveryTypes: [],
+					breakdownOrderTypes: ['eshop-legal', 'eshop-individual'],
+					breakdownStatusGroups: ['new', 'complete'],
+					breakdownSites: ['main'],
+					breakdownOrderMethods: ['phone'],
+					grantedOrderTypes: ['eshop-individual'],
+					grantedStatusGroups: ['new'],
+					grantedSites: ['main'],
+				},
+			],
+		};
+		const stores = {
+			success: true,
+			stores: [
+				{
+					type: 'store-type-warehouse',
+					inventoryType: 'integer',
+					address: { countryIso: 'IN' },
+					active: true,
+					ordering: '990',
+					code: 'warehouse',
+					workTime: { mo: [], tu: [], we: [], th: [], fr: [], sa: [], su: [] },
+					name: 'Main',
+				},
+			],
+		};
+		const cases: Array<[string, Record<string, JsonValue>]> = [
+			['users.userGroups.get', userGroups],
+			['dataBook.referenceStores.get', stores],
+		];
+		for (const [id, response] of cases) {
+			const strict = createOperationOutputSchema(getSimlaComOperation(id));
+			expect(strict.safeParse(response).success).toBe(false);
+			expect(SIMLACOM_OUTPUT_SCHEMAS.get(id)?.safeParse(response).success).toBe(
+				true,
+			);
+		}
+		// Structure still counts: a list that arrives as a string is refused.
+		expect(
+			SIMLACOM_OUTPUT_SCHEMAS.get('dataBook.referenceStores.get')?.safeParse({
+				success: true,
+				stores: 'warehouse',
+			}).success,
+		).toBe(false);
+	});
+
+	it('keeps the declared type when the published model carries an empty oneOf', () => {
+		const strict = createOperationOutputSchema(
+			getSimlaComOperation('loyalty.getLoyaltiesById.get'),
+		);
+		const loyalty = { name: 'Club', maxChargePercent: 10, chargeRate: 1 };
+		expect(
+			strict.safeParse({ success: true, loyalty: { ...loyalty, events: [] } })
+				.success,
+		).toBe(true);
+		expect(
+			strict.safeParse({
+				success: true,
+				loyalty: { ...loyalty, events: 'invalid' },
+			}).success,
+		).toBe(false);
+	});
+
+	it('lists and history reads need no filter, and ticket writes no attachedTag', () => {
+		for (const id of [
+			'customers.list.get',
+			'orders.history.get',
+			'tasks.history.get',
+			'tickets.history.get',
+			'knowledgeBase.documentsHistory.get',
+		]) {
+			expect(SIMLACOM_INPUT_SCHEMAS.get(id)?.safeParse({}).success).toBe(true);
+		}
+		expect(
+			SIMLACOM_INPUT_SCHEMAS.get('tickets.create.post')?.safeParse({
+				body: { ticket: { description: 'x', customer: { id: 1 } } },
+			}).success,
+		).toBe(true);
+		expect(
+			SIMLACOM_INPUT_SCHEMAS.get(
+				'knowledgeBase.getDocumentsById.get',
+			)?.safeParse({ path: { id: 42 }, query: { by: 'id' } }).success,
+		).toBe(true);
 	});
 });

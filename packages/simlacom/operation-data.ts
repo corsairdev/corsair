@@ -1078,7 +1078,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[subscriptions][channel]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'string',
 						enum: ['email', 'sms', 'waba', 'mg'],
@@ -1094,7 +1094,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[subscriptions][subscribed]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: { type: 'boolean' },
 				},
 				{
@@ -4033,7 +4033,7 @@ export const operationData: OperationData = {
 			summary: 'Integration module creation/editing',
 			description:
 				'To access the method, the following permission is required integration_write . For receiving notifications about module activation/deactivation or freezing/unfreezing specify baseUrl and path to activity callback - integrationModule[actions][activity] The integrationCode field is set when the module is created and cannot be changed by edit requests. Important! Since 2026, it will be possible to edit the module only using the related API key (the one with which the module was created or updated using the /api/v5/integration-modules/{code}/update-scopes method). For old modules that do not have a fixed API key, editing will be available with any API key that has permissions to manage integration modules. Module can have one or many different types of configuration, or not have any of configurations. Recommendations service ( recommendation ) The availability of configurations of this type gives access to use methods from the section "Recommendations". Delivery service ( delivery ) This type of configuration allows module to use methods from "Deliveries" section. Payment system ( payment ) Configuration of this type allows to use methods from “Payments” section. Warehouse system ( store ) This type of configuration allows module to use method {integrationModule["integrations"]["store"]["actions"]["inventoriesUpload"]} from "Store" section. Instant messaging ( mgTransport ) Configuration of a such type allows to integrate external messengers with the system. MessageGateway Bot ( mgBot ) Configuration of a such type allows to integrate MessageGateway Bots. Telephony ( telephony ) This type of configuration allows module to use methods from "Telephony" section. Field integrationModule[integrations][telephony][inputEventSupported] contains information, does the service support notifications about incoming call. Default value is 0. Field integrationModule[integrations][telephony][outputEventSupported] contains information, does the service support notifications about outgoing call. Default value is 0. Field integrationModule[integrations][telephony][hangupEventSupported] contains information, does the service support notification about call completion. Default value is 0. The field integrationModule[integrations][telephony][additionalCodes] contains JSON, where there is an array of mapping: user id and code - extension code in telephony. The field integrationModule[integrations][telephony][externalPhones] contains JSON, where there is an array of mapping: siteCode - store code and externalPhone - external phone number. If there are several external numbers specified for one store, the last one will be chosen when initiating the call from this store. If the field integrationModule[integrations][telephony][changeUserStatusUrl] specified, when changing the manager status in system to the specified address will be sent GET request. If the module is created or edited successfully, the response will contain information on the cost of the module (the information will be specified in the info[billingInfo] field). If the module isn\'t published in the marketplace, the information isn\'t transferred.',
-			risk: 'write',
+			risk: 'destructive',
 			parameters: [
 				{
 					name: 'code',
@@ -4217,7 +4217,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[documentId]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'integer',
 						minimum: 0,
@@ -4228,7 +4228,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[sinceId]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'integer',
 						minimum: 0,
@@ -4495,7 +4495,7 @@ export const operationData: OperationData = {
 			summary: 'Activation of participation in the loyalty program',
 			description:
 				'To access the method, the following permission is required loyalty_write . The method allows you to activate the created participation. If the setting of registration in the loyalty program "Confirmation of registration by SMS" is enabled, it is required to specify a phone number in the participation of the loyalty program. An SMS message will be sent to this phone number confirming the activation of the participation in the program. The activation will be performed only after the confirmation via the SMS code. To resend SMS, call this method again. Resending is available in 60 seconds. The validity of the SMS code is 5 minutes. If it is not required to send an SMS for activation, the activation will be performed according to the settings of the loyalty program and the LoyaltyAccount object will be returned in the response. In case of confirmation via SMS, the SmsVerification object will also be returned. The code received by SMS must be sent in the method of verification confirmation specifying the checkId parameter.',
-			risk: 'write',
+			risk: 'destructive',
 			parameters: [
 				{
 					name: 'id',
@@ -5976,7 +5976,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[orderId]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'integer',
 						minimum: 0,
@@ -5993,7 +5993,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[sinceId]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'integer',
 						minimum: 0,
@@ -9818,7 +9818,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[taskId]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'integer',
 						minimum: 0,
@@ -9829,7 +9829,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[sinceId]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'integer',
 						minimum: 0,
@@ -10663,7 +10663,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[ticketId]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'integer',
 						pattern: '^[0-9]+$',
@@ -10681,7 +10681,7 @@ export const operationData: OperationData = {
 				{
 					name: 'filter[sinceId]',
 					in: 'query',
-					required: true,
+					required: false,
 					schema: {
 						type: 'integer',
 						pattern: '^[0-9]+$',
@@ -16225,7 +16225,6 @@ export const operationData: OperationData = {
 			type: 'object',
 		},
 		TicketCreateInput: {
-			required: ['attachedTag'],
 			properties: {
 				number: { type: 'string', maxLength: 255 },
 				externalId: { type: 'string', maxLength: 255 },
@@ -16334,7 +16333,6 @@ export const operationData: OperationData = {
 			type: 'object',
 		},
 		TicketInput: {
-			required: ['attachedTag'],
 			properties: {
 				number: { type: 'string', maxLength: 255 },
 				externalId: { type: 'string', maxLength: 255 },

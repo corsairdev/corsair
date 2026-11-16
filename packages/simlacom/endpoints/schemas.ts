@@ -142,8 +142,10 @@ function schemaToZod(schema: JsonSchema): z.ZodType<unknown> {
 				),
 			{ message: 'Value is not in the documented Simla.com enum.' },
 		);
-	} else if (schema.oneOf || schema.anyOf) {
-		const choices = schema.oneOf ?? schema.anyOf ?? [];
+	} else if (schema.oneOf?.length || schema.anyOf?.length) {
+		// The published spec carries a few empty `oneOf: []` lists next to a real
+		// type; those fall through to the type below instead of accepting anything.
+		const choices = schema.oneOf?.length ? schema.oneOf : (schema.anyOf ?? []);
 		// Variant outputs differ by endpoint; each branch is runtime-validated before use.
 		result = choices.reduce<z.ZodType<unknown>>(
 			(combined, choice) => z.union([combined, schemaToZod(choice)]),
@@ -240,7 +242,21 @@ export function createOperationInputSchema(
 	for (const parameter of operation.parameters) {
 		const field = schemaToZod(parameter.schema);
 		if (parameter.in === 'path') {
-			pathFields[parameter.name] = field;
+			const type = Array.isArray(parameter.schema.type)
+				? parameter.schema.type[0]
+				: parameter.schema.type;
+			// Some numeric record ids are documented as digit strings; accept the
+			// number a create call returned as well.
+			pathFields[parameter.name] =
+				type === 'string'
+					? z.preprocess(
+							(value) =>
+								typeof value === 'number' && Number.isSafeInteger(value)
+									? String(value)
+									: value,
+							field,
+						)
+					: field;
 		} else {
 			queryFields[parameter.name] = field;
 			if (parameter.required && parameter.default === undefined) {
@@ -299,9 +315,71 @@ export const SIMLACOM_INPUT_SCHEMAS = new Map(
 	]),
 );
 
+// Live Simla.com responses drift from the published response models: ids and
+// amounts arrive as strings, dates miss the documented pattern, enums gain
+// values, optional fields come back null and PHP sends an empty object as `[]`.
+// Runtime parsing therefore checks only the structure (objects stay objects,
+// lists stay lists) and lets every documented scalar through. The strict models
+// above still describe the outputs in the docs and the generated types.
+const lenientCache = new Map<string, z.ZodType<unknown>>();
+// The provider value is untrusted JSON; each branch below narrows its structure.
+const anyJson: z.ZodType<unknown> = allowJsonValue;
+
+function lenientSchemaToZod(schema: JsonSchema): z.ZodType<unknown> {
+	if (schema.$ref) {
+		const ref = schema.$ref;
+		const cached = lenientCache.get(ref);
+		if (cached) return cached;
+		const lazy = z.lazy(() => lenientSchemaToZod(referencedSchema(ref)));
+		lenientCache.set(ref, lazy);
+		return lazy;
+	}
+	if (schema.allOf?.length) {
+		const merged = mergeAllOfObjectSchemas(schema.allOf);
+		return merged ? lenientSchemaToZod(merged) : anyJson;
+	}
+	if (schema.enum || schema.oneOf?.length || schema.anyOf?.length) {
+		return anyJson;
+	}
+	const type = Array.isArray(schema.type) ? schema.type[0] : schema.type;
+	if (type === 'array') {
+		const item = schema.items ? lenientSchemaToZod(schema.items) : anyJson;
+		// PHP encodes a list with non-sequential keys as an object.
+		return z.union([z.array(item), z.record(z.string(), item)]).nullable();
+	}
+	if (type === 'object' || schema.properties) {
+		const fields: Record<string, z.ZodType<unknown>> = {};
+		for (const [name, property] of Object.entries(schema.properties ?? {})) {
+			fields[name] = lenientSchemaToZod(property).nullable().optional();
+		}
+		const objectSchema = z.object(fields).catchall(anyJson);
+		// PHP encodes a map with sequential keys (or an empty one) as a list:
+		// user groups send `breakdownSites: ["main"]` where the model has an object.
+		return z.union([objectSchema, z.array(anyJson)]).nullable();
+	}
+	return anyJson;
+}
+
+export function createLenientOperationOutputSchema(
+	operation: SimlaComOperation,
+): z.ZodType<unknown> {
+	if (operation.response.kind === 'binary') {
+		return createOperationOutputSchema(operation);
+	}
+	const schema = operation.response.schema;
+	if (!schema || Object.keys(schema).length === 0) {
+		return z.record(z.string(), anyJson);
+	}
+	// Every documented response is a JSON object with a `success` flag.
+	return z.intersection(
+		z.record(z.string(), anyJson),
+		lenientSchemaToZod(schema),
+	);
+}
+
 export const SIMLACOM_OUTPUT_SCHEMAS = new Map(
 	operations.map((operation) => [
 		operation.id,
-		createOperationOutputSchema(operation),
+		createLenientOperationOutputSchema(operation),
 	]),
 );

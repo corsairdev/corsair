@@ -3099,7 +3099,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		description: 'Getting the integration module',
 	},
 	'integration.integrationModulesByCodeEdit.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Integration module creation/editing',
 	},
 	'knowledgeBase.documents.get': {
@@ -3153,7 +3153,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 			'Getting information about participation in the loyalty program',
 	},
 	'loyalty.accountByIdActivate.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Activation of participation in the loyalty program',
 	},
 	'loyalty.accountByIdBonusCharge.post': {

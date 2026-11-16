@@ -1218,7 +1218,7 @@ export type OpenApiTicketCreateInput = {
 	tags?: Array<string>;
 	addTags?: Array<string>;
 	removeTags?: Array<string>;
-	attachedTag: string;
+	attachedTag?: string;
 	customFields?: Record<string, JsonValue>;
 	callIds?: Array<number>;
 	dialogIds?: Array<number>;
@@ -1253,7 +1253,7 @@ export type OpenApiTicketInput = {
 	tags?: Array<string>;
 	addTags?: Array<string>;
 	removeTags?: Array<string>;
-	attachedTag: string;
+	attachedTag?: string;
 	customFields?: Record<string, JsonValue>;
 	callIds?: Array<number>;
 	dialogIds?: Array<number>;
@@ -7362,7 +7362,10 @@ export type SimlaComEndpointInputs = {
 	'cost.upload.post': { body: OpenApiCostUploadInput };
 	'cost.getById.get': { path: { id: number } };
 	'cost.byIdDelete.post': { path: { id: number } };
-	'cost.byIdEdit.post': { path: { id: string }; body: OpenApiCostEditInput };
+	'cost.byIdEdit.post': {
+		path: { id: string | number };
+		body: OpenApiCostEditInput;
+	};
 	'customFields.list.get': {
 		query?: {
 			limit?: 20 | 50 | 100 | 250;
@@ -7457,7 +7460,7 @@ export type SimlaComEndpointInputs = {
 		};
 	};
 	'customers.list.get': {
-		query: {
+		query?: {
 			limit?: 20 | 50 | 100;
 			page?: number;
 			'filter[ids][]'?: Array<number>;
@@ -7508,9 +7511,9 @@ export type SimlaComEndpointInputs = {
 				| 'male_with_presumable'
 				| 'female_with_presumable';
 			'filter[isContact]'?: boolean;
-			'filter[subscriptions][channel]': 'email' | 'sms' | 'waba' | 'mg';
+			'filter[subscriptions][channel]'?: 'email' | 'sms' | 'waba' | 'mg';
 			'filter[subscriptions][subscription]'?: string;
-			'filter[subscriptions][subscribed]': boolean;
+			'filter[subscriptions][subscribed]'?: boolean;
 			'filter[online]'?: boolean;
 			'filter[segment]'?: string;
 			'filter[commentary]'?: string;
@@ -7779,20 +7782,20 @@ export type SimlaComEndpointInputs = {
 		body: OpenApiCartSetInput;
 	};
 	'customerInteraction.getCartBySiteByCustomerid.get': {
-		path: { customerId: string; site: string };
+		path: { customerId: string | number; site: string };
 		query?: { by?: 'id' | 'externalId'; siteBy?: 'id' | 'code' };
 	};
 	'customerInteraction.getFavoritesBySiteByCustomerid.get': {
-		path: { site: string; customerId: string };
+		path: { site: string; customerId: string | number };
 		query?: { by?: 'id' | 'externalId'; siteBy?: 'id' | 'code' };
 	};
 	'customerInteraction.favoritesBySiteByCustomeridAdd.post': {
-		path: { site: string; customerId: string };
+		path: { site: string; customerId: string | number };
 		query?: { by?: 'id' | 'externalId'; siteBy?: 'id' | 'code' };
 		body: OpenApiFavoriteUpdateInput;
 	};
 	'customerInteraction.favoritesBySiteByCustomeridRemove.post': {
-		path: { site: string; customerId: string };
+		path: { site: string; customerId: string | number };
 		query?: { by?: 'id' | 'externalId'; siteBy?: 'id' | 'code' };
 		body: OpenApiFavoriteUpdateInput;
 	};
@@ -7874,25 +7877,25 @@ export type SimlaComEndpointInputs = {
 		body: OpenApiKnowledgeBaseDocumentCreateInput;
 	};
 	'knowledgeBase.documentsHistory.get': {
-		query: {
+		query?: {
 			limit?: 20 | 50 | 100;
 			page?: number;
 			'filter[startDate]'?: string;
 			'filter[endDate]'?: string;
-			'filter[documentId]': number;
-			'filter[sinceId]': number;
+			'filter[documentId]'?: number;
+			'filter[sinceId]'?: number;
 		};
 	};
 	'knowledgeBase.getDocumentsById.get': {
-		path: { id: string };
+		path: { id: string | number };
 		query?: { by?: 'id' | 'externalId' };
 	};
 	'knowledgeBase.documentsByIdDelete.post': {
-		path: { id: string };
+		path: { id: string | number };
 		query?: { by?: 'id' | 'externalId' };
 	};
 	'knowledgeBase.documentsByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: OpenApiKnowledgeBaseDocumentEditInput;
 	};
 	'knowledgeBase.sections.get': {};
@@ -8104,14 +8107,14 @@ export type SimlaComEndpointInputs = {
 	'orders.create.post': { body: OpenApiOrderCreateInput };
 	'orders.fixExternalIds.post': { body: OpenApiOrdersFixExternalRowCollection };
 	'orders.history.get': {
-		query: {
+		query?: {
 			limit?: 20 | 50 | 100;
 			page?: number;
 			'filter[startDate]'?: string;
 			'filter[endDate]'?: string;
-			'filter[orderId]': number;
+			'filter[orderId]'?: number;
 			'filter[orderExternalId]'?: string;
-			'filter[sinceId]': number;
+			'filter[sinceId]'?: number;
 		};
 	};
 	'orders.linksCreate.post': { body: OpenApiOrderLinkCreateInput };
@@ -8122,7 +8125,7 @@ export type SimlaComEndpointInputs = {
 	'orders.paymentsCreate.post': { body: OpenApiPaymentCreateInput };
 	'orders.paymentsByIdDelete.post': { path: { id: number } };
 	'orders.paymentsByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: OpenApiPaymentEditInput;
 	};
 	'orders.statuses.get': {
@@ -8211,7 +8214,7 @@ export type SimlaComEndpointInputs = {
 		body: OpenApiCourierCreateInput & { courier?: OpenApiCourier };
 	};
 	'dataBook.referenceCouriersByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: OpenApiCourierEditInput & { courier?: OpenApiCourier };
 	};
 	'dataBook.referenceCurrencies.get': {};
@@ -8219,7 +8222,7 @@ export type SimlaComEndpointInputs = {
 		body: OpenApiCurrencyCreateInput & { currency?: OpenApiCurrency };
 	};
 	'dataBook.referenceCurrenciesByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: OpenApiCurrencyEditInput & { currency?: OpenApiCurrency };
 	};
 	'dataBook.referenceDeliveryServices.get': {};
@@ -8311,7 +8314,7 @@ export type SimlaComEndpointInputs = {
 		body: { ticketChannel: OpenApiTicketChannelInput & { name: JsonValue } };
 	};
 	'dataBook.referenceTicketChannelsByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: { ticketChannel: OpenApiTicketChannelInput };
 	};
 	'dataBook.referenceTicketStatusGroups.get': {};
@@ -8321,7 +8324,7 @@ export type SimlaComEndpointInputs = {
 		};
 	};
 	'dataBook.referenceTicketStatusGroupsByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: { ticketStatusGroup: OpenApiTicketStatusGroupInput };
 	};
 	'dataBook.referenceTicketStatuses.get': {};
@@ -8334,7 +8337,7 @@ export type SimlaComEndpointInputs = {
 		};
 	};
 	'dataBook.referenceTicketStatusesByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: { ticketStatus: OpenApiTicketStatusInput };
 	};
 	'dataBook.referenceTicketSubtopics.get': {};
@@ -8347,7 +8350,7 @@ export type SimlaComEndpointInputs = {
 		};
 	};
 	'dataBook.referenceTicketSubtopicsByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: { ticketSubtopic: OpenApiTicketSubtopicInput };
 	};
 	'dataBook.referenceTicketTopics.get': {};
@@ -8355,7 +8358,7 @@ export type SimlaComEndpointInputs = {
 		body: { ticketTopic: OpenApiTicketTopicInput & { name: JsonValue } };
 	};
 	'dataBook.referenceTicketTopicsByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: { ticketTopic: OpenApiTicketTopicInput };
 	};
 	'dataBook.referenceTicketTypes.get': {};
@@ -8363,7 +8366,7 @@ export type SimlaComEndpointInputs = {
 		body: { ticketType: OpenApiTicketTypeInput & { name: JsonValue } };
 	};
 	'dataBook.referenceTicketTypesByIdEdit.post': {
-		path: { id: string };
+		path: { id: string | number };
 		body: { ticketType: OpenApiTicketTypeInput };
 	};
 	'dataBook.referenceUnits.get': {};
@@ -8553,13 +8556,13 @@ export type SimlaComEndpointInputs = {
 	};
 	'tasks.create.post': { body?: OpenApiTaskEditInput };
 	'tasks.history.get': {
-		query: {
+		query?: {
 			limit?: 20 | 50 | 100;
 			page?: number;
 			'filter[startDate]'?: string;
 			'filter[endDate]'?: string;
-			'filter[taskId]': number;
-			'filter[sinceId]': number;
+			'filter[taskId]'?: number;
+			'filter[sinceId]'?: number;
 		};
 	};
 	'tasks.getById.get': { path: { id: number } };
@@ -8668,15 +8671,15 @@ export type SimlaComEndpointInputs = {
 		};
 	};
 	'tickets.history.get': {
-		query: {
+		query?: {
 			limit?: 20 | 50 | 100;
 			page?: number;
 			'filter[sites][]'?: Array<string>;
 			'filter[startDate]'?: string;
 			'filter[endDate]'?: string;
-			'filter[ticketId]': number;
+			'filter[ticketId]'?: number;
 			'filter[ticketExternalId]'?: string;
-			'filter[sinceId]': number;
+			'filter[sinceId]'?: number;
 		};
 	};
 	'tickets.getByExternalid.get': {
