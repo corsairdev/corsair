@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { SimpleroAPIError } from './client';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 
@@ -7,15 +8,22 @@ import { errorHandlers as builtinHandlers } from './error-handlers';
 const errorHandlers: CorsairErrorHandler = builtinHandlers;
 
 function build(options: {
-	status?: number;
+	status: number;
 	method?: string;
 	retryAfter?: number;
 }) {
-	return new SimpleroAPIError(`Simplero ${options.status}`, {
-		status: options.status,
-		method: options.method,
-		retryAfter: options.retryAfter,
-	});
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/api/v2/lists' },
+		{
+			url: 'https://simplero.com/api/v2/lists',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { error: 'x' },
+		},
+		`Simplero ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 const context = (error: Error) => ({
@@ -36,26 +44,11 @@ function matches(name: keyof typeof errorHandlers, error: Error) {
 }
 
 describe('simplero error handlers', () => {
-	it('retries a 429 three times and keeps the Retry-After value', async () => {
-		const result = await run(
-			'RATE_LIMIT_ERROR',
-			build({ status: 429, retryAfter: 4000 }),
-		);
-
-		expect(result).toMatchObject({
-			maxRetries: 3,
-			headersRetryAfterMs: 4000,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('leaves the fallback delay unset when no Retry-After arrived', async () => {
-		const result = await run('RATE_LIMIT_ERROR', build({ status: 429 }));
-
-		expect(result).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
+	it('leaves a 429 to core, which has already retried it three times', async () => {
+		const error = build({ status: 429, retryAfter: 4000 });
+		expect(matches('RATE_LIMIT_ERROR', error)).toBe(true);
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 
@@ -111,11 +104,10 @@ describe('simplero error handlers', () => {
 	});
 });
 
-describe('simplero error classification', () => {
-	it('separates auth from permission', () => {
-		expect(build({ status: 401 }).isAuthError).toBe(true);
-		expect(build({ status: 401 }).isPermissionError).toBe(false);
-		expect(build({ status: 403 }).isPermissionError).toBe(true);
-		expect(build({ status: 403 }).isAuthError).toBe(false);
+describe('simplero transport errors', () => {
+	it('leaves a request that never reached Simplero to DEFAULT', () => {
+		const error = new SimpleroAPIError('fetch failed', { method: 'GET' });
+		expect(matches('SERVER_ERROR', error)).toBe(false);
+		expect(matches('DEFAULT', error)).toBe(true);
 	});
 });

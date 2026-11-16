@@ -11,76 +11,70 @@ export const SIMPLERO_API_BASE = 'https://simplero.com';
 
 /**
  * The spec documents no rate limit and no rate-limit headers, so a 429 here
- * comes from a gateway. Retries live in error-handlers.ts.
+ * comes from a gateway. Core retries it three times on Retry-After (R8); the
+ * plugin's handler does not add more.
  */
 const SIMPLERO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
 
 /**
- * Simplero sends two error shapes:
+ * A request that never reached Simplero (DNS, reset, timeout). HTTP failures
+ * are not wrapped: core's `ApiError` passes through (see `withoutSentBody`) so
+ * its `status`, `retryAfter`, `request` and `body` reach core and the caller.
+ * The key travels in the config headers, which core never copies onto an error.
  *
- * - `{ "error": "Bad API key" }` on a 401, and often elsewhere.
- * - `{ "errors": ["…"] }` on a 422, one string per problem.
- *
- * A 503 can mean the idempotency store could not be checked, in which case the
- * action did not run and the same key may be retried.
+ * Simplero sends two error shapes, `{ "error": "Bad API key" }` (401 and often
+ * elsewhere) and `{ "errors": ["…"] }` on a 422; `describeSimpleroError` turns
+ * either into a sentence. A 503 can mean the idempotency store could not be
+ * checked, in which case the action did not run.
  *
  * https://simplero.com/api/v2/docs
  */
 export class SimpleroAPIError extends Error {
-	readonly status?: number;
-	/** The single message from `error`, when the API sent that shape. */
-	readonly reason?: string;
-	/** Every message from a 422 `errors` array. */
-	readonly errors?: string[];
-	/** Milliseconds from a Retry-After header, when one was sent. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
-	// An error body is one of the shapes above, but a proxy can answer HTML or
-	// nothing at all.
-	readonly body?: UnknownJson; // unknown: see the note above
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			body?: UnknownJson; // unknown: same open error body as the field above
-			retryAfter?: number;
-			method?: string;
-		} = {},
+		options: { cause?: Error; method?: string } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'SimpleroAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		const record = asRecord(this.body);
-		this.reason = readString(record, 'error');
-		this.errors = readStrings(record?.errors);
+		this.method = options.method;
 	}
+}
 
-	/** True when the API key was missing or not recognised. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	/**
-	 * True when the key is valid but the account may not perform the change.
-	 * With an `Idempotency-Key` this also means permissions changed after the
-	 * original request, which is worth reading as its own case.
-	 */
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
+/**
+ * Core's ApiError keeps the request it was built from, body included, and a
+ * Simplero body is a contact or a purchase: names, emails, phone numbers,
+ * addresses. This rebuilds the same ApiError without the sent body and with the
+ * provider's message; status, method, URL, response body and rate-limit fields
+ * are kept.
+ */
+function withoutSentBody(error: ApiError): ApiError {
+	const { body: _sentBody, ...request } = error.request;
+	return new ApiError(
+		request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeSimpleroError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 // The record is an untyped error body; read one field at a time.
@@ -142,10 +136,11 @@ export function segment(value: string | number): string {
 }
 
 /**
- * The spec asks for an identifying User-Agent: an app name and a contact email.
- * Simplero can then reach whoever owns the integration rather than blocking it.
+ * The spec asks for an identifying User-Agent of the form `App (contact email)`,
+ * and Simplero has answered 400 "Incorrect User-Agent" to one without an email.
+ * team@corsair.dev is Corsair's published contact address.
  */
-const SIMPLERO_USER_AGENT = 'Corsair (https://corsair.dev)';
+export const SIMPLERO_USER_AGENT = 'Corsair (team@corsair.dev)';
 
 // Callers parse the body with the endpoint's zod output schema, and the shape
 // differs per route, which is what that schema is for. unknown: the schema
@@ -181,20 +176,7 @@ export async function makeSimpleroRequest(
 			rateLimitConfig: SIMPLERO_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including the X-API-Key header, so `util.inspect(error)` would print
-			// the key.
-			throw new SimpleroAPIError(
-				describeSimpleroError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method: error.request.method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw withoutSentBody(error);
 		// A transport failure never held a body or headers, so its cause is safe to
 		// keep. DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {

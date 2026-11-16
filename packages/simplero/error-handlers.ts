@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SimpleroAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof SimpleroAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -15,27 +15,19 @@ function statusOf(error: Error): number | undefined {
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		// The gateway refused the request before Simplero saw it, so any method
-		// is safe to replay.
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof SimpleroAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// Core's request() has already retried it three times on Retry-After.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401 with `{ "error": "Bad API key" }`: the key is missing or not recognised.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimpleroAPIError && error.isAuthError,
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403: the account may not perform this change. With an Idempotency-Key it
 	// can also mean permissions changed after the original request, in which
 	// case the original may already have taken effect.
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimpleroAPIError && error.isPermissionError,
+		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404: no such record, or one that belongs to another account. 409: a
@@ -57,8 +49,8 @@ export const errorHandlers = {
 	// landed, and Simplero's idempotency protection is opt-in per request.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SimpleroAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
