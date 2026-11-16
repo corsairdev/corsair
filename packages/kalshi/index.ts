@@ -281,21 +281,26 @@ const kalshiEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get a single order by ID',
 	},
+	// Placing, changing and cancelling orders moves money on a production
+	// account and can't be taken back once a fill happens: destructive (R8).
 	'orders.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Place an order. Spends real money when the environment is production',
 	},
 	'orders.amend': {
-		riskLevel: 'write',
-		description: "Change an existing order's price or size",
+		riskLevel: 'destructive',
+		description:
+			"Change an existing order's price or size; a new price can fill at once and spend real money in production",
 	},
 	'orders.cancel': {
-		riskLevel: 'write',
-		description: "Cancel a resting order's remaining contracts",
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			"Cancel a resting order's remaining contracts; a cancelled order can't be restored",
 	},
 	'orders.batchCreate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Place several orders in one request. Spends real money when the environment is production',
 	},
