@@ -225,6 +225,22 @@ describe('documented operation routes', () => {
 		);
 	});
 
+	it('sends the validated input even if the caller changes its object while the site loads', async () => {
+		const endpoint = teamworkOperationsById['v1_delete_projects_id_json'];
+		if (!endpoint) throw new Error('Project delete endpoint is missing');
+		const input = { path: { id: '1' }, query: {} };
+		const ctx = buildContext();
+		ctx.keys.get_site_name = async () => {
+			input.path.id = '2';
+			return 'teamwork-test';
+		};
+		mockedRequest.mockResolvedValue({ STATUS: 'OK' });
+		await endpoint(ctx, input);
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			expect.objectContaining({ pathParameters: { id: '1' } }),
+		);
+	});
+
 	it('uses documented CSV encoding for array query parameters', async () => {
 		const operation = teamworkOperations.find(
 			(item) => item.id === 'v2_get_projects_api_v2_tasklists_id_taskids_json',

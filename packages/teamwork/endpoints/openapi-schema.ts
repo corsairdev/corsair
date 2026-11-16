@@ -346,8 +346,9 @@ function createInputSchema(
 		shape[parameter.name] = parameter.required ? field : field.optional();
 	}
 	const inputShape: Record<string, z.ZodType> = {
-		path: z.object(pathShape).strict().default({}),
-		query: z.object(queryShape).strict().default({}),
+		// prefault, not default: an omitted map is still checked for required parameters.
+		path: z.object(pathShape).strict().prefault({}),
+		query: z.object(queryShape).strict().prefault({}),
 	};
 	if (operation.body !== undefined) {
 		const bodySchema = schemaFromOpenApi(
@@ -377,7 +378,8 @@ function responseSchema(
 	const schema = schemaFromOpenApi(
 		document,
 		definitions,
-		operation.version === 'v1' ? 'v1Response' : 'response',
+		// V2 custom-field values are text or numbers whatever the spec says, like V1's scalars.
+		operation.version === 'v3' ? 'response' : 'v1Response',
 		cache,
 	);
 	return schema instanceof z.ZodNullable

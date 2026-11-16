@@ -190,6 +190,7 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		'%s requires startDate and endDate, which Teamwork rejects a call without',
 		(id) => {
 			const schema = teamworkInputSchemas[id];
+			expect(schema?.safeParse({}).success).toBe(false);
 			expect(schema?.safeParse({ query: {} }).success).toBe(false);
 			expect(
 				schema?.safeParse({ query: { startDate: '2026-11-01' } }).success,
@@ -238,6 +239,18 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		const body = { affected: { taskIds: [] } };
 		expect(schema?.safeParse(body).data).toEqual(body);
 		expect(schema?.safeParse(undefined).success).toBe(true);
+	});
+
+	it('accepts text custom-field values in V2 task lists', () => {
+		const body = {
+			STATUS: 'OK',
+			tasks: [{ id: 1, customFields: [{ customFieldId: 7, value: 'Blue' }] }],
+		};
+		expect(
+			teamworkOutputSchemas['v2_get_projects_api_v2_tasks_json']?.safeParse(
+				body,
+			).success,
+		).toBe(true);
 	});
 
 	it('still rejects a response that is not the documented top-level shape', () => {

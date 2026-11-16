@@ -78,9 +78,17 @@ export function createTeamworkOperationEndpoint<Id extends TeamworkOperationId>(
 		if (!inputSchema || !outputSchema) {
 			throw new Error('Teamwork operation schema is unavailable');
 		}
-		if (!inputSchema.safeParse(input).success) {
+		const parsedInput = inputSchema.safeParse(input);
+		if (!parsedInput.success) {
 			throw new Error('Invalid Teamwork endpoint input');
 		}
+		// Send what was validated, not the caller's object, which could change during the awaits below.
+		// `unknown` is necessary because path, query and body shapes differ per operation; each was just validated.
+		const valid = parsedInput.data as {
+			path?: Record<string, unknown>;
+			query?: Record<string, unknown>;
+			body?: unknown;
+		};
 
 		const siteName = await resolveTeamworkSiteName(
 			ctx.options.siteName,
@@ -92,9 +100,9 @@ export function createTeamworkOperationEndpoint<Id extends TeamworkOperationId>(
 			version: operation.version,
 			method: operation.method,
 			path: operation.path,
-			pathParameters: input.path ?? {},
-			query: serializeTeamworkQuery(operation, input.query ?? {}),
-			body: input.body,
+			pathParameters: valid.path ?? {},
+			query: serializeTeamworkQuery(operation, valid.query ?? {}),
+			body: valid.body,
 		});
 
 		// `unknown` is necessary because provider response JSON is narrowed by the documented output schema.

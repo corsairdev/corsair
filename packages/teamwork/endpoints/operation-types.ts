@@ -441,7 +441,7 @@ type TeamworkV1Response<T> = T extends Array<infer Item>
 export type TeamworkEndpointOutputs = {
 	[Id in keyof TeamworkV1Outputs]: TeamworkV1Response<TeamworkV1Outputs[Id]>;
 } & {
-	[Id in keyof TeamworkV2Outputs]: TeamworkResponse<TeamworkV2Outputs[Id]>;
+	[Id in keyof TeamworkV2Outputs]: TeamworkV1Response<TeamworkV2Outputs[Id]>;
 } & {
 	[Id in keyof TeamworkV3Outputs]: TeamworkResponse<TeamworkV3Outputs[Id]>;
 };
