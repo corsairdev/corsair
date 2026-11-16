@@ -230,7 +230,7 @@ export function similarweb<const T extends SimilarwebPluginOptions>(
 	} satisfies InternalSimilarwebPlugin;
 }
 
-export { SimilarwebAPIError } from './client';
+export { isSimilarwebDataNotFound, similarwebErrorText } from './client';
 
 export type {
 	AppDescribeResponse,

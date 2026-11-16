@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SimilarwebAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isSimilarwebDataNotFound, similarwebErrorText } from './client';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 
 // The literal map is narrower than the type core uses (its match takes a
@@ -12,12 +13,19 @@ function build(options: {
 	retryAfter?: number;
 	body?: string;
 }) {
-	return new SimilarwebAPIError(`Similarweb ${options.status}`, {
-		status: options.status,
-		method: options.method,
-		retryAfter: options.retryAfter,
-		body: options.body,
-	});
+	// Core's ApiError, built the way request() builds it.
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/v1/website' },
+		{
+			url: 'https://api.similarweb.com/v1/website',
+			ok: false,
+			status: options.status ?? 0,
+			statusText: '',
+			body: options.body,
+		},
+		`Similarweb ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 const context = (error: Error) => ({
@@ -38,27 +46,28 @@ function matches(name: keyof typeof errorHandlers, error: Error) {
 }
 
 describe('similarweb error handlers', () => {
-	it('retries a 429 three times and keeps the Retry-After value', async () => {
-		const result = await run(
-			'RATE_LIMIT_ERROR',
-			build({ status: 429, retryAfter: 2000 }),
-		);
-
-		expect(result).toMatchObject({
-			maxRetries: 3,
-			headersRetryAfterMs: 2000,
-			retryStrategy: 'exponential_backoff',
+	it('does not replay a 429 core already retried', async () => {
+		const error = build({ status: 429, retryAfter: 2000 });
+		expect(matches('RATE_LIMIT_ERROR', error)).toBe(true);
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 
-	it('leaves the fallback delay unset when no Retry-After arrived', async () => {
-		const result = await run('RATE_LIMIT_ERROR', build({ status: 429 }));
+	it('reads a 401 "Data not found" as not found, before AUTH_ERROR', () => {
+		const error = build({ status: 401, body: 'Data not found' });
+		const first = Object.keys(builtinHandlers).find((name) =>
+			matches(name, error),
+		);
+		expect(first).toBe('NOT_FOUND_ERROR');
+	});
 
-		expect(result).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
+	it('keeps a 401 "invalid API key" an auth error', () => {
+		const error = build({ status: 401, body: 'invalid API key' });
+		const first = Object.keys(builtinHandlers).find((name) =>
+			matches(name, error),
+		);
+		expect(first).toBe('AUTH_ERROR');
 	});
 
 	it.each([401, 403])('does not retry a %i', async (status) => {
@@ -120,17 +129,20 @@ describe('similarweb error handlers', () => {
 });
 
 describe('similarweb error classification', () => {
-	it('keeps the plain-text reason and truncates a long one', () => {
+	it('reads the plain-text reason and truncates a long one', () => {
 		const error = build({ status: 401, body: 'invalid API key' });
 
-		expect(error.reason).toBe('invalid API key');
-		expect(build({ status: 500, body: 'x'.repeat(500) }).reason).toHaveLength(
-			300,
-		);
+		expect(similarwebErrorText(error)).toBe('invalid API key');
+		expect(
+			similarwebErrorText(build({ status: 500, body: 'x'.repeat(500) })),
+		).toHaveLength(300);
+		expect(similarwebErrorText(new Error('x'))).toBeUndefined();
 	});
 
-	it('does not treat a 404 as an auth problem', () => {
-		expect(build({ status: 404 }).isAuthError).toBe(false);
-		expect(build({ status: 404 }).isDataNotFound).toBe(true);
+	it('reads a 404 as data not found', () => {
+		expect(isSimilarwebDataNotFound(build({ status: 404 }))).toBe(true);
+		expect(
+			isSimilarwebDataNotFound(build({ status: 401, body: 'invalid API key' })),
+		).toBe(false);
 	});
 });

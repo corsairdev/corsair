@@ -16,85 +16,46 @@ export const SIMILARWEB_API_BASE = 'https://api.similarweb.com';
 
 /**
  * Similarweb allows 10 requests per second per account and answers 429 past
- * that. Retries live in error-handlers.ts, so the client makes one attempt.
+ * that. Core's request() retries a 429 three times with backoff, so the 429
+ * handler in error-handlers.ts does not retry again. No reset header is
+ * documented, so only Retry-After is read.
  */
 const SIMILARWEB_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
 
 /**
- * Similarweb's errors are **plain text, not JSON**: a 401 answers the literal
- * `invalid API key`, a 403 covers either a bad key or an exhausted credit
- * balance, and a 404 is "Data not found" for a domain with no data. So the body
- * is not parsed, and the status plus the text is all a caller can match on.
+ * Similarweb's errors are **plain text, not JSON**. A 401 is either the literal
+ * `invalid API key` (no key or a wrong one, seen on 11-16) or `Data not found`
+ * (a domain it has no data for, or one written in capitals), a 403 is a bad
+ * key or an exhausted credit balance, and an unknown route is an empty 404.
+ * Errors are core's ApiError, passed through unchanged; this returns its
+ * plain-text body, trimmed, or undefined.
  *
  * https://developers.similarweb.com/docs/error-codes-rest
  */
-export class SimilarwebAPIError extends Error {
-	readonly status?: number;
-	/** The provider's plain-text reason, when it sent one. */
-	readonly reason?: string;
-	/** Milliseconds from a Retry-After header, when one was sent. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-	// The body is plain text, but a proxy can answer HTML or nothing at all.
-	readonly body?: UnknownJson; // unknown: see the note above
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			body?: UnknownJson; // unknown: same open error body as the field above
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'SimilarwebAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.reason =
-			typeof this.body === 'string' && this.body.length > 0
-				? this.body.trim().slice(0, 300)
-				: undefined;
-	}
-
-	/**
-	 * 401 always means the key is missing or invalid. A 403 means either a bad
-	 * key or no credits left, and Similarweb documents no way to tell them
-	 * apart from the response, so both read as an account problem rather than a
-	 * transient one.
-	 */
-	get isAuthError(): boolean {
-		return this.status === 401 || this.status === 403;
-	}
-
-	/** True when the domain or app has no data, which is not an auth problem. */
-	get isDataNotFound(): boolean {
-		return this.status === 404 || this.reason === 'Data not found';
-	}
+export function similarwebErrorText(
+	// unknown: any thrown value; only core's ApiError carries a body.
+	error: unknown,
+): string | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	const body: UnknownJson = error.body;
+	return typeof body === 'string' && body.trim().length > 0
+		? body.trim().slice(0, 300)
+		: undefined;
 }
 
-export function describeSimilarwebError(
-	status: number | undefined,
-	body: UnknownJson, // unknown: an error body can be text, HTML or empty
-	fallback: string,
-): string {
-	// Similarweb sends a bare sentence, so the text is the whole message.
-	const text =
-		typeof body === 'string' && body.trim().length > 0
-			? body.trim().slice(0, 300)
-			: fallback;
-	return status === undefined ? text : `Similarweb ${status}: ${text}`;
+/** True for Similarweb's "Data not found" answer, which is not an auth problem. */
+export function isSimilarwebDataNotFound(error: unknown): boolean {
+	if (!(error instanceof ApiError)) return false;
+	return (
+		error.status === 404 ||
+		/^data not found/i.test(similarwebErrorText(error) ?? '')
+	);
 }
 
 export type SimilarwebQuery = Record<
@@ -137,32 +98,10 @@ export async function makeSimilarwebRequest(
 		query: { ...query, api_key: apiKey },
 	};
 
-	try {
-		// unknown: see the note on makeSimilarwebRequest.
-		return await request<UnknownJson>(config, requestOptions, {
-			rateLimitConfig: SIMILARWEB_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including the api_key query parameter, so `util.inspect(error)` on a
-			// wrapped cause would print the key.
-			throw new SimilarwebAPIError(
-				describeSimilarwebError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method: error.request.method,
-				},
-			);
-		}
-		// A transport failure never held a body or query, so its cause is safe to
-		// keep, and it is what tells a retry that nothing reached Similarweb.
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new SimilarwebAPIError(error.message, { cause: error, method });
-		}
-		throw new SimilarwebAPIError('Unknown Similarweb error', { method });
-	}
+	// Core's ApiError goes through unchanged (plugin rules R8). It already
+	// replaces the api_key query value with [REDACTED] in its url and request.
+	// unknown: see the note on makeSimilarwebRequest.
+	return request<UnknownJson>(config, requestOptions, {
+		rateLimitConfig: SIMILARWEB_RATE_LIMIT_CONFIG,
+	});
 }

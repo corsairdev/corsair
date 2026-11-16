@@ -1,43 +1,40 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SimilarwebAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isSimilarwebDataNotFound } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof SimilarwebAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
  * Status codes: https://developers.similarweb.com/docs/error-codes-rest
  *
  * Similarweb allows 10 requests per second per account and answers 429 past it.
- * It documents no Retry-After header, so a 429 falls back to backoff.
+ * Core retries a 429 three times; it documents no Retry-After header, so the
+ * retries fall back to backoff.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		// Similarweb refused the request before running it, so a GET is safe to
-		// replay, and every route here is a GET.
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof SimilarwebAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// Core's request() already retried it three times with backoff.
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// "Data not found": a domain or app with no data, or a mistyped or
+	// capitalised domain. Similarweb sends it as a 401 (its error-code page)
+	// or a 404, so this runs before AUTH_ERROR claims the 401.
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => isSimilarwebDataNotFound(error),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401 and 403 both mean the request cannot be authorised: the key is
 	// missing or invalid, or the account is out of data credits. Neither
 	// improves on a retry. Similarweb documents no way to tell a bad key from
 	// an exhausted balance, so a caller should check both on the account page.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimilarwebAPIError && error.isAuthError,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 404 is "Data not found": a domain or app with no data, or a mistyped
-	// domain. Similarweb answers 401 for a capitalised domain, so this only
-	// catches the ones it recognises as a known shape with no data.
-	NOT_FOUND_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimilarwebAPIError && error.isDataNotFound,
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status === 401 || status === 403;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 and 422: a malformed parameter, such as a country code the
@@ -52,8 +49,7 @@ export const errorHandlers = {
 	// Similarweb documents a 500 only as an internal error. Every route is a
 	// read, so a replay is safe.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimilarwebAPIError && (error.status ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
