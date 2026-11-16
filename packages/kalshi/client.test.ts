@@ -11,6 +11,8 @@ import {
 jest.mock('corsair/http', () => ({
 	request: jest.fn(),
 	ApiError: class extends Error {
+		// unknown: the mock mirrors core's ApiError, whose request and body are
+		// whatever the call sent and got back.
 		constructor(
 			request: unknown,
 			response: {
@@ -181,10 +183,9 @@ describe('makeKalshiRequest', () => {
 			),
 		);
 
-		const error = await makeKalshiRequest(
-			'/exchange/status',
-			credentials(),
-		).catch((e: unknown) => e);
+		const error = await makeKalshiRequest('/exchange/status', credentials())
+			// unknown: a rejection can carry any value; the next line checks its type.
+			.catch((e: unknown) => e);
 		expect(error).toBeInstanceOf(KalshiAPIError);
 		expect((error as KalshiAPIError).status).toBe(429);
 	});

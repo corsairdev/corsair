@@ -549,6 +549,7 @@ describe('Kalshi endpoints', () => {
 				url: '/portfolio/events/orders/batched',
 			});
 			// `unknown` elements: only the count matters here, not each order's shape.
+			// unknown: only the number of orders sent is checked here.
 			expect((sent().body as { orders: unknown[] }).orders).toHaveLength(2);
 			expect(result.orders[1]?.error).toBeDefined();
 			expect(mockLog).toHaveBeenCalledWith(
