@@ -18,7 +18,9 @@ export function defineEndpoint<
 	event: string;
 	input: I;
 	output: O;
+	// Raw Vercel response: `output` parses it as soon as run returns.
 	run: (ctx: VercelContext, input: z.output<I>) => Promise<unknown>;
+	// The event log takes mixed JSON values that differ per endpoint.
 	logInput?: (input: z.output<I>) => Record<string, unknown>;
 }): (ctx: VercelContext, input: z.input<I>) => Promise<z.output<O>> {
 	return async (ctx, rawInput) => {
@@ -27,6 +29,8 @@ export function defineEndpoint<
 		await logEventFromContext(
 			ctx,
 			config.event,
+			// z.output<I> is generic, so TS can't see it is an object; every input
+			// schema parses to one, with mixed values for the event log.
 			config.logInput
 				? config.logInput(input)
 				: { ...(input as Record<string, unknown>) },
@@ -78,7 +82,10 @@ export const PaginationSchema = z
 	})
 	.passthrough();
 
-/** Copies the defined values of `input` for `keys` into a query object. */
+/**
+ * Copies the defined values of `input` for `keys` into a query object. Inputs
+ * mix value types per endpoint; only scalars and arrays are copied.
+ */
 export function pickQuery<T extends Record<string, unknown>>(
 	input: T,
 	keys: readonly (keyof T)[],
@@ -100,12 +107,16 @@ export function pickQuery<T extends Record<string, unknown>>(
 	return query;
 }
 
-/** Drops `undefined` entries so they aren't sent in a JSON body. */
+/**
+ * Drops `undefined` entries so they aren't sent in a JSON body. Bodies mix
+ * value types per endpoint.
+ */
 export function compactBody<T extends Record<string, unknown>>(
 	body: T,
 ): Partial<T> {
 	const out: Partial<T> = {};
 	for (const [key, value] of Object.entries(body)) {
+		// Object.entries drops T's key types, so write through a plain record.
 		if (value !== undefined) (out as Record<string, unknown>)[key] = value;
 	}
 	return out;

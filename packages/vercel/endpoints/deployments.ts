@@ -7,6 +7,7 @@ import {
 	VercelDeploymentsOutputSchemas as Out,
 } from './deployments-types';
 
+// Raw Vercel deployment: only uid is checked, other fields pass through.
 type DeploymentRecord = { uid: string; [key: string]: unknown };
 
 // The local entity types its optional fields as non-null, while live responses
@@ -20,11 +21,13 @@ function withoutNulls(record: DeploymentRecord): DeploymentRecord {
 	return out;
 }
 
+// Raw list or single response item, checked before anything is stored.
 async function saveDeployment(ctx: VercelContext, deployment: unknown) {
 	if (!deployment || typeof deployment !== 'object' || !ctx.db.deployments) {
 		return;
 	}
-	// Lists key deployments by `uid`, single reads and writes by `id`.
+	// Lists key deployments by `uid`, single reads and writes by `id`. The
+	// object is raw JSON, so each field is checked before use.
 	const { id, ...rest } = deployment as Record<string, unknown>;
 	const uid = typeof rest.uid === 'string' ? rest.uid : id;
 	if (typeof uid !== 'string' || !uid) return;
@@ -34,7 +37,10 @@ async function saveDeployment(ctx: VercelContext, deployment: unknown) {
 	);
 }
 
-/** Vercel's 0/1 query flags from optional booleans. */
+/**
+ * Vercel's 0/1 query flags from optional booleans. Inputs mix value types per
+ * endpoint; only boolean fields are read.
+ */
 function binaryFlags<T extends Record<string, unknown>>(
 	input: T,
 	keys: readonly (keyof T)[],
@@ -50,7 +56,8 @@ function binaryFlags<T extends Record<string, unknown>>(
 /**
  * Newline-delimited JSON (application/stream+json) into its objects. Blank
  * lines are skipped; any other line that isn't JSON fails the call, since a
- * dropped line would return a silently shortened log.
+ * dropped line would return a silently shortened log. Events stay unknown
+ * here; the endpoint's output schema parses them.
  */
 function parseJsonLines(text: string): unknown[] {
 	const events: unknown[] = [];
@@ -93,6 +100,7 @@ export const getDeployments = defineEndpoint({
 		// Several states go comma-separated; a repeated state param is a 400.
 		if (input.state) query.state = [input.state].flat().join(',');
 		const result = await makeAuthenticatedVercelRequest<{
+			// Raw items: saveDeployment checks each, the output schema parses them.
 			deployments?: unknown[];
 		}>('/v7/deployments', ctx, { teamId: input.teamId, query });
 		for (const deployment of result?.deployments ?? []) {
@@ -178,6 +186,7 @@ export const deleteDeployment = defineEndpoint({
 	run: async (ctx, input) => {
 		// With `url` set Vercel ignores the path id, so the hostname fills it.
 		const target = input.deploymentId ?? input.url ?? '';
+		// Raw response; uid is checked with typeof before it is used.
 		const result = await makeAuthenticatedVercelRequest<{ uid?: unknown }>(
 			`/v13/deployments/${seg(target)}`,
 			ctx,
@@ -199,6 +208,7 @@ export const getDeploymentEvents = defineEndpoint({
 	input: In.getDeploymentEvents,
 	output: Out.getDeploymentEvents,
 	run: async (ctx, input) => {
+		// A JSON array, or newline-delimited text when streamed; handled below.
 		const result = await makeAuthenticatedVercelRequest<unknown>(
 			`/v3/deployments/${seg(input.idOrUrl)}/events`,
 			ctx,

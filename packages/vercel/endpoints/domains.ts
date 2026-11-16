@@ -6,12 +6,14 @@ import {
 	VercelDomainsOutputSchemas as Out,
 } from './domains-types';
 
+// Raw Vercel domain: fields beyond id and name pass through as is.
 type DomainRecord = { id: string; name: string; [key: string]: unknown };
 
 /**
  * Stores an account domain, keyed by its name: names are unique on Vercel and
  * are what every domain route takes. Project domains (no id, one row per
- * project) are not stored here.
+ * project) are not stored here. `domain` is a raw response item; id and name
+ * are checked before it is stored.
  */
 async function saveDomain(ctx: VercelContext, domain: unknown) {
 	const record = domain as Partial<DomainRecord> | undefined;
@@ -32,6 +34,7 @@ export const getDomains = defineEndpoint({
 	output: Out.getDomains,
 	run: async (ctx, input) => {
 		const result = await makeAuthenticatedVercelRequest<{
+			// Raw items: saveDomain checks each, the output schema parses them.
 			domains?: unknown[];
 		}>('/v5/domains', ctx, {
 			teamId: input.teamId,
@@ -49,6 +52,7 @@ export const getDomain = defineEndpoint({
 	input: In.getDomain,
 	output: Out.getDomain,
 	run: async (ctx, input) => {
+		// Raw domain: saveDomain checks it, the output schema parses the response.
 		const result = await makeAuthenticatedVercelRequest<{ domain?: unknown }>(
 			`/v5/domains/${seg(input.domain)}`,
 			ctx,
@@ -81,7 +85,8 @@ export const addDomain = defineEndpoint({
 	run: async (ctx, input) => {
 		const { teamId, ...fields } = input;
 		// Only the plain "add a domain you own" method. move-in and transfer-in
-		// (which charges for the transfer) are deliberately not offered.
+		// (which charges for the transfer) are deliberately not offered. The raw
+		// domain in the response is checked by saveDomain.
 		const result = await makeAuthenticatedVercelRequest<{ domain?: unknown }>(
 			'/v7/domains',
 			ctx,

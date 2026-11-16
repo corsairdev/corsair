@@ -38,6 +38,7 @@ export const AliasSchema = z
 			.passthrough()
 			.nullable()
 			.optional(),
+		// Nested Vercel objects passed through as is: their fields change often.
 		protectionBypass: z.record(z.string(), z.unknown()).nullable().optional(),
 		microfrontends: z.record(z.string(), z.unknown()).nullable().optional(),
 	})

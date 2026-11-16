@@ -24,6 +24,7 @@ export type VercelQuery = Record<string, VercelQueryValue>;
 export interface VercelRequestOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	query?: VercelQuery;
+	// Each endpoint sends its own JSON shape; request() serializes it as is.
 	body?: unknown;
 	/** A team id (`team_…`) or a team slug. Leave out for the token's own scope. */
 	teamId?: string;

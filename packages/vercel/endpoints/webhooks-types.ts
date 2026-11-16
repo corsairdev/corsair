@@ -136,6 +136,7 @@ export const WebhookSchema = z
 		events: z.array(z.string()).nullable().optional(),
 		ownerId: optStr(),
 		projectIds: z.array(z.string()).nullable().optional(),
+		// Nested Vercel objects passed through as is: their fields change often.
 		projectsMetadata: z.array(z.unknown()).nullable().optional(),
 		alertRuleIds: z.array(z.string()).nullable().optional(),
 		createdAt: optNum(),

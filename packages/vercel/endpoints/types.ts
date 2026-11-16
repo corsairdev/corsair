@@ -35,7 +35,10 @@ type Prefixed<G extends string, T> = {
 	[K in keyof T & string as `${G}.${K}`]: T[K];
 };
 
-/** Re-keys one group's schemas by their operation path (`group.name`). */
+/**
+ * Re-keys one group's schemas by their operation path (`group.name`). The
+ * schemas are of different types and pass through untouched.
+ */
 function prefixed<G extends string, T extends Record<string, unknown>>(
 	group: G,
 	schemas: T,

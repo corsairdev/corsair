@@ -132,6 +132,7 @@ export const DomainConfigSchema = z
 		serviceType: optStr(),
 		cnames: stringList(),
 		aValues: stringList(),
+		// Nested Vercel objects passed through as is: their fields change often.
 		conflicts: z.array(z.unknown()).nullable().optional(),
 		ipStatus: optStr(),
 	})

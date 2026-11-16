@@ -6,12 +6,14 @@ import {
 	VercelTeamsOutputSchemas as Out,
 } from './teams-types';
 
+// Raw Vercel team: id is checked with typeof, other fields pass through.
 type TeamRecord = { id?: unknown; [key: string]: unknown };
 
 // Fields the local store types as non-null; Vercel sends a null name for a
 // team without a display name.
 const STRICT_FIELDS = ['slug', 'name', 'createdAt'];
 
+// Raw list or single response item, checked before anything is stored.
 async function saveTeam(ctx: VercelContext, team: unknown) {
 	const source = team as TeamRecord | undefined;
 	if (typeof source?.id !== 'string' || !ctx.db.teams) return;
@@ -43,6 +45,7 @@ export const getTeams = defineEndpoint({
 	input: In.getTeams,
 	output: Out.getTeams,
 	run: async (ctx, input) => {
+		// Raw items: saveTeam checks each, the output schema parses them.
 		const result = await makeAuthenticatedVercelRequest<{ teams?: unknown[] }>(
 			'/v2/teams',
 			ctx,

@@ -38,6 +38,7 @@ export const TeamSchema = z
 		updatedAt: optNum(),
 		limited: optBool(),
 		stagingPrefix: optStr(),
+		// Nested Vercel objects passed through as is: their fields change often.
 		billing: z.record(z.string(), z.unknown()).nullable().optional(),
 		membership: z
 			.object({
@@ -64,6 +65,7 @@ export const TeamMemberSchema = z
 		membershipSource: optStr(),
 		createdAt: optNum(),
 		accessRequestedAt: optNum(),
+		// Nested Vercel objects passed through as is: their fields change often.
 		projects: z.array(z.unknown()).nullable().optional(),
 	})
 	.passthrough();
@@ -105,6 +107,7 @@ export const VercelTeamsOutputSchemas = {
 	getTeamMembers: z
 		.object({
 			members: z.array(TeamMemberSchema),
+			// Nested Vercel objects passed through as is: their fields change often.
 			emailInviteCodes: z.array(z.unknown()).nullable().optional(),
 			pagination: PaginationSchema.nullable().optional(),
 			totalCount: optNum(),

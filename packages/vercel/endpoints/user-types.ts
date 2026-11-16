@@ -14,6 +14,7 @@ export const UserSchema = z
 		limited: optBool(),
 		stagingPrefix: optStr(),
 		version: optStr(),
+		// Nested Vercel objects passed through as is: their fields change often.
 		billing: z.record(z.string(), z.unknown()).nullable().optional(),
 		softBlock: z.record(z.string(), z.unknown()).nullable().optional(),
 	})

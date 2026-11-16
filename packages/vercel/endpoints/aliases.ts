@@ -6,16 +6,18 @@ import {
 } from './aliases-types';
 import { compactBody, defineEndpoint, pickQuery } from './common';
 
+// Raw Vercel alias: only uid is checked, other fields pass through.
 type AliasRecord = { uid: string; [key: string]: unknown };
 
 async function saveAlias(
 	ctx: VercelContext,
+	// Raw response item, checked below before anything is stored.
 	alias: unknown,
 	deploymentId?: string,
 ) {
 	if (!alias || typeof alias !== 'object' || !ctx.db.aliases) return;
 	// protectionBypass is keyed by share-link secrets and invitee emails: it
-	// stays out of the local store.
+	// stays out of the local store. The alias is raw JSON, read field by field.
 	const { protectionBypass: _bypass, ...rest } = alias as Record<
 		string,
 		unknown
@@ -37,6 +39,7 @@ export const getAliases = defineEndpoint({
 	output: Out.getAliases,
 	run: async (ctx, input) => {
 		const result = await makeAuthenticatedVercelRequest<{
+			// Raw items: saveAlias checks each, the output schema parses them.
 			aliases?: unknown[];
 		}>('/v4/aliases', ctx, {
 			teamId: input.teamId,
@@ -121,6 +124,7 @@ export const deleteAlias = defineEndpoint({
 			? undefined
 			: input.aliasId;
 		if (!uid && ctx.db.aliases) {
+			// Raw response; uid is checked with typeof before it is used.
 			const found = await makeAuthenticatedVercelRequest<{ uid?: unknown }>(
 				`/v4/aliases/${seg(input.aliasId)}`,
 				ctx,
@@ -128,6 +132,7 @@ export const deleteAlias = defineEndpoint({
 			);
 			uid = typeof found?.uid === 'string' ? found.uid : undefined;
 		}
+		// Raw response; status is checked with typeof before it is returned.
 		const result = await makeAuthenticatedVercelRequest<{ status?: unknown }>(
 			`/v2/aliases/${seg(input.aliasId)}`,
 			ctx,

@@ -6,8 +6,10 @@ import {
 	VercelProjectsOutputSchemas as Out,
 } from './projects-types';
 
+// Raw Vercel project: fields beyond id pass through to the store as is.
 type ProjectRecord = { id: string; [key: string]: unknown };
 
+// Raw list or single response item; the id is checked before it is stored.
 async function saveProject(ctx: VercelContext, project: unknown) {
 	const record = project as ProjectRecord | undefined;
 	if (!record?.id || !ctx.db.projects) return;
@@ -23,6 +25,7 @@ export const getProjects = defineEndpoint({
 	output: Out.getProjects,
 	run: async (ctx, input) => {
 		const result = await makeAuthenticatedVercelRequest<{
+			// Raw items: saveProject checks each, the output schema parses them.
 			projects?: unknown[];
 		}>('/v10/projects', ctx, {
 			teamId: input.teamId,

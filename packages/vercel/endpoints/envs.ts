@@ -6,6 +6,8 @@ import {
 	VercelEnvsOutputSchemas as Out,
 } from './envs-types';
 
+// Raw Vercel env object: Vercel's model leaves id optional, so it is checked
+// before use; other fields pass through as is.
 type EnvRecord = { id?: unknown; [key: string]: unknown };
 
 // Fields that carry a variable's value: as typed, encrypted or decrypted.
@@ -25,6 +27,7 @@ function withoutValue(env: EnvRecord): EnvRecord {
 	);
 }
 
+// Routes return one env object, a list, or nothing; this accepts all three.
 function asList(result: unknown): EnvRecord[] {
 	if (Array.isArray(result)) return result as EnvRecord[];
 	return result && typeof result === 'object' ? [result as EnvRecord] : [];
@@ -57,6 +60,7 @@ export const getEnvVariables = defineEndpoint({
 	input: In.getEnvVariables,
 	output: Out.getEnvVariables,
 	run: async (ctx, input) => {
+		// Raw envs, normalised by asList; the output schema parses the response.
 		const result = await makeAuthenticatedVercelRequest<{ envs?: unknown }>(
 			`/v10/projects/${seg(input.idOrName)}/env`,
 			ctx,
@@ -96,6 +100,7 @@ export const createEnvVariable = defineEndpoint({
 	output: Out.createEnvVariable,
 	run: async (ctx, input) => {
 		const { teamId, idOrName, variables, upsert, ...single } = input;
+		// One object or a list depending on the body; asList handles both.
 		const result = await makeAuthenticatedVercelRequest<{ created?: unknown }>(
 			`/v10/projects/${seg(idOrName)}/env`,
 			ctx,

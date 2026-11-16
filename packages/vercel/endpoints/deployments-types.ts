@@ -115,6 +115,7 @@ const creator = z
 	.passthrough()
 	.nullable()
 	.optional();
+// Nested Vercel objects passed through as is: their fields change often.
 const looseRecord = () =>
 	z.record(z.string(), z.unknown()).nullable().optional();
 const looseArray = () => z.array(z.unknown()).nullable().optional();

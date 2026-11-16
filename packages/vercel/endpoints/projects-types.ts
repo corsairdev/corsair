@@ -54,6 +54,7 @@ export const ProjectSchema = z
 		outputDirectory: optStr(),
 		rootDirectory: optStr(),
 		live: optBool(),
+		// Nested Vercel objects passed through as is: their fields change often.
 		link: z.record(z.string(), z.unknown()).nullable().optional(),
 		latestDeployments: z.array(z.unknown()).nullable().optional(),
 		targets: z.record(z.string(), z.unknown()).nullable().optional(),

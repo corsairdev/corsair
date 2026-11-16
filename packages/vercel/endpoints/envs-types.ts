@@ -58,6 +58,7 @@ const envFields = {
 
 const singleVariableKeys = Object.keys(envFields) as (keyof typeof envFields)[];
 
+// Only presence is checked; it runs on list entries and on the whole input.
 const needsTarget = (v: { target?: unknown; customEnvironmentIds?: unknown }) =>
 	v.target !== undefined || v.customEnvironmentIds !== undefined;
 
@@ -88,6 +89,7 @@ export const EnvVariableSchema = z
 		configurationId: optStr(),
 		edgeConfigId: optStr(),
 		edgeConfigTokenId: optStr(),
+		// Nested Vercel objects passed through as is: their fields change often.
 		contentHint: z.record(z.string(), z.unknown()).nullable().optional(),
 		createdAt: optNum(),
 		updatedAt: optNum(),

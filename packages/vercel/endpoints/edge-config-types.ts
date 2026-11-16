@@ -13,6 +13,7 @@ const itemKey = z
 	.regex(/^[\w-]+$/, 'Keys use letters, digits, _ and - only.')
 	.describe('Item key: letters, digits, _ and -, up to 256 characters.');
 
+// Edge Config item values are arbitrary JSON by Vercel's definition.
 const itemValue = z
 	.unknown()
 	.describe('Any JSON value: string, number, boolean, object, array or null.');
@@ -24,6 +25,7 @@ const itemDescription = z
 	.optional()
 	.describe('Note on the item (up to 512 characters). null clears it.');
 
+// Only presence is checked; value is arbitrary JSON.
 const hasValueOrDescription = (
 	item: { value?: unknown; description?: unknown },
 	ctx: z.RefinementCtx,
@@ -87,6 +89,7 @@ export const EdgeConfigSchema = z
 export const EdgeConfigItemSchema = z
 	.object({
 		key: z.string(),
+		// Item values are arbitrary JSON by Vercel's definition.
 		value: z.unknown().optional(),
 		description: optStr(),
 		edgeConfigId: optStr(),
