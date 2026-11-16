@@ -2,14 +2,13 @@
 // (https://apidoc.teltel.io). Every payload is wrapped in `data`, the deletes
 // and updates report under `meta`, and the balance entries are floats.
 
+// The live shape (11-16): `data` is one object, not the spec's list.
 export const balanceResponse = {
-	data: [
-		{
-			credit: -9.99,
-			credit_limit: 200,
-			balance: 190.01,
-		},
-	],
+	data: {
+		credit: -9.99,
+		credit_limit: 200,
+		balance: 190.01,
+	},
 };
 
 export const smsSendResponse = { data: { id: '1832256' } };
@@ -35,8 +34,9 @@ export const smsReport = {
 	id: 1832256,
 	from: '37126118199',
 	to: '37126118198',
-	country: { code: 'LV', name: 'Latvia' },
-	operator: { code: 'LMT', name: 'LMT' },
+	// The spec's shape: numeric ids and mobile codes.
+	country: { id: 109, name: 'Latvia', iso: 'LV', mcc: 247 },
+	operator: { id: 1, name: 'LMT', mnc: 1 },
 	created_at: '2024-03-01 10:00:00',
 	delivered: '2024-03-01 10:00:02',
 	multipart: false,
@@ -92,7 +92,7 @@ export const campaignCreateResponse = {
 };
 
 export const campaignActionResponse = {
-	data: { status: 200, message: 'Campaign started.' },
+	data: { id: 761, action: 'start' },
 };
 
 export const contact = {
@@ -143,8 +143,15 @@ export const call = {
 	handle_sec: 3,
 	rate: 0.05,
 	cost: 0.0033,
-	caller: { number: '37126111111' },
-	callee: { number: '37126111112' },
+	// user_id is a number or null in the spec.
+	caller: {
+		number: '37126111111',
+		type: 'phone',
+		cid: '37126111111',
+		dnid: '',
+		user_id: 21312,
+	},
+	callee: { number: '37126111112', type: 'phone', user_id: null },
 	extra_prefix: null,
 	hangup_by: 'caller',
 	hangup_value: 'normal',
@@ -179,7 +186,7 @@ export const phoneNumber = {
 	spam_score: 0,
 	spam_checked_at: null,
 	spam_score_details: null,
-	groups: [5],
+	groups: [{ id: 5 }],
 	users: [],
 };
 
@@ -213,6 +220,8 @@ export const user = {
 	name: 'u8172616',
 	realname: 'John Doe',
 	email: 'john.doe@company.com',
+	// TelTEL returns each user's key; the plugin drops it.
+	api_key: 'user-api-key-must-not-leak',
 };
 
 export const usersListResponse = { data: [user] };

@@ -1,5 +1,5 @@
 import type { TeltelEndpoints } from '..';
-import { call, metaResultCall } from './call';
+import { call, filterParam, metaResultCall } from './call';
 import {
 	CampaignActionInputSchema,
 	CampaignActionResponseSchema,
@@ -31,7 +31,7 @@ export const list: TeltelEndpoints['campaignsList'] = async (ctx, input) => {
 				offset: parsed.offset,
 				fields: parsed.fields,
 				sort: parsed.sort,
-				state: parsed.state,
+				filter: filterParam([['state', '=', parsed.state]]),
 			},
 		}),
 	);
@@ -80,7 +80,7 @@ export const update: TeltelEndpoints['campaignsUpdate'] = async (
 		{
 			event: 'campaigns.update',
 			input: CampaignUpdateInputSchema,
-			output: CampaignActionResponseSchema,
+			output: MetaResultSchema,
 		},
 		input,
 		(parsed) => {

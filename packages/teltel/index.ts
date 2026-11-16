@@ -419,7 +419,7 @@ const teltelEndpointMeta = {
 	},
 	'numbers.update': {
 		riskLevel: 'write',
-		description: "Change a number's auto-renew, description or SMS handler",
+		description: "Change a number's auto-renew or SMS handler URL and email",
 	},
 	'numberCountries.list': {
 		riskLevel: 'read',
@@ -436,7 +436,8 @@ const teltelEndpointMeta = {
 	},
 	'users.list': {
 		riskLevel: 'read',
-		description: 'List the account users with their login and email',
+		description:
+			'List the account users with their login and email; their API keys are left out',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof teltelEndpointsNested>;
 

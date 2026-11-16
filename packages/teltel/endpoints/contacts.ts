@@ -1,5 +1,5 @@
 import type { TeltelEndpoints } from '..';
-import { call, metaResultCall } from './call';
+import { call, filterParam, metaResultCall } from './call';
 import {
 	ContactCreateInputSchema,
 	ContactCreateResponseSchema,
@@ -44,8 +44,10 @@ export const contactsList: TeltelEndpoints['contactsList'] = async (
 				offset: parsed.offset,
 				fields: parsed.fields,
 				sort: parsed.sort,
-				group_id: parsed.group_id,
-				phone: parsed.phone,
+				filter: filterParam([
+					['group_id', '=', parsed.group_id],
+					['phone', '=', parsed.phone],
+				]),
 			},
 		}),
 	);

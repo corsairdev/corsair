@@ -123,9 +123,17 @@ describe('account.balance', () => {
 			path: '/v2/account/balance',
 			method: 'GET',
 		});
-		expect(result.data[0]?.balance).toBe(190.01);
+		expect(result.data.balance).toBe(190.01);
 		// A negative credit means money is owed.
-		expect(result.data[0]?.credit).toBe(-9.99);
+		expect(result.data.credit).toBe(-9.99);
+	});
+
+	it('also reads the one-entry list the spec documents', async () => {
+		respond({ data: [{ credit: 0, credit_limit: 0, balance: 5 }] });
+
+		const result = await invoke(Sms.accountBalance, {});
+
+		expect(result.data.balance).toBe(5);
 	});
 });
 
@@ -219,19 +227,22 @@ describe('smsReports and inbox', () => {
 		const result = await invoke(Sms.smsReportsList, {
 			limit: 100,
 			offset: 50,
-			state: 'delivered',
+			state: 'DONE',
+			'created_at[from]': '2024-03-01T00:00:00',
 		});
 
 		expect(lastRequest()).toMatchObject({
 			path: '/v2/sms/reports',
 			method: 'GET',
 		});
+		// TelTEL ignores top-level filters; they all go in one `filter` value.
 		expect(lastRequest().query).toEqual({
 			limit: '100',
 			offset: '50',
-			state: 'delivered',
+			filter: 'state=DONE,created_at>2024-03-01T00:00:00',
 		});
 		expect(result.data[0]?.id).toBe(1832256);
+		expect(result.data[0]?.country?.mcc).toBe(247);
 	});
 
 	it('reads one outbound report', async () => {
@@ -311,9 +322,9 @@ describe('campaigns', () => {
 	});
 
 	it('updates a campaign without the id in the body', async () => {
-		respond(campaignActionResponse);
+		respond(updatedResponse);
 
-		await invoke(Campaigns.update, {
+		const result = await invoke(Campaigns.update, {
 			campaignId: 781,
 			title: 'Spring sale 2',
 		});
@@ -323,6 +334,7 @@ describe('campaigns', () => {
 			method: 'PATCH',
 		});
 		expect(lastRequest().body).toEqual({ data: { title: 'Spring sale 2' } });
+		expect(result).toEqual({ meta: { updated: true } });
 	});
 
 	it('starts a campaign through the actions route', async () => {
@@ -338,7 +350,8 @@ describe('campaigns', () => {
 			method: 'POST',
 		});
 		expect(lastRequest().body).toEqual({ data: { action: 'start' } });
-		expect(result.data?.message).toBe('Campaign started.');
+		expect(result.data?.action).toBe('start');
+		expect(result.data?.id).toBe(761);
 	});
 
 	it('rejects an unknown campaign action', async () => {
@@ -377,7 +390,7 @@ describe('contacts', () => {
 		const result = await invoke(Contacts.contactsList, { group_id: 5 });
 
 		expect(lastRequest().path).toBe('/v2/contacts');
-		expect(lastRequest().query).toEqual({ group_id: '5' });
+		expect(lastRequest().query).toEqual({ filter: 'group_id=5' });
 		expect(result.data[0]?.phone).toBe('37121234567');
 	});
 
@@ -499,8 +512,12 @@ describe('calls', () => {
 		});
 
 		expect(lastRequest().path).toBe('/v2/calls');
-		expect(lastRequest().query).toEqual({ direction: 'outbound', limit: '50' });
+		expect(lastRequest().query).toEqual({
+			filter: 'direction=outbound',
+			limit: '50',
+		});
 		expect(result.data[0]?.duration_sec).toBe(4);
+		expect(result.data[0]?.caller?.user_id).toBe(21312);
 	});
 
 	it('places a click-to-call with both display names', async () => {
@@ -549,20 +566,21 @@ describe('numbers, countries and users', () => {
 		expect(lastRequest().path).toBe('/v2/dids/my-numbers/115');
 	});
 
-	it('updates a number and keeps the meta envelope', async () => {
-		respond(updatedResponse);
+	it('updates a number and parses the number it returns', async () => {
+		// The spec answers this PATCH with the updated number, not a meta flag.
+		respond(numberResponse);
 
 		const result = await invoke(Numbers.numbersUpdate, {
 			numberId: 115,
-			description: 'Sales line',
+			auto_renew: false,
 		});
 
 		expect(lastRequest()).toMatchObject({
 			path: '/v2/dids/my-numbers/115',
 			method: 'PATCH',
 		});
-		expect(lastRequest().body).toEqual({ data: { description: 'Sales line' } });
-		expect(result).toEqual({ meta: { updated: true } });
+		expect(lastRequest().body).toEqual({ data: { auto_renew: false } });
+		expect(result.data.id).toBe(115);
 	});
 
 	it('lists countries, reads one, and lists its price groups', async () => {
@@ -590,6 +608,9 @@ describe('numbers, countries and users', () => {
 
 		expect(lastRequest().path).toBe('/v2/users');
 		expect(result.data[0]?.realname).toBe('John Doe');
+		// TelTEL sends each user's API key; it must not reach the caller.
+		expect(result.data[0]).not.toHaveProperty('api_key');
+		expect(JSON.stringify(result)).not.toContain('user-api-key-must-not-leak');
 	});
 });
 
@@ -618,7 +639,9 @@ describe('error handling', () => {
 		);
 
 		expect(error.status).toBe(400);
-		expect(teltelErrorDetails(error)?.errors[0]?.title).toContain('Bad request.');
+		expect(teltelErrorDetails(error)?.errors[0]?.title).toContain(
+			'Bad request.',
+		);
 		// The phone numbers and text in the send body stay off the error.
 		expect(error.request.body).toBeUndefined();
 		expect(JSON.stringify(error)).not.toContain('37126118199');

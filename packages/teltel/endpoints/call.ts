@@ -48,6 +48,20 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 }
 
 /**
+ * TelTEL lists take every filter in one `filter` query value, comma-separated,
+ * e.g. `state=WAIT,created_at>2021-01-01T10:00:00`. A top-level `state=` is
+ * ignored. Each entry is [field, operator, value]; unset values are skipped.
+ */
+export function filterParam(
+	entries: Array<[string, '=' | '>' | '<', string | number | undefined]>,
+): string | undefined {
+	const parts = entries
+		.filter(([, , value]) => value !== undefined && value !== '')
+		.map(([field, op, value]) => `${field}${op}${value}`);
+	return parts.length > 0 ? parts.join(',') : undefined;
+}
+
+/**
  * The deletes and updates answer `{ meta: { deleted: true } }` or
  * `{ meta: { updated: true } }` and nothing else, so there is no record to
  * unwrap; the envelope is parsed as it arrives.

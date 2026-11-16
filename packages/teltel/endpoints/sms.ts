@@ -1,5 +1,6 @@
+import { asRecord } from 'corsair/core';
 import type { TeltelEndpoints } from '..';
-import { call } from './call';
+import { call, filterParam } from './call';
 import {
 	BalanceInputSchema,
 	BalanceResponseSchema,
@@ -31,6 +32,15 @@ export const accountBalance: TeltelEndpoints['accountBalance'] = async (
 		input,
 		undefined,
 		() => ({ method: 'GET', path: '/account/balance' }),
+		{
+			// unknown: the raw body before the output schema reads it.
+			shape: (raw: unknown) => {
+				const body = asRecord(raw);
+				return body && Array.isArray(body.data) && body.data.length === 1
+					? { ...body, data: body.data[0] }
+					: raw;
+			},
+		},
 	);
 };
 
@@ -87,11 +97,13 @@ export const smsReportsList: TeltelEndpoints['smsReportsList'] = async (
 				offset: parsed.offset,
 				fields: parsed.fields,
 				sort: parsed.sort,
-				state: parsed.state,
-				from: parsed.from,
-				to: parsed.to,
-				'created_at[from]': parsed['created_at[from]'],
-				'created_at[to]': parsed['created_at[to]'],
+				filter: filterParam([
+					['state', '=', parsed.state],
+					['from', '=', parsed.from],
+					['to', '=', parsed.to],
+					['created_at', '>', parsed['created_at[from]']],
+					['created_at', '<', parsed['created_at[to]']],
+				]),
 			},
 		}),
 	);
@@ -135,8 +147,10 @@ export const inboxList: TeltelEndpoints['inboxList'] = async (ctx, input) => {
 				offset: parsed.offset,
 				fields: parsed.fields,
 				sort: parsed.sort,
-				from: parsed.from,
-				to: parsed.to,
+				filter: filterParam([
+					['from', '=', parsed.from],
+					['to', '=', parsed.to],
+				]),
 			},
 		}),
 	);

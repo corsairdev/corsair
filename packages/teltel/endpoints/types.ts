@@ -67,8 +67,10 @@ export const BalanceEntrySchema = z
 	})
 	.loose();
 
+// The live API answers `data` as one object (11-16). The spec shows a
+// one-entry list; account.balance unwraps that list to the same object.
 export const BalanceResponseSchema = z
-	.object({ data: z.array(BalanceEntrySchema) })
+	.object({ data: BalanceEntrySchema })
 	.loose();
 
 export type BalanceResponse = z.infer<typeof BalanceResponseSchema>;
@@ -163,7 +165,12 @@ export const SmsReportsListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('A field to sort by; prefix it with "-" for descending.'),
-	state: z.string().optional().describe('Only messages in this state.'),
+	state: z
+		.string()
+		.optional()
+		.describe(
+			'Only messages in this state: NEW, PROC, WAIT, DONE, ERROR or CANCEL.',
+		),
 	from: z.string().optional().describe('Only messages from this number.'),
 	to: z.string().optional().describe('Only messages to this number.'),
 	'created_at[from]': z
@@ -183,8 +190,24 @@ export const SmsReportSchema = z
 		id: z.number(),
 		from: z.string().nullish(),
 		to: z.string().nullish(),
-		country: z.record(z.string(), z.string()).nullish(),
-		operator: z.record(z.string(), z.string()).nullish(),
+		// The spec sends id and mcc/mnc as numbers, so these are objects.
+		country: z
+			.object({
+				id: z.number().nullish(),
+				name: z.string().nullish(),
+				iso: z.string().nullish(),
+				mcc: z.number().nullish(),
+			})
+			.loose()
+			.nullish(),
+		operator: z
+			.object({
+				id: z.number().nullish(),
+				name: z.string().nullish(),
+				mnc: z.number().nullish(),
+			})
+			.loose()
+			.nullish(),
 		created_at: z.string().nullish(),
 		delivered: z.string().nullish(),
 		multipart: z.boolean().nullish(),
@@ -363,12 +386,13 @@ export const CampaignActionInputSchema = z.object({
 
 export type CampaignActionInput = z.infer<typeof CampaignActionInputSchema>;
 
+// A campaign action answers with the action it recorded.
 export const CampaignActionResponseSchema = z
 	.object({
 		data: z
 			.object({
-				status: z.number().nullish(),
-				message: z.string().nullish(),
+				id: z.number().nullish(),
+				action: z.string().nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -390,10 +414,12 @@ export const ContactsListInputSchema = z.object({
 
 export type ContactsListInput = z.infer<typeof ContactsListInputSchema>;
 
+// The spec types group_id as a string and leaves id out of the list
+// response, so both are read leniently.
 export const ContactSchema = z
 	.object({
-		id: z.number(),
-		group_id: z.number().nullish(),
+		id: z.union([z.number(), z.string()]).nullish(),
+		group_id: z.union([z.number(), z.string()]).nullish(),
 		phone: z.string().nullish(),
 		param_1: z.string().nullish(),
 		param_2: z.string().nullish(),
@@ -450,10 +476,15 @@ export const ContactsCreateBulkResponseSchema = z
 	.object({
 		data: z
 			.union([
-				z.array(z.object({ id: z.number() }).loose()),
+				// The 200 answer sends string ids, the 207 answer numbers.
+				z.array(z.object({ id: z.union([z.number(), z.string()]) }).loose()),
 				z
 					.object({
-						success: z.array(z.object({ id: z.number() }).loose()).nullish(),
+						success: z
+							.array(
+								z.object({ id: z.union([z.number(), z.string()]) }).loose(),
+							)
+							.nullish(),
 						errors: z
 							.array(
 								z
@@ -621,8 +652,25 @@ export const CallSchema = z
 		handle_sec: z.number().nullish(),
 		rate: z.number().nullish(),
 		cost: z.number().nullish(),
-		caller: z.record(z.string(), z.string()).nullish(),
-		callee: z.record(z.string(), z.string()).nullish(),
+		// user_id is a number or null, so these are objects, not string maps.
+		caller: z
+			.object({
+				number: z.string().nullish(),
+				type: z.string().nullish(),
+				cid: z.string().nullish(),
+				dnid: z.string().nullish(),
+				user_id: z.number().nullish(),
+			})
+			.loose()
+			.nullish(),
+		callee: z
+			.object({
+				number: z.string().nullish(),
+				type: z.string().nullish(),
+				user_id: z.number().nullish(),
+			})
+			.loose()
+			.nullish(),
 		extra_prefix: z.string().nullish(),
 		hangup_by: z.string().nullish(),
 		hangup_value: z.string().nullish(),
@@ -699,8 +747,10 @@ export const PhoneNumberSchema = z
 		spam_score: z.number().nullish(),
 		spam_checked_at: z.string().nullish(),
 		spam_score_details: z.string().nullish(),
-		groups: z.array(z.number()).nullish(),
-		users: z.array(z.number()).nullish(),
+		// unknown: the spec lists group and user objects without their fields.
+		groups: z.array(z.unknown()).nullish(),
+		// unknown: same as groups.
+		users: z.array(z.unknown()).nullish(),
 	})
 	.loose();
 
@@ -728,7 +778,6 @@ export const NumbersUpdateInputSchema = z
 	.object({
 		numberId: z.number().int().positive().describe('The number to change.'),
 		auto_renew: z.boolean().optional(),
-		description: z.string().nullable().optional(),
 		sms_handler_url: z.string().nullable().optional(),
 		sms_handler_email: z.string().nullable().optional(),
 	})
@@ -739,7 +788,8 @@ export const NumbersUpdateInputSchema = z
 
 export type NumbersUpdateInput = z.infer<typeof NumbersUpdateInputSchema>;
 
-export const NumberCountriesListInputSchema = z.object({ ...PagingShape });
+// The countries route takes no paging; it returns every country at once.
+export const NumberCountriesListInputSchema = z.object({});
 
 export type NumberCountriesListInput = z.infer<
 	typeof NumberCountriesListInputSchema
@@ -880,7 +930,7 @@ export type TeltelEndpointOutputs = {
 	campaignsList: CampaignsListResponse;
 	campaignsGet: CampaignGetResponse;
 	campaignsCreate: CampaignCreateResponse;
-	campaignsUpdate: CampaignActionResponse;
+	campaignsUpdate: MetaResult;
 	campaignsAction: CampaignActionResponse;
 	campaignsRemove: MetaResult;
 	contactsList: ContactsListResponse;
@@ -899,7 +949,7 @@ export type TeltelEndpointOutputs = {
 	callsCreate: CallCreateResponse;
 	numbersList: NumbersListResponse;
 	numbersGet: NumbersGetResponse;
-	numbersUpdate: MetaResult;
+	numbersUpdate: NumbersGetResponse;
 	numberCountriesList: NumberCountriesListResponse;
 	numberCountryGet: NumberCountryGetResponse;
 	priceGroupsList: PriceGroupsListResponse;
@@ -954,7 +1004,7 @@ export const TeltelEndpointOutputSchemas = {
 	campaignsList: CampaignsListResponseSchema,
 	campaignsGet: CampaignGetResponseSchema,
 	campaignsCreate: CampaignCreateResponseSchema,
-	campaignsUpdate: CampaignActionResponseSchema,
+	campaignsUpdate: MetaResultSchema,
 	campaignsAction: CampaignActionResponseSchema,
 	campaignsRemove: MetaResultSchema,
 	contactsList: ContactsListResponseSchema,
@@ -973,7 +1023,7 @@ export const TeltelEndpointOutputSchemas = {
 	callsCreate: CallCreateResponseSchema,
 	numbersList: NumbersListResponseSchema,
 	numbersGet: NumbersGetResponseSchema,
-	numbersUpdate: MetaResultSchema,
+	numbersUpdate: NumbersGetResponseSchema,
 	numberCountriesList: NumberCountriesListResponseSchema,
 	numberCountryGet: NumberCountryGetResponseSchema,
 	priceGroupsList: PriceGroupsListResponseSchema,

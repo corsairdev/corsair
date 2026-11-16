@@ -69,7 +69,7 @@ describe('rate-limit retries through createCorsair', () => {
 
 			const result = await corsair.teltel.api.account.balance({});
 
-			expect(result.data).toHaveLength(1);
+			expect(result.data.balance).toBe(190.01);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
@@ -110,7 +110,9 @@ describe('fake-timer delay pinning', () => {
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 
 			await jest.advanceTimersByTimeAsync(1_000);
-			await expect(pending).resolves.toMatchObject({ data: expect.any(Array) });
+			await expect(pending).resolves.toMatchObject({
+				data: expect.objectContaining({ balance: 190.01 }),
+			});
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			jest.useRealTimers();

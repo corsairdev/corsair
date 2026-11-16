@@ -1,11 +1,11 @@
+import { asRecord } from 'corsair/core';
 import type { TeltelEndpoints } from '..';
-import { call } from './call';
+import { call, filterParam } from './call';
 import {
 	CallCreateInputSchema,
 	CallCreateResponseSchema,
 	CallsListInputSchema,
 	CallsListResponseSchema,
-	MetaResultSchema,
 	NumberCountriesListInputSchema,
 	NumberCountriesListResponseSchema,
 	NumberCountryGetInputSchema,
@@ -41,9 +41,11 @@ export const callsList: TeltelEndpoints['callsList'] = async (ctx, input) => {
 				offset: parsed.offset,
 				fields: parsed.fields,
 				sort: parsed.sort,
-				direction: parsed.direction,
-				'starttime[from]': parsed['starttime[from]'],
-				'starttime[to]': parsed['starttime[to]'],
+				filter: filterParam([
+					['direction', '=', parsed.direction],
+					['starttime', '>', parsed['starttime[from]']],
+					['starttime', '<', parsed['starttime[to]']],
+				]),
 			},
 		}),
 	);
@@ -115,14 +117,13 @@ export const numbersUpdate: TeltelEndpoints['numbersUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	// This route answers the standard update envelope, so it goes through the
-	// wrapped-body path rather than the bare meta one.
+	// This route answers with the updated number under `data`.
 	return call(
 		ctx,
 		{
 			event: 'numbers.update',
 			input: NumbersUpdateInputSchema,
-			output: MetaResultSchema,
+			output: NumbersGetResponseSchema,
 		},
 		input,
 		(parsed) => {
@@ -152,11 +153,6 @@ export const countriesList: TeltelEndpoints['numberCountriesList'] = async (
 		(parsed) => ({
 			method: 'GET',
 			path: '/dids/new-numbers/countries',
-			query: {
-				limit: parsed.limit,
-				offset: parsed.offset,
-				fields: parsed.fields,
-			},
 		}),
 	);
 };
@@ -208,6 +204,22 @@ export const priceGroupsList: TeltelEndpoints['priceGroupsList'] = async (
 
 // ── users ─────────────────────────────────────────────────────────────────
 
+// unknown: the raw users response; non-object entries pass through untouched
+// and the output schema rejects them.
+function withoutUserApiKeys(raw: unknown): unknown {
+	const body = asRecord(raw);
+	if (!body || !Array.isArray(body.data)) return raw;
+	return {
+		...body,
+		data: body.data.map((entry: unknown) => {
+			const user = asRecord(entry);
+			if (!user) return entry;
+			const { api_key: _apiKey, ...rest } = user;
+			return rest;
+		}),
+	};
+}
+
 export const usersList: TeltelEndpoints['usersList'] = async (ctx, input) => {
 	return call(
 		ctx,
@@ -227,5 +239,8 @@ export const usersList: TeltelEndpoints['usersList'] = async (ctx, input) => {
 				fields: parsed.fields,
 			},
 		}),
+		// TelTEL returns each user's API key in the list. It is dropped here
+		// so a credential never reaches the caller or an agent's context.
+		{ shape: withoutUserApiKeys },
 	);
 };
