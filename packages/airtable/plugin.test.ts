@@ -12,6 +12,9 @@ const operations = [
 	'webhooks.getPayloads',
 ];
 
+// The `as keyof typeof ...` casts below narrow a path string to the map's key type. They are safe
+// because each test first asserts the map's keys equal `operations`; typing `operations` as a
+// const tuple doesn't help, since `endpointSchemas ?? {}` widens the key type.
 describe('airtable plugin definition', () => {
 	const plugin = airtable();
 
