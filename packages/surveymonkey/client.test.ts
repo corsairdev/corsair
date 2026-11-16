@@ -3,7 +3,19 @@ import {
 	normalizeSurveymonkeyBase,
 	SURVEYMONKEY_API_BASE,
 	SurveymonkeyAPIError,
+	segment,
 } from './client';
+
+describe('surveymonkey path segments', () => {
+	it('encodes an id', () => {
+		expect(segment('a/b')).toBe('a%2Fb');
+	});
+
+	it('refuses a dot segment, which a URL parser would resolve upward', () => {
+		expect(() => segment('..')).toThrow(/not a valid id/);
+		expect(() => segment('.')).toThrow(/not a valid id/);
+	});
+});
 
 describe('SurveyMonkey base normalization', () => {
 	it('accepts the documented host', () => {
@@ -32,6 +44,15 @@ describe('SurveyMonkey base normalization', () => {
 		);
 	});
 
+	it('accepts the Canadian datacenter, which is under surveymonkey.ca', () => {
+		expect(normalizeSurveymonkeyBase('https://api.surveymonkey.ca')).toBe(
+			'https://api.surveymonkey.ca/v3',
+		);
+		expect(() =>
+			normalizeSurveymonkeyBase('surveymonkey.ca.evil.test'),
+		).toThrow();
+	});
+
 	it('lowercases the host', () => {
 		expect(normalizeSurveymonkeyBase('API.SurveyMonkey.COM')).toBe(
 			SURVEYMONKEY_API_BASE,
@@ -40,10 +61,10 @@ describe('SurveyMonkey base normalization', () => {
 
 	it('rejects another domain, so the token cannot be redirected', () => {
 		expect(() => normalizeSurveymonkeyBase('api.example.com')).toThrow(
-			/surveymonkey\.com host/,
+			/surveymonkey\.ca host/,
 		);
 		expect(() => normalizeSurveymonkeyBase('https://evil.test/v3')).toThrow(
-			/surveymonkey\.com host/,
+			/surveymonkey\.ca host/,
 		);
 	});
 

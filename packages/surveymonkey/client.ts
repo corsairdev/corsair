@@ -1,9 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 /**
@@ -15,11 +11,12 @@ import { ApiError, request } from 'corsair/http';
  */
 export const SURVEYMONKEY_API_BASE = 'https://api.surveymonkey.com/v3';
 
-/** The domain every SurveyMonkey datacenter host lives under. */
-const SURVEYMONKEY_DOMAIN = 'surveymonkey.com';
-
-/** A SurveyMonkey host is `api.` plus optional labels under the domain. */
-const HOST_PATTERN = /^[a-z0-9-]+(\.[a-z0-9-]+)*\.surveymonkey\.com$/;
+/**
+ * A SurveyMonkey host is labels under `surveymonkey.com` (the US and EU
+ * datacenters, `api.surveymonkey.com` and `api.eu.surveymonkey.com`) or under
+ * `surveymonkey.ca` (the Canadian datacenter, `api.surveymonkey.ca`).
+ */
+const HOST_PATTERN = /^[a-z0-9-]+(\.[a-z0-9-]+)*\.surveymonkey\.(com|ca)$/;
 
 /**
  * Reduces what was configured to a `surveymonkey.com` host and returns the
@@ -62,7 +59,7 @@ export function normalizeSurveymonkeyBase(host: string): string {
 	const hostName = value.toLowerCase();
 	if (!HOST_PATTERN.test(hostName)) {
 		throw new Error(
-			'[surveymonkey] api host must be a surveymonkey.com host, e.g. api.surveymonkey.com',
+			'[surveymonkey] api host must be a surveymonkey.com or surveymonkey.ca host, e.g. api.surveymonkey.com',
 		);
 	}
 	// The version is added here, so a pasted `/v3` or `/v3/` cannot double it.
@@ -179,23 +176,18 @@ export type SurveymonkeyRequest = {
 	body?: unknown;
 };
 
-/** Encodes one path segment. */
+/**
+ * Encodes one path segment. `encodeURIComponent` leaves `.` alone, and a URL
+ * parser resolves a `..` segment against the path, so an id of `..` would send
+ * `DELETE /surveys/1/pages/..` to `/surveys/1/`. Dot segments are refused.
+ */
 export function segment(value: string | number): string {
-	return encodeURIComponent(String(value));
+	const text = String(value);
+	if (text === '.' || text === '..') {
+		throw new Error(`[surveymonkey] "${text}" is not a valid id`);
+	}
+	return encodeURIComponent(text);
 }
-
-// `corsair/http` replaces the default rate-limit config wholesale, so every
-// field is spelled out. A draft or private app gets 120 requests a minute and
-// 500 a day, and the response carries the remaining counts in
-// `X-Ratelimit-App-Global-Minute-*` and `...-Day-*` headers. A 429 is handled in
-// error-handlers.ts.
-const SURVEYMONKEY_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-};
 
 /**
  * Sends one request. SurveyMonkey authenticates with a **bearer token**: either
@@ -231,31 +223,59 @@ export async function makeSurveymonkeyRequest(
 	};
 
 	try {
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: SURVEYMONKEY_RATE_LIMIT_CONFIG,
-		});
+		return await request<unknown>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) throw toSurveymonkeyApiError(error);
 		if (error instanceof SurveymonkeyAPIError) throw error;
-		if (error instanceof ApiError) {
-			const described = describeSurveymonkeyError(
-				error.status,
-				error.body,
-				error.message,
-			);
-			throw new SurveymonkeyAPIError(described.message, {
-				cause: error,
-				status: error.status,
-				code: described.code,
-				errorName: described.errorName,
-				docs: described.docs,
-				retryAfter: error.retryAfter,
-				method,
-			});
-		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new SurveymonkeyAPIError(error.message, { cause: error, method });
 		}
 		throw new SurveymonkeyAPIError('Unknown SurveyMonkey error', { method });
 	}
+}
+
+/**
+ * Core's `ApiError` goes through (R8): its `status` and `retryAfter` are what
+ * core's 429 retry and the error handlers read. It is rebuilt only to drop the
+ * sent body and query, which can hold contacts' and recipients' names and
+ * email addresses, and to put SurveyMonkey's own message on it.
+ */
+function toSurveymonkeyApiError(error: ApiError): ApiError {
+	const described = describeSurveymonkeyError(
+		error.status,
+		error.body,
+		error.message,
+	);
+	let url = error.url;
+	try {
+		const parsed = new URL(error.url);
+		parsed.search = '';
+		url = parsed.toString();
+	} catch {
+		// A relative or empty url carries no query to drop.
+	}
+	const rebuilt = new ApiError(
+		{
+			...error.request,
+			body: undefined,
+			formData: undefined,
+			query: undefined,
+		},
+		{
+			url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		described.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	return rebuilt;
 }
