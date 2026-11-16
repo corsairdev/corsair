@@ -61,9 +61,12 @@ export const list: SignpathEndpoints['signingRequestsList'] = (ctx, input) => {
 		(_, organizationId) => {
 			if (nextLink) {
 				const next = parseNextLink(nextLink);
-				if (!next) {
+				// A cursor from another account's organization would send that
+				// organization's path with this account's token.
+				const collection = orgPath(organizationId, '/SigningRequests');
+				if (!next || next.path !== collection) {
 					throw new Error(
-						'signingRequests.list needs the nextLink SignPath returned, such as https://app.signpath.io/Api/v1/...',
+						`signingRequests.list needs the nextLink SignPath returned for this organization, such as https://app.signpath.io/Api${collection}?...`,
 					);
 				}
 				return { method: 'GET', path: next.path, query: next.query };
@@ -384,6 +387,19 @@ export const signMessage: SignpathEndpoints['signingRequestsSignMessage'] = (
 		},
 	);
 
+/**
+ * Location is `.../v1/<organizationId>/SigningRequests/<id>`; the id is the last
+ * segment. Null when SignPath sent no Location, so the caller knows to list.
+ */
+export function signingRequestIdFromLocation(
+	location: unknown, // unknown: the Location header, or undefined without one
+): string | null {
+	if (typeof location !== 'string' || location.length === 0) return null;
+	const path = location.split(/[?#]/)[0] ?? '';
+	const match = /\/SigningRequests\/([^/]+)\/?$/i.exec(path);
+	return match?.[1] ? decodeURIComponent(match[1]) : null;
+}
+
 export const resubmit: SignpathEndpoints['signingRequestsResubmit'] = (
 	ctx,
 	input,
@@ -400,19 +416,18 @@ export const resubmit: SignpathEndpoints['signingRequestsResubmit'] = (
 			method: 'POST',
 			path: orgPath(organizationId, '/SigningRequests/Resubmit'),
 			body,
+			// 201 with no body: the new request is only in Location.
+			responseHeader: 'Location',
 		}),
 		{
-			// 201 with the new request only in Location, which the client cannot
-			// return. Report what was asked for; listing by project finds the rest.
-			shape: (raw, { originalSigningRequestId, signingPolicySlug }) => {
-				assertBodyless(raw, 'signingRequests.resubmit');
-				return {
-					originalSigningRequestId,
-					signingPolicySlug,
-					resubmitted: true as const,
-				};
-			},
-			log: ({ originalSigningRequestId, signingPolicySlug }) => ({
+			shape: (raw, { originalSigningRequestId, signingPolicySlug }) => ({
+				signingRequestId: signingRequestIdFromLocation(raw),
+				originalSigningRequestId,
+				signingPolicySlug,
+				resubmitted: true as const,
+			}),
+			log: ({ originalSigningRequestId, signingPolicySlug }, result) => ({
+				signingRequestId: result.signingRequestId ?? undefined,
 				originalSigningRequestId,
 				signingPolicySlug,
 			}),

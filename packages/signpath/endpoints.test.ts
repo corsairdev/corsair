@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { SIGNPATH_API_BASE, SignpathAPIError, segment } from './client';
+import { ApiError } from 'corsair/http';
+import { SIGNPATH_API_BASE, segment } from './client';
 import {
 	ArtifactConfigurations,
 	AuditLog,
@@ -568,6 +569,15 @@ describe('signingRequests.list', () => {
 		expect(sent.query).toEqual({ projectSlug: 'my-app', page: '2' });
 	});
 
+	it('rejects a nextLink for another organization', async () => {
+		await expect(
+			invoke(SigningRequests.list, {
+				nextLink: `${SIGNPATH_API_BASE}/v1/other-org/SigningRequests?page=2`,
+			}),
+		).rejects.toThrow(/for this organization/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a nextLink that is not a SignPath API URL', async () => {
 		await expect(
 			invoke(SigningRequests.list, { nextLink: 'https://example.com/next' }),
@@ -816,8 +826,17 @@ describe('signingRequests.signMessage', () => {
 });
 
 describe('signingRequests.resubmit', () => {
-	it('POSTs the resubmit body and reports what was sent', async () => {
-		respondEmpty(201);
+	const NEW_ID = '7c9e6679-7425-40de-944b-e07fc1f90ae7';
+
+	it('POSTs the resubmit body and returns the new id from Location', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(null, {
+				status: 201,
+				headers: {
+					Location: `${SIGNPATH_API_BASE}/v1/${ORG_ID}/SigningRequests/${NEW_ID}`,
+				},
+			}),
+		);
 
 		const result = await invoke(SigningRequests.resubmit, {
 			originalSigningRequestId: signingRequest.signingRequestId,
@@ -834,10 +853,22 @@ describe('signingRequests.resubmit', () => {
 			description: 'promote to release',
 		});
 		expect(result).toEqual({
+			signingRequestId: NEW_ID,
 			originalSigningRequestId: signingRequest.signingRequestId,
 			signingPolicySlug: 'release',
 			resubmitted: true,
 		});
+	});
+
+	it('returns a null id when SignPath sends no Location', async () => {
+		respondEmpty(201);
+
+		const result = await invoke(SigningRequests.resubmit, {
+			originalSigningRequestId: signingRequest.signingRequestId,
+			signingPolicySlug: 'release',
+		});
+
+		expect(result).toMatchObject({ signingRequestId: null, resubmitted: true });
 	});
 });
 
@@ -939,7 +970,7 @@ describe('auditLog', () => {
 });
 
 describe('client', () => {
-	it('describes a problem body from detail and keeps the status', async () => {
+	it('lets core ApiError through with the problem body and status', async () => {
 		respond(
 			{
 				type: 'https://tools.ietf.org/html/rfc9110#section-15.5.1',
@@ -955,11 +986,14 @@ describe('client', () => {
 			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
 		);
 
-		expect(error).toBeInstanceOf(SignpathAPIError);
-		const failure = error as SignpathAPIError;
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
 		expect(failure.status).toBe(400);
-		expect(failure.message).toContain("Project 'my-app' already exists.");
-		expect(failure.traceId).toBe('trace-1');
+		expect(failure.body).toMatchObject({
+			detail: "Project 'my-app' already exists.",
+			traceId: 'trace-1',
+		});
+		expect(JSON.stringify(failure.request)).not.toContain(API_KEY);
 	});
 
 	it('rejects a keyless call before any request', async () => {

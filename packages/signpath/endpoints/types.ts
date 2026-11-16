@@ -994,7 +994,7 @@ const SigningRequestsSubmitWithoutArtifactInputSchema = z.object({
 		.min(1)
 		.max(5000)
 		.describe(
-			'A name for the artifact SignPath will receive later through `signingRequests.uploadUnsignedArtifact`.',
+			'A name for the artifact SignPath will receive later. Upload the file to the `uploadLink` in the response; this plugin does not upload it.',
 		),
 	artifactSha256: z
 		.string()
@@ -1157,11 +1157,16 @@ export type SigningRequestsResubmitInput = z.infer<
 >;
 
 /**
- * Resubmit answers 201 and puts the new request in `Location` with no body;
- * `signingRequests.list` filtered by project finds it, so this reports what
- * was asked for rather than inventing an id.
+ * Resubmit answers 201 with no body and puts the new request in `Location`.
+ * `signingRequestId` is read from that header; null when SignPath sent none.
  */
 const SigningRequestsResubmitResponseSchema = z.object({
+	signingRequestId: z
+		.string()
+		.nullable()
+		.describe(
+			'The new signing request, from the Location header. Poll it with signingRequests.getStatus.',
+		),
 	originalSigningRequestId: Uuid,
 	signingPolicySlug: z.string(),
 	resubmitted: z.literal(true),
