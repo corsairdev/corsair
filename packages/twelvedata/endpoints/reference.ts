@@ -134,7 +134,12 @@ export const funds: TwelveDataEndpoints['fundsList'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: 'funds',
-			query: { country: parsed.country, symbol: parsed.symbol },
+			query: {
+				country: parsed.country,
+				symbol: parsed.symbol,
+				page: parsed.page,
+				outputsize: parsed.outputsize,
+			},
 		}),
 		{ log: (_parsed, result) => ({ funds: result.result.list.length }) },
 	);
@@ -156,6 +161,8 @@ export const bonds: TwelveDataEndpoints['bondsList'] = async (ctx, input) =>
 				symbol: parsed.symbol,
 				exchange: parsed.exchange,
 				country: parsed.country,
+				page: parsed.page,
+				outputsize: parsed.outputsize,
 			},
 		}),
 		{ log: (_parsed, result) => ({ bonds: result.result.list.length }) },

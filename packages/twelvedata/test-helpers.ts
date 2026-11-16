@@ -9,7 +9,14 @@
 export async function captureError(
 	promise: Promise<unknown>,
 ): Promise<unknown> {
-	return promise.catch((caught: unknown) => caught);
+	const settled = await promise.then(
+		(value: unknown) => ({ ok: true as const, value }),
+		(caught: unknown) => ({ ok: false as const, caught }),
+	);
+	if (settled.ok) {
+		throw new Error('Expected the promise to reject, but it fulfilled');
+	}
+	return settled.caught;
 }
 
 /**

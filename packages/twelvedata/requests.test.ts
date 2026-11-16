@@ -15,7 +15,6 @@ import {
 	forexPairsList,
 	fundsList,
 	macdSeries,
-	partialBatch,
 	price,
 	quote,
 	rsiSeries,
@@ -405,16 +404,24 @@ describe('a 200 is not proof the lookup worked', () => {
 		expect((error as Error).message).toContain('market.quote');
 	});
 
-	it('throws for a batch answer where an entry failed', async () => {
-		respond(partialBatch);
+	it('rejects a comma list before sending, since the answer would be a keyed map', async () => {
+		for (const endpoint of [MarketEndpoints.quote, MarketEndpoints.price]) {
+			const error = await captureError(
+				invoke(endpoint, { symbol: 'AAPL,BAD' }),
+			);
+			expect((error as Error).name).toBe('ZodError');
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 
-		const error = await captureError(
-			invoke(MarketEndpoints.quote, { symbol: 'AAPL,BAD' }),
-		);
+	it('forwards page and outputsize for funds and bonds', async () => {
+		respond(fundsList);
+		await invoke(ReferenceEndpoints.funds, { page: 2, outputsize: 10 });
+		expect(lastRequest().params).toEqual({ page: '2', outputsize: '10' });
 
-		// A single-object quote parse fails first, which is the right outcome:
-		// the caller asked for one quote shape and got a keyed map.
-		expect(error).toBeDefined();
+		respond(bondsList);
+		await invoke(ReferenceEndpoints.bonds, { page: 3 });
+		expect(lastRequest().params).toEqual({ page: '3' });
 	});
 
 	it('turns a 401 into a typed error', async () => {

@@ -219,10 +219,15 @@ export type ApiUsageOutput = z.output<typeof ApiUsageSchema>;
 
 /** Shared request fields for the market-data routes. */
 const SymbolFields = {
+	// One symbol: for a comma list Twelve Data answers a map keyed by symbol,
+	// which the single-quote output schema would read as an empty quote.
 	symbol: z
 		.string()
 		.min(1)
-		.describe('One symbol, or several separated by commas'),
+		.refine((value) => !value.includes(','), {
+			message: 'Pass one symbol; call once per symbol for several',
+		})
+		.describe('One symbol, such as AAPL or EUR/USD'),
 	exchange: z.string().optional().describe('Narrow to one exchange'),
 	country: z.string().optional().describe('Narrow to one country'),
 };
@@ -365,15 +370,29 @@ const ListEtfInputSchema = z.object({
 	country: z.string().optional(),
 });
 
+/** The funds and bonds lists are paged; Twelve Data documents `page` and `outputsize`. */
+const ListPageFields = {
+	page: z.number().int().min(1).optional().describe('Page number; default 1'),
+	outputsize: z
+		.number()
+		.int()
+		.min(1)
+		.max(50)
+		.optional()
+		.describe('Rows per page; default 50'),
+};
+
 const ListFundsInputSchema = z.object({
 	country: z.string().optional(),
 	symbol: z.string().optional(),
+	...ListPageFields,
 });
 
 const ListBondsInputSchema = z.object({
 	symbol: z.string().optional(),
 	exchange: z.string().optional(),
 	country: z.string().optional(),
+	...ListPageFields,
 });
 
 export type ListEtfInput = z.input<typeof ListEtfInputSchema>;
