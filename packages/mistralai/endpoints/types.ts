@@ -498,11 +498,14 @@ const OcrProcessResponseSchema = z
 
 // ── Files ───────────────────────────────────────────────────────────────────
 
+// 'audio' is not in the OpenAPI enum, but Mistral's transcription docs upload
+// with purpose=audio before transcribing by file_id.
 const FilePurposeSchema = z.enum([
 	'fine-tune',
 	'batch',
 	'ocr',
 	'agentic_safety',
+	'audio',
 ]);
 
 const FileIdSchema = z
