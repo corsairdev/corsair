@@ -1,0 +1,1398 @@
+---
+title: "Needle API reference"
+sidebarTitle: "API"
+description: "API reference for the Needle plugin in Corsair: every `needle.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### me
+
+`account.me`
+
+Read the user and organization the API key belongs to, with the key’s role
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.account.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+| `requestId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  imageUrl?: string | null,
+  organization?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    imageUrl?: string | null,
+    role?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create a campaign in draft from a sequence graph; it contacts nobody until campaigns.update sets it active
+
+**Risk:** `write`
+
+```ts
+await corsair.needle.api.campaigns.create({ name: 'EMEA logistics Q4', graph: { nodes: [{ id: 'start', kind: 'start' }, { id: 'end', kind: 'end' }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `graph` | `object` | Yes | — |
+
+The campaign starts in draft and contacts nobody until campaigns.update sets status active.
+
+<AccordionGroup>
+<Accordion title="graph full type">
+
+```ts
+{
+  nodes: {
+    id: string,
+    kind: start | end | delay | action,
+    label?: string,
+    duration?: {
+      days?: number,
+      hours?: number,
+      minutes?: number
+    },
+    channel?: linkedin | instagram,
+    connectedAccountId?: string,
+    action?: linkedin_invitation | linkedin_cancel_invitation | linkedin_message | linkedin_inmail | linkedin_profile_view | linkedin_search | linkedin_comment | linkedin_reaction | linkedin_post_view | linkedin_company_view | linkedin_job_view | linkedin_conversation_view | linkedin_network_view | linkedin_invitation_list | linkedin_invitation_response | linkedin_search_parameter | linkedin_inmail_balance | linkedin_own_profile | instagram_message | instagram_profile_view | instagram_follow | instagram_unfollow | instagram_comment | instagram_reaction | instagram_post | instagram_post_view | instagram_conversation_view | instagram_network_view | instagram_own_profile,
+    content?: {
+      kind: template,
+      text: string,
+      subject?: string
+    } | {
+      kind: ai,
+      prompt: string,
+      context?: (profile | posts | conversation | lead_properties)[],
+      maxChars?: number,
+      fallbackText?: string,
+      requiresApproval?: boolean
+    }
+  }[],
+  edges: {
+    from: string,
+    to: string,
+    label?: next | yes | no | on_event | on_timeout
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  startedAt?: string | null,
+  pausedAt?: string | null,
+  archivedAt?: string | null,
+  enrollmentCount?: number | null,
+  progress?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Archive a campaign: it stops sending and leaves the active list, and the record is kept
+
+**Risk:** `destructive`
+
+```ts
+await corsair.needle.api.campaigns.delete({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archived` | `boolean` | Yes | — |
+
+
+
+---
+
+### enroll
+
+`campaigns.enroll`
+
+Enroll up to 500 leads at once, with one result per lead so a batch can partly succeed; an enrolled lead can be contacted
+
+**Risk:** `write`
+
+```ts
+await corsair.needle.api.campaigns.enroll({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', leadIds: ['1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadIds` | `string[]` | Yes | Leads to enroll, by id. Create them first. |
+
+One result comes back per lead, so a batch can partly succeed; a skipped entry carries the reason.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  index?: number | null,
+  status?: string | null,
+  leadId?: string | null,
+  enrollmentId?: string | null,
+  reason?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Read one campaign, including its sequence graph and status
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.campaigns.get({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  startedAt?: string | null,
+  pausedAt?: string | null,
+  archivedAt?: string | null,
+  enrollmentCount?: number | null,
+  progress?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### leads
+
+`campaigns.leads`
+
+Page through the leads enrolled in a campaign with their status
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.campaigns.leads({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  leadId?: string | null,
+  enrollmentId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  companyDomain?: string | null,
+  jobTitle?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+Page through campaigns, optionally filtered by status
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.campaigns.list({ status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `status` | `draft \| active \| paused \| archived` | No | Only campaigns in this status. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  startedAt?: string | null,
+  pausedAt?: string | null,
+  archivedAt?: string | null,
+  enrollmentCount?: number | null,
+  progress?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`campaigns.stats`
+
+Read a campaign’s progress and funnel: invites, messages, replies, and why leads were skipped
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.campaigns.stats({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stats` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+{
+  progress?: number | null,
+  funnel?: {
+    enrolled?: number | null,
+    skippedByReason?: Record<string, number> | null,
+    invitesSent?: number | null,
+    invitesAccepted?: number | null,
+    acceptanceRate?: number | null,
+    messagesSent?: number | null,
+    repliedLeads?: number | null,
+    replyRate?: number | null,
+    repliedBySentiment?: Record<string, number> | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stopLeads
+
+`campaigns.stopLeads`
+
+Stop leads in a campaign so no further step reaches them, keeping them in the list
+
+**Risk:** `write`
+
+```ts
+await corsair.needle.api.campaigns.stopLeads({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', leadIds: ['1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  index?: number | null,
+  status?: string | null,
+  leadId?: string | null,
+  enrollmentId?: string | null,
+  reason?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Rename a campaign, replace its graph, or set active to start sending and paused to halt it
+
+**Risk:** `write`
+
+```ts
+await corsair.needle.api.campaigns.update({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `active \| paused` | No | Set active to start or resume, paused to halt contact. |
+| `graph` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="graph full type">
+
+```ts
+{
+  nodes: {
+    id: string,
+    kind: start | end | delay | action,
+    label?: string,
+    duration?: {
+      days?: number,
+      hours?: number,
+      minutes?: number
+    },
+    channel?: linkedin | instagram,
+    connectedAccountId?: string,
+    action?: linkedin_invitation | linkedin_cancel_invitation | linkedin_message | linkedin_inmail | linkedin_profile_view | linkedin_search | linkedin_comment | linkedin_reaction | linkedin_post_view | linkedin_company_view | linkedin_job_view | linkedin_conversation_view | linkedin_network_view | linkedin_invitation_list | linkedin_invitation_response | linkedin_search_parameter | linkedin_inmail_balance | linkedin_own_profile | instagram_message | instagram_profile_view | instagram_follow | instagram_unfollow | instagram_comment | instagram_reaction | instagram_post | instagram_post_view | instagram_conversation_view | instagram_network_view | instagram_own_profile,
+    content?: {
+      kind: template,
+      text: string,
+      subject?: string
+    } | {
+      kind: ai,
+      prompt: string,
+      context?: (profile | posts | conversation | lead_properties)[],
+      maxChars?: number,
+      fallbackText?: string,
+      requiresApproval?: boolean
+    }
+  }[],
+  edges: {
+    from: string,
+    to: string,
+    label?: next | yes | no | on_event | on_timeout
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  startedAt?: string | null,
+  pausedAt?: string | null,
+  archivedAt?: string | null,
+  enrollmentCount?: number | null,
+  progress?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Compose
+
+### preview
+
+`compose.preview`
+
+Preview an AI-composed message for a lead without sending it, with the context sources it used
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.compose.preview({ channel: 'linkedin', connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f', leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `linkedin \| instagram` | Yes | — |
+| `connectedAccountId` | `string` | Yes | The connected account the message would be sent from. |
+| `leadId` | `string` | No | — |
+| `instructions` | `string` | No | — |
+| `context` | `object` | No | Extra hints for the composer, such as the offer to mention. |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+  notes?: string,
+  offer?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  contextUsed?: {
+    source?: string | null,
+    cached?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads
+
+### create
+
+`leads.create`
+
+Create a lead with a LinkedIn or Instagram identity; a duplicate identity is refused with 409, so use leads.upsert to merge instead
+
+**Risk:** `write`
+
+```ts
+await corsair.needle.api.leads.create({ identities: { linkedin: 'https://www.linkedin.com/in/dana-okafor' }, timezone: 'Europe/London', firstName: 'Dana' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identities` | `object` | Yes | — |
+| `timezone` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `email` | `string` | No | — |
+| `imageUrl` | `string` | No | — |
+| `properties` | `Record<string, string>` | No | Custom properties, as a name-to-string map. |
+
+A duplicate identity is refused with 409; use leads.upsert to merge instead.
+
+<AccordionGroup>
+<Accordion title="identities full type">
+
+```ts
+{
+  linkedin?: string,
+  instagram?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="lead full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  companyDomain?: string | null,
+  jobTitle?: string | null,
+  email?: string | null,
+  imageUrl?: string | null,
+  timezone?: string | null,
+  identities?: {
+    channel?: string | null,
+    channelIdentity?: string | null
+  }[] | null,
+  liveEnrollment?: {
+    campaignId?: string | null,
+    status?: string | null,
+    stepId?: string | null
+  } | null,
+  properties?: Record<string, string> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`leads.delete`
+
+Delete a lead and its identities permanently; there is no restore call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.needle.api.leads.delete({ leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`leads.get`
+
+Read one lead by id, with its identities and live enrollment
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.leads.get({ leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="lead full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  companyDomain?: string | null,
+  jobTitle?: string | null,
+  email?: string | null,
+  imageUrl?: string | null,
+  timezone?: string | null,
+  identities?: {
+    channel?: string | null,
+    channelIdentity?: string | null
+  }[] | null,
+  liveEnrollment?: {
+    campaignId?: string | null,
+    status?: string | null,
+    stepId?: string | null
+  } | null,
+  properties?: Record<string, string> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leads.list`
+
+Page through the workspace’s leads by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.leads.list({ limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | The nextCursor from a prior page. |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` for the next page; null on the last one. |
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  companyDomain?: string | null,
+  jobTitle?: string | null,
+  email?: string | null,
+  imageUrl?: string | null,
+  timezone?: string | null,
+  identities?: {
+    channel?: string | null,
+    channelIdentity?: string | null
+  }[] | null,
+  liveEnrollment?: {
+    campaignId?: string | null,
+    status?: string | null,
+    stepId?: string | null
+  } | null,
+  properties?: Record<string, string> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`leads.search`
+
+Search leads by free text and structured filters, combined with AND, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.leads.search({ query: 'northwind', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Free text. Every word must appear in the name, email, company, domain, job title or a profile handle. |
+| `filters` | `object[]` | No | Every filter must match. Combined with `query` as AND. |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  field: string,
+  operator: eq | neq | in | not_in | contains | not_contains | starts_with | gt | gte | lt | lte | before | after | on | between | is_set | is_not_set,
+  value?: string | number | boolean | (string | number)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | No | Pass as `cursor` for the next page; null on the last one. |
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  companyDomain?: string | null,
+  jobTitle?: string | null,
+  email?: string | null,
+  imageUrl?: string | null,
+  timezone?: string | null,
+  identities?: {
+    channel?: string | null,
+    channelIdentity?: string | null
+  }[] | null,
+  liveEnrollment?: {
+    campaignId?: string | null,
+    status?: string | null,
+    stepId?: string | null
+  } | null,
+  properties?: Record<string, string> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`leads.update`
+
+Patch a lead’s fields by id; sending identities replaces the whole set rather than adding to it
+
+**Risk:** `write`
+
+```ts
+await corsair.needle.api.leads.update({ leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d', jobTitle: 'SVP Operations' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | The lead to update. |
+| `identities` | `object` | No | — |
+| `timezone` | `string` | No | IANA time zone used for the sending window, e.g. Europe/London. |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `email` | `string` | No | — |
+| `imageUrl` | `string` | No | — |
+| `properties` | `Record<string, string>` | No | Custom properties, as a name-to-string map. |
+
+Sending identities replaces the whole identity set rather than adding a channel.
+
+<AccordionGroup>
+<Accordion title="identities full type">
+
+```ts
+{
+  linkedin?: string,
+  instagram?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="lead full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  companyDomain?: string | null,
+  jobTitle?: string | null,
+  email?: string | null,
+  imageUrl?: string | null,
+  timezone?: string | null,
+  identities?: {
+    channel?: string | null,
+    channelIdentity?: string | null
+  }[] | null,
+  liveEnrollment?: {
+    campaignId?: string | null,
+    status?: string | null,
+    stepId?: string | null
+  } | null,
+  properties?: Record<string, string> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`leads.upsert`
+
+Create the lead, or patch the fields onto the one an identity already belongs to, reporting created or matched
+
+**Risk:** `write`
+
+```ts
+await corsair.needle.api.leads.upsert({ identities: { linkedin: 'dana-okafor' }, timezone: 'Europe/London' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identities` | `object` | Yes | — |
+| `timezone` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `email` | `string` | No | — |
+| `imageUrl` | `string` | No | — |
+| `properties` | `Record<string, string>` | No | Custom properties, as a name-to-string map. |
+
+Answers created or matched; on a match it patches the fields sent onto the existing lead.
+
+<AccordionGroup>
+<Accordion title="identities full type">
+
+```ts
+{
+  linkedin?: string,
+  instagram?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | created for a new lead, matched when an identity already belonged to one and the fields were patched onto it. |
+| `lead` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="lead full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  companyDomain?: string | null,
+  jobTitle?: string | null,
+  email?: string | null,
+  imageUrl?: string | null,
+  timezone?: string | null,
+  identities?: {
+    channel?: string | null,
+    channelIdentity?: string | null
+  }[] | null,
+  liveEnrollment?: {
+    campaignId?: string | null,
+    status?: string | null,
+    stepId?: string | null
+  } | null,
+  properties?: Record<string, string> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Places
+
+### search
+
+`places.search`
+
+Search places by free text or around a point, returning addresses, coordinates and websites
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.places.search({ query: 'dentists in Munich', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Free text such as "dentists in Munich". |
+| `location` | `object` | No | Centre point for a nearby search. |
+| `radiusMeters` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  latitude: number,
+  longitude: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hits` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hits full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  formattedAddress?: string | null,
+  city?: string | null,
+  region?: string | null,
+  country?: string | null,
+  postalCode?: string | null,
+  location?: {
+    latitude?: number | null,
+    longitude?: number | null
+  } | null,
+  googleMapsUrl?: string | null,
+  websiteUrl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suppressions
+
+### check
+
+`suppressions.check`
+
+Check up to 1000 identities against the suppression list and answer contactable with the reason when not
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.suppressions.check({ identities: [{ channel: 'linkedin', identity: 'dana-okafor' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identities` | `object[]` | Yes | — |
+
+Run this before enrolling; Needle also applies its own suppression policy during a send.
+
+<AccordionGroup>
+<Accordion title="identities full type">
+
+```ts
+{
+  channel: linkedin | instagram,
+  identity: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  channel?: string | null,
+  identity?: string | null,
+  decision?: {
+    contactable: boolean,
+    reason?: string | null,
+    source?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`suppressions.create`
+
+Suppress up to 1000 leads or company domains, with counts for what was created and what was already listed
+
+**Risk:** `write`
+
+```ts
+await corsair.needle.api.suppressions.create({ entries: [{ scope: 'company', companyDomain: 'competitor.example', reason: 'competitor' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+(
+  {
+    scope: lead,
+    leadId: string,
+    reason: manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive,
+    note?: string,
+    expiresAt?: string | null
+  } | {
+    scope: company,
+    companyDomain: string,
+    reason: manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive,
+    note?: string,
+    expiresAt?: string | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `number` | Yes | — |
+| `alreadyListed` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`suppressions.delete`
+
+Remove a suppression entry, which makes that person or domain contactable again
+
+**Risk:** `destructive`
+
+```ts
+await corsair.needle.api.suppressions.delete({ suppressionId: 'c9d0e1f2-a3b4-4c5d-8e6f-7a8b9c0d1e2f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suppressionId` | `string` | Yes | The suppression entry to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`suppressions.list`
+
+Page through suppression entries, optionally filtered by reason
+
+**Risk:** `read`
+
+```ts
+await corsair.needle.api.suppressions.list({ reason: 'unsubscribed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `reason` | `manual \| unsubscribed \| not_interested \| existing_customer \| open_opportunity \| competitor \| employee \| invalid_recipient \| complained \| recently_contacted \| unresponsive` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suppressions` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="suppressions full type">
+
+```ts
+{
+  id?: string | null,
+  scope?: string | null,
+  leadId?: string | null,
+  companyDomain?: string | null,
+  reason?: string | null,
+  note?: string | null,
+  expiresAt?: string | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
