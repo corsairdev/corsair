@@ -1,0 +1,142 @@
+---
+title: "NiftyImages plugin"
+sidebarTitle: "Overview"
+description: "List NiftyImages widgets, read per-widget view and click stats, page the recipients a widget recorded and the images it generated, and read one recipient's aggregated stats."
+---
+
+Use **NiftyImages** through Corsair: one client, typed API calls.
+
+The API key comes from the NiftyImages account settings page. The plugin sends it in the `ApiKey` header, one of the three transports the docs allow, so it never appears in a URL a proxy would log.
+
+Six widget calls are wrapped. Each takes a widget key from `widgets.list`, and each stats call takes an optional `startDate` and `endDate`:
+
+- **`widgets.list`** answers every widget with its name and key.
+- **`widgets.stats`** is `/Widgets/AllStats`, so one call reports every widget at once rather than one per call.
+- **`widgets.users`** and **`widgets.userStats`** read the recipients a widget recorded and one recipient's totals.
+- **`widgets.images`** and **`widgets.userImages`** list the generated images and their URLs.
+
+Things worth knowing:
+
+- **Lists answer bare arrays.** `widgets.list` sends `[{ Name, WidgetKey }]`, not an envelope, so the plugin keys it as `widgets`. A non-array body means an error rather than an empty page.
+- **Property names are PascalCase.** `WidgetKey`, `CreateDate`, `Views`, `UniqueClicks`. The plugin passes them through exactly as sent, so a caller reads `row.WidgetKey` rather than `row.widgetKey`.
+- **Every date is ISO 8601**, in both directions: query parameters and response fields, e.g. `2016-03-12T08:00Z`.
+- **A recipient is whatever the widget recorded**, usually an email address. It goes in the path, so the plugin percent-encodes it; an `@` or `+` left raw would split the path.
+- **A wrong path answers an HTML page, not a JSON 404.** That is why a 404 is reported as a path problem: an unauthenticated request answers 401 whatever the path, so without a key a wrong route and a wrong key look the same.
+- **Only the Widget endpoints are wrapped.** NiftyImages also documents Data Store, Timer, Map, Bee Plugin, Image and Photoshop calls; those pages did not resolve while building this, so they are left out rather than guessed at.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/niftyimages better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/niftyimages better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/niftyimages better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/niftyimages better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { niftyimages } from '@corsair-dev/niftyimages';
+
+export const corsair = createCorsair({
+	plugins: [
+		niftyimages(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the NiftyImages API key before the first call: `pnpm corsair setup --plugin=niftyimages --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+niftyimages()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'niftyimages',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the account's widgets**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.niftyimages.api.widgets.list({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/niftyimages/api) reference._
+
+
+See the full list on the [API](/plugins/niftyimages/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/niftyimages/api">
+    Every `niftyimages.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

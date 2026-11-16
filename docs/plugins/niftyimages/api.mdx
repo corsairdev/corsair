@@ -1,0 +1,300 @@
+---
+title: "NiftyImages API reference"
+sidebarTitle: "API"
+description: "API reference for the NiftyImages plugin in Corsair: every `niftyimages.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Widgets
+
+### images
+
+`widgets.images`
+
+List the images a widget generated in a time window, with each image’s URL and own counts
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.widgets.images({ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widgetKey` | `string` | Yes | The widget key, a GUID from widgets.list. |
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  ImageKey?: string | null,
+  ImageUrl?: string | null,
+  User?: string | null,
+  CreateDate?: string | null,
+  Views?: number | null,
+  Clicks?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`widgets.list`
+
+List the account’s widgets with their names and keys, which every other widget call needs
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.widgets.list({ startDate: '2016-02-10T08:00Z', endDate: '2016-03-10T08:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+Answers a bare array of { Name, WidgetKey }, which the plugin keys as widgets.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widgets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="widgets full type">
+
+```ts
+{
+  Name?: string | null,
+  WidgetKey?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`widgets.stats`
+
+Read per-widget view and click counts for a time window, for every widget at once
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.widgets.stats({ startDate: '2016-02-10T08:00Z', endDate: '2016-03-10T08:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+Reads AllStats, so one call covers every widget rather than one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stats` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+{
+  WidgetKey?: string | null,
+  Name?: string | null,
+  Views?: number | null,
+  UniqueViews?: number | null,
+  Clicks?: number | null,
+  UniqueClicks?: number | null,
+  CreateDate?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### userImages
+
+`widgets.userImages`
+
+List the images a widget generated for one recipient
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.widgets.userImages({ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578', user: 'jordan@acme-logistics.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widgetKey` | `string` | Yes | The widget key, a GUID from widgets.list. |
+| `user` | `string` | Yes | The user id or email to read images for. |
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  ImageKey?: string | null,
+  ImageUrl?: string | null,
+  User?: string | null,
+  CreateDate?: string | null,
+  Views?: number | null,
+  Clicks?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users
+
+`widgets.users`
+
+List the recipients one widget recorded in a time window, with their view and click counts
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.widgets.users({ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widgetKey` | `string` | Yes | The widget key, a GUID from widgets.list. |
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  User?: string | null,
+  Views?: number | null,
+  Clicks?: number | null,
+  LastSeen?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### userStats
+
+`widgets.userStats`
+
+Read aggregated stats for one recipient of one widget
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.widgets.userStats({ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578', user: 'jordan@acme-logistics.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widgetKey` | `string` | Yes | The widget key, a GUID from widgets.list. |
+| `user` | `string` | Yes | The user id or email the widget recorded for the recipient. |
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+The user is percent-encoded into the path, because it is usually an email address.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stats` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+{
+  User?: string | null,
+  Views?: number | null,
+  Clicks?: number | null,
+  FirstSeen?: string | null,
+  LastSeen?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

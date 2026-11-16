@@ -3387,6 +3387,14 @@
                 ]
               },
               {
+                "group": "NiftyImages",
+                "pages": [
+                  "plugins/niftyimages/overview",
+                  "plugins/niftyimages/api",
+                  "plugins/niftyimages/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
