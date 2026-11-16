@@ -75,6 +75,7 @@ export function sentHeader(name: string): string | null {
 	return new Headers(lastCall().init.headers).get(name);
 }
 
+// unknown: a sent JSON body is arbitrary JSON; each test asserts the fields it expects.
 export function sentBody(): Record<string, unknown> {
 	const body = lastCall().init.body;
 	if (typeof body !== 'string') {

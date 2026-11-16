@@ -22,7 +22,7 @@ pnpm add @corsair-dev/surveymonkey
 | `contactLists.delete` | `surveymonkey.api.contactLists.delete` | `destructive` | Delete a contact list. The contacts on it stay on the account |
 | `contactLists.get` | `surveymonkey.api.contactLists.get` | `read` | Read one contact list |
 | `contactLists.list` | `surveymonkey.api.contactLists.list` | `read` | List the contact lists on the account |
-| `contactLists.merge` | `surveymonkey.api.contactLists.merge` | `destructive` | Move every contact from this list into another. The source list is left empty, so this effectively undoes it |
+| `contactLists.merge` | `surveymonkey.api.contactLists.merge` | `write` | Copy every contact from list_id into this list. list_id keeps its contacts |
 | `contactLists.update` | `surveymonkey.api.contactLists.update` | `write` | Rename a contact list |
 | `contacts.bulkCreate` | `surveymonkey.api.contacts.bulkCreate` | `write` | Create up to a few hundred contacts in one call, optionally updating existing ones |
 | `contacts.create` | `surveymonkey.api.contacts.create` | `write` | Create a contact with a name and an email or a phone number |
@@ -37,7 +37,7 @@ pnpm add @corsair-dev/surveymonkey
 | `messages.create` | `surveymonkey.api.messages.create` | `write` | Draft an invite or reminder for an email collector. Nothing is sent until send is called |
 | `messages.get` | `surveymonkey.api.messages.get` | `read` | Read one message subject and body |
 | `messages.list` | `surveymonkey.api.messages.list` | `read` | List the invite and reminder messages of a collector |
-| `messages.send` | `surveymonkey.api.messages.send` | `write` | Send a message to every recipient on it. This mails real people, so check the recipients first |
+| `messages.send` | `surveymonkey.api.messages.send` | `destructive` | Send a message to every recipient on it. This mails real people, so check the recipients first |
 | `messages.update` | `surveymonkey.api.messages.update` | `write` | Change a message subject, body or type before it is sent |
 | `pages.create` | `surveymonkey.api.pages.create` | `write` | Add a page to a survey, optionally at a given position |
 | `pages.delete` | `surveymonkey.api.pages.delete` | `destructive` | Delete a page and the questions on it. There is no undo |
@@ -67,7 +67,7 @@ pnpm add @corsair-dev/surveymonkey
 | `surveys.listCategories` | `surveymonkey.api.surveys.listCategories` | `read` | List the survey categories available for the language |
 | `surveys.listLanguages` | `surveymonkey.api.surveys.listLanguages` | `read` | List the languages a survey can be written in |
 | `surveys.listTemplates` | `surveymonkey.api.surveys.listTemplates` | `read` | List the survey templates, optionally filtered by language or category |
-| `surveys.replace` | `surveymonkey.api.surveys.replace` | `write` | Replace a survey wholesale. Fields left out reset to their defaults, so prefer update |
+| `surveys.replace` | `surveymonkey.api.surveys.replace` | `destructive` | Replace a survey wholesale. Fields left out reset to their defaults, so prefer update |
 | `surveys.update` | `surveymonkey.api.surveys.update` | `write` | Change a survey title, nickname, language, button text, variables or folder |
 | `users.getMe` | `surveymonkey.api.users.getMe` | `read` | Read the account the token belongs to, which is the cheapest connection check |
 | `webhooks.create` | `surveymonkey.api.webhooks.create` | `write` | Subscribe a URL to an event on a survey or collector. SurveyMonkey then POSTs to it |

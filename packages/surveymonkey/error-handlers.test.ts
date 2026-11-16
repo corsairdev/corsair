@@ -67,6 +67,7 @@ describe('surveymonkey error handling', () => {
 		const error = new SurveymonkeyAPIError('rate limited', { status: 429 });
 		const strategy = await entry('RATE_LIMIT_ERROR').handler(error, context);
 
+		// unknown: the strategy type is a union, and this reads one optional field.
 		expect(
 			(strategy as Record<string, unknown>).headersRetryAfterMs,
 		).toBeUndefined();
