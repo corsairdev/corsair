@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { SimplekpiAPIError, segment } from './client';
+import { ApiError } from 'corsair/http';
+import { segment, simplekpiProblem } from './client';
 import {
 	BreakdownItems,
 	CategoryKpis,
@@ -210,6 +211,17 @@ describe('kpis', () => {
 		expect(result).toEqual({ id: 1234, deleted: true });
 	});
 
+	it.each([[{}], [[]], [null]])(
+		'throws when a delete answers the JSON body %j instead of a 204',
+		async (body) => {
+			respond(body as UnknownJson);
+
+			await expect(invoke(Kpis.remove, { id: 1234 })).rejects.toThrow(
+				/bodyless/,
+			);
+		},
+	);
+
 	it('throws when a delete answers a body', async () => {
 		respond({ ok: true });
 
@@ -327,6 +339,20 @@ describe('breakdownItems', () => {
 		expect(lastRequest()).toMatchObject({
 			method: 'PUT',
 			path: '/v1/breakdownitems/77',
+		});
+
+		respond(breakdownItem);
+		await invoke(BreakdownItems.update, {
+			id: 77,
+			name: 'EMEA North',
+			is_archived: true,
+			sort_order: 3,
+		});
+		// A PUT replaces the item, so the archive flag and order must survive.
+		expect(lastRequest().body).toEqual({
+			name: 'EMEA North',
+			is_archived: true,
+			sort_order: 3,
 		});
 
 		respondEmpty();
@@ -558,6 +584,24 @@ describe('kpiUnits', () => {
 	});
 });
 
+describe('reports.allDataEntries filters', () => {
+	it('sends the user and breakdown item filters as comma lists', async () => {
+		respond([]);
+
+		await invoke(Reports.allDataEntries, {
+			kpiIDs: [1, 2],
+			userIDs: [7, 8],
+			groupItemIDs: [77],
+		});
+
+		expect(lastRequest().query).toMatchObject({
+			kpiIDs: '1,2',
+			userIDs: '7,8',
+			groupItemIDs: '77',
+		});
+	});
+});
+
 describe('reports.allDataEntries', () => {
 	it('joins the KPI ids into a comma separated filter', async () => {
 		respond([reportRow]);
@@ -618,12 +662,14 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		expect(error).toBeInstanceOf(SimplekpiAPIError);
-		const failure = error as SimplekpiAPIError;
+		// Core's ApiError goes through unchanged (plugin rules R8).
+		expect(error).toBeInstanceOf(ApiError);
+		const failure = error as ApiError;
 		expect(failure.status).toBe(400);
-		expect(failure.fieldErrors).toEqual(validationProblem.errors);
-		expect(failure.message).toContain('aggregate_function');
-		expect(util.inspect(error)).not.toContain(API_KEY);
+		expect(simplekpiProblem(failure)?.fieldErrors).toEqual(
+			validationProblem.errors,
+		);
+		expect(util.inspect(error, { depth: 10 })).not.toContain(API_KEY);
 		expect(failure.message).not.toContain(API_KEY);
 	});
 
@@ -635,15 +681,14 @@ describe('client error handling', () => {
 			(caught: UnknownJson) => caught,
 		);
 
-		const failure = error as SimplekpiAPIError;
-		expect(failure.detail).toBe('No KPI with id 9999 on this account.');
-		expect(failure.traceId).toBe('00-abc-def-01');
-		expect(failure.isAuthError).toBe(false);
+		const problem = simplekpiProblem(error);
+		expect((error as ApiError).status).toBe(404);
+		expect(problem?.detail).toBe('No KPI with id 9999 on this account.');
+		expect(problem?.traceId).toBe('00-abc-def-01');
 	});
 
-	it('classifies 401 as auth and 403 as scope', () => {
-		expect(new SimplekpiAPIError('x', { status: 401 }).isAuthError).toBe(true);
-		expect(new SimplekpiAPIError('x', { status: 403 }).isScopeError).toBe(true);
+	it('reads nothing from an error that is not an ApiError', () => {
+		expect(simplekpiProblem(new Error('offline'))).toBeUndefined();
 	});
 
 	it('encodes a path segment', () => {

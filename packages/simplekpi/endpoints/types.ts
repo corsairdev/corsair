@@ -109,6 +109,8 @@ const BreakdownItemSchema = z
 			.nullish()
 			.describe('Set for a People breakdown item, null for every other kind.'),
 		is_system: z.boolean().nullish(),
+		is_archived: z.boolean().nullish(),
+		sort_order: z.number().int().nullish(),
 		created_at: Timestamp.nullish(),
 		updated_at: Timestamp.nullish(),
 	})
@@ -461,11 +463,28 @@ export type BreakdownItemsListResponse = z.infer<
 	typeof BreakdownItemsListResponseSchema
 >;
 
+const breakdownItemWritable = {
+	is_archived: z
+		.boolean()
+		.optional()
+		.describe(
+			'Archive the item. An update replaces the item, so send it again.',
+		),
+	sort_order: z
+		.number()
+		.int()
+		.optional()
+		.describe(
+			'Display position. An update replaces the item, so send it again.',
+		),
+};
+
 const BreakdownItemsCreateInputSchema = z.object({
 	name: z.string().min(1).max(100),
 	breakdown_id: Id.optional().describe(
 		'Omit it for an item that combines several breakdowns.',
 	),
+	...breakdownItemWritable,
 });
 
 export type BreakdownItemsCreateInput = z.infer<
@@ -492,6 +511,7 @@ const BreakdownItemsUpdateInputSchema = z.object({
 	id: Id,
 	name: z.string().min(1).max(100),
 	breakdown_id: Id.nullish(),
+	...breakdownItemWritable,
 });
 
 export type BreakdownItemsUpdateInput = z.infer<
@@ -740,6 +760,14 @@ const ReportsAllDataEntriesInputSchema = z.object({
 		.describe('The KPIs to report on. Sent as a comma separated list.'),
 	dateFrom: z.string().optional(),
 	dateTo: z.string().optional(),
+	userIDs: z
+		.array(z.number().int())
+		.optional()
+		.describe('Only these users. Sent as a comma separated list.'),
+	groupItemIDs: z
+		.array(z.number().int())
+		.optional()
+		.describe('Only these breakdown items. Sent as a comma separated list.'),
 });
 
 export type ReportsAllDataEntriesInput = z.infer<

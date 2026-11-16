@@ -22,13 +22,15 @@ export const allDataEntries: SimplekpiEndpoints['reportsAllDataEntries'] = (
 			output: Outputs.reportsAllDataEntries,
 		},
 		input,
-		({ kpiIDs, dateFrom, dateTo }) => ({
+		({ kpiIDs, dateFrom, dateTo, userIDs, groupItemIDs }) => ({
 			method: 'GET',
 			path: '/v1/reports/alldataentries',
 			query: {
 				kpiIDs: kpiIDs?.join(','),
 				dateFrom,
 				dateTo,
+				userIDs: userIDs?.join(','),
+				groupItemIDs: groupItemIDs?.join(','),
 			},
 		}),
 		{
