@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SimplekpiAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof SimplekpiAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -14,26 +14,18 @@ function statusOf(error: Error): number | undefined {
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		// The API refused the request before running it, so any method is safe
-		// to replay.
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof SimplekpiAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// Core's request() already retried it three times with Retry-After.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401: the key was missing, malformed, unrecognised, expired or revoked.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimplekpiAPIError && error.isAuthError,
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403: the key is valid but lacks the scope this route needs. Write does not
 	// imply read here, so a key that can push entries still cannot list them.
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			error instanceof SimplekpiAPIError && error.isScopeError,
+		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 with a field map: a value failed validation, such as a frequency the
@@ -56,9 +48,9 @@ export const errorHandlers = {
 	// replay can double a `addToActual` increment.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SimplekpiAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

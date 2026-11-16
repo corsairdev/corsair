@@ -16,11 +16,12 @@ export const SIMPLEKPI_API_BASE = 'https://api.simplekpi.com';
 /**
  * Two limits apply and a request has to satisfy both: 300 per 60 seconds per
  * client and 600 per 60 seconds per key. Both answer 429 with a Retry-After.
- * Retries live in error-handlers.ts, so the client makes one attempt.
+ * Core's request() retries a 429 three times honouring it, so the 429 handler
+ * in error-handlers.ts does not retry again.
  */
 const SIMPLEKPI_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -39,59 +40,38 @@ const SIMPLEKPI_RATE_LIMIT_CONFIG: RateLimitConfig = {
  *
  * https://support.simplekpi.com/ai-core/api/errors
  */
-export class SimplekpiAPIError extends Error {
-	readonly status?: number;
+export type SimplekpiProblem = {
 	/** The problem type URI, when the API sent one. */
-	readonly type?: string;
+	type?: string;
+	/** The generic title, e.g. "One or more validation errors occurred". */
+	title?: string;
 	/** What went wrong with this request, as opposed to its type. */
-	readonly detail?: string;
+	detail?: string;
 	/** Field name to messages, from a 400 validation failure. */
-	readonly fieldErrors?: Record<string, string[]>;
+	fieldErrors?: Record<string, string[]>;
 	/** The server's trace id, for a support request. */
-	readonly traceId?: string;
-	/** Milliseconds from a Retry-After header, when one was sent. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-	// A problem body is typed, but a proxy can answer HTML or nothing at all.
-	readonly body?: UnknownJson; // unknown: see the note above
+	traceId?: string;
+};
 
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			body?: UnknownJson; // unknown: same open problem body as the field above
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'SimplekpiAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		const record = asRecord(this.body);
-		this.type = readString(record, 'type');
-		this.detail = readString(record, 'detail');
-		this.traceId = readString(record, 'trace_id');
-		this.fieldErrors = readFieldErrors(record?.errors);
-	}
-
-	/** True when the key was missing, malformed, unrecognised, expired or revoked. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	/**
-	 * True when the key is valid but lacks the scope the route needs. A write
-	 * scope does not imply its read scope, so this is a real and common case.
-	 */
-	get isScopeError(): boolean {
-		return this.status === 403;
-	}
+/**
+ * Errors are core's ApiError, passed through unchanged (plugin rules R8). This
+ * reads the problem-details body off one, or returns undefined for anything
+ * else.
+ */
+export function simplekpiProblem(
+	// unknown: any thrown value; only core's ApiError carries a problem body.
+	error: unknown,
+): SimplekpiProblem | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	const record = asRecord(error.body as UnknownJson);
+	if (!record) return undefined;
+	return {
+		type: readString(record, 'type'),
+		title: readString(record, 'title'),
+		detail: readString(record, 'detail'),
+		fieldErrors: readFieldErrors(record.errors),
+		traceId: readString(record, 'trace_id'),
+	};
 }
 
 // The record is an untyped problem body; read one field at a time.
@@ -122,31 +102,6 @@ function readFieldErrors(
 		}
 	}
 	return Object.keys(out).length > 0 ? out : undefined;
-}
-
-export function describeSimplekpiError(
-	status: number | undefined,
-	body: UnknownJson, // unknown: a problem body can be text, HTML or empty
-	fallback: string,
-): string {
-	const record = asRecord(body);
-	const fieldErrors = readFieldErrors(record?.errors);
-	// A validation 400 carries the field errors and a generic `title` ("One or
-	// more validation errors occurred"), so the field map is the useful part and
-	// wins over the title. `detail`, when present, is written for a human and
-	// wins over both.
-	const text =
-		readString(record, 'detail') ??
-		(fieldErrors ? describeFieldErrors(fieldErrors) : undefined) ??
-		readString(record, 'title') ??
-		fallback;
-	return status === undefined ? text : `SimpleKPI ${status}: ${text}`;
-}
-
-function describeFieldErrors(errors: Record<string, string[]>): string {
-	return Object.entries(errors)
-		.map(([field, messages]) => `${field}: ${messages.join('; ')}`)
-		.join('. ');
 }
 
 export type SimplekpiQuery = Record<
@@ -196,32 +151,10 @@ export async function makeSimplekpiRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
-	try {
-		// unknown: see the note on makeSimplekpiRequest.
-		return await request<UnknownJson>(config, requestOptions, {
-			rateLimitConfig: SIMPLEKPI_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including the Authorization header, so `util.inspect(error)` would
-			// print the key. The fields below are what a caller and the replay
-			// gate need.
-			throw new SimplekpiAPIError(
-				describeSimplekpiError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method: error.request.method,
-				},
-			);
-		}
-		// A transport failure never held a body or headers, so its cause is safe to
-		// keep. DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new SimplekpiAPIError(error.message, { cause: error, method });
-		}
-		throw new SimplekpiAPIError('Unknown SimpleKPI error', { method });
-	}
+	// Core's ApiError goes through unchanged (plugin rules R8). The key travels
+	// in the config's headers, which ApiError does not keep.
+	// unknown: see the note on makeSimplekpiRequest.
+	return request<UnknownJson>(config, requestOptions, {
+		rateLimitConfig: SIMPLEKPI_RATE_LIMIT_CONFIG,
+	});
 }

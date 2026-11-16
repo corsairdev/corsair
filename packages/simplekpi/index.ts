@@ -566,7 +566,8 @@ export function simplekpi<const T extends SimplekpiPluginOptions>(
 	} satisfies InternalSimplekpiPlugin;
 }
 
-export { SimplekpiAPIError } from './client';
+export type { SimplekpiProblem } from './client';
+export { simplekpiProblem } from './client';
 
 export type {
 	CategoryKpisCreateInput,
