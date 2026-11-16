@@ -23,6 +23,17 @@ const PageSizeSchema = z
 	.optional()
 	.describe('Results per page, from 1 to 250.');
 
+/**
+ * An ID that goes into a request path. Endpoints encode it, and "." or ".."
+ * is refused because a URL resolver would turn it into a different route.
+ */
+const PathIdSchema = z
+	.string()
+	.min(1)
+	.refine((value) => value !== '.' && value !== '..', {
+		message: 'An ID cannot be "." or "..".',
+	});
+
 const MetaSchema = z
 	.object({
 		total_pages: z.number().nullish(),
@@ -177,7 +188,7 @@ export const MessagesSendResponseSchema = record(MessageSchema);
 export type MessagesSendResponse = z.infer<typeof MessagesSendResponseSchema>;
 
 export const MessagesGetInputSchema = z.object({
-	messageId: z.string().min(1).describe('The message ID.'),
+	messageId: PathIdSchema.describe('The message ID.'),
 });
 
 export type MessagesGetInput = z.infer<typeof MessagesGetInputSchema>;
@@ -187,7 +198,7 @@ export const MessagesGetResponseSchema = record(MessageSchema);
 export type MessagesGetResponse = z.infer<typeof MessagesGetResponseSchema>;
 
 export const MessagesRemoveInputSchema = z.object({
-	messageId: z.string().min(1).describe('The message ID.'),
+	messageId: PathIdSchema.describe('The message ID.'),
 });
 
 export type MessagesRemoveInput = z.infer<typeof MessagesRemoveInputSchema>;
@@ -249,7 +260,7 @@ export type MessagingProfilesListResponse = z.infer<
 >;
 
 export const MessagingProfilesGetInputSchema = z.object({
-	profileId: z.string().min(1).describe('The messaging profile ID.'),
+	profileId: PathIdSchema.describe('The messaging profile ID.'),
 });
 
 export type MessagingProfilesGetInput = z.infer<
@@ -291,7 +302,7 @@ export type MessagingProfilesCreateResponse = z.infer<
 >;
 
 export const MessagingProfilesUpdateInputSchema = z.object({
-	profileId: z.string().min(1).describe('The messaging profile to change.'),
+	profileId: PathIdSchema.describe('The messaging profile to change.'),
 	name: z.string().min(1).optional(),
 	enabled: z.boolean().optional(),
 	webhook_url: z.string().nullable().optional(),
@@ -312,7 +323,7 @@ export type MessagingProfilesUpdateResponse = z.infer<
 >;
 
 export const MessagingProfilesRemoveInputSchema = z.object({
-	profileId: z.string().min(1).describe('The messaging profile to delete.'),
+	profileId: PathIdSchema.describe('The messaging profile to delete.'),
 });
 
 export type MessagingProfilesRemoveInput = z.infer<
@@ -374,7 +385,7 @@ export type PhoneNumbersListResponse = z.infer<
 >;
 
 export const PhoneNumbersGetInputSchema = z.object({
-	phoneNumberId: z.string().min(1).describe('The phone number record ID.'),
+	phoneNumberId: PathIdSchema.describe('The phone number record ID.'),
 });
 
 export type PhoneNumbersGetInput = z.infer<typeof PhoneNumbersGetInputSchema>;
@@ -387,9 +398,7 @@ export type PhoneNumbersGetResponse = z.infer<
 
 export const PhoneNumbersUpdateInputSchema = z
 	.object({
-		phoneNumberId: z
-			.string()
-			.min(1)
+		phoneNumberId: PathIdSchema
 			.describe('The phone number record to change.'),
 		connection_id: z
 			.string()
@@ -424,9 +433,7 @@ export type PhoneNumbersUpdateResponse = z.infer<
 >;
 
 export const PhoneNumbersRemoveInputSchema = z.object({
-	phoneNumberId: z
-		.string()
-		.min(1)
+	phoneNumberId: PathIdSchema
 		.describe('The phone number record to delete.'),
 });
 
@@ -555,7 +562,7 @@ export const CallsCreateResponseSchema = record(CallSchema);
 export type CallsCreateResponse = z.infer<typeof CallsCreateResponseSchema>;
 
 export const CallsGetInputSchema = z.object({
-	callControlId: z.string().min(1).describe('The call_control_id of the call.'),
+	callControlId: PathIdSchema.describe('The call_control_id of the call.'),
 });
 
 export type CallsGetInput = z.infer<typeof CallsGetInputSchema>;
@@ -578,13 +585,13 @@ export const CallActionResponseSchema = z
 export type CallActionResponse = z.infer<typeof CallActionResponseSchema>;
 
 export const CallsHangupInputSchema = z.object({
-	callControlId: z.string().min(1).describe('The call_control_id to hang up.'),
+	callControlId: PathIdSchema.describe('The call_control_id to hang up.'),
 });
 
 export type CallsHangupInput = z.infer<typeof CallsHangupInputSchema>;
 
 export const CallsSpeakInputSchema = z.object({
-	callControlId: z.string().min(1).describe('The call_control_id to speak on.'),
+	callControlId: PathIdSchema.describe('The call_control_id to speak on.'),
 	payload: z.string().min(1).describe('The text to read aloud.'),
 	// Telnyx requires one of these two.
 	voice: z.string().optional().describe('The voice to use.'),
@@ -649,7 +656,7 @@ export type CallControlApplicationsListResponse = z.infer<
 >;
 
 export const CallControlApplicationsGetInputSchema = z.object({
-	applicationId: z.string().min(1).describe('The call control application ID.'),
+	applicationId: PathIdSchema.describe('The call control application ID.'),
 });
 
 export type CallControlApplicationsGetInput = z.infer<
@@ -690,7 +697,7 @@ export type CallControlApplicationsCreateResponse = z.infer<
 
 export const CallControlApplicationsUpdateInputSchema = z
 	.object({
-		applicationId: z.string().min(1),
+		applicationId: PathIdSchema,
 		application_name: z.string().min(1).optional(),
 		webhook_event_url: z.string().optional(),
 		webhook_event_failover_url: z.string().nullable().optional(),
@@ -716,9 +723,7 @@ export type CallControlApplicationsUpdateResponse = z.infer<
 >;
 
 export const CallControlApplicationsRemoveInputSchema = z.object({
-	applicationId: z
-		.string()
-		.min(1)
+	applicationId: PathIdSchema
 		.describe('The call control application to delete.'),
 });
 

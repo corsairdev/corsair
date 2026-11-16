@@ -1,4 +1,5 @@
 import type { TelnyxEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	CallActionResponseSchema,
@@ -51,7 +52,7 @@ export const callsGet: TelnyxEndpoints['callsGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/calls/${parsed.callControlId}`,
+			path: `/calls/${segment(parsed.callControlId)}`,
 		}),
 	);
 };
@@ -70,7 +71,7 @@ export const callsHangup: TelnyxEndpoints['callsHangup'] = async (
 		input,
 		(parsed) => ({
 			method: 'POST',
-			path: `/calls/${parsed.callControlId}/actions/hangup`,
+			path: `/calls/${segment(parsed.callControlId)}/actions/hangup`,
 		}),
 	);
 };
@@ -88,7 +89,7 @@ export const callsSpeak: TelnyxEndpoints['callsSpeak'] = async (ctx, input) => {
 			const { callControlId, ...body } = parsed;
 			return {
 				method: 'POST',
-				path: `/calls/${callControlId}/actions/speak`,
+				path: `/calls/${segment(callControlId)}/actions/speak`,
 				body,
 			};
 		},
@@ -128,7 +129,7 @@ export const applicationsGet: TelnyxEndpoints['callControlApplicationsGet'] =
 			input,
 			(parsed) => ({
 				method: 'GET',
-				path: `/call_control_applications/${parsed.applicationId}`,
+				path: `/call_control_applications/${segment(parsed.applicationId)}`,
 			}),
 		);
 	};
@@ -165,7 +166,7 @@ export const applicationsUpdate: TelnyxEndpoints['callControlApplicationsUpdate'
 				const { applicationId, ...body } = parsed;
 				return {
 					method: 'PATCH',
-					path: `/call_control_applications/${applicationId}`,
+					path: `/call_control_applications/${segment(applicationId)}`,
 					body,
 				};
 			},
@@ -184,7 +185,7 @@ export const applicationsRemove: TelnyxEndpoints['callControlApplicationsRemove'
 			input,
 			(parsed) => ({
 				method: 'DELETE',
-				path: `/call_control_applications/${parsed.applicationId}`,
+				path: `/call_control_applications/${segment(parsed.applicationId)}`,
 			}),
 		);
 	};

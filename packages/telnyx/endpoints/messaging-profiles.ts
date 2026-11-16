@@ -1,4 +1,5 @@
 import type { TelnyxEndpoints } from '..';
+import { segment } from '../client';
 import { call, paging } from './call';
 import {
 	MessagingProfilesCreateInputSchema,
@@ -47,7 +48,7 @@ export const get: TelnyxEndpoints['messagingProfilesGet'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/messaging_profiles/${parsed.profileId}`,
+			path: `/messaging_profiles/${segment(parsed.profileId)}`,
 		}),
 	);
 };
@@ -88,7 +89,7 @@ export const update: TelnyxEndpoints['messagingProfilesUpdate'] = async (
 			const { profileId, ...body } = parsed;
 			return {
 				method: 'PATCH',
-				path: `/messaging_profiles/${profileId}`,
+				path: `/messaging_profiles/${segment(profileId)}`,
 				body,
 			};
 		},
@@ -109,7 +110,7 @@ export const remove: TelnyxEndpoints['messagingProfilesRemove'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/messaging_profiles/${parsed.profileId}`,
+			path: `/messaging_profiles/${segment(parsed.profileId)}`,
 		}),
 	);
 };

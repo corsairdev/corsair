@@ -1,4 +1,5 @@
 import type { TelnyxEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	MessagesGetInputSchema,
@@ -43,7 +44,7 @@ export const messagesGet: TelnyxEndpoints['messagesGet'] = async (
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/messages/${parsed.messageId}`,
+			path: `/messages/${segment(parsed.messageId)}`,
 		}),
 	);
 };
@@ -62,7 +63,7 @@ export const messagesRemove: TelnyxEndpoints['messagesRemove'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/messages/${parsed.messageId}`,
+			path: `/messages/${segment(parsed.messageId)}`,
 		}),
 	);
 };

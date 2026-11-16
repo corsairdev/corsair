@@ -510,6 +510,32 @@ describe('callControlApplications', () => {
 	});
 });
 
+describe('path IDs', () => {
+	it('encodes an ID into a single path segment', async () => {
+		respond(phoneNumberResponse);
+
+		await invoke(PhoneNumbers.get, {
+			phoneNumberId: '../call_control_applications/1293384261075731499',
+		});
+
+		expect(lastRequest().path).toBe(
+			'/v2/phone_numbers/..%2Fcall_control_applications%2F1293384261075731499',
+		);
+	});
+
+	it('refuses a dot-only ID before any request', async () => {
+		for (const phoneNumberId of ['.', '..']) {
+			await expect(
+				invoke(PhoneNumbers.remove, { phoneNumberId }),
+			).rejects.toThrow();
+		}
+		await expect(
+			invoke(Calls.applicationsRemove, { applicationId: '..' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
 describe('error handling', () => {
 	it('parses the errors array for a refused key', async () => {
 		respond(unauthorizedResponse, 401);

@@ -1,4 +1,5 @@
 import type { TelnyxEndpoints } from '..';
+import { segment } from '../client';
 import { call, paging } from './call';
 import {
 	AvailablePhoneNumbersListInputSchema,
@@ -44,7 +45,7 @@ export const get: TelnyxEndpoints['phoneNumbersGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/phone_numbers/${parsed.phoneNumberId}`,
+			path: `/phone_numbers/${segment(parsed.phoneNumberId)}`,
 		}),
 	);
 };
@@ -65,7 +66,7 @@ export const update: TelnyxEndpoints['phoneNumbersUpdate'] = async (
 			const { phoneNumberId, ...body } = parsed;
 			return {
 				method: 'PATCH',
-				path: `/phone_numbers/${phoneNumberId}`,
+				path: `/phone_numbers/${segment(phoneNumberId)}`,
 				body,
 			};
 		},
@@ -86,7 +87,7 @@ export const remove: TelnyxEndpoints['phoneNumbersRemove'] = async (
 		input,
 		(parsed) => ({
 			method: 'DELETE',
-			path: `/phone_numbers/${parsed.phoneNumberId}`,
+			path: `/phone_numbers/${segment(parsed.phoneNumberId)}`,
 		}),
 	);
 };
