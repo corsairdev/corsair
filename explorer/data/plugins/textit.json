@@ -1,0 +1,2664 @@
+{
+  "id": "textit",
+  "displayName": "TextIt",
+  "description": "Manage TextIt messaging, contacts, flows, campaigns, tickets, workspace data and outbound resthook subscriptions.",
+  "npmPackageName": "@corsair-dev/textit",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 49,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "textit.api.archives.list",
+      "shortPath": "archives.list",
+      "description": "List archived message or flow-run data.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "message | run"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "daily | monthly"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ type?: string | null, start_date?: string | null, period?: string | null, record_count?: number | null, size?: number | null, hash?: string | null, download_url?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.broadcasts.list",
+      "shortPath": "broadcasts.list",
+      "description": "List outgoing broadcasts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, urns?: string[] | null, contacts?: { uuid?: string | null, name?: string | null }[] | null, groups?: { uuid?: string | null, name?: string | null }[] | null, text?: Record<string, string> | null, attachments?: Record<string, string[]> | null, quick_replies?: Record<string, { type?: string | null, text?: string | null, extra?: string | null }[]> | null, base_language?: string | null, status?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.broadcasts.send",
+      "shortPath": "broadcasts.send",
+      "description": "Send a translated broadcast to contacts, groups or URNs; it messages real people.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urns",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "Record<string, string[]>"
+          },
+          {
+            "key": "quick_replies",
+            "optional": true,
+            "type": "Record<string, { type?: text | form | url | location, text: string, extra?: string }[]>"
+          },
+          {
+            "key": "base_language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urns",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "Record<string, string[]> | null"
+          },
+          {
+            "key": "quick_replies",
+            "optional": true,
+            "type": "Record<string, { type?: string | null, text?: string | null, extra?: string | null }[]> | null"
+          },
+          {
+            "key": "base_language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.campaignEvents.create",
+      "shortPath": "campaignEvents.create",
+      "description": "Create a campaign event that messages or starts a flow for every contact in the campaign group.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "relative_to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "minutes | hours | days | weeks"
+          },
+          {
+            "key": "delivery_hour",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "relative_to",
+            "optional": true,
+            "type": "{ key?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "delivery_hour",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.campaignEvents.delete",
+      "shortPath": "campaignEvents.delete",
+      "description": "Delete a campaign event.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "textit.api.campaignEvents.list",
+      "shortPath": "campaignEvents.list",
+      "description": "List campaign events.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, campaign?: { uuid?: string | null, name?: string | null } | null, relative_to?: { key?: string | null, name?: string | null } | null, offset?: number | null, unit?: string | null, delivery_hour?: number | null, message?: Record<string, string> | null, flow?: { uuid?: string | null, name?: string | null } | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.campaignEvents.update",
+      "shortPath": "campaignEvents.update",
+      "description": "Update a campaign event that messages or starts a flow for every contact in the campaign group.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ campaign: string, relative_to: string, offset: number, unit: minutes | hours | days | weeks, delivery_hour: number, message?: string, flow?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "relative_to",
+            "optional": true,
+            "type": "{ key?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "delivery_hour",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a campaign for a contact group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, archived?: boolean | null, group?: { uuid?: string | null, name?: string | null } | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Update a campaign by UUID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.channels.list",
+      "shortPath": "channels.list",
+      "description": "List messaging channels.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, address?: string | null, type?: string | null, country?: string | null, device?: { name?: string | null, power_level?: number | null, power_status?: string | null, power_source?: string | null, network_type?: string | null } | null, last_seen?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.contactActions.apply",
+      "shortPath": "contactActions.apply",
+      "description": "Apply a bulk contact action, including permanent deletion.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "add | remove | block | unblock | interrupt | delete"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "textit.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urns",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "(string | { uuid: string, name?: string })[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urns",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_verified_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "last_seen_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Permanently delete a contact by UUID or URN.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "inline",
+        "type": "{ uuid: string } | { urn: string }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "textit.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts and their custom fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, status?: string | null, language?: string | null, urns?: string[] | null, email?: string | null, email_verified_on?: string | null, groups?: { uuid?: string | null, name?: string | null }[] | null, fields?: Record<string, any> | null, flow?: { uuid?: string | null, name?: string | null } | null, last_seen_on?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact by UUID or URN; an unknown URN creates one.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ uuid: string } | { urn: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name?: string | null, language?: string | null, urns?: string[], groups?: (string | { uuid: string, name?: string })[], fields?: Record<string, string | null> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urns",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_verified_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "last_seen_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Create a custom contact field.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "text | number | datetime | state | district | ward"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.fields.list",
+      "shortPath": "fields.list",
+      "description": "List custom contact fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ key?: string | null, name?: string | null, type?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.fields.update",
+      "shortPath": "fields.update",
+      "description": "Update a custom contact field by key.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "text | number | datetime | state | district | ward"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.flows.list",
+      "shortPath": "flows.list",
+      "description": "List flows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "message | voice | survey"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, type?: string | null, archived?: boolean | null, labels?: { uuid?: string | null, name?: string | null }[] | null, expires?: number | null, runs?: { active?: number | null, completed?: number | null, interrupted?: number | null, expired?: number | null } | null, results?: { key?: string | null, name?: string | null, categories?: string[] | null, node_uuids?: string[] | null }[] | null, parent_refs?: string[] | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.flowStarts.create",
+      "shortPath": "flowStarts.create",
+      "description": "Start contacts, groups or URNs in a flow, which can message them.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flow",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "urns",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "restart_participants",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.flowStarts.list",
+      "shortPath": "flowStarts.list",
+      "description": "List manual flow starts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, flow?: { uuid?: string | null, name?: string | null } | null, contacts?: { uuid?: string | null, name?: string | null }[] | null, groups?: { uuid?: string | null, name?: string | null }[] | null, status?: string | null, params?: Record<string, any> | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.globals.create",
+      "shortPath": "globals.create",
+      "description": "Create a workspace global.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.globals.list",
+      "shortPath": "globals.list",
+      "description": "List workspace globals.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ key?: string | null, name?: string | null, value?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.globals.update",
+      "shortPath": "globals.update",
+      "description": "Update a workspace global by key.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a contact group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a contact group.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "textit.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List contact groups.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manual_only",
+            "optional": true,
+            "type": "1 | 0"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, query?: string | null, status?: string | null, system?: boolean | null, count?: number | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update a contact group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.labels.create",
+      "shortPath": "labels.create",
+      "description": "Create a message label.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.labels.delete",
+      "shortPath": "labels.delete",
+      "description": "Delete a message label.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "textit.api.labels.list",
+      "shortPath": "labels.list",
+      "description": "List message labels.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, count?: number | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.labels.update",
+      "shortPath": "labels.update",
+      "description": "Update a message label.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.media.upload",
+      "shortPath": "media.upload",
+      "description": "Upload a media file for message attachments.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.messageActions.apply",
+      "shortPath": "messageActions.apply",
+      "description": "Label, archive, restore or permanently delete incoming messages by integer id; inspect failures.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "label | unlabel | archive | restore | delete"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void | { failures: number[] }"
+      }
+    },
+    {
+      "path": "textit.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages with optional folder and label filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "inbox | flows | archived | outbox | sent | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, contact?: { uuid?: string | null, name?: string | null } | null, urn?: string | null, channel?: { uuid?: string | null, name?: string | null } | null, direction?: string | null, type?: string | null, status?: string | null, visibility?: string | null, text?: string | null, attachments?: { content_type?: string | null, url?: string | null }[] | null, quick_replies?: { type?: string | null, text?: string | null, extra?: string | null }[] | null, labels?: { uuid?: string | null, name?: string | null }[] | null, flow?: { uuid?: string | null, name?: string | null } | null, sent_on?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a message to a contact; it messages a real person.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "quick_replies",
+            "optional": true,
+            "type": "{ type?: text | form | url | location, text: string, extra?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "urn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ content_type?: string | null, url?: string | null }[] | null"
+          },
+          {
+            "key": "quick_replies",
+            "optional": true,
+            "type": "{ type?: string | null, text?: string | null, extra?: string | null }[] | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "sent_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.resthookEvents.list",
+      "shortPath": "resthookEvents.list",
+      "description": "List outbound resthook events.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resthook",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ resthook?: string | null, data?: Record<string, any> | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.resthooks.list",
+      "shortPath": "resthooks.list",
+      "description": "List outbound resthooks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ resthook?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.resthookSubscribers.create",
+      "shortPath": "resthookSubscribers.create",
+      "description": "Subscribe a target URL to a resthook.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resthook",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "target_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "resthook",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.resthookSubscribers.delete",
+      "shortPath": "resthookSubscribers.delete",
+      "description": "Remove an outbound resthook subscription.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "textit.api.resthookSubscribers.list",
+      "shortPath": "resthookSubscribers.list",
+      "description": "List outbound resthook subscribers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "resthook",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | number | null, resthook?: string | null, target_url?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.runs.list",
+      "shortPath": "runs.list",
+      "description": "List flow runs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "responded",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, flow?: { uuid?: string | null, name?: string | null } | null, contact?: { uuid?: string | null, name?: string | null } | null, start?: { uuid?: string | null, name?: string | null } | null, responded?: boolean | null, values?: Record<string, { name?: string | null, value?: string | null, category?: string | null, node?: string | null, time?: string | null }> | { name?: string | null, value?: string | null, category?: string | null, node?: string | null, time?: string | null }[] | null, exited_on?: string | null, exit_type?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.ticketActions.apply",
+      "shortPath": "ticketActions.apply",
+      "description": "Apply a bulk ticket action.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tickets",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "assign | note | close | reopen"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "textit.api.tickets.list",
+      "shortPath": "tickets.list",
+      "description": "List support tickets.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, contact?: { uuid?: string | null, name?: string | null } | null, status?: string | null, topic?: { uuid?: string | null, name?: string | null } | null, assignee?: { email?: string | null, name?: string | null } | null, opened_on?: string | null, opened_by?: { email?: string | null, name?: string | null } | null, opened_in?: { uuid?: string | null, name?: string | null } | null, closed_on?: string | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.topics.create",
+      "shortPath": "topics.create",
+      "description": "Create a ticket topic.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "counts",
+            "optional": true,
+            "type": "{ open?: number | null, closed?: number | null } | null"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.topics.list",
+      "shortPath": "topics.list",
+      "description": "List ticket topics.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, counts?: { open?: number | null, closed?: number | null } | null, system?: boolean | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.users.list",
+      "shortPath": "users.list",
+      "description": "List workspace users.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid?: string | null, avatar?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, role?: string | null, team?: { uuid?: string | null, name?: string | null } | null, created_on?: string | null, modified_on?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textit.api.workspace.get",
+      "shortPath": "workspace.get",
+      "description": "Read current workspace details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_style",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anon",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

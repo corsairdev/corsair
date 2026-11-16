@@ -1,0 +1,2145 @@
+{
+  "id": "parallel",
+  "displayName": "Parallel",
+  "description": "Search, extract, run research tasks, monitor changes, and generate grounded responses with Parallel.",
+  "npmPackageName": "@corsair-dev/parallel",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 35,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "parallel.api.chat.create",
+      "shortPath": "chat.create",
+      "description": "Create a non-streaming chat completion",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | user | assistant, content: string, name?: string | null }[]"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false | null"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "presence_penalty",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "frequency_penalty",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "previous_interaction_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, delta: { content?: string | null, refusal?: string | null, role?: string | null }, finish_reason?: string | null, logprobs?: JsonValue | null }[]"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "chat.completion"
+          },
+          {
+            "key": "moderation",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "service_tier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "system_fingerprint",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "JsonValue | null"
+          },
+          {
+            "key": "basis",
+            "optional": true,
+            "type": "{ field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[]"
+          },
+          {
+            "key": "interaction_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.decisions.create",
+      "shortPath": "decisions.create",
+      "description": "Answer grounded decision questions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": false,
+            "type": "JsonValue"
+          },
+          {
+            "key": "questions",
+            "optional": false,
+            "type": "Record<string, { type: choice, instructions: string, criteria: Record<string, string> } | { type: score, instructions: string, criteria: string[] } | { type: noul, instructions: string, criteria?: { true: string, false: string } | null }>"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "fast"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ location?: string | null, after_date?: string | null, include_excerpts?: boolean } | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "fast"
+          },
+          {
+            "key": "answers",
+            "optional": false,
+            "type": "Record<string, { type?: choice, choice: string, probabilities: Record<string, number>, confidence?: number | null } | { type?: score, score: number, legend: Record<string, string>, probabilities: Record<string, number>, confidence?: number | null } | { type?: noul, noul: number } | { type: refusal }>"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ input_tokens: number, output_tokens: 0 }"
+          },
+          {
+            "key": "citations",
+            "optional": false,
+            "type": "{ url: string, title?: string | null, excerpts: string[] }[]"
+          },
+          {
+            "key": "decision_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.extract.extract",
+      "shortPath": "extract.extract",
+      "description": "Extract content from web URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "objective",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "search_queries",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "max_chars_total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client_model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, excerpt_settings?: { max_chars_per_result?: number | null } | null, full_content?: boolean | { max_chars_per_result?: number | null }, links?: boolean | null } | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extract_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, title?: string | null, publish_date?: string | null, excerpts: string[], full_content?: string | null, acquired_at?: string | null, links?: string[] | null }[]"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ url: string, error_type: string, http_status_code: number | null, content: string | null }[]"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ name: string, count: number }[] | null"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.findall.cancel",
+      "shortPath": "findall.cancel",
+      "description": "Cancel a FindAll run",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "findall_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "parallel.api.findall.createRun",
+      "shortPath": "findall.createRun",
+      "description": "Create a FindAll run",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objective",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "match_conditions",
+            "optional": false,
+            "type": "{ name: string, description: string }[]"
+          },
+          {
+            "key": "generator",
+            "optional": false,
+            "type": "base | core | pro | preview"
+          },
+          {
+            "key": "match_limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "exclude_list",
+            "optional": true,
+            "type": "{ name: string, url: string }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ url: string, event_types?: task_run.status[] } | null"
+          },
+          {
+            "key": "memory_scope_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "findall_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "generator",
+            "optional": false,
+            "type": "base | core | pro | preview | string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.findall.enrich",
+      "shortPath": "findall.enrich",
+      "description": "Enrich a FindAll run",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "findall_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ processor?: string, output_schema: { json_schema: Record<string, JsonValue>, type?: json }, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objective",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "match_conditions",
+            "optional": false,
+            "type": "{ name: string, description: string }[]"
+          },
+          {
+            "key": "enrichments",
+            "optional": true,
+            "type": "{ processor?: string, output_schema: { json_schema: Record<string, JsonValue>, type?: json }, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null }[] | null"
+          },
+          {
+            "key": "generator",
+            "optional": true,
+            "type": "base | core | pro | preview | string"
+          },
+          {
+            "key": "match_limit",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.findall.entitySearch",
+      "shortPath": "findall.entitySearch",
+      "description": "Search for entities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "people | companies"
+          },
+          {
+            "key": "objective",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "match_limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_set_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entities",
+            "optional": false,
+            "type": "{ name: string, url: string, description: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.findall.extend",
+      "shortPath": "findall.extend",
+      "description": "Extend a FindAll run",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "findall_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ additional_match_limit: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objective",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "match_conditions",
+            "optional": false,
+            "type": "{ name: string, description: string }[]"
+          },
+          {
+            "key": "enrichments",
+            "optional": true,
+            "type": "{ processor?: string, output_schema: { json_schema: Record<string, JsonValue>, type?: json }, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null }[] | null"
+          },
+          {
+            "key": "generator",
+            "optional": true,
+            "type": "base | core | pro | preview | string"
+          },
+          {
+            "key": "match_limit",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.findall.getRun",
+      "shortPath": "findall.getRun",
+      "description": "Get a FindAll run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "findall_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "findall_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "generator",
+            "optional": false,
+            "type": "base | core | pro | preview | string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.findall.ingest",
+      "shortPath": "findall.ingest",
+      "description": "Create an entity search specification",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objective",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objective",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "match_conditions",
+            "optional": false,
+            "type": "{ name: string, description: string }[]"
+          },
+          {
+            "key": "enrichments",
+            "optional": true,
+            "type": "{ processor?: string, output_schema: { json_schema: Record<string, JsonValue>, type?: json }, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null }[] | null"
+          },
+          {
+            "key": "generator",
+            "optional": true,
+            "type": "base | core | pro | preview | string"
+          },
+          {
+            "key": "match_limit",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.findall.result",
+      "shortPath": "findall.result",
+      "description": "Get FindAll results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "findall_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run",
+            "optional": false,
+            "type": "{ findall_id: string, generator: base | core | pro | preview | string, status: { status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }, metadata?: Record<string, string | number | boolean> | null, created_at?: string | null, modified_at?: string | null }"
+          },
+          {
+            "key": "candidates",
+            "optional": false,
+            "type": "{ candidate_id: string, name: string, url: string, match_status: generated | matched | unmatched | discarded | string, description?: string | null, output?: Record<string, JsonValue> | null, basis?: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[] | null }[]"
+          },
+          {
+            "key": "last_event_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.findall.schema",
+      "shortPath": "findall.schema",
+      "description": "Get the FindAll schema",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "findall_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objective",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "match_conditions",
+            "optional": false,
+            "type": "{ name: string, description: string }[]"
+          },
+          {
+            "key": "enrichments",
+            "optional": true,
+            "type": "{ processor?: string, output_schema: { json_schema: Record<string, JsonValue>, type?: json }, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null }[] | null"
+          },
+          {
+            "key": "generator",
+            "optional": true,
+            "type": "base | core | pro | preview | string"
+          },
+          {
+            "key": "match_limit",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.images.search",
+      "shortPath": "images.search",
+      "description": "Search for images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objective",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "search_queries",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "fast | advanced | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client_model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ location?: string | null, max_results?: number | null } | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ name: string, count: number }[] | null"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title: string, image_url: string, source_page_url: string, width?: number | null, height?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.memory.clear",
+      "shortPath": "memory.clear",
+      "description": "Clear a memory scope",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_scope_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "parallel.api.memory.evict",
+      "shortPath": "memory.evict",
+      "description": "Evict a memory source",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_scope_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "task | monitor | findall"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "parallel.api.memory.retrieve",
+      "shortPath": "memory.retrieve",
+      "description": "Retrieve memories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_scope_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "task | monitor | findall | null"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "({ kind: task, id: string, updated_at: string, input_excerpt: string, output_excerpt: string } | { kind: monitor, id: string, updated_at: string, input_excerpt: string, status: active | cancelled | string, matched_events?: { event_id: string, event_group_id: string, detected_at: string, excerpt: string }[] } | { kind: findall, id: string, updated_at: string, input_excerpt: string, matched_count: number } | { kind: string, id: string, updated_at: string, input_excerpt: string })[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.monitors.cancel",
+      "shortPath": "monitors.cancel",
+      "description": "Permanently cancel a monitor",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event_stream | snapshot | string"
+          },
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | cancelled | string"
+          },
+          {
+            "key": "frequency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "processor",
+            "optional": false,
+            "type": "lite | base | core | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ url: string, event_types?: (monitor.event.detected | monitor.execution.completed | monitor.execution.failed | string)[] } | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "last_run_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ task_run_id: string, query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null } | { query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null, include_backfill?: boolean | null, advanced_settings?: { source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, location?: string | null } | null }"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ latest_snapshot?: JsonValue | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.monitors.create",
+      "shortPath": "monitors.create",
+      "description": "Create a monitor",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "{ type: event_stream, frequency: string, processor?: lite | base | core, webhook?: { url: string, event_types?: (monitor.event.detected | monitor.execution.completed | monitor.execution.failed)[] } | null, metadata?: Record<string, string> | null, memory_scope_key?: string | null, settings: { query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null, include_backfill?: boolean | null, advanced_settings?: { source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, location?: string | null } | null } } | { type: snapshot, frequency: string, processor?: lite | base | core, webhook?: { url: string, event_types?: (monitor.event.detected | monitor.execution.completed | monitor.execution.failed)[] } | null, metadata?: Record<string, string> | null, memory_scope_key?: string | null, settings: { task_run_id: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event_stream | snapshot | string"
+          },
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | cancelled | string"
+          },
+          {
+            "key": "frequency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "processor",
+            "optional": false,
+            "type": "lite | base | core | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ url: string, event_types?: (monitor.event.detected | monitor.execution.completed | monitor.execution.failed | string)[] } | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "last_run_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ task_run_id: string, query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null } | { query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null, include_backfill?: boolean | null, advanced_settings?: { source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, location?: string | null } | null }"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ latest_snapshot?: JsonValue | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.monitors.events",
+      "shortPath": "monitors.events",
+      "description": "List monitor events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "include_completions",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event_type: event_stream | snapshot | completion | error | string, event_id?: string, event_group_id?: string, event_date?: string | null, timestamp?: string, error_message?: string, output?: JsonValue, changed_output?: JsonValue, previous_output?: JsonValue }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.monitors.get",
+      "shortPath": "monitors.get",
+      "description": "Get a monitor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event_stream | snapshot | string"
+          },
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | cancelled | string"
+          },
+          {
+            "key": "frequency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "processor",
+            "optional": false,
+            "type": "lite | base | core | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ url: string, event_types?: (monitor.event.detected | monitor.execution.completed | monitor.execution.failed | string)[] } | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "last_run_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ task_run_id: string, query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null } | { query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null, include_backfill?: boolean | null, advanced_settings?: { source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, location?: string | null } | null }"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ latest_snapshot?: JsonValue | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.monitors.list",
+      "shortPath": "monitors.list",
+      "description": "List monitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "(event_stream | snapshot)[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(active | cancelled)[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitors",
+            "optional": false,
+            "type": "{ type: event_stream | snapshot | string, monitor_id: string, status: active | cancelled | string, frequency: string, processor: lite | base | core | string, created_at: string, webhook?: { url: string, event_types?: (monitor.event.detected | monitor.execution.completed | monitor.execution.failed | string)[] } | null, metadata?: Record<string, string> | null, last_run_at?: string | null, settings: { task_run_id: string, query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null } | { query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null, include_backfill?: boolean | null, advanced_settings?: { source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, location?: string | null } | null }, output?: { latest_snapshot?: JsonValue | null } | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.monitors.stats",
+      "shortPath": "monitors.stats",
+      "description": "Get monitor statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "processor_counts",
+            "optional": false,
+            "type": "Record<string, Record<string, Record<string, number>>>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.monitors.trigger",
+      "shortPath": "monitors.trigger",
+      "description": "Trigger a monitor run",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "parallel.api.monitors.update",
+      "shortPath": "monitors.update",
+      "description": "Update a monitor",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ type?: event_stream, frequency?: string, processor?: lite | base | core, webhook?: { url: string, event_types?: (monitor.event.detected | monitor.execution.completed | monitor.execution.failed)[] } | null, metadata?: Record<string, string> | null, settings?: { query?: string, advanced_settings?: { source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, location?: string | null } | null } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event_stream | snapshot | string"
+          },
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | cancelled | string"
+          },
+          {
+            "key": "frequency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "processor",
+            "optional": false,
+            "type": "lite | base | core | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ url: string, event_types?: (monitor.event.detected | monitor.execution.completed | monitor.execution.failed | string)[] } | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "last_run_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ task_run_id: string, query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null } | { query: string, output_schema?: { json_schema: Record<string, JsonValue>, type?: json } | null, include_backfill?: boolean | null, advanced_settings?: { source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, location?: string | null } | null }"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ latest_snapshot?: JsonValue | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.places.search",
+      "shortPath": "places.search",
+      "description": "Search for places by location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "max_distance_km",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "open_now",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "fast | advanced | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client_model",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ name: string, count: number }[] | null"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ name: string, url?: string | null, address?: string | null, phone?: string | null, latitude?: number | null, longitude?: number | null, distance_km?: number | null, rating?: fair | good | great | excellent | string | null, price_level?: number | null, opening_hours?: { monday?: { opens: string, closes: string }[] | null, tuesday?: { opens: string, closes: string }[] | null, wednesday?: { opens: string, closes: string }[] | null, thursday?: { opens: string, closes: string }[] | null, friday?: { opens: string, closes: string }[] | null, saturday?: { opens: string, closes: string }[] | null, sunday?: { opens: string, closes: string }[] | null } | null, timezone?: string | null, open_now?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.responses.create",
+      "shortPath": "responses.create",
+      "description": "Create a non-streaming response",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | { role: user | assistant | system | developer, content: string | { type?: string | null, text?: string | null }[] }[]"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous_response_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "reasoning",
+            "optional": true,
+            "type": "{ effort?: low | medium | high | auto | null } | null"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "false | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null"
+          },
+          {
+            "key": "data_sources",
+            "optional": true,
+            "type": "{ pay_per_use?: string[], free?: string[], excluded?: string[] } | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "response"
+          },
+          {
+            "key": "output",
+            "optional": false,
+            "type": "({ id: string, type: message, role: assistant, status: string, content: { type: output_text, text: string, annotations: JsonValue[] }[] } | { id: string, type: web_search_call, status: string, action: Record<string, JsonValue> } | { id: string, type: mcp_call, status: string, arguments: string, name: string, server_label: string, output?: string | null, error?: JsonValue | null } | { id: string, type: mcp_list_tools, server_label: string, tools: JsonValue[], error?: string | null } | { type: string })[]"
+          },
+          {
+            "key": "parallel_tool_calls",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "parallel"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "previous_response_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search the web for relevant sources and excerpts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objective",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "search_queries",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "turbo | fast | basic | advanced | null"
+          },
+          {
+            "key": "max_chars_total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client_model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, excerpt_settings?: { max_chars_per_result?: number | null } | null, location?: string | null, max_results?: number | null } | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, title?: string | null, publish_date?: string | null, excerpts: string[] }[]"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ name: string, count: number }[] | null"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.tasks.addGroupRuns",
+      "shortPath": "tasks.addGroupRuns",
+      "description": "Add runs to a task group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskgroup_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "refresh_status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parallel_beta",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ default_task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, inputs: { processor: string, input: string | Record<string, JsonValue>, metadata?: Record<string, string | number | boolean> | null, memory_scope_key?: string | null, source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, advanced_settings?: { location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null, task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, previous_interaction_id?: string | null, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null, enable_events?: boolean | null, webhook?: { url: string, event_types?: task_run.status[] } | null }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ num_task_runs: number, task_run_status_counts: Record<string, number>, is_active: boolean, status_message: string | null, modified_at: string | null }"
+          },
+          {
+            "key": "run_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "run_cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "event_cursor",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.tasks.createGroup",
+      "shortPath": "tasks.createGroup",
+      "description": "Create a task group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskgroup_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ num_task_runs: number, task_run_status_counts: Record<string, number>, is_active: boolean, status_message: string | null, modified_at: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.tasks.createRun",
+      "shortPath": "tasks.createRun",
+      "description": "Create a task run",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ processor: string, input: string | Record<string, JsonValue>, metadata?: Record<string, string | number | boolean> | null, memory_scope_key?: string | null, source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, advanced_settings?: { location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null, task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, previous_interaction_id?: string | null, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null, enable_events?: boolean | null, webhook?: { url: string, event_types?: task_run.status[] } | null }"
+          },
+          {
+            "key": "parallel_beta",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interaction_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | action_required | running | completed | failed | cancelling | cancelled | string"
+          },
+          {
+            "key": "is_active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "processor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ ref_id: string, message: string, detail?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          },
+          {
+            "key": "taskgroup_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.tasks.getGroup",
+      "shortPath": "tasks.getGroup",
+      "description": "Get a task group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskgroup_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskgroup_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ num_task_runs: number, task_run_status_counts: Record<string, number>, is_active: boolean, status_message: string | null, modified_at: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.tasks.getGroupRun",
+      "shortPath": "tasks.getGroupRun",
+      "description": "Get a run in a task group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskgroup_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interaction_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | action_required | running | completed | failed | cancelling | cancelled | string"
+          },
+          {
+            "key": "is_active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "processor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ ref_id: string, message: string, detail?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          },
+          {
+            "key": "taskgroup_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.tasks.getResult",
+      "shortPath": "tasks.getResult",
+      "description": "Get task run result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parallel_beta",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run",
+            "optional": false,
+            "type": "{ run_id: string, interaction_id: string, status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, processor: string, created_at: string | null, modified_at: string | null, warnings?: { type: string, message: string, detail?: Record<string, any> | null }[] | null, error?: { ref_id: string, message: string, detail?: Record<string, JsonValue> | null } | null, metadata?: Record<string, string | number | boolean> | null, taskgroup_id?: string | null }"
+          },
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ type: text, basis: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[], content: string, mcp_tool_calls?: JsonValue[] | null } | { type: json, basis: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[], content: Record<string, JsonValue>, output_schema?: Record<string, JsonValue> | null, mcp_tool_calls?: JsonValue[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.tasks.getRun",
+      "shortPath": "tasks.getRun",
+      "description": "Get a task run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interaction_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | action_required | running | completed | failed | cancelling | cancelled | string"
+          },
+          {
+            "key": "is_active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "processor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "modified_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ ref_id: string, message: string, detail?: Record<string, JsonValue> | null } | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          },
+          {
+            "key": "taskgroup_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.tasks.getRunInput",
+      "shortPath": "tasks.getRunInput",
+      "description": "Get task run input",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "processor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean> | null"
+          },
+          {
+            "key": "memory_scope_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source_policy",
+            "optional": true,
+            "type": "{ include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null"
+          },
+          {
+            "key": "task_spec",
+            "optional": true,
+            "type": "{ output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null"
+          },
+          {
+            "key": "previous_interaction_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mcp_servers",
+            "optional": true,
+            "type": "{ type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null"
+          },
+          {
+            "key": "enable_events",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ url: string, event_types?: task_run.status[] } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
