@@ -1,0 +1,576 @@
+{
+  "id": "rollbar",
+  "displayName": "Rollbar",
+  "description": "Error monitoring with Rollbar - list and read error items and their occurrences, update an item's status, assignee or snooze, read an item's comments and events, comment on an item, and list and record deploys.",
+  "npmPackageName": "@corsair-dev/rollbar",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "rollbar.api.deploys.create",
+      "shortPath": "deploys.create",
+      "description": "Record a deploy with its environment, revision and optional status and comment; needs a project token with post_server_item scope",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": false,
+            "type": "string",
+            "description": "The environment deployed to."
+          },
+          {
+            "key": "revision",
+            "optional": false,
+            "type": "string",
+            "description": "The revision deployed, up to 40 characters."
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "local_username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rollbar_username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "started | succeeded | failed | timed_out"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploy_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.deploys.list",
+      "shortPath": "deploys.list",
+      "description": "List deploys in a project, newest first, with page paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Rollbar returns 20 per page unless `limit` is set."
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Required with an account or personal access token, which Rollbar otherwise refuses with 403 \"Requires project access\". A project access token ignores it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploys",
+            "optional": false,
+            "type": "{ id?: number | null, project_id?: number | null, environment?: string | null, revision?: string | null, comment?: string | null, status?: string | null, local_username?: string | null, user_id?: number | null, username?: string | null, start_time?: number | null, finish_time?: number | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number | null",
+            "description": "Total matches, or null when the project has more than 100,000 items."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.itemComments.create",
+      "shortPath": "itemComments.create",
+      "description": "Add a comment to an item, posted as the token owner; needs a personal access token with write scope and the project_id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "The project that holds the item. Rollbar requires it here."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The comment text, sent to Rollbar as `comment`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ id?: number | null, type?: string | null, source?: string | null, item_id?: number | null, user_id?: number | null, username?: string | null, text?: string | null, timestamp?: number | null, via_api?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.itemComments.list",
+      "shortPath": "itemComments.list",
+      "description": "List the comments and resolve notes on an item, oldest first (Rollbar marks this route deprecated in favour of itemEvents.list)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Required with an account or personal access token, which Rollbar otherwise refuses with 403 \"Requires project access\". A project access token ignores it."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Rollbar returns 20 per page unless `limit` is set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id?: number | null, type?: string | null, source?: string | null, item_id?: number | null, user_id?: number | null, username?: string | null, text?: string | null, timestamp?: number | null, via_api?: boolean | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number | null",
+            "description": "Total matches, or null when the project has more than 100,000 items."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.itemEvents.list",
+      "shortPath": "itemEvents.list",
+      "description": "List the history events for an item: status changes, assignments and comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Required with an account or personal access token, which Rollbar otherwise refuses with 403 \"Requires project access\". A project access token ignores it."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Rollbar returns 20 per page unless `limit` is set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ id?: number | null, type?: string | null, item_id?: number | null, user_id?: number | null, username?: string | null, timestamp?: number | null, text?: string | null, status?: string | null, level?: string | null, comment?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number | null",
+            "description": "Total matches, or null when the project has more than 100,000 items."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.items.get",
+      "shortPath": "items.get",
+      "description": "Fetch one item with its occurrence counts, timestamps and resolution state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Required with an account or personal access token, which Rollbar otherwise refuses with 403 \"Requires project access\". A project access token ignores it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id?: number | string | null, public_item_id?: number | null, group_item_id?: number | null, project_id?: number | null, counter?: number | null, title?: string | null, hash?: string | null, environment?: string | null, platform?: string | null, framework?: string | null, level?: string | null, status?: string | null, group_status?: number | null, total_occurrences?: number | null, unique_occurrences?: number | null, last_occurrence_id?: number | null, last_occurrence_timestamp?: number | null, first_occurrence_id?: number | null, first_occurrence_timestamp?: number | null, last_activated_timestamp?: number | null, last_resolved_timestamp?: number | null, last_modified_by?: number | null, assigned_user_id?: number | null, assigned_team_id?: number | null, resolved_in_version?: string | null, title_lock?: number | null, level_lock?: number | null, controlling_id?: number | null, activating_occurrence_id?: number | null, integrations_data?: string | Record<string, JsonValue> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.items.list",
+      "shortPath": "items.list",
+      "description": "List error items with status, level, environment and assignee filters plus page paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Rollbar returns 20 per page unless `limit` is set."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, up to 100."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | resolved | muted | archived"
+          },
+          {
+            "key": "level",
+            "optional": true,
+            "type": "(critical | error | warning | info | debug)[]",
+            "description": "Sent as a repeated parameter, so several levels can be asked for."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "framework",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A search string."
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Account tokens only: search these projects."
+          },
+          {
+            "key": "assigned_user",
+            "optional": true,
+            "type": "string",
+            "description": "A user id or email."
+          },
+          {
+            "key": "assigned_team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_snoozed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: number | string | null, public_item_id?: number | null, group_item_id?: number | null, project_id?: number | null, counter?: number | null, title?: string | null, hash?: string | null, environment?: string | null, platform?: string | null, framework?: string | null, level?: string | null, status?: string | null, group_status?: number | null, total_occurrences?: number | null, unique_occurrences?: number | null, last_occurrence_id?: number | null, last_occurrence_timestamp?: number | null, first_occurrence_id?: number | null, first_occurrence_timestamp?: number | null, last_activated_timestamp?: number | null, last_resolved_timestamp?: number | null, last_modified_by?: number | null, assigned_user_id?: number | null, assigned_team_id?: number | null, resolved_in_version?: string | null, title_lock?: number | null, level_lock?: number | null, controlling_id?: number | null, activating_occurrence_id?: number | null, integrations_data?: string | Record<string, JsonValue> | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number | null",
+            "description": "Total matches, or null when the project has more than 100,000 items."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.items.update",
+      "shortPath": "items.update",
+      "description": "Update an item: its status, level, title, assignee, resolved-in version or snooze",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Required with an account or personal access token, which Rollbar otherwise refuses with 403 \"Requires project access\". A project access token ignores it."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | resolved | muted"
+          },
+          {
+            "key": "level",
+            "optional": true,
+            "type": "critical | error | warning | info | debug"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "A new title, up to 255 characters."
+          },
+          {
+            "key": "assigned_user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The user to assign, or null to clear the assignment."
+          },
+          {
+            "key": "assigned_team_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The team to assign, or null to clear the assignment."
+          },
+          {
+            "key": "resolved_in_version",
+            "optional": true,
+            "type": "string",
+            "description": "The version the item is resolved in, up to 40 characters."
+          },
+          {
+            "key": "snooze_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "snooze_expiration_in_seconds",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ status?: string | null, resolved_in_version?: string | null, title?: string | null, level?: string | null, assigned_user_id?: number | null, assigned_team_id?: number | null, snooze_enabled?: boolean | null, snooze_expiration_in_seconds?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.occurrences.get",
+      "shortPath": "occurrences.get",
+      "description": "Fetch one occurrence: its ids, timestamp and the payload the notifier sent under data (level, trace, request, person)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "occurrence_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Required with an account or personal access token, which Rollbar otherwise refuses with 403 \"Requires project access\". A project access token ignores it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "occurrence",
+            "optional": false,
+            "type": "{ id?: number | null, project_id?: number | null, item_id?: number | null, timestamp?: number | null, version?: number | null, billable?: number | null, data?: Record<string, JsonValue> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.occurrences.list",
+      "shortPath": "occurrences.list",
+      "description": "List occurrences in a project with page paging, for a forward walk from a known id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Rollbar returns 20 per page unless `limit` is set."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, up to 5000."
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number",
+            "description": "Account tokens only: read this project."
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only occurrences after this id, for a forward walk."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "occurrences",
+            "optional": false,
+            "type": "{ id?: number | null, project_id?: number | null, item_id?: number | null, timestamp?: number | null, version?: number | null, billable?: number | null, data?: Record<string, JsonValue> | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number | null",
+            "description": "Total matches, or null when the project has more than 100,000 items."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rollbar.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects the token can see; needs an account or personal access token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, account_id?: number | null, status?: string | null, date_created?: number | null, date_modified?: number | null, settings_data?: Record<string, JsonValue> | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

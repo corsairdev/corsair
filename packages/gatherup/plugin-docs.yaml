@@ -1,0 +1,73 @@
+displayName: GatherUp
+description: Customer feedback and reviews with GatherUp - manage the businesses on an account, add customers and send them feedback requests, and read the feedback and ratings they leave.
+domain: gatherup.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a bearer token and copy your client ID from your GatherUp account owner details. Both are needed on every call, and the client ID travels as the `clientId` query parameter.
+
+  Things to know before you call:
+
+  - **A failure can arrive with HTTP 200.** GatherUp puts `errorCode` and `errorMessage` in the body of every answer, with `0` and `Success` on a good one. A live probe of `/api/test` with a bad token answered **200** and `{"errorCode": 2, "errorMessage": "Invalid clientId"}`, so the plugin throws whenever the code is non-zero, whatever the status was.
+  - **The rate limit answers 503, not 429.** GatherUp allows 5 requests a second and returns 503 above it, so a 503 is a rate limit. A 503 is retried on reads only, since one from an outage can follow a write that already landed; a 429 is retried on any call. A 500 is still a real server error.
+  - **Write bodies use prefixed field names.** `businesses.create` takes `businessName` and `businessType`, where a read returns `name` and `organisationType`. `customers.create` takes `customerFirstName`, `customerEmail` and so on. The plugin uses the documented names on each side.
+  - **Update and create disagree on one spelling.** `customers.create` takes `customerPhone`, and `customers.update` takes `customerPhoneNumber`. Each keeps its own documented name.
+  - **A rating is a decimal string.** A customer's `rating` arrives as `"5.00"` or null, not a number, while a feedback's `rating` is a number.
+  - **A feedback's tags arrive as one string.** `tags` is `"Auto,Towing,Roadside Service"`, not an array.
+  - **Deactivating is not deleting.** `businesses.deactivate` suspends feedback requests and `businesses.reactivate` reverses it, so neither is destructive. `businesses.delete` and `customers.delete` are permanent.
+  - **`customers.requestFeedback` messages a real person.** It sends the review request, so it is a write.
+  - **No webhooks.** GatherUp does not push; a caller polls `feedbacks.list`.
+examples:
+  read:
+    path: businesses.list
+    title: List the businesses on the account
+    args:
+      page: 1
+      perPage: 25
+  write:
+    path: customers.create
+    title: Add a customer to a business
+    args:
+      businessId: 34291
+      customerFirstName: John
+      customerLastName: Smith
+      customerEmail: john.smith@example.com
+apiExamples:
+  businesses.list:
+    call: "{ page: 1, perPage: 25 }"
+  businesses.get:
+    call: "{ businessId: 34291 }"
+  businesses.search:
+    call: "{ by: 'customField', search: '1234' }"
+  businesses.types:
+    call: "{ search: 'Medicine' }"
+  businesses.create:
+    call: "{ businessName: 'Peach Trees Intl.', businessType: 'Insurance Agency', city: 'Haiku', country: 'US', streetAddress: '4150 Hana Hwy', state: 'HI', zip: '96708', phone: '808-333-3334' }"
+  businesses.update:
+    call: "{ businessId: 34291, businessType: 'Insurance Agency', businessName: 'Peach Trees II' }"
+  businesses.deactivate:
+    call: "{ businessId: 34291 }"
+  businesses.reactivate:
+    call: "{ businessId: 34291 }"
+  businesses.delete:
+    call: "{ businessId: 34291 }"
+  customers.list:
+    call: "{ businessId: 34291, page: 1 }"
+  customers.get:
+    call: "{ businessId: 34291, customerId: 80717046 }"
+  customers.create:
+    call: "{ businessId: 34291, customerFirstName: 'John', customerLastName: 'Smith', customerEmail: 'john.smith@example.com', customerTags: 'brakes,tires' }"
+  customers.update:
+    call: "{ businessId: 34291, customerId: 80717046, customerPhoneNumber: '+12025550199' }"
+  customers.delete:
+    call: "{ businessId: 34291, customerId: 80717046 }"
+  customers.requestFeedback:
+    call: "{ businessId: 34291, customerId: 80717046 }"
+  feedbacks.list:
+    call: "{ businessId: 34291, from: '2026-10-01', to: '2026-11-12' }"
+apiNotes:
+  businesses.list: 'Pages by `page` and `perPage`; `next_page` is null on the last one.'
+  businesses.create: 'Takes `businessName` and `businessType`, not the `name` and `organisationType` a read returns.'
+  customers.create: 'Takes `customerFirstName` and `customerEmail`; an email or a phone is needed to reach the customer.'
+  customers.update: 'Spells the phone `customerPhoneNumber`, where create spells it `customerPhone`.'
+  customers.requestFeedback: 'Sends a review request to a real person.'
+  feedbacks.list: 'A feedback’s `rating` is a number and its `tags` one comma-separated string.'

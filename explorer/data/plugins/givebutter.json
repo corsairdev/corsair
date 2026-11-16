@@ -1,0 +1,4062 @@
+{
+  "id": "givebutter",
+  "displayName": "Givebutter",
+  "description": "Manage Givebutter fundraising campaigns, supporters, donations, and related fundraising operations.",
+  "npmPackageName": "@corsair-dev/givebutter",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 70,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "givebutter.api.activities.create",
+      "shortPath": "activities.create",
+      "description": "Create a contact activity.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email | meeting | note | phone_call | sms | completed_task | volunteer_activity"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "occurred_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.activities.delete",
+      "shortPath": "activities.delete",
+      "description": "Delete a contact activity.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "activity",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.activities.get",
+      "shortPath": "activities.get",
+      "description": "Get a contact activity.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "activity",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.activities.list",
+      "shortPath": "activities.list",
+      "description": "List contact activities.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "email | meeting | note | phone_call | sms | completed_task | volunteer_activity"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, type?: string, created_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.activities.update",
+      "shortPath": "activities.update",
+      "description": "Update a contact activity.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "activity",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a fundraising campaign.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "general | collect | fundraise | event"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "USD"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ name: string, value?: any }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "raised",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "donors",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "string | {} | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Delete a fundraising campaign.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Get a fundraising campaign.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "raised",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "donors",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "string | {} | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List fundraising campaigns.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, code?: string | null, account_id?: string | number, event_id?: string | number | null, type?: string, title?: string, subtitle?: string | null, description?: string | null, slug?: string, url?: string, goal?: number | null, raised?: number | string, donors?: number, currency?: string, cover?: string | {} | null, status?: string, timezone?: string | null, end_at?: string | null, settings?: {}[] | null, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number, unfiltered_total: number | string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Update a fundraising campaign.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "short_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "beneficiary_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "default_appeal_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "general | collect | fundraise | event"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "USD"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ name: string, value?: any }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "raised",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "donors",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "string | {} | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preferred_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "male | female | other"
+          },
+          {
+            "key": "pronouns",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "suffix",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "individual | company"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitter_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "facebook_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tiktok_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instagram_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_since",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dob",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "primary_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zipcode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_address_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_address_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_zipcode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "email_subscription",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "phone_subscription",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "address_subscription",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "force_create",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "individual | company"
+          },
+          {
+            "key": "createdAfter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAfter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedBefore",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "totalContributionsMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalContributionsMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "recurringContributionsMin",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "recurringContributionsMax",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "name_or_company | primary_email | point_of_contact | created_at | total_contributions | recurring_contributions | last_donation_amount | null"
+          },
+          {
+            "key": "sortByDesc",
+            "optional": true,
+            "type": "name_or_company | primary_email | point_of_contact | created_at | total_contributions | recurring_contributions | last_donation_amount | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, external_id?: string | null, type?: string, first_name?: string | null, last_name?: string | null, primary_email?: string | null, primary_phone?: string | null, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.contacts.restore",
+      "shortPath": "contacts.restore",
+      "description": "Restore a deleted contact.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preferred_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "male | female | other"
+          },
+          {
+            "key": "pronouns",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "suffix",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "individual | company"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitter_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "facebook_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tiktok_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instagram_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_since",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dob",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_opt_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sms_opt_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "address_subscription",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "remove_emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "remove_phones",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "remove_address_ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.contactTags.add",
+      "shortPath": "contactTags.add",
+      "description": "Add tags to a contact.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.contactTags.remove",
+      "shortPath": "contactTags.remove",
+      "description": "Remove tags from a contact.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.contactTags.sync",
+      "shortPath": "contactTags.sync",
+      "description": "Replace all of a contact’s tags; tags not listed are removed.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.discountCodes.create",
+      "shortPath": "discountCodes.create",
+      "description": "Create a campaign discount code.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "percentage | fixed"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "include_future",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "uses",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.discountCodes.delete",
+      "shortPath": "discountCodes.delete",
+      "description": "Delete a campaign discount code.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "discountCode",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.discountCodes.get",
+      "shortPath": "discountCodes.get",
+      "description": "Get a campaign discount code.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "discountCode",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.discountCodes.list",
+      "shortPath": "discountCodes.list",
+      "description": "List a campaign’s discount codes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.discountCodes.update",
+      "shortPath": "discountCodes.update",
+      "description": "Update a campaign discount code.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "discountCode",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "percentage | fixed"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "include_future",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "uses",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.funds.create",
+      "shortPath": "funds.create",
+      "description": "Create a fund.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.funds.delete",
+      "shortPath": "funds.delete",
+      "description": "Delete a fund.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fund",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.funds.get",
+      "shortPath": "funds.get",
+      "description": "Get a fund.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fund",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.funds.list",
+      "shortPath": "funds.list",
+      "description": "List funds.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number | null, name?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.funds.update",
+      "shortPath": "funds.update",
+      "description": "Update a fund.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fund",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.householdContacts.add",
+      "shortPath": "householdContacts.add",
+      "description": "Add a contact to a household.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "household",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.householdContacts.get",
+      "shortPath": "householdContacts.get",
+      "description": "Get a household contact.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "household",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.householdContacts.list",
+      "shortPath": "householdContacts.list",
+      "description": "List contacts in a household.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "household",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.householdContacts.remove",
+      "shortPath": "householdContacts.remove",
+      "description": "Remove a contact from a household.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "household",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.households.create",
+      "shortPath": "households.create",
+      "description": "Create a household.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "head_contact_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "envelope_name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.households.delete",
+      "shortPath": "households.delete",
+      "description": "Delete a household.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "household",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.households.get",
+      "shortPath": "households.get",
+      "description": "Get a household.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "household",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.households.list",
+      "shortPath": "households.list",
+      "description": "List households.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headContactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortByDesc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string | number, name?: string }[]"
+      }
+    },
+    {
+      "path": "givebutter.api.households.update",
+      "shortPath": "households.update",
+      "description": "Update a household.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "household",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "head_contact_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "envelope_name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.members.delete",
+      "shortPath": "members.delete",
+      "description": "Remove a campaign member.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "member",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.members.get",
+      "shortPath": "members.get",
+      "description": "Get a campaign member.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "member",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.members.list",
+      "shortPath": "members.list",
+      "description": "List a campaign’s members.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: {}[], links: { first: string | null, last: string | null, prev: string | null, next: string | null }, meta: { current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number } } | {}"
+      }
+    },
+    {
+      "path": "givebutter.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get a message.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, status?: string, channel?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.payouts.get",
+      "shortPath": "payouts.get",
+      "description": "Get a payout.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payout",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.payouts.list",
+      "shortPath": "payouts.list",
+      "description": "List payouts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, amount?: number | string, status?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.plans.get",
+      "shortPath": "plans.get",
+      "description": "Get a recurring plan.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_bill_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "canceled_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.plans.list",
+      "shortPath": "plans.list",
+      "description": "List recurring plans.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, contact_id?: string | number | null, amount?: number | string | null, status?: string | null, frequency?: string | null, next_bill_date?: string | null, canceled_at?: string | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.pledges.get",
+      "shortPath": "pledges.get",
+      "description": "Get a pledge.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pledge",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.pledges.list",
+      "shortPath": "pledges.list",
+      "description": "List pledges.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, status?: string, amount?: number | string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.sso.account",
+      "shortPath": "sso.account",
+      "description": "Get the SSO account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.sso.campaign",
+      "shortPath": "sso.campaign",
+      "description": "Get a campaign through the SSO API.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Remove a campaign team.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "team",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get a campaign team.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "team",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List a campaign’s teams.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.ticketItems.create",
+      "shortPath": "ticketItems.create",
+      "description": "Create a campaign ticket item.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_quantity",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "physical | digital | hybrid | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "retail_price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bundle_only",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hide_remaining",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "registrant | event | null"
+          },
+          {
+            "key": "bundles",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "pictures",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.ticketItems.get",
+      "shortPath": "ticketItems.get",
+      "description": "Get a campaign ticket item.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.ticketItems.list",
+      "shortPath": "ticketItems.list",
+      "description": "List a campaign’s ticket items.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.tickets.get",
+      "shortPath": "tickets.get",
+      "description": "Get an issued ticket.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.tickets.list",
+      "shortPath": "tickets.list",
+      "description": "List issued tickets.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.transactions.create",
+      "shortPath": "transactions.create",
+      "description": "Record an offline transaction (cash, check, etc.). The API has no delete for transactions.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "campaign_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaign_team_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "team_member_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "contact_external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fund_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mark_deposited",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "acknowledged_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_contact_since",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fee_covered",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "platform_fee",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "processing_fee",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "check_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "check_deposited_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zipcode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dedication_type",
+            "optional": true,
+            "type": "in_memory_of | in_honor_of"
+          },
+          {
+            "key": "dedication_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dedication_recipient_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dedication_recipient_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giving_space_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appeal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appeal_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appeal_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "method",
+            "optional": false,
+            "type": "ach | card | cash | check | digital_wallet | donor_advised_fund | paypal | venmo | cashapp | terminal | stock | in-kind | property | other | none"
+          },
+          {
+            "key": "transacted_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transacted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.transactions.get",
+      "shortPath": "transactions.get",
+      "description": "Get a transaction.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transacted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List transactions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactedAfter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactedBefore",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAfter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAfter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedBefore",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "checkDepositedAfter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "checkDepositedBefore",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "all | benefiting | chapters | null"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "amount | transacted_at | created_at | contact_name | null"
+          },
+          {
+            "key": "sortByDesc",
+            "optional": true,
+            "type": "amount | transacted_at | created_at | contact_name | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, amount?: number | string, currency?: string, status?: string, method?: string, transacted_at?: string, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number, unfiltered_total: number | string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.transactions.update",
+      "shortPath": "transactions.update",
+      "description": "Update a transaction.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "transaction_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "check_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "check_deposited_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaign_member_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fund_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transacted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appeal_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offline_payment_received",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dedication",
+            "optional": true,
+            "type": "{ type: in_memory_of | in_honor_of, name: string, recipient_name: string | null, recipient_email: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transacted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.webhooks.activities.get",
+      "shortPath": "webhooks.activities.get",
+      "description": "Get an outbound webhook activity.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "activity",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "givebutter.api.webhooks.activities.list",
+      "shortPath": "webhooks.activities.list",
+      "description": "List outbound webhook activities.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create an outbound webhook registration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "campaign.created | campaign.updated | ticket.created | transaction.succeeded | contact.created | plan.canceled | plan.created | plan.failed | plan.paused | plan.resumed | plan.updated | refund.created"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "(campaign.created | campaign.updated | ticket.created | transaction.succeeded | contact.created | plan.canceled | plan.created | plan.failed | plan.paused | plan.resumed | plan.updated | refund.created)[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete an outbound webhook registration.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "givebutter.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get an outbound webhook registration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List outbound webhook registrations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, url?: string, enabled?: boolean }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first: string | null, last: string | null, prev: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page: number, from: number | null, last_page: number, links: { url: string | null, label: string, active: boolean }[], path: string | null, per_page: number, to: number | null, total: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "givebutter.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update an outbound webhook registration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "(campaign.created | campaign.updated | ticket.created | transaction.succeeded | contact.created | plan.canceled | plan.created | plan.failed | plan.paused | plan.resumed | plan.updated | refund.created)[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,24 @@
+{
+  "id": 309833,
+  "organization": "019c4574-818b-0000-9a04-748335a0596a",
+  "name": "Default project",
+  "created_at": "2026-02-10T02:49:49.206221Z",
+  "effective_membership_level": 1,
+  "group_types": [],
+  "updated_at": "2026-11-09T08:19:43.938570Z",
+  "uuid": "019c4574-8197-0000-9da4-20df023ec2d0",
+  "api_token": "phc_test_token",
+  "test_account_filters": [
+    {
+      "key": "$host",
+      "type": "event",
+      "value": "^(localhost|127\\.0\\.0\\.1)($|:)",
+      "operator": "not_regex"
+    }
+  ],
+  "is_demo": false,
+  "timezone": "UTC",
+  "week_start_day": null,
+  "primary_dashboard": 1266166,
+  "person_on_events_querying_enabled": true
+}

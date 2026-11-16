@@ -9,7 +9,7 @@ import { categorySlug, USE_CASES, useCasesByCategory } from '@/lib/use-cases';
 
 const TITLE = 'AI Agent Use Cases for Slack, Gmail and GitHub';
 const DESCRIPTION =
-	'Prompts that work with Claude, ChatGPT and Cursor once your apps are connected in Corsair: Slack reminders, morning briefings, GitHub to Linear, sales call prep and more.';
+	'Prompts for Claude, ChatGPT and Cursor once your apps are connected in Corsair: Slack reminders, morning briefings, GitHub to Linear and sales call prep.';
 
 export const metadata: Metadata = {
 	title: TITLE,

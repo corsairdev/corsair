@@ -1,0 +1,82 @@
+---
+title: "NeverBounce API reference"
+sidebarTitle: "API"
+description: "API reference for the NeverBounce plugin in Corsair: every `neverbounce.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Single
+
+### check
+
+`single.check`
+
+Verify one email address as it comes in, such as a form signup (valid, invalid, disposable, catchall or unknown); uses one verification credit. NeverBounce may lock the account if this is looped over an existing list; lists belong in its bulk jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.neverbounce.api.single.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Email address to verify, including invalid addresses for syntax checking |
+| `address_info` | `number` | No | Include address details (default 0) |
+| `credits_info` | `number` | No | Include credit details (default 0) |
+| `timeout` | `number` | No | Maximum verification time in seconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `result` | `string \| null` | No | — |
+| `flags` | `string[] \| null` | No | — |
+| `suggested_correction` | `string \| null` | No | — |
+| `address_info` | `object \| null` | No | — |
+| `credits_info` | `object \| null` | No | — |
+| `execution_time` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="address_info full type">
+
+```ts
+{
+  original_email?: string | null,
+  normalized_email?: string | null,
+  addr?: string | null,
+  alias?: string | null,
+  host?: string | null,
+  fqdn?: string | null,
+  domain?: string | null,
+  subdomain?: string | null,
+  tld?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="credits_info full type">
+
+```ts
+{
+  paid_credits_used?: number | null,
+  free_credits_used?: number | null,
+  paid_credits_remaining?: number | null,
+  free_credits_remaining?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

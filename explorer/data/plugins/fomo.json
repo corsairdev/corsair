@@ -1,0 +1,1386 @@
+{
+  "id": "fomo",
+  "displayName": "Fomo",
+  "description": "Social proof marketing platform providing automated notification feeds, event tracking, and conversion analytics.",
+  "npmPackageName": "@corsair-dev/fomo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fomo.api.application.get",
+      "shortPath": "application.get",
+      "description": "Get Fomo application settings for the token's own site, or pass id to read another site of the same user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_load",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maximum_per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_for",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "randomize",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "closable",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "display_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_ago_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_ago_threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_mobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loop_notification",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_types_attributes",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "stat_application",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.application.getStats",
+      "shortPath": "application.getStats",
+      "description": "Get notification statistics and conversion data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date_range",
+            "optional": false,
+            "type": "{ from: string, to: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "graph",
+            "optional": true,
+            "type": "Record<string, { converted_sale_in_cents?: number, conversions_count?: number, click_count?: number, impr_count?: number, hover_count?: number }>"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{ converted_sale_in_cents?: number, conversions_count?: number, click_count?: number, impr_count?: number, hover_count?: number, goal_conversion_count?: number, goal_converted_sale_in_dollars?: number }"
+          },
+          {
+            "key": "date_range",
+            "optional": true,
+            "type": "{ from?: string, to?: string }"
+          },
+          {
+            "key": "has_ga_conversions",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.application.update",
+      "shortPath": "application.update",
+      "description": "Update Fomo application settings for the token's own site, or pass id to update another site of the same user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_load",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maximum_per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_for",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "randomize",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "closable",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "display_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_ago_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_ago_threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_mobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loop_notification",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "bottom_left | bottom_right | top_left | top_right"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "theme1 | theme2 | custom"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_types_attributes",
+            "optional": true,
+            "type": "{ id?: number, name?: string, message?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_load",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maximum_per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_for",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "randomize",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "closable",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "display_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "display_threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_ago_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_ago_threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_mobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loop_notification",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_types_attributes",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "stat_application",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.events.create",
+      "shortPath": "events.create",
+      "description": "Create a new Fomo event; it shows as a social-proof notification on the site's live feed",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_event_fields_attributes",
+            "optional": true,
+            "type": "{ id?: number, key: string, value: string | number | boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_type_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at_to_seconds_from_epoch",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_event_fields_attributes",
+            "optional": true,
+            "type": "{ id?: number, key: string, value: string | number | boolean }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.events.delete",
+      "shortPath": "events.delete",
+      "description": "Delete a Fomo event by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.events.get",
+      "shortPath": "events.get",
+      "description": "Retrieve a Fomo event by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_type_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at_to_seconds_from_epoch",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_event_fields_attributes",
+            "optional": true,
+            "type": "{ id?: number, key: string, value: string | number | boolean }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.events.list",
+      "shortPath": "events.list",
+      "description": "List Fomo events with optional pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_meta",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, external_id?: string | null, event_type_id?: number | string | null, event_type_tag?: string | null, url?: string | null, first_name?: string | null, email_address?: string | null, ip_address?: string | null, city?: string | null, province?: string | null, country?: string | null, title?: string | null, image_url?: string | null, created_at?: string | null, updated_at?: string | null, created_at_to_seconds_from_epoch?: number | null, message?: string | null, link?: string | null, custom_event_fields_attributes?: { id?: number, key: string, value: string | number | boolean }[] | null }[] | { events: { id: number, external_id?: string | null, event_type_id?: number | string | null, event_type_tag?: string | null, url?: string | null, first_name?: string | null, email_address?: string | null, ip_address?: string | null, city?: string | null, province?: string | null, country?: string | null, title?: string | null, image_url?: string | null, created_at?: string | null, updated_at?: string | null, created_at_to_seconds_from_epoch?: number | null, message?: string | null, link?: string | null, custom_event_fields_attributes?: { id?: number, key: string, value: string | number | boolean }[] | null }[], meta?: { per_page?: number, page?: number, total_count?: number, total_pages?: number } }"
+      }
+    },
+    {
+      "path": "fomo.api.events.search",
+      "shortPath": "events.search",
+      "description": "Search for an event by external_id or email_address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": false,
+            "type": "email_address | external_id"
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_type_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at_to_seconds_from_epoch",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_event_fields_attributes",
+            "optional": true,
+            "type": "{ id?: number, key: string, value: string | number | boolean }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.events.update",
+      "shortPath": "events.update",
+      "description": "Update an existing Fomo event by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "event_type_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_event_fields_attributes",
+            "optional": true,
+            "type": "{ id?: number, key: string, value: string | number | boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_type_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at_to_seconds_from_epoch",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_event_fields_attributes",
+            "optional": true,
+            "type": "{ id?: number, key: string, value: string | number | boolean }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a new Fomo event template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "markdown_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_avatar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_ip_mapping",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "markdown_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "use_avatar",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "use_ip_mapping",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a Fomo event template by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Retrieve a Fomo event template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "markdown_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "use_avatar",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "use_ip_mapping",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fomo.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List Fomo event templates (event types)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, event_type_tag?: string | null, name: string, message?: string | null, markdown_enabled?: boolean | null, image_url?: string | null, use_avatar?: boolean | null, use_ip_mapping?: boolean | null }[] | { event_types: { id: number, event_type_tag?: string | null, name: string, message?: string | null, markdown_enabled?: boolean | null, image_url?: string | null, use_avatar?: boolean | null, use_ip_mapping?: boolean | null }[] }"
+      }
+    },
+    {
+      "path": "fomo.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update an existing Fomo event template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_avatar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_ip_mapping",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "event_type_tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "markdown_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "use_avatar",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "use_ip_mapping",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

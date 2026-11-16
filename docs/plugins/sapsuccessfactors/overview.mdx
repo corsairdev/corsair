@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "SAP SuccessFactors plugin"
+sidebarTitle: "Overview"
 description: "Cloud HR suite for employee records, recruiting, performance, and workforce management."
 ---
 
@@ -17,16 +18,20 @@ Use **SAP SuccessFactors** through Corsair: one client, typed API calls, local D
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/sapsuccessfactors
+npm install corsair @corsair-dev/sapsuccessfactors better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/sapsuccessfactors
+yarn add corsair @corsair-dev/sapsuccessfactors better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/sapsuccessfactors
+pnpm install corsair @corsair-dev/sapsuccessfactors better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/sapsuccessfactors
+bun add corsair @corsair-dev/sapsuccessfactors better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -71,7 +76,7 @@ More: [OAuth 2.0](/concepts/oauth)
 </Tab>
 <Tab title="API Key">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the SAP SuccessFactors API key before the first call: `pnpm corsair setup --plugin=sapsuccessfactors --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 sapsuccessfactors({

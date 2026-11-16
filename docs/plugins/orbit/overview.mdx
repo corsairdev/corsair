@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Orbit plugin"
+sidebarTitle: "Overview"
 description: "Search for people and enrich public profiles on the Orbit API."
 ---
 
@@ -18,16 +19,20 @@ Use **Orbit** through Corsair: one client, typed API calls, local DB sync, and i
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/orbit
+npm install corsair @corsair-dev/orbit better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/orbit
+yarn add corsair @corsair-dev/orbit better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/orbit
+pnpm install corsair @corsair-dev/orbit better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/orbit
+bun add corsair @corsair-dev/orbit better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -61,7 +66,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Orbit API key before the first call: `pnpm corsair setup --plugin=orbit --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 orbit()

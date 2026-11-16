@@ -1,0 +1,4273 @@
+{
+  "id": "hubplanner",
+  "displayName": "Hub Planner",
+  "description": "Resource scheduling, project planning, timesheet tracking, and team capacity management.",
+  "npmPackageName": "@corsair-dev/hubplanner",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 71,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "hubplanner.api.bookings.create",
+      "shortPath": "bookings.create",
+      "description": "Create a new resource schedule booking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stateValue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowOverschedule",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "repeatEndsAfterTimes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repeatEndsOnDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stateValue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bookingCreatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.bookings.delete",
+      "shortPath": "bookings.delete",
+      "description": "Delete a specific booking by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.bookings.deleteBulk",
+      "shortPath": "bookings.deleteBulk",
+      "description": "Bulk delete bookings by IDs, or every booking of one resource or one project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deletedCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.bookings.get",
+      "shortPath": "bookings.get",
+      "description": "Get booking details by booking ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stateValue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bookingCreatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.bookings.list",
+      "shortPath": "bookings.list",
+      "description": "List scheduled bookings with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dependencies",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, title?: string | null, state?: string | null, allDay?: boolean | null, start: string, end: string, stateValue?: number | null, resource: string, project: string, note?: string | null, createdDate?: string | null, updatedDate?: string | null, metadata?: string | null, type?: string | null, categoryTemplateId?: string | null, categoryName?: string | null, bookingCreatorId?: string | null, customFields?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.bookings.patch",
+      "shortPath": "bookings.patch",
+      "description": "Patch specific properties of a booking or approve/reject booking requests",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approvalInfo",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "allowOverschedule",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stateValue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stateValue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bookingCreatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.bookings.search",
+      "shortPath": "bookings.search",
+      "description": "Search bookings matching criteria such as date range or project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "dependencies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, title?: string | null, state?: string | null, allDay?: boolean | null, start: string, end: string, stateValue?: number | null, resource: string, project: string, note?: string | null, createdDate?: string | null, updatedDate?: string | null, metadata?: string | null, type?: string | null, categoryTemplateId?: string | null, categoryName?: string | null, bookingCreatorId?: string | null, customFields?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.bookings.update",
+      "shortPath": "bookings.update",
+      "description": "Update all properties of an existing booking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stateValue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowOverschedule",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categoryTemplateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allDay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stateValue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bookingCreatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.create",
+      "shortPath": "categories.create",
+      "description": "Create a new booking category in a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gridColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "NON_OPTIONAL | CUSTOM"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gridColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryGroupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryGroupName",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.createCostCategory",
+      "shortPath": "categories.createCostCategory",
+      "description": "Create a new project cost category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.deleteCostCategory",
+      "shortPath": "categories.deleteCostCategory",
+      "description": "Delete a project cost category by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "costCategoryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.get",
+      "shortPath": "categories.get",
+      "description": "Get booking category details by category ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gridColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryGroupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryGroupName",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.getCostCategory",
+      "shortPath": "categories.getCostCategory",
+      "description": "Get project cost category by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "costCategoryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List all booking categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, gridColor?: string | null, type?: string | null, createdDate?: string | null, updatedDate?: string | null, categoryGroupId?: string | null, categoryGroupName?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.listCostCategories",
+      "shortPath": "categories.listCostCategories",
+      "description": "List all project cost categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, createdDate?: string | null, updatedDate?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.listGroups",
+      "shortPath": "categories.listGroups",
+      "description": "List booking category groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, type?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.search",
+      "shortPath": "categories.search",
+      "description": "Search booking categories by name or group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, gridColor?: string | null, type?: string | null, createdDate?: string | null, updatedDate?: string | null, categoryGroupId?: string | null, categoryGroupName?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.searchCostCategories",
+      "shortPath": "categories.searchCostCategories",
+      "description": "Search project cost categories by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, createdDate?: string | null, updatedDate?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.update",
+      "shortPath": "categories.update",
+      "description": "Update an existing booking category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gridColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "NON_OPTIONAL | CUSTOM"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gridColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryGroupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryGroupName",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.categories.updateCostCategory",
+      "shortPath": "categories.updateCostCategory",
+      "description": "Update an existing project cost category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "costCategoryId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.customFields.addChoices",
+      "shortPath": "customFields.addChoices",
+      "description": "Add options to dropdown or selection custom field templates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "placeholderText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allowMultipleValues",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "canResourceEdit",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "characterLimit",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "isChoicesSortedAlphabetically",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "{ _id?: string | null, value: string }[] | null"
+          },
+          {
+            "key": "defaultValue",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Create a new custom field template for projects or resources",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "placeholderText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowMultipleValues",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canResourceEdit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "characterLimit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isChoicesSortedAlphabetically",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "{ value: string }[]"
+          },
+          {
+            "key": "defaultValue",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "placeholderText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allowMultipleValues",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "canResourceEdit",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "characterLimit",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "isChoicesSortedAlphabetically",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "{ _id?: string | null, value: string }[] | null"
+          },
+          {
+            "key": "defaultValue",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.customFields.delete",
+      "shortPath": "customFields.delete",
+      "description": "Delete a custom field template by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "hubplanner.api.customFields.get",
+      "shortPath": "customFields.get",
+      "description": "Get custom field template details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "placeholderText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allowMultipleValues",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "canResourceEdit",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "characterLimit",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "isChoicesSortedAlphabetically",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "{ _id?: string | null, value: string }[] | null"
+          },
+          {
+            "key": "defaultValue",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.customFields.list",
+      "shortPath": "customFields.list",
+      "description": "List custom field templates for projects or resources",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, type: string, label: string, instructions?: string | null, placeholderText?: string | null, status?: string | null, allowMultipleValues?: boolean | string | null, isRequired?: boolean | string | null, canResourceEdit?: boolean | string | null, characterLimit?: number | string | null, isChoicesSortedAlphabetically?: boolean | string | null, choices?: { _id?: string | null, value: string }[] | null, defaultValue?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.customFields.search",
+      "shortPath": "customFields.search",
+      "description": "Search custom field templates matching filter parameters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, type: string, label: string, instructions?: string | null, placeholderText?: string | null, status?: string | null, allowMultipleValues?: boolean | string | null, isRequired?: boolean | string | null, canResourceEdit?: boolean | string | null, characterLimit?: number | string | null, isChoicesSortedAlphabetically?: boolean | string | null, choices?: { _id?: string | null, value: string }[] | null, defaultValue?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.customFields.update",
+      "shortPath": "customFields.update",
+      "description": "Replace a custom field template; choices left out of the array are removed from records",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "placeholderText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowMultipleValues",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canResourceEdit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "characterLimit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isChoicesSortedAlphabetically",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "{ _id?: string, value: string }[]"
+          },
+          {
+            "key": "defaultValue",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "placeholderText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allowMultipleValues",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "canResourceEdit",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "characterLimit",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "isChoicesSortedAlphabetically",
+            "optional": true,
+            "type": "boolean | string | null"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "{ _id?: string | null, value: string }[] | null"
+          },
+          {
+            "key": "defaultValue",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.events.create",
+      "shortPath": "events.create",
+      "description": "Create a new company event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.events.delete",
+      "shortPath": "events.delete",
+      "description": "Delete a company event by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "hubplanner.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get company event details by event ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.events.list",
+      "shortPath": "events.list",
+      "description": "List company events with pagination and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, eventCode?: string | null, backgroundColor?: string | null, createdDate?: string | null, updatedDate?: string | null, metadata?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.events.search",
+      "shortPath": "events.search",
+      "description": "Search events by name or event code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, eventCode?: string | null, backgroundColor?: string | null, createdDate?: string | null, updatedDate?: string | null, metadata?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.events.update",
+      "shortPath": "events.update",
+      "description": "Update an existing company event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.milestones.create",
+      "shortPath": "milestones.create",
+      "description": "Create a new project milestone date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.milestones.delete",
+      "shortPath": "milestones.delete",
+      "description": "Delete a project milestone by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "milestoneId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "hubplanner.api.milestones.get",
+      "shortPath": "milestones.get",
+      "description": "Get milestone details by milestone ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "milestoneId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.milestones.list",
+      "shortPath": "milestones.list",
+      "description": "List milestones with pagination and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, date: string, project: string, metadata?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.milestones.search",
+      "shortPath": "milestones.search",
+      "description": "Search milestones by project or date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, date: string, project: string, metadata?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.milestones.update",
+      "shortPath": "milestones.update",
+      "description": "Update an existing project milestone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "milestoneId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.addClients",
+      "shortPath": "projects.addClients",
+      "description": "Associate client organizations with a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.addResources",
+      "shortPath": "projects.addResources",
+      "description": "Assign resources to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resourceIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.addTags",
+      "shortPath": "projects.addTags",
+      "description": "Add tags to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeEntryEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timeEntryLocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timeEntryApproval",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "projectCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeEntryNoteRequired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "budgetHours",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetCashAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetCurrency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "useStatusColor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "useProjectDuration",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectManagers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "resources",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tagId: string, value: string, _id?: string | null }[] | null"
+          },
+          {
+            "key": "customers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeEntryEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeEntryLocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeEntryApproval",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeEntryNoteRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "budgetHours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budgetCashAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budgetCurrency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "useStatusColor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "useProjectDuration",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectManagers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resources",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeEntryEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timeEntryLocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timeEntryApproval",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "projectCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeEntryNoteRequired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "budgetHours",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetCashAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetCurrency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "useStatusColor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "useProjectDuration",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectManagers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "resources",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tagId: string, value: string, _id?: string | null }[] | null"
+          },
+          {
+            "key": "customers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a specific project by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.deleteBulk",
+      "shortPath": "projects.deleteBulk",
+      "description": "Delete multiple projects by their IDs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get project details by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeEntryEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timeEntryLocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timeEntryApproval",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "projectCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeEntryNoteRequired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "budgetHours",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetCashAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetCurrency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "useStatusColor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "useProjectDuration",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectManagers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "resources",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tagId: string, value: string, _id?: string | null }[] | null"
+          },
+          {
+            "key": "customers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.getTags",
+      "shortPath": "projects.getTags",
+      "description": "List tags associated with a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ tagId: string, value: string, _id?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List all projects with pagination and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, links?: Record<string, string> | null, note?: string | null, createdDate?: string | null, updatedDate?: string | null, timeEntryEnabled?: boolean | null, timeEntryLocked?: boolean | null, timeEntryApproval?: boolean | null, projectCode?: string | null, timeEntryNoteRequired?: boolean | null, budgetHours?: number | null, budgetCashAmount?: number | null, budgetCurrency?: string | null, useStatusColor?: boolean | null, status?: string | null, useProjectDuration?: boolean | null, start?: string | null, end?: string | null, backgroundColor?: string | null, metadata?: string | null, projectManagers?: string[] | null, resources?: string[] | null, tags?: { tagId: string, value: string, _id?: string | null }[] | null, customers?: Record<string, any>[] | null, customFields?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.removeClient",
+      "shortPath": "projects.removeClient",
+      "description": "Dissociate a client organization from projects",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.removeResource",
+      "shortPath": "projects.removeResource",
+      "description": "Remove a resource from multiple projects",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.removeTag",
+      "shortPath": "projects.removeTag",
+      "description": "Remove a tag from a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.search",
+      "shortPath": "projects.search",
+      "description": "Search projects matching custom criteria",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name: string, links?: Record<string, string> | null, note?: string | null, createdDate?: string | null, updatedDate?: string | null, timeEntryEnabled?: boolean | null, timeEntryLocked?: boolean | null, timeEntryApproval?: boolean | null, projectCode?: string | null, timeEntryNoteRequired?: boolean | null, budgetHours?: number | null, budgetCashAmount?: number | null, budgetCurrency?: string | null, useStatusColor?: boolean | null, status?: string | null, useProjectDuration?: boolean | null, start?: string | null, end?: string | null, backgroundColor?: string | null, metadata?: string | null, projectManagers?: string[] | null, resources?: string[] | null, tags?: { tagId: string, value: string, _id?: string | null }[] | null, customers?: Record<string, any>[] | null, customFields?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.setProjectManagers",
+      "shortPath": "projects.setProjectManagers",
+      "description": "Replace the project manager list of a project (managers not listed are removed)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "managerIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeEntryEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timeEntryLocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timeEntryApproval",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "projectCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timeEntryNoteRequired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "budgetHours",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetCashAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budgetCurrency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "useStatusColor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "useProjectDuration",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectManagers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "resources",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tagId: string, value: string, _id?: string | null }[] | null"
+          },
+          {
+            "key": "customers",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Bulk update projects with modified attributes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ _id: string, name?: string, note?: string, projectCode?: string, budgetCashAmount?: number, budgetHours?: number, budgetCurrency?: string, status?: string, backgroundColor?: string, metadata?: string, timeEntryEnabled?: boolean, timeEntryLocked?: boolean, timeEntryApproval?: boolean, timeEntryNoteRequired?: boolean, useStatusColor?: boolean, useProjectDuration?: boolean, start?: string, end?: string, customFields?: Record<string, any>[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, status?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.addTags",
+      "shortPath": "resources.addTags",
+      "description": "Add tags to a resource",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tagId: string, value: string, _id?: string | null }[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.create",
+      "shortPath": "resources.create",
+      "description": "Create a new resource member",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tagId: string, value: string, _id?: string | null }[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.delete",
+      "shortPath": "resources.delete",
+      "description": "Delete a specific resource by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.deleteBulk",
+      "shortPath": "resources.deleteBulk",
+      "description": "Delete multiple resources by their IDs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.get",
+      "shortPath": "resources.get",
+      "description": "Get resource details by resource ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tagId: string, value: string, _id?: string | null }[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.getTags",
+      "shortPath": "resources.getTags",
+      "description": "List tags associated with a resource",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ tagId: string, value: string, _id?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.list",
+      "shortPath": "resources.list",
+      "description": "List all resources with pagination and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, firstName?: string | null, lastName?: string | null, email?: string | null, role?: string | null, status?: string | null, backgroundColor?: string | null, createdDate?: string | null, updatedDate?: string | null, metadata?: string | null, tags?: { tagId: string, value: string, _id?: string | null }[] | null, customFields?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.removeTag",
+      "shortPath": "resources.removeTag",
+      "description": "Remove a tag from a resource",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.search",
+      "shortPath": "resources.search",
+      "description": "Search resources matching custom criteria",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, firstName?: string | null, lastName?: string | null, email?: string | null, role?: string | null, status?: string | null, backgroundColor?: string | null, createdDate?: string | null, updatedDate?: string | null, metadata?: string | null, tags?: { tagId: string, value: string, _id?: string | null }[] | null, customFields?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.resources.update",
+      "shortPath": "resources.update",
+      "description": "Bulk update resources with modified attributes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resources",
+            "optional": false,
+            "type": "{ _id: string, firstName?: string, lastName?: string, email?: string, role?: string, status?: string, backgroundColor?: string, metadata?: string, customFields?: Record<string, any>[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, status?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.timeEntries.create",
+      "shortPath": "timeEntries.create",
+      "description": "Log new time entry on a project for a resource",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectStatus",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryName",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.timeEntries.delete",
+      "shortPath": "timeEntries.delete",
+      "description": "Delete a timesheet entry by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeEntryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "hubplanner.api.timeEntries.deleteBulk",
+      "shortPath": "timeEntries.deleteBulk",
+      "description": "Delete multiple timesheet entries by their IDs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "hubplanner.api.timeEntries.get",
+      "shortPath": "timeEntries.get",
+      "description": "Get timesheet entry details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeEntryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectStatus",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryName",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubplanner.api.timeEntries.list",
+      "shortPath": "timeEntries.list",
+      "description": "List recorded timesheet entries with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, resource: string, project: string, projectName?: string | null, projectType?: string | null, projectStatus?: string | null, date: string, minutes: number, note?: string | null, createdDate?: string | null, updatedDate?: string | null, metadata?: string | null, status?: string | null, locked?: boolean | null, creator?: string | null, categoryTemplateId?: string | null, categoryName?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.timeEntries.search",
+      "shortPath": "timeEntries.search",
+      "description": "Search time entries matching date ranges and resource/project filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, resource: string, project: string, projectName?: string | null, projectType?: string | null, projectStatus?: string | null, date: string, minutes: number, note?: string | null, createdDate?: string | null, updatedDate?: string | null, metadata?: string | null, status?: string | null, locked?: boolean | null, creator?: string | null, categoryTemplateId?: string | null, categoryName?: string | null }[]"
+      }
+    },
+    {
+      "path": "hubplanner.api.timeEntries.update",
+      "shortPath": "timeEntries.update",
+      "description": "Update an existing timesheet entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeEntryId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectStatus",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categoryName",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

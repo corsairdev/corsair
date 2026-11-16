@@ -398,16 +398,20 @@ function authTypeCredentialInstructions(
 	authType: string,
 	title: string,
 	base: string,
+	pluginId: string,
 ): string {
 	switch (authType) {
 		case 'managed':
 			return `No setup required. Corsair hosts the OAuth app for **${title}** — your tenants connect through Hub when they sign in.`;
 		case 'oauth_2':
 			return `Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your ${title} OAuth app.`;
+		// Corsair does not prompt for a key: a call without one throws
+		// AuthMissingError (with a connect link only when Hub or manual connect
+		// is set up). Say how the key gets stored instead.
 		case 'api_key':
-			return `No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.`;
+			return `Store the ${title} API key before the first call: \`pnpm corsair setup --plugin=${pluginId} --tenant=acme api_key=<your-key>\` (leave out \`--tenant\` without \`multiTenancy\`), or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).`;
 		case 'bot_token':
-			return `No setup required yet. When you make your first request as a tenant, Corsair prompts for the bot token.`;
+			return `Store the ${title} bot token before the first call: \`pnpm corsair setup --plugin=${pluginId} --tenant=acme bot_token=<your-token>\` (leave out \`--tenant\` without \`multiTenancy\`), or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own token on the connect page. See [API key auth](/concepts/api-key).`;
 		default:
 			return `See [Get Credentials](${base}/get-credentials) for provider-specific setup steps.`;
 	}
@@ -421,6 +425,27 @@ function yamlDoubleQuotedScalar(s: string): string {
 		oneLine.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\t/g, ' ') +
 		'"'
 	);
+}
+
+/** Search results cut a description near 160 characters. */
+const META_DESCRIPTION_MAX = 160;
+
+/**
+ * The fuller description when it fits a search result, otherwise the shorter
+ * one. A long plugin name or id can push the fuller text past the limit.
+ */
+function fitDescription(full: string, short: string): string {
+	return full.length <= META_DESCRIPTION_MAX ? full : short;
+}
+
+/**
+ * Frontmatter title lines for a plugin page. Every plugin has the same set of
+ * pages, so a bare "API" or "Overview" gives hundreds of pages the same
+ * browser and search title. The title names the plugin; `sidebarTitle` keeps
+ * the short label in the navigation.
+ */
+function pageTitleFrontmatter(title: string, sidebarTitle: string): string {
+	return `title: ${yamlDoubleQuotedScalar(title)}\nsidebarTitle: ${yamlDoubleQuotedScalar(sidebarTitle)}`;
 }
 
 function sortAuthTypesForTabs(
@@ -1092,7 +1117,7 @@ function buildMainMdx(opts: {
 ${authOrdered
 	.map((t) => {
 		const label = authTabLabel(t, recommendedAuth);
-		const note = authTypeCredentialInstructions(t, title, base);
+		const note = authTypeCredentialInstructions(t, title, base, pluginId);
 		const callSnippet = pluginFactorySnippet(
 			exportKey,
 			t,
@@ -1251,7 +1276,7 @@ See [Webhooks](${base}/webhooks) for every event path and payload shape, and [We
 	}
 
 	return `---
-title: Overview
+${pageTitleFrontmatter(`${title} plugin`, 'Overview')}
 description: ${yamlDoubleQuotedScalar(frontmatterDescription)}
 ---
 
@@ -1638,13 +1663,15 @@ function buildApiMdx(
 		}
 	}
 
-	const apiDescription = `API reference for ${title}: every \`${pluginId}.api.*\` operation with input and output types.`;
+	const apiDescriptionShort = `API reference for ${title}: every \`${pluginId}.api.*\` operation with input and output types.`;
+	const apiDescription = fitDescription(
+		`API reference for the ${title} plugin in Corsair: every \`${pluginId}.api.*\` operation with its input and output types, taken from the plugin's Zod schemas.`,
+		apiDescriptionShort,
+	);
 	return `---
-title: API
+${pageTitleFrontmatter(`${title} API reference`, 'API')}
 description: ${yamlDoubleQuotedScalar(apiDescription)}
 ---
-
-Every \`${pluginId}.api.*\` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -1663,13 +1690,16 @@ function buildDbMdx(
 	// instead of pointing readers at `.db.<entity>.search()` paths that do not
 	// exist.
 	if (data.db.length === 0) {
-		const description = `${title} returns live API data and stores no local entities.`;
+		const description = fitDescription(
+			`The ${title} plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally.`,
+			`${title} returns live API data and stores no local entities.`,
+		);
 		return `---
-title: Database
+${pageTitleFrontmatter(`${title} database`, 'Database')}
 description: ${yamlDoubleQuotedScalar(description)}
 ---
 
-The ${title} plugin returns live API data and does not sync or store entities locally. No local \`.search()\` operations are available.
+No local \`.search()\` operations are available for ${title}. To read its data, call the [API operations](/plugins/${pluginId}/api), which return what ${title} has at that moment.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
@@ -1715,9 +1745,12 @@ The ${title} plugin returns live API data and does not sync or store entities lo
 		);
 	}
 
-	const dbDescription = `${title} local sync: searchable entities, \`.search()\` filters, and operators.`;
+	const dbDescription = fitDescription(
+		`${title} local sync in Corsair: the entities stored in your database, the \`.search()\` filters each one accepts, and the filter operators.`,
+		`${title} local sync: searchable entities, \`.search()\` filters, and operators.`,
+	);
 	return `---
-title: Database
+${pageTitleFrontmatter(`${title} database`, 'Database')}
 description: ${yamlDoubleQuotedScalar(dbDescription)}
 ---
 
@@ -1822,9 +1855,12 @@ function buildWebhooksMdx(
 		}
 	}
 
-	const whDescription = `${title} incoming webhooks: event paths, payloads, and response data.`;
+	const whDescription = fitDescription(
+		`${title} incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data.`,
+		`${title} incoming webhooks: event paths, payloads, and response data.`,
+	);
 	return `---
-title: Webhooks
+${pageTitleFrontmatter(`${title} webhooks`, 'Webhooks')}
 description: ${yamlDoubleQuotedScalar(whDescription)}
 ---
 
@@ -1846,9 +1882,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 \`\`\`
 

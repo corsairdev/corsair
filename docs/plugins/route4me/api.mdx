@@ -1,0 +1,1250 @@
+---
+title: "Route4Me API reference"
+sidebarTitle: "API"
+description: "API reference for the Route4Me plugin in Corsair: every `route4me.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Addresses
+
+### create
+
+`addresses.create`
+
+Add a contact to the address book; the coordinates are required alongside the street address
+
+**Risk:** `write`
+
+```ts
+await corsair.route4me.api.addresses.create({ address_1: 'Prinsengracht 100', address_city: 'Amsterdam', cached_lat: 52.373066, cached_lng: 4.886445 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_1` | `string` | Yes | The street address. |
+| `address_2` | `string` | No | — |
+| `address_alias` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state_id` | `string` | No | — |
+| `address_country_id` | `string` | No | — |
+| `address_zip` | `string` | No | — |
+| `cached_lat` | `number` | Yes | — |
+| `cached_lng` | `number` | Yes | — |
+| `curbside_lat` | `number` | No | — |
+| `curbside_lng` | `number` | No | — |
+| `address_group` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `address_email` | `string` | No | The contact email. Route4Me names it `address_email`, not `email`. |
+| `address_phone_number` | `string` | No | — |
+| `service_time` | `number` | No | — |
+| `address_weight` | `number` | No | — |
+| `address_cube` | `number` | No | — |
+| `address_pieces` | `number` | No | — |
+| `address_revenue` | `number` | No | — |
+| `address_priority` | `number` | No | — |
+| `address_reference_no` | `string` | No | — |
+| `address_stop_type` | `DELIVERY \| PICKUP \| BREAK \| MEETUP \| SERVICE \| VISIT` | No | — |
+| `eligible_pickup` | `boolean` | No | — |
+| `eligible_depot` | `boolean` | No | — |
+| `customer_id` | `string` | No | — |
+| `address_custom_data` | `Record<string, string>` | No | — |
+
+Coordinates are required; Route4Me will not geocode on write.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address_id?: number | null,
+  address_alias?: string | null,
+  address_1?: string | null,
+  created_timestamp?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`addresses.list`
+
+List address book contacts with a display filter, a search phrase and limit/offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.addresses.list({ display: 'unrouted', limit: 100, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `display` | `all \| routed \| unrouted` | No | Which contacts to return. Route4Me defaults to `all`. |
+| `display_list` | `(routed \| unrouted)[]` | No | Sent as a repeated parameter. |
+| `query` | `string` | No | — |
+| `fields` | `string[]` | No | A projection: only these fields come back. |
+| `limit` | `number` | No | Records to return, up to 10000. Route4Me defaults to the maximum. |
+| `offset` | `number` | No | Records to skip, for offset paging. |
+
+Pages by limit/offset; next_offset is null on a short page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+| `total` | `number \| null` | No | Total matching contacts, before `limit` and `offset`. |
+| `offset` | `number \| null` | Yes | — |
+| `limit` | `number \| null` | Yes | — |
+| `next_offset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  address_id?: number | null,
+  address_group?: string | null,
+  address_alias?: string | null,
+  address_1?: string | null,
+  address_2?: string | null,
+  member_id?: number | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  address_email?: string | null,
+  address_phone_number?: string | null,
+  address_city?: string | null,
+  address_state_id?: string | null,
+  address_country_id?: string | null,
+  address_zip?: string | null,
+  cached_lat?: number | null,
+  cached_lng?: number | null,
+  curbside_lat?: number | null,
+  curbside_lng?: number | null,
+  in_route_count?: number | null,
+  visited_count?: number | null,
+  last_visited_timestamp?: number | null,
+  last_routed_timestamp?: number | null,
+  created_timestamp?: number | null,
+  local_time_window_start?: number | null,
+  local_time_window_end?: number | null,
+  service_time?: number | null,
+  local_timezone_string?: string | null,
+  color?: string | null,
+  address_icon?: string | null,
+  address_stop_type?: string | null,
+  address_cube?: number | null,
+  address_pieces?: number | null,
+  address_reference_no?: string | null,
+  address_revenue?: number | null,
+  address_weight?: number | null,
+  address_priority?: number | null,
+  address_customer_po?: string | null,
+  eligible_pickup?: boolean | null,
+  eligible_depot?: boolean | null,
+  customer_id?: string | null,
+  customer_name?: string | null,
+  parent_location_id?: number | null,
+  required_skills?: string[] | null,
+  facility_ids?: string[] | null,
+  address_custom_data?: Record<string, any> | any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Optimizations
+
+### create
+
+`optimizations.create`
+
+Submit addresses for optimization; the solver runs in the background and returns a problem id and state
+
+**Risk:** `write`
+
+```ts
+await corsair.route4me.api.optimizations.create({ addresses: [{ lat: 52.373066, lng: 4.856445 }, { address: 'Damrak 1, Amsterdam' }], route_max_duration: 1800, algorithm_type: 'TSP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | The stops to sequence into routes. |
+| `route_max_duration` | `number` | No | The longest a single route may take, in seconds. |
+| `route_max_distance` | `number` | No | — |
+| `vehicle_capacity` | `number` | No | — |
+| `route_name` | `string` | No | — |
+| `algorithm_type` | `TSP \| VRP \| CVRP \| MDVRP` | No | TSP for one vehicle, VRP for several, CVRP with capacity, MDVRP with multiple depots. |
+| `distance_unit` | `mi \| km` | No | — |
+| `optimize` | `Distance \| Time \| time \| distance` | No | What the optimizer minimises. |
+| `travel_mode` | `Driving \| Walking \| Trucking \| Cycling` | No | — |
+| `shared_publicly` | `boolean` | No | — |
+
+Asynchronous: poll optimizations.get until state is 4 (Optimized).
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  address?: string,
+  lat?: number,
+  lng?: number,
+  alias?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state_id?: string,
+  zip?: string,
+  service_time?: number,
+  time_window_start?: number,
+  time_window_end?: number,
+  priority?: number,
+  weight?: number,
+  cube?: number,
+  pieces?: number,
+  revenue?: number,
+  required_skills?: string[],
+  is_depot?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `optimization` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="optimization full type">
+
+```ts
+{
+  optimization_problem_id?: string | null,
+  state?: number | null,
+  created_timestamp?: number | null,
+  sent_to_background?: boolean | null,
+  user_errors?: string[] | null,
+  optimization_errors?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`optimizations.get`
+
+Fetch one optimization problem with its state, parameters and its solved routes
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.optimizations.get({ optimization_problem_id: 'B0C1D2E3F4A5B6C7D8E9F0A1B2C3D4E5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `optimization_problem_id` | `string` | Yes | The optimization id, from `optimizations.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `optimization` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="optimization full type">
+
+```ts
+{
+  optimization_problem_id?: string | null,
+  state?: number | null,
+  created_timestamp?: number | null,
+  scheduled_for?: number | null,
+  optimization_completed_timestamp?: number | null,
+  sent_to_background?: boolean | null,
+  user_errors?: string[] | null,
+  optimization_errors?: string[] | null,
+  parameters?: Record<string, string | number | boolean> | null,
+  addresses?: {
+    address_id?: number | null,
+    route_destination_id?: number | null,
+    address?: string | null,
+    address_1?: string | null,
+    address_2?: string | null,
+    alias?: string | null,
+    cached_lat?: number | null,
+    cached_lng?: number | null,
+    curbside_lat?: number | null,
+    curbside_lng?: number | null,
+    sequence_no?: number | null,
+    is_depot?: boolean | null,
+    time_window_start?: number | null,
+    time_window_end?: number | null,
+    service_time?: number | null,
+    priority?: number | null,
+    weight?: number | null,
+    cube?: number | null,
+    pieces?: number | null,
+    revenue?: number | null,
+    cost?: number | null,
+    visited?: number | null,
+    status?: string | null,
+    timestamp_last_visited?: number | null,
+    notes?: {
+      note_id?: number | null,
+      note?: string | null
+    }[] | null,
+    custom_fields?: Record<string, any> | any[] | null
+  }[] | null,
+  routes?: {
+    route_id?: string | null,
+    route_name?: string | null,
+    driver_alias?: string | null,
+    vehicle_alias?: string | null,
+    route_cost?: number | null,
+    route_revenue?: number | null,
+    trip_distance?: number | null,
+    destination_count?: number | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`optimizations.list`
+
+List optimization problems by state and date range, or read exactly one when an id is given
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.optimizations.list({ state: 4, limit: 10, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `optimization_problem_id` | `string` | No | Read this optimization instead of listing; v4 then answers a single object rather than a list. |
+| `state` | `number` | No | 0 New, 1 Initial, 2 MatrixProcessing, 3 Optimizing, 4 Optimized, 5 Error, 6 ComputingDirections. |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `start_date` | `string` | No | Only optimizations created on or after this date. |
+| `end_date` | `string` | No | Only optimizations created on or before this date. |
+
+Passing optimization_problem_id makes v4 answer one object; both forms are normalised into optimizations.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `optimizations` | `object[]` | Yes | — |
+| `total_records` | `number \| null` | Yes | Route4Me's `totalRecords`, renamed to snake case. |
+| `next_offset` | `number \| null` | Yes | The offset to request next, or null on the last page. |
+
+<AccordionGroup>
+<Accordion title="optimizations full type">
+
+```ts
+{
+  optimization_problem_id?: string | null,
+  state?: number | null,
+  created_timestamp?: number | null,
+  scheduled_for?: number | null,
+  optimization_completed_timestamp?: number | null,
+  sent_to_background?: boolean | null,
+  user_errors?: string[] | null,
+  optimization_errors?: string[] | null,
+  parameters?: Record<string, string | number | boolean> | null,
+  addresses?: {
+    address_id?: number | null,
+    route_destination_id?: number | null,
+    address?: string | null,
+    address_1?: string | null,
+    address_2?: string | null,
+    alias?: string | null,
+    cached_lat?: number | null,
+    cached_lng?: number | null,
+    curbside_lat?: number | null,
+    curbside_lng?: number | null,
+    sequence_no?: number | null,
+    is_depot?: boolean | null,
+    time_window_start?: number | null,
+    time_window_end?: number | null,
+    service_time?: number | null,
+    priority?: number | null,
+    weight?: number | null,
+    cube?: number | null,
+    pieces?: number | null,
+    revenue?: number | null,
+    cost?: number | null,
+    visited?: number | null,
+    status?: string | null,
+    timestamp_last_visited?: number | null,
+    notes?: {
+      note_id?: number | null,
+      note?: string | null
+    }[] | null,
+    custom_fields?: Record<string, any> | any[] | null
+  }[] | null,
+  routes?: {
+    route_id?: string | null,
+    route_name?: string | null,
+    driver_alias?: string | null,
+    vehicle_alias?: string | null,
+    route_cost?: number | null,
+    route_revenue?: number | null,
+    trip_distance?: number | null,
+    destination_count?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### create
+
+`orders.create`
+
+Create a delivery order from an address, with its contact, time window, load and facility details
+
+**Risk:** `write`
+
+```ts
+await corsair.route4me.api.orders.create({ address_1: 'Prinsengracht 100', address_city: 'Amsterdam', first_name: 'Jordan', email: 'jordan@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_1` | `string` | Yes | The delivery street address. |
+| `address_2` | `string` | No | — |
+| `address_alias` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state_id` | `string` | No | — |
+| `address_zip` | `string` | No | — |
+| `address_country_id` | `number` | No | — |
+| `cached_lat` | `number` | No | — |
+| `cached_lng` | `number` | No | — |
+| `curbside_lat` | `number` | No | — |
+| `curbside_lng` | `number` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `group` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `address_stop_type` | `DELIVERY \| PICKUP \| BREAK \| MEETUP \| SERVICE \| VISIT` | No | — |
+| `local_time_window_start` | `number` | No | — |
+| `local_time_window_end` | `number` | No | — |
+| `local_timezone_string` | `string` | No | — |
+| `service_time` | `number` | No | — |
+| `weight` | `number` | No | — |
+| `cube` | `number` | No | — |
+| `pieces` | `number` | No | — |
+| `revenue` | `number` | No | — |
+| `custom_user_fields` | `object[]` | No | — |
+| `required_skills` | `string[]` | No | — |
+| `facility_ids` | `string[]` | No | — |
+
+Contact fields go out as EXT_FIELD_first_name and so on, which is what the v5 API reads.
+
+<AccordionGroup>
+<Accordion title="custom_user_fields full type">
+
+```ts
+{
+  key?: string | null,
+  value?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  order_id?: number | null,
+  order_uuid?: string | null,
+  address_1?: string | null,
+  address_alias?: string | null,
+  created_timestamp?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+List delivery orders with search, scheduled-day, status and group filters plus page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.orders.list({ page: 0, per_page: 50, search_query: 'canal' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 0-based page number. |
+| `per_page` | `number` | No | — |
+| `search_query` | `string` | No | — |
+| `order_by` | `object` | No | — |
+| `day_scheduled_for` | `string[]` | No | Scheduled days in YYYYMMDD form. |
+| `day_added` | `string[]` | No | Added days in YYYYMMDD form. |
+| `statuses` | `string[]` | No | — |
+| `group` | `string` | No | — |
+| `barcode` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="order_by full type">
+
+```ts
+{
+  field: string,
+  direction: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | The page to request next, or null on the last page. |
+| `current_page` | `number \| null` | No | — |
+| `last_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  order_id?: number | null,
+  order_uuid?: string | null,
+  member_id?: number | null,
+  root_member_id?: number | null,
+  address_1?: string | null,
+  address_2?: string | null,
+  address_alias?: string | null,
+  address_city?: string | null,
+  address_state_id?: string | null,
+  address_zip?: string | null,
+  cached_lat?: number | null,
+  cached_lng?: number | null,
+  curbside_lat?: number | null,
+  curbside_lng?: number | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  tracking_number?: string | null,
+  group?: string | null,
+  priority?: number | null,
+  last_status?: number | null,
+  address_stop_type?: string | null,
+  weight?: number | null,
+  cube?: number | null,
+  pieces?: number | null,
+  revenue?: number | null,
+  cost?: number | null,
+  in_route_count?: number | null,
+  visited_count?: number | null,
+  created_timestamp?: number | null,
+  updated_timestamp?: number | null,
+  visited_timestamp?: number | null,
+  routed_timestamp?: number | null,
+  scheduled_date?: string | null,
+  done_date?: string | null,
+  created_date?: string | null,
+  local_time_window_start?: number | null,
+  local_time_window_end?: number | null,
+  local_timezone_string?: string | null,
+  territory_ids?: string[] | null,
+  custom_data?: Record<string, any> | any[] | null,
+  workflow_uuid?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Routes
+
+### get
+
+`routes.get`
+
+Fetch one route by its 32-character id, including its sequenced stops and directions
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.routes.get({ route_id: '9F86D081884C7D659A2FEAA0C55AD015' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route_id` | `string` | Yes | The 32-character route id, from `routes.list`. |
+| `page` | `number` | No | 1-based page number. |
+| `per_page` | `number` | No | Items per page, 1 to 500. Route4Me's own default applies when omitted. |
+
+The route id is exactly 32 characters and validated before the request.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route_id` | `string \| null` | No | — |
+| `route_name` | `string \| null` | No | — |
+| `optimization_problem_id` | `string \| null` | No | — |
+| `route_status` | `string \| null` | No | — |
+| `approved_to_execute` | `boolean \| null` | No | — |
+| `driver_alias` | `string \| null` | No | — |
+| `vehicle_alias` | `string \| null` | No | — |
+| `member_id` | `number \| null` | No | — |
+| `destination_count` | `number \| null` | No | — |
+| `visited_count` | `number \| null` | No | — |
+| `trip_distance` | `number \| null` | No | — |
+| `actual_travel_distance` | `number \| null` | No | — |
+| `actual_travel_time` | `number \| null` | No | — |
+| `route_created_unix` | `number \| null` | No | — |
+| `route_scheduled_start_unix` | `number \| null` | No | — |
+| `total_weight` | `number \| null` | No | — |
+| `total_cube` | `number \| null` | No | — |
+| `total_pieces` | `number \| null` | No | — |
+| `total_revenue` | `number \| null` | No | — |
+| `addresses` | `object[] \| null` | No | The route stops, in the order Route4Me sequenced them. |
+| `directions` | `object[] \| null` | No | — |
+| `notes` | `object[] \| null` | No | — |
+| `route_custom_data` | `Record<string, any> \| any[] \| null` | No | — |
+| `next_page` | `number \| null` | Yes | When the stop list is paged, the page to request next; null otherwise. |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  address_id?: number | null,
+  route_destination_id?: number | null,
+  address?: string | null,
+  address_1?: string | null,
+  address_2?: string | null,
+  alias?: string | null,
+  cached_lat?: number | null,
+  cached_lng?: number | null,
+  curbside_lat?: number | null,
+  curbside_lng?: number | null,
+  sequence_no?: number | null,
+  is_depot?: boolean | null,
+  time_window_start?: number | null,
+  time_window_end?: number | null,
+  service_time?: number | null,
+  priority?: number | null,
+  weight?: number | null,
+  cube?: number | null,
+  pieces?: number | null,
+  revenue?: number | null,
+  cost?: number | null,
+  visited?: number | null,
+  status?: string | null,
+  timestamp_last_visited?: number | null,
+  notes?: {
+    note_id?: number | null,
+    note?: string | null
+  }[] | null,
+  custom_fields?: Record<string, any> | any[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="directions full type">
+
+```ts
+{
+  distance?: number | null,
+  duration?: number | null,
+  direction?: string | null,
+  maneuver_type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  note_id?: number | null,
+  note?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`routes.list`
+
+List routes with search, facility and id filters plus page paging, from the v5 API
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.routes.list({ page: 1, per_page: 100, timezone: 'Europe/Amsterdam' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | A free-text search phrase. |
+| `search_query` | `string` | No | A second search field. |
+| `exclude_ids` | `string[]` | No | Route ids to leave out of the result. |
+| `facility_ids` | `string[]` | No | — |
+| `route_id` | `string \| string[]` | No | One route id, or several, to read instead of listing all. |
+| `timezone` | `string` | No | An IANA timezone, used for the date fields in the result. |
+| `group_by` | `string` | No | — |
+| `page` | `number` | No | 1-based page number. |
+| `per_page` | `number` | No | Items per page, 1 to 500. Route4Me's own default applies when omitted. |
+| `order_by` | `object` | No | — |
+
+A POST with no side effect; the plugin marks it replayable so a 5xx is retried.
+
+<AccordionGroup>
+<Accordion title="order_by full type">
+
+```ts
+{
+  field: string,
+  direction: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routes` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | The page to request next, or null on the last page. |
+| `current_page` | `number \| null` | No | — |
+| `last_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+  route_id?: string | null,
+  route_name?: string | null,
+  route_created_unix?: number | null,
+  optimization_problem_id?: string | null,
+  updated_timestamp?: number | null,
+  route_scheduled_start_unix?: number | null,
+  approved_to_execute?: boolean | null,
+  destination_count?: number | null,
+  visited_count?: number | null,
+  notes_count?: number | null,
+  vehicle_id?: string | null,
+  vehicle_alias?: string | null,
+  driver_alias?: string | null,
+  member_id?: number | null,
+  owner_email?: string | null,
+  trip_distance?: number | null,
+  actual_travel_distance?: number | null,
+  actual_travel_time?: number | null,
+  route_progress?: number | null,
+  route_status?: string | null,
+  route_status_id?: number | null,
+  weight?: number | null,
+  cube?: number | null,
+  pieces?: number | null,
+  revenue?: number | null,
+  cost?: number | null,
+  planned_destinations?: number | null,
+  done_destinations?: number | null,
+  failed_destinations?: number | null,
+  skipped_destinations?: number | null,
+  destinations_arrived_on_time?: number | null,
+  destinations_arrived_early?: number | null,
+  destinations_arrived_late?: number | null,
+  planned_total_route_duration?: number | null,
+  planned_total_service_time?: number | null,
+  planned_total_travel_time?: number | null,
+  planned_total_wait_time?: number | null,
+  planned_total_break_time?: number | null,
+  actual_route_duration?: number | null,
+  actual_start_timestamp?: number | null,
+  actual_end_timestamp?: number | null,
+  planned_end_timestamp?: number | null,
+  driver_open_timestamp?: number | null,
+  has_directions?: boolean | null,
+  is_unrouted?: boolean | null,
+  planned_weight_load_percent?: number | null,
+  planned_cube_load_percent?: number | null,
+  planned_revenue_load_percent?: number | null,
+  planned_pieces_load_percent?: number | null,
+  actual_weight_load_percent?: number | null,
+  actual_cube_load_percent?: number | null,
+  actual_revenue_load_percent?: number | null,
+  actual_pieces_load_percent?: number | null,
+  mobile_actual_travel_distance?: string | null,
+  telematics_actual_travel_distance?: string | null,
+  merged_actual_travel_distance?: number | null,
+  mobile_visited_distance_percent?: number | null,
+  telematics_visited_distance_percent?: number | null,
+  merged_visited_distance_percent?: number | null,
+  facility_ids?: string[] | null,
+  depot_timezone?: string | null,
+  path?: string | null,
+  route_data?: {
+    address_id?: number | null,
+    route_destination_id?: number | null,
+    address?: string | null,
+    address_1?: string | null,
+    address_2?: string | null,
+    alias?: string | null,
+    cached_lat?: number | null,
+    cached_lng?: number | null,
+    curbside_lat?: number | null,
+    curbside_lng?: number | null,
+    sequence_no?: number | null,
+    is_depot?: boolean | null,
+    time_window_start?: number | null,
+    time_window_end?: number | null,
+    service_time?: number | null,
+    priority?: number | null,
+    weight?: number | null,
+    cube?: number | null,
+    pieces?: number | null,
+    revenue?: number | null,
+    cost?: number | null,
+    visited?: number | null,
+    status?: string | null,
+    timestamp_last_visited?: number | null,
+    notes?: {
+      note_id?: number | null,
+      note?: string | null
+    }[] | null,
+    custom_fields?: Record<string, any> | any[] | null
+  }[] | null,
+  facilities?: {
+    facility_id?: string | null,
+    facility_alias?: string | null,
+    status?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Team
+
+### list
+
+`team.list`
+
+List the team members on the account, optionally limited to drivers or to one optimization
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.team.list({ drivers_only: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `drivers_only` | `boolean` | No | — |
+| `optimization_problem_id` | `string` | No | — |
+| `facility_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  member_id?: number | null,
+  member_first_name?: string | null,
+  member_last_name?: string | null,
+  member_email?: string | null,
+  member_company?: string | null,
+  member_phone?: string | null,
+  member_type?: string | null,
+  member_type_title?: string | null,
+  member_picture?: string | null,
+  OWNER_MEMBER_ID?: number | null,
+  owner_member_name?: string | null,
+  timezone?: string | null,
+  timestamp_added?: number | null,
+  timestamp_last_active?: number | null,
+  authentication_count?: number | null,
+  last_login_device?: string | null,
+  optimization_profile_id?: number | null,
+  optimization_profile_name?: string | null,
+  READONLY_USER?: boolean | null,
+  allowed_submember_types?: string[] | null,
+  can_edit?: boolean | null,
+  can_delete?: boolean | null,
+  facility_ids?: string[] | null,
+  permissions?: {
+    id?: string | null,
+    title?: string | null
+  }[] | null,
+  territories?: {
+    id?: string | null,
+    permission?: boolean | null
+  }[] | null,
+  custom_data?: Record<string, any> | any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### me
+
+`team.me`
+
+Read the account the key belongs to: owner, timezone and optimization profile
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.team.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  member_id?: number | null,
+  member_first_name?: string | null,
+  member_last_name?: string | null,
+  member_email?: string | null,
+  member_company?: string | null,
+  member_phone?: string | null,
+  member_type?: string | null,
+  member_type_title?: string | null,
+  member_picture?: string | null,
+  OWNER_MEMBER_ID?: number | null,
+  owner_member_name?: string | null,
+  timezone?: string | null,
+  timestamp_added?: number | null,
+  timestamp_last_active?: number | null,
+  authentication_count?: number | null,
+  last_login_device?: string | null,
+  optimization_profile_id?: number | null,
+  optimization_profile_name?: string | null,
+  READONLY_USER?: boolean | null,
+  allowed_submember_types?: string[] | null,
+  can_edit?: boolean | null,
+  can_delete?: boolean | null,
+  facility_ids?: string[] | null,
+  permissions?: {
+    id?: string | null,
+    title?: string | null
+  }[] | null,
+  territories?: {
+    id?: string | null,
+    permission?: boolean | null
+  }[] | null,
+  custom_data?: Record<string, any> | any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vehicles
+
+### create
+
+`vehicles.create`
+
+Add a vehicle to the fleet with its plate, dimensions, capacity profile and skills
+
+**Risk:** `write`
+
+```ts
+await corsair.route4me.api.vehicles.create({ vehicle_alias: 'Van 1', vehicle_license_plate: 'AB-123-CD', vehicle_make: 'Ford' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vehicle_alias` | `string` | Yes | The name shown in the app. |
+| `vehicle_vin` | `string` | No | — |
+| `vehicle_license_plate` | `string` | No | — |
+| `vehicle_make` | `string` | No | — |
+| `vehicle_model` | `string` | No | — |
+| `vehicle_model_year` | `number` | No | — |
+| `vehicle_reg_state_id` | `number` | No | — |
+| `vehicle_reg_country_id` | `number` | No | — |
+| `vehicle_type_id` | `number` | No | — |
+| `color_id` | `number` | No | — |
+| `fuel_type` | `string` | No | — |
+| `vehicle_profile_id` | `number` | No | — |
+| `vehicle_capacity_profile_id` | `number` | No | — |
+| `is_operational` | `boolean` | No | — |
+| `license_start_date` | `string` | No | — |
+| `license_end_date` | `string` | No | — |
+| `max_height` | `number` | No | — |
+| `max_width` | `number` | No | — |
+| `max_length` | `number` | No | — |
+| `total_weight` | `number` | No | — |
+| `max_weight_per_axle` | `number` | No | — |
+| `skills` | `string[]` | No | Skills this vehicle offers, matched against required skills. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vehicle` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="vehicle full type">
+
+```ts
+{
+  vehicle_id?: string | null,
+  vehicle_alias?: string | null,
+  vehicle_license_plate?: string | null,
+  timestamp_added?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`vehicles.list`
+
+List the fleet with filters for operational state, profile and telematics connection
+
+**Risk:** `read`
+
+```ts
+await corsair.route4me.api.vehicles.list({ is_operational: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `show` | `string` | No | A field projection. |
+| `search_query` | `string` | No | — |
+| `query` | `string` | No | — |
+| `is_operational` | `boolean` | No | — |
+| `only_with_profile` | `boolean` | No | — |
+| `with_multi_unit_fields` | `boolean` | No | — |
+| `telematics_connection_ids` | `number[]` | No | — |
+| `facility_ids` | `string[]` | No | — |
+
+This host answers a bare JSON array rather than a page envelope.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vehicles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="vehicles full type">
+
+```ts
+{
+  vehicle_id?: string | null,
+  member_id?: number | null,
+  root_member_id?: number | null,
+  is_deleted?: boolean | null,
+  vehicle_alias?: string | null,
+  vehicle_vin?: string | null,
+  vehicle_license_plate?: string | null,
+  vehicle_reg_state_id?: number | null,
+  vehicle_reg_state_label?: string | null,
+  vehicle_reg_country_id?: number | null,
+  vehicle_reg_country_label?: string | null,
+  vehicle_type_id?: number | null,
+  vehicle_make?: string | null,
+  vehicle_model?: string | null,
+  vehicle_model_year?: number | null,
+  vehicle_cost_new?: number | null,
+  purchased_new?: boolean | null,
+  vehicle_year_acquired?: number | null,
+  color_id?: number | null,
+  color_name?: string | null,
+  fuel_type?: string | null,
+  fuel_type_name?: string | null,
+  license_start_date?: string | null,
+  license_end_date?: string | null,
+  is_operational?: boolean | null,
+  status?: string | null,
+  status_label?: string | null,
+  timestamp_added?: number | null,
+  timestamp_removed?: number | null,
+  vehicle_profile_id?: number | null,
+  vehicle_profile_name?: string | null,
+  vehicle_capacity_profile_id?: number | null,
+  vehicle_capacity_profile_name?: string | null,
+  external_telematics_vehicle_id?: number | null,
+  max_height?: number | null,
+  max_width?: number | null,
+  max_length?: number | null,
+  total_weight?: number | null,
+  max_weight_per_axle?: number | null,
+  skills?: string[] | null,
+  vehicle_tags?: {
+    tag?: string | null
+  }[] | null,
+  metadata?: {
+    key?: string | null,
+    value?: string | null
+  }[] | null,
+  metadata_numeric?: {
+    key?: string | null,
+    value?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
