@@ -55,8 +55,22 @@ const RecipientSchema = z.object({
 		.describe(
 			'Your own identifier for this recipient, used to attach fields. Number them 1, 2, 3.',
 		),
-	name: z.string().min(1),
+	name: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Required on 21 CFR Part 11 documents.'),
 	email: Email.optional().describe('Required unless delivery_method is sms.'),
+	phone_number: z
+		.string()
+		.optional()
+		.describe('Required when delivery_method is sms or email_and_sms.'),
+	send_sms: z.boolean().optional(),
+	send_sms_delay: z
+		.number()
+		.int()
+		.optional()
+		.describe('Minutes to wait before texting this recipient.'),
 	delivery_method: z
 		.enum(['email', 'sms', 'email_and_sms'])
 		.optional()
@@ -101,7 +115,7 @@ const PlaceholderSchema = z.object({
 });
 
 const CopiedContactSchema = z.object({
-	name: z.string().min(1),
+	name: z.string().min(1).optional(),
 	email: Email,
 });
 
@@ -144,19 +158,51 @@ const baseField = {
 		.string()
 		.optional()
 		.describe('Your identifier for this field, used by conditional rules.'),
-	value: z.string().optional().describe('Prefilled value.'),
+	value: z
+		.union([z.string(), z.boolean(), z.number()])
+		.optional()
+		.describe('Prefilled value: text, a number, or true for a checkbox.'),
+	label: z.string().optional(),
+	name: z.string().optional(),
 	width: z.number().optional(),
 	height: z.number().optional(),
 	validation: z
-		.object({
-			number: z.boolean().optional(),
-			minimum: z.number().optional(),
-			maximum: z.number().optional(),
-			date_format: z.string().optional(),
-			regex: z.string().optional(),
-			regex_error_message: z.string().optional(),
-		})
-		.optional(),
+		.enum([
+			'no_text_validation',
+			'numbers',
+			'letters',
+			'email_address',
+			'us_phone_number',
+			'us_zip_code',
+			'us_ssn',
+			'us_age',
+			'alphanumeric',
+			'us_bank_routing_number',
+			'us_bank_account_number',
+			'custom',
+		])
+		.optional()
+		.describe('Text field validation; custom uses validation_regex.'),
+	validation_regex: z.string().optional(),
+	validation_regex_error_message: z.string().optional(),
+	date_format: z.string().optional().describe('Date fields, e.g. MM/DD/YYYY.'),
+	fixed_width: z.boolean().optional(),
+	lock_sign_date: z.boolean().optional(),
+	options: z
+		.array(
+			z.union([
+				z.string(),
+				z.object({
+					name: z.string().min(1),
+					api_id: z.string().optional(),
+					is_other: z.boolean().optional(),
+				}),
+			]),
+		)
+		.optional()
+		.describe('Choices for a dropdown or select field.'),
+	default_option: z.string().optional(),
+	allow_other: z.boolean().optional(),
 };
 
 const DocumentFieldSchema = z.object({
@@ -193,33 +239,61 @@ const LabelSchema = z.object({
 
 const AttachmentRequestSchema = z.object({
 	name: z.string().min(1),
-	required: z.boolean(),
+	recipient_id: z
+		.string()
+		.min(1)
+		.describe('The recipient who uploads the attachment.'),
+	required: z.boolean().optional().describe('Defaults to true.'),
+});
+
+const TemplateAttachmentRequestSchema = z.object({
+	name: z.string().min(1),
+	placeholder_id: z
+		.string()
+		.min(1)
+		.describe('The placeholder whose recipient uploads the attachment.'),
+	required: z.boolean().optional().describe('Defaults to true.'),
 });
 
 const ConditionalRuleSchema = z
 	.object({
-		field_id: z
+		id: z
+			.string()
+			.optional()
+			.describe('On an update, the rule to change; omit it to add a rule.'),
+		deleted: z
+			.boolean()
+			.optional()
+			.describe('On an update, true together with id removes the rule.'),
+		target_id: z
 			.string()
 			.min(1)
-			.describe('The api_id of the field that decides.'),
-		operator: z
-			.enum([
-				'is',
-				'is_not',
-				'contains',
-				'does_not_contain',
-				'is_empty',
-				'is_not_empty',
-			])
-			.optional(),
-		value: z.string().optional(),
-		action: z.enum(['show', 'hide', 'require', 'optional']).optional(),
-		target_field_ids: z.array(z.string()).optional(),
+			.optional()
+			.describe('api_id of the field that owns the rule. Required on create.'),
+		action_type: z
+			.enum(['show', 'hide', 'require'])
+			.optional()
+			.describe('Required on create.'),
+		action_field_ids: z
+			.array(z.string())
+			.optional()
+			.describe('api_ids of the fields the action applies to.'),
+		conditions: z
+			.array(
+				z.object({
+					condition_type: z.enum(['any_of', 'all_of', 'none_of', 'not_all_of']),
+					status: z.enum(['completed', 'not_completed']),
+					field_api_ids: z.array(z.string()).min(1),
+					join_operator: z.enum(['and_operator', 'or_operator']).optional(),
+					position: z.number().int().optional(),
+				}),
+			)
+			.min(1)
+			.max(5)
+			.optional()
+			.describe('1 to 5 conditions that trigger the rule.'),
 	})
-	.loose()
-	.describe(
-		'Conditional logic is passed through; SignWell documents the shape per rule type.',
-	);
+	.describe('A conditional logic rule, as SignWell documents it.');
 
 /** The options every create route shares, minus the body-specific ones. */
 const commonSendingOptions = {
@@ -684,8 +758,18 @@ const DocumentsCreateFromTemplateInputSchema = z
 			.array(
 				z.object({
 					id: z.string().min(1).describe('The template placeholder id.'),
-					name: z.string().min(1),
-					email: Email,
+					placeholder_name: z
+						.string()
+						.optional()
+						.describe('The placeholder this recipient is assigned to.'),
+					name: z.string().min(1).optional(),
+					email: Email.optional().describe(
+						'Required unless delivery_method is sms.',
+					),
+					phone_number: z
+						.string()
+						.optional()
+						.describe('Required when delivery_method is sms or email_and_sms.'),
 					subject: z.string().optional(),
 					message: z.string().optional(),
 					passcode: z.string().optional(),
@@ -709,10 +793,24 @@ const DocumentsCreateFromTemplateInputSchema = z
 		allow_reassign: z.boolean().optional(),
 		language: z.string().optional(),
 		labels: z.array(LabelSchema).optional(),
+		template_fields: z
+			.array(
+				z.object({
+					api_id: z
+						.string()
+						.min(1)
+						.describe("The template field's API id (case sensitive)."),
+					value: z.union([z.string(), z.boolean(), z.number()]),
+				}),
+			)
+			.optional()
+			.describe("Prefill the template's existing fields by api_id."),
 		fields: z
 			.array(z.array(z.record(z.string(), z.unknown()))) // unknown: field shape
 			.optional()
-			.describe("Overrides for the template's field values, if any."),
+			.describe(
+				"SignWell's fields for appended files; to prefill the template's own fields use template_fields.",
+			),
 	})
 	.superRefine((value, ctx) => {
 		const given = [value.template_id, value.template_ids].filter(
@@ -824,7 +922,10 @@ const DocumentsUpdateAuthenticationInputSchema = z.object({
 					.object({
 						enabled: z.boolean(),
 						methods: z.array(z.enum(['email'])).optional(),
-						expire_after_days: z.number().int().optional(),
+						expire_after_access: z
+							.boolean()
+							.optional()
+							.describe('Clear the passcode after the signer authenticates.'),
 					})
 					.optional(),
 			}),
@@ -982,7 +1083,7 @@ const TemplatesCreateInputSchema = z.object({
 	language: z.string().optional(),
 	metadata: z.record(z.string(), z.string()).optional(),
 	labels: z.array(LabelSchema).optional(),
-	attachment_requests: z.array(AttachmentRequestSchema).optional(),
+	attachment_requests: z.array(TemplateAttachmentRequestSchema).optional(),
 	conditional_rules: z.array(ConditionalRuleSchema).optional(),
 	fields: templateFields.optional(),
 });
