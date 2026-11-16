@@ -1,11 +1,15 @@
 import type { SupersaasEndpoints } from '..';
 import { segment } from '../client';
-import { call, created, deletion } from './shared';
+import { call, created, deletion, updated } from './shared';
 import {
 	SupersaasEndpointInputSchemas as Inputs,
 	SupersaasEndpointOutputSchemas as Outputs,
 } from './types';
 
+/**
+ * Slots exist only on a capacity-type schedule. Every route takes the schedule
+ * as a top-level `schedule_id` query parameter, never inside `slot`.
+ */
 export const list: SupersaasEndpoints['slotsList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -15,7 +19,12 @@ export const list: SupersaasEndpoints['slotsList'] = (ctx, input) =>
 			output: Outputs.slotsList,
 		},
 		input,
-		(query) => ({ method: 'GET', path: '/slots', query }),
+		({ schedule_id, from, to, limit, offset }) => ({
+			method: 'GET',
+			path: '/slots',
+			// The slot list names its window start and finish.
+			query: { schedule_id, start: from, finish: to, limit, offset },
+		}),
 		{ log: (_, result) => ({ count: result.length }) },
 	);
 
@@ -28,11 +37,14 @@ export const get: SupersaasEndpoints['slotsGet'] = (ctx, input) =>
 			output: Outputs.slotsGet,
 		},
 		input,
-		({ slot_id }) => ({ method: 'GET', path: `/slots/${segment(slot_id)}` }),
+		({ schedule_id, slot_id }) => ({
+			method: 'GET',
+			path: `/slots/${segment(slot_id)}`,
+			query: { schedule_id },
+		}),
 		{ log: ({ slot_id }) => ({ slotId: slot_id }) },
 	);
 
-/** Slots exist only on a capacity-type schedule. */
 export const create: SupersaasEndpoints['slotsCreate'] = (ctx, input) =>
 	call(
 		ctx,
@@ -42,12 +54,18 @@ export const create: SupersaasEndpoints['slotsCreate'] = (ctx, input) =>
 			output: Outputs.slotsCreate,
 		},
 		input,
-		(slot) => ({ method: 'POST', path: '/slots', body: { slot } }),
+		({ schedule_id, ...slot }) => ({
+			method: 'POST',
+			path: '/slots',
+			query: { schedule_id },
+			body: { slot },
+			responseHeader: 'Location',
+		}),
 		{
-			shape: (raw, parsed) => created(raw, String(parsed.schedule_id)),
-			log: (parsed) => ({
+			shape: (raw) => created(raw),
+			log: (parsed, result) => ({
 				scheduleId: parsed.schedule_id,
-				start: parsed.start,
+				slotId: result.id,
 			}),
 		},
 	);
@@ -61,12 +79,16 @@ export const update: SupersaasEndpoints['slotsUpdate'] = (ctx, input) =>
 			output: Outputs.slotsUpdate,
 		},
 		input,
-		({ slot_id, ...slot }) => ({
+		({ schedule_id, slot_id, ...slot }) => ({
 			method: 'PUT',
 			path: `/slots/${segment(slot_id)}`,
+			query: { schedule_id },
 			body: { slot },
 		}),
-		{ log: ({ slot_id }) => ({ slotId: slot_id }) },
+		{
+			shape: (raw, { slot_id }) => updated(raw, slot_id),
+			log: ({ slot_id }) => ({ slotId: slot_id }),
+		},
 	);
 
 export const remove: SupersaasEndpoints['slotsDelete'] = (ctx, input) =>
@@ -78,9 +100,10 @@ export const remove: SupersaasEndpoints['slotsDelete'] = (ctx, input) =>
 			output: Outputs.slotsDelete,
 		},
 		input,
-		({ slot_id }) => ({
+		({ schedule_id, slot_id }) => ({
 			method: 'DELETE',
 			path: `/slots/${segment(slot_id)}`,
+			query: { schedule_id },
 		}),
 		{
 			shape: (raw, { slot_id }) => deletion(raw, slot_id),

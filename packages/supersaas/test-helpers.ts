@@ -48,16 +48,6 @@ export function respond(
 	);
 }
 
-/** A documented empty 201, where the id lives only in a Location header. */
-export function respondCreated(fetchMock: jest.SpyInstance) {
-	fetchMock.mockResolvedValueOnce(
-		new Response(null, {
-			status: 201,
-			headers: { Location: 'https://www.supersaas.com/api/users/123456.json' },
-		}),
-	);
-}
-
 /** A documented empty 200, which is what a delete answers. */
 export function respondEmpty(fetchMock: jest.SpyInstance) {
 	fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));

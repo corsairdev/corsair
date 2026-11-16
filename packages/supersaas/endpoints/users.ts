@@ -1,6 +1,6 @@
 import type { SupersaasEndpoints } from '..';
 import { segment } from '../client';
-import { call, created, deletion } from './shared';
+import { call, created, deletion, updated } from './shared';
 import {
 	SupersaasEndpointInputSchemas as Inputs,
 	SupersaasEndpointOutputSchemas as Outputs,
@@ -41,10 +41,17 @@ export const create: SupersaasEndpoints['usersCreate'] = (ctx, input) =>
 			output: Outputs.usersCreate,
 		},
 		input,
-		(user) => ({ method: 'POST', path: '/users', body: { user } }),
+		(user) => ({
+			method: 'POST',
+			path: '/users',
+			body: { user },
+			responseHeader: 'Location',
+		}),
 		{
-			shape: (raw, { name }) => created(raw, name),
-			log: (parsed) => ({ name: parsed.name }),
+			shape: (raw) => created(raw),
+			// The login name is often an email address, so only the new id is
+			// logged.
+			log: (_, result) => ({ userId: result.id }),
 		},
 	);
 
@@ -68,10 +75,11 @@ export const createWithKey: SupersaasEndpoints['usersCreateWithKey'] = (
 			method: 'POST',
 			path: `/users/${segment(key)}`,
 			body: { user },
+			responseHeader: 'Location',
 		}),
 		{
-			shape: (raw, { key }) => created(raw, key),
-			log: ({ key }) => ({ userId: key }),
+			shape: (raw) => created(raw),
+			log: (_, result) => ({ userId: result.id }),
 		},
 	);
 
@@ -94,7 +102,10 @@ export const update: SupersaasEndpoints['usersUpdate'] = (ctx, input) =>
 			query: { notfound },
 			body: { user },
 		}),
-		{ log: ({ id }) => ({ userId: id }) },
+		{
+			shape: (raw, { id }) => updated(raw, id),
+			log: ({ id }) => ({ userId: id }),
+		},
 	);
 
 export const remove: SupersaasEndpoints['usersDelete'] = (ctx, input) =>

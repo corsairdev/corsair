@@ -1,73 +1,62 @@
 /**
- * Shapes taken from SuperSaaS's API documentation at
- * https://www.supersaas.com/info/dev/user_api and /appointment_api.
+ * Shapes from the live API (11-16, a test account; names replaced). Ids come
+ * back as numbers, and the schedule reads wrap their rows in `bookings` or
+ * `slots`.
  */
 
 export const user = {
-	id: '123456',
-	fk: '567',
-	name: 'jane@example.com',
-	email: 'jane@example.com',
-	full_name: 'Jane Smith',
-	address: '1 Main St',
-	mobile: null,
-	phone: null,
-	country: 'DE',
-	timezone: 'Europe/Berlin',
-	field_1: null,
-	field_2: null,
-	super_field: null,
-	credit: '0',
+	id: 15294233,
+	fk: null,
+	created_on: '2026-11-16T00:52:26Z',
 	role: 3,
-	group: null,
-	created_on: '2026-01-01 10:00:00',
 	last_login: null,
+	name: 'jane@example.com',
+	full_name: 'Jane Smith',
+	mobile: null,
+	address: null,
 };
 
+/** A booking on a capacity schedule, as `GET /api/bookings/{id}.json` answers. */
 export const booking = {
-	id: '987654',
-	start: '2026-03-10 09:00:00',
-	finish: '2026-03-10 09:30:00',
-	created_on: '2026-03-01 12:00:00',
-	updated_on: '2026-03-01 12:00:00',
-	user_id: '123456',
-	user_name: 'jane@example.com',
+	id: 153818785,
+	slot_id: 74660627,
+	created_on: '2026-11-16T00:52:39Z',
+	user_id: 15294233,
+	created_by: 'jane@example.com / *',
+	waitlisted: false,
+	price: null,
+	deleted: false,
+	full_name: 'Jane Smith',
+};
+
+/** A booking on a resource schedule. */
+export const resourceBooking = {
+	id: 121573357,
+	start: '2026-12-01T10:00',
+	finish: '2026-12-01T11:00',
+	created_on: '2026-11-16T00:53:02Z',
+	user_id: null,
 	full_name: 'Jane Smith',
 	email: 'jane@example.com',
-	resource_id: '1',
-	resource_name: 'Room A',
-	slot_id: null,
-	field_1: null,
-	field_2: null,
-	field_1_r: null,
-	field_2_r: null,
-	super_field: null,
-	form_id: null,
+	price: null,
+	deleted: false,
 };
 
 export const slot = {
-	id: '555',
-	start: '2026-03-10 09:00:00',
-	finish: '2026-03-10 10:00:00',
-	created_on: '2026-03-01 12:00:00',
-	updated_on: '2026-03-01 12:00:00',
-	booked: 3,
-	capacity: 10,
-	resource_id: null,
-	resource_name: null,
+	id: 74660627,
+	start: '2026-12-01T10:00',
+	finish: '2026-12-01T11:00',
+	title: 'Workshop',
+	description: '',
+	location: '',
+	capacity: 2,
+	level: 0,
+	waiting: 0,
+	color: 0,
 };
 
-export const change = {
-	type: 'booking',
-	id: '987654',
-	start: '2026-03-10 09:00:00',
-	finish: '2026-03-10 09:30:00',
-	updated_on: '2026-03-01 12:00:00',
-};
+/** `GET /api/changes/{schedule}.json` and `/agenda`. */
+export const bookingsEnvelope = { bookings: [booking] };
 
-export const freeSpace = {
-	start: '2026-03-10 11:00:00',
-	finish: '2026-03-10 11:30:00',
-	resource_id: '1',
-	resource_name: 'Room A',
-};
+/** `GET /api/range/{capacity schedule}.json` and `/free`. */
+export const slotsEnvelope = { slots: [{ ...slot, count: 1 }] };

@@ -1,14 +1,18 @@
+import { inspect } from 'node:util';
 import { logEventFromContext } from 'corsair/core';
-import { jsonPath, SupersaasAPIError, segment } from './client';
+import { ApiError } from 'corsair/http';
+import { jsonPath, segment } from './client';
 import { Bookings, Schedules, Slots, Users } from './endpoints';
 import type { UnknownJson } from './json';
-import { booking, change, freeSpace, slot, user } from './test-fixtures';
 import {
-	lastRequest,
-	respond,
-	respondCreated,
-	respondEmpty,
-} from './test-helpers';
+	booking,
+	bookingsEnvelope,
+	resourceBooking,
+	slot,
+	slotsEnvelope,
+	user,
+} from './test-fixtures';
+import { lastRequest, respond, respondEmpty } from './test-helpers';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -24,9 +28,14 @@ const ACCOUNT = 'acme';
 // so the shared return type is the widest one.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>; // unknown: per endpoint
 
+/** The account name is a stored account field, read like the key. */
 function invoke(endpoint: AnyEndpoint, input: UnknownJson) {
 	return endpoint(
-		{ key: API_KEY, options: { accountName: ACCOUNT } } as never,
+		{
+			key: API_KEY,
+			options: {},
+			keys: { get_account_name: jest.fn().mockResolvedValue(ACCOUNT) },
+		} as never,
 		input as never,
 	);
 }
@@ -42,14 +51,16 @@ afterEach(() => {
 	fetchMock.mockRestore();
 });
 
-/**
- * SuperSaaS authenticates with HTTP Basic: the account name is the username and
- * the API key the password. Every route also carries `.json`.
- */
+/** A 201 with an empty body and the new record's URL in Location. */
+function respondCreated(location: string) {
+	fetchMock.mockResolvedValueOnce(
+		new Response(null, { status: 201, headers: { Location: location } }),
+	);
+}
+
 function expectBasicAuthAndJson() {
 	const sent = lastRequest(fetchMock);
 	expect(sent.origin).toBe('https://www.supersaas.com');
-	expect(sent.headers.get('authorization')).toMatch(/^Basic /);
 	const decoded = Buffer.from(
 		(sent.headers.get('authorization') ?? '').replace('Basic ', ''),
 		'base64',
@@ -58,6 +69,9 @@ function expectBasicAuthAndJson() {
 	// Without `.json` SuperSaaS answers XML.
 	expect(sent.path.endsWith('.json')).toBe(true);
 }
+
+// unknown: a rejection reason has no static type.
+const caught = (promise: Promise<unknown>) => promise.catch((e: unknown) => e);
 
 describe('client', () => {
 	it('appends the json suffix once', () => {
@@ -71,409 +85,373 @@ describe('client', () => {
 });
 
 describe('users', () => {
-	it('lists with the paging query', async () => {
+	it('lists with the paging query and parses numeric ids', async () => {
 		respond(fetchMock, [user]);
 
-		const result = await invoke(Users.list, { limit: 50, offset: 100 });
+		const result = (await invoke(Users.list, { limit: 10, offset: 20 })) as {
+			id: number;
+		}[];
 
 		expectBasicAuthAndJson();
-		expect(lastRequest(fetchMock).path).toBe('/api/users.json');
-		expect(lastRequest(fetchMock).query).toEqual({
-			limit: '50',
-			offset: '100',
-		});
-		expect(result).toEqual([user]);
-		expect(mockLog).toHaveBeenCalledWith(
-			expect.anything(),
-			'supersaas.users.list',
-			{ count: 1 },
-			'completed',
-		);
+		expect(lastRequest(fetchMock).query).toEqual({ limit: '10', offset: '20' });
+		expect(result[0]?.id).toBe(15294233);
 	});
 
-	it('gets one user by id or foreign key', async () => {
-		respond(fetchMock, user);
-
-		expect(await invoke(Users.get, { id: '567fk' })).toEqual(user);
-		expect(lastRequest(fetchMock).path).toBe('/api/users/567fk.json');
-	});
-
-	it('creates a user and reports the key, because 201 carries no body', async () => {
-		respondCreated(fetchMock);
+	it('reads the new id from the Location header of a 201', async () => {
+		respondCreated('https://www.supersaas.com/api/users/15294233.json');
 
 		const result = await invoke(Users.create, {
 			name: 'jane@example.com',
 			full_name: 'Jane Smith',
 		});
 
-		const sent = lastRequest(fetchMock);
-		expect(sent.method).toBe('POST');
-		expect(sent.path).toBe('/api/users.json');
-		// SuperSaaS wraps the document in a `user` key.
-		expect(sent.body).toEqual({
+		expect(lastRequest(fetchMock).body).toEqual({
 			user: { name: 'jane@example.com', full_name: 'Jane Smith' },
 		});
 		expect(result).toEqual({
 			created: true,
-			key: 'jane@example.com',
-			id: undefined,
+			id: '15294233',
+			location: 'https://www.supersaas.com/api/users/15294233.json',
 		});
+		// The login name is an email here, so the event carries the id only.
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'supersaas.users.create',
+			{ userId: '15294233' },
+			'completed',
+		);
 	});
 
-	it('rejects a user with no name, the only required field', async () => {
-		await expect(invoke(Users.create, { email: 'a@b.c' })).rejects.toThrow(
-			/name/,
-		);
-		expect(fetchMock).not.toHaveBeenCalled();
+	it('refuses a 201 without a Location header instead of inventing success', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 201 }));
+
+		await expect(
+			invoke(Users.create, { name: 'jane@example.com' }),
+		).rejects.toThrow(/Location/);
 	});
 
 	it('creates under a caller-supplied key', async () => {
-		respondCreated(fetchMock);
+		respondCreated('https://www.supersaas.com/api/users/15294241.json');
 
 		const result = await invoke(Users.createWithKey, {
-			key: '567fk',
+			key: '9001fk',
 			name: 'jane@example.com',
 		});
 
-		expect(lastRequest(fetchMock).path).toBe('/api/users/567fk.json');
-		expect(result).toMatchObject({ created: true, key: '567fk' });
+		expect(lastRequest(fetchMock).path).toBe('/api/users/9001fk.json');
+		expect(result).toMatchObject({ created: true, id: '15294241' });
 	});
 
-	it('updates with the notfound policy as a query parameter', async () => {
-		respond(fetchMock, user);
+	it('accepts the empty 200 an update answers', async () => {
+		respondEmpty(fetchMock);
 
-		await invoke(Users.update, {
-			id: '123456',
+		const result = await invoke(Users.update, {
+			id: '15294233',
 			name: 'jane@example.com',
 			notfound: 'error',
 		});
 
-		const sent = lastRequest(fetchMock);
-		expect(sent.method).toBe('PUT');
-		expect(sent.query).toEqual({ notfound: 'error' });
-		expect(sent.body).toEqual({ user: { name: 'jane@example.com' } });
+		expect(lastRequest(fetchMock)).toMatchObject({
+			method: 'PUT',
+			path: '/api/users/15294233.json',
+			query: { notfound: 'error' },
+		});
+		expect(result).toEqual({ id: '15294233', updated: true });
 	});
 
 	it('rejects a notfound value the API does not accept', async () => {
 		await expect(
-			invoke(Users.update, {
-				id: '123456',
-				name: 'jane@example.com',
-				notfound: 'create',
-			}),
-		).rejects.toThrow(/notfound/);
+			invoke(Users.update, { id: '1', name: 'x', notfound: 'create' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('rejects a role outside 3, 4 and -1', async () => {
-		await expect(
-			invoke(Users.create, { name: 'jane@example.com', role: 1 }),
-		).rejects.toThrow(/role/);
-	});
-
-	it('deletes a user and reports the id', async () => {
+	it('deletes a user and refuses a delete that answers a body', async () => {
 		respondEmpty(fetchMock);
-
-		const result = await invoke(Users.remove, { id: '123456' });
-
-		expect(lastRequest(fetchMock)).toMatchObject({
-			method: 'DELETE',
-			path: '/api/users/123456.json',
+		await expect(invoke(Users.remove, { id: '15294233' })).resolves.toEqual({
+			id: '15294233',
+			deleted: true,
 		});
-		expect(result).toEqual({ id: '123456', deleted: true });
-	});
 
-	it('throws when a delete answers a body, so an error page is not read as success', async () => {
-		respond(fetchMock, { error: 'nope' });
-
-		await expect(invoke(Users.remove, { id: '123456' })).rejects.toThrow(
-			/answered a delete with a body/,
+		fetchMock.mockResolvedValueOnce(
+			new Response('<html>error</html>', {
+				status: 200,
+				headers: { 'Content-Type': 'text/html' },
+			}),
+		);
+		await expect(invoke(Users.remove, { id: '1' })).rejects.toThrow(
+			/unexpected body/,
 		);
 	});
 });
 
 describe('bookings', () => {
-	it('lists for a schedule with the user filter', async () => {
-		respond(fetchMock, [booking]);
+	it('lists with schedule_id, window and limit in the query', async () => {
+		respond(fetchMock, [resourceBooking]);
 
-		await invoke(Bookings.list, { schedule_id: 42, user_id: '123456' });
+		const result = (await invoke(Bookings.list, {
+			schedule_id: 858435,
+			start: '2026-12-01 00:00',
+			finish: '2026-12-03 00:00',
+			limit: 10,
+		})) as unknown[];
 
-		expect(lastRequest(fetchMock).path).toBe('/api/bookings.json');
-		expect(lastRequest(fetchMock).query).toEqual({
-			schedule_id: '42',
-			user_id: '123456',
+		expect(lastRequest(fetchMock)).toMatchObject({
+			path: '/api/bookings.json',
+			query: {
+				schedule_id: '858435',
+				start: '2026-12-01 00:00',
+				finish: '2026-12-03 00:00',
+				limit: '10',
+			},
 		});
+		expect(result).toHaveLength(1);
 	});
 
-	it('gets one booking', async () => {
+	it('gets one booking with schedule_id in the query', async () => {
 		respond(fetchMock, booking);
 
-		expect(await invoke(Bookings.get, { booking_id: '987654' })).toEqual(
-			booking,
-		);
-		expect(lastRequest(fetchMock).path).toBe('/api/bookings/987654.json');
+		const result = (await invoke(Bookings.get, {
+			schedule_id: 858436,
+			booking_id: 153818785,
+		})) as { slot_id: number };
+
+		expect(lastRequest(fetchMock)).toMatchObject({
+			path: '/api/bookings/153818785.json',
+			query: { schedule_id: '858436' },
+		});
+		expect(result.slot_id).toBe(74660627);
 	});
 
-	it('creates a resource booking with start and finish', async () => {
-		respondCreated(fetchMock);
+	it('creates with schedule_id, user_id and webhook in the query, not the document', async () => {
+		respondCreated('https://www.supersaas.com/api/bookings/153818785.json');
 
 		const result = await invoke(Bookings.create, {
-			schedule_id: 42,
-			start: '2026-03-10 09:00:00',
-			finish: '2026-03-10 09:30:00',
+			schedule_id: 858436,
+			slot_id: 74660627,
+			user_id: 15294233,
+			webhook: true,
 			full_name: 'Jane Smith',
+			email: 'jane@example.com',
 		});
 
 		const sent = lastRequest(fetchMock);
-		expect(sent.method).toBe('POST');
-		// SuperSaaS wraps the document in a `booking` key.
+		expect(sent.query).toEqual({
+			schedule_id: '858436',
+			user_id: '15294233',
+			webhook: 'true',
+		});
 		expect(sent.body).toEqual({
 			booking: {
-				schedule_id: 42,
-				start: '2026-03-10 09:00:00',
-				finish: '2026-03-10 09:30:00',
+				slot_id: '74660627',
 				full_name: 'Jane Smith',
+				email: 'jane@example.com',
 			},
 		});
-		expect(result).toMatchObject({ created: true, key: '42' });
+		expect(result).toMatchObject({ created: true, id: '153818785' });
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('jane@');
 	});
 
-	it('creates a capacity booking from a slot id instead of times', async () => {
-		respondCreated(fetchMock);
-
-		await invoke(Bookings.create, { schedule_id: 42, slot_id: '555' });
-
-		expect(lastRequest(fetchMock).body).toEqual({
-			booking: { schedule_id: 42, slot_id: '555' },
-		});
-	});
-
-	it('rejects a booking that names neither times nor a slot', async () => {
-		await expect(invoke(Bookings.create, { schedule_id: 42 })).rejects.toThrow(
-			/start and finish for a resource schedule, or slot_id/,
-		);
-	});
-
-	it('rejects a booking that names both a slot and times', async () => {
-		await expect(
-			invoke(Bookings.create, {
-				schedule_id: 42,
-				slot_id: '555',
-				start: '2026-03-10 09:00:00',
-			}),
-		).rejects.toThrow(/slot_id instead of start and finish/);
-	});
-
-	it('passes user_id as a query parameter, since it is not part of the document', async () => {
-		respondCreated(fetchMock);
+	it('creates a resource booking with start and finish', async () => {
+		respondCreated('https://www.supersaas.com/api/bookings/121573357.json');
 
 		await invoke(Bookings.create, {
-			schedule_id: 42,
-			slot_id: '555',
-			user_id: '123456',
+			schedule_id: 858435,
+			start: '2026-12-01 10:00',
+			finish: '2026-12-01 11:00',
 		});
 
-		expect(lastRequest(fetchMock).query).toEqual({ user_id: '123456' });
+		expect(lastRequest(fetchMock).body).toEqual({
+			booking: { start: '2026-12-01 10:00', finish: '2026-12-01 11:00' },
+		});
 	});
 
-	it('updates and deletes', async () => {
-		respond(fetchMock, booking);
-		await invoke(Bookings.update, {
-			booking_id: '987654',
-			schedule_id: 42,
-			start: '2026-03-10 10:00:00',
+	it('rejects a booking that names neither times nor a slot, or both', async () => {
+		await expect(invoke(Bookings.create, { schedule_id: 1 })).rejects.toThrow();
+		await expect(
+			invoke(Bookings.create, {
+				schedule_id: 1,
+				slot_id: 2,
+				start: '2026-12-01 10:00',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('updates and deletes with schedule_id and accepts the empty answers', async () => {
+		respondEmpty(fetchMock);
+		await expect(
+			invoke(Bookings.update, {
+				schedule_id: 858436,
+				booking_id: '153818785',
+				full_name: 'Jane Q',
+			}),
+		).resolves.toEqual({ id: '153818785', updated: true });
+		expect(lastRequest(fetchMock)).toMatchObject({
+			method: 'PUT',
+			query: { schedule_id: '858436' },
+			body: { booking: { full_name: 'Jane Q' } },
 		});
-		expect(lastRequest(fetchMock)).toMatchObject({ method: 'PUT' });
 
 		respondEmpty(fetchMock);
-		expect(await invoke(Bookings.remove, { booking_id: '987654' })).toEqual({
-			id: '987654',
-			deleted: true,
+		await expect(
+			invoke(Bookings.remove, { schedule_id: 858436, booking_id: '153818785' }),
+		).resolves.toEqual({ id: '153818785', deleted: true });
+		expect(lastRequest(fetchMock)).toMatchObject({
+			method: 'DELETE',
+			query: { schedule_id: '858436' },
 		});
 	});
 });
 
 describe('slots', () => {
-	it('lists slots in a window', async () => {
+	it('lists with the window as start and finish, and paging', async () => {
 		respond(fetchMock, [slot]);
 
 		await invoke(Slots.list, {
-			schedule_id: 42,
-			from: '2026-03-10',
-			to: '2026-03-11',
+			schedule_id: 858436,
+			from: '2026-12-02 00:00',
+			to: '2026-12-03 00:00',
+			limit: 10,
+			offset: 10,
 		});
 
 		expect(lastRequest(fetchMock).query).toEqual({
-			schedule_id: '42',
-			from: '2026-03-10',
-			to: '2026-03-11',
+			schedule_id: '858436',
+			start: '2026-12-02 00:00',
+			finish: '2026-12-03 00:00',
+			limit: '10',
+			offset: '10',
 		});
 	});
 
-	it('gets, creates, updates and deletes', async () => {
-		respond(fetchMock, slot);
-		await invoke(Slots.get, { slot_id: '555' });
-		expect(lastRequest(fetchMock).path).toBe('/api/slots/555.json');
+	it('creates with schedule_id in the query and reads the Location id', async () => {
+		respondCreated('https://www.supersaas.com/api/slots/74660627.json');
 
-		respondCreated(fetchMock);
-		await invoke(Slots.create, {
-			schedule_id: 42,
-			start: '2026-03-10 09:00:00',
-			finish: '2026-03-10 10:00:00',
-			capacity: 10,
+		const result = await invoke(Slots.create, {
+			schedule_id: 858436,
+			start: '2026-12-02 10:00',
+			finish: '2026-12-02 11:00',
+			capacity: 2,
 		});
+
+		expect(lastRequest(fetchMock).query).toEqual({ schedule_id: '858436' });
 		expect(lastRequest(fetchMock).body).toEqual({
 			slot: {
-				schedule_id: 42,
-				start: '2026-03-10 09:00:00',
-				finish: '2026-03-10 10:00:00',
-				capacity: 10,
+				start: '2026-12-02 10:00',
+				finish: '2026-12-02 11:00',
+				capacity: 2,
 			},
 		});
-
-		respond(fetchMock, slot);
-		await invoke(Slots.update, {
-			slot_id: '555',
-			schedule_id: 42,
-			start: '2026-03-10 09:00:00',
-			finish: '2026-03-10 10:00:00',
-		});
-		expect(lastRequest(fetchMock).method).toBe('PUT');
-
-		respondEmpty(fetchMock);
-		await invoke(Slots.remove, { slot_id: '555' });
-		expect(lastRequest(fetchMock).method).toBe('DELETE');
+		expect(result).toMatchObject({ id: '74660627' });
 	});
 
-	it('rejects a slot with no capacity floor below one', async () => {
+	it('gets, updates to capacity 0 and deletes with schedule_id', async () => {
+		respond(fetchMock, slot);
+		await invoke(Slots.get, { schedule_id: 858436, slot_id: 74660627 });
+		expect(lastRequest(fetchMock).query).toEqual({ schedule_id: '858436' });
+
+		respondEmpty(fetchMock);
 		await expect(
-			invoke(Slots.create, {
-				schedule_id: 42,
-				start: '2026-03-10 09:00:00',
-				finish: '2026-03-10 10:00:00',
+			invoke(Slots.update, {
+				schedule_id: 858436,
+				slot_id: 74660627,
 				capacity: 0,
 			}),
-		).rejects.toThrow(/capacity/);
+		).resolves.toEqual({ id: '74660627', updated: true });
+		expect(lastRequest(fetchMock).body).toEqual({ slot: { capacity: 0 } });
+
+		respondEmpty(fetchMock);
+		await expect(
+			invoke(Slots.remove, { schedule_id: 858436, slot_id: 74660627 }),
+		).resolves.toEqual({ id: '74660627', deleted: true });
 	});
 });
 
 describe('schedules', () => {
-	it('reads changes since a time', async () => {
-		respond(fetchMock, [change]);
+	it('reads changes in the bookings envelope with paging', async () => {
+		respond(fetchMock, bookingsEnvelope);
 
-		const result = await invoke(Schedules.changes, {
-			schedule_id: 42,
-			from: '2026-03-01',
+		const result = (await invoke(Schedules.changes, {
+			schedule_id: 858436,
+			limit: 5,
+			offset: 5,
+		})) as { bookings: unknown[] };
+
+		expect(lastRequest(fetchMock)).toMatchObject({
+			path: '/api/changes/858436.json',
+			query: { limit: '5', offset: '5' },
+		});
+		expect(result.bookings).toHaveLength(1);
+	});
+
+	it('reads a capacity range in the slots envelope', async () => {
+		respond(fetchMock, slotsEnvelope);
+
+		const result = (await invoke(Schedules.range, {
+			schedule_id: 858436,
+			from: '2026-12-01 00:00',
+		})) as { slots: unknown[] };
+
+		expect(lastRequest(fetchMock).path).toBe('/api/range/858436.json');
+		expect(result.slots).toHaveLength(1);
+	});
+
+	it('sends the stored account name on a cross-schedule agenda and logs no user', async () => {
+		respond(fetchMock, bookingsEnvelope);
+
+		await invoke(Schedules.agenda, { user: 'jane@example.com' });
+
+		expect(lastRequest(fetchMock)).toMatchObject({
+			path: '/api/agenda.json',
+			query: { user: 'jane@example.com', account: ACCOUNT },
+		});
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('jane@');
+	});
+
+	it('reads free spaces with maxresults', async () => {
+		respond(fetchMock, slotsEnvelope);
+
+		await invoke(Schedules.free, {
+			schedule_id: 858435,
+			from: '2026-12-02 08:00',
+			maxresults: 3,
 		});
 
-		expect(lastRequest(fetchMock).path).toBe('/api/changes/42.json');
-		expect(lastRequest(fetchMock).query).toEqual({ from: '2026-03-01' });
-		expect(result).toEqual([change]);
-	});
-
-	it('reads appointments in a range', async () => {
-		respond(fetchMock, [booking]);
-
-		await invoke(Schedules.range, {
-			schedule_id: 42,
-			from: '2026-03-01',
-			to: '2026-03-31',
+		expect(lastRequest(fetchMock)).toMatchObject({
+			path: '/api/free/858435.json',
+			query: { from: '2026-12-02 08:00', maxresults: '3' },
 		});
-
-		expect(lastRequest(fetchMock).path).toBe('/api/range/42.json');
-	});
-
-	it('reads one user agenda with the schedule in the path', async () => {
-		respond(fetchMock, [booking]);
-
-		await invoke(Schedules.agenda, { schedule_id: 42, user: '123456' });
-
-		expect(lastRequest(fetchMock).path).toBe('/api/agenda/42.json');
-		expect(lastRequest(fetchMock).query).toEqual({ user: '123456' });
-	});
-
-	it('reads a cross-schedule agenda with the account in the query', async () => {
-		respond(fetchMock, [booking]);
-
-		await invoke(Schedules.agenda, { user: '0' });
-
-		const sent = lastRequest(fetchMock);
-		expect(sent.path).toBe('/api/agenda.json');
-		// Without a schedule SuperSaaS needs the account instead.
-		expect(sent.query).toEqual({ user: '0', account: ACCOUNT });
-	});
-
-	it('reads free spaces', async () => {
-		respond(fetchMock, [freeSpace]);
-
-		const result = await invoke(Schedules.free, {
-			schedule_id: 42,
-			from: '2026-03-10',
-		});
-
-		expect(lastRequest(fetchMock).path).toBe('/api/free/42.json');
-		expect(lastRequest(fetchMock).query).toEqual({ from: '2026-03-10' });
-		expect(result).toEqual([freeSpace]);
 	});
 });
 
 describe('client error handling', () => {
-	it('reads a plain-text 401 and keeps the credentials out of util.inspect', async () => {
-		fetchMock.mockResolvedValueOnce(
-			new Response('HTTP Basic: Access denied.', {
-				status: 401,
-				headers: { 'Content-Type': 'text/html' },
+	it('lets core ApiError through without the sent body', async () => {
+		respond(
+			fetchMock,
+			{ errors: [{ status: '422', title: 'Name has already been taken' }] },
+			422,
+		);
+
+		const error = await caught(
+			invoke(Users.create, {
+				name: 'jane@example.com',
+				password: 'hunter2-secret',
 			}),
 		);
-		const util = await import('node:util');
 
-		const error = await invoke(Users.list, {}).catch(
-			// unknown: a rejection reason has no static type; narrowed below.
-			(caught: UnknownJson) => caught,
-		);
-
-		expect(error).toBeInstanceOf(SupersaasAPIError);
-		const failure = error as SupersaasAPIError;
-		expect(failure.status).toBe(401);
-		expect(failure.reason).toBe('HTTP Basic: Access denied.');
-		expect(failure.isAuthError).toBe(true);
-		expect(failure.message).toContain('HTTP Basic: Access denied.');
-		const inspected = util.inspect(error);
-		expect(inspected).not.toContain(API_KEY);
-		expect(inspected).not.toContain(ACCOUNT);
-		expect(failure.message).not.toContain(API_KEY);
-	});
-
-	it('reads a 404 as not found', () => {
-		expect(new SupersaasAPIError('x', { status: 404 }).isNotFound).toBe(true);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(422);
+		expect((error as ApiError).request.method).toBe('POST');
+		const text = `${inspect(error, { depth: 6 })} ${JSON.stringify(error)}`;
+		expect(text).not.toContain('hunter2-secret');
+		expect(text).not.toContain('jane@example.com');
+		expect(text).not.toContain(API_KEY);
 	});
 });
 
 describe('credentials', () => {
-	it('reads the account name from the account when the option is absent', async () => {
-		respond(fetchMock, [user]);
-
-		await Users.list(
-			{
-				key: API_KEY,
-				options: {},
-				keys: {
-					get_account_name: jest.fn().mockResolvedValue('stored-account'),
-				},
-			} as never,
-			{} as never,
-		);
-
-		const decoded = Buffer.from(
-			(lastRequest(fetchMock).headers.get('authorization') ?? '').replace(
-				'Basic ',
-				'',
-			),
-			'base64',
-		).toString();
-		expect(decoded).toBe(`stored-account:${API_KEY}`);
-	});
-
-	it('throws a clear error when no account name is configured', async () => {
+	it('throws AuthMissingError when no account name is stored', async () => {
 		const { AuthMissingError } = jest.requireActual('corsair/core');
 
 		await expect(

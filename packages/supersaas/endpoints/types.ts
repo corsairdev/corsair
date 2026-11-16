@@ -7,12 +7,34 @@ import { z } from 'zod';
  *
  * A wrapped document is required only on write: SuperSaaS wants `{ user: {...} }`,
  * `{ booking: {...} }` or `{ slot: {...} }`, and the endpoints build that
- * wrapper. Reads answer the bare record or a bare array.
+ * wrapper. Record and list reads answer the bare record or a bare array; the
+ * schedule reads (changes, range, agenda, free) answer `{ bookings }` or
+ * `{ slots }`. Ids arrive as numbers (checked live 11-16), so output ids take
+ * a number or a string.
  *
  * Contract: https://www.supersaas.com/info/dev/user_api and /appointment_api
  */
 
 // ── Shared pieces ─────────────────────────────────────────────────────────
+
+/** An id as SuperSaaS returns it: a number, or a string for your own keys. */
+const IdOut = z.union([z.number(), z.string()]).nullish();
+
+/** A number SuperSaaS may send as text, such as a price or credit. */
+const NumOrStr = z.union([z.number(), z.string()]).nullish();
+
+/** An id a caller passes: a number or a digit string, sent in the URL. */
+const IdIn = z
+	.union([z.number().int(), z.string().min(1)])
+	.transform((value) => String(value));
+
+/** The schedule a booking or slot belongs to, sent as a query parameter. */
+const ScheduleId = z
+	.number()
+	.int()
+	.describe(
+		'The schedule id, the number at the end of the Configure Overview URL.',
+	);
 
 /** SuperSaaS dates are local wall-clock times, either a date or with a time. */
 const LocalDateTime = z
@@ -53,8 +75,8 @@ const paging = {
  */
 const UserSchema = z
 	.object({
-		id: z.string().nullish(),
-		fk: z.string().nullish().describe('Your own key, when you supplied one.'),
+		id: IdOut,
+		fk: IdOut.describe('Your own key, when you supplied one.'),
 		name: z.string().nullish(),
 		email: z.string().nullish(),
 		full_name: z.string().nullish(),
@@ -66,9 +88,9 @@ const UserSchema = z
 		field_1: z.string().nullish(),
 		field_2: z.string().nullish(),
 		super_field: z.string().nullish(),
-		credit: z.string().nullish(),
+		credit: NumOrStr,
 		role: z.number().nullish().describe('3 regular, 4 superuser, -1 blocked.'),
-		group: z.number().nullish(),
+		group: IdOut,
 		created_on: z.string().nullish(),
 		last_login: z.string().nullish(),
 	})
@@ -79,12 +101,18 @@ export type SupersaasUser = z.infer<typeof UserSchema>;
 /** A booking. Its fields are set per schedule, so most are optional here. */
 const BookingSchema = z
 	.object({
-		id: z.string().nullish(),
+		id: IdOut,
 		start: LocalDateTime.nullish(),
 		finish: LocalDateTime.nullish(),
 		created_on: z.string().nullish(),
 		updated_on: z.string().nullish(),
-		user_id: z.string().nullish(),
+		created_by: z.string().nullish(),
+		schedule_id: IdOut,
+		schedule_name: z.string().nullish(),
+		price: NumOrStr,
+		waitlisted: z.boolean().nullish(),
+		deleted: z.boolean().nullish(),
+		user_id: IdOut,
 		user_name: z.string().nullish(),
 		full_name: z.string().nullish(),
 		email: z.string().nullish(),
@@ -92,9 +120,9 @@ const BookingSchema = z
 		mobile: z.string().nullish(),
 		phone: z.string().nullish(),
 		country: z.string().nullish(),
-		resource_id: z.string().nullish(),
+		resource_id: IdOut,
 		resource_name: z.string().nullish(),
-		slot_id: z.string().nullish(),
+		slot_id: IdOut,
 		lat: z.number().nullish(),
 		long: z.number().nullish(),
 		field_1: z.string().nullish(),
@@ -102,7 +130,7 @@ const BookingSchema = z
 		field_1_r: z.string().nullish(),
 		field_2_r: z.string().nullish(),
 		super_field: z.string().nullish(),
-		form_id: z.string().nullish(),
+		form_id: IdOut,
 	})
 	.loose();
 
@@ -111,51 +139,61 @@ export type SupersaasBooking = z.infer<typeof BookingSchema>;
 /** A slot, which exists only on a capacity-type schedule. */
 const SlotSchema = z
 	.object({
-		id: z.string().nullish(),
+		id: IdOut,
 		start: LocalDateTime.nullish(),
 		finish: LocalDateTime.nullish(),
+		title: z.string().nullish(),
+		description: z.string().nullish(),
+		location: z.string().nullish(),
 		created_on: z.string().nullish(),
 		updated_on: z.string().nullish(),
-		booked: z.number().nullish(),
-		capacity: z.number().nullish(),
-		resource_id: z.string().nullish(),
+		count: z.number().nullish().describe('Bookings in the slot (free reads).'),
+		capacity: z
+			.number()
+			.nullish()
+			.describe('Null or empty means no limit; 0 accepts no bookings.'),
+		price: NumOrStr,
+		resource_id: IdOut,
 		resource_name: z.string().nullish(),
+		bookings: z.array(BookingSchema).nullish(),
 	})
 	.loose();
 
 export type SupersaasSlot = z.infer<typeof SlotSchema>;
 
 /**
- * A change record from `/changes`: the same object the booking or slot route
- * returns, plus a `type` naming what happened. It is kept loose because a
- * change can be either kind.
+ * The schedule reads answer an envelope: `{ bookings: [...] }` for a resource
+ * or service schedule, `{ slots: [...] }` for a capacity schedule or with
+ * `slot=true` (each slot then carries its `bookings`), checked live 11-16.
  */
-const ChangeSchema = z
+const ScheduleReadSchema = z
 	.object({
-		type: z
-			.string()
-			.nullish()
-			.describe('What changed, such as booking or slot.'),
-		id: z.string().nullish(),
-		start: LocalDateTime.nullish(),
-		finish: LocalDateTime.nullish(),
-		updated_on: z.string().nullish(),
+		bookings: z.array(BookingSchema).nullish(),
+		slots: z.array(SlotSchema).nullish(),
 	})
 	.loose();
 
-export type SupersaasChange = z.infer<typeof ChangeSchema>;
+export type SupersaasScheduleRead = z.infer<typeof ScheduleReadSchema>;
 
-/** A free-space entry from `/free`. */
-const FreeSpaceSchema = z
-	.object({
-		start: LocalDateTime.nullish(),
-		finish: LocalDateTime.nullish(),
-		resource_id: z.string().nullish(),
-		resource_name: z.string().nullish(),
-	})
-	.loose();
+/** Updates answer 200 with an empty body, so the result records the id. */
+const UpdatedSchema = z.object({
+	id: z.string(),
+	updated: z.literal(true),
+});
 
-export type SupersaasFreeSpace = z.infer<typeof FreeSpaceSchema>;
+export type SupersaasUpdated = z.infer<typeof UpdatedSchema>;
+
+/**
+ * Creates answer 201 with an empty body and the new record's URL in the
+ * `Location` header; the id is read from it.
+ */
+const CreatedSchema = z.object({
+	created: z.literal(true),
+	id: z.string().describe('The new record id, from the Location header.'),
+	location: z.string().describe('The new record URL SuperSaaS returned.'),
+});
+
+export type SupersaasCreated = z.infer<typeof CreatedSchema>;
 
 // ── users ─────────────────────────────────────────────────────────────────
 
@@ -224,6 +262,7 @@ export type UsersCreateWithKeyInput = z.infer<
 >;
 
 const UserTargetSchema = z.object({ id: UserId });
+// UserId is a string already; numeric ids pass as digit strings.
 
 export type UserTargetInput = z.infer<typeof UserTargetSchema>;
 
@@ -248,7 +287,7 @@ const UsersUpdateInputSchema = z.object({
 
 export type UsersUpdateInput = z.infer<typeof UsersUpdateInputSchema>;
 
-const UsersUpdateResponseSchema = UserSchema;
+const UsersUpdateResponseSchema = UpdatedSchema;
 
 export type UsersUpdateResponse = z.infer<typeof UsersUpdateResponseSchema>;
 
@@ -262,23 +301,24 @@ export type SupersaasDeleted = z.infer<typeof DeletedSchema>;
 
 // ── bookings ──────────────────────────────────────────────────────────────
 
-const ScheduleTargetSchema = z.object({
-	schedule_id: z
-		.number()
-		.int()
-		.describe(
-			'The schedule id, the number at the end of the Configure Overview URL.',
-		),
-});
+const ScheduleTargetSchema = z.object({ schedule_id: ScheduleId });
 
 export type ScheduleTargetInput = z.infer<typeof ScheduleTargetSchema>;
 
 const BookingsListInputSchema = z.object({
-	schedule_id: z.number().int(),
-	user_id: z.string().optional(),
-	slot_id: z.string().optional(),
-	/** SuperSaaS pages bookings by a `from` time rather than by offset. */
-	from: LocalDateTime.optional(),
+	schedule_id: ScheduleId,
+	start: LocalDateTime.optional().describe(
+		'Only bookings from this time (resource and service schedules).',
+	),
+	finish: LocalDateTime.optional().describe(
+		'Only bookings up to this time (resource and service schedules).',
+	),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Records to return. For paging use schedules.range.'),
 });
 
 export type BookingsListInput = z.infer<typeof BookingsListInputSchema>;
@@ -294,11 +334,11 @@ export type BookingsListResponse = z.infer<typeof BookingsListResponseSchema>;
  * sending a slot id on a resource booking's fields at once.
  */
 const bookingBody = {
-	schedule_id: z.number().int(),
+	schedule_id: ScheduleId,
 	start: LocalDateTime.optional(),
 	finish: LocalDateTime.optional(),
-	slot_id: z.string().optional(),
-	resource_id: z.string().optional(),
+	slot_id: IdIn.optional(),
+	resource_id: IdIn.optional(),
 	full_name: z.string().nullish(),
 	email: z.string().nullish(),
 	address: z.string().nullish(),
@@ -311,16 +351,18 @@ const bookingBody = {
 	field_2_r: z.string().nullish(),
 	super_field: z.string().nullish(),
 	form_id: z.string().nullish(),
-	webhook: z.boolean().optional(),
 };
 
 const BookingsCreateInputSchema = z
 	.object({
 		...bookingBody,
-		user_id: z
-			.string()
+		user_id: IdIn.optional().describe(
+			'Create the booking on behalf of this user (id or your own key).',
+		),
+		webhook: z
+			.boolean()
 			.optional()
-			.describe('Create the booking on behalf of this user.'),
+			.describe("Trigger the schedule's webhooks for this booking."),
 	})
 	.superRefine((value, ctx) => {
 		// A schedule is either resource-based (start and finish) or capacity-based
@@ -348,15 +390,15 @@ const BookingsCreateInputSchema = z
 
 export type BookingsCreateInput = z.infer<typeof BookingsCreateInputSchema>;
 
-/** A booking create also answers 201 with an empty body and a Location header. */
-const BookingsCreateResponseSchema = createdSchema(z.string());
+const BookingsCreateResponseSchema = CreatedSchema;
 
 export type BookingsCreateResponse = z.infer<
 	typeof BookingsCreateResponseSchema
 >;
 
 const BookingTargetSchema = z.object({
-	booking_id: z.string().min(1),
+	schedule_id: ScheduleId,
+	booking_id: IdIn,
 });
 
 export type BookingTargetInput = z.infer<typeof BookingTargetSchema>;
@@ -366,13 +408,13 @@ const BookingsGetResponseSchema = BookingSchema;
 export type BookingsGetResponse = z.infer<typeof BookingsGetResponseSchema>;
 
 const BookingsUpdateInputSchema = z.object({
-	booking_id: z.string().min(1),
 	...bookingBody,
+	booking_id: IdIn,
 });
 
 export type BookingsUpdateInput = z.infer<typeof BookingsUpdateInputSchema>;
 
-const BookingsUpdateResponseSchema = BookingSchema;
+const BookingsUpdateResponseSchema = UpdatedSchema;
 
 export type BookingsUpdateResponse = z.infer<
 	typeof BookingsUpdateResponseSchema
@@ -381,9 +423,21 @@ export type BookingsUpdateResponse = z.infer<
 // ── slots ─────────────────────────────────────────────────────────────────
 
 const SlotsListInputSchema = z.object({
-	schedule_id: z.number().int(),
-	from: LocalDateTime.optional(),
-	to: LocalDateTime.optional(),
+	schedule_id: ScheduleId,
+	from: LocalDateTime.optional().describe(
+		'Slots from this time (sent as start).',
+	),
+	to: LocalDateTime.optional().describe(
+		'Slots up to this time (sent as finish).',
+	),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(2500)
+		.optional()
+		.describe('Records to return, default 100, max 2500.'),
+	offset: z.number().int().min(0).optional().describe('Records to skip.'),
 });
 
 export type SlotsListInput = z.infer<typeof SlotsListInputSchema>;
@@ -393,23 +447,33 @@ const SlotsListResponseSchema = z.array(SlotSchema);
 export type SlotsListResponse = z.infer<typeof SlotsListResponseSchema>;
 
 const slotBody = {
-	schedule_id: z.number().int(),
+	schedule_id: ScheduleId,
 	start: LocalDateTime,
 	finish: LocalDateTime,
-	capacity: z.number().int().min(1).optional(),
-	resource_id: z.string().optional(),
+	title: z.string().optional(),
+	description: z.string().max(2000).optional(),
+	location: z.string().optional(),
+	capacity: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Bookings the slot takes; 0 closes it.'),
+	price: z.union([z.number(), z.string()]).optional(),
 };
 
 const SlotsCreateInputSchema = z.object(slotBody);
 
 export type SlotsCreateInput = z.infer<typeof SlotsCreateInputSchema>;
 
-/** A slot create also answers 201 with an empty body and a Location header. */
-const SlotsCreateResponseSchema = createdSchema(z.string());
+const SlotsCreateResponseSchema = CreatedSchema;
 
 export type SlotsCreateResponse = z.infer<typeof SlotsCreateResponseSchema>;
 
-const SlotTargetSchema = z.object({ slot_id: z.string().min(1) });
+const SlotTargetSchema = z.object({
+	schedule_id: ScheduleId,
+	slot_id: IdIn,
+});
 
 export type SlotTargetInput = z.infer<typeof SlotTargetSchema>;
 
@@ -418,44 +482,68 @@ const SlotsGetResponseSchema = SlotSchema;
 export type SlotsGetResponse = z.infer<typeof SlotsGetResponseSchema>;
 
 const SlotsUpdateInputSchema = z.object({
-	slot_id: z.string().min(1),
-	...slotBody,
+	schedule_id: ScheduleId,
+	slot_id: IdIn,
+	start: LocalDateTime.optional(),
+	finish: LocalDateTime.optional(),
+	title: slotBody.title,
+	description: slotBody.description,
+	location: slotBody.location,
+	capacity: slotBody.capacity,
+	price: slotBody.price,
 });
 
 export type SlotsUpdateInput = z.infer<typeof SlotsUpdateInputSchema>;
 
-const SlotsUpdateResponseSchema = SlotSchema;
+const SlotsUpdateResponseSchema = UpdatedSchema;
 
 export type SlotsUpdateResponse = z.infer<typeof SlotsUpdateResponseSchema>;
 
 // ── schedule reads ────────────────────────────────────────────────────────
 
+const scheduleReadPaging = {
+	limit: z.number().int().min(1).optional().describe('Records to return.'),
+	offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Records to skip, to read past a full page.'),
+	slot: z
+		.boolean()
+		.optional()
+		.describe('Group the answer by slot (capacity schedules).'),
+};
+
 const ScheduleChangesInputSchema = z.object({
-	schedule_id: z.number().int(),
+	schedule_id: ScheduleId,
 	from: LocalDateTime.optional().describe(
 		'Only changes after this time. Omitted shows the ten most recent.',
 	),
+	to: LocalDateTime.optional(),
+	...scheduleReadPaging,
 });
 
 export type ScheduleChangesInput = z.infer<typeof ScheduleChangesInputSchema>;
 
-const ScheduleChangesResponseSchema = z.array(ChangeSchema);
+const ScheduleChangesResponseSchema = ScheduleReadSchema;
 
 export type ScheduleChangesResponse = z.infer<
 	typeof ScheduleChangesResponseSchema
 >;
 
 const ScheduleRangeInputSchema = z.object({
-	schedule_id: z.number().int(),
+	schedule_id: ScheduleId,
 	from: LocalDateTime.optional().describe(
 		'Appointments starting at or after this.',
 	),
 	to: LocalDateTime.optional().describe('Appointments starting before this.'),
+	...scheduleReadPaging,
 });
 
 export type ScheduleRangeInput = z.infer<typeof ScheduleRangeInputSchema>;
 
-const ScheduleRangeResponseSchema = z.array(BookingSchema);
+const ScheduleRangeResponseSchema = ScheduleReadSchema;
 
 export type ScheduleRangeResponse = z.infer<typeof ScheduleRangeResponseSchema>;
 
@@ -464,7 +552,7 @@ export type ScheduleRangeResponse = z.infer<typeof ScheduleRangeResponseSchema>;
  * `account` is then required, which the endpoint fills from the credentials.
  */
 const ScheduleAgendaInputSchema = z.object({
-	schedule_id: z.number().int().optional(),
+	schedule_id: ScheduleId.optional(),
 	user: z
 		.string()
 		.describe("The user's name or id, or 0 for the administrator."),
@@ -473,22 +561,28 @@ const ScheduleAgendaInputSchema = z.object({
 
 export type ScheduleAgendaInput = z.infer<typeof ScheduleAgendaInputSchema>;
 
-const ScheduleAgendaResponseSchema = z.array(BookingSchema);
+const ScheduleAgendaResponseSchema = ScheduleReadSchema;
 
 export type ScheduleAgendaResponse = z.infer<
 	typeof ScheduleAgendaResponseSchema
 >;
 
 const ScheduleFreeInputSchema = z.object({
-	schedule_id: z.number().int(),
+	schedule_id: ScheduleId,
 	from: LocalDateTime.describe(
 		'Return free spaces that occur after this time.',
 	),
+	maxresults: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Spaces to return, default 10.'),
 });
 
 export type ScheduleFreeInput = z.infer<typeof ScheduleFreeInputSchema>;
 
-const ScheduleFreeResponseSchema = z.array(FreeSpaceSchema);
+const ScheduleFreeResponseSchema = ScheduleReadSchema;
 
 export type ScheduleFreeResponse = z.infer<typeof ScheduleFreeResponseSchema>;
 
@@ -522,17 +616,17 @@ export type SupersaasEndpointOutputs = {
 	usersGet: UsersGetResponse;
 	usersCreate: UsersCreateResponse;
 	usersCreateWithKey: UsersCreateWithKeyResponse;
-	usersUpdate: UsersUpdateResponse;
+	usersUpdate: SupersaasUpdated;
 	usersDelete: SupersaasDeleted;
 	bookingsList: BookingsListResponse;
 	bookingsGet: BookingsGetResponse;
 	bookingsCreate: BookingsCreateResponse;
-	bookingsUpdate: BookingsUpdateResponse;
+	bookingsUpdate: SupersaasUpdated;
 	bookingsDelete: SupersaasDeleted;
 	slotsList: SlotsListResponse;
 	slotsGet: SlotsGetResponse;
 	slotsCreate: SlotsCreateResponse;
-	slotsUpdate: SlotsUpdateResponse;
+	slotsUpdate: SupersaasUpdated;
 	slotsDelete: SupersaasDeleted;
 	scheduleChanges: ScheduleChangesResponse;
 	scheduleRange: ScheduleRangeResponse;
@@ -540,29 +634,8 @@ export type SupersaasEndpointOutputs = {
 	scheduleFree: ScheduleFreeResponse;
 };
 
-/**
- * A create answers 201 with an **empty body**: SuperSaaS puts the new id only in
- * a `Location` header, which core's client cannot return alongside the body. The
- * result therefore says what was created and echoes the key the caller supplied,
- * and a read is needed to see the stored record.
- */
-function createdSchema<Key extends z.ZodType>(key: Key) {
-	return z.object({
-		created: z.literal(true),
-		/** The key the caller supplied, or the record's login name. */
-		key,
-		/** The id may be absent, because it lived in the Location header. */
-		id: z
-			.string()
-			.optional()
-			.describe(
-				'Present only when SuperSaaS answered a body; the id otherwise arrives in a Location header this client cannot read.',
-			),
-	});
-}
-
-const UsersCreateResponseSchema = createdSchema(z.string());
-const UsersCreateWithKeyResponseSchema = createdSchema(z.string());
+const UsersCreateResponseSchema = CreatedSchema;
+const UsersCreateWithKeyResponseSchema = CreatedSchema;
 
 export type UsersCreateResponse = z.infer<typeof UsersCreateResponseSchema>;
 export type UsersCreateWithKeyResponse = z.infer<
