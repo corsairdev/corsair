@@ -18,13 +18,13 @@ pnpm add @corsair-dev/telnyx
 | `callControlApplications.get` | `telnyx.api.callControlApplications.get` | `read` | Read one call control application by ID |
 | `callControlApplications.list` | `telnyx.api.callControlApplications.list` | `read` | List the call control applications with their webhook URLs |
 | `callControlApplications.update` | `telnyx.api.callControlApplications.update` | `write` | Change an application's webhook URL, name or active state |
-| `calls.create` | `telnyx.api.calls.create` | `write` | Place an outbound call through a call control application, which dials the number and bills per minute |
+| `calls.create` | `telnyx.api.calls.create` | `destructive` | Place an outbound call through a call control application, which dials the number and bills per minute |
 | `calls.get` | `telnyx.api.calls.get` | `read` | Read one call with its state, direction and timestamps |
-| `calls.hangup` | `telnyx.api.calls.hangup` | `write` | Hang up an active call, ending it for both legs |
-| `calls.speak` | `telnyx.api.calls.speak` | `write` | Read text aloud on an active call using text to speech |
-| `messages.delete` | `telnyx.api.messages.delete` | `destructive` | Delete a message record from the messaging log; the message itself was already delivered or failed |
-| `messages.get` | `telnyx.api.messages.get` | `read` | Read one message with its delivery status, parts, cost and any errors |
-| `messages.send` | `telnyx.api.messages.send` | `write` | Send an SMS or MMS from a Telnyx number, charging the account per part; text or at least one media URL is required |
+| `calls.hangup` | `telnyx.api.calls.hangup` | `destructive` | Hang up an active call, ending it for both legs |
+| `calls.speak` | `telnyx.api.calls.speak` | `destructive` | Read text aloud on an active call using text to speech |
+| `messages.delete` | `telnyx.api.messages.delete` | `destructive` | Cancel a scheduled message before Telnyx sends it; a message that already went out cannot be cancelled |
+| `messages.get` | `telnyx.api.messages.get` | `read` | Read one message with its delivery status, parts, cost and the errors Telnyx recorded |
+| `messages.send` | `telnyx.api.messages.send` | `destructive` | Send an SMS or MMS from a Telnyx number, charging the account per part; text or at least one media URL is required |
 | `messagingProfiles.create` | `telnyx.api.messagingProfiles.create` | `write` | Create a messaging profile, which groups numbers and sets where inbound messages are delivered |
 | `messagingProfiles.delete` | `telnyx.api.messagingProfiles.delete` | `destructive` | Delete a messaging profile, which detaches its numbers and stops inbound delivery |
 | `messagingProfiles.get` | `telnyx.api.messagingProfiles.get` | `read` | Read one messaging profile by ID |
@@ -33,7 +33,7 @@ pnpm add @corsair-dev/telnyx
 | `phoneNumbers.delete` | `telnyx.api.phoneNumbers.delete` | `destructive` | Release a phone number from the account; it cannot be recovered once released |
 | `phoneNumbers.get` | `telnyx.api.phoneNumbers.get` | `read` | Read one phone number record by ID |
 | `phoneNumbers.list` | `telnyx.api.phoneNumbers.list` | `read` | List the numbers on the account with their connection and messaging profile |
-| `phoneNumbers.update` | `telnyx.api.phoneNumbers.update` | `write` | Attach a number to a call control or messaging application, set its emergency address, or retag it |
+| `phoneNumbers.update` | `telnyx.api.phoneNumbers.update` | `write` | Attach a number to a call control application or other connection, or change its tags, billing group or customer reference |
 
 ## Auth
 
