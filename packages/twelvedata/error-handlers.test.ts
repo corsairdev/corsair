@@ -145,6 +145,18 @@ describe('Twelve Data error handlers on core ApiError', () => {
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
+	it('does not retry daily or monthly quota-exhausted messages', () => {
+		for (const message of [
+			'daily quota exhausted',
+			'monthly quota exhausted',
+			'You have run out of API credits for the month.',
+		]) {
+			expect(classify(coreError(429, { code: 429, message }))).toBe(
+				'QUOTA_EXHAUSTED_ERROR',
+			);
+		}
+	});
+
 	it('routes 401, 403 and 5xx by status', () => {
 		expect(classify(coreError(401, badKey))).toBe('AUTH_ERROR');
 		expect(classify(coreError(403, planLimit))).toBe('PERMISSION_ERROR');

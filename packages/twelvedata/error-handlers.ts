@@ -18,13 +18,15 @@ function retryAfterOf(error: Error): number | undefined {
 
 /**
  * Twelve Data answers 429 both for the per-minute limit and for a used-up daily
- * credit allowance. Only the message tells them apart, and waiting minutes will
+ * (or monthly) credit allowance. Only the message tells them apart, and waiting minutes will
  * not bring the daily credits back.
  */
 export function isDailyQuotaExhausted(error: Error): boolean {
 	const body = error instanceof ApiError ? asRecord(error.body) : undefined;
 	const text = `${typeof body?.message === 'string' ? body.message : ''} ${error.message}`;
-	return /for the day|daily (limit|credits|allowance)|per day/i.test(text);
+	return /for the (day|month)|(daily|monthly) (limit|credits|allowance|quota)|quota (exhausted|exceeded)|per (day|month)/i.test(
+		text,
+	);
 }
 
 /**
