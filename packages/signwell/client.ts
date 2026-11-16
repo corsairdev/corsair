@@ -24,7 +24,9 @@ const SIGNWELL_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * SignWell has two error shapes, and the status tells them apart:
+ * A transport failure (timeout, DNS, reset) before SignWell answered; HTTP
+ * errors stay core's ApiError. SignWell has two error body shapes, and the
+ * status tells them apart:
  *
  * - 422 `{ errors: { field: [message, …] } }` for validation problems, one
  *   entry per field that failed.
@@ -123,20 +125,18 @@ export function describeSignwellError(
 ): string {
 	const record = asRecord(body);
 	const meta = asRecord(record?.meta);
-	const fieldErrors = readFieldErrors(record?.errors);
-	// A 422 has no message of its own, so the field errors are the message.
+	const fieldErrors = asRecord(record?.errors);
+	// A 422 has no message of its own. Only the field names go in the message:
+	// SignWell's per-field messages can echo the submitted value (an email, a
+	// phone number). The full errors object stays on the error's `body`.
 	const text =
 		readString(record, 'error') ??
 		readString(meta, 'message') ??
 		readString(record, 'message') ??
-		(fieldErrors ? describeFieldErrors(fieldErrors) : fallback);
+		(fieldErrors && Object.keys(fieldErrors).length > 0
+			? `invalid fields: ${Object.keys(fieldErrors).join(', ')}`
+			: fallback);
 	return status === undefined ? text : `SignWell ${status}: ${text}`;
-}
-
-function describeFieldErrors(errors: Record<string, string[]>): string {
-	return Object.entries(errors)
-		.map(([field, messages]) => `${field}: ${messages.join('; ')}`)
-		.join('. ');
 }
 
 export type SignwellQuery = Record<
@@ -195,16 +195,29 @@ export async function makeSignwellRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including the X-Api-Key header, so `util.inspect(error)` on a
-			// wrapped cause would print the token.
-			throw new SignwellAPIError(
-				describeSignwellError(error.status, error.body, error.message),
+			// Still core's ApiError, so handlers and core keep its status and rate
+			// limit fields (rule R8). It is rebuilt only to drop echoed request data:
+			// the request body holds recipient emails and phone numbers, and core's
+			// fallback message would print a 422 body that can echo them back.
+			throw new ApiError(
+				{ method: error.request.method, url: error.request.url },
 				{
+					url: error.url,
+					ok: false,
 					status: error.status,
+					statusText: error.statusText,
 					body: error.body,
+				},
+				describeSignwellError(
+					error.status,
+					error.body,
+					`SignWell request failed with HTTP ${error.status}`,
+				),
+				{
 					retryAfter: error.retryAfter,
-					method: error.request.method,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}

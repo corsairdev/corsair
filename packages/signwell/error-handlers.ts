@@ -1,8 +1,24 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SignwellAPIError } from './client';
+import { asRecord } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 
+// HTTP failures arrive as core's ApiError. Transport failures (SignwellAPIError)
+// carry no status, so they fall through to DEFAULT.
 function statusOf(error: Error): number | undefined {
-	return error instanceof SignwellAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+const AUTH_CODES = new Set([
+	'missing_authorization_key_error',
+	'api_key_unauthorized_error',
+]);
+
+function isAuthError(error: Error): boolean {
+	if (!(error instanceof ApiError)) return false;
+	const code = asRecord(asRecord(error.body)?.meta)?.error;
+	return (
+		error.status === 401 || (typeof code === 'string' && AUTH_CODES.has(code))
+	);
 }
 
 /**
@@ -20,15 +36,14 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof SignwellAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// 401: the token was revoked or is not valid. SignWell answers this for an
 	// missing document id too when the token is bad, so it always means auth.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SignwellAPIError && error.isAuthError,
+		match: (error: Error) => isAuthError(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 422: a field failed validation, e.g. a recipient with no email, or both
@@ -54,9 +69,9 @@ export const errorHandlers = {
 	// replayed: a create, send or delete may already have landed.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SignwellAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

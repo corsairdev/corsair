@@ -1,5 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SignwellAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 import type { JsonObject } from './json';
 
@@ -13,12 +13,21 @@ function build(options: {
 	retryAfter?: number;
 	body?: JsonObject;
 }) {
-	return new SignwellAPIError(`SignWell ${options.status}`, {
-		status: options.status,
-		method: options.method,
-		retryAfter: options.retryAfter,
-		body: options.body,
-	});
+	return new ApiError(
+		{
+			method: (options.method ?? 'GET') as 'GET' | 'POST',
+			url: '/v1/documents',
+		},
+		{
+			url: 'https://www.signwell.com/api/v1/documents',
+			ok: false,
+			status: options.status ?? 0,
+			statusText: '',
+			body: options.body,
+		},
+		`SignWell ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 const context = (error: Error) => ({
@@ -28,7 +37,13 @@ const context = (error: Error) => ({
 	originalError: error,
 });
 
+// Picks the handler the way core does (first match in key order), so a test
+// fails when its handler's matcher stops matching.
 async function run(name: keyof typeof errorHandlers, error: Error) {
+	const selected = Object.entries(errorHandlers).find(([, entry]) =>
+		entry?.match(error, context(error)),
+	);
+	expect(selected?.[0]).toBe(name);
 	const entry = errorHandlers[name];
 	if (!entry) throw new Error(`missing handler ${name}`);
 	return entry.handler(error, context(error));
@@ -133,14 +148,13 @@ describe('signwell error handlers', () => {
 });
 
 describe('signwell error classification', () => {
-	it('reads the code from meta.error', () => {
+	it('treats a meta.error auth code as an auth error', async () => {
 		const error = build({
-			status: 401,
+			status: 403,
 			body: { meta: { error: 'api_key_unauthorized_error' } },
 		});
 
-		expect(error.code).toBe('api_key_unauthorized_error');
-		expect(error.isAuthError).toBe(true);
+		await expect(run('AUTH_ERROR', error)).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('is not an auth error for a plain 422', () => {
@@ -149,6 +163,6 @@ describe('signwell error classification', () => {
 			body: { errors: { name: ['required'] } },
 		});
 
-		expect(error.isAuthError).toBe(false);
+		expect(matches('AUTH_ERROR', error)).toBe(false);
 	});
 });
