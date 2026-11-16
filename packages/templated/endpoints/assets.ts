@@ -17,6 +17,7 @@ import {
 	GalleryFontsListResponseSchema,
 	UploadsCreateInputSchema,
 	UploadsCreateResponseSchema,
+	UploadsDeletedSchema,
 	UploadsListInputSchema,
 	UploadsListResponseSchema,
 	UploadsRemoveInputSchema,
@@ -97,6 +98,7 @@ export const uploadsRemove: TemplatedEndpoints['uploadsRemove'] = async (
 			event: 'uploads.remove',
 			input: UploadsRemoveInputSchema,
 			output: DeleteResultSchema,
+			confirm: UploadsDeletedSchema,
 		},
 		input,
 		(parsed) => ({

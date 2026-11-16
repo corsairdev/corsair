@@ -50,13 +50,17 @@ export async function callDelete<Input extends z.ZodType>(
 		event: string;
 		input: Input;
 		output: z.ZodType<{ success: true }>;
+		// Routes that answer a body on success (uploads: `{ deleted, message }`)
+		// pass its schema, so a malformed answer fails instead of reporting success.
+		confirm?: z.ZodType;
 	},
 	// unknown: raw caller input, parsed below by the operation's input schema.
 	rawInput: unknown,
 	toRequest: (parsed: z.output<Input>) => TemplatedRequest,
 ): Promise<{ success: true }> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	await makeTemplatedRequest(ctx.key, toRequest(parsed));
+	const raw = await makeTemplatedRequest(ctx.key, toRequest(parsed));
+	operation.confirm?.parse(raw);
 
 	await logEventFromContext(
 		ctx,

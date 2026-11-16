@@ -468,7 +468,10 @@ describe('uploads', () => {
 	});
 
 	it('deletes uploads with repeated ids query values', async () => {
-		respondEmpty(204);
+		respond({
+			deleted: ['upl_1', 'upl_2'],
+			message: 'Successfully deleted 2 upload(s)',
+		});
 
 		const result = await invoke(Assets.uploadsRemove, {
 			uploadIds: ['upl_1', 'upl_2'],
@@ -567,6 +570,24 @@ describe('error handling', () => {
 		expect(require('node:util').inspect(error, { depth: 10 })).not.toContain(
 			'Jane Doe',
 		);
+	});
+
+	it('refuses an upload delete answer without the deleted ids', async () => {
+		respond({ deleted: 'invalid' });
+
+		await expect(
+			invoke(Assets.uploadsRemove, { uploadIds: ['upl_1'] }),
+		).rejects.toThrow();
+	});
+
+	it('sends a tag filter on the template list, comma-separated', async () => {
+		respond([]);
+
+		await invoke(Templates.templatesList, { tags: ['instagram', 'story'] });
+
+		expect(lastRequest().queryObject).toMatchObject({
+			tags: 'instagram,story',
+		});
 	});
 
 	it('refuses host: false on a merge, which would answer file bytes', async () => {

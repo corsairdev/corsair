@@ -304,6 +304,10 @@ export const TemplatesListInputSchema = z.object({
 	query: z.string().optional().describe('Filter templates by name.'),
 	width: z.number().int().optional().describe('Only templates this wide.'),
 	height: z.number().int().optional().describe('Only templates this tall.'),
+	tags: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Only templates with these tags; sent comma-separated.'),
 });
 
 export type TemplatesListInput = z.infer<typeof TemplatesListInputSchema>;
@@ -674,6 +678,14 @@ export const TemplatedEndpointInputSchemas = {
 } as const;
 
 export const DeleteResultSchema = z.object({ success: z.literal(true) });
+
+/** `DELETE /uploads` answers `{ deleted: [ids], message }` (200), not 204. */
+export const UploadsDeletedSchema = z
+	.object({
+		deleted: z.array(z.string()),
+		message: z.string().nullish(),
+	})
+	.loose();
 
 export const TemplatedEndpointOutputSchemas = {
 	rendersList: RendersListResponseSchema,

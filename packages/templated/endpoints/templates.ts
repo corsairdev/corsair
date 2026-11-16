@@ -38,6 +38,7 @@ export const templatesList: TemplatedEndpoints['templatesList'] = async (
 				query: parsed.query,
 				width: parsed.width,
 				height: parsed.height,
+				tags: parsed.tags?.join(','),
 			},
 		}),
 	);
