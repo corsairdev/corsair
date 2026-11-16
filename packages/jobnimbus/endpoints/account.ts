@@ -29,7 +29,7 @@ export const accountGetSettings: JobNimbusEndpoints['accountGetSettings'] =
 		await logEventFromContext(
 			ctx,
 			'jobnimbus.account.get_settings',
-			{ count: 1 },
+			{ count: Array.isArray(parsed) ? parsed.length : 1 },
 			'completed',
 		);
 

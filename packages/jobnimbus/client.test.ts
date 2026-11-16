@@ -147,7 +147,7 @@ describe('JobNimbus HTTP client', () => {
 		});
 	});
 
-	it('re-throws sanitized ApiError when request body contains secrets', async () => {
+	it('re-throws ApiError without the request body (secrets or customer data)', async () => {
 		const sensitiveBody = {
 			name: 'Job',
 			token: 'secret-token-value',
@@ -174,10 +174,9 @@ describe('JobNimbus HTTP client', () => {
 
 		expect(caught).toBeInstanceOf(ApiError);
 		if (caught instanceof ApiError) {
-			expect(caught.request.body).toEqual({
-				name: 'Job',
-				token: '[REDACTED]',
-			});
+			expect(caught.request.body).toBeUndefined();
+			expect(caught.status).toBe(400);
+			expect(caught.message).toBe('Bad Request');
 		}
 	});
 

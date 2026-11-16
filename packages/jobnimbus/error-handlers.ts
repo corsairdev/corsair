@@ -4,7 +4,9 @@ import { ApiError } from 'corsair/http';
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			// An HTTP status is the only signal for ApiError: a 5xx whose message mentions a rate
+			// limit must not get five retries, because a write could run twice.
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('too many requests') || msg.includes('rate limit');
 		},

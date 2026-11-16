@@ -334,7 +334,9 @@ describe('JobNimbus schema and endpoint registry', () => {
 			};
 			const parsed =
 				JobNimbusEndpointOutputSchemas.accountGetSettings.parse(raw);
-			expect(parsed.workflows).toBeDefined();
+			expect(
+				Array.isArray(parsed) ? undefined : parsed.workflows,
+			).toBeDefined();
 		});
 	});
 });

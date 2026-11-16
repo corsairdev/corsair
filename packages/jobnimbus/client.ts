@@ -166,29 +166,28 @@ export async function makeJobNimbusRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const requestBody = redactCredentialFields(error.request.body);
-			if (requestBody.changed) {
-				const sanitizedError = new ApiError(
-					{ ...error.request, body: requestBody.value },
-					{
-						url: error.url,
-						ok: false,
-						status: error.status,
-						statusText: error.statusText,
-						body: error.body,
-					},
-					error.message,
-					{
-						retryAfter: error.retryAfter,
-						rateLimitReset: error.rateLimitReset,
-						rateLimitRemaining: error.rateLimitRemaining,
-						rateLimitLimit: error.rateLimitLimit,
-					},
-				);
-				sanitizedError.stack = error.stack;
-				throw sanitizedError;
-			}
-			throw error;
+			// Request bodies carry customer names, emails, phone numbers and addresses, and core
+			// does not redact bodies, so the rethrown error keeps the status, the provider's
+			// message and the retry metadata but not the body that was sent.
+			const sanitizedError = new ApiError(
+				{ ...error.request, body: undefined },
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
+			sanitizedError.stack = error.stack;
+			throw sanitizedError;
 		}
 		if (error instanceof Error) {
 			throw error;
