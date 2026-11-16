@@ -29,12 +29,12 @@ const SUBDOMAIN_LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
  * `*.simla.com`.
  */
 export function normalizeSimlaComSubdomain(value: string): string | undefined {
-	const host = value
-		.trim()
-		.toLowerCase()
-		.replace(/^https:\/\//, '')
-		.replace(/\/.*$/, '')
-		.replace(/\.simla\.com$/, '');
+	if (value.length > 300) return undefined;
+	let host = value.trim().toLowerCase();
+	if (host.startsWith('https://')) host = host.slice('https://'.length);
+	const slash = host.indexOf('/');
+	if (slash !== -1) host = host.slice(0, slash);
+	if (host.endsWith('.simla.com')) host = host.slice(0, -'.simla.com'.length);
 	return SUBDOMAIN_LABEL.test(host) ? host : undefined;
 }
 

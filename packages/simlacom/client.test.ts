@@ -227,6 +227,9 @@ describe('Simla.com transport', () => {
 			Array(3).fill('https://north-shop.simla.com/api/api-versions'),
 		);
 		expect(normalizeSimlaComSubdomain('acme')).toBe('acme');
+		expect(normalizeSimlaComSubdomain(`https://${'/'.repeat(100_000)}`)).toBe(
+			undefined,
+		);
 	});
 
 	it('sends list query parameters with the [] suffix PHP needs', async () => {
