@@ -38,7 +38,7 @@ export const addDomain: SpotlightrEndpoints['domainsAdd'] = async (
 			path: 'api/user/domain',
 			formData: { domain: parsed.domain },
 		}),
-		{ log: (parsed) => ({ domain: parsed.domain }) },
+		{ log: () => ({}) },
 	);
 
 export const createStudent: SpotlightrEndpoints['studentsCreate'] = async (

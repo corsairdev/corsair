@@ -197,7 +197,7 @@ const spotlightrEndpointMeta = {
 	'videos.list': {
 		riskLevel: 'read',
 		description:
-			'List videos, or one video by ID, optionally narrowed to a project',
+			'List videos (1000 a page), or one video by numeric ID, optionally narrowed to a project',
 	},
 	'videos.create': {
 		riskLevel: 'write',
@@ -205,8 +205,10 @@ const spotlightrEndpointMeta = {
 			'Create a video from a hosted link or an uploaded file, optionally copying player settings from another video',
 	},
 	'videos.updateSource': {
-		riskLevel: 'write',
-		description: 'Point an existing video at a new source URL',
+		// Overwrites the video's source; the old URL is not kept anywhere.
+		riskLevel: 'destructive',
+		description:
+			'Point an existing video at a new source URL, replacing the old source',
 	},
 	'videos.delete': {
 		riskLevel: 'destructive',
@@ -224,7 +226,7 @@ const spotlightrEndpointMeta = {
 	'videos.views': {
 		riskLevel: 'read',
 		description:
-			'List a video views, optionally for one known viewer or only those past one percent watched',
+			'List a video views (30 a page), optionally for one known viewer or only those past one percent watched',
 	},
 	'videos.updateSettings': {
 		riskLevel: 'write',

@@ -87,7 +87,7 @@ describe('spotlightr plugin definition', () => {
 			'videos.listTop': 'read',
 			'videos.metrics': 'read',
 			'videos.updateSettings': 'write',
-			'videos.updateSource': 'write',
+			'videos.updateSource': 'destructive',
 			'videos.views': 'read',
 		});
 	});

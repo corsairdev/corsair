@@ -35,5 +35,10 @@ export const create: SpotlightrEndpoints['projectsCreate'] = async (
 			path: 'groups',
 			formData: { name: parsed.name },
 		}),
-		{ log: (parsed) => ({ name: parsed.name }) },
+		// The project name is customer content, so only the new id is logged.
+		{
+			log: (_parsed, result) => ({
+				project_id: typeof result === 'number' ? result : undefined,
+			}),
+		},
 	);
