@@ -908,7 +908,7 @@ Answers `{ labels: [{ name, color }] }`. A ticket can only be given a label that
 
 Send a reply to the requester. The mail leaves SupportBee, so this reaches the real customer
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.supportbee.api.replies.create({});
@@ -1580,6 +1580,14 @@ Answers `{ teams }`. `with_users: true` adds each team's members, and `user` nar
     thumb64?: string | null,
     thum128?: string | null,
     thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
   } | null
 }[]
 ```
@@ -1752,6 +1760,14 @@ Wraps the id in `team_assignment` and answers that record. Reassigning a ticket 
       thumb64?: string | null,
       thum128?: string | null,
       thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
     } | null
   } | null
 } | null
@@ -1844,6 +1860,14 @@ Wraps the id in `user_assignment` and answers that record plus an `asignee` obje
       thumb64?: string | null,
       thum128?: string | null,
       thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
     } | null
   } | null
 } | null
@@ -1909,9 +1933,9 @@ Answers `{ audit }`, the actions on the ticket oldest first. Each entry has an `
 
 `tickets.create`
 
-Open a ticket for a requester. Works without a token, and an unauthenticated call is capped at 5 tickets an hour per IP
+Open a ticket for a requester, which emails them when notify_requester is set. This plugin always sends the API token
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.supportbee.api.tickets.create({});
@@ -1930,7 +1954,7 @@ await corsair.supportbee.api.tickets.create({});
 | `content` | `object` | No | — |
 | `forwarding_address_id` | `string \| number` | No | — |
 
-Wraps the payload in `ticket` and answers the created ticket. This route works **without a token**, and an unauthenticated call is capped at 5 tickets an hour per IP, so a token raises it to 8 a minute. `content` takes `text`, `html` or both, plus `attachment_ids` from `attachments.create`. `notify_requester: true` sends a copy and suppresses the auto-response.
+Wraps the payload in `ticket` and answers the created ticket. SupportBee also accepts this route without a token, but this plugin always sends the account's token, so the 8-a-minute token limit applies. `content` takes `text`, `html` or both, plus `attachment_ids` from `attachments.create`. `notify_requester: true` sends a copy and suppresses the auto-response.
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -2057,6 +2081,14 @@ Wraps the payload in `ticket` and answers the created ticket. This route works *
   id?: number | null,
   name?: string | null,
   picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
     thumb20?: string | null,
     thumb24?: string | null,
     thumb32?: string | null,
@@ -2226,6 +2258,14 @@ Answers `{ ticket }`. The ticket carries its requester, content, labels, and its
       thumb64?: string | null,
       thum128?: string | null,
       thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
     } | null
   } | null
 }
@@ -2281,7 +2321,7 @@ Answers `{ tickets, total, current_page, per_page, total_pages }`, 15 a page in 
 | `current_page` | `number \| null` | No | — |
 | `per_page` | `number \| null` | No | — |
 | `total_pages` | `number \| null` | No | — |
-| `tickets` | `object[]` | Yes | — |
+| `tickets` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="tickets full type">
@@ -2367,6 +2407,14 @@ Answers `{ tickets, total, current_page, per_page, total_pages }`, 15 a page in 
     id?: number | null,
     name?: string | null,
     picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
       thumb20?: string | null,
       thumb24?: string | null,
       thumb32?: string | null,
@@ -2639,6 +2687,14 @@ The parameter is **`query`**, not `q`. Answers the same wrapper as the list rout
     id?: number | null,
     name?: string | null,
     picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
       thumb20?: string | null,
       thumb24?: string | null,
       thumb32?: string | null,
@@ -2925,6 +2981,14 @@ Wraps the id in `member` and answers the updated group. **There is no route to r
       thumb64?: string | null,
       thum128?: string | null,
       thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
     } | null
   }[] | null
 }
@@ -2940,9 +3004,9 @@ Wraps the id in `member` and answers the updated group. **There is no route to r
 
 `users.create`
 
-Create a user or a customer group. A group is a user with type customer_group
+Create a user or a customer group. A new agent or admin gets an invitation email; a group is a user with type customer_group
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.supportbee.api.users.create({});
@@ -3002,6 +3066,14 @@ Wraps the payload in `user`. `name` is the one required field because a customer
     id?: number | null,
     name?: string | null,
     picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
       thumb20?: string | null,
       thumb24?: string | null,
       thumb32?: string | null,
@@ -3081,6 +3153,14 @@ Answers `{ user }`. `max_tickets` caps the tickets listed on the record.
     id?: number | null,
     name?: string | null,
     picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
       thumb20?: string | null,
       thumb24?: string | null,
       thumb32?: string | null,
@@ -3168,6 +3248,14 @@ Answers `{ users }`, which are the desk's users **and** its customer groups. `ty
       thumb64?: string | null,
       thum128?: string | null,
       thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
     } | null
   }[] | null
 }[]
@@ -3239,6 +3327,14 @@ Answers `{ users }`, the members of one customer group. Answers 404 when the id 
     id?: number | null,
     name?: string | null,
     picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
       thumb20?: string | null,
       thumb24?: string | null,
       thumb32?: string | null,
@@ -3324,6 +3420,14 @@ Sends PUT with a `user` wrapper, and only the fields you pass change. **The toke
     id?: number | null,
     name?: string | null,
     picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
       thumb20?: string | null,
       thumb24?: string | null,
       thumb32?: string | null,
