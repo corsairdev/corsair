@@ -476,6 +476,21 @@ describe('client error handling', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
+	it('masks the company name a lookup used in the error', async () => {
+		respond(fetchMock, { success: false, message: 'Not found', data: [] }, 404);
+
+		const error = await invoke(Companies.get, {
+			identifier: 'Jane Doe Consulting',
+		}).catch(
+			// unknown: a rejection reason has no static type; narrowed below.
+			(caught: UnknownJson) => caught,
+		);
+
+		const text = JSON.stringify(error);
+		expect(text).not.toContain('Jane');
+		expect((error as ApiError).request.url).toBe('/company/[identifier]');
+	});
+
 	it('masks the email a contact was addressed by in the error', async () => {
 		respond(
 			fetchMock,

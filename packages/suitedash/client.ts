@@ -66,17 +66,19 @@ function maskEmails(value: UnknownJson): UnknownJson {
 	);
 }
 
-function maskPath(url: string): string {
-	return (url.split('?')[0] ?? url)
-		.split('/')
-		.map((part) => {
-			try {
-				return decodeURIComponent(part).includes('@') ? '[email]' : part;
-			} catch {
-				return part;
-			}
-		})
-		.join('/');
+/**
+ * A company, contact or project is addressed in the path by uid, email or
+ * exact name, and a name can be a person's. The record segment is replaced
+ * with a marker; the route itself (and `meta`) stays readable.
+ */
+export function maskPath(url: string): string {
+	const path = url.split('?')[0] ?? url;
+	return path
+		.replace(
+			/(\/(?:company|contact))\/(?!meta(?:$|\/))[^/]+/,
+			'$1/[identifier]',
+		)
+		.replace(/(\/project\/[^/]+)\/[^/]+/, '$1/[identifier]');
 }
 
 /**
