@@ -3387,6 +3387,14 @@
                 ]
               },
               {
+                "group": "NetHunt CRM",
+                "pages": [
+                  "plugins/nethunt/overview",
+                  "plugins/nethunt/api",
+                  "plugins/nethunt/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",

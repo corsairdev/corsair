@@ -1,0 +1,552 @@
+---
+title: "NetHunt CRM API reference"
+sidebarTitle: "API"
+description: "API reference for the NetHunt CRM plugin in Corsair: every `nethunt.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### verify
+
+`account.verify`
+
+Confirm the email and key pair work and return the user behind them
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.account.verify({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  personalName?: string | null,
+  emailAddress?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### fields
+
+`folders.fields`
+
+List a folder's field names, which are user-defined and are what a create or update must use
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.folders.fields({ folderId: '596f644b8f6d05e16c24b810' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List the folders this account can read, or only the ones it may create records in
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.folders.list({ writable: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `writable` | `boolean` | No | True to list only folders the user may create records in, false for every readable folder. Defaults to every readable folder. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### callLog
+
+`records.callLog`
+
+Log a call on a record’s timeline with its start time and duration in minutes
+
+**Risk:** `write`
+
+```ts
+await corsair.nethunt.api.records.callLog({ recordId: '596f644b8f6d05e16c24b830', text: 'Discovery call', time: '2026-01-01T12:35:00Z', duration: 2.5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string` | Yes | The record id. |
+| `text` | `string` | Yes | The call log text. |
+| `time` | `string` | No | When the call started, as an ISO 8601 instant in UTC. |
+| `duration` | `number` | No | How long the call lasted, in minutes. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callLogId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+
+
+
+---
+
+### changes
+
+`records.changes`
+
+Read the audit trail for a folder: who changed which field, when, with before and after values, including deletes
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.records.changes({ folderId: '596f644b8f6d05e16c24b810', since: '2026-01-01T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+| `recordId` | `string` | No | The record id. |
+| `fieldNames` | `string[]` | No | — |
+| `since` | `string` | No | An ISO 8601 instant, e.g. 2026-01-01T00:00:00.000Z. |
+| `limit` | `number` | No | — |
+
+This is the only route that reports a delete, and it carries before and after values per field.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `changes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="changes full type">
+
+```ts
+{
+  recordId?: string | null,
+  time?: string | null,
+  user?: string | null,
+  recordAction?: string | null,
+  fieldActions?: Record<string, {
+    before?: string | number | boolean | null | (string | number | boolean)[],
+    after?: string | number | boolean | null | (string | number | boolean)[]
+  }> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### comment
+
+`records.comment`
+
+Add a comment to a record’s timeline
+
+**Risk:** `write`
+
+```ts
+await corsair.nethunt.api.records.comment({ recordId: '596f644b8f6d05e16c24b830', text: 'Called about the renewal' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string` | Yes | The record id. |
+| `text` | `string` | Yes | The comment text. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commentId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`records.create`
+
+Create one record in a folder from a flat map of the folder’s field names, with the time zone NetHunt needs to read dates
+
+**Risk:** `write`
+
+```ts
+await corsair.nethunt.api.records.create({ folderId: '596f644b8f6d05e16c24b810', timeZone: 'Europe/London', fields: { Name: 'John Doe', Country: 'GB' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+| `timeZone` | `string` | Yes | The user’s time zone, an IANA name such as Europe/London. NetHunt requires it on every create and uses it to interpret date fields. |
+| `fields` | `Record<string, string \| number \| boolean \| null \| (string \| number \| boolean)[]>` | Yes | The folder’s field names mapped to their values. Names are per-folder and set by the user. |
+
+The fields map uses the folder’s own field names, and timeZone is required so NetHunt can read date values.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `fields` | `Record<string, string \| number \| boolean \| null \| (string \| number \| boolean)[]> \| null` | No | The folder’s field names mapped to their values. Names are per-folder and set by the user. |
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Delete a record permanently; NetHunt has no restore route and the audit trail keeps only the change entry
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nethunt.api.records.delete({ recordId: '596f644b8f6d05e16c24b830' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string` | Yes | The record id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `recordId` | `string` | Yes | — |
+
+
+
+---
+
+### find
+
+`records.find`
+
+Find records in a folder by id or by a text query such as Name:Doe
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.records.find({ folderId: '596f644b8f6d05e16c24b810', query: 'Name:Doe', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+| `recordId` | `string` | No | The record id. |
+| `query` | `string` | No | A search query such as Name:Doe. NetHunt matches per field and ignores case. |
+| `limit` | `number` | No | Most records to return. NetHunt defaults to 1. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id?: string | null,
+  recordId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  fields?: Record<string, string | number | boolean | null | (string | number | boolean)[]> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### linkThread
+
+`records.linkThread`
+
+Attach an existing Gmail thread to a record
+
+**Risk:** `write`
+
+```ts
+await corsair.nethunt.api.records.linkThread({ recordId: '596f644b8f6d05e16c24b830', gmailThreadId: '1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string` | Yes | The record id. |
+| `gmailThreadId` | `string` | Yes | The Gmail thread id to attach to the record. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linked` | `boolean` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `gmailThreadId` | `string` | Yes | — |
+
+
+
+---
+
+### recent
+
+`records.recent`
+
+List records created in a folder after a timestamp; NetHunt defaults the window to 24 hours
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.records.recent({ folderId: '596f644b8f6d05e16c24b810', since: '2026-01-01T00:00:00.000Z', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+| `since` | `string` | No | Only records created after this instant. Defaults at NetHunt to 24 hours before the request. |
+| `limit` | `number` | No | — |
+
+NetHunt defaults the window to 24 hours before the request.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id?: string | null,
+  recordId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  fields?: Record<string, string | number | boolean | null | (string | number | boolean)[]> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update a record’s fields through per-field actions, each able to overwrite, remove or add values
+
+**Risk:** `write`
+
+```ts
+await corsair.nethunt.api.records.update({ recordId: '596f644b8f6d05e16c24b830', fieldActions: { Salary: { remove: 100000, add: 200000 } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string` | Yes | The record id. |
+| `overwrite` | `boolean` | No | The default for every field action. NetHunt defaults it to false. |
+| `fieldActions` | `object` | Yes | Field name to the action to perform on it. |
+
+Each field takes an action: overwrite clears it, remove takes values out, add puts values in. Do not combine overwrite with remove.
+
+<AccordionGroup>
+<Accordion title="fieldActions full type">
+
+```ts
+Record<string, {
+  overwrite?: boolean,
+  remove?: string | number | boolean | null | (string | number | boolean)[] | (string | number | boolean | null | (string | number | boolean)[])[],
+  add?: string | number | boolean | null | (string | number | boolean)[] | (string | number | boolean | null | (string | number | boolean)[])[]
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `fields` | `Record<string, string \| number \| boolean \| null \| (string \| number \| boolean)[]> \| null` | No | The folder’s field names mapped to their values. Names are per-folder and set by the user. |
+
+
+
+---
+
+### updated
+
+`records.updated`
+
+List records updated in a folder after a timestamp, optionally only when named fields changed
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.records.updated({ folderId: '596f644b8f6d05e16c24b810', fieldNames: ['Primary Email Address'], since: '2026-01-01T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+| `fieldNames` | `string[]` | No | Only report changes to these fields. Repeatable at the provider; several names are sent as separate parameters. |
+| `since` | `string` | No | Only records updated after this instant. Defaults at NetHunt to 24 hours before the request. |
+| `limit` | `number` | No | — |
+
+fieldNames is sent as a repeated fieldName parameter, which NetHunt takes as a list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id?: string | null,
+  recordId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  fields?: Record<string, string | number | boolean | null | (string | number | boolean)[]> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
