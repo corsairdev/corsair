@@ -42,10 +42,10 @@ pnpm add @corsair-dev/tapfiliate
 | `customers.uncancel` | `tapfiliate.api.customers.uncancel` | `write` | Reactivate a canceled customer, restoring recurring commissions from now without back-filling |
 | `customers.update` | `tapfiliate.api.customers.update` | `write` | Change a customer's customer_id or replace its metadata |
 | `payments.cancel` | `tapfiliate.api.payments.cancel` | `destructive` | Cancel a payment. It stops counting against the affiliate balance, so the balance goes back up by its amount; an outside payout already sent is not reversed, and there is no undo |
-| `payments.create` | `tapfiliate.api.payments.create` | `destructive` | Record one payment or an array of payments; Tapfiliate creates none when any entry is invalid |
+| `payments.create` | `tapfiliate.api.payments.create` | `destructive` | Record one payment or an array of payments; an affiliate on an automated payout method is also paid out through that provider. Tapfiliate creates none when any entry is invalid |
 | `payments.get` | `tapfiliate.api.payments.get` | `read` | Read one payment with its affiliate, amount and currency |
 | `payments.list` | `tapfiliate.api.payments.list` | `read` | List payments that were not canceled, newest first |
-| `programs.addAffiliate` | `tapfiliate.api.programs.addAffiliate` | `write` | Add an existing affiliate to a program, approved by default, or pending or disapproved explicitly |
+| `programs.addAffiliate` | `tapfiliate.api.programs.addAffiliate` | `destructive` | Add an existing affiliate to a program, approved by default (which sends the approval email when the program notifies on approval), or pending or disapproved explicitly |
 | `programs.affiliates` | `tapfiliate.api.programs.affiliates` | `read` | List a program's affiliates in every approval state, with each one's coupon and referral link |
 | `programs.approveAffiliate` | `tapfiliate.api.programs.approveAffiliate` | `destructive` | Approve an affiliate for a program and email them when the program notifies on approval |
 | `programs.disapproveAffiliate` | `tapfiliate.api.programs.disapproveAffiliate` | `write` | Disapprove an affiliate for a program; they keep the record but earn nothing there |

@@ -135,7 +135,8 @@ export const clicksList: TapfiliateEndpoints['clicksList'] = async (
 				affiliate_id: parsed.affiliate_id,
 				date_from: parsed.date_from,
 				date_to: parsed.date_to,
-				meta_data: parsed.meta_data,
+				'meta_data[key]': parsed.meta_data?.key,
+				'meta_data[value]': parsed.meta_data?.value,
 			},
 		}),
 	);

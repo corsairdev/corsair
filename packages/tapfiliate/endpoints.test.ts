@@ -956,4 +956,38 @@ describe('single reads and the customer update', () => {
 		expect(lastRequest().path).toBe('/1.6/payments/pa_abc123/');
 		expect(one.amount).toBe(30.55);
 	});
+
+	it('reads a numeric payout id on a commission', async () => {
+		respond({ ...commission, payout: 321 });
+		const result = await invoke(Conversions.commissionsGet, {
+			commissionId: 1234,
+		});
+		expect(result.payout).toBe(321);
+	});
+
+	it('refuses a JSON null answer on affiliate create', async () => {
+		respond(null);
+		await expect(
+			invoke(Affiliates.create, { email: 'jane@example-blog.inc' }),
+		).rejects.toThrow();
+	});
+
+	it('sends the click meta data filter as key and value', async () => {
+		respond(clicks);
+		await invoke(Payments.clicksList, {
+			meta_data: { key: 'subid1', value: 'baz' },
+		});
+		expect(lastRequest().query).toMatchObject({
+			'meta_data[key]': 'subid1',
+			'meta_data[value]': 'baz',
+		});
+	});
+
+	it('takes a timestamp boundary on the customer list', async () => {
+		respond(customers);
+		await invoke(Customers.list, { date_from: '2026-11-16T12:00:00Z' });
+		expect(lastRequest().query).toMatchObject({
+			date_from: '2026-11-16T12:00:00Z',
+		});
+	});
 });

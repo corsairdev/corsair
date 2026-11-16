@@ -141,7 +141,8 @@ export const CommissionSchema = z
 		kind: z.string().nullish(),
 		currency: z.string().nullish(),
 		created_at: z.string().nullish(),
-		payout: z.boolean().nullish(),
+		/** The payout id once the commission was paid out, for example `321`. */
+		payout: z.union([z.number(), z.string(), z.boolean()]).nullish(),
 		comment: z.string().nullish(),
 		final: z.boolean().nullish(),
 		finalization_date: z.string().nullish(),
@@ -876,8 +877,9 @@ export const CustomersListInputSchema = z.object({
 	program_id: z.string().optional(),
 	customer_id: z.string().optional(),
 	affiliate_id: z.string().optional(),
-	date_from: IsoDateSchema.optional(),
-	date_to: IsoDateSchema.optional(),
+	/** A date or a full timestamp, such as `2026-11-16T12:00:00Z`. */
+	date_from: z.string().min(1).optional(),
+	date_to: z.string().min(1).optional(),
 });
 
 export type CustomersListInput = z.infer<typeof CustomersListInputSchema>;
@@ -1048,7 +1050,12 @@ export const ClicksListInputSchema = z.object({
 	affiliate_id: z.string().optional(),
 	date_from: IsoDateSchema.optional(),
 	date_to: IsoDateSchema.optional(),
-	meta_data: z.string().optional().describe('Filter by click meta data.'),
+	meta_data: z
+		.object({ key: z.string().min(1), value: z.string() })
+		.optional()
+		.describe(
+			'Only clicks whose meta data has this key and value; sent as meta_data[key] and meta_data[value].',
+		),
 });
 
 export type ClicksListInput = z.infer<typeof ClicksListInputSchema>;

@@ -386,9 +386,9 @@ const tapfiliateEndpointMeta = {
 			"List a program's affiliates in every approval state, with each one's coupon and referral link",
 	},
 	'programs.addAffiliate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Add an existing affiliate to a program, approved by default, or pending or disapproved explicitly',
+			'Add an existing affiliate to a program, approved by default (which sends the approval email when the program notifies on approval), or pending or disapproved explicitly',
 	},
 	'programs.getAffiliate': {
 		riskLevel: 'read',

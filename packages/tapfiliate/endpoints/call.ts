@@ -45,7 +45,8 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
  * unknown: the response body is untyped.
  */
 export function isEmptyBody(raw: unknown): boolean {
-	return raw === undefined || raw === null || raw === '';
+	// A JSON `null` is a body, not an empty answer, so it fails the schema.
+	return raw === undefined || raw === '';
 }
 
 /**

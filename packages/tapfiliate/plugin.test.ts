@@ -112,6 +112,7 @@ describe('tapfiliate plugin definition', () => {
 			'customers.delete',
 			'payments.cancel',
 			'payments.create',
+			'programs.addAffiliate',
 			'programs.approveAffiliate',
 		]);
 		for (const name of [

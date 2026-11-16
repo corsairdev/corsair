@@ -605,9 +605,21 @@ await corsair.tapfiliate.api.clicks.list({ page: 1, program_id: '1' });
 | `affiliate_id` | `string` | No | — |
 | `date_from` | `string` | No | A date as "YYYY-MM-DD". |
 | `date_to` | `string` | No | A date as "YYYY-MM-DD". |
-| `meta_data` | `string` | No | Filter by click meta data. |
+| `meta_data` | `object` | No | Only clicks whose meta data has this key and value; sent as meta_data[key] and meta_data[value]. |
 
 Requires the click-report feature on your plan, otherwise 403.
+
+<AccordionGroup>
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key: string,
+  value: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -669,7 +681,7 @@ await corsair.tapfiliate.api.commissions.approve({ commissionId: 1234 });
 | `kind` | `string \| null` | No | — |
 | `currency` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
-| `payout` | `boolean \| null` | No | — |
+| `payout` | `number \| string \| boolean \| null` | No | — |
 | `comment` | `string \| null` | No | — |
 | `final` | `boolean \| null` | No | — |
 | `finalization_date` | `string \| null` | No | — |
@@ -735,7 +747,7 @@ await corsair.tapfiliate.api.commissions.disapprove({ commissionId: 1234 });
 | `kind` | `string \| null` | No | — |
 | `currency` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
-| `payout` | `boolean \| null` | No | — |
+| `payout` | `number \| string \| boolean \| null` | No | — |
 | `comment` | `string \| null` | No | — |
 | `final` | `boolean \| null` | No | — |
 | `finalization_date` | `string \| null` | No | — |
@@ -801,7 +813,7 @@ await corsair.tapfiliate.api.commissions.get({ commissionId: 1234 });
 | `kind` | `string \| null` | No | — |
 | `currency` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
-| `payout` | `boolean \| null` | No | — |
+| `payout` | `number \| string \| boolean \| null` | No | — |
 | `comment` | `string \| null` | No | — |
 | `final` | `boolean \| null` | No | — |
 | `finalization_date` | `string \| null` | No | — |
@@ -879,7 +891,7 @@ await corsair.tapfiliate.api.commissions.list({ page: 1, status: 'approved' });
   kind?: string | null,
   currency?: string | null,
   created_at?: string | null,
-  payout?: boolean | null,
+  payout?: number | string | boolean | null,
   comment?: string | null,
   final?: boolean | null,
   finalization_date?: string | null,
@@ -928,7 +940,7 @@ await corsair.tapfiliate.api.commissions.update({ commissionId: 1234, amount: 5 
 | `kind` | `string \| null` | No | — |
 | `currency` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
-| `payout` | `boolean \| null` | No | — |
+| `payout` | `number \| string \| boolean \| null` | No | — |
 | `comment` | `string \| null` | No | — |
 | `final` | `boolean \| null` | No | — |
 | `finalization_date` | `string \| null` | No | — |
@@ -1056,7 +1068,7 @@ Send at least one of coupon, click_id, referral_code, asset_id or tracking_id, o
   kind?: string | null,
   currency?: string | null,
   created_at?: string | null,
-  payout?: boolean | null,
+  payout?: number | string | boolean | null,
   comment?: string | null,
   final?: boolean | null,
   finalization_date?: string | null,
@@ -1201,7 +1213,7 @@ await corsair.tapfiliate.api.conversions.get({ conversionId: 4321 });
   kind?: string | null,
   currency?: string | null,
   created_at?: string | null,
-  payout?: boolean | null,
+  payout?: number | string | boolean | null,
   comment?: string | null,
   final?: boolean | null,
   finalization_date?: string | null,
@@ -1307,7 +1319,7 @@ await corsair.tapfiliate.api.conversions.list({ page: 1, program_id: '1' });
     kind?: string | null,
     currency?: string | null,
     created_at?: string | null,
-    payout?: boolean | null,
+    payout?: number | string | boolean | null,
     comment?: string | null,
     final?: boolean | null,
     finalization_date?: string | null,
@@ -1397,7 +1409,7 @@ recalculate_commissions travels as a query flag and needs a numeric amount; with
     kind?: string | null,
     currency?: string | null,
     created_at?: string | null,
-    payout?: boolean | null,
+    payout?: number | string | boolean | null,
     comment?: string | null,
     final?: boolean | null,
     finalization_date?: string | null,
@@ -1715,8 +1727,8 @@ await corsair.tapfiliate.api.customers.list({ page: 1, customer_id: 'cust-1' });
 | `program_id` | `string` | No | — |
 | `customer_id` | `string` | No | — |
 | `affiliate_id` | `string` | No | — |
-| `date_from` | `string` | No | A date as "YYYY-MM-DD". |
-| `date_to` | `string` | No | A date as "YYYY-MM-DD". |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
 
 
 
@@ -2094,9 +2106,9 @@ await corsair.tapfiliate.api.payments.list({ page: 1 });
 
 `programs.addAffiliate`
 
-Add an existing affiliate to a program, approved by default, or pending or disapproved explicitly
+Add an existing affiliate to a program, approved by default (which sends the approval email when the program notifies on approval), or pending or disapproved explicitly
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.tapfiliate.api.programs.addAffiliate({ programId: '1', affiliateId: 'jane-jameson', coupon: 'JANE10OFF' });
