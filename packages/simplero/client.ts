@@ -24,7 +24,7 @@ const SIMPLERO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 /**
  * A request that never reached Simplero (DNS, reset, timeout). HTTP failures
- * are not wrapped: core's `ApiError` passes through (see `withoutSentBody`) so
+ * are not wrapped: core's `ApiError` passes through (see `withoutRequestData`) so
  * its `status`, `retryAfter`, `request` and `body` reach core and the caller.
  * The key travels in the config headers, which core never copies onto an error.
  *
@@ -50,24 +50,67 @@ export class SimpleroAPIError extends Error {
 }
 
 /**
- * Core's ApiError keeps the request it was built from, body included, and a
- * Simplero body is a contact or a purchase: names, emails, phone numbers,
- * addresses. This rebuilds the same ApiError without the sent body and with the
- * provider's message; status, method, URL, response body and rate-limit fields
- * are kept.
+ * Query filters that carry a person's details: the contact and subscription
+ * lists filter by email and name, and `q` is free-text search.
  */
-function withoutSentBody(error: ApiError): ApiError {
-	const { body: _sentBody, ...request } = error.request;
+const PERSONAL_QUERY = new Set(['email', 'first_names', 'last_name', 'q']);
+const REDACTED = '[REDACTED]';
+
+function maskUrl(value: string): string {
+	const at = value.indexOf('?');
+	if (at === -1) return value;
+	const params = value
+		.slice(at + 1)
+		.split('&')
+		.map((pair) => {
+			const raw = pair.split('=')[0] ?? '';
+			let name = raw;
+			try {
+				name = decodeURIComponent(raw);
+			} catch {
+				name = raw;
+			}
+			return PERSONAL_QUERY.has(name) ? `${raw}=${REDACTED}` : pair;
+		});
+	return `${value.slice(0, at)}?${params.join('&')}`;
+}
+
+/**
+ * Core's ApiError is passed through unchanged unless the request carried
+ * personal data: a sent body (contacts and purchases hold names, emails,
+ * addresses) or a personal query filter, which core keeps on `request` and in
+ * `url`. Only then is it rebuilt, with the body dropped and those filters
+ * masked; status, message, response body and rate-limit fields are kept, and
+ * Simplero's own text stays readable on `body`.
+ */
+function withoutRequestData(error: ApiError): ApiError {
+	const { body: sentBody, query, ...request } = error.request;
+	const personalQuery = Object.keys(query ?? {}).some((key) =>
+		PERSONAL_QUERY.has(key),
+	);
+	if (sentBody === undefined && !personalQuery) return error;
+	const maskedQuery = query
+		? Object.fromEntries(
+				Object.entries(query).map(([key, value]) => [
+					key,
+					PERSONAL_QUERY.has(key) ? REDACTED : value,
+				]),
+			)
+		: undefined;
 	return new ApiError(
-		request,
 		{
-			url: error.url,
+			...request,
+			url: maskUrl(error.request.url),
+			...(maskedQuery ? { query: maskedQuery } : {}),
+		},
+		{
+			url: maskUrl(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
 			body: error.body,
 		},
-		describeSimpleroError(error.status, error.body, error.message),
+		error.message,
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -176,7 +219,7 @@ export async function makeSimpleroRequest(
 			rateLimitConfig: SIMPLERO_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) throw withoutSentBody(error);
+		if (error instanceof ApiError) throw withoutRequestData(error);
 		// A transport failure never held a body or headers, so its cause is safe to
 		// keep. DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {

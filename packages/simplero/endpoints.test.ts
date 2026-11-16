@@ -422,7 +422,8 @@ describe('client error handling', () => {
 		const failure = error as ApiError;
 		expect(failure.status).toBe(401);
 		expect(failure.body).toEqual(authProblem);
-		expect(failure.message).toContain('Bad API key');
+		// No personal data was sent, so this is core's error unchanged.
+		expect(failure.message).toBe('Unauthorized');
 		expect(util.inspect(error)).not.toContain(API_KEY);
 		expect(failure.message).not.toContain(API_KEY);
 	});
@@ -441,11 +442,31 @@ describe('client error handling', () => {
 		const failure = error as ApiError;
 		expect(failure).toBeInstanceOf(ApiError);
 		expect(failure.body).toEqual(validationProblem);
-		expect(failure.message).toContain('Email is invalid');
-		expect(failure.message).toContain('Lead score must be a number');
+		expect(failure.status).toBe(422);
 		// The sent contact (email, names) stays off the error.
 		expect(failure.request.body).toBeUndefined();
 		expect(JSON.stringify(failure)).not.toContain('not-an-email');
+	});
+
+	it('masks personal list filters on a failed read', async () => {
+		respond(authProblem, 500);
+		respond(authProblem, 500);
+		respond(authProblem, 500);
+
+		const error = (await invoke(Customers.list, {
+			email: 'alex@example.com',
+			q: 'Alex Doe',
+			tag_id: 5,
+		}).catch(
+			// unknown: a rejection reason has no static type; narrowed below.
+			(caught: UnknownJson) => caught,
+		)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		const text = `${JSON.stringify(error)} ${error.url} ${error.request.url}`;
+		expect(text).not.toContain('alex');
+		expect(text).not.toContain('Alex');
+		expect(error.request.query).toMatchObject({ tag_id: 5 });
 	});
 
 	it('encodes a path segment', () => {
