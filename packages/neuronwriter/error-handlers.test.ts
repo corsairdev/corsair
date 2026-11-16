@@ -1,4 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { NeuronwriterAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
@@ -23,24 +24,50 @@ async function strategy(error: Error) {
 	});
 }
 
+/** Builds the core `ApiError` the client throws for an HTTP failure. */
+function apiError(
+	status: number,
+	options: { retryAfter?: number } = {},
+): ApiError {
+	return new ApiError(
+		{ method: 'POST', url: '/list-projects' },
+		{
+			url: 'https://app.neuronwriter.com/neuron-api/0.5/writer/list-projects',
+			ok: false,
+			status,
+			statusText: 'error',
+			body: { error: 'Invalid or inactive API key.' },
+		},
+		'NEURONwriter failed',
+		{ retryAfter: options.retryAfter },
+	);
+}
+
 describe('neuronwriter error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = new NeuronwriterAPIError('429', { status: 429 });
+	it('retries a 429 and passes Retry-After through', async () => {
+		const error = apiError(429, { retryAfter: 3000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
+			headersRetryAfterMs: 3000,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
 
 	it('does not retry a 401, which is a bad or inactive key', async () => {
-		const error = new NeuronwriterAPIError('401', { status: 401 });
+		const error = apiError(401);
 		expect(classify(error)).toBe('AUTH_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
+	it('does not retry a 403, which is a plan without API access', async () => {
+		const error = apiError(403);
+		expect(classify(error)).toBe('PERMISSION_ERROR');
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+	});
+
 	it('does not retry a 422 from an unreadable body', async () => {
-		const error = new NeuronwriterAPIError('422', { status: 422 });
+		const error = apiError(422);
 		expect(classify(error)).toBe('VALIDATION_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
@@ -52,14 +79,16 @@ describe('neuronwriter error handlers', () => {
 	});
 
 	it('does not replay a 5xx, because every method is a POST', async () => {
-		// starting an analysis spends a monthly credit, so no retry is safe.
-		const error = new NeuronwriterAPIError('500', { status: 500 });
+		// analysis.start spends a monthly credit, so no retry is safe.
+		const error = apiError(500);
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('falls back to DEFAULT for a transport failure', () => {
-		expect(classify(new Error('socket hang up'))).toBe('DEFAULT');
+		expect(classify(new NeuronwriterAPIError('socket hang up'))).toBe(
+			'DEFAULT',
+		);
 	});
 });
 
@@ -92,12 +121,12 @@ describe('mergeErrorHandlers', () => {
 	it('runs a caller handler for a status no builtin covers', () => {
 		const custom = {
 			match: (error: Error) =>
-				error instanceof NeuronwriterAPIError && error.status === 502,
+				error instanceof ApiError && error.status === 502,
 			handler: async () => ({ maxRetries: 9 }),
 		};
 		const merged = mergeErrorHandlers(errorHandlers, { CUSTOM: custom });
 
-		const failure = new NeuronwriterAPIError('bad gateway', { status: 502 });
+		const failure = apiError(502);
 		const firstMatch = Object.entries(merged).find(([, entry]) =>
 			entry?.match?.(failure, {
 				pluginId: 'neuronwriter',

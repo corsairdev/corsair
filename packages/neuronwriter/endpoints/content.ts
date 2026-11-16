@@ -43,7 +43,9 @@ export const importContent: NeuronwriterEndpoints['contentImport'] = (
 		input,
 		(body) => ({ method: 'import-content', body }),
 		{
-			log: ({ query, url }) => ({ query, url }),
+			// The URL is caller-supplied and a private draft link can carry a
+			// preview token or signed query, so only the query id is logged.
+			log: ({ query }) => ({ query }),
 		},
 	);
 
@@ -65,6 +67,8 @@ export const evaluate: NeuronwriterEndpoints['contentEvaluate'] = (
 		input,
 		(body) => ({ method: 'evaluate-content', body }),
 		{
-			log: ({ query, url }) => ({ query, url }),
+			// The URL is caller-supplied and a private draft link can carry a
+			// preview token or signed query, so only the query id is logged.
+			log: ({ query }) => ({ query }),
 		},
 	);

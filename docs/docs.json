@@ -3395,6 +3395,14 @@
                 ]
               },
               {
+                "group": "NEURONwriter",
+                "pages": [
+                  "plugins/neuronwriter/overview",
+                  "plugins/neuronwriter/api",
+                  "plugins/neuronwriter/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",

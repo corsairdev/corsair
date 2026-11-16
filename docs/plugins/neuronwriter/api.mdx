@@ -160,7 +160,7 @@ Answers only a status until it is ready; the metrics, terms, ideas and competito
 
 Queue a content analysis for a keyword, spending one Content Writer analysis from the monthly limit; poll analysis.get for the recommendations
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.neuronwriter.api.analysis.start({ project: 'c2fe46bce8019bff', keyword: 'trail running shoes', engine: 'google.co.uk', language: 'English', competitors_mode: 'top10' });
@@ -251,7 +251,7 @@ await corsair.neuronwriter.api.content.get({ query: '32dee2a89374a722', revision
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | The query id, from analysis.start. |
-| `revision_type` | `manual \| all` | No | manual for the last saved revision, all to include autosaves. NetHunt defaults to manual. |
+| `revision_type` | `manual \| all` | No | manual for the last saved revision, all to include autosaves. NEURONwriter defaults to manual. |
 
 
 

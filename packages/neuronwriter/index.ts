@@ -120,7 +120,10 @@ const neuronwriterEndpointMeta = {
 			"List the account's projects with the id, language and search engine each one uses",
 	},
 	'analysis.start': {
-		riskLevel: 'write',
+		// Spends one Content Writer analysis from the account's monthly limit, so
+		// it needs the approval a destructive call gets (R8).
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Queue a content analysis for a keyword, spending one Content Writer analysis from the monthly limit; poll analysis.get for the recommendations',
 	},

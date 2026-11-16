@@ -237,7 +237,7 @@ const ContentGetInputSchema = z.object({
 		.enum(['manual', 'all'])
 		.optional()
 		.describe(
-			'manual for the last saved revision, all to include autosaves. NetHunt defaults to manual.',
+			'manual for the last saved revision, all to include autosaves. NEURONwriter defaults to manual.',
 		),
 });
 

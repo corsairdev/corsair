@@ -1,5 +1,4 @@
 import { createCorsair } from 'corsair';
-import type { CorsairEndpoint } from 'corsair/core';
 import { asRecord } from 'corsair/core';
 import type { NeuronwriterPluginOptions } from './index';
 import { neuronwriter, neuronwriterEndpointsNested } from './index';
@@ -31,11 +30,32 @@ function makeContext() {
 	};
 }
 
-// unknown: each operation has its own input and output, and every call site
-// passes a concrete value that the operation's schema validates.
-type Endpoint = CorsairEndpoint<never, unknown, unknown>;
+/**
+ * The endpoint functions expect the plugin's full runtime context, which a test
+ * cannot build without a database and a key manager. They only read `ctx.key`
+ * and `ctx.log`, both of which `makeContext` provides.
+ */
+// unknown: each operation takes its own parsed input, and every call site passes
+// a concrete value that the operation's own schema validates.
+//
+// `as never` below is used at two kinds of site, and nothing else: an invalid
+// value handed to a rejection test (`competitors_mode: 'top50'`), or a partial
+// object standing in for the plugin runtime context. TypeScript cannot express
+// either without the cast, because the real types forbid exactly what the test
+// is checking for.
+type TestEndpoint = (
+	ctx: ReturnType<typeof makeContext>,
+	input: unknown,
+) => Promise<unknown>;
 
-const endpoints = neuronwriterEndpointsNested;
+const endpoints = neuronwriterEndpointsNested as unknown as {
+	[G in keyof typeof neuronwriterEndpointsNested]: {
+		[K in keyof (typeof neuronwriterEndpointsNested)[G]]: TestEndpoint;
+	};
+};
+
+/** Any one endpoint, as the helpers above describe it. */
+type Endpoint = TestEndpoint;
 
 /** Runs one endpoint and returns the response and the request that made it. */
 async function capture(
@@ -57,12 +77,22 @@ async function capture(
 	}) as typeof fetch;
 
 	try {
-		const result = await endpoint(makeContext() as never, input);
+		const result = await endpoint(makeContext(), input);
 		if (!url) throw new Error('no request was made');
 		return { result, url, init };
 	} finally {
 		globalThis.fetch = original;
 	}
+}
+
+/**
+ * Resolves to whatever the promise rejected with, so an assertion can read
+ * `String(error)` without a cast.
+ * unknown: a rejection reason has no static type; each caller only stringifies
+ * it, so a stricter type would be invented rather than checked.
+ */
+async function captureError<T>(promise: Promise<T>): Promise<unknown> {
+	return promise.catch((caught: unknown) => caught);
 }
 
 function sentBody(init: RequestInit): Record<string, unknown> {
@@ -152,7 +182,7 @@ describe('analysis.start', () => {
 
 	it('rejects a competitors_mode the provider does not offer', async () => {
 		await expect(
-			endpoints.analysis.start(makeContext() as never, {
+			endpoints.analysis.start(makeContext(), {
 				project: 'p1',
 				keyword: 'kw',
 				engine: 'google.com',
@@ -166,14 +196,11 @@ describe('analysis.start', () => {
 		// Cast past the type: the point is that the schema refuses it at runtime
 		// for a caller passing untyped input.
 		await expect(
-			endpoints.analysis.start(
-				makeContext() as never,
-				{
-					project: 'p1',
-					keyword: 'kw',
-					engine: 'google.com',
-				} as never,
-			),
+			endpoints.analysis.start(makeContext(), {
+				project: 'p1',
+				keyword: 'kw',
+				engine: 'google.com',
+			} as never),
 		).rejects.toThrow();
 	});
 });
@@ -262,7 +289,7 @@ describe('queries.list', () => {
 
 	it('rejects a status the provider does not offer', async () => {
 		await expect(
-			endpoints.queries.list(makeContext() as never, {
+			endpoints.queries.list(makeContext(), {
 				project: 'p1',
 				status: 'done' as never,
 			}),
@@ -271,7 +298,7 @@ describe('queries.list', () => {
 
 	it('rejects a created date that is not an ISO instant', async () => {
 		await expect(
-			endpoints.queries.list(makeContext() as never, {
+			endpoints.queries.list(makeContext(), {
 				project: 'p1',
 				created: 'last week',
 			}),
@@ -354,13 +381,13 @@ describe('content.import and evaluate', () => {
 
 	it('rejects a payload with neither html nor url', async () => {
 		await expect(
-			endpoints.content.import(makeContext() as never, { query: 'q1' }),
+			endpoints.content.import(makeContext(), { query: 'q1' }),
 		).rejects.toThrow(/html or url/);
 	});
 
 	it('rejects a payload with both html and url', async () => {
 		await expect(
-			endpoints.content.import(makeContext() as never, {
+			endpoints.content.import(makeContext(), {
 				query: 'q1',
 				html: '<p>x</p>',
 				url: 'https://example.com',
@@ -383,25 +410,25 @@ describe('content.import and evaluate', () => {
 
 	it('applies the same html-or-url rule to evaluate', async () => {
 		await expect(
-			endpoints.content.evaluate(makeContext() as never, { query: 'q1' }),
+			endpoints.content.evaluate(makeContext(), { query: 'q1' }),
 		).rejects.toThrow(/html or url/);
 	});
 });
 
 describe('neuronwriter error reporting', () => {
 	it('reads the one error body the provider sends', async () => {
-		const error = await capture(endpoints.projects.list, {}, invalidKey, {
-			status: 401,
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			capture(endpoints.projects.list, {}, invalidKey, { status: 401 }),
+		);
 
 		expect(String(error)).toContain('Invalid or inactive API key');
 		expect(String(error)).toContain('401');
 	});
 
 	it('does not leak the API key into the error message', async () => {
-		const error = await capture(endpoints.projects.list, {}, invalidKey, {
-			status: 401,
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			capture(endpoints.projects.list, {}, invalidKey, { status: 401 }),
+		);
 
 		expect(String(error)).not.toContain(API_KEY);
 	});
@@ -433,15 +460,17 @@ describe('neuronwriter plugin definition', () => {
 		]);
 	});
 
-	it('marks the writes correctly and nothing destructive', () => {
+	it('marks the credit-spending call destructive and a revision save a write', () => {
 		const meta = neuronwriter().endpointMeta ?? {};
-		expect(meta['analysis.start']?.riskLevel).toBe('write');
+		// analysis.start spends one analysis from the monthly limit, so R8
+		// requires the approval a destructive call gets.
+		expect(meta['analysis.start']?.riskLevel).toBe('destructive');
+		expect(meta['analysis.start']?.irreversible).toBe(true);
+		// Importing writes a revision, which the caller can edit again.
 		expect(meta['content.import']?.riskLevel).toBe('write');
 		// Evaluating scores content without saving a revision.
 		expect(meta['content.evaluate']?.riskLevel).toBe('read');
-		for (const entry of Object.values(meta)) {
-			expect(entry.riskLevel).not.toBe('destructive');
-		}
+		expect(meta['content.get']?.riskLevel).toBe('read');
 	});
 
 	it('builds a key from the option, then the stored key, then throws', async () => {
