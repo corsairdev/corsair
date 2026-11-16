@@ -422,18 +422,21 @@ export const ParseBlockSchema = z
 		type: z.string(),
 		content: z.string().optional(),
 		bbox: BboxSchema.optional(),
-		confidence: z.string().optional(),
+		// Reducto sends null for every optional block field it has no value for
+		// (ParseBlock in its OpenAPI spec), so each one accepts null as well as absent.
+		confidence: z.string().nullable().optional(),
 		granular_confidence: z
 			.object({
 				parse_confidence: z.number().nullable().optional(),
 				extract_confidence: z.number().nullable().optional(),
 			})
 			.loose()
+			.nullable()
 			.optional(),
 		image_url: z.string().nullable().optional(),
 		chart_data: z.array(z.string()).nullable().optional(),
-		merged_tables: z.array(z.unknown()).optional(),
-		extra: z.record(z.string(), z.unknown()).optional(),
+		merged_tables: z.array(z.unknown()).nullable().optional(),
+		extra: z.record(z.string(), z.unknown()).nullable().optional(),
 	})
 	.loose();
 
@@ -451,9 +454,10 @@ export const ParseOcrWordSchema = z
 	.object({
 		text: z.string(),
 		bbox: BboxSchema,
-		confidence: z.number().optional(),
-		chunk_index: z.number().int().optional(),
-		rotation: z.number().optional(),
+		// Nullable in Reducto's OCRWord and OCRLine.
+		confidence: z.number().nullable().optional(),
+		chunk_index: z.number().int().nullable().optional(),
+		rotation: z.number().nullable().optional(),
 	})
 	.loose();
 
