@@ -193,8 +193,8 @@ await corsair.signpath.api.auditLog.listEvents({});
       name?: string | null
     }
   },
-  entityMetadata: Record<string, unknown>,
-  data: Record<string, unknown>
+  entityMetadata: Record<string, any>,
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -260,8 +260,8 @@ await corsair.signpath.api.auditLog.listSigningRequestEvents({});
       name?: string | null
     }
   },
-  entityMetadata: Record<string, unknown>,
-  data: Record<string, unknown>
+  entityMetadata: Record<string, any>,
+  data: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -926,7 +926,7 @@ await corsair.signpath.api.signingPolicies.create({ projectSlug: 'my-app', name:
 | `certificateSlug` | `string` | Yes | The certificate this policy signs with. |
 | `submitterIds` | `string[]` | Yes | Participants who may submit signing requests under this policy. |
 | `disableMalwareScanning` | `boolean` | Yes | SignPath requires this field, so pass false to keep scanning on. |
-| `purpose` | `TestSigning \| ReleaseSigning` | Yes | Whether the resulting signatures are test or release signatures. |
+| `purpose` | `TestSigning \| ReleaseSigning` | No | Whether the resulting signatures are test or release signatures. SignPath defaults it when omitted. |
 | `approval` | `object` | No | — |
 | `trustedBuildSystemVerification` | `object` | No | — |
 
@@ -1132,7 +1132,7 @@ await corsair.signpath.api.signingPolicies.update({ projectSlug: 'my-app', signi
 | `certificateSlug` | `string` | Yes | The certificate this policy signs with. |
 | `submitterIds` | `string[]` | Yes | Participants who may submit signing requests under this policy. |
 | `disableMalwareScanning` | `boolean` | Yes | SignPath requires this field, so pass false to keep scanning on. |
-| `purpose` | `TestSigning \| ReleaseSigning` | Yes | Whether the resulting signatures are test or release signatures. |
+| `purpose` | `TestSigning \| ReleaseSigning` | No | Whether the resulting signatures are test or release signatures. SignPath defaults it when omitted. |
 | `approval` | `object` | No | — |
 | `trustedBuildSystemVerification` | `object` | No | — |
 
@@ -1186,7 +1186,7 @@ The body requires the full policy, not just the fields you are changing. Read it
 
 Approve a signing request waiting for approval; SignPath accepts it once the policy's required approval count is reached
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signpath.api.signingRequests.approve({ signingRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
@@ -1215,9 +1215,9 @@ await corsair.signpath.api.signingRequests.approve({ signingRequestId: '3fa85f64
 
 `signingRequests.cancel`
 
-Cancel a signing request that has not finished; a completed request cannot be cancelled
+Cancel a signing request that has not finished; a cancelled request cannot be resumed, so a new one has to be submitted
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.signpath.api.signingRequests.cancel({ signingRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
@@ -1472,9 +1472,9 @@ nextLink replaces your filters rather than adding to them, because SignPath alre
 
 `signingRequests.resubmit`
 
-Resubmit a completed signing request under another policy, which is how a test-signed artifact is promoted to release signing
+Resubmit a completed signing request under another policy, which is how a test-signed artifact is promoted to release signing; returns the new request id from the Location header
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signpath.api.signingRequests.resubmit({ originalSigningRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', signingPolicySlug: 'release-signed' });
@@ -1496,6 +1496,7 @@ await corsair.signpath.api.signingRequests.resubmit({ originalSigningRequestId: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `signingRequestId` | `string \| null` | Yes | The new signing request, from the Location header. Poll it with signingRequests.getStatus. |
 | `originalSigningRequestId` | `string` | Yes | — |
 | `signingPolicySlug` | `string` | Yes | — |
 | `resubmitted` | `true` | Yes | — |
@@ -1510,7 +1511,7 @@ await corsair.signpath.api.signingRequests.resubmit({ originalSigningRequestId: 
 
 Sign a hash with the policy's key and return the signature in the response, without an artifact or a waiting period
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.signpath.api.signingRequests.signHash({ projectSlug: 'my-app', signingPolicySlug: 'release', hash: 'q83vASNFZ4mrze8BI0VniavN7wEjRWeJq83vASNFZ4k=', signatureAlgorithm: 'Rsa', rsaOptions: { paddingMode: 'Pkcs1', hashAlgorithmName: 'Sha256' } });
@@ -1619,7 +1620,7 @@ rsaOptions, ecdsaOptions and mldsaOptions are required to match signatureAlgorit
 
 Sign a message with ML-DSA and return the signature in the response; PureMldsa is the only algorithm SignPath offers here
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.signpath.api.signingRequests.signMessage({ projectSlug: 'my-app', signingPolicySlug: 'release', message: 'aGVsbG8gd29ybGQ=', signatureAlgorithm: 'PureMldsa' });
@@ -1693,7 +1694,7 @@ await corsair.signpath.api.signingRequests.signMessage({ projectSlug: 'my-app', 
 
 Submit an artifact for signing, uploading the bytes in the same call; the request then waits for approval and processing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signpath.api.signingRequests.submitWithArtifact({ projectSlug: 'my-app', signingPolicySlug: 'release', artifactBase64: 'TVqQAAMAAAAEAAAA', artifactFileName: 'app.exe', description: 'v1.2.0' });
@@ -1782,7 +1783,7 @@ artifactBase64 is decoded before the request, so a 10 MB artifact is about 13.3 
 
 Submit a signing request that points at an artifact SignPath downloads itself, which is the route for artifacts too large to upload
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signpath.api.signingRequests.submitWithArtifactRetrievalLink({ projectSlug: 'my-app', signingPolicySlug: 'release', artifactUrl: 'https://builds.example.com/app.exe', artifactFileName: 'app.exe', artifactSha256: '0000000000000000000000000000000000000000000000000000000000000000' });
@@ -1870,7 +1871,7 @@ await corsair.signpath.api.signingRequests.submitWithArtifactRetrievalLink({ pro
 
 Submit a signing request before the artifact exists, returning the upload link the artifact must be delivered to
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.signpath.api.signingRequests.submitWithoutArtifact({ projectSlug: 'my-app', signingPolicySlug: 'release', artifactId: 'app.exe', artifactSha256: '0000000000000000000000000000000000000000000000000000000000000000' });
@@ -1885,7 +1886,7 @@ await corsair.signpath.api.signingRequests.submitWithoutArtifact({ projectSlug: 
 | `signingPolicySlug` | `string` | Yes | The policy whose certificate and approval rules apply. |
 | `description` | `string` | No | — |
 | `cancellationTimeoutInSeconds` | `number` | No | How long the request may wait before SignPath cancels it. |
-| `artifactId` | `string` | Yes | A name for the artifact SignPath will receive later through `signingRequests.uploadUnsignedArtifact`. |
+| `artifactId` | `string` | Yes | A name for the artifact SignPath will receive later. Upload the file to the `uploadLink` in the response; this plugin does not upload it. |
 | `artifactSha256` | `string` | Yes | Lowercase hex SHA-256 of the artifact that will be uploaded. |
 | `parameters` | `Record<string, string>` | No | Values for the artifact configuration's user-defined parameters, sent as `parameters.<name>` form fields. |
 
