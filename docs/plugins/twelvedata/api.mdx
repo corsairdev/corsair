@@ -52,7 +52,7 @@ await corsair.twelvedata.api.indicators.adx({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -104,7 +104,7 @@ await corsair.twelvedata.api.indicators.apo({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -156,7 +156,7 @@ await corsair.twelvedata.api.indicators.atr({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -208,7 +208,7 @@ await corsair.twelvedata.api.indicators.bbands({ symbol: 'AAPL', interval: '1day
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -237,9 +237,10 @@ await corsair.twelvedata.api.indicators.beta({ symbol: 'AAPL', interval: '1day',
 | `symbol` | `string` | Yes | — |
 | `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
 | `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
-| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
 | `outputsize` | `number` | No | — |
 | `exchange` | `string` | No | — |
+| `series_type_1` | `close \| open \| high \| low` | No | First price series; default open |
+| `series_type_2` | `close \| open \| high \| low` | No | Second price series; default close |
 
 
 
@@ -260,7 +261,7 @@ await corsair.twelvedata.api.indicators.beta({ symbol: 'AAPL', interval: '1day',
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -312,7 +313,7 @@ await corsair.twelvedata.api.indicators.cci({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -341,9 +342,10 @@ await corsair.twelvedata.api.indicators.correl({ symbol: 'AAPL', interval: '1day
 | `symbol` | `string` | Yes | — |
 | `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
 | `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
-| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
 | `outputsize` | `number` | No | — |
 | `exchange` | `string` | No | — |
+| `series_type_1` | `close \| open \| high \| low` | No | First price series; default open |
+| `series_type_2` | `close \| open \| high \| low` | No | Second price series; default close |
 
 
 
@@ -364,7 +366,7 @@ await corsair.twelvedata.api.indicators.correl({ symbol: 'AAPL', interval: '1day
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -416,7 +418,7 @@ await corsair.twelvedata.api.indicators.ema({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -470,7 +472,7 @@ Returns `macd`, `macd_signal` and `macd_hist` per candle, all as strings.
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -522,7 +524,7 @@ await corsair.twelvedata.api.indicators.max({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -574,7 +576,7 @@ await corsair.twelvedata.api.indicators.mfi({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -626,7 +628,7 @@ await corsair.twelvedata.api.indicators.min({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -678,7 +680,7 @@ await corsair.twelvedata.api.indicators.ppo({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -730,7 +732,7 @@ await corsair.twelvedata.api.indicators.roc({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -784,7 +786,7 @@ Each indicator answers its own field names as decimal strings; `rsi` returns `va
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -836,7 +838,7 @@ await corsair.twelvedata.api.indicators.sma({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -888,7 +890,7 @@ await corsair.twelvedata.api.indicators.stddev({ symbol: 'AAPL', interval: '1day
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -940,7 +942,7 @@ await corsair.twelvedata.api.indicators.stoch({ symbol: 'AAPL', interval: '1day'
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -992,7 +994,7 @@ await corsair.twelvedata.api.indicators.stochrsi({ symbol: 'AAPL', interval: '1d
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -1044,7 +1046,7 @@ await corsair.twelvedata.api.indicators.supertrend({ symbol: 'AAPL', interval: '
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -1096,7 +1098,7 @@ await corsair.twelvedata.api.indicators.tsf({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -1148,59 +1150,7 @@ await corsair.twelvedata.api.indicators.ultosc({ symbol: 'AAPL', interval: '1day
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### vwma
-
-`indicators.vwma`
-
-Read the VWMA technical indicator for a symbol over an interval
-
-**Risk:** `read`
-
-```ts
-await corsair.twelvedata.api.indicators.vwma({ symbol: 'AAPL', interval: '1day', time_period: 14 });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `symbol` | `string` | Yes | — |
-| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
-| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
-| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
-| `outputsize` | `number` | No | — |
-| `exchange` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `meta` | `object \| null` | No | — |
-| `values` | `Record<string, string \| null>[] \| null` | No | — |
-| `status` | `string \| null` | No | ok or error |
-| `code` | `number \| null` | No | — |
-| `message` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-  symbol?: string | null,
-  interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -1252,7 +1202,7 @@ await corsair.twelvedata.api.indicators.willr({ symbol: 'AAPL', interval: '1day'
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -1304,7 +1254,7 @@ await corsair.twelvedata.api.indicators.wma({ symbol: 'AAPL', interval: '1day', 
 {
   symbol?: string | null,
   interval?: string | null,
-  indicator?: string | null
+  indicator?: string | Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -1370,7 +1320,7 @@ The symbol is a pair such as EUR/USD, not a single currency.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `symbol` | `string \| null` | No | — |
-| `rate` | `string \| null` | No | A decimal number, sent as a string |
+| `rate` | `number \| string \| null` | No | — |
 | `timestamp` | `number \| string \| null` | No | — |
 
 
@@ -1393,7 +1343,7 @@ await corsair.twelvedata.api.market.price({ symbol: 'AAPL' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `symbol` | `string` | Yes | One symbol, or several separated by commas |
+| `symbol` | `string` | Yes | One symbol, such as AAPL or EUR/USD |
 | `exchange` | `string` | No | Narrow to one exchange |
 | `country` | `string` | No | Narrow to one country |
 
@@ -1425,7 +1375,7 @@ await corsair.twelvedata.api.market.quote({ symbol: 'AAPL', exchange: 'NASDAQ' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `symbol` | `string` | Yes | One symbol, or several separated by commas |
+| `symbol` | `string` | Yes | One symbol, such as AAPL or EUR/USD |
 | `exchange` | `string` | No | Narrow to one exchange |
 | `country` | `string` | No | Narrow to one country |
 
@@ -1565,6 +1515,8 @@ await corsair.twelvedata.api.reference.bonds({ symbol: 'ABXL' });
 | `symbol` | `string` | No | — |
 | `exchange` | `string` | No | — |
 | `country` | `string` | No | — |
+| `page` | `number` | No | Page number; default 1 |
+| `outputsize` | `number` | No | Rows per page; default 50 |
 
 Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.
 
@@ -1815,6 +1767,8 @@ await corsair.twelvedata.api.reference.funds({ country: 'United States' });
 |------|------|----------|-------------|
 | `country` | `string` | No | — |
 | `symbol` | `string` | No | — |
+| `page` | `number` | No | Page number; default 1 |
+| `outputsize` | `number` | No | Rows per page; default 50 |
 
 Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.
 

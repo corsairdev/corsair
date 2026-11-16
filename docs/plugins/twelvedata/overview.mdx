@@ -6,21 +6,21 @@ description: "Read quotes, prices and OHLC time series, exchange rates and techn
 
 Use **Twelve Data** through Corsair: one client, typed API calls.
 
-Create a free API key at https://twelvedata.com/pricing, or copy it from your dashboard. The key travels as the `apikey` query parameter on every request.
+Create a free API key at https://twelvedata.com/pricing, or copy it from your dashboard. The plugin sends the key in the `Authorization: apikey <key>` header, so it never appears in a URL or in an error.
 
 Things to know:
 
-- **A 200 can mean the lookup failed.** An unknown symbol answers HTTP 200 with `{ code: 400, status: 'error', message: ... }`. The plugin reads `status` on every answer and throws `TwelveDataAPIError` when it says `error`, so a resolved promise means the data arrived.
-- **Every number is a string.** Twelve Data sends prices and volumes as decimal strings (`"211.66"`), and the plugin keeps that type. Convert with `Number(...)` where arithmetic is needed.
+- **A 200 can mean the lookup failed.** An unknown symbol answers HTTP 200 with `{ code: 400, status: 'error', message: ... }`. The plugin reads `status` on every answer and throws `TwelveDataAPIError` when it says `error`, so a resolved promise means the data arrived. HTTP failures (401, 403, 429) come through as core's `ApiError`.
+- **Every number is a string.** Twelve Data sends prices and volumes as decimal strings (`"211.66"`), and the plugin keeps that type. Convert with `Number(...)` where arithmetic is needed. The exception is `exchange_rate`, whose `rate` is a JSON number.
 - **Plan limits are per endpoint.** A 403 names the plan the endpoint needs, so `earnings`, `splits`, `dividends` and `profile` are left out: they need a paid plan and are not part of this plugin.
-- **Paging is `outputsize`.** A time series returns the newest candles by default; `outputsize` caps them and `start_date` / `end_date` set a window. The free plan caps the interval history at 8 requests a minute.
+- **Paging is `outputsize`.** A time series returns the newest candles by default; `outputsize` caps them and `start_date` / `end_date` set a window. The free plan caps the interval history at 8 requests a minute. `funds` and `bonds` page with `page` and `outputsize`.
 - **Indicators return one shape each.** `rsi` answers `values[].rsi`, `macd` answers `macd`, `macd_signal` and `macd_hist`, and so on. Each value is a decimal string, and the schema keeps them as an open record rather than a fixed field list per indicator.
-- **Reference lists answer without a key.** `stocks`, `forex_pairs`, `cryptocurrencies`, `exchanges`, `etf`, `funds` and `bonds` are open, which is why their shapes are the best documented here.
+- **Reference lists are open at Twelve Data, but the plugin still needs a key.** `stocks`, `forex_pairs`, `cryptocurrencies`, `exchanges`, `etf`, `funds` and `bonds` answer without a key, which is why their shapes are the best documented here. The plugin sends the stored key on every call, so configure one before using them.
 - **Two envelopes.** `stocks`, `forex_pairs`, `cryptocurrencies`, `exchanges` and `etf` answer `{ data: [...] }`. `funds` and `bonds` answer `{ result: { count, list } }`, so their schemas differ.
 
 **What you get:**
 
-- 37 typed API operations
+- 36 typed API operations
 
 ## Setup
 
@@ -114,11 +114,11 @@ await tenant.twelvedata.api.market.quote({ symbol: 'AAPL' });
 ```
 
 
-**Read the last few candles for a symbol**
+**Read the current exchange rate for a currency pair**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.twelvedata.api.market.timeSeries({ symbol: 'AAPL', outputsize: 7 });
+await tenant.twelvedata.api.market.exchangeRate({ symbol: 'EUR/USD' });
 ```
 
 
