@@ -1,0 +1,147 @@
+---
+title: "Honeybadger plugin"
+sidebarTitle: "Overview"
+description: "Error tracking, uptime monitoring, check-ins, deploys and Insights queries from Honeybadger's v3 API."
+---
+
+Use **Honeybadger** through Corsair: one client, typed API calls.
+
+Honeybadger is an error tracker that also does uptime monitoring, cron and job check-ins, deploy tracking and event analytics. This plugin wraps the Data API v3.
+
+Create an API token in Honeybadger, then store it as the account's `api_key`. It is sent as `Authorization: Bearer <token>`. Three token kinds work: a user API token (`hbu_`), an account API token (`hba_`) for automation, or an OAuth access token. A v2 personal auth token does not work with v3.
+
+Things to know before you call:
+
+- **Pick the right region.** Honeybadger runs a US app and an EU app, and an account lives in one of them. A US token is answered `401` by the EU host and the reverse. The plugin defaults to `us`; pass `region: 'eu'` when the account is on `eu-app.honeybadger.io`. The token prefix is the same in both, so it cannot be detected.
+- **Every read needs `project_id`.** A project ID is a short opaque string such as `Xk9mZp`, not a number, and v3 IDs differ from the v2 ones. Get them from `projects.list`.
+- **Errors branch on a code, not a message.** A failure body is `{ error: { code, message, details } }`. The plugin keeps `status` and `code` on the thrown error and drops the body, because a validation failure echoes the submitted values. `details` becomes text in the message, such as which field failed or which scope a 403 needed.
+- **Time filters are Unix seconds.** `created_after`, `occurred_after` and `occurred_before` take numbers, as the API documents. An ISO string is refused before the request is sent.
+- **Bulk fault changes need a bound.** `faults.resolve`, `unresolve`, `ignore` and `unignore` take either `fault_ids` or `all: true`. A request with neither is refused here, because the API answers `422` for it. `dry_run: true` reports what would change without changing it.
+- **Pagination differs by collection.** Numbered lists (`projects`, `faults`, `environments`, `checkIns`, `sites`, `streams`) take `page` and `per_page`, capped at 100. Time-ordered lists (`notices`, `comments`, `deploys`, `checkIns.events`, `sites.checks`, `sites.outages`) take `limit` and a `before` or `after` cursor, which you read from `links.older` and `links.newer`. `faults.occurrences` and `sites.checks` window on `created_after` and `created_before` instead of cursors.
+- **Rate limits are 360 requests an hour per token.** A `429` carries `Retry-After` and is retried three times. `concurrent_request` and `streams_provisioning` are also `429`s, and both mean try again. The plugin reads `Retry-After` only, never `X-RateLimit-Reset`, because the budget resets on the hour, and waiting for that reset would hold the call for most of an hour.
+- **A merged fault redirects.** After a merge finishes, a read of the old ID answers `301` to the target and the old ID eventually `404`s. A write against it answers `409 fault_merged` with the target in `details`.
+- **No inbound webhooks.** Honeybadger sends no deliveries to an arbitrary URL, so this plugin registers no webhook route. Its notification integrations are per-project and configured in the web UI or through the integrations API, which this plugin does not wrap.
+- **Deletes answer 204.** They return `{ deleted: true }` plus the IDs that were removed, because the provider sends no body to report.
+
+**What you get:**
+
+- 62 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/honeybadger better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/honeybadger better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/honeybadger better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/honeybadger better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { honeybadger } from '@corsair-dev/honeybadger';
+
+export const corsair = createCorsair({
+	plugins: [
+		honeybadger(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Honeybadger API key before the first call: `pnpm corsair setup --plugin=honeybadger --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+honeybadger()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'honeybadger',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the unresolved faults in a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.honeybadger.api.faults.list({ project_id: 'Xk9mZp', q: '-is:resolved', per_page: 10 });
+```
+
+
+**Resolve one fault**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.honeybadger.api.faults.resolve({
+	project_id: 'Xk9mZp',
+	fault_ids: ['12345'],
+});
+```
+
+
+See the full list on the [API](/plugins/honeybadger/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/honeybadger/api">
+    Every `honeybadger.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

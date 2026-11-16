@@ -1,0 +1,182 @@
+displayName: Honeybadger
+description: Error tracking, uptime monitoring, check-ins, deploys and Insights queries from Honeybadger's v3 API.
+domain: honeybadger.io
+recommendedAuth: api_key
+overviewNote: |
+  Honeybadger is an error tracker that also does uptime monitoring, cron and job check-ins, deploy tracking and event analytics. This plugin wraps the Data API v3.
+
+  Create an API token in Honeybadger, then store it as the account's `api_key`. It is sent as `Authorization: Bearer <token>`. Three token kinds work: a user API token (`hbu_`), an account API token (`hba_`) for automation, or an OAuth access token. A v2 personal auth token does not work with v3.
+
+  Things to know before you call:
+
+  - **Pick the right region.** Honeybadger runs a US app and an EU app, and an account lives in one of them. A US token is answered `401` by the EU host and the reverse. The plugin defaults to `us`; pass `region: 'eu'` when the account is on `eu-app.honeybadger.io`. The token prefix is the same in both, so it cannot be detected.
+  - **Every read needs `project_id`.** A project ID is a short opaque string such as `Xk9mZp`, not a number, and v3 IDs differ from the v2 ones. Get them from `projects.list`.
+  - **Errors branch on a code, not a message.** A failure body is `{ error: { code, message, details } }`. The plugin keeps `status` and `code` on the thrown error and drops the body, because a validation failure echoes the submitted values. `details` becomes text in the message, such as which field failed or which scope a 403 needed.
+  - **Time filters are Unix seconds.** `created_after`, `occurred_after` and `occurred_before` take numbers, as the API documents. An ISO string is refused before the request is sent.
+  - **Bulk fault changes need a bound.** `faults.resolve`, `unresolve`, `ignore` and `unignore` take either `fault_ids` or `all: true`. A request with neither is refused here, because the API answers `422` for it. `dry_run: true` reports what would change without changing it.
+  - **Pagination differs by collection.** Numbered lists (`projects`, `faults`, `environments`, `checkIns`, `sites`, `streams`) take `page` and `per_page`, capped at 100. Time-ordered lists (`notices`, `comments`, `deploys`, `checkIns.events`, `sites.checks`, `sites.outages`) take `limit` and a `before` or `after` cursor, which you read from `links.older` and `links.newer`. `faults.occurrences` and `sites.checks` window on `created_after` and `created_before` instead of cursors.
+  - **Rate limits are 360 requests an hour per token.** A `429` carries `Retry-After` and is retried three times. `concurrent_request` and `streams_provisioning` are also `429`s, and both mean try again. The plugin reads `Retry-After` only, never `X-RateLimit-Reset`, because the budget resets on the hour, and waiting for that reset would hold the call for most of an hour.
+  - **A merged fault redirects.** After a merge finishes, a read of the old ID answers `301` to the target and the old ID eventually `404`s. A write against it answers `409 fault_merged` with the target in `details`.
+  - **No inbound webhooks.** Honeybadger sends no deliveries to an arbitrary URL, so this plugin registers no webhook route. Its notification integrations are per-project and configured in the web UI or through the integrations API, which this plugin does not wrap.
+  - **Deletes answer 204.** They return `{ deleted: true }` plus the IDs that were removed, because the provider sends no body to report.
+references:
+  - title: Honeybadger API v3 reference
+    url: https://docs.honeybadger.io/api/v3/
+  - title: Authentication and token scopes
+    url: https://docs.honeybadger.io/api/v3/authentication/
+  - title: Error codes
+    url: https://docs.honeybadger.io/api/v3/
+  - title: OpenAPI specification
+    url: https://docs.honeybadger.io/api/v3/openapi.json
+examples:
+  read:
+    path: faults.list
+    title: Read the unresolved faults in a project
+    args:
+      project_id: Xk9mZp
+      q: -is:resolved
+      per_page: 10
+  write:
+    path: faults.resolve
+    title: Resolve one fault
+    args:
+      project_id: Xk9mZp
+      fault_ids:
+        - '12345'
+apiExamples:
+  projects.list:
+    call: "{ per_page: 25 }"
+  projects.get:
+    call: "{ project_id: 'Xk9mZp' }"
+  projects.create:
+    call: "{ name: 'Billing API', language: 'ruby' }"
+  projects.update:
+    call: "{ project_id: 'Xk9mZp', resolve_errors_on_deploy: false }"
+  projects.delete:
+    call: "{ project_id: 'Xk9mZp' }"
+  projects.stats:
+    call: "{ project_id: 'Xk9mZp' }"
+  projects.occurrences:
+    call: "{ project_id: 'Xk9mZp', period: 'day' }"
+  occurrences.list:
+    call: "{ period: 'week' }"
+  faults.list:
+    call: "{ project_id: 'Xk9mZp', order: 'recent', per_page: 25 }"
+  faults.get:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345' }"
+  faults.update:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', resolved: true }"
+  faults.delete:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345' }"
+  faults.resolve:
+    call: "{ project_id: 'Xk9mZp', fault_ids: ['12345'] }"
+  faults.unresolve:
+    call: "{ project_id: 'Xk9mZp', fault_ids: ['12345'] }"
+  faults.ignore:
+    call: "{ project_id: 'Xk9mZp', fault_ids: ['12345'], dry_run: true }"
+  faults.unignore:
+    call: "{ project_id: 'Xk9mZp', fault_ids: ['12345'] }"
+  faults.summary:
+    call: "{ project_id: 'Xk9mZp' }"
+  faults.assign:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', assignee_id: 'Uz4wKm' }"
+  faults.unassign:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345' }"
+  faults.merge:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', target_fault_id: '67890' }"
+  faults.pauseRecording:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', time: 'hour' }"
+  faults.resumeRecording:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345' }"
+  faults.snooze:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', time: 'day' }"
+  faults.unsnooze:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345' }"
+  faults.affectedUsers:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345' }"
+  faults.occurrences:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345' }"
+  notices.list:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', limit: 25 }"
+  notices.get:
+    call: "{ uuid: '1e2ba1f0-4f3c-4b1a-9c7e-6f2f5c0f1a3b' }"
+  comments.list:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345' }"
+  comments.get:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', comment_id: 'Cm7pLx' }"
+  comments.create:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', body: 'Rolled back, watching.' }"
+  comments.update:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', comment_id: 'Cm7pLx', body: 'Fixed in 2.4.1' }"
+  comments.delete:
+    call: "{ project_id: 'Xk9mZp', fault_id: '12345', comment_id: 'Cm7pLx' }"
+  deploys.list:
+    call: "{ project_id: 'Xk9mZp', environment: 'production' }"
+  deploys.get:
+    call: "{ project_id: 'Xk9mZp', deploy_id: 'Dp2yNk' }"
+  deploys.delete:
+    call: "{ project_id: 'Xk9mZp', deploy_id: 'Dp2yNk' }"
+  environments.list:
+    call: "{ project_id: 'Xk9mZp' }"
+  environments.get:
+    call: "{ project_id: 'Xk9mZp', environment_id: 'En6tRm' }"
+  environments.create:
+    call: "{ project_id: 'Xk9mZp', name: 'staging' }"
+  environments.update:
+    call: "{ project_id: 'Xk9mZp', environment_id: 'En6tRm', notifications: false }"
+  environments.delete:
+    call: "{ project_id: 'Xk9mZp', environment_id: 'En6tRm' }"
+  environments.bulkDelete:
+    call: "{ project_id: 'Xk9mZp', environment_ids: ['En6tRm'] }"
+  environments.bulkUpdate:
+    call: "{ project_id: 'Xk9mZp', environment_ids: ['En6tRm'], notifications: false }"
+  checkIns.list:
+    call: "{ project_id: 'Xk9mZp' }"
+  checkIns.get:
+    call: "{ project_id: 'Xk9mZp', check_in_id: 'Ci5xWq' }"
+  checkIns.create:
+    call: "{ project_id: 'Xk9mZp', name: 'Nightly billing', slug: 'nightly-billing', report_period: '1 day', grace_period: '15 minutes' }"
+  checkIns.update:
+    call: "{ project_id: 'Xk9mZp', check_in_id: 'Ci5xWq', grace_period: '30 minutes' }"
+  checkIns.delete:
+    call: "{ project_id: 'Xk9mZp', check_in_id: 'Ci5xWq' }"
+  checkIns.replace:
+    call: "{ project_id: 'Xk9mZp', check_ins: [{ slug: 'nightly-billing', name: 'Nightly billing', report_period: '1 day' }] }"
+  checkIns.events:
+    call: "{ project_id: 'Xk9mZp', check_in_id: 'Ci5xWq', limit: 25 }"
+  sites.list:
+    call: "{ project_id: 'Xk9mZp' }"
+  sites.get:
+    call: "{ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47' }"
+  sites.create:
+    call: "{ project_id: 'Xk9mZp', url: 'https://www.example.com/health', name: 'Marketing site' }"
+  sites.update:
+    call: "{ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47', frequency: 15 }"
+  sites.delete:
+    call: "{ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47' }"
+  sites.checks:
+    call: "{ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47', limit: 25 }"
+  sites.outages:
+    call: "{ project_id: 'Xk9mZp', site_id: '9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47' }"
+  streams.list:
+    call: "{ project_id: 'Xk9mZp' }"
+  insights.query:
+    call: "{ project_id: 'Xk9mZp', query: '@size > 0 | limit 10', ts: '1h' }"
+  account.get:
+    call: "{}"
+  account.usage:
+    call: "{}"
+  token.get:
+    call: "{}"
+apiNotes:
+  projects.list: 'Returns `data` and `pagination`. `name` is an exact match, not a search.'
+  faults.list: '`q` uses the web UI error search syntax. `occurred_after` also narrows the occurrence counts each fault reports.'
+  faults.resolve: 'Answers the number changed, which counts what changed rather than what matched: resolving a hundred faults of which ninety were already resolved reports ten.'
+  faults.merge: 'Answers 202 with a `batch_id`; the merge runs in the background. Until it finishes the old fault is readable, then reads redirect.'
+  faults.snooze: 'Send exactly one of `time` or `count`. `count` is one of 10, 100 or 1000.'
+  notices.list: 'The first page is the newest notices. Follow `links.older` for earlier ones; `links.newer` is always null here.'
+  checkIns.create: 'A `simple` schedule needs `report_period`. A `cron` schedule needs `cron_schedule` and takes the web app timezone name, not an IANA identifier.'
+  checkIns.replace: 'This replaces the whole set: every check-in the list does not name is deleted.'
+  sites.create: '`match` is required for every match type except `success`, which refuses it. `timeout` must be less than the frequency in seconds.'
+  insights.query: 'A POST that changes nothing, so it is a read and safe to replay. The `data` columns depend on the query.'
+  token.get: 'Needs no scope, so it is the cheapest way to check that a token works and which region it belongs to.'
