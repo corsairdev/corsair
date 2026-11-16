@@ -73,8 +73,8 @@ await corsair.helpwise.api.contacts.create({
 | `displayName` | `string \| null` | No | — |
 | `company` | `string \| null` | No | — |
 | `jobTitle` | `string \| null` | No | — |
-| `emails` | `string[]` | No | — |
-| `isBlocked` | `boolean` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `isBlocked` | `boolean \| null` | No | — |
 
 
 
@@ -110,8 +110,8 @@ await corsair.helpwise.api.contacts.get({ contactId: 50 });
 | `displayName` | `string \| null` | No | — |
 | `company` | `string \| null` | No | — |
 | `jobTitle` | `string \| null` | No | — |
-| `emails` | `string[]` | No | — |
-| `isBlocked` | `boolean` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `isBlocked` | `boolean \| null` | No | — |
 
 
 
@@ -142,8 +142,8 @@ await corsair.helpwise.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `nextPage` | `string \| number \| null` | No | — |
-| `results` | `object[]` | Yes | — |
+| `nextPage` | `string \| number \| boolean \| null` | No | — |
+| `results` | `object[] \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -156,9 +156,9 @@ await corsair.helpwise.api.contacts.list({});
   displayName?: string | null,
   company?: string | null,
   jobTitle?: string | null,
-  emails?: string[],
-  isBlocked?: boolean
-}[]
+  emails?: string[] | null,
+  isBlocked?: boolean | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -193,9 +193,9 @@ await corsair.helpwise.api.contacts.search({ term: 'Alex' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `nextPage` | `string \| number \| null` | No | — |
-| `result` | `object[]` | No | — |
-| `results` | `object[]` | No | — |
+| `nextPage` | `string \| number \| boolean \| null` | No | — |
+| `result` | `object[] \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -208,9 +208,9 @@ await corsair.helpwise.api.contacts.search({ term: 'Alex' });
   displayName?: string | null,
   company?: string | null,
   jobTitle?: string | null,
-  emails?: string[],
-  isBlocked?: boolean
-}[]
+  emails?: string[] | null,
+  isBlocked?: boolean | null
+}[] | null
 ```
 </Accordion>
 
@@ -224,9 +224,9 @@ await corsair.helpwise.api.contacts.search({ term: 'Alex' });
   displayName?: string | null,
   company?: string | null,
   jobTitle?: string | null,
-  emails?: string[],
-  isBlocked?: boolean
-}[]
+  emails?: string[] | null,
+  isBlocked?: boolean | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -296,8 +296,8 @@ await corsair.helpwise.api.contacts.update({ contactId: 50, firstname: 'Alex' })
 | `displayName` | `string \| null` | No | — |
 | `company` | `string \| null` | No | — |
 | `jobTitle` | `string \| null` | No | — |
-| `emails` | `string[]` | No | — |
-| `isBlocked` | `boolean` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `isBlocked` | `boolean \| null` | No | — |
 
 
 
@@ -423,6 +423,8 @@ await corsair.helpwise.api.conversations.get({ inboxId: 10, conversationId: 101 
 | `inboxId` | `number` | Yes | — |
 | `conversationId` | `number` | Yes | — |
 | `labelId` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `pageToken` | `string` | No | — |
 
 
 
@@ -882,6 +884,7 @@ await corsair.helpwise.api.inboxes.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
+| `data` | `Record<string, any>[] \| null` | No | — |
 | `mailboxes` | `Record<string, any>[]` | No | — |
 
 
@@ -1279,7 +1282,7 @@ await corsair.helpwise.api.tags.list({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
+**Output:** `object[] \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1293,7 +1296,7 @@ await corsair.helpwise.api.tags.list({});
   hierarchy?: string | null,
   inbox?: string | null,
   createdAt?: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1389,7 +1392,18 @@ await corsair.helpwise.api.users.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
-| `data` | `Record<string, any>[]` | No | — |
+| `data` | `Record<string, any>[] \| object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, any>[] | {
+  users: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
