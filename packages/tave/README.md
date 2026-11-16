@@ -29,7 +29,7 @@ pnpm add @corsair-dev/tave
 | `payments.delete` | `tave.api.payments.delete` | `destructive` | Delete a payment, which removes it from the job balance |
 | `payments.get` | `tave.api.payments.get` | `read` | Read one payment with its refunded amount and memo |
 | `payments.list` | `tave.api.payments.list` | `read` | List payments with their job, amount, status and method |
-| `payments.update` | `tave.api.payments.update` | `write` | Change a payment's status, memo, method or payer; the amount is read-only, so record a new payment instead |
+| `payments.update` | `tave.api.payments.update` | `write` | Change a payment's status, memo, method or payer; the amount is read-only, so to fix it delete the payment and record it again (the delete cannot be undone and the new payment gets a new id) |
 | `products.create` | `tave.api.products.create` | `write` | Add a product to the price list |
 | `products.delete` | `tave.api.products.delete` | `destructive` | Delete a product; orders that already include it keep their line item |
 | `products.get` | `tave.api.products.get` | `read` | Read one product with its price, SKU and flags |

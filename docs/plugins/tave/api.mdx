@@ -1206,7 +1206,7 @@ await corsair.tave.api.payments.list({ page: 1 });
 
 `payments.update`
 
-Change a payment's status, memo, method or payer; the amount is read-only, so record a new payment instead
+Change a payment's status, memo, method or payer; the amount is read-only, so to fix it delete the payment and record it again (the delete cannot be undone and the new payment gets a new id)
 
 **Risk:** `write`
 
