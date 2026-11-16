@@ -199,16 +199,29 @@ describe('links', () => {
 
 		await invoke(LinksEndpoints.insights, {
 			link_id: 48213,
-			start: '2026-05-01',
-			end: '2026-05-31',
+			metric: 'clicks',
+			start_date: '2026-05-01',
+			end_date: '2026-05-31',
+			aggregate_interval: 'day',
 		});
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/api/v1/links/48213/insights');
+		// ToneDen requires `metric` and names the window start_date/end_date.
 		expect(lastRequest().params).toEqual({
-			start: '2026-05-01',
-			end: '2026-05-31',
+			metric: 'clicks',
+			start_date: '2026-05-01',
+			end_date: '2026-05-31',
+			aggregate_interval: 'day',
 		});
+	});
+
+	it('links.insights refuses a call without a metric', async () => {
+		const error = await captureError(
+			invoke(LinksEndpoints.insights, { link_id: 48213 }),
+		);
+		expect((error as Error).name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('links.insightsOverview GETs the overview route', async () => {
@@ -310,6 +323,27 @@ describe('attachments', () => {
 		expect(lastRequest().path).toBe('/api/v1/attachments/9100/entries');
 		expect(result.data).toHaveLength(1);
 		expect(result.totals).toBeDefined();
+	});
+
+	it('attachments.entries and unlocks forward start_date and the interval', async () => {
+		respond(attachmentStats);
+		await invoke(AttachmentsEndpoints.entries, {
+			attachment_id: 9100,
+			start_date: '2026-05-01',
+			aggregate_interval: 'week',
+		});
+		expect(lastRequest().params).toEqual({
+			start_date: '2026-05-01',
+			aggregate_interval: 'week',
+		});
+
+		respond(attachmentStats);
+		await invoke(AttachmentsEndpoints.unlocks, {
+			attachment_id: 9100,
+			aggregate_interval: 'hour',
+		});
+		expect(lastRequest().path).toBe('/api/v1/attachments/9100/unlocks');
+		expect(lastRequest().params).toEqual({ aggregate_interval: 'hour' });
 	});
 
 	it('attachments.entriesTotals GETs the totals route', async () => {
@@ -473,14 +507,17 @@ describe('user lists and offline conversions', () => {
 
 		await invoke(UserListsEndpoints.updateContacts, {
 			list_id: 55,
-			add: ['a@acme.com', 'b@acme.com'],
+			add: [{ email: 'a@acme.com' }, { phone: '+15555550100', country: 'US' }],
 		});
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe(
 			'/api/v1/advertising/userLists/55/contacts',
 		);
-		expect(lastRequest().body).toEqual({ add: ['a@acme.com', 'b@acme.com'] });
+		// ToneDen takes contact objects, not bare strings.
+		expect(lastRequest().body).toEqual({
+			add: [{ email: 'a@acme.com' }, { phone: '+15555550100', country: 'US' }],
+		});
 	});
 
 	it('userLists.updateContacts rejects a call with no change', async () => {
@@ -495,13 +532,32 @@ describe('user lists and offline conversions', () => {
 	it('offlineConversions.upload POSTs to the user path', async () => {
 		respond(deleted);
 
-		await invoke(OfflineConversionsEndpoints.upload, { user_id: 1 });
+		await invoke(OfflineConversionsEndpoints.upload, {
+			user_id: 1,
+			events: [
+				{
+					user: { email: 'fan@example.com' },
+					event: 'Purchase',
+					timestamp: 1779000000,
+					value: 25,
+				},
+			],
+		});
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe(
 			'/api/v1/users/1/advertising/offlineConversions',
 		);
 		expect(lastRequest().method).toBe('POST');
+		// The events go as a bare array; the user id stays in the path.
+		expect(lastRequest().body).toEqual([
+			{
+				user: { email: 'fan@example.com' },
+				event: 'Purchase',
+				timestamp: 1779000000,
+				value: 25,
+			},
+		]);
 	});
 });
 

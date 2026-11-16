@@ -127,10 +127,15 @@ export const remove: ToneDenEndpoints['attachmentsDelete'] = async (
  * The five analytics routes differ only in their sub-path, so they share one
  * request builder. Each exported function keeps its own name and event.
  */
-function statsRequest(attachmentId: number, subPath: string) {
+function statsRequest(
+	attachmentId: number,
+	subPath: string,
+	query?: { start_date?: string; aggregate_interval?: string },
+) {
 	return {
 		method: 'GET' as const,
 		path: `attachments/${segment(attachmentId)}/${subPath}`,
+		...(query ? { query } : {}),
 	};
 }
 
@@ -146,7 +151,11 @@ export const entries: ToneDenEndpoints['attachmentsEntries'] = async (
 			output: ToneDenEndpointOutputSchemas.attachmentEntries,
 		},
 		input,
-		(parsed) => statsRequest(parsed.attachment_id, 'entries'),
+		(parsed) =>
+			statsRequest(parsed.attachment_id, 'entries', {
+				start_date: parsed.start_date,
+				aggregate_interval: parsed.aggregate_interval,
+			}),
 		{ log: (parsed) => ({ attachment_id: parsed.attachment_id }) },
 	);
 
@@ -176,7 +185,11 @@ export const unlocks: ToneDenEndpoints['attachmentsUnlocks'] = async (
 			output: ToneDenEndpointOutputSchemas.attachmentUnlocks,
 		},
 		input,
-		(parsed) => statsRequest(parsed.attachment_id, 'unlocks'),
+		(parsed) =>
+			statsRequest(parsed.attachment_id, 'unlocks', {
+				start_date: parsed.start_date,
+				aggregate_interval: parsed.aggregate_interval,
+			}),
 		{ log: (parsed) => ({ attachment_id: parsed.attachment_id }) },
 	);
 

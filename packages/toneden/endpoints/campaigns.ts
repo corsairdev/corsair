@@ -214,7 +214,13 @@ export const offlineConversions: ToneDenEndpoints['offlineConversions'] =
 			(parsed) => ({
 				method: 'POST',
 				path: `users/${segment(parsed.user_id)}/advertising/offlineConversions`,
-				body: writeBody(parsed as Record<string, unknown>, ['user_id']),
+				// ToneDen takes the events as a bare array.
+				body: parsed.events,
 			}),
-			{ log: (parsed) => ({ user_id: parsed.user_id }) },
+			{
+				log: (parsed) => ({
+					user_id: parsed.user_id,
+					events: parsed.events.length,
+				}),
+			},
 		);

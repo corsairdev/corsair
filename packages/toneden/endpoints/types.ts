@@ -295,8 +295,25 @@ export type ValidPathInput = z.input<typeof ValidPathInputSchema>;
 
 const LinkInsightsInputSchema = z.object({
 	link_id: z.number().int().positive(),
-	start: z.string().optional().describe('ISO 8601 date'),
-	end: z.string().optional().describe('ISO 8601 date'),
+	metric: z
+		.enum(['clicks', 'clickthroughs', 'rsvps'])
+		.describe('Which action to count; `rsvps` only works on livestream links'),
+	start_date: z
+		.string()
+		.optional()
+		.describe('ISO 8601 date; only actions after it are counted'),
+	end_date: z
+		.string()
+		.optional()
+		.describe('ISO 8601 date; only actions before it are counted'),
+	aggregate_interval: z.enum(['day', 'hour', 'week']).optional(),
+	aggregate_geo: z.enum(['city', 'country', 'region']).optional(),
+	aggregate_by_referrer: z.boolean().optional(),
+	aggregate_by_service: z.boolean().optional(),
+	for_distinct_fans: z
+		.boolean()
+		.optional()
+		.describe('Count one action per fan'),
 });
 export type LinkInsightsInput = z.input<typeof LinkInsightsInputSchema>;
 
@@ -350,12 +367,27 @@ const UpdateAttachmentInputSchema = z
 	});
 export type UpdateAttachmentInput = z.input<typeof UpdateAttachmentInputSchema>;
 
+// The totals and platform routes take only the attachment ID.
 const AttachmentStatsInputSchema = z.object({
 	attachment_id: z.number().int().positive(),
-	start: z.string().optional(),
-	end: z.string().optional(),
 });
 export type AttachmentStatsInput = z.input<typeof AttachmentStatsInputSchema>;
+
+// The entries and unlocks time series take a start date and an interval.
+const AttachmentSeriesInputSchema = z.object({
+	attachment_id: z.number().int().positive(),
+	start_date: z
+		.string()
+		.optional()
+		.describe(
+			'Earliest date to include; ToneDen defaults to the attachment creation',
+		),
+	aggregate_interval: z
+		.enum(['day', 'hour', 'week'])
+		.optional()
+		.describe('One data point per day (default), hour or week'),
+});
+export type AttachmentSeriesInput = z.input<typeof AttachmentSeriesInputSchema>;
 
 const AttachmentStatsSchema = z
 	.object({
@@ -406,11 +438,25 @@ const CreateUserListInputSchema = z.object({
 });
 export type CreateUserListInput = z.input<typeof CreateUserListInputSchema>;
 
+/** A person in a user list or a conversion, as ToneDen documents it. */
+const UserListUserSchema = z.object({
+	email: z.string().optional(),
+	phone: z.string().optional(),
+	id: z.string().optional().describe('Your own external ID for the person'),
+	city: z.string().optional(),
+	state: z.string().optional(),
+	country: z.string().length(2).optional().describe('2-letter country code'),
+	zip: z.string().optional(),
+	gender: z.enum(['m', 'f']).optional(),
+	first_name: z.string().optional(),
+	last_name: z.string().optional(),
+});
+
 const UpdateUserListContactsInputSchema = z
 	.object({
 		list_id: z.number().int().positive(),
-		add: z.array(z.string()).optional(),
-		remove: z.array(z.string()).optional(),
+		add: z.array(UserListUserSchema).min(1).optional(),
+		remove: z.array(UserListUserSchema).min(1).optional(),
 	})
 	.superRefine((value, ctx) => {
 		// One of the two lists has to say what to change.
@@ -428,6 +474,29 @@ export type UpdateUserListContactsInput = z.input<
 
 const OfflineConversionsInputSchema = z.object({
 	user_id: z.number().int().positive(),
+	events: z
+		.array(
+			z.object({
+				user: UserListUserSchema.describe('Who performed the event'),
+				event: z.enum([
+					'ViewContent',
+					'Search',
+					'AddToCart',
+					'AddToWishlist',
+					'InitiateCheckout',
+					'AddPaymentInfo',
+					'Purchase',
+					'Lead',
+				]),
+				timestamp: z.number().describe('UNIX timestamp of the event'),
+				value: z
+					.number()
+					.optional()
+					.describe('What the customer spent, for a Purchase'),
+			}),
+		)
+		.min(1)
+		.describe('The conversion events; sent as the request body array'),
 });
 export type OfflineConversionsInput = z.input<
 	typeof OfflineConversionsInputSchema
@@ -509,9 +578,9 @@ export type ToneDenEndpointInputs = {
 	createAttachment: CreateAttachmentInput;
 	updateAttachment: UpdateAttachmentInput;
 	deleteAttachment: AttachmentIdInput;
-	attachmentEntries: AttachmentStatsInput;
+	attachmentEntries: AttachmentSeriesInput;
 	attachmentEntriesTotals: AttachmentStatsInput;
-	attachmentUnlocks: AttachmentStatsInput;
+	attachmentUnlocks: AttachmentSeriesInput;
 	attachmentUnlocksTotals: AttachmentStatsInput;
 	attachmentUnlockPlatforms: AttachmentStatsInput;
 	listCampaigns: ListCampaignsInput;
@@ -591,9 +660,9 @@ export const ToneDenEndpointInputSchemas = {
 	createAttachment: CreateAttachmentInputSchema,
 	updateAttachment: UpdateAttachmentInputSchema,
 	deleteAttachment: AttachmentIdInputSchema,
-	attachmentEntries: AttachmentStatsInputSchema,
+	attachmentEntries: AttachmentSeriesInputSchema,
 	attachmentEntriesTotals: AttachmentStatsInputSchema,
-	attachmentUnlocks: AttachmentStatsInputSchema,
+	attachmentUnlocks: AttachmentSeriesInputSchema,
 	attachmentUnlocksTotals: AttachmentStatsInputSchema,
 	attachmentUnlockPlatforms: AttachmentStatsInputSchema,
 	listCampaigns: ListCampaignsInputSchema,

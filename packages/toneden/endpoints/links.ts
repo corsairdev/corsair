@@ -172,7 +172,16 @@ export const insights: ToneDenEndpoints['linksInsights'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: `links/${segment(parsed.link_id)}/insights`,
-			query: { start: parsed.start, end: parsed.end },
+			query: {
+				metric: parsed.metric,
+				start_date: parsed.start_date,
+				end_date: parsed.end_date,
+				aggregate_interval: parsed.aggregate_interval,
+				aggregate_geo: parsed.aggregate_geo,
+				aggregate_by_referrer: parsed.aggregate_by_referrer,
+				aggregate_by_service: parsed.aggregate_by_service,
+				for_distinct_fans: parsed.for_distinct_fans,
+			},
 		}),
 		{ log: (parsed) => ({ link_id: parsed.link_id }) },
 	);
