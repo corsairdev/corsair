@@ -651,7 +651,12 @@ Set draft: true to create without notifying anyone. Without it SignWell sends th
   send_email?: boolean,
   send_email_delay?: number,
   signing_order?: number,
-  passcode?: string
+  passcode?: string,
+  passcode_delivery?: {
+    enabled?: boolean,
+    methods?: email[],
+    expire_after_access?: boolean
+  }
 }[]
 ```
 </Accordion>
@@ -895,6 +900,7 @@ await corsair.signwell.api.documents.createFromTemplate({ template_id: 'd7315111
 | `allow_reassign` | `boolean` | No | — |
 | `language` | `string` | No | — |
 | `labels` | `object[]` | No | — |
+| `files` | `object[]` | No | Files appended after the template's own files; each takes file_url or file_base64. |
 | `template_fields` | `object[]` | No | Prefill the template's existing fields by api_id. |
 | `fields` | `Record<string, any>[][]` | No | SignWell's fields for appended files; to prefill the template's own fields use template_fields. |
 
@@ -913,6 +919,13 @@ Supply template_id or template_ids, never both; the schema rejects a call that s
   subject?: string,
   message?: string,
   passcode?: string,
+  passcode_delivery?: {
+    enabled?: boolean,
+    methods?: email[],
+    expire_after_access?: boolean
+  },
+  send_email?: boolean,
+  send_email_delay?: number,
   delivery_method?: email | sms | email_and_sms
 }[]
 ```
@@ -934,6 +947,17 @@ Supply template_id or template_ids, never both; the schema rejects a call that s
 {
   name: string,
   color?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  name: string,
+  file_url?: string,
+  file_base64?: string
 }[]
 ```
 </Accordion>
@@ -2036,7 +2060,12 @@ await corsair.signwell.api.templates.create({ files: [{ name: 'contract.pdf', fi
   id: string,
   name: string,
   preassigned_recipient_name?: string,
-  preassigned_recipient_email?: string
+  preassigned_recipient_email?: string,
+  passcode_delivery?: {
+    enabled?: boolean,
+    methods?: email[],
+    expire_after_access?: boolean
+  }
 }[]
 ```
 </Accordion>
@@ -2350,7 +2379,12 @@ await corsair.signwell.api.templates.update({ id: 'd7315111-c671-4b15-8354-c9a19
   id: string,
   name: string,
   preassigned_recipient_name?: string,
-  preassigned_recipient_email?: string
+  preassigned_recipient_email?: string,
+  passcode_delivery?: {
+    enabled?: boolean,
+    methods?: email[],
+    expire_after_access?: boolean
+  }
 }[]
 ```
 </Accordion>
